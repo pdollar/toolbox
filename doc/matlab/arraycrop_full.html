@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of arraycrop_full</title>
+  <meta name="keywords" content="arraycrop_full">
+  <meta name="description" content="Used to crop a rectangular region from an n dimensional array.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>arraycrop_full
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Used to crop a rectangular region from an n dimensional array.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function I = arraycrop_full( I, start_locs, end_locs, padelement ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Used to crop a rectangular region from an n dimensional array.  
+ 
+ Guarantees that the resulting array will have dimensions as specified by rect by filling
+ in locations with padelement if the locations are outside of the image.
+
+ INPUTS
+   I             - n dimensional array to crop window from
+   start_locs    - locations at which to start cropping along each dim
+   end_locs      - locations at which to end cropping along each dim
+   padelement    - [optional] element with which to pad (0 by default)
+
+ OUTPUTS
+   I             - cropped array
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+ 
+ See also PADARRAY</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="checknumericargs.html" class="code" title="function [x,er] = checknumericargs( x, siz, integerflag, signflag )">checknumericargs</a>	Helper utility for checking numeric vector arguments.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../images/imshrink.html" class="code" title="function I = imshrink( I, ratios )">imshrink</a>	Used to shrink a multidimensional array I by integer amount.</li><li><a href="../images/private/nlfilt_sep.html" class="code" title="function I = nlfilt_sep( I, dims, shape, fun, varargin )">nlfilt_sep</a>	Efficient multidimensional nonlinear but seperable filtering operation.</li><li><a href="../images/private/nlfiltblock_sep.html" class="code" title="function I = nlfiltblock_sep( I, dims, fun, varargin  )">nlfiltblock_sep</a>	Efficient multidimensional nonlinear but seperable filtering operation.</li><li><a href="arraycrop2dims.html" class="code" title="function IC = arraycrop2dims( I, dims, padelement )">arraycrop2dims</a>	Pads or crops I appropriately so that size(IC)==dims.</li><li><a href="mat2cell2.html" class="code" title="function C = mat2cell2( X, parts )">mat2cell2</a>	Break matrix up into a cell array of same sized matrices.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of filter_gauss_nD</title>
+  <meta name="keywords" content="filter_gauss_nD">
+  <meta name="description" content="n-dimensional Gaussian filter.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html filters -->
+<h1>filter_gauss_nD
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>n-dimensional Gaussian filter.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function G = filter_gauss_nD( dims, mu, C, show ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> n-dimensional Gaussian filter. 
+
+ Creates an image of a Gaussian with arbitrary covariance matrix. The point [x,y,z]
+ refers to the x-th column and y-th row, at the t-th frame.  So for example mu should
+ have the format [col,row,t].
+
+ If mu==[], it is calculated to be the center of the image.  C can be a full nxn
+ covariance matrix, or an nx1 vector of variance.  In the latter case C is calculated as
+ C=diag(C).  If C=[]; then C=(dims/6).^2, ie it is transformed into a vector of variances
+ such that along each dimension the variance is equal to (siz/6)^2.  
+
+ INPUTS
+   dims    - n element vector of dimensions of final Gaussian
+   mu      - [optional] n element vector specifying the mean or []
+   C       - [optional] nxn covariance matrix, nx1 set of variances, or variance, or []
+   show    - [optional] figure to use for display (no display if == 0)
+
+ OUTPUTS
+   G   - image of the created Gaussian
+
+ EXAMPLE
+   % 2D
+   sigma=3; G = filter_gauss_nD( 4*[sigma sigma] + 1, [], [sigma sigma].^2, 1 );
+   % 3D
+   R = rotation_matrix3D( [1,1,0], pi/4 ); 
+   C = R'*[10^2 0 0; 0 5^2 0; 0 0 16^2]*R;
+   G = filter_gauss_nD( [50,50,50], [25,25,25], C, 1 );
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="filter_gauss_1D.html" class="code" title="function f = filter_gauss_1D( r, sigma, show )">FILTER_GAUSS_1D</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="filter_visualize_1D.html" class="code" title="function filter_visualize_1D( f )">filter_visualize_1D</a>	Used to help visualize the a 1D filter.</li><li><a href="filter_visualize_3D.html" class="code" title="function filter_visualize_3D( F, frac )">filter_visualize_3D</a>	Used to help visualize a 3D filter.</li><li><a href="../images/im.html" class="code" title="function im( I, range );">im</a>	IM [2D] Function for displaying grayscale images.</li><li><a href="../images/montage2.html" class="code" title="function varargout = montage2( IS, showlines, extrainfo, clim, mm, nn, labels )">montage2</a>	[3D] Used to display a stack of T images.</li><li><a href="../matlab/normpdf2.html" class="code" title="function ps = normpdf2(xs,m,C);">normpdf2</a>	Normal prob. density function (pdf) with arbitrary covariance matrix.</li><li><a href="../matlab/plot_gaussellipses.html" class="code" title="function plot_gaussellipses( mus, Cs, d )">plot_gaussellipses</a>	Plots 2D ellipses derived from 2D Gaussians specified by mus & Cs.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../images/imageMLG.html" class="code" title="function varargout = imageMLG( G, symmFlag, show )">imageMLG</a>	Calculates maximum likelihood parameters of gaussian that gave rise to image G.</li><li><a href="../images/mask_gaussians.html" class="code" title="function [masks,keeplocs] = mask_gaussians( siz, M, windowwidth, offset, show )">mask_gaussians</a>	Divides a volume into softly overlapping gaussian windows.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

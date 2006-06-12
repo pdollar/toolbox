@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of histc_image</title>
+  <meta name="keywords" content="histc_image">
+  <meta name="description" content="Calculates histograms at every point in an array I.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>histc_image
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Calculates histograms at every point in an array I.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function HS = histc_image( I, edges, weightmask, shape ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Calculates histograms at every point in an array I.  
+
+ The qth bin of each histogram contains the count of the number of locations in I that
+ have value in between edges(q)&lt;=v&lt; edges(q+1).  HS(i,j,...,k,:) will contain the
+ histogram at location (i,j,...,k), as calculated by weighing values in I by placing
+ weightmask at that location.  For example, if weightmask is ones(window_size) then the
+ histogram at every location will simply be a histogram of the pixels within that window.
+
+ See histc_1D for more details about edges and nbins. 
+
+ The shape flag specifies what to do at boundaries.  See convn_fast for
+ possible flags such as 'same', 'valid', 'full, or 'smooth'.
+
+ INPUTS
+   I           - Array with integer values [see above]
+   edges       - either nbins+1 length vector of quantization bounds, or nbins
+   weightmask  - numeric array of weights, or cell array of seperable weight kernels
+   shape       - [optional] 'valid', ['full'], 'same', or 'smooth'
+
+ OUTPUTS
+   HS          - ~size(I)xQ array where each ~size(I) elt is a Q element
+                 histogram (~size(I) because depends on val of shape)
+
+ EXAMPLE
+   load trees;
+   L = conv2(X, filter_DOG_2D(10,4,1,0), 'valid' ); 
+   f1=filter_gauss_1D([],5);   HS1 = histc_image( L, 15, {f1,f1'}, 'same' ); 
+   f2=ones(1,15);              HS2 = histc_image( L, 15, {f2,f2'}, 'same' ); 
+   figure(1); im(X); figure(2); im(L);   figure(3); montage2(HS1,1,1); 
+   figure(4); montage2(HS2,1,1);         figure(5); montage2(HS1-HS2,1,1);
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="assign2bins.html" class="code" title="function B = assign2bins( I, edges )">ASSIGN2BINS</a>, <a href="histc_1D.html" class="code" title="function h = histc_1D( I, edges, weightmask )">HISTC_1D</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="assign2bins.html" class="code" title="function B = assign2bins( I, edges )">assign2bins</a>	Quantizes I according to values in edges.</li><li><a href="convn_fast.html" class="code" title="function C = convn_fast( A, B, shape )">convn_fast</a>	Fast convolution, replacement for both conv2 and convn.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

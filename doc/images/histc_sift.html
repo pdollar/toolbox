@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of histc_sift</title>
+  <meta name="keywords" content="histc_sift">
+  <meta name="description" content="Creates a series of locally position dependent histograms of the values in I.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>histc_sift
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Creates a series of locally position dependent histograms of the values in I.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function hs = histc_sift( I, edges, pargmask, weightmask ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Creates a series of locally position dependent histograms of the values in I.
+
+ Inspired by David Lowe's SIFT descriptor.  Takes I, divides it into a number of regions,
+ and creates a histogram for each region. I is divided into approximately equally sized
+ hyper-rectangular regions so that together these hyper-rectangles cover I.  The
+ hyper-rectangles are actually 'soft', in that each region is actually defined by a
+ gaussian mask, for details see mask_gaussians. pargmask, parameters to mask_gaussians,
+ controls details about how the masks are created.  Optionally, each value in I may have
+ associated weight given by weightmask, which should have the same exact dimensions as I. 
+
+ INPUTS
+   I           - M1xM2x...xMk numeric array
+   edges       - either nbins+1 length vector of quantization bounds, or nbins
+   pargmask    - cell of parameters to mask_gaussians
+   weightmask  - [optional] size(I) numeric array of weights
+
+ OUTPUTS
+   hs          - histograms (array of size nbins x nmasks)
+
+ EXAMPLE
+   G = filter_gauss_nD([100 100],[],[],0);
+   hs = histc_sift( G, 5, {2,.6,.1,0} ); figure(1); im(hs)
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="histc_1D.html" class="code" title="function h = histc_1D( I, edges, weightmask )">HISTC_1D</a>, <a href="mask_gaussians.html" class="code" title="function [masks,keeplocs] = mask_gaussians( siz, M, windowwidth, offset, show )">MASK_GAUSSIANS</a>, <a href="histc_sift_nD.html" class="code" title="function hs = histc_sift_nD( I, edges, pargmask, weightmask, multch )">HISTC_SIFT_ND</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="histc_sift_nD.html" class="code" title="function hs = histc_sift_nD( I, edges, pargmask, weightmask, multch )">histc_sift_nD</a>	Creates a series of locally position dependent histograms.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

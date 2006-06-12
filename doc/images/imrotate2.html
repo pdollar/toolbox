@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of imrotate2</title>
+  <meta name="keywords" content="imrotate2">
+  <meta name="description" content="Custom version of imrotate that demonstrates use of apply_homography.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>imrotate2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Custom version of imrotate that demonstrates use of apply_homography.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function IR = imrotate2( I, angle, method, bbox ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Custom version of imrotate that demonstrates use of apply_homography.
+
+ Works exactly the same as imrotate.  For usage see imrotate.
+
+ INPUTS
+   I       - 2D image [converted to double]
+   angle   - angle to rotate in degrees
+   method  - 'nearest',{'linear'},'spline','cubic';
+   bbox    - {'loose'}, 'crop'
+
+ OUTPUTS
+   IR      - rotated image
+
+ EXAMPLE
+   load trees;
+   tic; X1 = imrotate( X, 55, 'bicubic' ); toc, 
+   tic; X2 = imrotate2( X, 55, 'bicubic' ); toc
+   clf;  subplot(2,2,1); im(X); subplot(2,2,2); im(X1-X2);
+   subplot(2,2,3); im(X1); subplot(2,2,4); im(X2);
+
+ DATESTAMP
+   2-May-2006  10:00pm
+
+ See also IMROTATE</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="apply_homography.html" class="code" title="function IR = apply_homography( I, H, method, bbox, show )">apply_homography</a>	Applies the homography defined by H on the image I.</li><li><a href="../matlab/rotation_matrix2D.html" class="code" title="function R = rotation_matrix2D( theta )">rotation_matrix2D</a>	Returns the matrix: R=[cos(t) -sin(t); sin(t) cos(t)].</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

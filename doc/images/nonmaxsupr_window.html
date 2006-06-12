@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of nonmaxsupr_window</title>
+  <meta name="keywords" content="nonmaxsupr_window">
+  <meta name="description" content="Nonmaximal suppression of values outside of a given window.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>nonmaxsupr_window
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Nonmaximal suppression of values outside of a given window.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [subs,vals,keeplocs] = nonmaxsupr_window( subs, vals,start_locs, end_locs, thresh, maxn ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Nonmaximal suppression of values outside of a given window.
+
+ Suppresses all location in subs that do not fall in given range (defined by start_locs
+ and end_locs).  For example, if subs are 3D coordinates of maxes over an array of size
+ siz,  &quot;nonmaxsupr_window( subs, vals, [1,1,1]+10, siz-10 )&quot; suppreses all locations
+ within 10 pixels of the border of I.
+
+ INPUTS
+   subs        - subscripts of point locations (m x d) 
+   vals        - values at point locations (m x 1)
+   start_locs  - locations at which to start cropping along each dim
+   end_locs    - locations at which to end cropping along each dim
+   thresh      - [optional] minimum value below which not to look fo
+   maxn        - [optional] return at most maxn of the largest vals 
+
+ OUTPUTS
+   subs        - subscripts of non-suppressed point locations (n x d) 
+   vals        - values at non-suppressed point locations (n x 1)
+   keeplocs    - indicies of kept locations from subs (n x 1)
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="imsubs2array.html" class="code" title="function I = imsubs2array( subs, vals, siz, fillval )">IMSUBS2ARRAY</a>, <a href="nonmaxsupr.html" class="code" title="function [subs,vals] = nonmaxsupr( I, radii, thresh, maxn )">NONMAXSUPR</a>, <a href="nonmaxsupr_list.html" class="code" title="function [subs,vals,keeplocs] = nonmaxsupr_list( subs, vals, radii, thresh, maxn, supr_eq)">NONMAXSUPR_LIST</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../matlab/checknumericargs.html" class="code" title="function [x,er] = checknumericargs( x, siz, integerflag, signflag )">checknumericargs</a>	Helper utility for checking numeric vector arguments.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

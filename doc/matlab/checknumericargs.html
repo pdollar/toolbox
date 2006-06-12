@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of checknumericargs</title>
+  <meta name="keywords" content="checknumericargs">
+  <meta name="description" content="Helper utility for checking numeric vector arguments.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>checknumericargs
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Helper utility for checking numeric vector arguments.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [x,er] = checknumericargs( x, siz, integerflag, signflag ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Helper utility for checking numeric vector arguments.
+
+ Runs a number of tests on the numeric array x.  Tests to see if x has all integer
+ values, all positive values, and so on, depending on the values for integerflag and
+ signflag. Also tests to see if the size of x matches siz (unless siz==[]).  If x is a
+ scalar, x is converted to a array simply by creating a matrix of size siz with x in each
+ entry.  This is why the function returns x.  siz=M is equivalent to siz=[M M]. 
+
+ If x does not satisfy some criteria, an error message is returned in er. If x satisfied
+ all the criteria er=''.  Note that error('') has no effect, so can always use: &quot;[x,er] =
+ checknumericargs( x, ... ); error(er);&quot;, which will throw an error only if something was
+ wrong with x.
+
+ INPUTS
+   x           - numeric array
+   siz         - [if []]: does not test size of x
+               - [if not []]: intended size for x
+   integerflag - [if -1]: no need for integer x
+                 [if  0]: error if non integer x
+                 [if  1]: error if non odd integers
+                 [if  2]: error if non even integers
+   signflag    - [if -2]: entires of x must be strictly negative
+                 [if -1]: entires of x must be negative
+                 [if  0]: no contstraints on sign of entries in x
+                 [if  1]: entires of x must be positive
+                 [if  2]: entires of x must be strictly positive
+
+ OUTPUTS
+   x   - if x was a scalar it may have been replicated into a matrix 
+   er  - contains error msg if anything was wrong with x
+
+ EXAMPLE
+   a=1;  [a,er] = checknumericargs( a, [1 3], 2, 0 ); a, error(er)
+
+ DATESTAMP
+   29-Sep-2005  2:00pm</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../classify/clf_knn_train.html" class="code" title="function clf = clf_knn_train( clf, X, Y )">clf_knn_train</a>	Train a k nearest neighbor classifier (memorization).</li><li><a href="../classify/confmatrix.html" class="code" title="function CM = confmatrix( IDXtrue, IDXpred, ntypes )">confmatrix</a>	Generates a confusion matrix according to true and predicted data labels.</li><li><a href="../classify/meanshiftim.html" class="code" title="function [M,Vr,Vc] = meanshiftim( X, sig_spt, sig_rng, softflag, maxiter, mindelta )">meanshiftim</a>	Applies the meanshift algorithm to a joint spatial/range image.</li><li><a href="../images/imshrink.html" class="code" title="function I = imshrink( I, ratios )">imshrink</a>	Used to shrink a multidimensional array I by integer amount.</li><li><a href="../images/imsubs_resize.html" class="code" title="function subs = imsubs_resize( subs, resizevals )">imsubs_resize</a>	Resizes subs in subs/vals image representation by resizevals.</li><li><a href="../images/mask_gaussians.html" class="code" title="function [masks,keeplocs] = mask_gaussians( siz, M, windowwidth, offset, show )">mask_gaussians</a>	Divides a volume into softly overlapping gaussian windows.</li><li><a href="../images/montages2.html" class="code" title="function varargout = montages2( IS, montage2params, padsize )">montages2</a>	MONTAGES2 [4D] Used to display R sets of T images each.</li><li><a href="../images/nonmaxsupr_list.html" class="code" title="function [subs,vals,keeplocs] = nonmaxsupr_list( subs, vals, radii, thresh, maxn, supr_eq)">nonmaxsupr_list</a>	Applies nonmaximal suppression to a list.</li><li><a href="../images/nonmaxsupr_window.html" class="code" title="function [subs,vals,keeplocs] = nonmaxsupr_window( subs, vals,start_locs, end_locs, thresh, maxn )">nonmaxsupr_window</a>	Nonmaximal suppression of values outside of a given window.</li><li><a href="../images/private/nlfilt_sep.html" class="code" title="function I = nlfilt_sep( I, dims, shape, fun, varargin )">nlfilt_sep</a>	Efficient multidimensional nonlinear but seperable filtering operation.</li><li><a href="../images/private/nlfiltblock_sep.html" class="code" title="function I = nlfiltblock_sep( I, dims, fun, varargin  )">nlfiltblock_sep</a>	Efficient multidimensional nonlinear but seperable filtering operation.</li><li><a href="arraycrop2dims.html" class="code" title="function IC = arraycrop2dims( I, dims, padelement )">arraycrop2dims</a>	Pads or crops I appropriately so that size(IC)==dims.</li><li><a href="arraycrop_full.html" class="code" title="function I = arraycrop_full( I, start_locs, end_locs, padelement )">arraycrop_full</a>	Used to crop a rectangular region from an n dimensional array.</li><li><a href="mat2cell2.html" class="code" title="function C = mat2cell2( X, parts )">mat2cell2</a>	Break matrix up into a cell array of same sized matrices.</li><li><a href="tocstatus.html" class="code" title="function tocstatus( id, fracdone )">tocstatus</a>	Used to display the progress of a long process.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

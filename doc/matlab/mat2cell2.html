@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of mat2cell2</title>
+  <meta name="keywords" content="mat2cell2">
+  <meta name="description" content="Break matrix up into a cell array of same sized matrices.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>mat2cell2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Break matrix up into a cell array of same sized matrices.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function C = mat2cell2( X, parts ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Break matrix up into a cell array of same sized matrices.
+
+ Useful wrapper for matlab function mat2cell.  Instead of specifying locations along each
+ dimension at which to split the matrix, this function takes the number of parts along
+ each dimension to break X into.  That is if X is d1xd2x...xdk and parts=[p1 p2 ... pk];
+ then X is split into p1*p2*...*pk matricies of dimension d1/p1 x d2/p2 x ... x dk/pk.
+ If di/pi is not an integer, floor(di/pi) is used.  Leftover chunks of X are discarded.
+ Using a scalar p for parts is equivalent to using [p p ... p].
+
+ So for example if X is 10*16, mat2cell2( X, [2 3] ) break X into 2*3 parts, each of size
+ 5x5, and the last column of X is discarded.
+
+ INPUTS
+   X       - matrix to split
+   parts   - see above
+
+ OUTPUTS
+   C       - cell array adjacent submatrices of X
+
+ EXAMPLE
+   A=rand(4), B = mat2cell2(A,2), B{:}
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also MAT2CELL, <a href="cell2array.html" class="code" title="function Y = cell2array( X, padelement )">CELL2ARRAY</a>, CELL2MAT</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="arraycrop_full.html" class="code" title="function I = arraycrop_full( I, start_locs, end_locs, padelement )">arraycrop_full</a>	Used to crop a rectangular region from an n dimensional array.</li><li><a href="checknumericargs.html" class="code" title="function [x,er] = checknumericargs( x, siz, integerflag, signflag )">checknumericargs</a>	Helper utility for checking numeric vector arguments.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

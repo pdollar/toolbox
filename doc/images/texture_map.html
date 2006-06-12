@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of texture_map</title>
+  <meta name="keywords" content="texture_map">
+  <meta name="description" content="Maps texture in I according to row_dest and col_dest.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>texture_map
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Maps texture in I according to row_dest and col_dest.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function IR = texture_map( I, row_dest, col_dest, bbox ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Maps texture in I according to row_dest and col_dest.
+
+ I has (nrows*ncols) coordinates.  Each coordinate has an associated intensity value.  A
+ transformation on I can be defined by giving the destination (r',c') of the intensity
+ associated with coordinate (r,c) in I -- ie I(r,c).  Applying the transformation, we ask
+ what intensity is associated with a coordinate (r0',c0') by interpolating between the 
+ intensities at the closest coordinates (r',c').  In the function below specify the
+ destination of (r,c) by (row_dest(r,c), col_dest(r,c)).
+
+ If the inverse mapping is also available -- ie if we can go from the coordinates in the
+ destination to the coordinates in the source, then a much more efficient procedure can
+ be used to texture_map that involves interp2 instead of griddata.  See apply_homography
+ for example usage in this case.
+
+ The bounding box of the image is set by the BBOX argument, a string that can be 'loose'
+ (default) or 'crop'. When BBOX is 'loose', IR includes the whole transformed image,
+ which generally is larger than I. When BBOX is 'crop' IR is cropped to include only the
+ central portion of the transformed image and is the same size as I. 
+
+ INPUTS
+   I           - 2D input image
+   row_dest    - row_dest(i,j) is row loc where I(i,j) gets mapped to
+   col_dest    - col_dest(i,j) is col loc where I(i,j) gets mapped to
+   bbox        - [optional] see above for meaning of bbox ({'loose'},'crop')
+
+ OUTPUTS
+   IR          - result of texture mapping
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="apply_homography.html" class="code" title="function IR = apply_homography( I, H, method, bbox, show )">APPLY_HOMOGRAPHY</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../matlab/tps_interpolateimage.html" class="code" title="function IR = tps_interpolateimage( I_source, xs_source, ys_source,xs_dest, ys_dest, wx, affinex, wy, affiney )">tps_interpolateimage</a>	Interpolate I_source according to the warp from I_source->I_dest.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

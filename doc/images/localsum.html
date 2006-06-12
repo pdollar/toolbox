@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of localsum</title>
+  <meta name="keywords" content="localsum">
+  <meta name="description" content="Fast routine for box filtering.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>localsum
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Fast routine for box filtering.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function I = localsum( I, dims, shape ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Fast routine for box filtering.
+
+ Same effect as calling 'C=convn( I, ones(dims), shape)', except more efficient.
+ Computes local sums by using running sums.
+
+ INPUTS
+   I       - matrix to compute sum over
+   dims    - size of volume to compute sum over 
+   shape   - [optional] 'valid', 'full', or 'same', see conv2 help
+
+ OUTPUTS
+   C       - matrix of sums
+
+ EXAMPLE
+   A = rand(20); dim=31; shape='valid'; 
+   B = localsum(A,dim,shape); 
+   C = conv2(A,ones(dim),shape); 
+   diff=B-C; sum(abs(diff(:)))
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="localsum_block.html" class="code" title="function I = localsum_block( I, dims )">LOCALSUM_BLOCK</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../images/private/nlfilt_sep.html" class="code" title="function I = nlfilt_sep( I, dims, shape, fun, varargin )">nlfilt_sep</a>	Efficient multidimensional nonlinear but seperable filtering operation.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="mask_circle.html" class="code" title="function mask = mask_circle( angle_start, angle_size, r, nsamples )">mask_circle</a>	Creates an image of a 'pie slice' of a circle.</li><li><a href="modefilt1.html" class="code" title="function y = modefilt1( x, s )">modefilt1</a>	One-dimensional mode filtering.</li><li><a href="normxcorrn.html" class="code" title="function C =  normxcorrn( T, A, shape )">normxcorrn</a>	Normalized n-dimensional cross-correlation.</li><li><a href="optflow_corr.html" class="code" title="function [Vx,Vy,reliab] = optflow_corr( I1, I2, patch_r, search_r, sigma, thr, show )">optflow_corr</a>	Calculate optical flow using cross-correlation.</li><li><a href="xeucn.html" class="code" title="function C = xeucn( A, T, shape )">xeucn</a>	n-dimensional euclidean distance between each window in A and template T.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

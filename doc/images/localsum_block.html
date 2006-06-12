@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of localsum_block</title>
+  <meta name="keywords" content="localsum_block">
+  <meta name="description" content="Calculates the sum in non-overlapping blocks of I of size dims.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>localsum_block
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Calculates the sum in non-overlapping blocks of I of size dims.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function I = localsum_block( I, dims ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Calculates the sum in non-overlapping blocks of I of size dims.  
+
+ Similar to localsum except gets sum in non-overlapping windows. Equivalent to doing
+ localsum, and then subsampling (except more efficient).
+
+ INPUTS
+   I       - matrix to compute sum over
+   dims    - size of volume to compute sum over 
+
+ OUTPUTS
+   I       - resulting array 
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+ 
+ See also <a href="localsum.html" class="code" title="function I = localsum( I, dims, shape )">LOCALSUM</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../images/private/nlfiltblock_sep.html" class="code" title="function I = nlfiltblock_sep( I, dims, fun, varargin  )">nlfiltblock_sep</a>	Efficient multidimensional nonlinear but seperable filtering operation.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="imshrink.html" class="code" title="function I = imshrink( I, ratios )">imshrink</a>	Used to shrink a multidimensional array I by integer amount.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

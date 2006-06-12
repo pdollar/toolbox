@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of apply_homography</title>
+  <meta name="keywords" content="apply_homography">
+  <meta name="description" content="Applies the homography defined by H on the image I.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>apply_homography
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Applies the homography defined by H on the image I.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function IR = apply_homography( I, H, method, bbox, show ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Applies the homography defined by H on the image I.  
+
+ Takes the center of the image as the origin, not the top left corner.  Also, the
+ coordinate system is row/ column format, so H must be also.  
+
+ The bounding box of the image is set by the BBOX argument, a string that can be 'loose'
+ (default) or 'crop'. When BBOX is 'loose', IR includes the whole transformed image,
+ which generally is larger than I. When BBOX is 'crop' IR is cropped to include only the
+ central portion of the transformed image and is the same size as I.  Preserves I's type.
+
+ INPUTS
+   I       - input black and white image (2D double or unint8 array)
+   H       - 3x3 nonsingular homography matrix
+   method  - [optional] parameter for interp2 ('nearest',{'linear'},'spline','cubic');
+   bbox    - [optional] see above for meaning of bbox ({'loose'},'crop')
+   show    - [optional] figure to use for display (no display if == 0)
+
+ OUTPUTS
+   IR -  result of applying H to I.
+
+ EXAMPLE
+   load trees; I=X;
+   R = rotation_matrix2D( pi/4 ); T = [1; 3]; H = [R T; 0 0 1];
+   IR = apply_homography( I, H, [], 'crop', 1 );
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="texture_map.html" class="code" title="function IR = texture_map( I, row_dest, col_dest, bbox )">TEXTURE_MAP</a>, <a href="imrotate2.html" class="code" title="function IR = imrotate2( I, angle, method, bbox )">IMROTATE2</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="im.html" class="code" title="function im( I, range );">im</a>	IM [2D] Function for displaying grayscale images.</li><li><a href="../matlab/arraycrop2dims.html" class="code" title="function IC = arraycrop2dims( I, dims, padelement )">arraycrop2dims</a>	Pads or crops I appropriately so that size(IC)==dims.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="imrotate2.html" class="code" title="function IR = imrotate2( I, angle, method, bbox )">imrotate2</a>	Custom version of imrotate that demonstrates use of apply_homography.</li><li><a href="imtranslate.html" class="code" title="function IR = imtranslate( I, dx, dy, method, bbox )">imtranslate</a>	Translate an image to subpixel accuracy.</li><li><a href="jitter_image.html" class="code" title="function IJ = jitter_image( I, nphis, maxphi, ntrans, maxtrans, jsiz, reflectflag, scales )">jitter_image</a>	Creates multiple, slightly jittered versions of an image.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

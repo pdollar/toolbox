@@ -1,0 +1,21 @@
+Todo:
+ -faster meanshit code from vincent
+
+Version 1.03  (03-May-06)
+ -this file is now a standard part of the documentation
+ -thanks to everyone who gave me comments and helped make this toolbox more useful!
+ -added imtranslate.m
+ -playmovie/playmovies backward/forward playback
+ -comment nonmaxsupr < vs <=
+ -compile problems 'toolbox_compile'
+ -tweaked feval_images / imwrite2 to make more resilient
+ -added to imnormalize
+ -added scales to jitterimage
+ -added imwrite2split (useful extension to imwrite2 for writing/reading from mul dirs)
+ -lots of other minor fixes that I should have recorded...
+
+Version 1.02  (29-Nov-05)
+ -filmstrip/filstrips
+ -principal is misspelled in the PCA-related functions.
+ -fixed clustermontages (header was stripped)
+ -updated overview (add to path, recompile, description)

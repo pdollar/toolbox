@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of histc_1D</title>
+  <meta name="keywords" content="histc_1D">
+  <meta name="description" content="Generalized, version of histc (histogram count), allows weighted values.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>histc_1D
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Generalized, version of histc (histogram count), allows weighted values.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function h = histc_1D( I, edges, weightmask ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Generalized, version of histc (histogram count), allows weighted values.
+
+ Creates a histogram h of the values in I, with edges as specified.  h will have length
+ nbins, where nbins=length(edges)-1.  Each value in I has associated weight given by
+ weightmask, which should have the same dimensions as I. h(q) contains the weighted
+ count of values v in I such that edges(q) &lt;= v &lt; edges(q+1). h(nbins) additionally
+ contains the weighted count of values in I such that v==edges(nbins+1) -- which is
+ different then how histc treates the boundary condition. Finally, h is normalized so
+ that sum(h(:))==1. 
+
+ It usually makes sense to specify edges explicitly, especially if different histograms
+ are going to be compared.  In general, edges must have monotonically non-decreasing
+ values.  Also, if the exact bounds are unknown then it is convenient to set the first
+ element in edges to -inf and the last to inf.  If h = histc_1D( I, nbins, ...), edges are
+ automatically generated and have bins equally spaced between min(I) and max(I). That is
+ edges is generated via: 'edges = linspace( minI-eps, maxI+eps, nbins+1 )'.  
+
+ See histc for more information.
+
+ INPUTS
+   I           - numeric array [treated as a vector]
+   edges       - either nbins+1 length vector of quantization bounds, or scalar nbins
+   weightmask  - [optional] size(I) numeric array of weights
+
+ OUTPUTS
+   h           - histogram (vector of size 1xnbins)
+ 
+ EXAMPLE
+   G = filter_gauss_nD([1000 1000],[],[],1);
+   h1 = histc_1D( G, 25 ); figure(1); bar(h1);
+   h2 = histc_1D( G, 25, G ); figure(2); bar(h2);
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also HISTC, <a href="assign2bins.html" class="code" title="function B = assign2bins( I, edges )">ASSIGN2BINS</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="histc_sift_nD.html" class="code" title="function hs = histc_sift_nD( I, edges, pargmask, weightmask, multch )">histc_sift_nD</a>	Creates a series of locally position dependent histograms.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

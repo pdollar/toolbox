@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of optflow_horn</title>
+  <meta name="keywords" content="optflow_horn">
+  <meta name="description" content="Calculate optical flow using Horn &amp; Schunck.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>optflow_horn
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Calculate optical flow using Horn &amp; Schunck.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [Vx,Vy] = optflow_horn( I1, I2, sigma, show ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Calculate optical flow using Horn &amp; Schunck.
+
+ INPUTS
+   I1, I2      - input images to calculate flow between
+   sigma       - [optional] amount to smooth by (may be 0)
+   show        - [optional] figure to use for display (no display if == 0)
+
+ OUTPUTS
+   Vx, Vy  - x,y components of optical flow [Vx&gt;0 -&gt; flow is right, Vy&gt;0 -&gt; flow is down]
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="optflow_corr.html" class="code" title="function [Vx,Vy,reliab] = optflow_corr( I1, I2, patch_r, search_r, sigma, thr, show )">OPTFLOW_CORR</a>, <a href="optflow_lucaskanade.html" class="code" title="function [Vx,Vy,reliab]=optflow_lucaskanade( I1, I2, win_n, win_sig, sigma, thr, show )">OPTFLOW_LUCASKANADE</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gauss_smooth.html" class="code" title="function [L,filters] = gauss_smooth( I, sigmas, shape, radius )">gauss_smooth</a>	Applies Gaussian smoothing to a (multidimensional) image.</li><li><a href="im.html" class="code" title="function im( I, range );">im</a>	IM [2D] Function for displaying grayscale images.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,12 @@
+TODO LIST
+---------
+
+- Allow to parse an XML string rather than only an XML file
+- Better compliance with DOM specifications.
+- Better implementation of XPath
+- Modify save to write <tag>hello</tag> without <cr> when content is short
+  Also save <tag/> when content is empty
++ Add method should return the UID of the newly created node
+- Save method should allow for the tree in output in order to save the filename
+- Constructor should allow to take a struct in input (using struct2xml.m)
++ There should be an export.m methods to export XML to a simple struct when possible

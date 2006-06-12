@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of pca_apply_large</title>
+  <meta name="keywords" content="pca_apply_large">
+  <meta name="description" content="Wrapper for pca_apply that allows for application to large X.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html classify -->
+<h1>pca_apply_large
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Wrapper for pca_apply that allows for application to large X.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ Yk, Xhat, pixelerror ] = pca_apply_large( X, U, mu, variances, k ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Wrapper for pca_apply that allows for application to large X.
+
+ Wrapper for pca_apply that splits and processes X in parts, this may be
+ useful if processing cannot be done fully in parallel because of memory
+ constraints. See pca_apply for usage.
+
+ INPUTS
+   same as pca_apply
+
+ OUTPUTS
+   same as pca_apply
+
+ DATESTAMP
+   29-Nov-2005  2:00pm
+
+ See also <a href="pca.html" class="code" title="function [ U, mu, variances ] = pca( X )">PCA</a>, <a href="pca_apply.html" class="code" title="function [ Yk, Xhat, avsq, avsq_orig ] = pca_apply( X, U, mu, variances, k )">PCA_APPLY</a>, <a href="pca_visualize.html" class="code" title="function varargout = pca_visualize( U, mu, variances, X, index, ks, filename, show )">PCA_VISUALIZE</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="pca_apply.html" class="code" title="function [ Yk, Xhat, avsq, avsq_orig ] = pca_apply( X, U, mu, variances, k )">pca_apply</a>	Companion function to pca.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

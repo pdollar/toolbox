@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of pca_visualize</title>
+  <meta name="keywords" content="pca_visualize">
+  <meta name="description" content="Visualization of quality of approximation of X given principal components.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html classify -->
+<h1>pca_visualize
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Visualization of quality of approximation of X given principal components.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function varargout = pca_visualize( U, mu, variances, X, index, ks, filename, show ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Visualization of quality of approximation of X given principal components.
+
+ X can either represent a single element (a single image or video), or a set of elements.
+ In the latter case, index controls which element of X to apply visualization to, if
+ unspecified it is chosen randomly.
+
+ INPUTS
+   U           - [returned by pca] -- see pca
+   mu          - [returned by pca] -- see pca
+   variances   - [returned by pca] -- see pca
+   X           - Set of images or videos, or a single image or video
+   index       - [optional] If X is a set of images or videos, controls
+               - which image or video to apply visualization to
+   ks          - [optional] ks values of k for pca_apply (ex. ks=[1 4 8 16])
+   filename    - [optional] if specified outputs avis
+   show        - [optional] will display results in figure(show) and figure(show+1)
+
+ OUTPUTS
+   M       - [only if X ia a movie] movie of xhats (see pcaapply)
+   MDiff   - [only if X ia a movie] movie of difference images
+   MU      - [only if X ia a movie] movie of eigenmovies
+
+ DATESTAMP
+   29-Nov-2005  2:00pm
+ 
+ See also <a href="pca.html" class="code" title="function [ U, mu, variances ] = pca( X )">PCA</a>, <a href="pca_apply.html" class="code" title="function [ Yk, Xhat, avsq, avsq_orig ] = pca_apply( X, U, mu, variances, k )">PCA_APPLY</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="pca_apply.html" class="code" title="function [ Yk, Xhat, avsq, avsq_orig ] = pca_apply( X, U, mu, variances, k )">pca_apply</a>	Companion function to pca.</li><li><a href="../images/im.html" class="code" title="function im( I, range );">im</a>	IM [2D] Function for displaying grayscale images.</li><li><a href="../images/makemovies.html" class="code" title="function M = makemovies( IS, montage2params )">makemovies</a>	[4D] Used to convert R sets of equal length videos into a single movie.</li><li><a href="../images/montage2.html" class="code" title="function varargout = montage2( IS, showlines, extrainfo, clim, mm, nn, labels )">montage2</a>	[3D] Used to display a stack of T images.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

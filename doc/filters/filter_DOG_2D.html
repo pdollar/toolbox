@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of filter_DOG_2D</title>
+  <meta name="keywords" content="filter_DOG_2D">
+  <meta name="description" content="Difference of Gaussian (Dog) Filter.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html filters -->
+<h1>filter_DOG_2D
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Difference of Gaussian (Dog) Filter.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function G = filter_DOG_2D( r, sig, order, show ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Difference of Gaussian (Dog) Filter.
+
+ Adapted from code by Serge Belongie.  Takes a &quot;difference of Gaussian&quot; - all centered
+ on the same point but with different values for sigma.  
+
+ INPUTS
+   r       - Final filter will be 2*r+1 on each side
+   sig     - standard deviation of central Gaussian
+   order   - should be either 1 or 2
+   show    - [optional] figure to use for display (no display if == 0)
+
+ OUTPUTS
+   G       - final filter
+
+ EXAMPLE
+   G = filter_DOG_2D( 6, 3, 1, 1 );
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="filter_DOOG_2D.html" class="code" title="function dG = filter_DOOG_2D( r, sigx, sigy, nderivs, show )">FILTER_DOOG_2D</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="filter_visualize_2D.html" class="code" title="function filter_visualize_2D( F, plotline )">filter_visualize_2D</a>	Used to help visualize a 2D filter.</li><li><a href="../matlab/c.html" class="code" title="">c</a>	clc</li><li><a href="../matlab/normpdf2.html" class="code" title="function ps = normpdf2(xs,m,C);">normpdf2</a>	Normal prob. density function (pdf) with arbitrary covariance matrix.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="FB_make_2D.html" class="code" title="function FB = FB_make_2D">FB_make_2D</a>	Various ways to make filterbanks.  See inside of this file for details.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

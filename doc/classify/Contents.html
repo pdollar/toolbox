@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Contents</title>
+  <meta name="keywords" content="Contents">
+  <meta name="description" content="CLASSIFY">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html classify -->
+<h1>Contents
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>CLASSIFY</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> CLASSIFY
+ See also
+
+ Clustering:
+   <a href="democluster.html" class="code" title="function [IDX, X, k_true, noisefrac_true, IDX_true ] =democluster( X, k, noisefrac, IDX_true )">democluster</a>         - Clustering demo.
+   <a href="demogendata.html" class="code" title="function [X,IDX,T,IDT] = demogendata(n,m,k,d,c,e,f)">demogendata</a>         - Generate data drawn form a mixture of Gaussians.
+   <a href="kmeans2.html" class="code" title="function [IDX,C,sumd] = kmeans2( X,k,varargin )">kmeans2</a>             - Very fast version of kmeans clustering.
+   <a href="meanshift.html" class="code" title="function [IDX,M] = meanshift(X, radius, rate, maxiter, minCsize, blur )">meanshift</a>           - <a href="meanshift.html" class="code" title="function [IDX,M] = meanshift(X, radius, rate, maxiter, minCsize, blur )">meanshift</a> clustering algorithm.
+   <a href="meanshiftim.html" class="code" title="function [M,Vr,Vc] = meanshiftim( X, sig_spt, sig_rng, softflag, maxiter, mindelta )">meanshiftim</a>         - Applies the <a href="meanshift.html" class="code" title="function [IDX,M] = meanshift(X, radius, rate, maxiter, minCsize, blur )">meanshift</a> algorithm to a joint spatial/range image.
+   <a href="meanshiftim_explore.html" class="code" title="function meanshiftim_explore( I, X, sig_spt, sig_rng, show )">meanshiftim_explore</a> - Visualization to help choose sigmas for <a href="meanshiftim.html" class="code" title="function [M,Vr,Vc] = meanshiftim( X, sig_spt, sig_rng, softflag, maxiter, mindelta )">meanshiftim</a>.
+
+ Calculating distances efficiently:
+   <a href="dist_L1.html" class="code" title="function D = dist_L1( X, Y )">dist_L1</a>             - Calculates the L1 Distance between vectors (ie the City-Block distance).
+   <a href="dist_chisquared.html" class="code" title="function D = dist_chisquared( X, Y )">dist_chisquared</a>     - Calculates the Chi Squared Distance between vectors (usually histograms).
+   <a href="dist_emd.html" class="code" title="function D = dist_emd( X, Y )">dist_emd</a>            - Calculates Earth Mover's Distance (EMD) between positive vectors.
+   <a href="dist_euclidean.html" class="code" title="function D = dist_euclidean( X, Y )">dist_euclidean</a>      - Calculates the Euclidean distance between vectors [FAST].
+   <a href="distmatrix_show.html" class="code" title="function distmatrix_show( D, IDX )">distmatrix_show</a>     - Useful visualization of a distance matrix of clustered points.
+   <a href="softmin.html" class="code" title="function M = softmin( D, sigma )">softmin</a>             - Calculates the <a href="softmin.html" class="code" title="function M = softmin( D, sigma )">softmin</a> of a vector.
+
+ Principal components analysis:
+   <a href="pca.html" class="code" title="function [ U, mu, variances ] = pca( X )">pca</a>                 - principal components analysis (alternative to princomp).
+   <a href="pca_apply.html" class="code" title="function [ Yk, Xhat, avsq, avsq_orig ] = pca_apply( X, U, mu, variances, k )">pca_apply</a>           - Companion function to <a href="pca.html" class="code" title="function [ U, mu, variances ] = pca( X )">pca</a>.
+   <a href="pca_apply_large.html" class="code" title="function [ Yk, Xhat, pixelerror ] = pca_apply_large( X, U, mu, variances, k )">pca_apply_large</a>     - Wrapper for <a href="pca_apply.html" class="code" title="function [ Yk, Xhat, avsq, avsq_orig ] = pca_apply( X, U, mu, variances, k )">pca_apply</a> that allows for application to large X.
+   <a href="pca_randomvector.html" class="code" title="function Xr = pca_randomvector( U, mu, variances, k, n, hypershpere, show )">pca_randomvector</a>    - Generate random vectors in <a href="pca.html" class="code" title="function [ U, mu, variances ] = pca( X )">PCA</a> subspace.
+   <a href="pca_visualize.html" class="code" title="function varargout = pca_visualize( U, mu, variances, X, index, ks, filename, show )">pca_visualize</a>       - Visualization of quality of approximation of X given principal components.
+   <a href="visualize_data.html" class="code" title="function visualize_data( X, k, IDX, types )">visualize_data</a>      - Project high dim. data unto principal components (PCA) for visualization.
+
+ Classification methods with a common interface:
+   <a href="democlassify.html" class="code" title="function democlassify">democlassify</a>        - A demo used to test and demonstrate the usage of classifiers (clf_*)
+   <a href="nfoldxval.html" class="code" title="function CM=nfoldxval( data, IDX, clfinit, clfparams, types, ignoretypes, fname, show )">nfoldxval</a>           - Runs n-fold cross validation on data with a given classifier.
+   <a href="confmatrix.html" class="code" title="function CM = confmatrix( IDXtrue, IDXpred, ntypes )">confmatrix</a>          - Generates a confusion matrix according to true and predicted data labels.
+   <a href="confmatrix_show.html" class="code" title="function confmatrix_show( CM, types, pvpairs, ndigits )">confmatrix_show</a>     - Used to display a confusion matrix.
+   <a href="clf_dectree.html" class="code" title="function clf = clf_dectree( p, varargin )">clf_dectree</a>         - Wrapper for treefit that makes decision trees compatible with <a href="nfoldxval.html" class="code" title="function CM=nfoldxval( data, IDX, clfinit, clfparams, types, ignoretypes, fname, show )">nfoldxval</a>.
+   <a href="clf_dectree_fwd.html" class="code" title="function Y = clf_dectree_fwd( clf, X )">clf_dectree_fwd</a>     - Apply the decision tree to data X.
+   <a href="clf_dectree_train.html" class="code" title="function clf = clf_dectree_train( clf, X, Y )">clf_dectree_train</a>   - Train a decision tree classifier.
+   <a href="clf_ecoc.html" class="code" title="function clf = clf_ecoc(p,clfinit,clfparams,nclasses,use01targets)">clf_ecoc</a>            - Wrapper for ecoc that makes ecoc compatible with <a href="nfoldxval.html" class="code" title="function CM=nfoldxval( data, IDX, clfinit, clfparams, types, ignoretypes, fname, show )">nfoldxval</a>.
+   <a href="clf_ecoc_code.html" class="code" title="function [C,nbits] = clf_ecoc_code( k )">clf_ecoc_code</a>       - Generates optimal ECOC codes when 3&lt;=nclasses&lt;=7.
+   <a href="clf_knn.html" class="code" title="function clf = clf_knn( p, k, dist_fn )">clf_knn</a>             - Create a k nearest neighbor classifier.
+   <a href="clf_knn_dist.html" class="code" title="function IDXpred = clf_knn_dist( D, IDX, k )">clf_knn_dist</a>        - k-nearest neighbor classifier based on a distance matrix D.
+   <a href="clf_knn_fwd.html" class="code" title="function Y = clf_knn_fwd( clf, X )">clf_knn_fwd</a>         - Apply a k-nearest neighbor classifier to X.
+   <a href="clf_knn_train.html" class="code" title="function clf = clf_knn_train( clf, X, Y )">clf_knn_train</a>       - Train a k nearest neighbor classifier (memorization).
+   <a href="clf_lda.html" class="code" title="function clf = clf_lda( p, type, prior )">clf_lda</a>             - Create a Linear Discriminant Analysis (LDA) classifier.
+   <a href="clf_lda_fwd.html" class="code" title="function Y = clf_LDAfwd( clf, X )">clf_lda_fwd</a>         - Apply the Linear Discriminant Analysis (LDA) classifier to data X.
+   <a href="clf_lda_train.html" class="code" title="function clf = clf_lda_train( clf, X, Y )">clf_lda_train</a>       - Train a Linear Discriminant Analysis (LDA) classifier.
+   <a href="clf_svm.html" class="code" title="function net = clf_svm(varargin)">clf_svm</a>             - Wrapper for svm that makes svm compatible with <a href="nfoldxval.html" class="code" title="function CM=nfoldxval( data, IDX, clfinit, clfparams, types, ignoretypes, fname, show )">nfoldxval</a>.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

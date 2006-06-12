@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of imlabel</title>
+  <meta name="keywords" content="imlabel">
+  <meta name="description" content="Improved method for labeling figure axes.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>imlabel
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Improved method for labeling figure axes.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function imlabel( labels, position, slant, pvpairs ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Improved method for labeling figure axes.
+
+ INPUTS
+   labels          - cell array of strings, labels for display
+   position        - 'left', 'right', 'bottom', or 'top'
+   slant           - [optional] rotation for top and bottom labels in [-90,90]
+   pvpairs         - [optional] parameter / value list for text
+
+ EXAMPLE
+   load( 'images.mat' );
+   clf; cla; montage2( images(:,:,1:9), 1 );
+   imlabel( {'row1','row2','row3'}, 'left',[],{'FontSize',20} );
+   imlabel( {'column 1','column 2','column 3'}, 'bottom', -25, {'FontSize',20} );
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also MONTAGE2, <a href="text2.html" class="code" title="function varargout = text2( varargin )">TEXT2</a>, TEXT</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="text2.html" class="code" title="function varargout = text2( varargin )">text2</a>	Wrapper for text.m that ensures displayed text fits in figure.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../classify/confmatrix_show.html" class="code" title="function confmatrix_show( CM, types, pvpairs, ndigits )">confmatrix_show</a>	Used to display a confusion matrix.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

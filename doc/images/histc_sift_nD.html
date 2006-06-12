@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of histc_sift_nD</title>
+  <meta name="keywords" content="histc_sift_nD">
+  <meta name="description" content="Creates a series of locally position dependent histograms.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>histc_sift_nD
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Creates a series of locally position dependent histograms.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function hs = histc_sift_nD( I, edges, pargmask, weightmask, multch ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Creates a series of locally position dependent histograms.
+
+ Creates a series of locally position dependent histograms of the values in the mutiple
+ channel multidimensional array I (this is a generalized version of histc_sift that
+ allows for multiple channels).
+
+ I is an M1xM2x...xMkxnd array, it consists of nd channels each of dimension
+ (M1xM2x...xMk).  histc_sift_nD works by dividing a (M1xM2x...xMk) array into seperate
+ regions and creating a 1D histogram for each using histc_1D.  histc_sift_nD does the same
+ thing except each region now has multiple channels, and an nd-dimensional histogram is
+ created for each using histc_nD.
+
+ INPUTS
+   I           - M1xM2x...xMkxnd array, (nd channels each of dim M1xM2x...xMk)
+   edges       - parameter to histc_nD, [either scalar, vector, or cell vector]
+   pargmask    - cell of parameters to mask_gaussians
+   weightmask  - [optional] M1xM2x...xMk numeric array of weights
+   multch      - [optional] if 0 this becomes same as histc_sift.m (nd==1)
+
+ OUTPUTS
+   hs          - histograms (array of size nmasks x nbins)
+
+ EXAMPLE
+   G = filter_gauss_nD([100 100],[],[],0); 
+   hs = histc_sift_nD( cat(3,G,G), 5, {2,.6,.1,0} ); 
+   hs = histc_sift_nD( cat(3,G,randn(size(G))),5,{2,.6,.1,0}); 
+   figure(1); montage2(hs,1);  figure(2); montage2(hs,1);
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="histc_1D.html" class="code" title="function h = histc_1D( I, edges, weightmask )">HISTC_1D</a>, <a href="histc_sift.html" class="code" title="function hs = histc_sift( I, edges, pargmask, weightmask )">HISTC_SIFT</a>, <a href="mask_gaussians.html" class="code" title="function [masks,keeplocs] = mask_gaussians( siz, M, windowwidth, offset, show )">MASK_GAUSSIANS</a>, <a href="histc_nD.html" class="code" title="function h = histc_nD( I, edges, weightmask )">HISTC_ND</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gauss_smooth.html" class="code" title="function [L,filters] = gauss_smooth( I, sigmas, shape, radius )">gauss_smooth</a>	Applies Gaussian smoothing to a (multidimensional) image.</li><li><a href="histc_1D.html" class="code" title="function h = histc_1D( I, edges, weightmask )">histc_1D</a>	Generalized, version of histc (histogram count), allows weighted values.</li><li><a href="histc_nD.html" class="code" title="function h = histc_nD( I, edges, weightmask )">histc_nD</a>	Generalized, multidimensional version of normalized histc (histogram count).</li><li><a href="mask_gaussians.html" class="code" title="function [masks,keeplocs] = mask_gaussians( siz, M, windowwidth, offset, show )">mask_gaussians</a>	Divides a volume into softly overlapping gaussian windows.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="histc_sift.html" class="code" title="function hs = histc_sift( I, edges, pargmask, weightmask )">histc_sift</a>	Creates a series of locally position dependent histograms of the values in I.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

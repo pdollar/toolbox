@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of nonmaxsupr</title>
+  <meta name="keywords" content="nonmaxsupr">
+  <meta name="description" content="Applies nonmaximal suppression on an image of arbitrary dimension.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>nonmaxsupr
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Applies nonmaximal suppression on an image of arbitrary dimension.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [subs,vals] = nonmaxsupr( I, radii, thresh, maxn ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Applies nonmaximal suppression on an image of arbitrary dimension.
+
+ nonmaxsupr( I, ... ) returns the pixel location and values of local maximums - that is a
+ location is returned only if it has a value greater then or equal to all pixels in the
+ surrounding window of size radii. I can be smoothed first to make method more robust.
+ The first output is an array of the subscript locations of maximal values in I and the
+ second output contains the corresponding maximal values.  One can convert subs/vals back
+ to an array representation using imsubs2array. Note that values are suppressed iff there
+ are strictly greater values in the neighborhood.  Hences nonmaxsupr(ones(10),5) would
+ not suppress any values.
+
+ INPUTS 
+   I       - matrix to apply nonmaxsupr to
+   radii   - suppression window dimensions 
+   thresh  - [optional] minimum value below which not to look for maxes
+   maxn:   - [optional] return at most maxn of the largest vals 
+
+ OUTPUTS
+   subs    - subscripts of non-suppressed point locations (n x d) 
+   vals    - values at non-suppressed point locations (n x 1)
+
+ EXAMPLE
+   % example 1
+   G = filter_gauss_nD( [25 25], [13,13], 3*eye(2), 1 );
+   siz=[11 11]; G = filter_gauss_nD( siz, (siz+1)/2, eye(2), 1 ); 
+   [subs,vals] = nonmaxsupr( G, 1, eps );
+   figure(2); im( imsubs2array( subs, vals, siz ) );
+   [subs,vals] = nonmaxsupr_list( ind2sub2(siz,(1:prod(siz))'), G(:)',1 );
+   figure(3); im( imsubs2array( subs, vals, siz ) );
+   % example 2
+   siz=[30 30]; I=ones(siz); I(22,23)=I(22,23)+3;  
+   I(12,23)=I(12,23)+5; I(7,1)=I(7,1)-.5; figure(1); im(I); 
+   r=3; supr_eq = 1; maxn=[]; thresh=eps; 
+   [subs,vals] = nonmaxsupr(I,r,thresh,maxn); 
+   figure(2); im( imsubs2array( subs, vals, siz ) ); 
+   [subs,vals] = nonmaxsupr_window(subs,vals,[1 1]+6,siz-6);
+   figure(3); im( imsubs2array( subs, vals, siz ) ); 
+   [subs2,vals2] = nonmaxsupr_list( ind2sub2(siz,(1:prod(siz))'), ...
+                                            I(:)',r,thresh,maxn,supr_eq );
+   figure(4); im( imsubs2array( subs2, vals2, siz ) );
+
+ DATESTAMP
+   05-May-2006  2:00pm
+
+ See also <a href="imsubs2array.html" class="code" title="function I = imsubs2array( subs, vals, siz, fillval )">IMSUBS2ARRAY</a>, <a href="nonmaxsupr_list.html" class="code" title="function [subs,vals,keeplocs] = nonmaxsupr_list( subs, vals, radii, thresh, maxn, supr_eq)">NONMAXSUPR_LIST</a>, <a href="nonmaxsupr_window.html" class="code" title="function [subs,vals,keeplocs] = nonmaxsupr_window( subs, vals,start_locs, end_locs, thresh, maxn )">NONMAXSUPR_WINDOW</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../images/private/nlfilt_sep.html" class="code" title="function I = nlfilt_sep( I, dims, shape, fun, varargin )">nlfilt_sep</a>	Efficient multidimensional nonlinear but seperable filtering operation.</li><li><a href="../matlab/ind2sub2.html" class="code" title="function sub = ind2sub2(siz,ind)">ind2sub2</a>	Improved version of ind2sub.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

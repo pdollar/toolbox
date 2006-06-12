@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ticstatus</title>
+  <meta name="keywords" content="ticstatus">
+  <meta name="description" content="Used to display the progress of a long process.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>ticstatus
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Used to display the progress of a long process.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function id = ticstatus( msg, updatefreq, updatemint, eraseprev ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Used to display the progress of a long process.
+ 
+ Essentially, use 'ticstatusid = ticstatus' to start a new progress indicator, and then
+ update the progress indicator with a call to 'tocstatus( ticstatusid, fracdone )', where
+ fracdone is the fraction of the work completed.  The progress indicator is shown as a
+ text message (sent to stdout).  For example in a loop over i where about the same amount
+ of work is done each iteration, the indicator would be added as follows:
+     ticstatusid = ticstatus('my message');
+     for i=1:n
+         ...
+         tocstatus( ticstatusid, i/n );
+     end
+ Before the loop the timer is initialized, and then at the end of each iteration a call
+ to tocstatus is made 'tocstatus( ticstatusid, i/n )'.  The progress indicator is of the
+ form:   'my message   completed=4.5% [elapsed=1.0s / remaining~=21.5s]'
+
+ The parameters passed to ticstatus control the behavior of the progress indicator.  The
+ updatefreq is the minimum time (in seconds) between updates to the progress indicator
+ (a typical value is 1 second).  So even if 'tocstatus( ticstatusid, i/n )' is called
+ 100/second, an update occurs only once per updatefreq seconds.  Next updatemint is used
+ to control if a progress message shows at all.  If a process is projected to take time &lt;
+ updatemint then no progress indicator is shown at all.  The form of the progress
+ indicator is a text message.  If eraseprev is set to true, then the previously displayed
+ message is erased.  This ONLY WORKS if no other output was sent to stdout since the last
+ call to tocstatus.  Otherwise, each new update is simply sent to the progress indicator
+ without first tyring to erase any previous text.  Finally msg allows customization of
+ the actual udpate message displayed.
+
+ ticstatus returns an id that uniquely identifies the progress indicator.  tocstatus
+ takes this id as its first input.  Once tocstatus is called with a fracdone==1, then the
+ memory of the progress indicator that corresponds to id is set free (make sure to call
+ tocstatus(id,1) if the progress indicator is no longer needed).  Nesting of progress
+ indicators is possible; however, in this case eraseprev should be set to false (otherwise
+ the various progress messages may erase each other).
+ 
+ INPUTS
+   msg         - [optinoal] additional msg to display in progress
+   updatefreq  - [optional] frequency with which to update progress (in seconds)
+   updatemint  - [optional] no progress is shown if process takes time &lt; updatemint
+   eraseprev   - [optional] whether to attempt to erase prev message
+
+ OUTPUTS
+   ticstatusid - unique id of progress indicator
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="tocstatus.html" class="code" title="function tocstatus( id, fracdone )">TOCSTATUS</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../classify/meanshiftim.html" class="code" title="function [M,Vr,Vc] = meanshiftim( X, sig_spt, sig_rng, softflag, maxiter, mindelta )">meanshiftim</a>	Applies the meanshift algorithm to a joint spatial/range image.</li><li><a href="../classify/private/meanshift_post.html" class="code" title="function [IDX,C] = meanshift_post( X, IDX, C, minCsize, forceoutliers )">meanshift_post</a>	Some post processing routines for meanshift not currently being used.</li><li><a href="feval_arrays.html" class="code" title="function B = feval_arrays( A, fhandle, varargin )">feval_arrays</a>	Used to apply the same operation to a stack of array elements.</li><li><a href="feval_images.html" class="code" title="function X = feval_images( fhandle, params, srcdir, name, ext, nstart, nend, ndigits )">feval_images</a>	Used to apply the same operation to all images in given directory.</li><li><a href="feval_mats.html" class="code" title="function X = feval_mats( fhandle, matcontents, params, srcdir, prefix )">feval_mats</a>	Used to apply the same operation to all .mat files in given directory.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

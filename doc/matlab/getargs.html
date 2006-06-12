@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of getargs</title>
+  <meta name="keywords" content="getargs">
+  <meta name="description" content="Utility to process parameter name/value pairs.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>getargs
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Utility to process parameter name/value pairs.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [emsg,varargout]=getargs(pnames,dflts,varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Utility to process parameter name/value pairs.
+
+ Based on code fromt the Matlab Statistics Toolobox &quot;private/statgetargs.m&quot;
+
+ [EMSG,A,B,...]=GETARGS(PNAMES,DFLTS,'NAME1',VAL1,'NAME2',VAL2,...) accepts a cell
+ array PNAMES of valid parameter names, a cell array DFLTS of default values for the
+ parameters named in PNAMES, and additional parameter name/value pairs.  Returns
+ parameter values A,B,... in the same order as the names in PNAMES.  Outputs
+ corresponding to entries in PNAMES that are not specified in the name/value pairs are
+ set to the corresponding value from DFLTS.  If nargout is equal to length(PNAMES)+1,
+ then unrecognized name/value pairs are an error.  If nargout is equal to
+ length(PNAMES)+2, then all unrecognized name/value pairs are returned in a single cell
+ array following any other outputs.
+
+ EMSG is empty if the arguments are valid, or the text of an error message if an error
+ occurs.  GETARGS does not actually throw any errors, but rather returns an error
+ message so that the caller may throw the error. Outputs will be partially processed
+ after an error occurs.
+
+ EXAMPLE
+   pnames = {'color' 'linestyle', 'linewidth'}
+   dflts  = {    'r'         '_'          '1'}
+   v = {'linew' 2 'nonesuch' [1 2 3] 'linestyle' ':'};
+   [emsg,color,linestyle,linewidth,unrec] = getargs(pnames,dflts,v{:}) % ok
+   [emsg,color,linestyle,linewidth] = getargs(pnames,dflts,v{:})    % error
+
+ DATESTAMP
+   29-Sep-2005  2:00pm</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../classify/kmeans2.html" class="code" title="function [IDX,C,sumd] = kmeans2( X,k,varargin )">kmeans2</a>	Very fast version of kmeans clustering.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

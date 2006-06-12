@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of visualize_data</title>
+  <meta name="keywords" content="visualize_data">
+  <meta name="description" content="Project high dim. data unto principal components (PCA) for visualization.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html classify -->
+<h1>visualize_data
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Project high dim. data unto principal components (PCA) for visualization.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function visualize_data( X, k, IDX, types ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Project high dim. data unto principal components (PCA) for visualization.
+
+ Optionally IDX can be specified to indicate different classes for the points;
+ in this case points in different classes are displayed using different colors.
+ Up to 12 types are handled (for technical reasons involving plot), any 
+ cluster with a label&gt;12 is assigned the label 12.
+
+ INPUTS
+   X       - column vector of data - N vectors of dimension p (X is Nxp)
+   k       - dimension to which to reduce data (2 or 3)
+   IDX     - [optional] cluster membership [see kmeans2.m]
+   types   - [optional] cell array of length ntypes of text labels for each type 
+
+ EXAMPLE
+   X=[randn(100,5); randn(100,5)+4];
+   IDX=[ones(100,1); 2*ones(100,1)];
+   visualize_data( X, 2, IDX, {'type1','type2' });
+
+ DATESTAMP
+   29-Nov-2005  2:00pm
+
+ See also <a href="kmeans2.html" class="code" title="function [IDX,C,sumd] = kmeans2( X,k,varargin )">KMEANS2</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="pca.html" class="code" title="function [ U, mu, variances ] = pca( X )">pca</a>	principal components analysis (alternative to princomp).</li><li><a href="pca_apply.html" class="code" title="function [ Yk, Xhat, avsq, avsq_orig ] = pca_apply( X, U, mu, variances, k )">pca_apply</a>	Companion function to pca.</li><li><a href="../matlab/c.html" class="code" title="">c</a>	clc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="democlassify.html" class="code" title="function democlassify">democlassify</a>	A demo used to test and demonstrate the usage of classifiers (clf_*)</li><li><a href="democluster.html" class="code" title="function [IDX, X, k_true, noisefrac_true, IDX_true ] =democluster( X, k, noisefrac, IDX_true )">democluster</a>	Clustering demo.</li><li><a href="nfoldxval.html" class="code" title="function CM=nfoldxval( data, IDX, clfinit, clfparams, types, ignoretypes, fname, show )">nfoldxval</a>	Runs n-fold cross validation on data with a given classifier.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

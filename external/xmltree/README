@@ -1,0 +1,90 @@
+XMLTree: XML Toolbox For Matlab
+-------------------------------
+Release 1.1, 2003/05/19
+Written by:  Guillaume Flandin
+             INRIA Sophia Antipolis - Epidaure
+             2004 route des Lucioles - BP 93
+             06902 Sophia Antipolis Cedex - France
+             email: Guillaume.Flandin@sophia.inria.fr
+			 
+About XMLTree
+-------------
+XMLTree is an XML toolbox for Matlab (version 5.3 or later).
+This package consists of a class xmltree, of XML-files examples
+and of 3 scripts of demonstrations.
+
+This toolbox contains an XML 1.0 processor (or parser), which aims
+to be fully conforming. It is currently not a validating processor.
+See http://www.w3.org/TR/REC-xml <http://www.w3.org/TR/REC-xml>
+for details on XML.
+
+This processor is encapsulated in a Matlab class allowing for the
+manipulation of an XMLTree object through an object oriented way.
+Several functions have been designed for this purpose. Look at the
+examples scripts (xmldemo*.m) for a walkthrough of how to use the
+xmltree class.
+
+If you do not wish to use the whole class but are solely interested
+in the XML parser, then you can only use functions that are in the
+private folder of the class @xmltree/private: xml_parser.m and a
+compiled version of xml_findstr.m.
+
+Installation and Use
+--------------------
+Please refer to the file "INSTALL" for details.
+
+Other Alternatives
+------------------
+There are several ways to handle XML with Matlab. Here is a list of
+them:
+
+1) Matlab:
+You can, of course!, use this toolbox XMLTree, which is implemented
+in Matlab with just one mexfile to overcome some limitations in 
+speed of the strfind.m function.
+Peter Rydesäter also developped a toolbox called "XML Tools" that
+imports XML strings and files to a Matlab struct array.
+http://www.mathworks.com/matlabcentral/fileexchange/Files.jsp?fileId=1742
+
+2) Java:
+With the Java capabilities of the last versions of Matlab, you can
+use Java's XML libraries. For example:
+http://java.sun.com/xml/
+http://www.alphaworks.ibm.com/tech/xml4j/
+http://xml.apache.org/xerces-j/
+
+3) ActiveX:
+On Windows platforms, a solution is to use Microsoft's XML parser
+through its ActiveX interface MSXML. More details:
+http://msdn.microsoft.com/xml/
+
+4) Mexfile gateway to a C/C++ library:
+There are several C/C++ libraries available for free to parse XML
+documents. A solution can be to write a mexfile calling routines
+of the library. The most famous C libraries are:
+Expat: http://www.jclark.com/xml/expat.html
+libxml: http://xmlsoft.org/
+In C++, the main libraries are:
+http://xml.apache.org/xerces-c/
+http://www.alphaworks.ibm.com/tech/xml4c/
+
+5) Matlab 6.5:
+The last release of Matlab (6.5 (R13)) comes with new functions to
+parse XML files and working with the resulting Document Object Model
+(DOM) representation: xmlread, xmlsave, ...
+I do not have access to these functions however it seems that
+Mathworks chose to use Java for this purpose with a Java class
+called com.mathworks.xml.XMLUtils.
+
+License Terms
+-------------
+Please refer to the file "LICENSE" for the terms.
+
+Suggestions for improvement and fixes are always welcome, although no 
+guarantee is made whether and when they will be implemented.
+
+Guillaume Flandin
+email: Guillaume.Flandin@sophia.inria.fr
+
+--------------------------------------------------------------------
+Matlab is a registered trademark of the Mathworks, Inc.

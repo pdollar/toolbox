@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of im</title>
+  <meta name="keywords" content="im">
+  <meta name="description" content="IM [2D] Function for displaying grayscale images.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>im
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>IM [2D] Function for displaying grayscale images.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function im( I, range ); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">IM [2D] Function for displaying grayscale images.
+
+ Handy function for showing a grayscale image with a colorbar and interactive pixel value
+ tool.
+
+ INPUTS
+   I       - image in a valid format
+   range   - [optional] minval/maxval for imagesc
+
+ EXAMPLE
+   load clown
+   im( X )
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also IMSHOW, IMVIEW</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../classify/distmatrix_show.html" class="code" title="function distmatrix_show( D, IDX )">distmatrix_show</a>	Useful visualization of a distance matrix of clustered points.</li><li><a href="../classify/meanshiftim_explore.html" class="code" title="function meanshiftim_explore( I, X, sig_spt, sig_rng, show )">meanshiftim_explore</a>	Visualization to help choose sigmas for meanshiftim.</li><li><a href="../classify/pca_visualize.html" class="code" title="function varargout = pca_visualize( U, mu, variances, X, index, ks, filename, show )">pca_visualize</a>	Visualization of quality of approximation of X given principal components.</li><li><a href="../filters/FB_apply_2D.html" class="code" title="function IF = FB_apply_2D( I, FB, shape, show )">FB_apply_2D</a>	Applies each of the filters in the filterbank FB to the image I.</li><li><a href="../filters/FB_reconstruct_2D.html" class="code" title="function I2 = FB_reconstruct_2D( I, FB )">FB_reconstruct_2D</a>	Use to see how much image information is preserved in filter outputs.</li><li><a href="../filters/FB_visualize_2D.html" class="code" title="function FB_visualize_2D( FB )">FB_visualize_2D</a>	Used to visualize the Fourier spectra of a series of 2D filters.</li><li><a href="../filters/filter_gauss_nD.html" class="code" title="function G = filter_gauss_nD( dims, mu, C, show )">filter_gauss_nD</a>	n-dimensional Gaussian filter.</li><li><a href="../filters/filter_steerable.html" class="code" title="function filter_steerable( theta )">filter_steerable</a>	Steerable Gaussian derivative filter.</li><li><a href="../filters/filter_visualize_2D.html" class="code" title="function filter_visualize_2D( F, plotline )">filter_visualize_2D</a>	Used to help visualize a 2D filter.</li><li><a href="apply_homography.html" class="code" title="function IR = apply_homography( I, H, method, bbox, show )">apply_homography</a>	Applies the homography defined by H on the image I.</li><li><a href="imageMLG.html" class="code" title="function varargout = imageMLG( G, symmFlag, show )">imageMLG</a>	Calculates maximum likelihood parameters of gaussian that gave rise to image G.</li><li><a href="mask_gaussians.html" class="code" title="function [masks,keeplocs] = mask_gaussians( siz, M, windowwidth, offset, show )">mask_gaussians</a>	Divides a volume into softly overlapping gaussian windows.</li><li><a href="optflow_corr.html" class="code" title="function [Vx,Vy,reliab] = optflow_corr( I1, I2, patch_r, search_r, sigma, thr, show )">optflow_corr</a>	Calculate optical flow using cross-correlation.</li><li><a href="optflow_horn.html" class="code" title="function [Vx,Vy] = optflow_horn( I1, I2, sigma, show )">optflow_horn</a>	Calculate optical flow using Horn & Schunck.</li><li><a href="optflow_lucaskanade.html" class="code" title="function [Vx,Vy,reliab]=optflow_lucaskanade( I1, I2, win_n, win_sig, sigma, thr, show )">optflow_lucaskanade</a>	Calculate optical flow using Lucas & Kanade.  Fast, parallel code.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

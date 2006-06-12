@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of montages2</title>
+  <meta name="keywords" content="montages2">
+  <meta name="description" content="MONTAGES2 [4D] Used to display R sets of T images each.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>montages2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>MONTAGES2 [4D] Used to display R sets of T images each.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function varargout = montages2( IS, montage2params, padsize ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">MONTAGES2 [4D] Used to display R sets of T images each.  
+
+ Displays one montage (see montage2) per row.  Each of the R image sets is flattened to
+ a single long image by concatenating the T images in the set.
+ Alternative to montages.
+
+ INPUTS
+   IS                  - MxNxTxR or MxNx1xTxR or MxNx3xTxR array 
+   montage2params      - [optional] params for montage2; ex: {showlines, extrainfo}
+   padsize             - [optional] total amount of vertical or horizontal padding
+
+ OUTPUTS
+   I                   - 3D or 4D array of flattened images, displayed with montage2
+   mm                  - #montages/row
+   nn                  - #montages/col
+
+ EXAMPLE
+   load( 'images.mat' );
+   imageclusters = clustermontage( images, IDXi, 16, 1 );
+   montages2( imageclusters );
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="montages.html" class="code" title="function varargout = montages( IS, montage2params, labels, montage2labels )">MONTAGES</a>, <a href="makemovies.html" class="code" title="function M = makemovies( IS, montage2params )">MAKEMOVIES</a>, <a href="montage2.html" class="code" title="function varargout = montage2( IS, showlines, extrainfo, clim, mm, nn, labels )">MONTAGE2</a>, <a href="clustermontage.html" class="code" title="function XC = clustermontage( X, IDX, nvals, pad )">CLUSTERMONTAGE</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="montage2.html" class="code" title="function varargout = montage2( IS, showlines, extrainfo, clim, mm, nn, labels )">montage2</a>	[3D] Used to display a stack of T images.</li><li><a href="../matlab/arraycrop2dims.html" class="code" title="function IC = arraycrop2dims( I, dims, padelement )">arraycrop2dims</a>	Pads or crops I appropriately so that size(IC)==dims.</li><li><a href="../matlab/checknumericargs.html" class="code" title="function [x,er] = checknumericargs( x, siz, integerflag, signflag )">checknumericargs</a>	Helper utility for checking numeric vector arguments.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="makemoviesets2.html" class="code" title="function M = makemoviesets2( IS, montagesparams )">makemoviesets2</a>	[5D] Used to convert S sets of R videos into a movie.</li><li><a href="mask_gaussians.html" class="code" title="function [masks,keeplocs] = mask_gaussians( siz, M, windowwidth, offset, show )">mask_gaussians</a>	Divides a volume into softly overlapping gaussian windows.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

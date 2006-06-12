@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of feval_mats</title>
+  <meta name="keywords" content="feval_mats">
+  <meta name="description" content="Used to apply the same operation to all .mat files in given directory.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>feval_mats
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Used to apply the same operation to all .mat files in given directory.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function X = feval_mats( fhandle, matcontents, params, srcdir, prefix ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Used to apply the same operation to all .mat files in given directory.
+
+ For each mat in srcdir, loads the mat file, extracts the variables denoted by
+ matcontents, applies the function fhandle and stores the result.  matcontents must be a
+ cell array of strings, where each string denotes the variable stored in the mat files.
+ For example, if each mat file contains two variables y and z, then matcontents should be
+ {'y','z'}.  For long operations shows progress information.
+
+ fhandle must point to a function that takes two inputs: vals and params.
+ vals is a cell array that contains the values for the variables denoted by matcontents
+ and contained in the mat file, and params are the additional static parameters passed to
+ feval_arrays.  Continuing the example above vals would be {y,z} - (use deal to extract):
+    x=feval(fhandle,{y,z},params) 
+ Each returned x must have the same dimensions, X is a concatentation of the returned x's
+ along the (d+1) dimension.  
+
+ INPUTS
+   fhandle     - function to apply to contents of each mat file [see above]
+   matcontents - cell array of strings that denote expected contents of each mat file
+   params      - cell array of additional parameters to fhandle (may be {})
+   srcdir      - directory containg mat files
+   prefix      - [optional] only consider mat files in srcdir of the form prefix_*.mat
+
+ OUTPUTS
+   X        - output array [see above]
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="feval_images.html" class="code" title="function X = feval_images( fhandle, params, srcdir, name, ext, nstart, nend, ndigits )">FEVAL_IMAGES</a>, <a href="feval_arrays.html" class="code" title="function B = feval_arrays( A, fhandle, varargin )">FEVAL_ARRAYS</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ticstatus.html" class="code" title="function id = ticstatus( msg, updatefreq, updatemint, eraseprev )">ticstatus</a>	Used to display the progress of a long process.</li><li><a href="tocstatus.html" class="code" title="function tocstatus( id, fracdone )">tocstatus</a>	Used to display the progress of a long process.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

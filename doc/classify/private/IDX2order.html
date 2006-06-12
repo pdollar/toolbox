@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of IDX2order</title>
+  <meta name="keywords" content="IDX2order">
+  <meta name="description" content="Converts class labels into an ordering.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html classify --><!-- menu.html private -->
+<h1>IDX2order
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Converts class labels into an ordering.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function order = IDX2order( IDX ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Converts class labels into an ordering.
+
+ Creates an ordering order such that IDX(order)=[1 1...1 2...2 ... k...k]. All points
+ within a class retain the ordering in which they originally appeared.  Also, Xb =
+ X(order,:) has cluster labels IDX(order), ie adjacent elements in X typically belong to
+ the same cluster.
+
+ INPUTS
+   IDX     - cluster membership [see kmeans2.m]
+
+ OUTPUTS
+   order   - n-by-1 vector containing a new ordering for the points.
+
+ EXAMPLE
+   order = IDX2order( [1 1 3 1 2 2] ),  % order should be: [1 2 4 5 6 3]
+
+ DATESTAMP
+   29-Sep-2005  2:00pm</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../classify/distmatrix_show.html" class="code" title="function distmatrix_show( D, IDX )">distmatrix_show</a>	Useful visualization of a distance matrix of clustered points.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

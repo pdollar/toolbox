@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of clf_knn_fwd</title>
+  <meta name="keywords" content="clf_knn_fwd">
+  <meta name="description" content="Apply a k-nearest neighbor classifier to X.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html classify -->
+<h1>clf_knn_fwd
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Apply a k-nearest neighbor classifier to X.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function Y = clf_knn_fwd( clf, X ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Apply a k-nearest neighbor classifier to X.
+
+ INPUTS
+   clf     - trained model
+   X       - nxp data array
+ 
+ OUTPUTS
+   Y       - nx1 vector of labels predicted according to the clf
+
+ DATESTAMP
+   11-Oct-2005  2:45pm
+
+ See also <a href="clf_knn.html" class="code" title="function clf = clf_knn( p, k, dist_fn )">CLF_KNN</a>, <a href="clf_knn_train.html" class="code" title="function clf = clf_knn_train( clf, X, Y )">CLF_KNN_TRAIN</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="clf_knn_dist.html" class="code" title="function IDXpred = clf_knn_dist( D, IDX, k )">clf_knn_dist</a>	k-nearest neighbor classifier based on a distance matrix D.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="clf_knn.html" class="code" title="function clf = clf_knn( p, k, dist_fn )">clf_knn</a>	Create a k nearest neighbor classifier.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

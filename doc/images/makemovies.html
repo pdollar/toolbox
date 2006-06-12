@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of makemovies</title>
+  <meta name="keywords" content="makemovies">
+  <meta name="description" content="[4D] Used to convert R sets of equal length videos into a single movie.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>makemovies
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>[4D] Used to convert R sets of equal length videos into a single movie.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function M = makemovies( IS, montage2params ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> [4D] Used to convert R sets of equal length videos into a single movie. 
+
+ To display same data statically use montages.
+ Works by calling montage2 once per frame.
+
+ INPUTS
+   IS              - MxNxTxR or MxNx1xTxR or MxNx3xTxR array, or cell array where each
+                     element is an MxNxT or MxNx1xT or MxNx3xT array
+   montage2params  - [optional] params for montage2 -- ex: {showlines, extrainfo}
+
+ OUTPUTS
+   M               - resulting movie
+
+ EXAMPLE
+   load( 'images.mat' );
+   M = makemovies( videos );
+   movie( M );
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="montages.html" class="code" title="function varargout = montages( IS, montage2params, labels, montage2labels )">MONTAGES</a>, <a href="montage2.html" class="code" title="function varargout = montage2( IS, showlines, extrainfo, clim, mm, nn, labels )">MONTAGE2</a>, <a href="makemovie.html" class="code" title="function M = makemovie( IS )">MAKEMOVIE</a>, <a href="makemoviesets.html" class="code" title="function M = makemoviesets( IS, montagesparams )">MAKEMOVIESETS</a>, <a href="playmovies.html" class="code" title="function playmovies( I, fps, loop )">PLAYMOVIES</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="montage2.html" class="code" title="function varargout = montage2( IS, showlines, extrainfo, clim, mm, nn, labels )">montage2</a>	[3D] Used to display a stack of T images.</li><li><a href="../matlab/cell2array.html" class="code" title="function Y = cell2array( X, padelement )">cell2array</a>	Converts a cell array into a regular array.</li><li><a href="../matlab/figureresized.html" class="code" title="function varargout = figuresized( screenratio, varargin )">figureresized</a>	Creates a figures that takes up certain area of screen.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../classify/pca_visualize.html" class="code" title="function varargout = pca_visualize( U, mu, variances, X, index, ks, filename, show )">pca_visualize</a>	Visualization of quality of approximation of X given principal components.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

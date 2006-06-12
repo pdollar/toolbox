@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of kmeans2</title>
+  <meta name="keywords" content="kmeans2">
+  <meta name="description" content="Very fast version of kmeans clustering.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html classify -->
+<h1>kmeans2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Very fast version of kmeans clustering.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [IDX,C,sumd] = kmeans2( X,k,varargin ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Very fast version of kmeans clustering.
+
+ Cluster the N x p matrix X into k clusters using the kmeans algorithm. It returns the
+ cluster memberships for each data point in the N x 1 vector IDX and the K x p matrix of
+ cluster means in C. 
+
+ Custom implementation of the kmeans algorithm.  In some ways it is less general (for
+ example only uses euclidian distance), but it has some options that the matlab version
+ does not (for example, it has a notion of outliers and min-cluster size).  It is also
+ many times faster than matlab's kmeans.  General kmeans help can be found in help for
+ the matlab implementation of kmeans. Note that the although the names and conventions
+ for this algorithm are taken from Matlab's implementation, there are slight
+ alterations (for example, IDX==-1 is used to indicate outliers).
+
+ 
+ -------------------------------------------------------------------------
+ INPUTS
+ 
+  X
+ n-by-p data matrix of n p-dimensional vectors.  That is X(i,:) is the ith point in X.
+
+  k
+ Integer indicating the maximum nuber of clusters for kmeans to find. Actual number may
+ be smaller (for example if clusters shrink and are eliminated).
+
+ -------------------------------------------------------------------------
+ ADDITIONAL INPUTS
+
+ [...] = kmeans2(...,'param1',val1,'param2',val2,...) enables you to
+ specify optional parameter name-value pairs to control the iterative
+ algorithm used by kmeans. Valid parameters are the following:
+   'replicates'  - Number of times to repeat the clustering, each with a
+                   new set of initial cluster centroid positions. kmeans
+                   returns the solution with the lowest value for sumd.
+   'maxiter'     - Maximum number of iterations. Default is 100.
+   'display'     - Whether or not to display algorithm status (default==0)
+   'randstate'   - seed with which to initialize kmeans.  Useful for
+                   replicability of algoirhtm.
+   'outlierfrac' - maximum fraction of points that can be treated as
+                   outliers   
+   'minCsize'    - minimum size for a cluster (smaller clusters get
+                   eliminated)
+
+ -------------------------------------------------------------------------
+ OUTPUTS
+
+  IDX
+ n-by-1 vector used to indicated cluster membership.  Let X be a set of n points.  Then
+ the ID of X - or IDX is a column vector of length n, where each element is an integer
+ indicating the cluster membership of the corresponding point in X.  That is IDX(i)=c
+ indicates that the ith point in X belongs to cluster c. Cluster labels range from 1 to
+ k, and thus k=max(IDX) is typically the number of clusters IDX divides X into.  The
+ cluster label &quot;-1&quot; is reserved for outliers.  That is IDX(i)==-1 indicates that the
+ given point does not belong to any of the discovered clusters.  Note that matlab's
+ version of kmeans does not have outliers.
+
+  C        
+ k-by-p matrix of centroid locations.  That is C(j,:) is the cluster centroid of points
+ belonging to cluster j.  In kmeans, given X and IDX, a cluster centroid is simply the
+ mean of the points belonging to the given cluster, ie: C(j,:) = mean( X(IDX==j,:) ). 
+
+  sumd
+ 1-by-k vector of within-cluster sums of point-to-centroid distances. That is sumd(j) is
+ the sum of the distances from X(IDX==j,:) to C(j,:). The total sum, sum(sumd), is a
+ typical error measure of the quality of a clustering. 
+
+ -------------------------------------------------------------------------
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="democluster.html" class="code" title="function [IDX, X, k_true, noisefrac_true, IDX_true ] =democluster( X, k, noisefrac, IDX_true )">DEMOCLUSTER</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="dist_euclidean.html" class="code" title="function D = dist_euclidean( X, Y )">dist_euclidean</a>	Calculates the Euclidean distance between vectors [FAST].</li><li><a href="../matlab/getargs.html" class="code" title="function [emsg,varargout]=getargs(pnames,dflts,varargin)">getargs</a>	Utility to process parameter name/value pairs.</li><li><a href="../matlab/int2str2.html" class="code" title="function nstr = int2str2( n, ndigits )">int2str2</a>	Convert integer to string of given length; improved version of int2str.</li><li><a href="../matlab/randint2.html" class="code" title="function R = randint2( m, n, range )">randint2</a>	Faster but restricted version of randint.</li><li><a href="../matlab/randperm2.html" class="code" title="function p = randperm2(n,k);">randperm2</a>	Returns a random permutation of integers.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="democluster.html" class="code" title="function [IDX, X, k_true, noisefrac_true, IDX_true ] =democluster( X, k, noisefrac, IDX_true )">democluster</a>	Clustering demo.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of mask_circle</title>
+  <meta name="keywords" content="mask_circle">
+  <meta name="description" content="Creates an image of a 'pie slice' of a circle.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>mask_circle
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Creates an image of a 'pie slice' of a circle.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function mask = mask_circle( angle_start, angle_size, r, nsamples ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Creates an image of a 'pie slice' of a circle.
+
+ Creates a 2D array of size (2rx2r) with values between 0 and 1.  Specifically, mask has
+ values 1 inside the pie slice of the circle defined by angle_start and angle_size.  For
+ example, using angle_start=-pi/4 and angle_size=pi/2 would give a quarter circle facing
+ right.  nsample conrols the accuracty of the circle at its boundaries.  That is if
+ nsamples&gt;1, pixels at the boundary which will have fractions values (when a pixel should
+ be say half inside the circle and half outside of the circle).  Note that running time
+ is O(nsamples^2*radius^2), so don't use a value that is too high for either.  A series
+ of masks whose angles together go from 0-2pi will sum exactly to form a radius r circle.
+ r may be either an integer, or an integer + .5.  A pixel is considered to belong to the
+ circle iff it is within the given angle and has a value strictly smaller then r.
+ 
+ INPUTS
+   angle_start       - start position of circle
+   angle_size        - number of radians to continue circle for
+   r                 - mask radius (integer or integer+.5)
+   nsamples          - [optional] controls sampling accuracy [1 by default]
+
+ OUTPUTS
+   mask      - the created image, size 2r by 2r
+
+ EXAMPLE
+   mask1 = mask_circle( -pi/8, pi/4, 20, 20 ); figure(1); im(mask1); 
+   mask2 = mask_circle( pi/8, pi/8, 20, 20 );  figure(2); im(mask2); 
+   figure(3); im(mask1+mask2);
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="mask_ellipse.html" class="code" title="function mask = mask_ellipse( mrows, ncols, varargin )">MASK_ELLIPSE</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="localsum.html" class="code" title="function I = localsum( I, dims, shape )">localsum</a>	Fast routine for box filtering.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

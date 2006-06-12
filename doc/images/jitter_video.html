@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of jitter_video</title>
+  <meta name="keywords" content="jitter_video">
+  <meta name="description" content="Creates multiple, slightly jittered versions of a video.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>jitter_video
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Creates multiple, slightly jittered versions of a video.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function IS = jitter_video( I, nphis, maxphi, ntrans, maxtrans, nttrans, maxttrans, jsiz ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Creates multiple, slightly jittered versions of a video.
+
+ Takes a video and creats multiple versions of the video with offsets in both space and
+ time and rotations in space.  Basically, for each frame in the video calls jitter_image,
+ and then also adds some temporal offsets. In all respects this it basically functions
+ like jitter_image -- see that function for more information.
+
+ Note: All temporal translations must have integer size.
+
+ INPUTS
+   I           - BW input video (MxNxT) or videos (MxNxTxK), must have odd dimensions
+   nphis       - number of spatial rotations (must be odd)
+   maxphis     - max value for spatial rotation
+   ntrans      - number of spatial translations (must be odd)
+   maxtrans    - max value for spatial translations
+   nttrans     - number of temporal translations (must be odd)
+   maxttrans   - max value for temporal translations
+   jsiz        - [optional] Final size of each video in IJ 
+
+ OUTPUTS
+   IS          - MxNxTxR or MxNxTxKxR set of videos where R=(ntrans*ntrans*nphis)
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="jitter_image.html" class="code" title="function IJ = jitter_image( I, nphis, maxphi, ntrans, maxtrans, jsiz, reflectflag, scales )">JITTER_IMAGE</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="jitter_image.html" class="code" title="function IJ = jitter_image( I, nphis, maxphi, ntrans, maxtrans, jsiz, reflectflag, scales )">jitter_image</a>	Creates multiple, slightly jittered versions of an image.</li><li><a href="../matlab/feval_arrays.html" class="code" title="function B = feval_arrays( A, fhandle, varargin )">feval_arrays</a>	Used to apply the same operation to a stack of array elements.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of rotation_matrix3D</title>
+  <meta name="keywords" content="rotation_matrix3D">
+  <meta name="description" content="Uses Rodrigues's formula to create a 3x3 rotation matrix R.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>rotation_matrix3D
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Uses Rodrigues's formula to create a 3x3 rotation matrix R.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function R = rotation_matrix3D( u, theta ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Uses Rodrigues's formula to create a 3x3 rotation matrix R.
+
+ The results of R*xMatrix is x rotated theta degrees about u.
+
+ INPUTS
+   u       - axis of rotation - specified as (x,y,z)
+   theta   - angle of rotation (radians)
+
+ OUTPUTS
+   R       - 3x3 Rotation matrix
+
+ EXAMPLE
+   R = rotation_matrix3D( [0 0 1], pi/4 )
+   R * [1 0 0]'
+
+ DATESTAMP
+   11-Oct-2005  9:00pm
+
+ See also <a href="recover_rotation3D.html" class="code" title="function [u,theta] = recover_rotation3D( R )">RECOVER_ROTATION3D</a>, <a href="rotation_matrix2D.html" class="code" title="function R = rotation_matrix2D( theta )">ROTATION_MATRIX2D</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="recover_rotation3D.html" class="code" title="function [u,theta] = recover_rotation3D( R )">recover_rotation3D</a>	Takes a rotation matrix and extracts the rotation angle and axis.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of FB_reconstruct_2D</title>
+  <meta name="keywords" content="FB_reconstruct_2D">
+  <meta name="description" content="Use to see how much image information is preserved in filter outputs.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html filters -->
+<h1>FB_reconstruct_2D
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Use to see how much image information is preserved in filter outputs.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function I2 = FB_reconstruct_2D( I, FB ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Use to see how much image information is preserved in filter outputs.
+
+ Reconstructs the orginal image from filter outputs. Does this independenly for each
+ pixel, and then just combines the pixel info.  Note that each patch is 0 mean, since no
+ mean information is captured by the filter outputs.  Alter flag below to either attempt
+ to reconstruct the entire image of just a patch (interactively specified).  Other flags
+ can also be changed, see file.
+
+ INPUTS
+   I       - original image
+   FB      - FB to apply and do reconstruction with
+
+ OUTPUTS
+   I2  - recovered image
+
+ EXAMPLE
+   load trees; X=imresize(X,.5);
+   load FB_DoG.mat;
+   I2 = FB_reconstruct_2D( X, FB );
+
+ DATESTAMP
+   29-Sep-2005  2:00pm</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="FB_apply_2D.html" class="code" title="function IF = FB_apply_2D( I, FB, shape, show )">FB_apply_2D</a>	Applies each of the filters in the filterbank FB to the image I.</li><li><a href="filter_binomial_1D.html" class="code" title="function f = filter_binomial_1D( r, show )">filter_binomial_1D</a>	1D binomial filter (approximation to Gaussian filter)</li><li><a href="../images/im.html" class="code" title="function im( I, range );">im</a>	IM [2D] Function for displaying grayscale images.</li><li><a href="../images/montage2.html" class="code" title="function varargout = montage2( IS, showlines, extrainfo, clim, mm, nn, labels )">montage2</a>	[3D] Used to display a stack of T images.</li><li><a href="../matlab/arraycrop2dims.html" class="code" title="function IC = arraycrop2dims( I, dims, padelement )">arraycrop2dims</a>	Pads or crops I appropriately so that size(IC)==dims.</li><li><a href="../matlab/c.html" class="code" title="">c</a>	clc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

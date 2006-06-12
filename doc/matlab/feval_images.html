@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of feval_images</title>
+  <meta name="keywords" content="feval_images">
+  <meta name="description" content="Used to apply the same operation to all images in given directory.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>feval_images
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Used to apply the same operation to all images in given directory.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function X = feval_images( fhandle, params, srcdir, name, ext, nstart, nend, ndigits ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Used to apply the same operation to all images in given directory.
+
+ For each image in  srcdir, loads the image, applies the function in fhandle and stores
+ the result.  The result x=fhandle(I,params{:}) on the ith image is stored in
+ X(:,...:,i).  If the size of x depends on the size of I, then all images in the
+ directory must have the same size.  Also I may have a different format depending on how
+ it is stored on disk - example: MxN for grayscale, MxNx3 for RGB, MxNx4 for CMYK. This
+ function is very similar to feval_arrays, except instead of operating on images in
+ memory it operates on images on disk.  For long operations shows progress information.
+ 
+ The srcdir must contain nothing but images.  Either the images follow no naming
+ convention, or they follow a very rigid naming convention that consists of a string
+ followed by ndigits-number specifying the image number, followed by an extension.  The
+ advantage of the more rigid naming convention is that it allows a certain range of
+ images to be operated on, specified by [nstart,nend]. For example, to operate on images
+ &quot;rats0003.tif ... rats0113.tif&quot; in directory '../rats/' use:   
+    feval_images( fhandle, params, '../rats/', 'rats' , 'tif', 3, 113, 4 );
+ If the parameter name is specified ('rats' in the example above), the rigid naming
+ convention is assumed.  All further input arguments are optional.
+
+ imwrite2 writes images in the format described above.  
+
+ If the function in fhandle is identity (f=@(x) x), the result is to read in all images
+ in the directory.  
+
+ A limitation of feval_images is that it does not pass state information to fhandle.  For
+ example, fhandle may want to know how many times it's been  called. This can be overcome
+ by saving state information inside fhandle using 'persistent' variables.  For an example
+ see imwrite2 (which uses persistent variables with feval_arrays). 
+
+ INPUTS
+   fhandle   - function to apply to each image [see above]
+   params    - cell array of additional parameters to fhandle (may be {} )
+   srcdir    - directory containing images 
+   name      - [optional] base name of images
+   ext       - [optional] extension of image 
+   nstart    - [optional] image number on which to start
+   nend      - [optional] image number on which to end
+   ndigits   - [optional] number of digits for filename index
+
+ OUTPUTS
+   X        - output array [see above]
+
+ EXAMPLE
+ % reads in all images in directory (note that fhandle is identity!):
+   X = feval_images( @(x) x, {}, srcdir );  
+ % reads in all images converting to grayscale:
+   X = feval_images( @(x) rgb2gray(x), {}, srcdir ); 
+
+ DATESTAMP
+   30-Apr-2006 12:00pm
+
+ See also <a href="feval_arrays.html" class="code" title="function B = feval_arrays( A, fhandle, varargin )">FEVAL_ARRAYS</a>, IMWRITE2, PERSISTENT, <a href="ticstatus.html" class="code" title="function id = ticstatus( msg, updatefreq, updatemint, eraseprev )">TICSTATUS</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="int2str2.html" class="code" title="function nstr = int2str2( n, ndigits )">int2str2</a>	Convert integer to string of given length; improved version of int2str.</li><li><a href="ticstatus.html" class="code" title="function id = ticstatus( msg, updatefreq, updatemint, eraseprev )">ticstatus</a>	Used to display the progress of a long process.</li><li><a href="tocstatus.html" class="code" title="function tocstatus( id, fracdone )">tocstatus</a>	Used to display the progress of a long process.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../images/imwrite2.html" class="code" title="function I = imwrite2( I, multflag, imagei, path, name, ext, ndigits, varargin )">imwrite2</a>	Similar to imwrite, except follows a strict naming convention.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

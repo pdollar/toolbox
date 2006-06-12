@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of assign2bins</title>
+  <meta name="keywords" content="assign2bins">
+  <meta name="description" content="Quantizes I according to values in edges.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>assign2bins
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Quantizes I according to values in edges.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function B = assign2bins( I, edges ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Quantizes I according to values in edges.  
+
+ assign2bins replaces each value in I with a value between [0,nbins] where
+ nbins=length(edges)-1.  edges must be a vector of monotonically increasing values.  Each
+ element v in I gets converted to a discrete value q such that edges(q)&lt;=v&lt; edges(q+1).
+ If v==edges(end) then q=nbins.  If v does not fall into any bin, then q=0. 
+
+ See histc_1D for more details about edges and nbins. 
+
+ INPUTS
+   I           - numeric array of arbitrary dimension
+   edges       - either nbins+1 length vector of quantization bounds, or scalar nbins
+
+ OUTPUTS
+   B           - size(I) array of quantization levels, int values between [0,nbins]
+
+ EXAMPLE
+   I = rand(5,5)
+   B = assign2bins(I,[0:.1:1])
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+   
+ See also <a href="histc_1D.html" class="code" title="function h = histc_1D( I, edges, weightmask )">HISTC_1D</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="histc_image.html" class="code" title="function HS = histc_image( I, edges, weightmask, shape )">histc_image</a>	Calculates histograms at every point in an array I.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

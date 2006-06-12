@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of mask_ellipse</title>
+  <meta name="keywords" content="mask_ellipse">
+  <meta name="description" content="Creates a binary image of an ellipse.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>mask_ellipse
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Creates a binary image of an ellipse.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function mask = mask_ellipse( mrows, ncols, varargin ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Creates a binary image of an ellipse.
+
+ Creats a binary image of size (mrows x ncols), with all pixels off except inside of the
+ specified ellipse.  The ellipse is given by 5 parameters,  a semimajor axis of ra, a
+ semminor axis of radius rb, angle phi (in radians), centered at (crow,ccol).
+
+ An alternative method of specifying the ellipse parameters is in terms of the parameters
+ of a 2d gaussian.  For more information on how a gaussian relates to an ellipse see
+ gauss2ellipse.
+ 
+ USAGE
+   mask = mask_ellipse( mrows, ncols, crow, ccol, ra, rb, phi )
+   mask = mask_ellipse( mrows, ncols, mu, C, d )
+
+ INPUTS
+   % version 1
+   mrows   - number of rows in mask
+   ncols   - number of columns in mask
+   crow    - the row location of the center of the ellipse
+   ccol    - the column location of the center of the ellipse
+   ra      - semi-major axis length (in pixels) of the ellipse
+   rb      - semi-minor axis length (in pixels) of the ellipse
+   phi     - rotation angle (in radians) of the semimajor axis from the x-axis
+   % version 2
+   mrows   - number of rows in mask
+   ncols   - number of columns in mask
+   mu      - 1x2 vector representing the center of the ellipse
+   C       - 2x2 cov matrix
+   d       - [optional] Number of std to create the ellipse to (2 is default)
+
+ OUTPUTS
+   mask    - created image mask
+
+ EXAMPLE
+   mask = mask_ellipse(  200, 200, 40, 100,  20, 15, pi/4 );
+   figure(1); im(mask); [mu,C] = imageMLG( mask, 0, 2 );
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also PLOT_ELLIPSE, GAUSS2ELLIPSE, <a href="mask_circle.html" class="code" title="function mask = mask_circle( angle_start, angle_size, r, nsamples )">MASK_CIRCLE</a>, <a href="mask_gaussians.html" class="code" title="function [masks,keeplocs] = mask_gaussians( siz, M, windowwidth, offset, show )">MASK_GAUSSIANS</a>, <a href="imageMLG.html" class="code" title="function varargout = imageMLG( G, symmFlag, show )">IMAGEMLG</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../matlab/gauss2ellipse.html" class="code" title="function [ crow, ccol, ra, rb, phi ] = gauss2ellipse( mu, C, d )">gauss2ellipse</a>	Creates an ellipse representing the 2D Gaussian distribution.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

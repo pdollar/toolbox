@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of normxcorrn</title>
+  <meta name="keywords" content="normxcorrn">
+  <meta name="description" content="Normalized n-dimensional cross-correlation.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>normxcorrn
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Normalized n-dimensional cross-correlation.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function C =  normxcorrn( T, A, shape ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Normalized n-dimensional cross-correlation.
+
+ For 2 dimensional inputs this function is exactly the same as normxcorr2, but also works
+ in higher dimensions.   For more information see help on normxcorr2.m.  Also see Forsyth
+ &amp; Ponce 11.3.1 (p241).
+
+ INPUTS:
+   T           - template to correlate to each window in A, must be smaller than A
+   A           - matrix to correlate T to
+   shape       - [optional] 'valid', 'full', or 'same', see convn_fast help
+
+ OUTPUTS
+   C           - correlation matrix
+
+ EXAMPLE
+   T = filter_gauss_nD( [21 21], [], [], 0 )*100;  A = rand(100); 
+   C1=normxcorrn(T,A);  C2=normxcorr2(T,A);  C3=xcorr2(A,T);
+   C4=xcorrn(A,T); C4r = rot90( xcorrn(T,A),2 );
+   C5=xeucn(A,T);  C5r = rot90( xeucn(T,A), 2 );
+   show=1;
+   figure(show); show=show+1; im(C1);   title('normxcorrn');
+   figure(show); show=show+1; im(C2);   title('normxcorr2');
+   figure(show); show=show+1; im(C3);   title('xcorr2');
+   figure(show); show=show+1; im(C4);   title('xcorrn');
+   figure(show); show=show+1; im(C4r);  title('xcorrn rev&amp;rot');
+   figure(show); show=show+1; im(-C5);  title('xeucn');
+   figure(show); show=show+1; im(-C5r); title('xeucn rev&amp;rot');
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="normxcorrn_fg.html" class="code" title="function C = normxcorrn_fg( T, T_fg, A, shape )">NORMXCORRN_FG</a>, <a href="xeucn.html" class="code" title="function C = xeucn( A, T, shape )">XEUCN</a>, <a href="xcorrn.html" class="code" title="function C = xcorrn( A, T, shape )">XCORRN</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="convn_fast.html" class="code" title="function C = convn_fast( A, B, shape )">convn_fast</a>	Fast convolution, replacement for both conv2 and convn.</li><li><a href="localsum.html" class="code" title="function I = localsum( I, dims, shape )">localsum</a>	Fast routine for box filtering.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

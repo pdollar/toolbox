@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of convn_fast</title>
+  <meta name="keywords" content="convn_fast">
+  <meta name="description" content="Fast convolution, replacement for both conv2 and convn.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>convn_fast
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Fast convolution, replacement for both conv2 and convn.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function C = convn_fast( A, B, shape ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Fast convolution, replacement for both conv2 and convn. 
+
+ See conv2 or convn for more information on convolution in general.
+
+ This works as a replacement for both conv2 and convn.  Basically, performs convolution
+ in either the frequency or spatial domain, depending on which it thinks will be faster
+ (see below). In general, if A is much bigger then B then spatial convolution will be
+ faster, but if B is of similar size to A and both are fairly big (such as in the case of
+ correlation), convolution as multiplication in the frequency domain will tend to be
+ faster.  
+
+ The shape flag can take on 1 additional value which is 'smooth'.  This flag is intended
+ for use with smoothing kernels.  The returned matrix C is the same size as A with
+ boundary effects handled in a special manner.  That is instead of A being zero padded
+ before being convolved with B; near the boundaries a cropped version of the matrix B is
+ used, and the results is scaled by the fraction of the weight found in  the cropped
+ version of B.  In this case each dimension of B must be odd, and all elements of B must
+ be positive.  There are other restrictions on when this flag can be used, and in
+ general it is only useful for smoothing kernels.  For 2D filtering it does not have much
+ overhead, for 3D it has more and for higher dimensions much much more.
+
+ For optimal performance some timing constants must be set to choose between doing
+ convolution in the spatial and frequency domains, for more info see time_conv below.
+
+ INPUTS
+   A       - d dimensional input matrix 
+   B       - d dimensional matrix to convolve with A 
+   shape   - [optional] 'valid', ['full'], 'same', or 'smooth'
+
+ OUTPUS:
+   C       - result of convolution
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also CONV2, CONVN</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="convn_fast.html" class="code" title="function C = convn_fast( A, B, shape )">convn_fast</a>	Fast convolution, replacement for both conv2 and convn.</li><li><a href="../matlab/arraycrop2dims.html" class="code" title="function IC = arraycrop2dims( I, dims, padelement )">arraycrop2dims</a>	Pads or crops I appropriately so that size(IC)==dims.</li><li><a href="../matlab/c.html" class="code" title="">c</a>	clc</li><li><a href="../matlab/ind2sub2.html" class="code" title="function sub = ind2sub2(siz,ind)">ind2sub2</a>	Improved version of ind2sub.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="convn_fast.html" class="code" title="function C = convn_fast( A, B, shape )">convn_fast</a>	Fast convolution, replacement for both conv2 and convn.</li><li><a href="gauss_smooth.html" class="code" title="function [L,filters] = gauss_smooth( I, sigmas, shape, radius )">gauss_smooth</a>	Applies Gaussian smoothing to a (multidimensional) image.</li><li><a href="histc_image.html" class="code" title="function HS = histc_image( I, edges, weightmask, shape )">histc_image</a>	Calculates histograms at every point in an array I.</li><li><a href="normxcorrn.html" class="code" title="function C =  normxcorrn( T, A, shape )">normxcorrn</a>	Normalized n-dimensional cross-correlation.</li><li><a href="normxcorrn_fg.html" class="code" title="function C = normxcorrn_fg( T, T_fg, A, shape )">normxcorrn_fg</a>	Normalized n-dimensional cross-correlation with a mask.</li><li><a href="xcorrn.html" class="code" title="function C = xcorrn( A, T, shape )">xcorrn</a>	n-dimensional cross-correlation.  Generalized version of xcorr2.</li><li><a href="xeucn.html" class="code" title="function C = xeucn( A, T, shape )">xeucn</a>	n-dimensional euclidean distance between each window in A and template T.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

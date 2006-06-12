@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of jitter_image</title>
+  <meta name="keywords" content="jitter_image">
+  <meta name="description" content="Creates multiple, slightly jittered versions of an image.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>jitter_image
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Creates multiple, slightly jittered versions of an image.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function IJ = jitter_image( I, nphis, maxphi, ntrans, maxtrans, jsiz, reflectflag, scales ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Creates multiple, slightly jittered versions of an image.
+
+ Takes an image I, and generates a number of images that are copies of the original image
+ with slight translation and rotation applied.  The original image also appears in the
+ final set.  
+
+ The parameter jsiz controls the size of the cropped images.  If jsiz gives a size that's
+ substantially smaller than I then all data in the the final set will come from I.
+ However, if this is not the case then I may need to be padded first.  The way this is
+ done is with padarray with the 'replicate' method.  If jsiz is not specified, it is set
+ to be the size of the original image. A warning appears if the image needs to be grown. 
+ 
+ Rotations and translations are specified by giving a range and a maximum value for each.
+ For example, if maxphi=10 and nphis=5, then the actual rotations applied are [-10 -5 0 5
+ 10]. Uses: linspace( -maxphi, maxphi, nphis ); Likewise if maxtrans=3 and ntrans=3 then
+ the translations are [-3 0 3]. Each translation is applied in the x direction as well as
+ the y direction.  Each combination of rotation, translation in x, and translation in y
+ is used (for example phi=5, transx=-3, transy=0), so the total number of images
+ generated is R=ntrans*ntrans*nphis).  This function works faster if all of the 
+ translation end up being integer valued.
+
+ If the input image is actually a MxNxK stack of images then applies op to each image in
+ stack and returns an MxNxKxR where R=(ntrans*ntrans*nphis) set of images. 
+
+ INPUTS
+   I           - BW input image (MxN) or images (MxNxK), must have odd dimensions
+   nphis       - number of rotations
+   maxphis     - max value for rotation
+   ntrans      - number of translations 
+   maxtrans    - max value for translation
+   jsiz        - [optional] Final size of each image in IJ 
+   reflectflag - [optional] if true then also adds reflection of each image
+   scales      - [optional] nscalesx2 array of vert/horiz scalings
+
+ OUTPUTS
+   IJ          - MxNxR or MxNxKxR set of images where R=(ntrans*ntrans*nphis*nscales)
+ 
+ EXAMPLE
+   load trees; I = ind2gray(X,map); I = imresize(I,[41 41]); clear X caption map
+   % creates 7^2*2 images of slight translations with reflection (but no rotation) 
+   IJ = jitter_image( I, 0, 0, 7, 3, [35 35], 1 ); montage2(IJ,1,1)
+   % creates 5 images of slight rotations (no translations)
+   IJ = jitter_image( I, 5, 25, 0, 0, size(I) ); montage2(IJ,1,1)
+   % creates 45 images of both rotation and slight translations
+   % alternatively use (maxtrans=3) OR (nphis=5)
+   IJ = jitter_image( I, 5, 10, 3, 2 ); montage2(IJ,1,1)
+   % additionally create multiple scaled versions
+   IJ = jitter_image( I, 1, 0, 1, 0, [], [], [1 1; 2 1; 1 2; 2 2] ); montage2(IJ,1)
+
+ DATESTAMP
+   27-Feb-2005  2:00pm
+
+ See also <a href="jitter_video.html" class="code" title="function IS = jitter_video( I, nphis, maxphi, ntrans, maxtrans, nttrans, maxttrans, jsiz )">JITTER_VIDEO</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="apply_homography.html" class="code" title="function IR = apply_homography( I, H, method, bbox, show )">apply_homography</a>	Applies the homography defined by H on the image I.</li><li><a href="../matlab/arraycrop2dims.html" class="code" title="function IC = arraycrop2dims( I, dims, padelement )">arraycrop2dims</a>	Pads or crops I appropriately so that size(IC)==dims.</li><li><a href="../matlab/feval_arrays.html" class="code" title="function B = feval_arrays( A, fhandle, varargin )">feval_arrays</a>	Used to apply the same operation to a stack of array elements.</li><li><a href="../matlab/rotation_matrix2D.html" class="code" title="function R = rotation_matrix2D( theta )">rotation_matrix2D</a>	Returns the matrix: R=[cos(t) -sin(t); sin(t) cos(t)].</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="jitter_video.html" class="code" title="function IS = jitter_video( I, nphis, maxphi, ntrans, maxtrans, nttrans, maxttrans, jsiz )">jitter_video</a>	Creates multiple, slightly jittered versions of a video.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

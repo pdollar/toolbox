@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of sub2ind2</title>
+  <meta name="keywords" content="sub2ind2">
+  <meta name="description" content="Improved version of sub2ind.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>sub2ind2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Improved version of sub2ind.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function ind = sub2ind2(siz,sub) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Improved version of sub2ind.
+ 
+ Almost the same as sub2ind, except always returns only a single output that contains all
+ the subscript locations.  Also handles multiple linear subscripts at the same time more
+ conviniently then matlab's version.  
+
+ See help for sub2ind for more info.
+
+ INPUTS
+   siz     - size of array into which sub is an index
+   sub     - sub(i,:) is the ith set of subscripts into the array.
+ 
+ OUTPUTS   
+   ind     - linear index (or vector of indicies) into given array
+
+ EXAMPLE
+   ind = sub2ind2( [10,10], [10 2] );
+   ind = sub2ind2( [10,10], [9 2; 10 2] );
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also SUB2IND, <a href="ind2sub2.html" class="code" title="function sub = ind2sub2(siz,ind)">IND2SUB2</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../images/imsubs2array.html" class="code" title="function I = imsubs2array( subs, vals, siz, fillval )">imsubs2array</a>	Converts subs/vals image representation to array representation.</li><li><a href="../images/modefilt1.html" class="code" title="function y = modefilt1( x, s )">modefilt1</a>	One-dimensional mode filtering.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

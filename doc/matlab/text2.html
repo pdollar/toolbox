@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of text2</title>
+  <meta name="keywords" content="text2">
+  <meta name="description" content="Wrapper for text.m that ensures displayed text fits in figure.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>text2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Wrapper for text.m that ensures displayed text fits in figure.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function varargout = text2( varargin ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Wrapper for text.m that ensures displayed text fits in figure.
+
+ When text is called, Matlab displays the text, but does nothing to ensure that all of
+ the text fits in the figure.  This function, after calling text, shrinks the axes until
+ the text is fully visible.  Note that since font doesn't resize as the figure does, just
+ because the text fully fits after text2 is called, no guaranties are made after the
+ figure is resized.  Hence it is a good idea to resize the figure appropriately before
+ calling text2.
+
+ Same input/output options as Matlab's text.m command.  
+
+ EXAMPLE
+   text2( -3 , 11, 'hello world' )
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also TEXT</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="imlabel.html" class="code" title="function imlabel( labels, position, slant, pvpairs )">imlabel</a>	Improved method for labeling figure axes.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

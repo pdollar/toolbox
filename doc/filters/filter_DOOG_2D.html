@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of filter_DOOG_2D</title>
+  <meta name="keywords" content="filter_DOOG_2D">
+  <meta name="description" content="2D difference of offset Gaussian (DooG) filters.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html filters -->
+<h1>filter_DOOG_2D
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>2D difference of offset Gaussian (DooG) filters.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function dG = filter_DOOG_2D( r, sigx, sigy, nderivs, show ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> 2D difference of offset Gaussian (DooG) filters.
+
+ Creates a 2D derivative of Gaussian kernel.  Use primarily for visualization purposes.
+ For filtering better to use the indvidiual seperable kernels for efficiency purposes.
+ 
+ INPUTS
+   r       - final mask will be 2r+1 x 2r+1
+   sigx    - sigma for Gaussian in x direction
+   sigy    - sigma for Gaussian in y direction
+   nderivs - order of derivative along each dimension
+   show    - [optional] figure to use for display (no display if == 0)
+
+ OUTPUTS
+   dG      - The derivative of Gaussian mask
+
+ EXAMPLE
+   dG = filter_DOOG_2D( 20, 3, 3, [1,1], 1 );
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="filter_DOOG_1D.html" class="code" title="function dG = filter_DOOG_1D( r, sig, deriv, show )">FILTER_DOOG_1D</a>, <a href="filter_DOOG_3D.html" class="code" title="function dG = filter_DOOG_3D( r, sigmas, nderivs, show )">FILTER_DOOG_3D</a>, <a href="filter_DOG_2D.html" class="code" title="function G = filter_DOG_2D( r, sig, order, show )">FILTER_DOG_2D</a>, <a href="filter_gabor_2D.html" class="code" title="function [Feven,Fodd]=filter_gabor_2D(r,sig,lam,theta,show)">FILTER_GABOR_2D</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="filter_visualize_2D.html" class="code" title="function filter_visualize_2D( F, plotline )">filter_visualize_2D</a>	Used to help visualize a 2D filter.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="FB_make_2D.html" class="code" title="function FB = FB_make_2D">FB_make_2D</a>	Various ways to make filterbanks.  See inside of this file for details.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

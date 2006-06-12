@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of optflow_lucaskanade</title>
+  <meta name="keywords" content="optflow_lucaskanade">
+  <meta name="description" content="Calculate optical flow using Lucas &amp; Kanade.  Fast, parallel code.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>optflow_lucaskanade
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Calculate optical flow using Lucas &amp; Kanade.  Fast, parallel code.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [Vx,Vy,reliab]=optflow_lucaskanade( I1, I2, win_n, win_sig, sigma, thr, show ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Calculate optical flow using Lucas &amp; Kanade.  Fast, parallel code.
+
+ Note that the window of integration can either be a hard square window of radius win_n
+ or it can be a soft 'gaussian' window with sigma win_sig.  In general the soft window
+ should be more accurate.
+
+ INPUTS
+   I1, I2  - input images to calculate flow between
+   win_n   - window radius for hard window (should be [] if win_sig is provided)
+   win_sig - [optional] sigma for soft 'gauss' window (should be [] if win_n is provided)
+   sigma   - [optional] amount to smooth by (may be 0)
+   thr     - [optional] ABSOLUTE reliability threshold (min eigenvalue), [default: 3e-6]
+   show    - [optional] figure to use for display (no display if == 0)
+
+ OUTPUTS
+   Vx, Vy  - x,y components of optical flow [Vx&gt;0 -&gt; flow is right, Vy&gt;0 -&gt; flow is down]
+   reliab  - reliability of optical flow in given window (cornerness of window)  
+
+ EXAMPLE
+   % create square + translated square (B) + rotated square (C)
+   A=zeros(50,50); A(16:35,16:35)=1;
+   B=zeros(50,50); B(17:36,17:36)=1;
+   C=imrotate(A,5,'bil','crop'); 
+   optflow_lucaskanade( A, B, [], 2, 2, 3e-6, 1 );
+   optflow_lucaskanade( A, C, [], 2, 2, 3e-6, 4 );
+   % compare on stored real images (of mice)
+   load optflow_data;
+   [Vx,Vy,reliab] = optflow_lucaskanade( I5A, I5B, [], 4, 1.2, 3e-6, 1 );
+   [Vx,Vy,reliab] = optflow_corr( I5A, I5B, 3, 5, 1.2, .01, 2 );
+   [Vx,Vy] = optflow_horn( I5A, I5B, 2, 3 );
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="optflow_horn.html" class="code" title="function [Vx,Vy] = optflow_horn( I1, I2, sigma, show )">OPTFLOW_HORN</a>, <a href="optflow_corr.html" class="code" title="function [Vx,Vy,reliab] = optflow_corr( I1, I2, patch_r, search_r, sigma, thr, show )">OPTFLOW_CORR</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gauss_smooth.html" class="code" title="function [L,filters] = gauss_smooth( I, sigmas, shape, radius )">gauss_smooth</a>	Applies Gaussian smoothing to a (multidimensional) image.</li><li><a href="im.html" class="code" title="function im( I, range );">im</a>	IM [2D] Function for displaying grayscale images.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

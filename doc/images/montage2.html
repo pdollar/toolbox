@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of montage2</title>
+  <meta name="keywords" content="montage2">
+  <meta name="description" content="[3D] Used to display a stack of T images.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>montage2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>[3D] Used to display a stack of T images.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function varargout = montage2( IS, showlines, extrainfo, clim, mm, nn, labels ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> [3D] Used to display a stack of T images. 
+
+ Improved version of montage, with more control over display.  
+
+ NOTE: Can convert between MxNxT and MxNx3xT image stack via:
+   I = repmat( I, [1,1,1,3] ); I = permute(I, [1,2,4,3] );
+
+ INPUTS
+   IS          - MxNxT or MxNx1xT or MxNx3xT array (of bw or color images)
+   showlines   - [optional] whether to show lines separating the various frames
+   extrainfo   - [optional] if 1 then a colorbar is shown as well as pixval bar
+   clim        - [optional] clim = [clow chigh] optional scaling of data
+   mm          - [optional] #images/row (if [] then calculated)
+   nn          - [optional] #images/col (if [] then calculated)
+   labels      - [optional] cell array of strings specifying labels for each image
+
+ OUTPUTS
+   h           - image handle
+   mm          - #images/row 
+   nn          - #images/col
+
+ EXAMPLE
+   load( 'images.mat' );
+   montage2( images );
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also MONTAGE, <a href="makemovie.html" class="code" title="function M = makemovie( IS )">MAKEMOVIE</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../classify/democlassify.html" class="code" title="function democlassify">democlassify</a>	A demo used to test and demonstrate the usage of classifiers (clf_*)</li><li><a href="../classify/pca_randomvector.html" class="code" title="function Xr = pca_randomvector( U, mu, variances, k, n, hypershpere, show )">pca_randomvector</a>	Generate random vectors in PCA subspace.</li><li><a href="../classify/pca_visualize.html" class="code" title="function varargout = pca_visualize( U, mu, variances, X, index, ks, filename, show )">pca_visualize</a>	Visualization of quality of approximation of X given principal components.</li><li><a href="../filters/FB_apply_2D.html" class="code" title="function IF = FB_apply_2D( I, FB, shape, show )">FB_apply_2D</a>	Applies each of the filters in the filterbank FB to the image I.</li><li><a href="../filters/FB_reconstruct_2D.html" class="code" title="function I2 = FB_reconstruct_2D( I, FB )">FB_reconstruct_2D</a>	Use to see how much image information is preserved in filter outputs.</li><li><a href="../filters/FB_visualize_2D.html" class="code" title="function FB_visualize_2D( FB )">FB_visualize_2D</a>	Used to visualize the Fourier spectra of a series of 2D filters.</li><li><a href="../filters/filter_DOOG_3D.html" class="code" title="function dG = filter_DOOG_3D( r, sigmas, nderivs, show )">filter_DOOG_3D</a>	3D difference of offset Gaussian (DooG) filters.</li><li><a href="../filters/filter_gauss_nD.html" class="code" title="function G = filter_gauss_nD( dims, mu, C, show )">filter_gauss_nD</a>	n-dimensional Gaussian filter.</li><li><a href="imageMLG.html" class="code" title="function varargout = imageMLG( G, symmFlag, show )">imageMLG</a>	Calculates maximum likelihood parameters of gaussian that gave rise to image G.</li><li><a href="makemovies.html" class="code" title="function M = makemovies( IS, montage2params )">makemovies</a>	[4D] Used to convert R sets of equal length videos into a single movie.</li><li><a href="mask_gaussians.html" class="code" title="function [masks,keeplocs] = mask_gaussians( siz, M, windowwidth, offset, show )">mask_gaussians</a>	Divides a volume into softly overlapping gaussian windows.</li><li><a href="montages.html" class="code" title="function varargout = montages( IS, montage2params, labels, montage2labels )">montages</a>	[4D] Used to display R sets of T images each.</li><li><a href="montages2.html" class="code" title="function varargout = montages2( IS, montage2params, padsize )">montages2</a>	MONTAGES2 [4D] Used to display R sets of T images each.</li><li><a href="playmovies.html" class="code" title="function playmovies( I, fps, loop )">playmovies</a>	[4D] shows R videos simultaneously as a movie.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

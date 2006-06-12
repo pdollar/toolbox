@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gauss_smooth</title>
+  <meta name="keywords" content="gauss_smooth">
+  <meta name="description" content="Applies Gaussian smoothing to a (multidimensional) image.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>gauss_smooth
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Applies Gaussian smoothing to a (multidimensional) image.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [L,filters] = gauss_smooth( I, sigmas, shape, radius ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Applies Gaussian smoothing to a (multidimensional) image.
+
+ Smooths the n-dimensional array I with a n-dimensional gaussian with standard deviations
+ specified by sigmas.  This operation in linearly seperable and is implemented as such.
+
+ INPUTS
+   I       - imput image
+   sigmas  - either n dimensional or 1 dimensional vector of standard devs
+           - if sigmas(n)&lt;=.3 then does not smooth along that dimension
+   shape   - [optional] shape to use in convolution [default == 'full']
+   radius  - [optional] radius in units of standard deviation [default == 2.25]
+
+ OUTPUTS
+   L       - smoothed image
+   filters - actual filters used, cell array of length n
+
+ DATESTAMP
+   29-Sep-2005  2:00pm</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../filters/filter_gauss_1D.html" class="code" title="function f = filter_gauss_1D( r, sigma, show )">filter_gauss_1D</a>	1D Gaussian filter.</li><li><a href="convn_fast.html" class="code" title="function C = convn_fast( A, B, shape )">convn_fast</a>	Fast convolution, replacement for both conv2 and convn.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="histc_sift_nD.html" class="code" title="function hs = histc_sift_nD( I, edges, pargmask, weightmask, multch )">histc_sift_nD</a>	Creates a series of locally position dependent histograms.</li><li><a href="optflow_corr.html" class="code" title="function [Vx,Vy,reliab] = optflow_corr( I1, I2, patch_r, search_r, sigma, thr, show )">optflow_corr</a>	Calculate optical flow using cross-correlation.</li><li><a href="optflow_horn.html" class="code" title="function [Vx,Vy] = optflow_horn( I1, I2, sigma, show )">optflow_horn</a>	Calculate optical flow using Horn & Schunck.</li><li><a href="optflow_lucaskanade.html" class="code" title="function [Vx,Vy,reliab]=optflow_lucaskanade( I1, I2, win_n, win_sig, sigma, thr, show )">optflow_lucaskanade</a>	Calculate optical flow using Lucas & Kanade.  Fast, parallel code.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

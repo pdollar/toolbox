@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of distmatrix_show</title>
+  <meta name="keywords" content="distmatrix_show">
+  <meta name="description" content="Useful visualization of a distance matrix of clustered points.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html classify -->
+<h1>distmatrix_show
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Useful visualization of a distance matrix of clustered points.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function distmatrix_show( D, IDX ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Useful visualization of a distance matrix of clustered points.
+
+ D is sorted into k blocks, where the ith block contains all the points in cluster i.
+ When D is displayed the blocks are shown explicitly.  Hence for a good clustering (under
+ a spherical gaussian assumption) the 'diagnol' blocks ought to be mostly dark, and all
+ other block ought to be relatively white.  One can thus quickly visualize the quality of
+ the clustering, or even how clusterable the points are.  Outliers (according to IDX) are
+ removed from D.
+
+ INPUTS
+   D       - nxn distance matrix
+   IDX     - cluster membership [see kmeans2.m]
+   
+ OUTPUTS
+   NONE
+
+ EXAMPLE
+  % not the best example since points are already ordered
+  [X,IDX_true] = demogendata(100,0,2,2,10,2,0);  
+  distmatrix_show( dist_euclidean(X,X), IDX_true );
+
+ DATESTAMP
+   29-Sep-2005  2:00pm</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../classify/private/IDX2order.html" class="code" title="function order = IDX2order( IDX )">IDX2order</a>	Converts class labels into an ordering.</li><li><a href="../images/im.html" class="code" title="function im( I, range );">im</a>	IM [2D] Function for displaying grayscale images.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

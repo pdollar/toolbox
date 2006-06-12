@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of imnormalize</title>
+  <meta name="keywords" content="imnormalize">
+  <meta name="description" content="Various ways to normalize a (multidimensional) image.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>imnormalize
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Various ways to normalize a (multidimensional) image.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function X = imnormalize( X, flag ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Various ways to normalize a (multidimensional) image.
+
+ Sets image X to have zero mean and unit variance (if flag==1). 
+ Sets image X to range in [0,1] (if flag==2). 
+ Sets image X to have zero mean (if flag==3). 
+ Sets image X to have zero mean and unit magnitude (if flag==4). 
+ Sets image X to have zero mean and unit variance, furthermore throws out 
+   extreme values and normalized to [0,1] (if flag==5)
+
+ X may have arbitrary dimension (ie an image or video, etc).  X is treated as a vector of
+ pixel values.  Hence, the mean of X is the average pixel value, and likewise the
+ standard deviation is the std of the pixels from the mean pixel.
+
+ INPUTS
+   X       - n dimensional array to standardize
+   flag    - [optional] determines normalization procedure
+
+ OUTPUTS
+   X       - X after normalization.
+
+ DATESTAMP
+   18-Jan-2006  5:15pm
+
+ EXAMPLE
+   I = double(imread('cameraman.tif'));
+   N = imnormalize(I,1);
+   mean(I(:)), std(I(:)), mean(N(:)), std(N(:))
+
+ See also FEVAL_ARRAYS</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="imnormalize.html" class="code" title="function X = imnormalize( X, flag )">imnormalize</a>	Various ways to normalize a (multidimensional) image.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../classify/pca_randomvector.html" class="code" title="function Xr = pca_randomvector( U, mu, variances, k, n, hypershpere, show )">pca_randomvector</a>	Generate random vectors in PCA subspace.</li><li><a href="imnormalize.html" class="code" title="function X = imnormalize( X, flag )">imnormalize</a>	Various ways to normalize a (multidimensional) image.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

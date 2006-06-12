@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of mask_gaussians</title>
+  <meta name="keywords" content="mask_gaussians">
+  <meta name="description" content="Divides a volume into softly overlapping gaussian windows.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>mask_gaussians
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Divides a volume into softly overlapping gaussian windows.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [masks,keeplocs] = mask_gaussians( siz, M, windowwidth, offset, show ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Divides a volume into softly overlapping gaussian windows.
+
+ Return M^nd masks each of size siz.  Each mask represents a symmetric gaussian window
+ centered at a different location.  The locations are evenly spaced throughout the array
+ of size siz.  For example, if M=2, then along each dimension d the location of each mask
+ is either 1/4 or 3/4 of siz(d) and likewise if M=3 that mask is at 1/6,3/6, or 5/6 of
+ siz(d). For higher M the locations are: 1/2M,3/2M,...,M-1/2M. 
+
+ See examples below to visualize the masks.
+
+ The std of each gaussian is set to be equal to the spacing between two adjacent masks
+ multiplied by windowwidth.  Reducing the widths of the gaussians causes there to be less
+ overlap between masks, but if the width is reduced too far certain pixels in between
+ masks receive very little weight.  A desired property of the masks is that their
+ coverage (the total weight placed on the pixel by all the masks) is approximately
+ constant.  Typically, we settle for having the coverage be monotonically decreasing as
+ we move away from the center.  (In reality the coverage oscilates as we move past peaks,
+ it's just that the oscillations tend to be tiny).  The default value of windowidth is
+ .6, which minimizes overlap while still providing good overall coverage. Values lower
+ tend to produce noticeable oscillations in coverage.
+
+ offset (in [-1,1]) controls the spacing of the locations.  Essentially, a positive
+ offset moves the locations away from the center of the array and a negative offset moves
+ the windows away from the center.  Using a positive offset gives better coverage to
+ areas near the borders.
+
+ INPUTS
+   siz         - dimensions of each mask
+   M           - # of mask locations along each dimension [either scalar or vector]
+   windowwidth - [optional] see above - default: .6
+   offset      - [optional] see above - default: .1
+   show        - [optional] figure to use for display (no display if == 0) (nd&lt;=3)
+
+ OUTPUTS
+   masks       - [see above] array of size [siz x M^nd]
+   keeplocs    - logical array of all location where masks is (almost) nonzero
+
+ EXAMPLE
+   masks = mask_gaussians( 100, 10, .6, -.1, 1 );  %1D
+   masks = mask_gaussians( [35 35], 3, .6, .1, 1 );  %2D
+   masks = mask_gaussians( [35 35 35], [2 2 4], .6, .1, 1 ); %3D
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="histc_sift.html" class="code" title="function hs = histc_sift( I, edges, pargmask, weightmask )">HISTC_SIFT</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../filters/filter_gauss_nD.html" class="code" title="function G = filter_gauss_nD( dims, mu, C, show )">filter_gauss_nD</a>	n-dimensional Gaussian filter.</li><li><a href="im.html" class="code" title="function im( I, range );">im</a>	IM [2D] Function for displaying grayscale images.</li><li><a href="montage2.html" class="code" title="function varargout = montage2( IS, showlines, extrainfo, clim, mm, nn, labels )">montage2</a>	[3D] Used to display a stack of T images.</li><li><a href="montages2.html" class="code" title="function varargout = montages2( IS, montage2params, padsize )">montages2</a>	MONTAGES2 [4D] Used to display R sets of T images each.</li><li><a href="../matlab/c.html" class="code" title="">c</a>	clc</li><li><a href="../matlab/checknumericargs.html" class="code" title="function [x,er] = checknumericargs( x, siz, integerflag, signflag )">checknumericargs</a>	Helper utility for checking numeric vector arguments.</li><li><a href="../matlab/ind2sub2.html" class="code" title="function sub = ind2sub2(siz,ind)">ind2sub2</a>	Improved version of ind2sub.</li><li><a href="../matlab/simplecache.html" class="code" title="function varargout = simplecache( op, cache, varargin )">simplecache</a>	A very simply cache that can be used to store results of computations.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="histc_sift_nD.html" class="code" title="function hs = histc_sift_nD( I, edges, pargmask, weightmask, multch )">histc_sift_nD</a>	Creates a series of locally position dependent histograms.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

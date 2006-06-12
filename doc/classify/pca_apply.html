@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of pca_apply</title>
+  <meta name="keywords" content="pca_apply">
+  <meta name="description" content="Companion function to pca.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html classify -->
+<h1>pca_apply
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Companion function to pca.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ Yk, Xhat, avsq, avsq_orig ] = pca_apply( X, U, mu, variances, k ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Companion function to pca.
+
+ Use pca to retrieve the principal components U and the mean mu from a
+ set fo vectors X1 via [U,mu,variances] = pca(X1).  Then given a new
+ vector x, use y = pca_apply( x, U, mu, variances, k ) to get the first k
+ coefficients of x in the space spanned by the columns of U.
+
+ The input x can be a matrix X, where each column represents a single
+ vector in R^N.  If X has higher dimension, the first n-1 dimensions are
+ used as the variables and the last dimension as an observation -- for
+ more information on this see pca.m
+
+ This may prove useful:
+   siz = size(X);  k = 100;
+   Uim = reshape( U(:,1:k), [ siz(1:end-1) k ]  );
+
+ It is also interesting to look at the distribution of the points Y's (their projection
+ onto 2D or 3D): 
+   plot( Y(1,:), Y(2,:), '.' );
+   plot3( Y(1,:), Y(2,:), Y(3,:), '.' );
+
+ INPUTS
+   X           - array for which to get PCA coefficients
+   U           - [returned by pca] -- see pca
+   mu          - [returned by pca] -- see pca
+   variances   - [returned by pca] -- see pca
+   k           - number of principal coordinates to approximate X with
+
+ OUTPUTS
+   Yk          - first k coordinates of X in column space of U
+   Xhat        - approximation of X corresponding to Yk
+   pixelerror  - measure of squared error per pixel normalized to fall between [0,1]
+
+ DATESTAMP
+   29-Nov-2005  2:00pm
+
+ See also <a href="pca.html" class="code" title="function [ U, mu, variances ] = pca( X )">PCA</a>, <a href="pca_apply_large.html" class="code" title="function [ Yk, Xhat, pixelerror ] = pca_apply_large( X, U, mu, variances, k )">PCA_APPLY_LARGE</a>, <a href="pca_visualize.html" class="code" title="function varargout = pca_visualize( U, mu, variances, X, index, ks, filename, show )">PCA_VISUALIZE</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="nfoldxval.html" class="code" title="function CM=nfoldxval( data, IDX, clfinit, clfparams, types, ignoretypes, fname, show )">nfoldxval</a>	Runs n-fold cross validation on data with a given classifier.</li><li><a href="pca_apply_large.html" class="code" title="function [ Yk, Xhat, pixelerror ] = pca_apply_large( X, U, mu, variances, k )">pca_apply_large</a>	Wrapper for pca_apply that allows for application to large X.</li><li><a href="pca_visualize.html" class="code" title="function varargout = pca_visualize( U, mu, variances, X, index, ks, filename, show )">pca_visualize</a>	Visualization of quality of approximation of X given principal components.</li><li><a href="visualize_data.html" class="code" title="function visualize_data( X, k, IDX, types )">visualize_data</a>	Project high dim. data unto principal components (PCA) for visualization.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

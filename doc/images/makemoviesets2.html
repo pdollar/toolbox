@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of makemoviesets2</title>
+  <meta name="keywords" content="makemoviesets2">
+  <meta name="description" content="[5D] Used to convert S sets of R videos into a movie.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>makemoviesets2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>[5D] Used to convert S sets of R videos into a movie.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function M = makemoviesets2( IS, montagesparams ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> [5D] Used to convert S sets of R videos into a movie.
+
+ Displays one set per row.  Each of the S sets is flattened to a single long image by
+ concatenating the T images in the set.
+
+ Alternative to makemoviesets.
+ Works by calling montages2 once per frame.
+
+ INPUTS
+   IS              - MxNxTxRxS or MxNx1xTxRxS or MxNx3xTxRxS array
+   montagesparams  - [optional] cell array of params for montages2
+
+ OUTPUTS
+   M               - resulting movie
+
+ EXAMPLE
+   load( 'images.mat' );
+   videoclusters = clustermontage( videos, IDXv, 9, 1 );
+   M = makemoviesets2( videoclusters );
+   movie( M );
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="makemovie.html" class="code" title="function M = makemovie( IS )">MAKEMOVIE</a>, <a href="makemoviesets.html" class="code" title="function M = makemoviesets( IS, montagesparams )">MAKEMOVIESETS</a>, <a href="clustermontage.html" class="code" title="function XC = clustermontage( X, IDX, nvals, pad )">CLUSTERMONTAGE</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="montages2.html" class="code" title="function varargout = montages2( IS, montage2params, padsize )">montages2</a>	MONTAGES2 [4D] Used to display R sets of T images each.</li><li><a href="../matlab/figureresized.html" class="code" title="function varargout = figuresized( screenratio, varargin )">figureresized</a>	Creates a figures that takes up certain area of screen.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

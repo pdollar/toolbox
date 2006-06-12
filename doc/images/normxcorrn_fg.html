@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of normxcorrn_fg</title>
+  <meta name="keywords" content="normxcorrn_fg">
+  <meta name="description" content="Normalized n-dimensional cross-correlation with a mask.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>normxcorrn_fg
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Normalized n-dimensional cross-correlation with a mask.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function C = normxcorrn_fg( T, T_fg, A, shape ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Normalized n-dimensional cross-correlation with a mask.
+
+ Similar to normxcorrn, except takes an additional argument that specifies a figure
+ ground mask for the T.  That is T_fg must be of the same dimensions as T, with each
+ entry being 0 or 1, where zero specifies regions to ignore (the ground) and 1 specifies
+ interesting regions (the figure).  Essentially T_fg specifies regions in T that are
+ interesting and should be taken into account when doing normalized cross correlation.
+ This allows for templates of arbitrary shape, and not just squares.  
+
+ Note: this function is approximately 3 times slower then normxcorr2 because it cannot
+ use the trick of precomputing sums.
+
+ INPUTS
+   T    - template to correlate to each window in A
+   T_fg - figure/ground mask for the template
+   A           - matrix to correlate template to
+   shape       - [optional] 'valid', 'full', or 'same', see convn_fast help
+
+ OUTPUTS
+   C           - correlation matrix
+
+ EXAMPLE
+   A=rand(50);  B=rand(11);  Bfg=ones(11);
+   C1=normxcorrn_fg(B,Bfg,A);  C2=normxcorr2(B,A);     
+   figure(1); im(C1); figure(2); im(C2); 
+   figure(3); im(abs(C1-C2));
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="normxcorrn.html" class="code" title="function C =  normxcorrn( T, A, shape )">NORMXCORRN</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="convn_fast.html" class="code" title="function C = convn_fast( A, B, shape )">convn_fast</a>	Fast convolution, replacement for both conv2 and convn.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

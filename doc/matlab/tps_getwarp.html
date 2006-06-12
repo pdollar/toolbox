@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of tps_getwarp</title>
+  <meta name="keywords" content="tps_getwarp">
+  <meta name="description" content="Given two sets of corresponding points, calculates warp between them.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>tps_getwarp
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Given two sets of corresponding points, calculates warp between them.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [wx, affinex, wy, affiney, L, Ln_inv, bend_energy ] =tps_getwarp( lambda, xs_source, ys_source, xs_dest, ys_dest ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Given two sets of corresponding points, calculates warp between them.
+
+ Uses booksteins PAMI89 method.  Can then apply warp to a new set of
+ points (tps_interpolate), or even an image (tps_interpolateiamge).
+
+ INPUTS
+   lambda                      - contolls rigidity of warp 
+                                 (lambda-&gt;inf means warp becomes affine)
+   xs_source, ys_source        - correspondence points from source image
+   xs_dest, ys_dest            - correspondence points from destination image
+
+ OUTPUTS
+   wx, affinex, wy, affiney    - booksteain warping parameters
+   L, Ln_inv                    - see bookstein
+   bend_energy                 - bending energy
+
+ EXAMPLE
+   % example 1
+   xs = [ 0 -1 0 1 ]; ys = [1 0 -1 0]; xs_dest = xs; ys_dest = [3/4 1/4 -5/4 1/4];
+   [grid_xs, grid_ys] = meshgrid( -1.25:.25:1.25, -1.25:.25:1.25 );
+   [wx,ax,wy,ay,L,Ln_inv,benden] = tps_getwarp( 0, xs, ys, xs_dest, ys_dest );
+   tps_interpolate( xs, ys, xs_dest, ys_dest, wx, ax, wy, ay, grid_xs, grid_ys, 1 );
+   % example 2
+   xs = [3.6929 6.5827 6.7756 4.8189 5.6969 ]; 
+   ys = [10.3819 8.8386 12.0866 11.2047 10.0748 ]; 
+   xs_dest = [ 3.9724 6.6969 6.5394 5.4016 5.7756 ]; 
+   ys_dest = [ 6.5354 4.1181 7.2362 6.4528 5.1142 ]; 
+   [grid_xs, grid_ys] = meshgrid( 3.5:.25:7, 8.5:.25: 12.5  );
+   [wx,ax,wy,ay,L,Ln_inv,benden] = tps_getwarp( 0, xs, ys, xs_dest, ys_dest );
+   tps_interpolate( xs, ys, xs_dest, ys_dest, wx, ax, wy, ay, grid_xs, grid_ys, 1 );
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="tps_interpolate.html" class="code" title="function [ xs_p, ys_p ] = tps_interpolate( xs_source, ys_source, xs_dest, ys_dest,wx, affinex, wy, affiney, xs, ys, show )">TPS_INTERPOLATE</a>, <a href="tps_interpolateimage.html" class="code" title="function IR = tps_interpolateimage( I_source, xs_source, ys_source,xs_dest, ys_dest, wx, affinex, wy, affiney )">TPS_INTERPOLATEIMAGE</a>, <a href="tps_random.html" class="code" title="function w = tps_random( Ln_inv, bend_energy )">TPS_RANDOM</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

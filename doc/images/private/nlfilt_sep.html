@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of nlfilt_sep</title>
+  <meta name="keywords" content="nlfilt_sep">
+  <meta name="description" content="Efficient multidimensional nonlinear but seperable filtering operation.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html images --><!-- menu.html private -->
+<h1>nlfilt_sep
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Efficient multidimensional nonlinear but seperable filtering operation.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function I = nlfilt_sep( I, dims, shape, fun, varargin ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Efficient multidimensional nonlinear but seperable filtering operation.
+
+ The concept of a nonlinear seperable filter is not very common, but nevertheless can
+ prove very useful since computation time can be reduced greatly.  Consider a funciton
+ like max that is applied to a 2 dimensional window.  max could also be applied to each
+ row of the window, then to the resulting column, insead of being applied to the entire
+ window simultaneously.  This is what is meant here by a seperable nonlinear filter.   
+
+ The function fun must be able to take an input of the form
+ C=fun(I,radius,param1,...paramk).  The return C must have the same size as I, and each
+ element of C must be the result of applying the nlfilt operation to the local column (of
+ size 2r+1) of A.  
+
+ For example:
+   % COMPUTES LOCAL SUMS:
+   C = nlfilt_sep( I, dims, shape, @rnlfilt_sum );
+
+   % COMPUTES LOCAL MAXES:
+   C = nlfilt_sep( I, dims, shape, @rnlfilt_max ); 
+
+ INPUTS
+   I       - matrix to compute fun over
+   dims    - size of volume to compute fun over 
+   shape   - 'valid', 'full', or 'same', see conv2 help
+   fun     - nonlinear filter 
+   params  - optional parameters for nonlinear filter
+
+ OUTPUTS
+   I      - resulting image
+
+ DATESTAMP
+   26-Jan-2006  2:00pm
+
+ See also <a href="nlfiltblock_sep.html" class="code" title="function I = nlfiltblock_sep( I, dims, fun, varargin  )">NLFILTBLOCK_SEP</a>, RNLFILT_SUM, RNLFILT_MAX</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../matlab/arraycrop_full.html" class="code" title="function I = arraycrop_full( I, start_locs, end_locs, padelement )">arraycrop_full</a>	Used to crop a rectangular region from an n dimensional array.</li><li><a href="../../matlab/checknumericargs.html" class="code" title="function [x,er] = checknumericargs( x, siz, integerflag, signflag )">checknumericargs</a>	Helper utility for checking numeric vector arguments.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../images/localsum.html" class="code" title="function I = localsum( I, dims, shape )">localsum</a>	Fast routine for box filtering.</li><li><a href="../../images/nonmaxsupr.html" class="code" title="function [subs,vals] = nonmaxsupr( I, radii, thresh, maxn )">nonmaxsupr</a>	Applies nonmaximal suppression on an image of arbitrary dimension.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

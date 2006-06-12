@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of feval_arrays</title>
+  <meta name="keywords" content="feval_arrays">
+  <meta name="description" content="Used to apply the same operation to a stack of array elements.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>feval_arrays
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Used to apply the same operation to a stack of array elements.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function B = feval_arrays( A, fhandle, varargin ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Used to apply the same operation to a stack of array elements.
+
+ The only constraint on the function specified in fhandle is that given two differrent
+ input arrays a1 and a2, if a1 and a2 have the same dimensions then the outputs b1 and b2
+ must have the same dimensions. For long operations shows progress information.
+
+ A can have arbitrary dimension.  Suppose A has size d1 x d2 ... x dn. Then for the
+ purpose of this function A has dn elements, where A(:,:,...,i) is the ith element.  This
+ function then applies the operation in fhandle, with paramters given in varargin, to
+ each element in A. The results are returned in the array B, of size f1 x f2 x ... x fk x
+ dn.  Each of the n element of B of the form B(:,:,...,i) is the the result of applying
+ fhandle to A(:,:,...,i).  A may also be a cell array, see the last example.
+
+ This can be extremely useful.  Suppose A is an MxNxR collection of R MxN images.  Then
+ &quot;B = feval_arrays( A, @imresize, .5 )&quot; resizes each of the R images in A by 1/2.  B has
+ size M/2 x N/2 X R.  As another motivating example, suppose A is an MxNx3xR array of R
+ MxN rgb images.  Then &quot;B = feval_arrays( A, @rgb2gray )&quot; converts each of the R color
+ images to a grayscale image.  B has size M x N x R.
+
+ A limitation of feval_arrays is that it does not pass state information to fhandle.  For
+ example, fhandle may want to know how many times it's been called.  This can be overcome
+ by saving state information inside fhandle using 'persistent' variables.  For an example
+ see imwrite2. 
+
+ INPUTS
+   A        - input array
+   fhandle  - operation to apply to each 'element' of A
+   params   - [varargin] parameters for each operation specified by fhandle
+
+ OUTPUTS
+   B        - output array
+
+ EXAMPLE
+   B = feval_arrays( A, @rgb2gray );      % where A is MxNx3xR
+   B = feval_arrays( A, @imresize, .5 );  % where A is MxNxR
+   B = feval_arrays( A, @imnormalize );   % where A has arbitrary dims
+   B = feval_arrays( A, @(x) {imresize(x{1},.5)} ); % resize each element in cell array
+
+ DATESTAMP
+   25-Jan-2005  2:00pm
+
+ See also <a href="feval_images.html" class="code" title="function X = feval_images( fhandle, params, srcdir, name, ext, nstart, nend, ndigits )">FEVAL_IMAGES</a>, IMWRITE2, PERSISTENT, <a href="ticstatus.html" class="code" title="function id = ticstatus( msg, updatefreq, updatemint, eraseprev )">TICSTATUS</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ticstatus.html" class="code" title="function id = ticstatus( msg, updatefreq, updatemint, eraseprev )">ticstatus</a>	Used to display the progress of a long process.</li><li><a href="tocstatus.html" class="code" title="function tocstatus( id, fracdone )">tocstatus</a>	Used to display the progress of a long process.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../classify/pca_randomvector.html" class="code" title="function Xr = pca_randomvector( U, mu, variances, k, n, hypershpere, show )">pca_randomvector</a>	Generate random vectors in PCA subspace.</li><li><a href="../images/imwrite2.html" class="code" title="function I = imwrite2( I, multflag, imagei, path, name, ext, ndigits, varargin )">imwrite2</a>	Similar to imwrite, except follows a strict naming convention.</li><li><a href="../images/jitter_image.html" class="code" title="function IJ = jitter_image( I, nphis, maxphi, ntrans, maxtrans, jsiz, reflectflag, scales )">jitter_image</a>	Creates multiple, slightly jittered versions of an image.</li><li><a href="../images/jitter_video.html" class="code" title="function IS = jitter_video( I, nphis, maxphi, ntrans, maxtrans, nttrans, maxttrans, jsiz )">jitter_video</a>	Creates multiple, slightly jittered versions of a video.</li><li><a href="../images/movie2images.html" class="code" title="function I = movie2images( M )">movie2images</a>	Creates a stack of images from a matlab movie M.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of normpdf2</title>
+  <meta name="keywords" content="normpdf2">
+  <meta name="description" content="Normal prob. density function (pdf) with arbitrary covariance matrix.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>normpdf2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Normal prob. density function (pdf) with arbitrary covariance matrix.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function ps = normpdf2(xs,m,C); </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Normal prob. density function (pdf) with arbitrary covariance matrix.
+
+ Evaluate the multi-variate density with mean vector m and covariance matrix C for the
+ input vector xs.  Assumes that the N datapoints are d dimensional.  Then m is dx1 or
+ 1xd, C is dxd, and xs is dxN or NxD where N is the number of samples to be evaluated.
+
+ INPUTS
+   xs  - points to evaluated (Nxd or dxN)
+   m   - mean vector (dx1 or 1xd)
+   C   - Covariance matrix (dxd)
+
+ OUTPUTS
+   ps  - probability density at each x
+
+ DATESTAMP
+   29-Sep-2005  2:00pm</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../filters/filter_DOG_2D.html" class="code" title="function G = filter_DOG_2D( r, sig, order, show )">filter_DOG_2D</a>	Difference of Gaussian (Dog) Filter.</li><li><a href="../filters/filter_gauss_nD.html" class="code" title="function G = filter_gauss_nD( dims, mu, C, show )">filter_gauss_nD</a>	n-dimensional Gaussian filter.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

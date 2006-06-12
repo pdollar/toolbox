@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of imageMLG</title>
+  <meta name="keywords" content="imageMLG">
+  <meta name="description" content="Calculates maximum likelihood parameters of gaussian that gave rise to image G.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>imageMLG
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Calculates maximum likelihood parameters of gaussian that gave rise to image G.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function varargout = imageMLG( G, symmFlag, show ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Calculates maximum likelihood parameters of gaussian that gave rise to image G.
+
+ Suppose G contains an image of a gaussian distribution.  One way to recover the
+ parameters of the gaussian is to threshold the image, and then estimate the
+ mean/covariance based on the coordinates of the thresholded points.  A better method is
+ to do no thresholding and instead use all the coordinates, weighted by their value.
+ This function does the latter, except in a very efficient manner since all computations
+ are done in parallel over the entire image. 
+
+ This function works over 2D or 3D images.  It makes most sense when G in fact contains
+ an image of a single gaussian, but a result will be returned regardless.  All operations
+ are performed on abs(G) in case it contains negative or complex values.
+
+ symmFlag is an optional flag that if set to 1 then imageMLG recovers the maximum
+ likelihood symmetric gaussian.  That is the variance in each direction is equal, and all
+ covariance terms are 0.  If symmFlag is set to 2 and G is 3D, imageMLG recovers the ML
+ guassian with equal variance in the 1st 2 dimensions (row and col) and all covariance
+ terms equal to 0, but a possibly different variance in the 3rd (z or t) dimension.
+
+ INPUTS
+   G           - image of a gaussian (weighted pixels)
+   symmFlag    - [optional] see above
+   show        - [optional] figure to use for display (no display if == 0)
+
+ OUTPUTS
+   mu      - 2 or 3 element vector specifying the mean [row,col,z]
+   C       - 2x2 or 3x3 covariance matrix [row,col,z]
+   GR      - image of the recovered gaussian (faster if omitted)
+   logl    - log likelihood of G given the recovered gaussian (faster if omitted)
+
+ EXAMPLE
+   % example 1 [2D]
+   R = rotation_matrix2D( pi/6 );  C=R'*[10^2 0; 0 20^2]*R;
+   G = filter_gauss_nD( [200, 300], [150,100], C, 0 );
+   [mu,C,GR,logl] = imageMLG( G, 0, 1 );
+   mask = mask_ellipse( size(G,1), size(G,2), mu, C ); 
+   figure(3); im(mask)
+   % example 2 [3D]
+   R = rotation_matrix3D( [1,1,0], pi/4 ); 
+   C = R'*[5^2 0 0; 0 2^2 0; 0 0 4^2]*R;
+   G = filter_gauss_nD( [50,50,50], [25,25,25], C, 0 );
+   [mu,C,GR,logl] = imageMLG( G, 0, 1 );
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also GAUSS2ELLIPSE, PLOT_GAUSSELLIPSES, <a href="mask_ellipse.html" class="code" title="function mask = mask_ellipse( mrows, ncols, varargin )">MASK_ELLIPSE</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../filters/filter_gauss_nD.html" class="code" title="function G = filter_gauss_nD( dims, mu, C, show )">filter_gauss_nD</a>	n-dimensional Gaussian filter.</li><li><a href="im.html" class="code" title="function im( I, range );">im</a>	IM [2D] Function for displaying grayscale images.</li><li><a href="montage2.html" class="code" title="function varargout = montage2( IS, showlines, extrainfo, clim, mm, nn, labels )">montage2</a>	[3D] Used to display a stack of T images.</li><li><a href="../matlab/plot_gaussellipses.html" class="code" title="function plot_gaussellipses( mus, Cs, d )">plot_gaussellipses</a>	Plots 2D ellipses derived from 2D Gaussians specified by mus & Cs.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

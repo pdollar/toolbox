@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of confmatrix</title>
+  <meta name="keywords" content="confmatrix">
+  <meta name="description" content="Generates a confusion matrix according to true and predicted data labels.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html classify -->
+<h1>confmatrix
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Generates a confusion matrix according to true and predicted data labels.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function CM = confmatrix( IDXtrue, IDXpred, ntypes ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Generates a confusion matrix according to true and predicted data labels.
+
+ CM(i,j) denotes the number of elements of class i that were given label j.  In other
+ words, each row i contains the predictions for elements whos actual class was i.  If
+ IDXpred is perfect, then CM is a diagnol matrix with CM(i,i) equal to the number of
+ instances of class i.  
+
+ To normalize CM to fall between [0,1], divide each row by the sum of that row:
+   CMnorm = CM ./ repmat( sum(CM,2), [1 size(CM,2)] );
+
+ INPUTS
+   IDXtrue     - nx1 array of true labels [int values between 1 and ntypes]
+   IDXpred     - nx1 array of predicted labels [int values between 1 and ntypes]
+   ntypes      - maximum number of types (should be &gt; max(IDX))
+
+ OUTPUTS
+   CM          - ntypes x ntypes confusion array with integer values
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="confmatrix_show.html" class="code" title="function confmatrix_show( CM, types, pvpairs, ndigits )">CONFMATRIX_SHOW</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../matlab/checknumericargs.html" class="code" title="function [x,er] = checknumericargs( x, siz, integerflag, signflag )">checknumericargs</a>	Helper utility for checking numeric vector arguments.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="democlassify.html" class="code" title="function democlassify">democlassify</a>	A demo used to test and demonstrate the usage of classifiers (clf_*)</li><li><a href="nfoldxval.html" class="code" title="function CM=nfoldxval( data, IDX, clfinit, clfparams, types, ignoretypes, fname, show )">nfoldxval</a>	Runs n-fold cross validation on data with a given classifier.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

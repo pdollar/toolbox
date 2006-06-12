@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of pca</title>
+  <meta name="keywords" content="pca">
+  <meta name="description" content="principal components analysis (alternative to princomp).">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html classify -->
+<h1>pca
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>principal components analysis (alternative to princomp).</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ U, mu, variances ] = pca( X ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> principal components analysis (alternative to princomp).
+
+ A simple dimensionality reduction technique.  Use this function to create an orthonormal
+ basis for the space R^N.  This basis has the property that the coordinates of a vector x
+ in R^N are of decreasing importance.  Hence instead of using all N coordinates to
+ specify the location of x, using only the first k&lt;N still gives a vector xhat that is
+ very close to x with high probability.  
+
+ Use this function to retrieve the basis U.  Use pca_apply.m to retrieve that basis
+ coefficients for a novel vector x.  Also, use pca_visualize(X,...) for visualization of
+ the approximated X. 
+
+ This function operates on arrays of arbitrary dimension, by first converting the array
+ to a vector.  That is if X is n dimensional, say of dims d1 x d2 x...x dn-1 x dn.  Then
+ the first n-1 dimensions of X are comined. That is X is flattened to be 2 dimensional:
+ (d1 * d2 * ...* dn-1) x dn.  
+
+ Once X is converted to 2 dimensions of size Nxn, each column represents a single 
+ observation, and each row is a different variable.  Note that this is the opposite of
+ many matlab functions such as princomp.  So if X is MxNxK, then X(:,:,i) representes the
+ ith observation.  This is useful if X is a stack of images (each image will
+ automatically get vectorized).  Likewise if X is MxNxKxR, then X(:,:,:,i) becomes the
+ ith observation, which is useful if X is a collection of videos each of size MxNxK.
+
+ If X is very large, it is samlped before running PCA, using randomsample.
+
+ To calculate residuals: 
+   residuals = variances / sum(variances); 
+   residuals = cumsum(residuals); plot( residuals, '- .' )
+
+ INPUTS
+   X           - n-dim array of size (d1 x d2 x...x dn-1) x dn (treated as dn elements)
+
+ OUTPUTS
+   U           - 2D array of size (d1 * d2 * ...* dn-1) x r, where each column represents 
+               - a principal component of X (after X is flattened).
+   mu          - Array of size d1 x d2 x...x dn-1 which represents the mean of X.
+   variances   - sorted eigenvalues corresponding to eigenvectors in U 
+
+ EXAMPLE
+   load pca_data;  
+   [ U, mu, variances ] = pca( I3D1(:,:,1:12) );
+   [ Y, Xhat, pe ] = pca_apply( I3D1(:,:,1), U, mu, variances, 5 );
+   figure(1); im(I3D1(:,:,1));  figure(2); im(Xhat);
+   pca_visualize( U, mu, variances, I3D1, 13, [0:12], [], 3 );
+
+ DATESTAMP
+   29-Nov-2005  2:00pm
+
+ See also PRINCOMP, <a href="pca_apply.html" class="code" title="function [ Yk, Xhat, avsq, avsq_orig ] = pca_apply( X, U, mu, variances, k )">PCA_APPLY</a>, <a href="pca_visualize.html" class="code" title="function varargout = pca_visualize( U, mu, variances, X, index, ks, filename, show )">PCA_VISUALIZE</a>, <a href="visualize_data.html" class="code" title="function visualize_data( X, k, IDX, types )">VISUALIZE_DATA</a>, RANDOMSAMPLE</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../matlab/randomsample.html" class="code" title="function [X,keeplocs] = randomsample( X, maxmegs )">randomsample</a>	Samples elements of X so result uses at most maxmegs megabytes of memory.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="nfoldxval.html" class="code" title="function CM=nfoldxval( data, IDX, clfinit, clfparams, types, ignoretypes, fname, show )">nfoldxval</a>	Runs n-fold cross validation on data with a given classifier.</li><li><a href="visualize_data.html" class="code" title="function visualize_data( X, k, IDX, types )">visualize_data</a>	Project high dim. data unto principal components (PCA) for visualization.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

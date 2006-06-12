@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of xcorrn</title>
+  <meta name="keywords" content="xcorrn">
+  <meta name="description" content="n-dimensional cross-correlation.  Generalized version of xcorr2.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>xcorrn
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>n-dimensional cross-correlation.  Generalized version of xcorr2.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function C = xcorrn( A, T, shape ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> n-dimensional cross-correlation.  Generalized version of xcorr2.
+
+ For 2 dimensional inputs this function is exactly the same as xcorr2, but also works in
+ higher dimensions.   It can also be more efficient because it performs convolution in
+ either the spatial or frequency domain.   
+
+ The order of parameters is reversed from normxcorrn.  This is to be compatible with the
+ matlab functions normxcorr2 anc xcorr2 which take parameters in different orders.
+
+ For more information see help on xcorr2.m.
+ For example usage see normxcorrn.  
+
+ INPUTS
+   A           - first d-dimensional matrix 
+   T           - second d-dimensional matrix 
+   shape       - [optional] 'valid', 'full', or 'same', see convn_fast help
+
+ OUTPUTS
+   C           - correlation matrix
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+ 
+ See also XCORR2, <a href="normxcorrn.html" class="code" title="function C =  normxcorrn( T, A, shape )">NORMXCORRN</a>, <a href="xeucn.html" class="code" title="function C = xeucn( A, T, shape )">XEUCN</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="convn_fast.html" class="code" title="function C = convn_fast( A, B, shape )">convn_fast</a>	Fast convolution, replacement for both conv2 and convn.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

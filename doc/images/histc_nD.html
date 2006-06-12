@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of histc_nD</title>
+  <meta name="keywords" content="histc_nD">
+  <meta name="description" content="Generalized, multidimensional version of normalized histc (histogram count).">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>histc_nD
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Generalized, multidimensional version of normalized histc (histogram count).</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function h = histc_nD( I, edges, weightmask ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Generalized, multidimensional version of normalized histc (histogram count).
+
+ Generalized version of normalized histc (histogram count) that allows for weighted
+ pixels and also multiple channels.  For example, suppose I is a nx2 array (n samples, 2
+ channels). Then histc_nD creates a 2D histogram such that h(q1,q2) contains the weighted
+ count of values [v1;v2] in I such that edges1(q1)&lt;=v1&lt;edges1(q1+1) and 
+ edges2(q2)&lt;=v2&lt;edges2(q2+1). 
+
+ The histogram edge vectors can be specified in a number of ways.  If edges is a scalar,
+ it is treated as a desired number of bins per dimension and a separate edges vector is
+ generated for each dimension, for details on how this works see histc_1D.  If edges is a
+ vector, than this vector is used as the edges vector along every dimension.  Finally, to
+ specify a different set of edges along each dimension use a cell vector of length nd
+ where each element is again a scalar or vector. Finally h is normalized so that
+ sum(h(:))==1.  
+
+ See histc_1D for more details about edges and nbins. 
+
+ INPUTS
+   I           - 2D numeric array [n x nd] 
+   edges       - either a scalar, vector, or length n cell vector of scalars and vectors
+   weightmask  - [optional] n length vector of weights
+
+ OUTPUTS
+   h           - histogram (array of size nbins1xnbins2x...)
+ 
+ EXAMPLE
+   G = filter_gauss_nD([1000 1000],[],[],0); G=G(:);
+   h=histc_nD( [G G], 25 ); figure(1); im(h); %decreasing vals along diagnol
+   h=histc_nD( [G G], 25, G ); figure(2); im(h); %constants along diagnol
+   h=histc_nD( [randn(size(G)) G], 5 ); figure(3); im(h); % symmetric about x, dec on y
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="histc_1D.html" class="code" title="function h = histc_1D( I, edges, weightmask )">HISTC_1D</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="histc_sift_nD.html" class="code" title="function hs = histc_sift_nD( I, edges, pargmask, weightmask, multch )">histc_sift_nD</a>	Creates a series of locally position dependent histograms.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of clf_ecoc</title>
+  <meta name="keywords" content="clf_ecoc">
+  <meta name="description" content="Wrapper for ecoc that makes ecoc compatible with nfoldxval.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html classify -->
+<h1>clf_ecoc
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Wrapper for ecoc that makes ecoc compatible with nfoldxval.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function clf = clf_ecoc(p,clfinit,clfparams,nclasses,use01targets) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Wrapper for ecoc that makes ecoc compatible with nfoldxval.
+
+ Requires the SVM toolbox by Anton Schwaighofer.
+
+ INPUTS
+   p               - data dimension
+   clfinit         - binary classifier init (see nfoldxval)
+   clfparams       - binary classifier parameters (see nfoldxval)
+   nclasses        - number of classes (currently only 3&lt;=nclasses&lt;=7 suppored)
+   use01targets    - see ecoc
+
+ OUTPUTS
+   clf             - see ecoc
+
+ DATESTAMP
+   11-Oct-2005  2:45pm
+
+ See also ECOC, <a href="nfoldxval.html" class="code" title="function CM=nfoldxval( data, IDX, clfinit, clfparams, types, ignoretypes, fname, show )">NFOLDXVAL</a>, <a href="clf_ecoc_code.html" class="code" title="function [C,nbits] = clf_ecoc_code( k )">CLF_ECOC_CODE</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="clf_ecoc_code.html" class="code" title="function [C,nbits] = clf_ecoc_code( k )">clf_ecoc_code</a>	Generates optimal ECOC codes when 3<=nclasses<=7.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="democlassify.html" class="code" title="function democlassify">democlassify</a>	A demo used to test and demonstrate the usage of classifiers (clf_*)</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

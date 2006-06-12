@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of filter_visualize_2D</title>
+  <meta name="keywords" content="filter_visualize_2D">
+  <meta name="description" content="Used to help visualize a 2D filter.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html filters -->
+<h1>filter_visualize_2D
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Used to help visualize a 2D filter.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function filter_visualize_2D( F, plotline ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Used to help visualize a 2D filter.  
+
+ Marks local image maxima with a green '+' and minima with a red '+'. Also shows the fft
+ response of the filter.  Can optionally also plot a scanline through either center row+2
+ or center column+2.  
+
+ INPUTS
+   F           - filter to visualize
+   plotline    - if 1, then draw line through center row+2, if 2 then 
+                 througt center col+2.  else no line. optional.
+
+ DATESTAMP
+   29-Sep-2005  2:00pm</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../images/im.html" class="code" title="function im( I, range );">im</a>	IM [2D] Function for displaying grayscale images.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="filter_DOG_2D.html" class="code" title="function G = filter_DOG_2D( r, sig, order, show )">filter_DOG_2D</a>	Difference of Gaussian (Dog) Filter.</li><li><a href="filter_DOOG_2D.html" class="code" title="function dG = filter_DOOG_2D( r, sigx, sigy, nderivs, show )">filter_DOOG_2D</a>	2D difference of offset Gaussian (DooG) filters.</li><li><a href="filter_gabor_2D.html" class="code" title="function [Feven,Fodd]=filter_gabor_2D(r,sig,lam,theta,show)">filter_gabor_2D</a>	2D Gabor filters.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

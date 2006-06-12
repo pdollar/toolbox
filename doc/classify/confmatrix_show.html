@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of confmatrix_show</title>
+  <meta name="keywords" content="confmatrix_show">
+  <meta name="description" content="Used to display a confusion matrix.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html classify -->
+<h1>confmatrix_show
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Used to display a confusion matrix.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function confmatrix_show( CM, types, pvpairs, ndigits ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Used to display a confusion matrix.  
+
+ See confmatrix for general format and info on confusion matricies.  This function
+ normalizes the CM before displaying (hence all values range in [0,1] and rows sum to 1. 
+
+ INPUTS
+   CM          - ntypes x ntypes confusion array -- see confusmatrix
+   types       - [optional] cell array of length ntypes of text labels for each type 
+   pvpairs     - [optional] parameter / value list for text.m
+   ndigits     - [optional] number of digits after decimal to display
+
+ OUTPUTS
+   NONE
+
+ EXAMPLE
+   cliptypes = { 'anger','disgust','fear','joy','sadness','surprise' };
+   confmatrix_show( rand(6)/3+eye(6), cliptypes, {'FontSize',20} )
+   title('confusion matrix','FontSize',24);
+
+ DATESTAMP
+   07-Oct-2005  5:00pm
+
+ See also <a href="confmatrix.html" class="code" title="function CM = confmatrix( IDXtrue, IDXpred, ntypes )">CONFMATRIX</a>, TEXT2</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../matlab/imlabel.html" class="code" title="function imlabel( labels, position, slant, pvpairs )">imlabel</a>	Improved method for labeling figure axes.</li><li><a href="../matlab/int2str2.html" class="code" title="function nstr = int2str2( n, ndigits )">int2str2</a>	Convert integer to string of given length; improved version of int2str.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="nfoldxval.html" class="code" title="function CM=nfoldxval( data, IDX, clfinit, clfparams, types, ignoretypes, fname, show )">nfoldxval</a>	Runs n-fold cross validation on data with a given classifier.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

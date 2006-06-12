@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of randomsample</title>
+  <meta name="keywords" content="randomsample">
+  <meta name="description" content="Samples elements of X so result uses at most maxmegs megabytes of memory.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>randomsample
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Samples elements of X so result uses at most maxmegs megabytes of memory.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [X,keeplocs] = randomsample( X, maxmegs ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Samples elements of X so result uses at most maxmegs megabytes of memory.
+ 
+ X must be an n dimensional array with the last dimension used to index samples of X. So
+ for example if X has size d1 x d2 x...x dn-1 x dn, it is treated as having dn elements
+ of size (d1 x d2 x...x dn-1), and the resulting array Xsam will have dimension d1 x d2
+ x...x dn-1 x dn' where dn' &lt;= dn.
+
+ Different types of arrays require different amounts of memory.  Each double requries 8
+ bytes of memory, hence an array with 1.024 million elements of type double requires 8MB
+ memory.  Each uint8 requires 1 byte, so the same size array would require 1MB.  Note
+ that when saved to .mat files arrays may take up more or less memory.  
+
+ Note, to see how much memory a variable x is using in memory, use:
+   s=whos('x'); mb=s.bytes/2^20
+
+ INPUTS
+   X           - n-dim array of size (d1 x d2 x...x dn-1) x dn (treated as dn elements)
+   maxmegs     - maximum number of megs Xsam is allowed to take up
+ 
+ OUTPUTS
+   Xsam        - n-dim array of size (d1 x d2 x...x dn-1) x dn' where dn'&lt;=dn
+   keeplocs    - vector of indicies kept from X;  Xsam=X(:,..,:,keeplocs)
+
+ EXAMPLE
+   % Xsam should have size: 1024xround(1024/10)
+   X = uint8(ones(2^10,2^10));
+   Xsam = randomsample( X, 1/10 );
+   % Xsam should have size: 100x10x~(1000/8) 
+   X = rand(100,10,1000);
+   Xsam = randomsample( X, 1 );
+
+ DATESTAMP
+   29-Sep-2005  2:00pm</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../classify/pca.html" class="code" title="function [ U, mu, variances ] = pca( X )">pca</a>	principal components analysis (alternative to princomp).</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

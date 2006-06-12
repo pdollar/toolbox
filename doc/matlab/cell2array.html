@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of cell2array</title>
+  <meta name="keywords" content="cell2array">
+  <meta name="description" content="Converts a cell array into a regular array.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>cell2array
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Converts a cell array into a regular array.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function Y = cell2array( X, padelement ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Converts a cell array into a regular array. 
+
+ Each element of X must be a regular array, and must have the same number of dimensions
+ k.  Converts X to an array Y of dimension k+1 where Y(:,:...,:,i) is X{i} padded to be
+ as big as the biggest element in X (along each dimension).   
+
+ Specifically, let di1..dik be the k dimensions of element X{i}.  Let dj=max(dij) for
+ each j.  Then each element of X{i} is padded to have size [d1 ... dk], and then the
+ elements of X are stacked into a vector.
+
+ Treats the cell array X as a vector (so ignores the layout of X).
+
+ INPUTS
+   X               - cell array where each element is a regular array with dimension k
+   padelement      - [optional] element with which to pad (0 by default)
+
+ OUTPUTS
+   Y   - resulting array of dimension k+1
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="mat2cell2.html" class="code" title="function C = mat2cell2( X, parts )">MAT2CELL2</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="arraycrop2dims.html" class="code" title="function IC = arraycrop2dims( I, dims, padelement )">arraycrop2dims</a>	Pads or crops I appropriately so that size(IC)==dims.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../images/makemovies.html" class="code" title="function M = makemovies( IS, montage2params )">makemovies</a>	[4D] Used to convert R sets of equal length videos into a single movie.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

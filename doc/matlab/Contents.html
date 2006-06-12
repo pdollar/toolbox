@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Contents</title>
+  <meta name="keywords" content="Contents">
+  <meta name="description" content="MATLAB">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>Contents
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>MATLAB</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> MATLAB
+ See also
+
+ Quick clear:
+   <a href="c.html" class="code" title="">c</a>                    - clc
+   <a href="cc.html" class="code" title="">cc</a>                   - close all, clc
+   <a href="ccc.html" class="code" title="">ccc</a>                  - clear, close all, clc, clear global
+
+ Convenient [but no faster] replacement of &quot;for loops&quot;:
+   <a href="feval_arrays.html" class="code" title="function B = feval_arrays( A, fhandle, varargin )">feval_arrays</a>         - Used to apply the same operation to a stack of array elements.
+   <a href="feval_images.html" class="code" title="function X = feval_images( fhandle, params, srcdir, name, ext, nstart, nend, ndigits )">feval_images</a>         - Used to apply the same operation to all images in given directory.
+   <a href="feval_mats.html" class="code" title="function X = feval_mats( fhandle, matcontents, params, srcdir, prefix )">feval_mats</a>           - Used to apply the same operation to all .mat files in given directory.
+
+ Timing:
+   <a href="ticstatus.html" class="code" title="function id = ticstatus( msg, updatefreq, updatemint, eraseprev )">ticstatus</a>            - Used to display the progress of a long process.
+   <a href="tocstatus.html" class="code" title="function tocstatus( id, fracdone )">tocstatus</a>            - Used to display the progress of a long process.
+
+ Array manipulation:
+   <a href="arraycrop2dims.html" class="code" title="function IC = arraycrop2dims( I, dims, padelement )">arraycrop2dims</a>       - Pads or crops I appropriately so that size(IC)==dims.
+   <a href="arraycrop_full.html" class="code" title="function I = arraycrop_full( I, start_locs, end_locs, padelement )">arraycrop_full</a>       - Used to crop a rectangular region from an n dimensional array.
+   <a href="cell2array.html" class="code" title="function Y = cell2array( X, padelement )">cell2array</a>           - Converts a cell array into a regular array.
+   <a href="mat2cell2.html" class="code" title="function C = mat2cell2( X, parts )">mat2cell2</a>            - Break matrix up into a cell array of same sized matrices.
+
+ Display:
+   <a href="imlabel.html" class="code" title="function imlabel( labels, position, slant, pvpairs )">imlabel</a>              - Improved method for labeling figure axes.
+   <a href="plot_ellipse.html" class="code" title="function varargout = plot_ellipse( crow, ccol, ra, rb, phi, color, npoints )">plot_ellipse</a>         - Adds an ellipse to the current plot.
+   <a href="plot_gaussellipses.html" class="code" title="function plot_gaussellipses( mus, Cs, d )">plot_gaussellipses</a>   - Plots 2D ellipses derived from 2D Gaussians specified by mus &amp; Cs.
+   <a href="text2.html" class="code" title="function varargout = text2( varargin )">text2</a>                - Wrapper for text.m that ensures displayed text fits in figure.
+   <a href="figureresized.html" class="code" title="function varargout = figuresized( screenratio, varargin )">figureresized</a>        - Creates a figures that takes up certain area of screen.
+
+ Miscellaneous:
+   <a href="checknumericargs.html" class="code" title="function [x,er] = checknumericargs( x, siz, integerflag, signflag )">checknumericargs</a>     - Helper utility for checking numeric vector arguments.
+   <a href="gauss2ellipse.html" class="code" title="function [ crow, ccol, ra, rb, phi ] = gauss2ellipse( mu, C, d )">gauss2ellipse</a>        - Creates an ellipse representing the 2D Gaussian distribution.
+   <a href="getargs.html" class="code" title="function [emsg,varargout]=getargs(pnames,dflts,varargin)">getargs</a>              - Utility to process parameter name/value pairs.
+   <a href="ind2sub2.html" class="code" title="function sub = ind2sub2(siz,ind)">ind2sub2</a>             - Improved version of ind2sub.
+   <a href="int2str2.html" class="code" title="function nstr = int2str2( n, ndigits )">int2str2</a>             - Convert integer to string of given length; improved version of int2str.
+   <a href="isfield2.html" class="code" title="function tf = isfield2( S, fs, isinit )">isfield2</a>             - More comprehensive version of isfield.
+   <a href="mode.html" class="code" title="function y=mode(x)">mode</a>                 - Returns the <a href="mode.html" class="code" title="function y=mode(x)">mode</a> of a vector.
+   <a href="normpdf2.html" class="code" title="function ps = normpdf2(xs,m,C);">normpdf2</a>             - Normal prob. density function (pdf) with arbitrary covariance matrix.
+   <a href="num2strs.html" class="code" title="function Y = num2strs( X, varargin )">num2strs</a>             - Applies num2str to each element of an array X.
+   <a href="randint2.html" class="code" title="function R = randint2( m, n, range )">randint2</a>             - Faster but restricted version of randint.
+   <a href="randomsample.html" class="code" title="function [X,keeplocs] = randomsample( X, maxmegs )">randomsample</a>         - Samples elements of X so result uses at most maxmegs megabytes of memory.
+   <a href="randperm2.html" class="code" title="function p = randperm2(n,k);">randperm2</a>            - Returns a random permutation of integers.
+   <a href="recover_rotation3D.html" class="code" title="function [u,theta] = recover_rotation3D( R )">recover_rotation3D</a>   - Takes a rotation matrix and extracts the rotation angle and axis.
+   <a href="rotation_matrix2D.html" class="code" title="function R = rotation_matrix2D( theta )">rotation_matrix2D</a>    - Returns the matrix: R=[cos(t) -sin(t); sin(t) cos(t)].
+   <a href="rotation_matrix3D.html" class="code" title="function R = rotation_matrix3D( u, theta )">rotation_matrix3D</a>    - Uses Rodrigues's formula to create a 3x3 rotation matrix R.
+   <a href="simplecache.html" class="code" title="function varargout = simplecache( op, cache, varargin )">simplecache</a>          - A very simply cache that can be used to store results of computations.
+   <a href="sub2ind2.html" class="code" title="function ind = sub2ind2(siz,sub)">sub2ind2</a>             - Improved version of sub2ind.
+
+ Thin plate splines:
+   <a href="tps_getwarp.html" class="code" title="function [wx, affinex, wy, affiney, L, Ln_inv, bend_energy ] =tps_getwarp( lambda, xs_source, ys_source, xs_dest, ys_dest )">tps_getwarp</a>          - Given two sets of corresponding points, calculates warp between them.
+   <a href="tps_interpolate.html" class="code" title="function [ xs_p, ys_p ] = tps_interpolate( xs_source, ys_source, xs_dest, ys_dest,wx, affinex, wy, affiney, xs, ys, show )">tps_interpolate</a>      - Apply warp (obtained by tps_getwarp) to a set of new points.
+   <a href="tps_interpolateimage.html" class="code" title="function IR = tps_interpolateimage( I_source, xs_source, ys_source,xs_dest, ys_dest, wx, affinex, wy, affiney )">tps_interpolateimage</a> - Interpolate I_source according to the warp from I_source-&gt;I_dest.
+   <a href="tps_random.html" class="code" title="function w = tps_random( Ln_inv, bend_energy )">tps_random</a>           - Obtain a random warp with the same bending energy as the original.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of meanshiftim</title>
+  <meta name="keywords" content="meanshiftim">
+  <meta name="description" content="Applies the meanshift algorithm to a joint spatial/range image.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html classify -->
+<h1>meanshiftim
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Applies the meanshift algorithm to a joint spatial/range image.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [M,Vr,Vc] = meanshiftim( X, sig_spt, sig_rng, softflag, maxiter, mindelta ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Applies the meanshift algorithm to a joint spatial/range image.  
+
+ See &quot;Mean Shift Analysis and Applications&quot; by Comaniciu &amp; Meer for info.
+
+ Assumes X is an MxNxP array, where an X(i,j,:) represents the range data at locations
+ (i,j).  This function runs meanshift on each of the MxN data points.  It takes advantage
+ of the lattice structure of an image for efficiency (it only needs to calculate full
+ distance between two points if they are near each other spatially). 
+
+ In the original formulation of the algorithm, after normalization of the data, the
+ search window around each point x has radius 1 (ie corresponding to 1 std of the data).
+ That is the search window only encloses 2*s+1 pixels, and of those, all which fall
+ within 1 unit from x are used to calcluate the new mean.  If softflag==0 the original
+ formulation is used.  If softflag==1, instead of using a fixed radius, each point p is
+ used in the calulation of the mean with points close to x given significantly more
+ weight.  Specifically, each point p is given weight exp(-dist(x,p)).  So instead of
+ having a fixed cutoff at r, the cutoff is 'soft' (same idea as in softmax), and occurs
+ at approximately r.  The implementation remains efficient by actually using a hard
+ cutoff at points further then 2r spatially from x.
+
+ The resulting matrix M is of size MxNx(P+2).  M(i,j,1) represents the convergent row
+ location of X(i,j,:) - (which had initial row location i) and M(i,j,2) represents the
+ final column location.  M(i,j,p+2) represents the convergent value for X(i,j,p).  The
+ optionaly outputs Vr and Vc are 2D arrays where Vr(i,j)=M(i,j,1)-i and
+ Vc(i,j)=M(i,j,2)-j.  That is they represent the spatial offset between the original
+ location of a point and its convergent location.  Display using quiver(Vc,Vr,0).
+
+ INPUTS
+   X        - MxNxP data array, P may be 1
+   sig_spt  - integer specifying spatial standard deviation
+   sig_rng  - value specifying the standard deviation of the range data
+   softflag - [optional] 0 or 1 [see above]
+   maxiter  - [optional] maximum number of iterations per data point
+   mindelta - [optional] minimum amount of spatial change defining convergence 
+
+ OUTPUTS
+   M       - array of convergent locations [see above]
+   Vr      - spatial motion in row direction
+   Vc      - spatial motion in col direction
+
+ EXAMPLE
+   I=double(imread('cameraman.tif'))/255;
+   [M,Vr,Vc] = meanshiftim( I,5,.2 );
+   figure(1); im(I); figure(2); im( M(:,:,3) );
+   % color image:
+   I=double(imread('hestain.png'))/255;
+   [M,Vr,Vc] = meanshiftim( I,5,.2 );
+   figure(1); im(I); figure(2); im( M(:,:,3:end) );
+
+ DATESTAMP
+   26-Oct-2005  4:00pm
+
+ See also <a href="meanshift.html" class="code" title="function [IDX,M] = meanshift(X, radius, rate, maxiter, minCsize, blur )">MEANSHIFT</a>, <a href="meanshiftim_explore.html" class="code" title="function meanshiftim_explore( I, X, sig_spt, sig_rng, show )">MEANSHIFTIM_EXPLORE</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../matlab/c.html" class="code" title="">c</a>	clc</li><li><a href="../matlab/checknumericargs.html" class="code" title="function [x,er] = checknumericargs( x, siz, integerflag, signflag )">checknumericargs</a>	Helper utility for checking numeric vector arguments.</li><li><a href="../matlab/ticstatus.html" class="code" title="function id = ticstatus( msg, updatefreq, updatemint, eraseprev )">ticstatus</a>	Used to display the progress of a long process.</li><li><a href="../matlab/tocstatus.html" class="code" title="function tocstatus( id, fracdone )">tocstatus</a>	Used to display the progress of a long process.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

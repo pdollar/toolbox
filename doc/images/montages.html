@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of montages</title>
+  <meta name="keywords" content="montages">
+  <meta name="description" content="[4D] Used to display R sets of T images each.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>montages
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>[4D] Used to display R sets of T images each.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function varargout = montages( IS, montage2params, labels, montage2labels ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> [4D] Used to display R sets of T images each.
+
+ Displays one montage (see montage2) per subplot. 
+
+ INPUTS
+   IS               - MxNxTxR or MxNx1xTxR or MxNx3xTxR array, or cell array where each
+                      element is an MxNxT or MxNx1xT or MxNx3xT array
+   montage2params   - [optional] params for montage2 EXCEPT labels; ex: {showlines}
+   lables           - [optional] cell array of strings - titles for subplots
+   montage2labels   - [optional] cell of cells of strings: montage2 lables for subplots
+
+ OUTPUTS
+   mm          - #montages/row 
+   nn          - #montages/col
+
+ EXAMPLE
+   load( 'images.mat' );
+   imageclusters = clustermontage( images, IDXi, 16, 1 );
+   montages( imageclusters );
+
+ DATESTAMP
+   29-Sep-2005  2:00pm
+
+ See also <a href="montages2.html" class="code" title="function varargout = montages2( IS, montage2params, padsize )">MONTAGES2</a>, <a href="makemovies.html" class="code" title="function M = makemovies( IS, montage2params )">MAKEMOVIES</a>, <a href="montage2.html" class="code" title="function varargout = montage2( IS, showlines, extrainfo, clim, mm, nn, labels )">MONTAGE2</a>, <a href="clustermontage.html" class="code" title="function XC = clustermontage( X, IDX, nvals, pad )">CLUSTERMONTAGE</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="montage2.html" class="code" title="function varargout = montage2( IS, showlines, extrainfo, clim, mm, nn, labels )">montage2</a>	[3D] Used to display a stack of T images.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="makemoviesets.html" class="code" title="function M = makemoviesets( IS, montagesparams )">makemoviesets</a>	[5D] Used to convert S sets of R videos into a movie.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

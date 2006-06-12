@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of nfoldxval</title>
+  <meta name="keywords" content="nfoldxval">
+  <meta name="description" content="Runs n-fold cross validation on data with a given classifier.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html classify -->
+<h1>nfoldxval
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Runs n-fold cross validation on data with a given classifier.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function CM=nfoldxval( data, IDX, clfinit, clfparams, types, ignoretypes, fname, show ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Runs n-fold cross validation on data with a given classifier.
+
+ Given n separate labeled data sets, trains classifier using n-1 data sets, test on
+ remaining one.  Average results over all n such runs.  Shows overall results in average
+ confusion matrix.
+
+ The classifier is passed in as a parameter.  For this to work the classifier (clf) must
+ follow certain conventions.  The conventions are as follows:
+   1) The following must initialize the clf ('p' is the dimension of the data):
+       clf = clfinit( p, clfparams{:} ) 
+   2) The created clf must point to 2 functions for training and applying it:
+       clf.fun_train    and   clf.fun_fwd
+   3) For training the following will be called:
+       clf = clf.fun_train( clf, X, Y );
+   4) For testing the following will be called:
+       pred = clf.fun_fwd( clf, Xtest );
+ The format for X is nxp where n is the number of data points and p is their dimension.
+ The format for Y is nx1.  Example of a classifier is: clfinit = @clf_lda
+
+ Given data in a cell array format, it might be useful to string out into single array:
+   IDX = cell2mat( permute( IDX, [2 1] ) );  data = cell2mat( permute( data, [2 1] ) );
+ For a simple, small dataset, can do the following to do leave one out classification:
+   [n,p]=size(data); IDX=mat2cell(IDX,ones(1,n),1);  data=mat2cell(data,ones(1,n),p);
+
+ Overall error can be calculated via:
+   er = 1-sum(diag(CM))/sum(CM(:))
+ Normalized confusion matrix can be calculated via:
+   CMn = CM ./ repmat( sum(CM,2), [1 size(CM,2)] );
+
+ INPUTS
+   data        - cell array of (n x p) arrays each of n samples of dim p
+   IDX         - cell array of (n x 1) arrays each of n labels
+   clfinit     - classifier initialization function
+   clfparams   - classifier parameters 
+   types       - [optional] cell array of string labels for types
+   ignoretypes - [optional] array of types we aren't interested in {eg: [1 4 5]}.
+   fname       - [optional] specify a file to save CM to, as well as image
+   show        - [optional] will display results in figure(show) 
+
+ OUTPUTS
+   CM          - confusion matrix
+
+ EXAMPLE
+   load clf_data; % 2 class data
+   nfoldxval( data, IDX, @clf_lda,{'linear'}, [],[],[],1 );      % LDA
+   nfoldxval( data, IDX, @clf_knn,{4},[],[],[],2 );              % 4 k nearest neighbor
+   nfoldxval( data, IDX, @clf_svm,{'poly',2},[],[],[],3 );       % polynomial SVM
+   nfoldxval( data, IDX, @clf_svm,{'rbf',2^-12},[],[],[],4 );    % rbf SVM
+   nfoldxval( data, IDX, @clf_dectree,{},[],[],[],5 );           % decision tree
+   % for multi-class data
+   nfoldxval( data, IDX, @clf_ecoc,{@clf_svm,{'rbf',2^-12},nclasses},[],[],[],6 ); % ECOC
+
+ DATESTAMP
+   11-Oct-2005  2:45pm
+
+ See also <a href="clf_lda.html" class="code" title="function clf = clf_lda( p, type, prior )">CLF_LDA</a>, <a href="clf_knn.html" class="code" title="function clf = clf_knn( p, k, dist_fn )">CLF_KNN</a>, <a href="clf_svm.html" class="code" title="function net = clf_svm(varargin)">CLF_SVM</a>, <a href="clf_ecoc.html" class="code" title="function clf = clf_ecoc(p,clfinit,clfparams,nclasses,use01targets)">CLF_ECOC</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="confmatrix.html" class="code" title="function CM = confmatrix( IDXtrue, IDXpred, ntypes )">confmatrix</a>	Generates a confusion matrix according to true and predicted data labels.</li><li><a href="confmatrix_show.html" class="code" title="function confmatrix_show( CM, types, pvpairs, ndigits )">confmatrix_show</a>	Used to display a confusion matrix.</li><li><a href="pca.html" class="code" title="function [ U, mu, variances ] = pca( X )">pca</a>	principal components analysis (alternative to princomp).</li><li><a href="pca_apply.html" class="code" title="function [ Yk, Xhat, avsq, avsq_orig ] = pca_apply( X, U, mu, variances, k )">pca_apply</a>	Companion function to pca.</li><li><a href="visualize_data.html" class="code" title="function visualize_data( X, k, IDX, types )">visualize_data</a>	Project high dim. data unto principal components (PCA) for visualization.</li><li><a href="../matlab/int2str2.html" class="code" title="function nstr = int2str2( n, ndigits )">int2str2</a>	Convert integer to string of given length; improved version of int2str.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

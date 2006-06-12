@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of clf_knn</title>
+  <meta name="keywords" content="clf_knn">
+  <meta name="description" content="Create a k nearest neighbor classifier.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html classify -->
+<h1>clf_knn
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Create a k nearest neighbor classifier.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function clf = clf_knn( p, k, dist_fn ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Create a k nearest neighbor classifier.
+ 
+ INPUTS
+   p       - data dimension
+   k       - number of nearest neighbors to look at 
+   dist_fn - [optional] distance function, squared euclidean by default
+
+ OUTPUTS
+   clf     - model ready to be trained
+
+ DATESTAMP
+   11-Oct-2005  2:45pm
+
+ See also <a href="nfoldxval.html" class="code" title="function CM=nfoldxval( data, IDX, clfinit, clfparams, types, ignoretypes, fname, show )">NFOLDXVAL</a>, <a href="clf_knn_train.html" class="code" title="function clf = clf_knn_train( clf, X, Y )">CLF_KNN_TRAIN</a>, <a href="clf_knn_fwd.html" class="code" title="function Y = clf_knn_fwd( clf, X )">CLF_KNN_FWD</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="clf_knn_fwd.html" class="code" title="function Y = clf_knn_fwd( clf, X )">clf_knn_fwd</a>	Apply a k-nearest neighbor classifier to X.</li><li><a href="clf_knn_train.html" class="code" title="function clf = clf_knn_train( clf, X, Y )">clf_knn_train</a>	Train a k nearest neighbor classifier (memorization).</li><li><a href="dist_euclidean.html" class="code" title="function D = dist_euclidean( X, Y )">dist_euclidean</a>	Calculates the Euclidean distance between vectors [FAST].</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="democlassify.html" class="code" title="function democlassify">democlassify</a>	A demo used to test and demonstrate the usage of classifiers (clf_*)</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

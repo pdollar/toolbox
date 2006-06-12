@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of meanshiftim_explore</title>
+  <meta name="keywords" content="meanshiftim_explore">
+  <meta name="description" content="Visualization to help choose sigmas for meanshiftim.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html classify -->
+<h1>meanshiftim_explore
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Visualization to help choose sigmas for meanshiftim.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function meanshiftim_explore( I, X, sig_spt, sig_rng, show ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Visualization to help choose sigmas for meanshiftim.
+
+ Displays the original image I, and prompts user to select a point on the image.  For
+ given point, calculates the distance (both spatial and range) to every other point in
+ the image.   It shows the results in a number of panes, which include 1) the original
+ image I, 2) Srange - similarity based on range only, 3) Seuc - similarity based on
+ Euclidean distance only, and 4) overall similarity.  Finally, in each image the green
+ dot (possibly occluded) shows the original point, and the blue dot shows the new mean of
+ the window after 1 step of meanshift.
+
+ INPUTS
+   I       - MxN image for display
+   X       - MxNxP data array, P may be 1 (X may be same as I)
+   sig_spt - integer specifying spatial standard deviation
+   sig_rng - value specifying the standard deviation of the range data
+   show    - [optional] will display results in figure(show)
+
+ EXAMPLE
+   I=double(imread('cameraman.tif'))/255;
+   meanshiftim_explore( I, I, 5, .2, 1 );
+
+ DATESTAMP
+   25-Oct-2005  4:00pm
+
+ See also <a href="meanshiftim.html" class="code" title="function [M,Vr,Vc] = meanshiftim( X, sig_spt, sig_rng, softflag, maxiter, mindelta )">MEANSHIFTIM</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="dist_euclidean.html" class="code" title="function D = dist_euclidean( X, Y )">dist_euclidean</a>	Calculates the Euclidean distance between vectors [FAST].</li><li><a href="../images/im.html" class="code" title="function im( I, range );">im</a>	IM [2D] Function for displaying grayscale images.</li><li><a href="../matlab/c.html" class="code" title="">c</a>	clc</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-May-2006 23:48:50 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>
