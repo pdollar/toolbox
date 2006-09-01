@@ -14,7 +14,7 @@
 %   figureresized( .75 )
 %
 % DATESTAMP
-%   29-Sep-2005  2:00pm
+%   18-Aug-2006  2:00pm
 % 
 % See also FIGURE
 
@@ -22,7 +22,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
  
-function varargout = figuresized( screenratio, varargin )
+function varargout = figureresized( screenratio, varargin )
     if( nargin<1 ) screenratio=.3; end;
     if( screenratio>1 ) error('screenratio must be <= 1'); end;
     
