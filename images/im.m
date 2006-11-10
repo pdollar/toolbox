@@ -1,7 +1,7 @@
 %IM [2D] Function for displaying grayscale images.
 %
-% Handy function for showing a grayscale image with a colorbar and interactive pixel value
-% tool.
+% Handy function for showing a grayscale image with a colorbar and
+% interactive pixel value tool.
 %
 % INPUTS
 %   I       - image in a valid format
@@ -12,7 +12,7 @@
 %   im( X )
 %
 % DATESTAMP
-%   29-Sep-2005  2:00pm
+%   05-Nov-2006  12:00am
 %
 % See also IMSHOW, IMVIEW
 
@@ -27,7 +27,12 @@ function im( I, range );
         imagesc(I,range)
     end
 
-    pixval on; % info about image pixels
+    % info about image pixels
+    if( 0 )
+        pixval on; 
+    else
+        impixelinfo;
+    end;
     title(inputname(1)); % title according to name of input arg
     colormap(gray); % black/white image
     colorbar; % appends a colorbar 
