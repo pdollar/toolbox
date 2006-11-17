@@ -28,11 +28,7 @@ function im( I, range );
     end
 
     % info about image pixels
-    if( 0 )
-        pixval on; 
-    else
-        impixelinfo;
-    end;
+    impixelinfo;
     title(inputname(1)); % title according to name of input arg
     colormap(gray); % black/white image
     colorbar; % appends a colorbar 

@@ -98,7 +98,7 @@ function varargout = montage2( IS, showlines, extrainfo, clim, mm, nn, labels )
     if( ~isempty(clim))  h=imagesc(I,clim);  else  h=imagesc(I);  end;
     colormap(gray);  title(inputname(1));  axis('image');
     if( extrainfo) 
-       colorbar; pixval on; 
+       colorbar; impixelinfo;
     else 
        set(gca,'XTick',[]); set(gca,'YTick',[]); 
     end;    
