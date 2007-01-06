@@ -12,7 +12,7 @@
 %   im( X )
 %
 % DATESTAMP
-%   05-Nov-2006  12:00am
+%   05-Jan-2007  12:00am
 %
 % See also IMSHOW, IMVIEW
 
@@ -20,8 +20,9 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
  
-function im( I, range );
-    if( nargin==1 || isempty(range)) 
+function im( I, range )
+    if( nargin==0 || isempty(I)); I=0; end;
+    if( nargin<=1 || isempty(range)) 
         imagesc(I);
     else
         imagesc(I,range)
