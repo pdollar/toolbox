@@ -45,7 +45,7 @@
 %   pca_visualize( U, mu, variances, I3D1, 13, [0:12], [], 3 );
 %
 % DATESTAMP
-%   29-Nov-2005  2:00pm
+%   01-Jan-2007  1:00pm
 %
 % See also PRINCOMP, PCA_APPLY, PCA_VISUALIZE, VISUALIZE_DATA, RANDOMSAMPLE
 
@@ -92,13 +92,13 @@ function [ U, mu, variances ] = pca( X )
     %  note: maxrank = min( n-1, N )
     if (N>n)
         [V,Ssq,V] = svd( X' * X ); 
-        keeplocs = diag(Ssq) > .00000001^2;
+        keeplocs = diag(Ssq) > 1e-30;
         Ssq = Ssq(keeplocs,keeplocs);
         V = V(:,keeplocs);
         U = X * (V * Ssq^-.5);
     else
         [U,Ssq,U] = svd( X * X' );
-        keeplocs = diag(Ssq) > .00000001^2;
+        keeplocs = diag(Ssq) > 1e-30;
         Ssq = Ssq(keeplocs,keeplocs);
         U = U(:,keeplocs);
     end    
