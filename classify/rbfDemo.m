@@ -27,6 +27,10 @@
 %
 % See also RBFCOMPUTEBASIS, RBFCOMPUTEFEATURES
 
+% Piotr's Image&Video Toolbox      Version 1.03   
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
+% Please email me if you find bugs, or have suggestions or questions! 
+
 function rbfDemo( dataType, noiseSig, scale, nBasis, cluster, show )
 
   %%% generate train/test data

@@ -49,6 +49,10 @@
 %
 % See also RBFDEMO, RBFCOMPUTEFEATURES
 
+% Piotr's Image&Video Toolbox      Version 1.03   
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
+% Please email me if you find bugs, or have suggestions or questions! 
+
 function rbfBasis = rbfComputeBasis( X, nBasis, cluster, scale, show )
   if( nargin<2 || isempty(nBasis)); error('nBasis not specified'); end;
   if( nargin<3 || isempty(cluster)); cluster=1;  end;
