@@ -79,6 +79,7 @@ function [ U, mu, vars ] = pca( X )
 
   % get principal components using the SVD 
   % note: X = U * S * V';  maxrank = min(n-1,N)
+  % basically same as svd(X,'econ'), slightly faster?
   if( N>n )
     [V,SS,V] = svd( X' * X ); 
     keeplocs = diag(SS) > 1e-30;
@@ -99,7 +100,7 @@ function [ U, mu, vars ] = pca( X )
   % t=[]; rs = 100:20:500; 
   % for r=rs tic; [u,s,v] = svd(rand(r)); t(end+1)=toc; end; plot(rs,t);
   % plot(rs,t,'r'); hold('on'); 
-  % fplot( '10^-6 * .25*(x)^2.75', [1,1000] ); hold('off');
-  % x=1500; 10^-7 * 2.5*(x)^2.75 / 60 %minutes
+  % fplot( '1e-7*(x)^2.75', [1,1000] ); hold('off');
+  % x=1500; 1e-7*(x)^2.75 / 60 %minutes
   %%%
   
