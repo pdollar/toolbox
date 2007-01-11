@@ -4,14 +4,17 @@
 % useful if processing cannot be done fully in parallel because of memory
 % constraints. See pca_apply for usage.
 %
+% USAGE
+%  same as pca_apply
+%
 % INPUTS
-%   same as pca_apply
+%  same as pca_apply
 %
 % OUTPUTS
-%   same as pca_apply
+%  same as pca_apply
 %
 % DATESTAMP
-%   29-Nov-2005  2:00pm
+%  10-Jan-2007  4:00pm
 %
 % See also PCA, PCA_APPLY, PCA_VISUALIZE
 
@@ -19,44 +22,47 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
  
-function [ Yk, Xhat, pixelerror ] = pca_apply_large( X, U, mu, variances, k )
-    siz = size(X); nd = ndims(X);  [N,r]  = size(U);
-    if (N==prod(siz) && ~(nd==2 && siz(2)==1)) siz=[siz, 1]; nd=nd+1; end;
-    inds = {':'}; inds = inds(:,ones(1,nd-1));   
-    d= prod(siz(1:end-1));
+function [ Yk, Xhat, avsq ] = pca_apply_large( X, U, mu, vars, k )
+  siz = size(X); nd = ndims(X);  [N,r]  = size(U);
+  if(N==prod(siz) && ~(nd==2 && siz(2)==1)); siz=[siz, 1]; nd=nd+1; end;
+  inds = {':'}; inds = inds(:,ones(1,nd-1));   
+  d= prod(siz(1:end-1));
 
-    % some error checking
-    if(isa(X,'uint8')) X = double(X); end;
-    if( k>r ) warning('Only r<k principal components available.'); k=r; end;
-    if (d~=N) error('incorrect size for X or U'); end;
+  % some error checking
+  if(isa(X,'uint8')); X = double(X); end;
+  if(k>r); warning(['Only ' int2str(r) '<k comp. available.']); k=r; end;
+  if(d~=N); error('incorrect size for X or U'); end;
 
-    % Will run out of memory if X has too many elements.  Hence, run pca_apply on parts of
-    % X and recombine.  The stuff below is uninteresting and ugly, all the work is done by
-    % pca_apply. 
-    maxwidth = ceil( (10^7) / d );  
-    if (maxwidth > siz(end))
-        if (nargout==1) 
-            Yk = pca_apply( X, U, mu, variances, k ); 
-        elseif (nargout==2) 
-            [Yk, Xhat] = pca_apply( X, U, mu, variances, k );
-        else 
-            [ Yk, Xhat, avsq, avsq_orig ] = pca_apply( X, U, mu, variances, k ); 
-            pixelerror = avsq / avsq_orig; 
-        end
-    else
-        Yk = zeros( k, siz(end) );  Xhat = zeros( siz );  
-        avsq = 0; avsq_orig = 0;  lastelt = 0;
-        if( nargout==1 ) outargs = cell(1,1); elseif( nargout==2 ) outargs = cell(1,2); 
-        else outargs = cell(1,4); end;
-        while (lastelt < siz(end))
-            firstelt = lastelt + 1;  lastelt = min( firstelt+maxwidth-1, siz(end) );  
-            truewidth = (lastelt - firstelt + 1);
-            [outargs{:}] = pca_apply( X(inds{:}, firstelt:lastelt), U, mu, variances, k );
-            Yk( :, firstelt:lastelt ) = outargs{1}; 
-            if(nargout>1) Xhat(inds{:}, firstelt:lastelt ) = outargs{2}; end;
-            if(nargout>2) avsq = avsq + outargs{3}; 
-                avsq_orig = avsq_orig + outargs{4}; end        
-        end
-        if( nargout==3) pixelerror = avsq / avsq_orig; end;
+  % Will run out of memory if X has too many elements.  Hence, run
+  % pca_apply on parts of X and recombine. 
+	maxwidth = ceil( (10^7) / d );  
+  if(maxwidth > siz(end))
+    if (nargout==1) 
+      Yk = pca_apply( X, U, mu, vars, k ); 
+    elseif (nargout==2) 
+      [Yk, Xhat] = pca_apply( X, U, mu, vars, k );
+    else 
+      [ Yk, Xhat, avsq ] = pca_apply( X, U, mu, vars, k ); 
     end
+  else
+    Yk = zeros( k, siz(end) );  Xhat = zeros( siz );  
+    avsq = 0;  avsq_orig = 0;  last = 0;
+    while(last < siz(end))
+      first=last+1;  last=min(first+maxwidth-1,siz(end));  
+      Xi = X(inds{:}, first:last);
+      if( nargout==1 )
+        Yki = pca_apply( Xi, U, mu, vars, k );
+      else
+        if( nargout==2 )
+          [Yki,Xhati] = pca_apply( Xi, U, mu, vars, k );
+        else
+          [Yki,Xhati,avsqi,avsq_origi] = pca_apply( Xi, U, mu, vars, k );
+          avsq = avsq + avsqi;  avsq_orig = avsq_orig + avsq_origi;
+        end;
+        Xhat(inds{:}, first:last ) = Xhati;
+      end
+      Yk( :, first:last ) = Yki; 
+    end;
+    if( nargout==3); avsq = avsq / avsq_orig; end;
+  end
     
