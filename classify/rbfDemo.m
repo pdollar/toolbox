@@ -3,7 +3,7 @@
 % See rbfComputeBasis for discussion of rbfs.
 %
 % USAGE
-%  rbfDemo( dataType, noiseSig, scale, nBasis, cluster, show )
+%  rbfDemo( dataType, noiseSig, scale, k, cluster, show )
 %
 % INPUTS
 %  dataType   - 0: 1D sinusoid
@@ -11,7 +11,7 @@
 %               2: 2D stretched sinusoid
 %  noiseSig   - std of idd gaussian noise
 %  scale      - see rbfComputeBasis
-%  nBasis     - see rbfComputeBasis
+%  k          - see rbfComputeBasis
 %  cluster    - see rbfComputeBasis
 %  show       - figure to use for display (no display if == 0)
 %
@@ -31,7 +31,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
 
-function rbfDemo( dataType, noiseSig, scale, nBasis, cluster, show )
+function rbfDemo( dataType, noiseSig, scale, k, cluster, show )
 
   %%% generate train/test data
   if( 1 )
@@ -40,7 +40,7 @@ function rbfDemo( dataType, noiseSig, scale, nBasis, cluster, show )
   end;
 
   %%% train/apply rbfs
-  rbfBasis = rbfComputeBasis( Xtrain, nBasis, cluster, scale, show )
+  rbfBasis = rbfComputeBasis( Xtrain, k, cluster, scale, show )
   rbfWeight = rbfComputeFeatures(Xtrain,rbfBasis) \ ytrain;
   yTrainRes = rbfComputeFeatures(Xtrain,rbfBasis) * rbfWeight;
   yTestRes  = rbfComputeFeatures(Xtest,rbfBasis) * rbfWeight;

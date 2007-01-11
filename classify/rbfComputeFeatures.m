@@ -10,7 +10,7 @@
 %  rbfBasis  - rbfBasis struct (see rbfComputeBasis)
 %
 % OUTPUT
-%  Xrbf      - [N x nBasis] computed feature vectors
+%  Xrbf      - [N x k] computed feature vectors
 %
 % DATESTAMP
 %  09-Jan-2007  1:00pm
@@ -22,23 +22,23 @@
 % Please email me if you find bugs, or have suggestions or questions! 
 
 function Xrbf = rbfComputeFeatures( X, rbfBasis )
-  N         = size(X,1);
-  nBasis    = rbfBasis.nBasis; 
-  mu        = rbfBasis.mu';
-  variance  = rbfBasis.variance;
+  N    = size(X,1);
+  k    = rbfBasis.k; 
+  mu   = rbfBasis.mu';
+  var  = rbfBasis.var;
 
   %% for each point, compute values of all basis functions
-  %% mu=[nBasis x d]; onesVec=[nBasis x 1]; Xi=[1 x d]; 
-  Xrbf = zeros( N, nBasis );
-  onesVec = ones(nBasis,1);
+  %% mu=[k x d]; onesVec=[k x 1]; Xi=[1 x d]; 
+  Xrbf = zeros( N, k );
+  onesVec = ones(k,1);
   for i=1:N 
     eucdist = sum( ((onesVec*X(i,:) - mu)).^2, 2 );
-    Xrbf(i,:) = eucdist' / 2 ./ variance;
+    Xrbf(i,:) = eucdist' / 2 ./ var;
   end;
   Xrbf = exp( -Xrbf );
 
   %% normalize rbfs to sum to 1
-  if( 0 ); Xrbf = Xrbf ./ repmat( sum(Xrbf,2), [1 nBasis] ); end;
+  if( 0 ); Xrbf = Xrbf ./ repmat( sum(Xrbf,2), [1 k] ); end;
 
   %% add constant vector of ones as last feature
   if( 0 ); Xrbf = [Xrbf ones(N,1)]; end;

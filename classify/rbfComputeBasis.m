@@ -16,7 +16,7 @@
 %   ytest = rbfWeight * features(Xtest)
 %
 % The code below achieves all three steps:
-%  rbfBasis  = rbfComputeBasis( Xtrain, nBasis, cluster, scale, show );
+%  rbfBasis  = rbfComputeBasis( Xtrain, k, cluster, scale, show );
 %  rbfWeight = rbfComputeFeatures(Xtrain,rbfBasis) \ ytrain;
 %  ytest     = rbfComputeFeatures(Xtest,rbfBasis) * rbfWeight;
 %
@@ -24,11 +24,11 @@
 %  Christopher M. Bishop. "Neural Networks for Pattern Recognition"
 %
 % USAGE
-%  rbfBasis = rbfComputeBasis( X, nBasis, [cluster], [scale], [show] )
+%  rbfBasis = rbfComputeBasis( X, k, [cluster], [scale], [show] )
 %
 % INPUTS
 %  X           - [N x d] N points of d dimensions each
-%  nBasis      - number of basis functions to use
+%  k           - number of basis functions to use
 %  [cluster]   - [1]: Computes cluster centers for use as rbf functions.
 %              - 0: Evenly centered basis functions (for small d)
 %  [scale]     - [5] Alter computed value of sigma by given factor
@@ -39,10 +39,10 @@
 % OUTPUTS
 %  rfbBasis
 %   .d        - feature vector size
-%   .nBasis   - number of basis functions actually used
-%   .mu       - [d x nBasis] rbf centers
-%   .variances- [1 x nBasis] rbf widths
-%   .variance - rbf average width
+%   .k        - number of basis functions actually used
+%   .mu       - [d x k] rbf centers
+%   .vars     - [1 x k] rbf widths
+%   .var      - rbf average width
 %
 % DATESTAMP
 %  09-Jan-2007  1:00pm
@@ -53,8 +53,8 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
 
-function rbfBasis = rbfComputeBasis( X, nBasis, cluster, scale, show )
-  if( nargin<2 || isempty(nBasis)); error('nBasis not specified'); end;
+function rbfBasis = rbfComputeBasis( X, k, cluster, scale, show )
+  if( nargin<2 || isempty(k)); error('k not specified'); end;
   if( nargin<3 || isempty(cluster)); cluster=1;  end;
   if( nargin<4 || isempty(scale)); scale=5;  end;
   if( nargin<5 || isempty(show)); show=0;  end;
@@ -64,33 +64,33 @@ function rbfBasis = rbfComputeBasis( X, nBasis, cluster, scale, show )
     %%% CLUSTERS subsample, run kmeans
     maxN=5000; if( N>maxN );  X=X(randperm2(N,maxN),:);  N=maxN;  end;
     params = {'replicates', 5, 'display', 1};
-    [IDX,mu] = kmeans2( X, nBasis, params{:} );  
-    mu = mu'; nBasis = size(mu,2);
+    [IDX,mu] = kmeans2( X, k, params{:} );  
+    mu = mu'; k = size(mu,2);
   else
     %%% GRID generate locations evenly spaced on grid  
     if( d>4 ); error('d too high. curse of dimensionality..'); end;
-    nBasisPer = round( nBasis ^ (1/d) );
-    nBasis = nBasisPer ^ d;
+    nBasisPer = round( k ^ (1/d) );
+    k = nBasisPer ^ d;
     minX = min(X,[],1 );  maxX = max(X,[],1 );
     stepX = (maxX-minX)/(nBasisPer+1);
     loc=cell(1,d); for i=1:d; loc{i}=(1:nBasisPer)*stepX(i)+minX(i); end;
     grid=cell(1,d); if(d>1); [grid{:}]=ndgrid(loc{:}); else grid=loc; end;
-    mu=zeros(d,nBasis);   for i=1:d; mu(i,:) = grid{i}(:); end;
+    mu=zeros(d,k);   for i=1:d; mu(i,:) = grid{i}(:); end;
   end;
 
-  %%% Set variance to be equal to average distance of neareast neighbor.
+  %%% Set var to be equal to average distance of neareast neighbor.
   dist = dist_euclidean( mu', mu' );
-  dist = dist + realmax * eye( nBasis );
-  variances = min(dist)* scale;
-  variance  = mean(variances);
-  variances = max( variances, variance/100 );
+  dist = dist + realmax * eye( k );
+  vars = min(dist)* scale;
+  var  = mean(vars);
+  vars = max( vars, var/100 );
   
   %%% store results
-  rbfBasis.d          = d;
-  rbfBasis.nBasis     = nBasis; 
-  rbfBasis.mu         = mu;
-  rbfBasis.variances  = variances;
-  rbfBasis.variance   = variance;
+  rbfBasis.d     = d;
+  rbfBasis.k     = k; 
+  rbfBasis.mu    = mu;
+  rbfBasis.vars  = vars;
+  rbfBasis.var   = var;
     
   %%% optionally display
   if( abs(show) )
@@ -103,8 +103,8 @@ function rbfBasis = rbfComputeBasis( X, nBasis, cluster, scale, show )
       figure(show); clf; hold on;
       minX = min(X,[],1 );  maxX = max(X,[],1 );
       xs = linspace( minX, maxX, 500 )';
-      for i=1:nBasis
-        ys = exp( -(xs-mu(i)).^2 / 2 / variance  );
+      for i=1:k
+        ys = exp( -(xs-mu(i)).^2 / 2 / var  );
         plot( xs, ys );
       end
     elseif( d==2 ) % 2D data      
@@ -114,9 +114,9 @@ function rbfBasis = rbfComputeBasis( X, nBasis, cluster, scale, show )
       xs2 = linspace(minX(2),maxX(2),25);
       [xs1,xs2] = ndgrid( xs1, xs2 );
       xs = [xs1(:) xs2(:)]; n = size(xs,1);
-      for i=1:nBasis
+      for i=1:k
         mui = repmat(mu(:,i),[1 n])';
-        ys = exp( - sum( ((xs - mui)).^2, 2 ) / 2 / variance );
+        ys = exp( - sum( ((xs - mui)).^2, 2 ) / 2 / var );
         surf( xs1, xs2, reshape(ys,size(xs1)) ); 
       end;
     elseif( d==3 ) % 3D data (show data+centers)
