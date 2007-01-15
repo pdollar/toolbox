@@ -1,18 +1,26 @@
-% Interpolate I_source according to the warp from I_source->I_dest.  
+% Interpolate Isrc according to the warp from Isrc->Idst.  
 %
 % Use tps_getwarp to obtain the warp.
 %
+% USAGE
+%  IR = tps_interpolateimage( Isrc, warp )
+%
 % INPUTS
-%   I_source                    - image to interpolate
-%   xs_source, ys_source        - correspondence points from source image
-%   xs_dest, ys_dest            - correspondence points from destination image
-%   wx, affinex, wy, affiney    - booksteain warping parameters
+%  Isrc   - image to interpolate
+%  warp   - [see tps_getwarp] bookstein warping parameters
 %
 % OUTPUTS
-%   IR      - warped image
+%  IR     - warped image
+%
+% EXAMPLE
+%  xsS=[0 0 1 1 2 2]; ysS=[0 2 0 2 0 2]; ysD=[0 2 .5 1.5 0 2];
+%  warp = tps_getwarp(0,xsS*100,ysS*100,xsS*100,ysD*100);
+%  load clown; I=padarray(X,[1 1],0,'both'); clear X caption map;
+%  IR = tps_interpolateimage( I, warp );
+%  figure(1); clf; im(I); figure(2); clf; im(IR);
 %
 % DATESTAMP
-%   29-Sep-2005  2:00pm
+%  15-Jan-2007  11:00am
 %
 % See also TPS_GETWARP
 
@@ -20,14 +28,13 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
  
-function IR = tps_interpolateimage( I_source, xs_source, ys_source, ...
-                                    xs_dest, ys_dest, wx, affinex, wy, affiney )
-    % warp grid points
-    [ grid_xs, grid_ys ] = meshgrid( 1:size(I_source,2), 1:size(I_source,1) );
-    [ grid_xs_target, grid_ys_target ] = tps_interpolate( xs_source, ys_source, ...
-                xs_dest, ys_dest, wx, affinex, wy, affiney, grid_xs(:), grid_ys(:), 0 );
-    grid_xs_target = reshape( grid_xs_target, size(I_source) );  
-    grid_ys_target = reshape( grid_ys_target, size(I_source) );
+function IR = tps_interpolateimage( Isrc, warp )
+  
+  % warp grid points
+  [ gxs, gys ] = meshgrid( 1:size(Isrc,2), 1:size(Isrc,1) );
+  [ gxsTar, gysTar ] = tps_interpolate( warp, gxs(:), gys(:), 0 );
+  gxsTar = reshape( gxsTar, size(Isrc) );  
+  gysTar = reshape( gysTar, size(Isrc) );
 
-    % use texture mapping to generate target image
-    IR = texture_map( double(I_source), grid_ys_target, grid_xs_target, 'crop' );
+  % use texture mapping to generate target image
+  IR = texture_map( double(Isrc), gysTar, gxsTar, 'loose' );
