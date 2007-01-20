@@ -1,15 +1,19 @@
 % Helper to set default values (if not already set) of parameter struct.
 % 
-% Takes a struct prm and a list of name/default pairs and for each name
-% that prm has no value (prm.(name) is not a field) assigns the given
-% default value.  Useful helper; see example below for usage details. 
+% Takes a struct prm and a list of name/default pairs, and for each name
+% for which prm has no value (prm.(name) is not a field) getParamDefaults
+% assigns the given default value.  Useful helper; see example below for
+% usage details.  
 %
 % USAGE
 %  prm = getParamDefaults( prm, dfs ) 
 %
-% INPUTS
+% INPUT
 %  prm    - parameters struct
 %  dfs    - cell of form {name1,default1,name2,default2,...}
+%
+% OUTPUT 
+%  prm    - updated parameters struct
 %
 % EXAMPLE
 %  prm.x = 1; 
