@@ -3,7 +3,7 @@
 % Takes a struct prm and a list of 'name'/default pairs, and for each
 % 'name' for which prm has no value (prm.(name) is not a field)
 % getParamDefaults assigns the given default value. If default value for
-% variable 'name' is 'REQUIRED', and prm.name is not a field, an error is
+% variable 'name' is 'REQ', and prm.name is not a field, an error is
 % thrown. See example below for usage details.  
 %
 % USAGE
@@ -18,11 +18,11 @@
 %
 % EXAMPLE
 %  prm.x = 1; 
-%  dfs = { 'x','REQUIRED', 'y','REQUIRED', 'z',[], 'eps',1e-3 };
+%  dfs = { 'x','REQ', 'y',0, 'z',[], 'eps',1e-3 };
 %  prm = getParamDefaults( prm, dfs )
 % 
 % DATESTAMP
-%   19-Jan-2007  12:00am
+%   24-Jan-2007  5:00pm
 
 % Piotr's Image&Video Toolbox      Version 1.03   
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
@@ -32,7 +32,7 @@ function prm = getParamDefaults( prm, dfs )
   if(mod(length(dfs),2)~=0); error('incorrect num dfs'); end;
   for i=1:2:length(dfs)
     if(~isfield2(prm,dfs{i},1)); 
-      if(strcmp('REQUIRED',dfs{i+1}))
+      if(strcmp('REQ',dfs{i+1}))
         error(['Required field ' dfs{i} ' not specified.'] );
       else
         prm.(dfs{i})=dfs{i+1}; 
