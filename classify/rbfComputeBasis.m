@@ -45,7 +45,7 @@
 %   .var      - rbf average width
 %
 % DATESTAMP
-%  09-Jan-2007  1:00pm
+%  30-Jan-2007  1:00pm
 %
 % See also RBFDEMO, RBFCOMPUTEFEATURES
 
@@ -63,7 +63,7 @@ function rbfBasis = rbfComputeBasis( X, k, cluster, scale, show )
   if( cluster ) 
     %%% CLUSTERS subsample, run kmeans
     maxN=5000; if( N>maxN );  X=X(randperm2(N,maxN),:);  N=maxN;  end;
-    params = {'replicates', 5, 'display', 1};
+    params = {'replicates', 5, 'display', 0};
     [IDX,mu] = kmeans2( X, k, params{:} );  
     mu = mu'; k = size(mu,2);
   else
