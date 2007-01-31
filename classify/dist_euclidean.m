@@ -1,4 +1,4 @@
-% Calculates the Euclidean distance between vectors [FAST].
+% Calculates the SQUARED Euclidean distance between vectors [FAST].
 %
 % Assume X is an m-by-p matrix representing m points in p-dimensional space and Y is an
 % n-by-p matrix representing another set of points in the same space. This function
@@ -20,7 +20,7 @@
 %   D = dist_euclidean( [X; Y], [X; Y] ); im(D)
 %
 % DATESTAMP
-%   29-Sep-2005  2:00pm
+%   31-Jan-2006  2:00pm
 %
 % See also DIST_CHISQUARED, DIST_EMD
 
