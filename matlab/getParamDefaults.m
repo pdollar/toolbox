@@ -22,13 +22,14 @@
 %  prm = getParamDefaults( prm, dfs )
 % 
 % DATESTAMP
-%   24-Jan-2007  5:00pm
+%   08-Feb-2007  5:00pm
 
 % Piotr's Image&Video Toolbox      Version 1.03   
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
 
 function prm = getParamDefaults( prm, dfs ) 
+  if(~isstruct(prm)); error('prm must be a struct'); end;
   if(mod(length(dfs),2)~=0); error('incorrect num dfs'); end;
   for i=1:2:length(dfs)
     if(~isfield2(prm,dfs{i},1)); 
