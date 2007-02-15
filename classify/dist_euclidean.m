@@ -1,9 +1,10 @@
 % Calculates the SQUARED Euclidean distance between vectors [FAST].
 %
-% Assume X is an m-by-p matrix representing m points in p-dimensional space and Y is an
-% n-by-p matrix representing another set of points in the same space. This function
-% compute the m-by-n distance matrix D where D(i,j) is the SQUARED Euclidean distance
-% between X(i,:) and Y(j,:).  Running time is O(m*n*p).
+% Let X be an m-by-p matrix representing m points in p-dimensional space
+% and Y be an n-by-p matrix representing another set of points in the same
+% space. This function computes the m-by-n distance matrix D where D(i,j)
+% is the SQUARED Euclidean distance between X(i,:) and Y(j,:). Running time
+% is O(m*n*p). 
 %
 % If x is a single data point, here is a faster, inline version to use:
 %   D = sum( (Y - ones(size(Y,1),1)*x).^2, 2 )';
@@ -20,7 +21,7 @@
 %   D = dist_euclidean( [X; Y], [X; Y] ); im(D)
 %
 % DATESTAMP
-%   31-Jan-2006  2:00pm
+%   14-Feb-2006  5:00pm
 %
 % See also DIST_CHISQUARED, DIST_EMD
 
