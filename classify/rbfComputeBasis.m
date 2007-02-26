@@ -45,7 +45,7 @@
 %   .var      - rbf average width
 %
 % DATESTAMP
-%  30-Jan-2007  1:00pm
+%  25-Feb-2007  9:00pm
 %
 % See also RBFDEMO, RBFCOMPUTEFEATURES
 
@@ -69,11 +69,9 @@ function rbfBasis = rbfComputeBasis( X, k, cluster, scale, show )
   else
     %%% GRID generate locations evenly spaced on grid  
     if( d>4 ); error('d too high. curse of dimensionality..'); end;
-    nBasisPer = round( k ^ (1/d) );
-    k = nBasisPer ^ d;
-    minX = min(X,[],1 );  maxX = max(X,[],1 );
-    stepX = (maxX-minX)/(nBasisPer+1);
-    loc=cell(1,d); for i=1:d; loc{i}=(1:nBasisPer)*stepX(i)+minX(i); end;
+    nBPer = round( k ^ (1/d) );  k = nBPer ^ d;  
+    rg=minmax(X'); del=(rg(:,2)-rg(:,1))/(nBPer-1); rg=rg+[-del del]/2;    
+    loc=cell(1,d);  for i=1:d; loc{i}=linspace(rg(i,1),rg(i,2),nBPer); end;
     grid=cell(1,d); if(d>1); [grid{:}]=ndgrid(loc{:}); else grid=loc; end;
     mu=zeros(d,k);   for i=1:d; mu(i,:) = grid{i}(:); end;
   end;
