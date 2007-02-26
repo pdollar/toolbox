@@ -7,7 +7,7 @@
 %   I       - imput image
 %   sigmas  - either n dimensional or 1 dimensional vector of standard devs
 %           - if sigmas(n)<=.3 then does not smooth along that dimension
-%   shape   - [optional] shape to use in convolution [default == 'full']
+%   shape   - [optional] shape to use in convolution 'valid', ['full'], 'same', or 'smooth'
 %   radius  - [optional] radius in units of standard deviation [default == 2.25]
 %
 % OUTPUTS
@@ -15,8 +15,8 @@
 %   filters - actual filters used, cell array of length n
 %
 % DATESTAMP
-%   14-May-2006  6:00pm
-
+%   26-Feb-2007  6:00pm
+%
 % Piotr's Image&Video Toolbox      Version 1.03   
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
