@@ -12,13 +12,13 @@
 %   C       - matrix of sums
 %
 % EXAMPLE
-%   A = rand(20); dim=31; shape='valid'; 
+%   A = rand(20); dim=11; shape='valid'; 
 %   B = localsum(A,dim,shape); 
 %   C = conv2(A,ones(dim),shape); 
 %   diff=B-C; sum(abs(diff(:)))
 %
 % DATESTAMP
-%   29-Sep-2005  2:00pm
+%   20-Mar-2007  2:00pm
 %
 % See also LOCALSUM_BLOCK
 
