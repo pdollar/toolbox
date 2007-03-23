@@ -23,7 +23,7 @@
 % EXAMPLE
 %
 % DATESTAMP
-%   29-Nov-2005  10:00am
+%   23-Mar-2007  11:00am
 %
 % See also KMEANS2, MONTAGES, MAKEMOVIESETS, CELL2ARRAY
 
@@ -33,13 +33,14 @@
  
 function XC = clustermontage( X, IDX, nvals, pad )
     %%% error check 
-    siz = size(X); nd = ndims(X); k = max(IDX);
-    if(nd~=3 && nd~=4) error('X must be 3 or 4 dimensional array'); end;
+    siz = size(X); nd = ndims(X);
+    if(nd~=3 && nd~=4); error('X must be 3 or 4 dimensional array'); end;
     inds = {':'}; inds = inds(:,ones(1,nd-1));   
 
     %%% sample both X and IDX so have nvals per cluster
     keeplocs = find( IDX>0 ); IDX = IDX(keeplocs); X=X(inds{:},keeplocs);
-    for i=1:k
+    uIDX=unique(IDX)';
+    for i=uIDX
         locs = find(IDX==i); nlocs = length(locs);
         if( nlocs>nvals ) 
             rperm=randperm(nlocs); 
@@ -54,11 +55,11 @@ function XC = clustermontage( X, IDX, nvals, pad )
 
     %%% string out X
     if( pad )
-        XC = repmat( uint8(0), [siz(1:nd-1), nvals, k] );
-        for i=1:k XC(inds{:},:,i) = X(inds{:},find(IDX==i)); end
+        XC = repmat( uint8(0), [siz(1:nd-1), nvals, length(uIDX)] );
+        for i=uIDX; XC(inds{:},:,i) = X(inds{:},IDX==i); end
     else
-        XC = cell(1,k);
-        for i=1:k XC{i} = X(inds{:},find(IDX==i)); end;
+        XC = cell(1,length(IDX));
+        for i=uIDX; XC{i} = X(inds{:},IDX==i); end;
     end;
         
        
