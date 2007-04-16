@@ -14,7 +14,7 @@
 %   06-Apr-2007  4:00pm
 %
 % See also OPTFLOW_CORR, OPTFLOW_LUCASKANADE
-%
+
 % Piotr's Image&Video Toolbox      Version 1.03   
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
