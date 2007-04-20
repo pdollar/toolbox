@@ -67,7 +67,7 @@
 % -------------------------------------------------------------------------
 %
 % DATESTAMP
-%   13-May-2006  6:00pm
+%   18-Apr-2007  1:00pm
 %
 % See also DEMOCLUSTER
 
@@ -83,7 +83,7 @@ function [IDX,C,sumd] = kmeans2( X,k,varargin )
     [errmsg,replicates,maxiter,display,randstate,outlierfrac,minCsize] = ...
                                                     getargs(pnames, dflts, varargin{:});
     error(errmsg);
-    if (k<=1) error('k must be greater than 1'); end;
+    if (k<1) error('k must be greater than 1'); end;
     if(ndims(X)~=2 || any(size(X)==0)) error('Illegal X'); end;
     if (outlierfrac<0 || outlierfrac>=1) 
         error('fraction of outliers must be between 0 and 1'); end;
