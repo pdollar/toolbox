@@ -7,6 +7,7 @@
 *********************************************************************/
 
 #include <math.h>
+#include <string.h>
 #include "mex.h"
 
 /* Input Arguments */
@@ -146,7 +147,7 @@ static void meanshift(double data[], int p, int n, double radius, double rate,
     for (i = 0; i < n; i++) deltas[i] = 1;
         
     radius2 = radius * radius;
-    means_current = (double *) memcpy (means_current, data, p * n * sizeof (double));
+    means_current = (double *) memcpy(means_current, data, p * n * sizeof (double));
     if (blur) adata = means_current; else adata = data;
 
 
