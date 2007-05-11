@@ -4,7 +4,8 @@
 %   [ D P ] = dijkstra( G , S )
 %
 % INPUT
-%   G   - full or sparse distance array [n x n]
+%   G   - full or sparse distance array [n x n]. If sparse, no value
+%         means no edge. If full, every value corresponds to reality (0 or not)
 %   S   - array of sources from which the distance to every other
 %         node will be computed [1 x p]
 %
