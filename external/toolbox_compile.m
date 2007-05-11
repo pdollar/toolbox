@@ -11,3 +11,6 @@ mex([dir 'mask_ellipse1.c'],'-outdir',dir);
 mex([dir 'rnlfilt_max.c'],'-outdir',dir);
 mex([dir 'rnlfilt_sum.c'],'-outdir',dir);
 mex([dir 'rnlfiltblock_sum.c'],'-outdir',dir);
+
+dir = 'external/dijkstra/private/';
+mex([dir 'fibheap.cpp'],'-outdir',dir);
