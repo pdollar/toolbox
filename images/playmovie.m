@@ -48,7 +48,7 @@ for nplayed = 1 : abs(loop)
     order = nframes:-1:1;
   else
     order = 1:nframes;
-  end;
+  end
   for i=order
     tic; try geth=get(h); catch return; end
     imagesc(I(inds{:},i),clim); axis('image');
