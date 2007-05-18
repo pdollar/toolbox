@@ -1,7 +1,7 @@
 % One line description of function (will appear in file summary).
 %
 % General commments explaining purpose of function [width is 75
-% characters]. There may be multiple paragraphs.
+% characters]. There may be multiple paragraphs.  
 %
 % Next come a series of sections, including USAGE, INPUTS, OUTPUTS,
 % EXAMPLE, DATESTAMP and "See also".  Each of these fields should always
@@ -53,6 +53,8 @@
 % Please email me if you find bugs, or have suggestions or questions! 
 
 function [y1,y2] = toolbox_header( x1, x2, x3, prm )
+
+% All indents should be set to two spaces.  
 
 if( nargin < 3 ); x3=0; end;
 
