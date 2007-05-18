@@ -1,7 +1,7 @@
 % [4D] shows R videos simultaneously as a movie.
 %
 % USAGE
-%  playmovie( I, fps, loop )
+%  playmovie( I, [fps], [loop] )
 %
 % INPUTS
 %  I       - MxNxTxR or MxNx1xTxR or MxNx3xTxR array (if MxNxT calls

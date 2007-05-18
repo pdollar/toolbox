@@ -4,7 +4,7 @@
 %   playmovie(movie2images(M));
 %
 % USAGE
-%  playmovie( I, fps, loop )
+%  playmovie( I, [fps], [loop] )
 %
 % INPUTS
 %  I       - MxNxT or MxNx1xT or MxNx3xT array (of images)
