@@ -1,4 +1,4 @@
-% One line description of function (will appear in file summary).
+% One line description of function (will appear in file summary).   
 %
 % General commments explaining purpose of function [width is 75
 % characters]. There may be multiple paragraphs.  
@@ -8,7 +8,7 @@
 % appear, even if nothing follows (for example no inputs).  USAGE should
 % usually be a copy of the first line of code (which begins with
 % "function"), minus the word "function". Optional parameters are
-% surrounded by brackets. Occassionally, there may be more than 1 distinct
+% surrounded by brackets. Occasionally, there may be more than 1 distinct
 % usage, in this case list additional usages.  In general try to avoid
 % this.  INPUTS/OUTPUTS are self explanatory, however if there are multiple
 % usages can be subdivided as below.  EXAMPLE should list 1 or more
@@ -43,12 +43,11 @@
 % EXAMPLE
 %  y = toolbox_header( 1, 2 );
 %
-% DATESTAMP
-%  17-May-2007
+% See also FUNCTIONALLCAPS
 %
-% See also
+% Piotr's Image&Video Toolbox      Version 1.03
 
-% Piotr's Image&Video Toolbox      Version 1.03   
+% DATESTAMP  17-May-2007
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
 
