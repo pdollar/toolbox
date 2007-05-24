@@ -43,41 +43,34 @@ bound=mean(bound,2); bound=[bound-maxB bound+maxB]; % make axes equal
 bound=reshape(bound',1,[]);
 
 % If 3D data points are given
-if nDim==3
-  h=gcf; figure(h); % bring to focus
-  set( gcf, 'KeyPressFcn', { @interface } );
-  set(gcf,'Renderer','opengl');
-  doReturn=0;
+h=gcf; figure(h); % bring to focus
+set( gcf, 'KeyPressFcn', { @interface } );
+set(gcf,'Renderer','opengl');
+doReturn=0;
 
-  conn=[]; hLine=0; hPoint=0;
-  initializeCloud();
+conn=[]; hLine=0; hPoint=0;
+initializeCloud();
 
-  % play the animation several times
-  for nplayed = 1 : abs(loop)
-    if( loop<0 && mod(nplayed,2)==1 )
-      order = nframes:-1:1;
-    else
-      order = 1:nframes;
-    end
-
-    % Play the animation once
-    for i=order
-      tic; try geth=get(h); catch return; end
-      if doReturn; return; end
-
-      updateCloud(i);
-
-      % Display the image
-      title(sprintf('frame %d of %d',i,nframes));
-      axis(bound); drawnow;
-      if(fps>0); pause(1/fps - toc); else pause(eps); end
-    end
+% play the animation several times
+for nplayed = 1 : abs(loop)
+  if( loop<0 && mod(nplayed,2)==1 )
+    order = nframes:-1:1;
+  else
+    order = 1:nframes;
   end
-% If 2D data points are given  
-else 
 
+  % Play the animation once
+  for i=order
+    tic; try geth=get(h); catch return; end
+    if doReturn; return; end
 
+    updateCloud(i);
 
+    % Display the image
+    title(sprintf('frame %d of %d',i,nframes));
+    axis(bound); drawnow;
+    if(fps>0); pause(1/fps - toc); else pause(eps); end
+  end
 end
 
 %%%%%%%%%%
@@ -90,25 +83,47 @@ end
       end
       conn = cell2mat(conn');
 
-      for ii=1:3; coord{i}=[A(ii,conn(:,1),1),A(ii,conn(:,2),1)]'; end
-      hLine=line(coord{1},coord{2},coord{3},'Color',[0.4,0.4,1],'Marker','.');
-    else
-      hPoint=plot3(A(1,:,1),A(2,:,1),A(3,:,1),'Color',[0.4,0.4,1],...
-        'Marker','.','LineStyle','none');
-    end
-  end
-
-  function updateCloud(ii)
-    if useConn
-      for j = 1 : length( hLine )
-        set(hLine(j),'XData',A(1,conn(j,1:2),ii),'YData',...
-          A(2,conn(j,1:2),ii),'ZData',A(3,conn(j,1:2),ii));
+      if nDim==3
+        for ii=1:3; coord{ii}=[A(ii,conn(:,1),1),A(ii,conn(:,2),1)]'; end
+        hLine=line(coord{1},coord{2},coord{3},'Color',[0.4,0.4,1],...
+          'Marker','.');
+      else
+        for ii=1:2; coord{ii}=[A(ii,conn(:,1),1),A(ii,conn(:,2),1)]'; end
+        hLine=line(coord{1},coord{2},'Color',[0.4,0.4,1],...
+          'Marker','.');
       end
     else
-      set(hPoint,'XData',A(1,:,i),'YData',A(2,:,i),'ZData',A(3,:,i));
+      if nDim==3
+        hPoint=plot3(A(1,:,1),A(2,:,1),A(3,:,1),'Color',[0.4,0.4,1],...
+          'Marker','.','LineStyle','none');
+      else
+        hPoint=plot(A(1,:,1),A(2,:,1),'Color',[0.4,0.4,1],...
+          'Marker','.','LineStyle','none');
+      end
     end
   end
 
+%%%%%%%%%%
+  function updateCloud(ii)
+    if useConn
+      if nDim==3
+        for j = 1 : length( hLine )
+          set(hLine(j),'XData',A(1,conn(j,1:2),ii),'YData',...
+            A(2,conn(j,1:2),ii),'ZData',A(3,conn(j,1:2),ii));
+        end
+      else
+        
+      end
+    else
+      if nDim==3
+        set(hPoint,'XData',A(1,:,i),'YData',A(2,:,i),'ZData',A(3,:,i));
+      else
+        set(hPoint,'XData',A(1,:,i),'YData',A(2,:,i));
+      end
+    end
+  end
+
+%%%%%%%%%%
   function interface( src, event )
     % Deal with a pressed key to change the view or quit the animation
     if ~isempty(event)
