@@ -16,9 +16,6 @@
 %
 % EXAMPLE
 %
-% DATESTAMP
-%  17-May-2007
-%
 % See also
 
 % Piotr's Image&Video Toolbox      Version 1.03
