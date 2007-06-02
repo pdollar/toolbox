@@ -39,10 +39,9 @@ maxB=max(bound(:,2)-bound(:,1))/2;
 bound=mean(bound,2); bound=[bound-maxB bound+maxB]; % make axes equal
 bound=reshape(bound',1,[]);
 
-% If 3D data points are given
+% Define some initial variables
 h=gcf; figure(h); % bring to focus
 set( gcf, 'KeyPressFcn', { @interface } );
-set(gcf,'Renderer','opengl');
 doReturn=0;
 
 conn=[]; hLine=0; hPoint=0;
@@ -76,7 +75,7 @@ end
     if useConn
       conn = cell(1,nPoint); coord=cell(1,3);
       for ii = 1 : nPoint
-        conn{ii}(:,2) = N{i}'; conn{ii}(:,1) = ii;
+        conn{ii}(:,2) = N{ii}'; conn{ii}(:,1) = ii;
       end
       conn = cell2mat(conn');
 
@@ -113,9 +112,9 @@ end
       end
     else
       if nDim==3
-        set(hPoint,'XData',A(1,:,i),'YData',A(2,:,i),'ZData',A(3,:,i));
+        set(hPoint,'XData',A(1,:,ii),'YData',A(2,:,ii),'ZData',A(3,:,ii));
       else
-        set(hPoint,'XData',A(1,:,i),'YData',A(2,:,i));
+        set(hPoint,'XData',A(1,:,ii),'YData',A(2,:,ii));
       end
     end
   end
