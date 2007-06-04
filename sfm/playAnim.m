@@ -22,19 +22,18 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function playAnimation( A, fps, loop, N )
+function playAnim( anim, prm )
 
-if( nargin<2 || isempty(fps)); fps = 100; end
-if( nargin<3 || isempty(loop)); loop = 1; end
-if( nargin<4 || isempty(N)); useConn = 0; else useConn = 1; end
+dfs = {'nCamera',-1,'fps',100, 'loop',1, 'N',[]};
+prm = getParamDefaults( prm, dfs );
+nCamera=prm.nCamera; fps=prm.fps; loop=prm.loop; N=prm.N;
 
-if( iscell(A) ); error('cell arrays not supported.'); end;
-if( ~ismember(ndims(A),[2 3]) ); error('unsupported dimension of A'); end
-
-siz=size(A); nframes=siz(3); nDim=siz(1); nPoint=siz(2);
+A=anim.A3; cam=anim.cam;
+siz=size(A); nframes=siz(3); nDim=siz(1);
 
 % Determine the boundaries of the data
-bound=minmax(reshape(A,nDim,[]));
+if nCamera<0; bound=minmax(reshape(A,nDim,[]));
+else bound=minmax([reshape(A,nDim,[]), cam]);end
 maxB=max(bound(:,2)-bound(:,1))/2;
 bound=mean(bound,2); bound=[bound-maxB bound+maxB]; % make axes equal
 bound=reshape(bound',1,[]);
@@ -42,10 +41,11 @@ bound=reshape(bound',1,[]);
 % Define some initial variables
 h=gcf; figure(h); % bring to focus
 set( gcf, 'KeyPressFcn', { @interface } );
-doReturn=0;
+doReturn=0; doPause=0;
 
-conn=[]; hLine=0; hPoint=0;
-initializeCloud();
+clf;
+[hPoint, hCam]=initializeCloud( struct('cam',anim.cam,'nCamera',nCamera,...
+  'c',[0.4,0.4,1],'N',N,'A',anim.A3,'bound',bound) );
 
 % play the animation several times
 for nplayed = 1 : abs(loop)
@@ -60,64 +60,19 @@ for nplayed = 1 : abs(loop)
     tic; try geth=get(h); catch return; end
     if doReturn; return; end
 
-    updateCloud(i);
+    hCam=updateCloud( struct('hPoint',hPoint,'hCam',hCam,'nCamera',...
+      nCamera, 'i',i,'A',anim.A3,'cam',cam));
 
+    while doPause
+      pause(0.1);
+    end
+    
     % Display the image
     title(sprintf('frame %d of %d',i,nframes));
     axis(bound); drawnow;
     if(fps>0); pause(1/fps - toc); else pause(eps); end
   end
 end
-
-%%%%%%%%%%
-  function initializeCloud()
-    % Initialize the point cloud
-    if useConn
-      conn = cell(1,nPoint); coord=cell(1,3);
-      for ii = 1 : nPoint
-        conn{ii}(:,2) = N{ii}'; conn{ii}(:,1) = ii;
-      end
-      conn = cell2mat(conn');
-
-      if nDim==3
-        for ii=1:3; coord{ii}=[A(ii,conn(:,1),1),A(ii,conn(:,2),1)]'; end
-        hLine=line(coord{1},coord{2},coord{3},'Color',[0.4,0.4,1],...
-          'Marker','.');
-      else
-        for ii=1:2; coord{ii}=[A(ii,conn(:,1),1),A(ii,conn(:,2),1)]'; end
-        hLine=line(coord{1},coord{2},'Color',[0.4,0.4,1],...
-          'Marker','.');
-      end
-    else
-      if nDim==3
-        hPoint=plot3(A(1,:,1),A(2,:,1),A(3,:,1),'Color',[0.4,0.4,1],...
-          'Marker','.','LineStyle','none');
-      else
-        hPoint=plot(A(1,:,1),A(2,:,1),'Color',[0.4,0.4,1],...
-          'Marker','.','LineStyle','none');
-      end
-    end
-  end
-
-%%%%%%%%%%
-  function updateCloud(ii)
-    if useConn
-      if nDim==3
-        for j = 1 : length( hLine )
-          set(hLine(j),'XData',A(1,conn(j,1:2),ii),'YData',...
-            A(2,conn(j,1:2),ii),'ZData',A(3,conn(j,1:2),ii));
-        end
-      else
-        
-      end
-    else
-      if nDim==3
-        set(hPoint,'XData',A(1,:,ii),'YData',A(2,:,ii),'ZData',A(3,:,ii));
-      else
-        set(hPoint,'XData',A(1,:,ii),'YData',A(2,:,ii));
-      end
-    end
-  end
 
 %%%%%%%%%%
   function interface( src, event )
@@ -132,6 +87,8 @@ end
           set( gca, 'View', get( gca, 'View' ) - [ 0 10 ] );
         case 'downarrow',
           set( gca, 'View', get( gca, 'View' ) + [ 0 10 ] );
+        case 'space',
+          doPause=~doPause;
         case 'q',
           doReturn=1;
       end

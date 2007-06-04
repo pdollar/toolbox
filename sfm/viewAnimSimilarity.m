@@ -18,17 +18,17 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function viewAnimSimilarity( A, S, N )
+function viewAnimSimilarity( anim, prm )
 
-if( nargin<4 || isempty(N)); useConn = 0; else useConn = 1; end
-
-if( iscell(A) ); error('cell arrays not supported.'); end;
-if( ~ismember(ndims(A),[2 3]) ); error('unsupported dimension of A'); end
+dfs = {'nCamera',-1,'N',[],'S','REQ'};
+prm = getParamDefaults( prm, dfs );
+nCamera=prm.nCamera; N=prm.N; S=prm.S; A=anim.A2; 
 
 siz=size(A); nframes=siz(3); nDim=siz(1); nPoint=siz(2);
 
 % Determine the boundaries of the data
-bound=minmax(reshape(A,nDim,[]));
+if nCamera<0; bound=minmax(reshape(A,nDim,[]));
+else bound=minmax([reshape(A,nDim,[]), cam]);end
 maxB=max(bound(:,2)-bound(:,1))/2;
 bound=mean(bound,2); bound=[bound-maxB bound+maxB]; % make axes equal
 bound=reshape(bound',1,[]);
@@ -50,78 +50,14 @@ set( gcf, 'WindowButtonMotionFcn', { @interface } );
 set( gcf, 'KeyPressFcn', { @interface } );
 
 conn=[]; hLine=0; hPoint=0;
-initializeCloud();
 
-%%%%%%%%%%
-  function initializeCloud()
-    c=[ 1 0.4 0.4; 0.4 1 0.4 ];
-    % Initialize the point cloud
-    if useConn
-      % define the connectivities
-      conn = cell(1,nPoint); coord=cell(1,3);
-      for i = 1 : nPoint
-        conn{i}(:,2) = N{i}'; conn{i}(:,1) = i;
-      end
-      conn = cell2mat(conn');
-
-      % Draw the points/lines
-      for i=1:2
-        axes(h(i));
-        if nDim==3
-          for ii=1:3; coord{ii}=[A(ii,conn(:,1),1),A(ii,conn(:,2),1)]'; end
-          hLine(i)=line(coord{1},coord{2},coord{3},'Color',c(i,:),...
-            'Marker','.');
-        else
-          for ii=1:2; coord{ii}=[A(ii,conn(:,1),1),A(ii,conn(:,2),1)]'; end
-          hLine(i)=line(coord{1},coord{2},'Color',c(i,:),'Marker','.');
-        end
-        title(sprintf('frame %d of %d',1,nframes)); axis(bound);
-      end
-    else
-      % Draw the points/lines
-      for i=1:2
-        axes(h(i));
-        if nDim==3          
-          hPoint(i)=plot3(A(1,:,1),A(2,:,1),A(3,:,1),'Color',c(i,:), ...
-            'Marker','.','LineStyle','none');
-        else
-          hPoint(i)=plot(A(1,:,1),A(2,:,1),'Color',c(i,:), ...
-            'Marker','.','LineStyle','none');
-        end
-        title(sprintf('frame %d of %d',1,nframes)); axis(bound); 
-      end
-    end
-    axes(h(3));
-  end
-
-%%%%%%%%%%
-  function updateCloud(x)
-    if useConn
-      for i=1:2
-        if nDim==3
-          for j = 1 : length( hLine )
-            set(hLine(j),'XData',A(1,conn(j,1:2),ii),'YData',...
-              A(2,conn(j,1:2),ii),'ZData',A(3,conn(j,1:2),ii));
-          end
-        else
-          for j = 1 : length( hLine )
-            set(hLine(j),'XData',A(1,conn(j,1:2),ii),'YData',...
-              A(2,conn(j,1:2),ii),'ZData',A(3,conn(j,1:2),ii));
-          end
-        end
-      end
-    else
-      for i=1:2
-        %axes(h(i)); title(sprintf('frame %d of %d',x(i),nframes));
-        if nDim==3
-          set(hPoint(i),'XData',A(1,:,x(i)),'YData',A(2,:,x(i)),...
-            'ZData',A(3,:,x(i)));
-        else
-          set(hPoint(i),'XData',A(1,:,x(i)),'YData',A(2,:,x(i)));
-        end
-      end
-    end
-  end
+c=[ 1 0.4 0.4; 0.4 1 0.4 ];
+for i=1:2
+  axes(h(i));
+  hPoint(i)=initializeCloud( struct('cam',anim.cam,'nCamera',nCamera,...
+    'c',c(i,:),'N',N,'A',anim.A2,'bound',bound) );
+end
+axes(h(3));
 
 %%%%%%%%%%
   function interface( src, event )
@@ -135,7 +71,10 @@ initializeCloud();
       set( marker1, 'XData', x(1), 'YData', 1 );
       set( marker2, 'XData', 1, 'YData', x(2) );
       % Deal with the 3D object
-      updateCloud(x);
+      for i=1:2
+        updateCloud(struct('hPoint',hPoint(i),'hCam',[],'nCamera',-1,...
+          'conn',conn,'i',x(i),'A',anim.A2,'cam',[]));
+      end
     else
       % Deal with a pressed key to change the view or quit the animation
       diffView=[0 0];
