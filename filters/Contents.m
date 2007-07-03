@@ -7,8 +7,8 @@
 %   filter_DOOG_2D      - 2D difference of offset Gaussian (DooG) filters.
 %   filter_DOOG_3D      - 3D difference of offset Gaussian (DooG) filters.
 %   filter_binomial_1D  - 1D binomial filter (approximation to Gaussian filter)
-%   filter_gabor_1D     - 1D Gabor Filters.
-%   filter_gabor_2D     - 2D Gabor filters.
+%   filter_gabor_1D     - Creates an even/odd pair of 1D Gabor filters.
+%   filter_gabor_2D     - Creates an even/odd pair of 2D Gabor filters.
 %   filter_gauss_1D     - 1D Gaussian filter.
 %   filter_gauss_nD     - n-dimensional Gaussian filter. 
 %   filter_steerable    - Steerable Gaussian derivative filter.
