@@ -6,7 +6,7 @@
 %  FB_visualize( FB, [show] )
 %
 % INPUTS
-%  FB      - filter bank to visualize
+%  FB      - filter bank to visualize (either 2D, 3D, or 4D array)
 %  show    - [1] figure to use for display
 %
 % OUTPUTS
@@ -22,11 +22,11 @@
  
 function FB_visualize( FB, show )
 
-nd = ndims(FB)-1;
 if( nargin<2 || isempty(show) ); show=1; end;
 if( show<=0); return; end;
 
 % get Fourier Spectra for 1D and 2D filterbanks
+nd = ndims(FB)-1;
 if( nd==1 || nd==2 )
   FBF=zeros(size(FB));
   if( nd==1 )
@@ -43,10 +43,12 @@ if( nd==1 )
   subplot(1,3,1); plot( -r:r, FB );
   subplot(1,3,2); plot( (-r:r)/(2*r+1), FBF );
   subplot(1,3,3); stem( (-r:r)/(2*r+1), max(FBF,[],1) );
+  
 elseif( nd==2 )
   subplot(1,3,1); montage2(FB,1);  title('filter bank');
   subplot(1,3,2); montage2(FBF,1); title('filter bank fft');
   subplot(1,3,3); im(sum(FBF,3));  title('filter bank fft coverage');
+  
 elseif( nd==3 )
   n = size(FB,4); nn = ceil( sqrt(n) ); mm = ceil( n/nn );
   for i=1:n 
