@@ -1,4 +1,4 @@
-% Used to help visualize a 3D filter. 
+% Used to visualize a 3D filter. 
 %
 % Dark lobes correspond to negative areas.  Surfaces shown are drawn at a
 % percentage of the peak filter response detemined by frac.  

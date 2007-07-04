@@ -12,9 +12,9 @@
 %   filter_gauss_1D     - 1D Gaussian filter.
 %   filter_gauss_nD     - n-dimensional Gaussian filter. 
 %   filter_steerable    - Steerable Gaussian derivative filter.
-%   filter_visualize_1D - Used to help visualize the a 1D filter.
-%   filter_visualize_2D - Used to help visualize a 2D filter.  
-%   filter_visualize_3D - Used to help visualize a 3D filter. 
+%   filter_visualize_1D - Used to visualize a 1D filter.
+%   filter_visualize_2D - Used to visualize a 2D filter.  
+%   filter_visualize_3D - Used to visualize a 3D filter. 
 %
 % Operations involving a set of filters (a filter bank or FB):
 %   FB_apply_2D         - Applies each of the filters in the filterbank FB to the image I.

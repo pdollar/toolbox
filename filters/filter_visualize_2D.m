@@ -1,4 +1,4 @@
-% Used to help visualize a 2D filter.  
+% Used to visualize a 2D filter.  
 %
 % Marks local image maxima with a green '+' and minima with a red '+'. Also
 % shows the fft response of the filter.  Can optionally also plot a
