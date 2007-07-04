@@ -1,64 +1,50 @@
 % Difference of Gaussian (Dog) Filter.
 %
-% Adapted from code by Serge Belongie.  Takes a "difference of Gaussian" -
-% all centered on the same point but with different values for sigma.  
+% Adapted from code by Serge Belongie.  Takes a "Difference of Gaussian" -
+% all centered on the same point but with different values for sigma. Also
+% known as a Laplacian of Gaussian (if order==1).  
 %
 % USAGE
-% 
+%  G = filter_DOG_2D( r, var, order, [show] )
+%
 % INPUTS
 %  r       - Final filter will be 2*r+1 on each side
-%  sig     - standard deviation of central Gaussian
-%  order   - should be either 1 or 2
-%  show    - [optional] figure to use for display (no display if == 0)
+%  var     - variance of central Gaussian
+%  order   - should be either 1-LoG or 2-difference of 3 Gaussians
+%  show    - [0] figure to use for optional display
 %
 % OUTPUTS
-%  G       - final filter
+%  G       - filter
 %
 % EXAMPLE
-%  G = filter_DOG_2D( 6, 3, 1, 1 );
+%  G = filter_DOG_2D( 40, 40, 1, 1 ); %order=1 (LoG)
+%  G = filter_DOG_2D( 40, 40, 2, 3 ); %order=2
 %
 % See also FILTER_DOOG_2D
 
-% Piotr's Image&Video Toolbox      Version 1.03   
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
  
-function G = filter_DOG_2D( r, sig, order, show )
+function G = filter_DOG_2D( r, var, order, show )
 
 if( nargin<4 || isempty(show) ); show=0; end;
 
+% create filter
 N = 2*r+1;
-[x,y]=meshgrid(-r:r,-r:r);
-X=[x(:) y(:)];
-
 if (order==1)
-  sigi=0.71*sig;  % these should have all been square-rooted
-  sigo=1.14*sig;
-  Ci=diag([sigi,sigi]);
-  Co=diag([sigo,sigo]);
-
-  Ga=normpdf2(X,[0 0]',Ci); Ga=reshape(Ga,N,N);
-  Gb=normpdf2(X,[0 0]',Co); Gb=reshape(Gb,N,N);
-
-  a=1; b=-1;
-  G = a*Ga + b*Gb;
+  Ga = filter_gauss_nD( [N N], [], .71*var );
+  Gb = filter_gauss_nD( [N N], [], 1.14*var );
+  a=1; b=-1; G = a*Ga + b*Gb;
 
 elseif (order==2)
-  sigi=0.62*sig;
-  sigo=1.6*sig;
-  C=diag([sig,sig]);
-  Ci=diag([sigi,sigi]);
-  Co=diag([sigo,sigo]);
-
-  Ga=normpdf2(X,[0 0]',Ci); Ga=reshape(Ga,N,N);
-  Gb=normpdf2(X,[0 0]',C);  Gb=reshape(Gb,N,N);
-  Gc=normpdf2(X,[0 0]',Co); Gc=reshape(Gc,N,N);
-
-  a=-1; b=2; c=-1;
-  G = a*Ga + b*Gb + c*Gc;
+  Ga = filter_gauss_nD( [N N], [], 0.62*var );
+  Gb = filter_gauss_nD( [N N], [], var );
+  Gc = filter_gauss_nD( [N N], [], 1.6*var );
+  a=-1; b=2; c=-1; G = a*Ga + b*Gb + c*Gc;
 
 else
-  error('order not supported');
+  error('order must be 1 or 2');
 end
 
 % normalize
@@ -66,7 +52,7 @@ G=G-mean(G(:));
 G=G/norm(G(:),1);
 
 % display
-filter_visualize_2D( G, 0, show );
+filter_visualize_2D( G, '', show );
 
     
 

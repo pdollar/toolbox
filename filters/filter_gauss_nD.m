@@ -42,6 +42,7 @@ if( nargin<2 || isempty(mu)); mu=(dims+1)/2; end;
 if( nargin<3 || isempty(C)); C=(dims/6).^2; end;
 if( nargin<4 || isempty(show) || nd>3 ); show=0; end;
 
+if( numel(C)==1 ); C=repmat(C,[1 nd]); end;
 if( size(C,1)==1 || size(C,2)==1 ); C=diag(C); end;
 if( length(mu)~=nd ); error('invalid mu'); end;
 if( any(size(C)~=nd)); error( 'invalid C'); end;
