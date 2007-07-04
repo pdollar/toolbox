@@ -16,20 +16,10 @@
 % OUTPUTS
 %  dG      - The derivative of Gaussian filter
 %
-% EXAMPLE (1D)
-%  dG1 = filter_DOOG_1D( 21, 2, 3, 1 );
-%  dG2 = filter_DooG_nD( 43, 2, 3, 2 );
-%  t=dG1-dG2'; sum(abs(t(:)))
-%
-% EXAMPLE (2D)
-%  dG1 = filter_DOOG_2D( 20, [3 3], [1,1], 1 );
-%  dG2 = filter_DooG_nD( [41 41], [3 3], [1,1], 2 );
-%  t=dG1-dG2; sum(abs(t(:)))
-%
-% EXAMPLE (3D)
-%  dG1 = filter_DOOG_3D( 50, [4,4,10], [1,1,0], 1 );
-%  dG2 = filter_DooG_nD( [101 101 101], [4,4,10], [1,1,0], 2 );
-%  t=dG1-dG2; sum(abs(t(:)))
+% EXAMPLE
+%  dG1 = filter_DooG_nD( 43, 2, 3, 1 ); %1D
+%  dG2 = filter_DooG_nD( [41 41], [3 3], [1,1], 2 ); %2D
+%  dG3 = filter_DooG_nD( [101 101 101], [4,4,10], [1,1,0], 3 ); %3D
 %
 % See also FILTER_GAUSS_ND, NORMPDF2, FILTER_DOG_2D, FILTER_GABOR_2D
 
