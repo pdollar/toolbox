@@ -1,38 +1,39 @@
-% Steerable Gaussian derivative filter.
+% Steerable 2D Gaussian derivative filter (for visualization).
 %
-% This function is meant for visualization only.  It is a demonstration of
-% steerable filters.
-%
-% Analytically find Gx = dxG and Gy = dxG.  Then find the derivative of G
-% in some arbitrary direction theta by taking a linear combination of Gx
-% and Gy.  
+% This function is a demonstration of steerable filters.  The directional
+% derivative of G in an arbitrary direction theta can be found by taking a
+% linear combination of the directional derivatives dxG and dyG.  
 %
 % USAGE
+%  filter_steerable( theta )
 %
 % INPUTS
-%   theta   - orientation
+%  theta   - orientation in radians
 %
 % OUTPUTS
 %
 % EXAMPLE
-%   filter_steerable( 30 )
+%  filter_steerable( pi/4 )
 
-% Piotr's Image&Video Toolbox      Version 1.03   
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
  
 function filter_steerable( theta )
 
-% Get G (could alternatively use fspecial but need phi)
+% Get G
 [x,y]=meshgrid(-1:.1:1, -1:.1:1 );
 r = sqrt( x.^2 + y.^2 );
 G = exp( -r .* r *2 );
 
-% get first derivative in x, y, and linear comb in theta
+% get first derivatives of G.  note: d/dx(G)=-2x*G
 phi = atan2( y, x );
-Gx = r .* cos(phi) .* G;  
-Gy = r .* sin(phi) .* G;
-Gtheta = cos(theta)*Gx + sin(theta)*Gy;
+dxG = r .* cos(phi) .* G;
+dyG = r .* sin(phi) .* G;
 
-% show (scale for visualization purposes)
-figure(1); im( [G Gx*2 Gy*2 Gtheta*2 ]  );
+% get directional derivative by taking linear comb in theta
+Gtheta = cos(theta)*dxG + sin(theta)*dyG;
+
+% dislpay (scale for visualization purposes)
+GS = cat(3,G,dxG*2,dyG*2,Gtheta*2);
+figure(1); montage2(GS,1);

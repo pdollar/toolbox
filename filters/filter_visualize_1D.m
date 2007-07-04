@@ -33,6 +33,7 @@ subplot(2,1,1); plot(-r:r, f);
 hold('on'); plot(0,0,'m+'); 
 h = line([-r,r],[0,0]); set(h,'color','green')
 xlim( [-r, r] );
+title(inputname(1));
 
 % plot local mins/maxs in f
 locMaxs = find(imregionalmax(f));
@@ -44,3 +45,4 @@ hold('off');
 % plot fft magnitude of f
 subplot(2,1,2); 
 stem( (-r:r) / (2*r+1), abs( fftshift( fft( f ) )) ); 
+title('Fourier spectra');
