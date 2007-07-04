@@ -23,7 +23,7 @@ if( nargin<2 || isempty(show) ); show=0; end;
 
 switch flag
 case 1 % decent seperable steerable filterbank
-  r = 9; dims=[2*r+1 2*r+1 2*r+1];
+  r = 25; dims=[2*r+1 2*r+1 2*r+1];
   sigs = [.5 1.5 3]; 
   derivs = [0 0 1; 0 1 0; 1 0 0; 0 0 2; 0 2 0; 2 0 0];
   cnt=1; nderivs = size(derivs,1);
@@ -39,8 +39,5 @@ otherwise
   error('none created.');
 end
    
-if( show )
-  for i=1:min(10,size(FB,4))
-    filter_visualize_3D( FB(:,:,:,i), [], i );
-  end
-end
+% display
+FB_visualize( FB, show );

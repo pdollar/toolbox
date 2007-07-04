@@ -10,7 +10,7 @@
 % OUTPUTS
 %
 % EXAMPLE
-%  FB=FB_make_1D;  FB_visualize_1D( FB )
+%  FB=FB_make_1D(1,0);  FB_visualize_1D( FB )
 
 % Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 

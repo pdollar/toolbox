@@ -32,7 +32,7 @@ otherwise
 end
 
 % display
-FB_visualize_1D( FB, show );
+FB_visualize( FB, show );
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -37,4 +37,4 @@ if( mod(r,1)~=0 ); error( 'r must be an integer'); end;
 f = diag(fliplr(pascal(2*r+1))) / 4^r;
 
 % display
-filter_visualize_1D( f, show );
+if(show); filter_visualize_1D( f, show ); end;

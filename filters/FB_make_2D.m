@@ -91,7 +91,7 @@ otherwise
 end
 
 % display
-FB_visualize_2D( FB, show );
+FB_visualize( FB, show );
 
 
 

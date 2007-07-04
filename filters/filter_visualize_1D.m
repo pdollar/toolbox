@@ -8,7 +8,7 @@
 %
 % INPUTS
 %  f       - filter to visualize
-%  show    - [1] figure to use for display
+%  show    - [1] figure to use for display (0->uses current)
 %
 % OUTPUTS
 %
@@ -22,8 +22,7 @@
 function filter_visualize_1D( f, show )
 
 if( nargin<2 || isempty(show) ); show=1; end;
-if( show<=0); return; end;
-figure( show ); clf;
+if( show>0); figure( show ); clf; end;
 
 r = (length(f)-1)/2;
 f( abs(f)<.00001 ) = 0; 

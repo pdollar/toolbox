@@ -21,5 +21,4 @@
 %   FB_make_2D          - Various 2D filterbanks (hardcoded).
 %   FB_make_3D          - Various 3D filterbanks (hardcoded).
 %   FB_reconstruct_2D   - Use to see how much image information is preserved in filter outputs.
-%   FB_visualize_1D     - Used to visualize the Fourier spectra of a series of 1D filters.  
-%   FB_visualize_2D     - Used to visualize the Fourier spectra of a series of 2D filters.
+%   FB_visualize        - Used to visualize the Fourier spectra of a series of 1D/2D/3D filters. 

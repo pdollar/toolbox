@@ -10,7 +10,7 @@
 % INPUTS
 %  F         - filter to visualize
 %  scanline  - [0] 'row' OR 'col': display centeral row OR col line
-%  show      - [1] figure to use for display
+%  show      - [1] figure to use for display (0->uses current)
 %
 % OUTPUTS
 %
@@ -26,8 +26,7 @@ function filter_visualize_2D( F, scanline, show )
 
 if( nargin<2 || isempty(scanline) ); scanline=''; end;
 if( nargin<3 || isempty(show) ); show=1; end;
-if( show<=0); return; end;
-figure( show ); clf;
+if( show>0); figure( show ); clf; end;
 
 F( abs(F)<.00001 ) = 0;
 

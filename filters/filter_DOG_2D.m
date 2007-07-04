@@ -52,7 +52,7 @@ G=G-mean(G(:));
 G=G/norm(G(:),1);
 
 % display
-filter_visualize_2D( G, '', show );
+if(show); filter_visualize_2D( G, '', show ); end;
 
     
 

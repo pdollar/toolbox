@@ -66,11 +66,12 @@ G = normpdf2( gridVec, mu, C );
 if( nd>1 ); G = reshape( G, dims ); end;
 
 % display
-if( nd==1 )
-  filter_visualize_1D( G, show );
-elseif( nd==2 )
-  filter_visualize_2D( G, '', show )
-elseif( nd==3 )
-  filter_visualize_3D( G, .2, show );
-end
-        
+if( show )
+  if( nd==1 )
+    filter_visualize_1D( G, show );
+  elseif( nd==2 )
+    filter_visualize_2D( G, '', show )
+  elseif( nd==3 )
+    filter_visualize_3D( G, .2, show );
+  end
+end;

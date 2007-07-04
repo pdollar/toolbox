@@ -38,4 +38,4 @@ f(f<eps*max(f(:))*10) = 0;
 sumf = sum(f(:));  if(sumf~=0); f = f/sumf; end;   
 
 % display
-filter_visualize_1D( f, show );
+if(show); filter_visualize_1D( f, show ); end
