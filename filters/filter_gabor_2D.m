@@ -49,6 +49,6 @@ Fodd=Fodd/norm(Fodd(:),1);
 
 % display
 if(show)
-  figure(show);   filter_visualize_2D( Feven, 0 ); 
-  figure(show+1); filter_visualize_2D( Fodd, 0 ); 
+  filter_visualize_2D( Feven, 0, show );
+  filter_visualize_2D( Fodd, 0, show+1 );  
 end;

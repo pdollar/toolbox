@@ -48,8 +48,8 @@ fodd=fodd/norm(fodd(:),1);
 
 % visualization
 if (show)
-  figure(show); filter_visualize_1D( feven );
+  filter_visualize_1D( feven, show );
   title( ['even filter: sig = ' num2str(sig) ', omega = ' num2str(omega) ] );
-  figure(show+1); filter_visualize_1D( fodd );
+  filter_visualize_1D( fodd, show+1 );
   title( ['odd filter: sig = ' num2str(sig) ', omega = ' num2str(omega) ] );
 end

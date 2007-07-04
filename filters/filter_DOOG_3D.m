@@ -5,12 +5,13 @@
 % seperable kernels for efficiency purposes.
 % 
 % USAGE
+%  dG = filter_DOOG_3D( r, sigmas, nderivs, [show] )
 %
 % INPUTS
 %  r       - final mask will be NxNxN where N=2r+1
 %  sigmas  - sigmas for 3D Gaussian
 %  nderivs - order of derivative along each dimension
-%  show    - [optional] whether or not to visually display the kernel
+%  show    - [0] figure to use for optional display
 %
 % OUTPUTS
 %  dG      - The derivative of Gaussian mask
@@ -20,16 +21,16 @@
 %
 % See also FILTER_DOOG_1D, FILTER_DOOG_2D
 
-% Piotr's Image&Video Toolbox      Version 1.03   
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
  
 function dG = filter_DOOG_3D( r, sigmas, nderivs, show )
 
 if( nargin<4 || isempty(show) ); show=0; end;
-N = 2*r+1;
 
 % create 1D Gaussian and derivative masks
+N = 2*r+1;
 gauss_x = fspecial( 'Gaussian', [1,N], sigmas(1) );
 gauss_y = fspecial( 'Gaussian', [N,1], sigmas(2) );
 gauss_t = fspecial( 'Gaussian', [N,1], sigmas(3) );
@@ -44,13 +45,11 @@ for i=1:nderivs(1); dG = convn( dG, dx, 'same' ); end;
 for i=1:nderivs(2); dG = convn( dG, dy, 'same' ); end;
 for i=1:nderivs(3); dG = convn( dG, dt, 'same' ); end;    
 
-% normalize    
-L1norm = norm(dG(:),1);
-dG=dG/L1norm;
+% normalize (don't need to adjust mean since DOOG always have 0 mean)
+dG=dG/norm(dG(:),1);
 
 % display
-if (show)
-  figure(show); clf; montage2(dG,1);
-  figure(show+1); clf; filter_visualize_3D( dG, .1 );
-end
-    
+if( show )
+  filter_visualize_3D( dG, .1, show );
+  title( ['sigs=[' num2str(sigmas) '], derivs=[' num2str( nderivs ) ']']);
+end;

@@ -36,6 +36,4 @@ sumf = sum(f(:));
 if(sumf~=0); f = f/sumf; end;   
 
 % display
-if ( show )
-  figure(show); filter_visualize_1D( f );
-end
+filter_visualize_1D( f, show );

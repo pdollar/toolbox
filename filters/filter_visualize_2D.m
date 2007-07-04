@@ -2,63 +2,64 @@
 %
 % Marks local image maxima with a green '+' and minima with a red '+'. Also
 % shows the fft response of the filter.  Can optionally also plot a
-% scanline through either center row+2 or center column+2.  
+% scanline through either center row/column.  
 %
 % USAGE
+%  filter_visualize_2D( F, scanline, [show] )
 %
 % INPUTS
-%  F           - filter to visualize
-%  plotline    - if 1, then draw line through center row+2, if 2 then 
-%                througt center col+2.  else no line. optional.
+%  F         - filter to visualize
+%  scanline  - [0] 'row' OR 'col': display centeral row OR col line
+%  show      - [1] figure to use for display
 %
 % OUTPUTS
 %
 % EXAMPLE
+%  F = filter_DOG_2D( 15, 10, 1 );
+%  filter_visualize_2D( F, 'row', 1 )
 
-% Piotr's Image&Video Toolbox      Version 1.03   
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
  
-function filter_visualize_2D( F, plotline )
-    
-subplot(2,1,1);
-F( abs(F)<.00001 ) = 0; im(F);
+function filter_visualize_2D( F, scanline, show )
+
+if( nargin<2 || isempty(scanline) ); scanline=''; end;
+if( nargin<3 || isempty(show) ); show=1; end;
+if( show<=0); return; end;
+figure( show ); clf;
+
+F( abs(F)<.00001 ) = 0;
+
+% image of filter
+subplot(2,1,1); im(F);
 title(inputname(1));
+hold('on');
 
 % plot maxes and mins in F
-localmaxes_BW = imregionalmax(F);    
-localmaxes_BW(1,1)=0; localmaxes_BW(end,end)=0;
-localmaxes_BW(1,end)=0; localmaxes_BW(end,1)=0;
-[localmaxes(:,1),localmaxes(:,2)] = find(localmaxes_BW);
-
-localmins_BW  = imregionalmin(F);  
-localmins_BW(1,1)=0; localmins_BW(end,end)=0;
-localmins_BW(1,end)=0; localmins_BW(end,1)=0;
-[localmins(:,1),localmins(:,2)] = find(localmins_BW);
-
-hold('on');  plot( localmaxes(:,2), localmaxes(:,1), 'g+');
-plot( localmins(:,2), localmins(:,1), 'r+'); hold('off'); 
+locMaxs = imregionalmax(F); locMaxs([1 end],[1 end])=0;
+[locMaxs1,locMaxs2] = find(locMaxs);
+plot( locMaxs2, locMaxs1, 'g+');
+locMins = imregionalmin(F); locMins([1 end],[1 end])=0;
+[locMins1,locMins2] = find(locMins);
+plot( locMins2, locMins1, 'r+');
 
 % show fft response
 subplot(2,1,2);
 FF = abs(fftshift(fft2(F)));
 im(FF); title('Fourier spectra');
 
-% plot scanline
-if (nargin==2)
-  if (plotline==1)
-    sc = F( (size(F,1)-1)/2 +2, : );  
-  elseif (plotline==2)
-    sc = F( :, (size(F,2)-1)/2 +2 );  
-  else 
-    return;
+% optionally plot central row/col scanline
+if(strcmp(scanline,'row') || strcmp(scanline,'col'))
+  if( strcmp(scanline,'row') )
+    sc = F( round((size(F,1)-1)/2+1), : );
+  else
+    sc = F( :, round((size(F,2)-1)/2+1) );
   end
-
-  localmaxes_BW = imregionalmax(sc);  localmaxes = find(localmaxes_BW);
-  localmins_BW  = imregionalmin(sc);  localmins  = find(localmins_BW) ;
-  figure(2);  plot( sc ); hold('on'); 
-  plot( localmaxes, sc(localmaxes), 'g+');
-  plot( localmins, sc(localmins), 'r+');     
+  figure(show+1);  plot( sc ); hold('on');  title(scanline);
+  locMaxs = find(imregionalmax(sc));
+  locMins = find(imregionalmin(sc));
+  plot( locMaxs, sc(locMaxs), 'g+');
+  plot( locMins, sc(locMins), 'r+');
   hold('off');
 end
-            

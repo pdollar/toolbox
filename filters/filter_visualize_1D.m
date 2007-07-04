@@ -1,9 +1,10 @@
-% Used to help visualize the a 1D filter.
+% Used to visualize a 1D filter.
 %
-% Marks local image maxima with a green '+' and minima with a red '+'.
+% Marks local filter maxima with a green '+' and minima with a red '+'.
 % Also shows the fft response of the filter.
 %
 % USAGE
+%  filter_visualize_1D( f, [show] )
 %
 % INPUTS
 %  f       - filter to visualize
@@ -12,29 +13,34 @@
 % OUTPUTS
 %
 % EXAMPLE
+%  filter_binomial_1D( 10, 1 );
 
-% Piotr's Image&Video Toolbox      Version 1.03   
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
  
-function filter_visualize_1D( f )
+function filter_visualize_1D( f, show )
+
+if( nargin<2 || isempty(show) ); show=1; end;
+if( show<=0); return; end;
+figure( show ); clf;
 
 r = (length(f)-1)/2;
-
 f( abs(f)<.00001 ) = 0; 
+
+% show original filter
 subplot(2,1,1); plot(-r:r, f);
 hold('on'); plot(0,0,'m+'); 
 h = line([-r,r],[0,0]); set(h,'color','green')
-hold('off'); xlim( [-r, r] );
+xlim( [-r, r] );
 
-% plot local maxes and mins in f
-localmaxes_BW = imregionalmax(f);  localmaxes = find(localmaxes_BW);
-localmins_BW  = imregionalmin(f);  localmins  = find(localmins_BW);
-
-hold('on'); 
-plot( localmaxes-r-1, f(localmaxes), 'g+');
-plot( localmins-r-1, f(localmins), 'r+');     
+% plot local mins/maxs in f
+locMaxs = find(imregionalmax(f));
+locMins = find(imregionalmin(f));
+plot( locMaxs-r-1, f(locMaxs), 'g+');
+plot( locMins-r-1, f(locMins), 'r+');     
 hold('off');
 
-% plot fft magnitude (fft magnitude of feven & fodd is same)
-subplot(2,1,2); stem( [-r:r] / (2*r+1), abs( fftshift( fft( f ) )) ); 
+% plot fft magnitude of f
+subplot(2,1,2); 
+stem( (-r:r) / (2*r+1), abs( fftshift( fft( f ) )) ); 

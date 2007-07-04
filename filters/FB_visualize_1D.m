@@ -18,7 +18,8 @@
  
 function FB_visualize_1D( FB, show )
 
-if( nargin<2 || isempty(show) || show<1 ); show=1; end;
+if( nargin<2 || isempty(show) ); show=1; end;
+if( show<=0); return; end;
 
 FBF=zeros(size(FB));
 for n=1:size(FB,1)

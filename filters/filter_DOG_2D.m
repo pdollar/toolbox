@@ -66,9 +66,8 @@ G=G-mean(G(:));
 G=G/norm(G(:),1);
 
 % display
-if(show)
-  figure(show); filter_visualize_2D( G, 0 );
-end
+filter_visualize_2D( G, 0, show );
+
     
 
 

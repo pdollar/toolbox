@@ -63,8 +63,8 @@ if( nd>1 ); G = reshape( ps, dims ); else G = ps; end;
 % optionally show
 if( show )
   figure(show); clf; 
-  if ( nd==1 )
-    filter_visualize_1D( G );
+  if( nd==1 )
+    filter_visualize_1D( G, show );
   elseif( nd==2 )
     im(G); hold('on'); plot_gaussellipses( mu, C, 2 ); hold('off');
   elseif( nd==3 )
