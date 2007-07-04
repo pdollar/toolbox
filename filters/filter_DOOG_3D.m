@@ -14,7 +14,7 @@
 %  show    - [0] figure to use for optional display
 %
 % OUTPUTS
-%  dG      - The derivative of Gaussian mask
+%  dG      - The derivative of Gaussian filter
 %
 % EXAMPLE
 %  dG = filter_DOOG_3D( 50, [4,4,10], [1,1,0], 1 );
@@ -29,18 +29,12 @@ function dG = filter_DOOG_3D( r, sigmas, nderivs, show )
 
 if( nargin<4 || isempty(show) ); show=0; end;
 
-% create 1D Gaussian and derivative masks
+% get initial Gaussian
 N = 2*r+1;
-gauss_x = fspecial( 'Gaussian', [1,N], sigmas(1) );
-gauss_y = fspecial( 'Gaussian', [N,1], sigmas(2) );
-gauss_t = fspecial( 'Gaussian', [N,1], sigmas(3) );
-gauss_t = permute( gauss_t', circshift(1:3,[1,2-1]) );    
-dx = .5*[-1 0 1]; dy = dx'; dt = .5* cat(3, -1, cat(3,0,1));
-
-% create Gaussian kernel
-dG =convn( gauss_t, gauss_y*gauss_x );
+dG = filter_gauss_nD( [N N N], [], sigmas.^2, 0 );
 
 % take derivative of kernel appropriately
+dx = .5*[-1 0 1]; dy = dx'; dt = .5* cat(3, -1, cat(3,0,1));
 for i=1:nderivs(1); dG = convn( dG, dx, 'same' ); end;
 for i=1:nderivs(2); dG = convn( dG, dy, 'same' ); end;
 for i=1:nderivs(3); dG = convn( dG, dt, 'same' ); end;    

@@ -14,7 +14,7 @@
 % OUTPUTS
 %
 % EXAMPLE
-%  F = filter_DOOG_3D( 50, [4,4,10], [1,1,0] );
+%  F = filter_DooG_nD( [51 51 101], [3 3 5], [1 2 3], 0 );
 %  filter_visualize_3D( F, .1, 1 )
 %
 % See also FILTER_VISUALIZE_2D
