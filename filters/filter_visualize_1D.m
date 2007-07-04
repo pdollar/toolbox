@@ -13,7 +13,10 @@
 % OUTPUTS
 %
 % EXAMPLE
-%  filter_binomial_1D( 10, 1 );
+%  f = filter_binomial_1D( 10, 0 );
+%  filter_visualize_1D( f, 1 )
+%
+% See also FILTER_VISUALIZE_2D
 
 % Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 

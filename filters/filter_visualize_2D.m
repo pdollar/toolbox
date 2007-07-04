@@ -16,7 +16,9 @@
 %
 % EXAMPLE
 %  F = filter_DOG_2D( 15, 10, 1 );
-%  filter_visualize_2D( F, 'row', 1 )
+%  filter_visualize_2D( F, 'row', 1 );
+%
+% See also FILTER_VISUALIZE_1D, FILTER_VISUALIZE_3D
 
 % Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 

@@ -13,7 +13,7 @@
 % OUTPUTS
 %
 % EXAMPLE
-%  filter_steerable( pi/4 )
+%  filter_steerable( pi/4 );
 
 % Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 

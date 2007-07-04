@@ -2,7 +2,8 @@
 %
 % Adapted from code by Serge Belongie.  Takes a "Difference of Gaussian" -
 % all centered on the same point but with different values for sigma. Also
-% known as a Laplacian of Gaussian (if order==1).  
+% serves as an approximation to an Laplacian of Gaussian (LoG) filter (if
+% order==1).
 %
 % USAGE
 %  G = filter_DOG_2D( r, var, order, [show] )
@@ -52,7 +53,7 @@ G=G-mean(G(:));
 G=G/norm(G(:),1);
 
 % display
-if(show); filter_visualize_2D( G, '', show ); end;
+if(show); filter_visualize_2D( G, 'row', show ); end;
 
     
 

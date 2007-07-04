@@ -18,7 +18,7 @@
 %
 % OUTPUTS
 %  Feven   - even symmetric filter (-cosine masked with Gaussian)
-%  Fodd    - even symmetric filter (-sine masked with Gaussian)
+%  Fodd    - odd symmetric filter (-sine masked with Gaussian)
 %
 % EXAMPLE
 %  [Feven,Fodd] = filter_gabor_2D(15,sqrt(2),4,45,1,1);

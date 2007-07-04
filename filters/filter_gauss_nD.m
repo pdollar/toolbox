@@ -21,16 +21,12 @@
 % OUTPUTS
 %  G   - image of the created Gaussian
 %
-% EXAMPLE (1D)
-%  g = filter_gauss_nD( 21, [], 4, 1);
-%
-% EXAMPLE (2D)
-%  sig=3; G = filter_gauss_nD( 4*[sig sig] + 1, [], [sig sig].^2, 1 );
-%
-% EXAMPLE (3D)
+% EXAMPLE
+%  g = filter_gauss_nD( 21, [], 4, 1); %1D
+%  sig=3; G = filter_gauss_nD( 4*[sig sig] + 1, [], [sig sig].^2, 2 ); %2D
 %  R = rotation_matrix3D( [1,1,0], pi/4 ); 
 %  C = R'*[10^2 0 0; 0 5^2 0; 0 0 16^2]*R;
-%  G = filter_gauss_nD( [51,51,51], [], C, 1 );
+%  G3 = filter_gauss_nD( [51,51,51], [], C, 3 ); %3D
 %
 % See also FILTER_GAUSS_1D, NORMPDF2
 
