@@ -47,5 +47,3 @@ camlight; lighting gouraud; set(gca,'Box','on');
 set(gca,'YTick',[]); set(gca,'XTick',[]); set(gca,'ZTick',[]);
 xlabel('y'); ylabel('t'); zlabel('x'); 
 if(~washeld); hold('off'); end;
-    
-    

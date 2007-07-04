@@ -1,39 +1,46 @@
-% Various ways to make filterbanks.  See inside of this file for details.
-%
-% Keep adding different filterbanks, don't alter old ones!
+% Various 3D filterbanks (hardcoded).
 %
 % USAGE
+%  FB = FB_make_3D( flag, [show] )
 %
 % INPUTS
+%  flag    - controls type of filterbank to create
+%            1: decent seperable steerable filterbank
+%  show    - [0] figure to use for optional display
 %
 % OUTPUTS
 %
 % EXAMPLE
+%  FB = FB_make_1D( 1, 1 );
 
-% Piotr's Image&Video Toolbox      Version 1.03   
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
  
-function FB = FB_make_3D
+function FB = FB_make_3D( flag, show )
 
-flag = 1;    
+if( nargin<2 || isempty(show) ); show=0; end;
 
 switch flag
-case 1 % pretty decent SEPERABLE STEERABLE? Filterbank
-  r = 9;  
-  sigmas = [.5 1.5 3]; 
+case 1 % decent seperable steerable filterbank
+  r = 9;
+  sigs = [.5 1.5 3]; 
   derivs = [0 0 1; 0 1 0; 1 0 0; 0 0 2; 0 2 0; 2 0 0];
-  counter=1;
-  for s=sigmas
-    for i=1:size(derivs,1)
-      dG = filter_DOOG_3D( r, [s, s, s], derivs(i,:), 0 );
-      FB(:,:,:,counter) = dG; counter=counter+1;
-    end        
+  cnt=1; nderivs = size(derivs,1);
+  for s=1:length(sigs)
+    for i=1:nderivs
+      dG = filter_DOOG_3D( r, [sigs(s) sigs(s) sigs(s)], derivs(i,:), 0 );
+      if(s==1 && i==1); FB=repmat(dG,[1 1 1 nderivs*length(sigs)]); end;
+      FB(:,:,:,cnt) = dG; cnt=cnt+1;
+    end
   end
-  %FB2 = mfb_DOG( r, .6, 2.8, 4);
-  %FB = cat(3, FB, FB2);        
 
-  otherwise
+otherwise
   error('none created.');
 end
    
+if( show )
+  for i=1:min(10,size(FB,4))
+    filter_visualize_3D( FB(:,:,:,i), [], i );
+  end
+end

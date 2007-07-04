@@ -1,38 +1,46 @@
-% Various ways to make filterbanks.  See inside of this file for details.
-%
-% keep adding different filterbanks, don't alter old ones!
+% Various 1D filterbanks (hardcoded).
 %
 % USAGE
+%  FB = FB_make_1D( flag, [show] )
 %
 % INPUTS
+%  flag    - controls type of filterbank to create
+%            1: gabor filter bank for spatiotemporal stuff
+%  show    - [0] figure to use for optional display
 %
 % OUTPUTS
 %
 % EXAMPLE
+%  FB = FB_make_1D( 1, 1 );
 
-% Piotr's Image&Video Toolbox      Version 1.03   
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
  
-function FB = FB_make_1D
-flag = 1;    
+function FB = FB_make_1D( flag, show )
 
-if flag==1  % gabor filter bank for spatiotemporal stuff
+if( nargin<2 || isempty(show) ); show=0; end;
+
+switch flag
+case 1  %%% gabor filter bank for spatiotemporal stuff
   omegas = 1 ./ [3 4 5 7.5 11];
   sigmas =      [3 4 5 7.5 11];
-  FB = mfb_gabor1D( 15, sigmas, omegas );
+  FB = FB_make_gabor1D( 15, sigmas, omegas );
+  
+otherwise
+  error('none created.');
 end
 
+% display
+FB_visualize_1D( FB, show );
 
-function FB = mfb_gabor1D( r, sigmas, omegas )     
-counter=1;  
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function FB = FB_make_gabor1D( r, sigmas, omegas )     
 for i=1:length(omegas)
   [feven,fodd]=filter_gabor_1D(r,sigmas(i),omegas(i));
-  FB(counter,:)=feven;  counter=counter+1;
-  FB(counter,:)=fodd;   counter=counter+1;
+  if( i==1 ); FB=repmat(feven,[2*length(omegas) 1]); end;
+  FB(i*2-1,:)=feven; FB(i*2,:)=fodd;
 end
 
         
-%%%%%% Used to test filterbank response
-% x=1:31; y=cos(2*pi*x* 1/5 ) + cos(2*pi*x* 1/7 ); y = y/max(y);
-% resp = sum(repmat( y, 10,1 ).*FB, 2); stem(resp);
