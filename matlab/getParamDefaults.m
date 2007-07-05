@@ -9,34 +9,31 @@
 % USAGE
 %  prm = getParamDefaults( prm, dfs ) 
 %
-% INPUT
+% INPUTS
 %  prm    - parameters struct
 %  dfs    - cell of form {name1,default1,name2,default2,...}
 %
-% OUTPUT 
+% OUTPUTS 
 %  prm    - updated parameters struct
 %
 % EXAMPLE
-%  prm.x = 1; 
 %  dfs = { 'x','REQ', 'y',0, 'z',[], 'eps',1e-3 };
-%  prm = getParamDefaults( prm, dfs )
-% 
-% DATESTAMP
-%   08-Feb-2007  5:00pm
+%  prm.x = 1;  prm = getParamDefaults( prm, dfs )
 
-% Piotr's Image&Video Toolbox      Version 1.03   
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
 
 function prm = getParamDefaults( prm, dfs ) 
-  if(~isstruct(prm)); error('prm must be a struct'); end;
-  if(mod(length(dfs),2)~=0); error('incorrect num dfs'); end;
-  for i=1:2:length(dfs)
-    if(~isfield2(prm,dfs{i},1)); 
-      if(strcmp('REQ',dfs{i+1}))
-        error(['Required field ' dfs{i} ' not specified.'] );
-      else
-        prm.(dfs{i})=dfs{i+1}; 
-      end;
-    end
+
+if(~isstruct(prm)); error('prm must be a struct'); end;
+if(mod(length(dfs),2)~=0); error('incorrect num dfs'); end;
+for i=1:2:length(dfs)
+  if(~isfield2(prm,dfs{i},1)); 
+    if(strcmp('REQ',dfs{i+1}))
+      error(['Required field ' dfs{i} ' not specified.'] );
+    else
+      prm.(dfs{i})=dfs{i+1}; 
+    end;
   end
+end

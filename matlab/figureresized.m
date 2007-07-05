@@ -16,30 +16,28 @@
 % EXAMPLE
 %  figureresized( .75 )
 %
-% DATESTAMP
-%  10-Jan-2007  10:00am
-% 
 % See also FIGURE
 
-% Piotr's Image&Video Toolbox      Version 1.03   
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
  
 function varargout = figureresized( screenratio, varargin )
-  if( nargin<1 ); screenratio=.3; end;
-  if( screenratio>1 ); error('screenratio must be <= 1'); end;
 
-  % call figure
-  h = figure( varargin{:} );
-  if( nargout ); varargout = {h}; end;
+if( nargin<1 ); screenratio=.3; end;
+if( screenratio>1 ); error('screenratio must be <= 1'); end;
 
-  % get dimensions of screen and what want figure to be
-  units = get(0,'Units');
-  ss = get(0,'ScreenSize');
-  st = (1 - screenratio)/2;
-  pos = [st*ss(3), st*ss(4), screenratio*ss(3), screenratio*ss(4)];
+% call figure
+h = figure( varargin{:} );
+if( nargout ); varargout = {h}; end;
 
-  % set dimensions of figure
-  set( h, 'Units', units );
-  set( h, 'Position', pos );
-    
+% get dimensions of screen and what want figure to be
+units = get(0,'Units');
+ss = get(0,'ScreenSize');
+st = (1 - screenratio)/2;
+pos = [st*ss(3), st*ss(4), screenratio*ss(3), screenratio*ss(4)];
+
+% set dimensions of figure
+set( h, 'Units', units );
+set( h, 'Position', pos );
+

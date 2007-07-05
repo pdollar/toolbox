@@ -13,51 +13,49 @@
 % INPUTS
 %  S        - struct array
 %  fs       - cell of string name or string
-%  [isinit] - if true than additionally test if all fields are initialized
+%  isinit   - [0] if true additionally test if all fields are initialized
 %
 % OUTPUTS
 %  tf      - true or false, depending on results of above tests
 %
-% DATESTAMP
-%  10-Jan-2007  10:00am
-%
+% EXAMPLE
+%  isfield2( struct('a',1,'b',2), {'a','b'}, 1 )
+% 
 % See also ISFIELD
 
-% Piotr's Image&Video Toolbox      Version 1.03   
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
  
 function tf = isfield2( S, fs, isinit )
-  if( nargin<3 ); isinit=0;  end;
 
-  if ~isa(S,'struct')  
-      tf = false; return;
-  end;
+if( nargin<3 ); isinit=0;  end;
 
-  % check if fs is a cell array, if not make it so
-  if( iscell(fs) )
-      nfs = length(fs);
-  else
-      nfs=1; fs={fs};
-  end;
+if ~isa(S,'struct')  
+  tf = false; return;
+end;
 
-  % see if every one of fs is a fieldname
-  Sfs = fieldnames(S);  
-  tf = true; 
-  for i=1:nfs 
-      tf = tf & any(strcmp(Sfs,fs{i}));
-      if( ~tf ); return; end;
-  end;
+% check if fs is a cell array, if not make it so
+if( iscell(fs) )
+  nfs = length(fs);
+else
+  nfs=1; fs={fs};
+end;
 
-  % now optionally check if fields are isinitialized
-  if( ~isinit || ~tf ); return; end;
-  nS = numel(S);
-  for i=1:nfs
-    for j=1:nS
-      tf = tf & ~isempty( S(j).(fs{i}) );
-      if( ~tf ); return; end;
-    end;
+% see if every one of fs is a fieldname
+Sfs = fieldnames(S);  
+tf = true; 
+for i=1:nfs 
+  tf = tf & any(strcmp(Sfs,fs{i}));
+  if( ~tf ); return; end;
+end;
+
+% now optionally check if fields are isinitialized
+if( ~isinit || ~tf ); return; end;
+nS = numel(S);
+for i=1:nfs
+  for j=1:nS
+    tf = tf & ~isempty( S(j).(fs{i}) );
+    if( ~tf ); return; end;
   end;
-    
-    
-    
+end;
