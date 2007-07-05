@@ -30,11 +30,17 @@
  
 function p = randperm2( n, k )
 
-if (nargin<2); k=n; else k = min(k,n); end
+wid = sprintf('Images:%s:obsoleteFunction',mfilename);
+warning(wid,[ '%s is obsolete in Piotr''s toolbox.\n RANDSAMPLE is its '...
+  'recommended replacement.'],upper(mfilename));
 
-p = 1:n;
-for i=1:k
-  r = i + floor( (n-i+1)*rand );     
-  t = p(r);  p(r) = p(i);  p(i) = t;
-end
-p = p(1:k);
+randsample( n, k );
+
+%if (nargin<2); k=n; else k = min(k,n); end
+
+%  p = 1:n;
+%  for i=1:k
+%    r = i + floor( (n-i+1)*rand );     
+%    t = p(r);  p(r) = p(i);  p(i) = t;
+%  end
+%  p = p(1:k);

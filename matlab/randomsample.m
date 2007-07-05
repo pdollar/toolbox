@@ -9,6 +9,7 @@
 % requires 1 byte, so the same size array would require 1MB.  Note that
 % when saved to .mat files arrays may take up more or less memory (due to
 % compression, etc.)
+% Different from Matlab randsample !
 %
 % Note, to see how much memory a variable x is using in memory, use:
 %  s=whos('x'); mb=s.bytes/2^20
