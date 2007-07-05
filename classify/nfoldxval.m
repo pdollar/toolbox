@@ -132,13 +132,13 @@ function CM=nfoldxval( data, IDX, clfinit, clfparams, types, ignoretypes, fname,
 
         % apply dim reduction [make sure data is well conditioned]
         if( 0 )
-            [ U, mu, variances ] = pca( train' );
+            [ U, mu, vars ] = pca( train' );
             maxp = size(U,2) -6; % -20; further reduce? -6
             if( maxp < p ) 
                 warning(['reducing dim of data from: ' ...
                     int2str(p) ' to ' int2str(maxp)]);
-                train = pca_apply( train', U, mu, variances, maxp )';
-                test  = pca_apply( test',  U, mu, variances, maxp )';
+                train = pca_apply( train', U, mu, vars, maxp )';
+                test  = pca_apply( test',  U, mu, vars, maxp )';
                 p = maxp;
             end;
         end;

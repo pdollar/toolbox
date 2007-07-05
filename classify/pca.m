@@ -20,8 +20,8 @@
 % vector x. Use pca_visualize(X,...) for visualization of approximated X. 
 %
 % To calculate residuals: 
-%   residuals = cumsum(vars / sum(vars)); 
-%   plot( residuals, '-.' )
+%  residuals = cumsum(vars / sum(vars)); 
+%  plot( residuals, '-.' )
 %
 % USAGE
 %  [ U, mu, vars ] = pca( X )
@@ -41,66 +41,62 @@
 %  figure(1); im(I3D1(:,:,1));  figure(2); im(Xhat);
 %  pca_visualize( U, mu, vars, I3D1, 13, [0:12], [], 3 );
 %
-% DATESTAMP
-%  10-Jan-2007  4:00pm
-%
 % See also PRINCOMP, PCA_APPLY, PCA_VISUALIZE, VISUALIZE_DATA, RANDOMSAMPLE
 
-% Piotr's Image&Video Toolbox      Version 1.03   
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
  
 function [ U, mu, vars ] = pca( X )
 
-  % Will run out of memory if X has too many elements.  
-  % Hence, choose a random sample to run PCA on.
-  maxmegs = 80;
-  if( ~isa(X,'double') )  
-    s=whos('X'); nbytes=s.bytes/numel(X);
-    X = randomsample( X, maxmegs * nbytes/8 );
-    X = double(X);
-  else
-    X = randomsample( X, maxmegs );
-  end
-  
-  siz=size(X);  nd=ndims(X);  d=prod(siz(1:end-1));
-  inds={':'};  inds=inds(:,ones(1,nd-1));   
+% Will run out of memory if X has too many elements.  
+maxmegs = 80;
+if( ~isa(X,'double') )  
+  s=whos('X'); nbytes=s.bytes/numel(X);
+  X = randomsample( X, maxmegs * nbytes/8 );
+  X = double(X);
+else
+  X = randomsample( X, maxmegs );
+end
 
-  % set X to be zero mean
-  mu = mean( X, nd );
-  murep = mu( inds{:}, ones(1,siz(end)));
-  X = X - murep;
+siz=size(X);  nd=ndims(X);  d=prod(siz(1:end-1));
+inds={':'};  inds=inds(:,ones(1,nd-1));   
 
-  % flatten X
-  X = reshape(X, d, [] );
-  [N,n] = size(X);
-  if(n==1); U=zeros(d,1); vars=0; return; end
-  X = X ./ sqrt(n-1);
+% set X to be zero mean
+mu = mean( X, nd );
+murep = mu( inds{:}, ones(1,siz(end)));
+X = X - murep;
 
-  % get principal components using the SVD 
-  % note: X = U * S * V';  maxrank = min(n-1,N)
-  % basically same as svd(X,'econ'), slightly faster?
-  if( N>n )
-    [V,SS,V] = svd( X' * X ); 
-    keeplocs = diag(SS) > 1e-30;
-    SS = SS(keeplocs,keeplocs);
-    V = V(:,keeplocs);
-    U = X * (V * SS^-.5);
-  else
-    [U,SS,U] = svd( X * X' );
-    keeplocs = diag(SS) > 1e-30;
-    SS = SS(keeplocs,keeplocs);
-    U = U(:,keeplocs);
-  end    
+% flatten X
+X = reshape(X, d, [] );
+[N,n] = size(X);
+if(n==1); U=zeros(d,1); vars=0; return; end
+X = X ./ sqrt(n-1);
 
-  % eigenvalues squared
-  vars = diag(SS);
-    
-  %%% THE FOLLOWING IS USED TO TIME SVD
-  % t=[]; rs = 100:20:500; 
-  % for r=rs tic; [u,s,v] = svd(rand(r)); t(end+1)=toc; end; plot(rs,t);
-  % plot(rs,t,'r'); hold('on'); 
-  % fplot( '1e-7*(x)^2.75', [1,1000] ); hold('off');
-  % x=1500; 1e-7*(x)^2.75 / 60 %minutes
-  %%%
+% get principal components using the SVD 
+% note: X = U * S * V';  maxrank = min(n-1,N)
+% basically same as svd(X,'econ'), slightly faster?
+if( N>n )
+  [V,SS,V] = svd( X' * X ); 
+  keeplocs = diag(SS) > 1e-30;
+  SS = SS(keeplocs,keeplocs);
+  V = V(:,keeplocs);
+  U = X * (V * SS^-.5);
+else
+  [U,SS,U] = svd( X * X' );
+  keeplocs = diag(SS) > 1e-30;
+  SS = SS(keeplocs,keeplocs);
+  U = U(:,keeplocs);
+end    
+
+% eigenvalues squared
+vars = diag(SS);
+
+%%% THE FOLLOWING IS USED TO TIME SVD
+% t=[]; rs = 100:20:500; 
+% for r=rs tic; [u,s,v] = svd(rand(r)); t(end+1)=toc; end; plot(rs,t);
+% plot(rs,t,'r'); hold('on'); 
+% fplot( '1e-7*(x)^2.75', [1,1000] ); hold('off');
+% x=1500; 1e-7*(x)^2.75 / 60 %minutes
+%%%
   

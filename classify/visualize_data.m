@@ -34,8 +34,8 @@ if( nargin<4 || isempty(types) ); types=[]; end;
 
 % apply PCA if necessary
 if( size(X,2)~= k )
-  [ U, mu, variances ] = pca( X' );
-  X = pca_apply( X', U, mu, variances, k )';
+  [ U, mu, vars ] = pca( X' );
+  X = pca_apply( X', U, mu, vars, k )';
 end
 
 %%% get k
