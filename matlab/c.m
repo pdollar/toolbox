@@ -1,9 +1,17 @@
-% clc
+% clc - clear command window.
 %
-% DATESTAMP
-%   29-Sep-2005  2:00pm
+% USAGE
+%  c
+%
+% INPUTS
+%
+% OUTPUTS
+%
+% EXAMPLE
+%
+% See also CLC, CC, CCC
 
-% Piotr's Image&Video Toolbox      Version 1.03   
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
  

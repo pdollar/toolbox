@@ -1,58 +1,49 @@
 % Pads or crops I appropriately so that size(IC)==dims.  
 %
-% For each dimension d, if size(I,d) is larger then dims(d) then symmetrically crops along
-% d (if cropping amount is odd crops one more unit from the start of the dimension).  If
-% size(I,d) is smaller then dims(d) then symmetrically pads along d with padelement (if
-% padding amount is even then pads one more unit along the start of the dimension).
+% For each dimension d, if size(I,d) is larger then dims(d) then
+% symmetrically crops along d (if cropping amount is odd crops one more
+% unit from the start of the dimension).  If size(I,d) is smaller then
+% dims(d) then symmetrically pads along d with padEl (if padding amount is
+% even then pads one more unit along the start of the dimension).
+%
+% USAGE
+%  IC = arraycrop2dims( I, dims, [padEl] )
 %
 % INPUTS
-%   I             - n dimensional array to crop window from
-%                   does not support cell arrays (except for cropping)
-%   dims          - dimensions to make I
-%   padelement    - [optional] element with which to pad (0 by default)
+%  I         - n dim array to crop window from (for arrays can only crop)
+%  dims      - dimensions to make I
+%  padEl     - [0] element with which to pad
 %
 % OUTPUTS
-%   IC            - cropped array
+%  IC        - cropped array
 %
 % EXAMPLE
-%   I = randn(10);
-%   delta=1; IC = arraycrop2dims( I, size(I)-2*delta  );
-%
-% DATESTAMP
-%   29-Sep-2005  2:00pm
+%  I=randn(10); delta=1; IC=arraycrop2dims(I,size(I)-2*delta);
 %
 % See also ARRAYCROP_FULL, PADARRAY
 
-% Piotr's Image&Video Toolbox      Version 1.03   
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
  
-function IC = arraycrop2dims( I, dims, padelement )
-    if( nargin<3 || isempty(padelement)) padelement=0; end;      
-    nd = ndims(I);  siz = size(I);
-    [dims,er] = checknumericargs( dims, size(siz), 0, 1 ); error(er);
-    if(any(dims==0)) IC=[]; return; end;
+function IC = arraycrop2dims( I, dims, padEl )
 
-    % get start and end locations for cropping
-    start_locs = ones( 1, nd );  end_locs = siz;
-    for d=1:nd
-        delta = siz(d) - dims(d);
-        if ( delta~=0 )
-            deltahalf = floor( delta / 2 );  deltarem = delta - 2*deltahalf;
-            start_locs(d) = 1 + (deltahalf + deltarem);
-            end_locs(d) = siz(d) - deltahalf;
-        end
-    end
+if( nargin<3 || isempty(padEl)); padEl=0; end;      
+nd = ndims(I);  siz = size(I);
+[dims,er] = checknumericargs( dims, size(siz), 0, 1 ); error(er);
+if(any(dims==0)); IC=[]; return; end;
 
-    % call arraycrop_full 
-    IC = arraycrop_full( I, start_locs, end_locs, padelement );
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+% get start and end locations for cropping
+strLocs = ones( 1, nd );  endLocs = siz;
+for d=1:nd
+  delta = siz(d) - dims(d);
+  if ( delta~=0 )
+    deltaHalf = floor( delta / 2 );  
+    deltaRem = delta - 2*deltaHalf;
+    strLocs(d) = 1 + (deltaHalf + deltaRem);
+    endLocs(d) = siz(d) - deltaHalf;
+  end
+end
+
+% call arraycrop_full 
+IC = arraycrop_full( I, strLocs, endLocs, padEl );

@@ -1,9 +1,17 @@
 % close all, clc
 %
-% DATESTAMP
-%   29-Sep-2005  2:00pm
+% USAGE
+%  cc
+%
+% INPUTS
+%
+% OUTPUTS
+%
+% EXAMPLE
+%
+% See also C, CCC
 
-% Piotr's Image&Video Toolbox      Version 1.03   
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
  
