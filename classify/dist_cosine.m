@@ -10,22 +10,19 @@
 %  D = dist_cosine( X, Y )
 %
 % INPUTS
-%  X   - m-by-p matrix of m p dimensional vectors 
-%  Y   - n-by-p matrix of n p dimensional vectors 
+%  X   - [m x p] matrix of m p-dimensional vectors 
+%  Y   - [n x p] matrix of n p-dimensional vectors 
 %
 % OUTPUTS
-%  D   - m-by-n distance matrix
+%  D   - [m x n] distance matrix
 %
 % EXAMPLE
-%  X=[randn(100,5)]; Y=randn(40,5)+2;
+%  X = [randn(100,5)]; Y=randn(40,5)+2;
 %  D = dist_cosine( [X; Y], [X; Y] ); im(D)
-%
-% DATESTAMP
-%  01-Apr-2007  5:00pm
 %
 % See also DIST_EUCLIDEAN
 
-% Piotr's Image&Video Toolbox      Version 1.03   
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
 
@@ -51,8 +48,3 @@ D = 1 - X*Y';
 %     D(j, i) = D(i, j);
 %   end
 % end
-
-
-
-
-
