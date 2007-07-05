@@ -1,27 +1,25 @@
-% Used to display the progress of a long process.'
-%
-% USAGE
-%                 tocstatus( id, fracdone )
+% Used to display the progress of a long process.
 %
 % For more information see ticstatus.
 %
+% USAGE
+%  tocstatus( id, fracDone )
+%
 % INPUTS
-%   ticstatusid - unique id of progress indicator
-%   fracdone    - value in (0,1] indicating percent of operation that is done
+%  ticstatusid - unique id of progress indicator
+%  fracDone    - value in (0,1] indicating percent operation completed
 %
 % OUTPUTS
-%   none
 %
-% DATESTAMP
-%   09-Apr-2007  10:00pm
+% EXAMPLE
 %
 % See also TICSTATUS
 
-% Piotr's Image&Video Toolbox      Version 1.03
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function tocstatus( id, fracdone )
+function tocstatus( id, fracDone )
 
 global TICTOCSTATUS TICTOCFREEIDS
 
@@ -30,31 +28,31 @@ if( length(TICTOCSTATUS)<id || TICTOCFREEIDS(id)==1 )
   error('MATLAB:tocstatus:callTicstatusFirst', ...
     'You must call TICSTATUS before calling TOCSTATUS.');
 end
-[fracdone,er] = checknumericargs( fracdone, [1 1], -1, 1 ); error(er)
-if( fracdone>1 ); error(['fracdone: ' num2str(fracdone) ' > 1'] ); end;
+[fracDone,er] = checknumericargs( fracDone, [1 1], -1, 1 ); error(er)
+if( fracDone>1 ); error(['fracDone: ' num2str(fracDone) ' > 1'] ); end;
 
 %%% get parameters
-updatefreq  = TICTOCSTATUS(id).updatefreq;
-updatemint  = TICTOCSTATUS(id).updatemint;
-eraseprev   = TICTOCSTATUS(id).eraseprev;
+updateFreq  = TICTOCSTATUS(id).updateFreq;
+updateMinT  = TICTOCSTATUS(id).updateMinT;
+erasePrev   = TICTOCSTATUS(id).erasePrev;
 msg         = TICTOCSTATUS(id).msg;
 t0          = TICTOCSTATUS(id).t0;
-tlast       = TICTOCSTATUS(id).tlast;
-lenprev     = TICTOCSTATUS(id).lenprev;
+tLast       = TICTOCSTATUS(id).tLast;
+lenPrev     = TICTOCSTATUS(id).lenPrev;
 
 
 %%% update if enough time has passed
-if( etime( clock, tlast )> updatefreq || (fracdone==1 && lenprev>0) )
-  tlast = clock;
+if( etime( clock, tLast )> updateFreq || (fracDone==1 && lenPrev>0) )
+  tLast = clock;
   elptime = etime(clock,t0);
-  fracdone = max( fracdone, .00001 );
-  esttime = elptime/fracdone - elptime;
-  if( lenprev || (elptime/fracdone)>updatemint )
-    if( ~lenprev ); fprintf('\n'); end;
+  fracDone = max( fracDone, .00001 );
+  esttime = elptime/fracDone - elptime;
+  if( lenPrev || (elptime/fracDone)>updateMinT )
+    if( ~lenPrev ); fprintf('\n'); end;
 
     % create display message
-    fracdone_s = num2str(fracdone*100,'%.1f');
-    if( elptime/fracdone < 600 )
+    fracdone_s = num2str(fracDone*100,'%.1f');
+    if( elptime/fracDone < 600 )
       elptime_s  = num2str(elptime,'%.1f');
       esttime_s  = num2str(esttime,'%.1f');
       timetype_s = 's';
@@ -68,18 +66,18 @@ if( etime( clock, tlast )> updatefreq || (fracdone==1 && lenprev>0) )
     msg = [msg timetype_s ' / remaining~=' esttime_s timetype_s ']' ];
 
     % erase previous display and create new display
-    if( eraseprev ) % undo previous disp
-      fprintf( repmat('\b', [1 lenprev] ) ); end;
+    if( erasePrev ) % undo previous disp
+      fprintf( repmat('\b', [1 lenPrev] ) ); end;
     fprintf( msg );  % fprintf( [msg '\n'] );
-    lenprev = length( msg ) - 1; %note %% (+1 if using \n)
-    TICTOCSTATUS(id).tlast = tlast;
-    TICTOCSTATUS(id).lenprev = lenprev;
+    lenPrev = length( msg ) - 1; %note %% (+1 if using \n)
+    TICTOCSTATUS(id).tLast = tLast;
+    TICTOCSTATUS(id).lenPrev = lenPrev;
   end;
 
 end;
 
 %%% free id if done
-if( fracdone==1 )
-  if(lenprev); fprintf('\n'); end;
+if( fracDone==1 )
+  if(lenPrev); fprintf('\n'); end;
   TICTOCFREEIDS(id) = 1;
 end;

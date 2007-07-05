@@ -19,22 +19,19 @@
 %  IR = tps_interpolateimage( I, warp );
 %  figure(1); clf; im(I); figure(2); clf; im(IR);
 %
-% DATESTAMP
-%  15-Jan-2007  11:00am
-%
 % See also TPS_GETWARP
 
-% Piotr's Image&Video Toolbox      Version 1.03   
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
  
 function IR = tps_interpolateimage( Isrc, warp )
   
-  % warp grid points
-  [ gxs, gys ] = meshgrid( 1:size(Isrc,2), 1:size(Isrc,1) );
-  [ gxsTar, gysTar ] = tps_interpolate( warp, gxs(:), gys(:), 0 );
-  gxsTar = reshape( gxsTar, size(Isrc) );  
-  gysTar = reshape( gysTar, size(Isrc) );
+% warp grid points
+[ gxs, gys ] = meshgrid( 1:size(Isrc,2), 1:size(Isrc,1) );
+[ gxsTar, gysTar ] = tps_interpolate( warp, gxs(:), gys(:), 0 );
+gxsTar = reshape( gxsTar, size(Isrc) );  
+gysTar = reshape( gysTar, size(Isrc) );
 
-  % use texture mapping to generate target image
-  IR = texture_map( double(Isrc), gysTar, gxsTar, 'loose' );
+% use texture mapping to generate target image
+IR = texture_map( double(Isrc), gysTar, gxsTar, 'loose' );

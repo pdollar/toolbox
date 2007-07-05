@@ -1,66 +1,74 @@
 % Used to display the progress of a long process.
 %
-% USAGE
-%         id = ticstatus( msg, updatefreq, updatemint, eraseprev )
-%
-% Essentially, use 'ticstatusid = ticstatus' to start a new progress indicator, and then
-% update the progress indicator with a call to 'tocstatus( ticstatusid, fracdone )', where
-% fracdone is the fraction of the work completed.  The progress indicator is shown as a
-% text message (sent to stdout).  For example in a loop over i where about the same amount
-% of work is done each iteration, the indicator would be added as follows:
-%     ticstatusid = ticstatus('my message');
+% Essentially, use 'ticId = ticstatus' to start a new progress
+% indicator, and then update the progress indicator with a call to
+% 'tocstatus( ticId, fracDone )', where fracDone is the fraction of
+% the work completed.  The progress indicator is shown as a text message
+% (sent to stdout).  For example in a loop over i where about the same
+% amount of work is done each iteration, the indicator would be added as
+% follows:
+%     ticId = ticstatus('my message');
 %     for i=1:n
 %         ...
-%         tocstatus( ticstatusid, i/n );
+%         tocstatus( ticId, i/n );
 %     end
-% Before the loop the timer is initialized, and then at the end of each iteration a call
-% to tocstatus is made 'tocstatus( ticstatusid, i/n )'.  The progress indicator is of the
-% form:   'my message   completed=4.5% [elapsed=1.0s / remaining~=21.5s]'
+% Before the loop the timer is initialized, and then at the end of each
+% iteration a call to tocstatus is made 'tocstatus( ticId, i/n )'.
+% The progress indicator is of the form:  
+%  'my message   completed=4.5% [elapsed=1.0s / remaining~=21.5s]'
 %
-% The parameters passed to ticstatus control the behavior of the progress indicator.  The
-% updatefreq is the minimum time (in seconds) between updates to the progress indicator
-% (a typical value is 1 second).  So even if 'tocstatus( ticstatusid, i/n )' is called
-% 100/second, an update occurs only once per updatefreq seconds.  Next updatemint is used
-% to control if a progress message shows at all.  If a process is projected to take time <
-% updatemint then no progress indicator is shown at all.  The form of the progress
-% indicator is a text message.  If eraseprev is set to true, then the previously displayed
-% message is erased.  This ONLY WORKS if no other output was sent to stdout since the last
-% call to tocstatus.  Otherwise, each new update is simply sent to the progress indicator
-% without first tyring to erase any previous text.  Finally msg allows customization of
+% The parameters passed to ticstatus control the behavior of the progress
+% indicator.  The updateFreq is the minimum time (in seconds) between
+% updates to the progress indicator (a typical value is 1 second).  So even
+% if 'tocstatus( ticId, i/n )' is called 100/second, an update occurs
+% only once per updateFreq seconds.  Next updateMinT is used to control if
+% a progress message shows at all.  If a process is projected to take time
+% < updateMinT then no progress indicator is shown at all.  The form of the
+% progress indicator is a text message.  If erasePrev is set to true, then
+% the previously displayed message is erased.  This ONLY WORKS if no other
+% output was sent to stdout since the last call to tocstatus.  Otherwise,
+% each new update is simply sent to the progress indicator without first
+% tyring to erase any previous text.  Finally msg allows customization of
 % the actual udpate message displayed.
 %
-% ticstatus returns an id that uniquely identifies the progress indicator.  tocstatus
-% takes this id as its first input.  Once tocstatus is called with a fracdone==1, then the
-% memory of the progress indicator that corresponds to id is set free (make sure to call
-% tocstatus(id,1) if the progress indicator is no longer needed).  Nesting of progress
-% indicators is possible; however, in this case eraseprev should be set to false (otherwise
-% the various progress messages may erase each other).
+% ticstatus returns an id that uniquely identifies the progress indicator.
+% tocstatus takes this id as its first input.  Once tocstatus is called
+% with a fracDone==1, then the memory of the progress indicator that
+% corresponds to id is set free (make sure to call tocstatus(id,1) if the
+% progress indicator is no longer needed).  Nesting of progress indicators
+% is possible; however, in this case erasePrev should be set to false
+% (otherwise the various progress messages may erase each other).
+%
+% USAGE
+%  id = ticstatus( [msg], [updateFreq], [updateMinT], [erasePrev] )
 %
 % INPUTS
-%   msg         - [optinoal] additional msg to display in progress
-%   updatefreq  - [optional] frequency with which to update progress (in seconds)
-%   updatemint  - [optional] no progress is shown if process takes time < updatemint
-%   eraseprev   - [optional] whether to attempt to erase prev message
+%  msg         - [] additional msg to display in progress
+%  updateFreq  - [] frequency with which to update progress (in seconds)
+%  updateMinT  - [] no progress is shown if process takes time < updateMinT
+%  erasePrev   - [] whether to attempt to erase prev message
 %
 % OUTPUTS
-%   ticstatusid - unique id of progress indicator
+%  ticId - unique id of progress indicator
 %
-% DATESTAMP
-%   09-Apr-2005  10:00pm
+% EXAMPLE
+%  ticId = ticstatus('example usage',.2,1); 
+%  for i=1:100; pause(.1); tocstatus( ticId, i/100 ); end
 %
-% See also TOCSTATUS
+% See also TOCSTATUS, TIC, TOC
 
-% Piotr's Image&Video Toolbox      Version 1.03
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function id = ticstatus( msg, updatefreq, updatemint, eraseprev )
+function id = ticstatus( msg, updateFreq, updateMinT, erasePrev )
+
 global TICTOCSTATUS TICTOCFREEIDS
 
 if( nargin<1 || isempty(msg) ); msg = []; end;
-if( nargin<2 || isempty(updatefreq) ); updatefreq = 1; end;
-if( nargin<3 || isempty(updatemint) ); updatemint = 20; end;
-if( nargin<4 || isempty(eraseprev) ); eraseprev = 1; end;
+if( nargin<2 || isempty(updateFreq) ); updateFreq = 1; end;
+if( nargin<3 || isempty(updateMinT) ); updateMinT = 20; end;
+if( nargin<4 || isempty(erasePrev) ); erasePrev = 1; end;
 if( isempty(TICTOCFREEIDS) ); TICTOCFREEIDS = ones(1,128); end;
 
 % get a free id
@@ -69,16 +77,16 @@ if( v==0 )
   nids = length(TICTOCFREEIDS);
   TICTOCFREEIDS = [TICTOCFREEIDS ones(1,nids)];
   id = nids+1;
-  warning('ticstatus: Doubling number of locations needed.');
+  warning('ticstatus: Doubling number of locations needed.'); %#ok<WNTAG>
 end;
 TICTOCFREEIDS(id) = 0;
 
 % initialize TICTOCSTATUS
 t0 = clock;
-TICTOCSTATUS(id).updatefreq = updatefreq;
-TICTOCSTATUS(id).updatemint = updatemint;
-TICTOCSTATUS(id).eraseprev  = eraseprev;
+TICTOCSTATUS(id).updateFreq = updateFreq;
+TICTOCSTATUS(id).updateMinT = updateMinT;
+TICTOCSTATUS(id).erasePrev  = erasePrev;
 TICTOCSTATUS(id).msg  = msg;
 TICTOCSTATUS(id).t0 = t0;
-TICTOCSTATUS(id).tlast = t0;
-TICTOCSTATUS(id).lenprev = 0;
+TICTOCSTATUS(id).tLast = t0;
+TICTOCSTATUS(id).lenPrev = 0;
