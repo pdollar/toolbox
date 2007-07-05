@@ -23,6 +23,10 @@
  
 function y = mode2( x )
 
+wid = sprintf('Images:%s:obsoleteFunction',mfilename);
+warning(wid,[ '%s is obsolete in Piotr''s toolbox.\n MODE is its '...
+  'recommended replacement.'],upper(mfilename));
+
 [b,i,j] = unique(x);
 [ mval, ind ] = max(hist(j,length(b)));
 y = b(ind);
