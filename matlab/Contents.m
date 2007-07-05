@@ -2,7 +2,7 @@
 % See also
 %
 % Quick clear:
-%   c                    - clc
+%   c                    - clc - clear command window.
 %   cc                   - close all, clc
 %   ccc                  - clear, close all, clc, clear global
 %
@@ -18,7 +18,7 @@
 % Array manipulation:
 %   arraycrop2dims       - Pads or crops I appropriately so that size(IC)==dims.  
 %   arraycrop_full       - Used to crop a rectangular region from an n dimensional array.  
-%   cell2array           - Converts a cell array into a regular array. 
+%   cell2array           - Flattens a cell array of regular arrays into a regular array. 
 %   mat2cell2            - Break matrix up into a cell array of same sized matrices.
 %
 % Display:
@@ -32,6 +32,7 @@
 %   checknumericargs     - Helper utility for checking numeric vector arguments.
 %   gauss2ellipse        - Creates an ellipse representing the 2D Gaussian distribution.
 %   getargs              - Utility to process parameter name/value pairs.
+%   getParamDefaults     - Helper to set default values (if not already set) of parameter struct.
 %   ind2sub2             - Improved version of ind2sub.
 %   int2str2             - Convert integer to string of given length; improved version of int2str.  
 %   isfield2             - More comprehensive version of isfield.
@@ -39,7 +40,7 @@
 %   normpdf2             - Normal prob. density function (pdf) with arbitrary covariance matrix.
 %   num2strs             - Applies num2str to each element of an array X.
 %   randint2             - Faster but restricted version of randint.
-%   randomsample         - Samples elements of X so result uses at most maxmegs megabytes of memory.
+%   randomsample         - Samples elements of X so result uses at most maxMegs megabytes of memory.
 %   randperm2            - Returns a random permutation of integers. 
 %   recover_rotation3D   - Takes a rotation matrix and extracts the rotation angle and axis.
 %   rotation_matrix2D    - Returns the matrix: R=[cos(t) -sin(t); sin(t) cos(t)].
@@ -50,6 +51,5 @@
 % Thin plate splines:
 %   tps_getwarp          - Given two sets of corresponding points, calculates warp between them.
 %   tps_interpolate      - Apply warp (obtained by tps_getwarp) to a set of new points. 
-%   tps_interpolateimage - Interpolate I_source according to the warp from I_source->I_dest.  
+%   tps_interpolateimage - Interpolate Isrc according to the warp from Isrc->Idst.  
 %   tps_random           - Obtain a random warp with the same bending energy as the original.
-%

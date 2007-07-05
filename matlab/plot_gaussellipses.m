@@ -1,10 +1,10 @@
 % Plots 2D ellipses derived from 2D Gaussians specified by mus & Cs.  
 %
 % USAGE
-%  hs = plot_gaussellipses( mus, Cs, rad )
+%  hs = plot_gaussellipses( mus, Cs, [rad] )
 %
 % INPUTS
-%  mu      - kx2 matrix of means
+%  mu      - k x 2 matrix of means
 %  Cs      - 2 x 2 x k  covariance matricies
 %  rad     - [2] Number of std to create the ellipse to
 %
@@ -12,7 +12,7 @@
 %  hs      - handles to ellipses
 %
 % EXAMPLE
-%  plot_gaussellipses( [ 10 10 ], eye(2), 2 );
+%  plot_gaussellipses( [ 10 10; 10 10 ], cat(3,eye(2),eye(2)*2) );
 %
 % See also PLOT_ELLIPSE, GAUSS2ELLIPSE
 

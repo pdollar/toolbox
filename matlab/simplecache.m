@@ -13,7 +13,7 @@
 % stay in memory until the matlab environment changes.  For an example
 % usage see mask_gaussians.
 %
-% USAGE:
+% USAGE
 %  % initialize a cache object
 %  cache = simplecache('init');   
 %
@@ -26,12 +26,12 @@
 %  % free key
 %  [cache,found] = simplecache( 'remove', cache, key );
 %
-% INPUT
+% INPUTS
 %  op         - 'init', 'put', 'get', 'remove'
 %  cache      - the cache object being operated on
 %  varargin   - see USAGE above
 %
-% OUTPUT
+% OUTPUTS
 %  varargout  - see USAGE above
 %
 % EXAMPLE

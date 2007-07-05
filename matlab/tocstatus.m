@@ -3,10 +3,10 @@
 % For more information see ticstatus.
 %
 % USAGE
-%  tocstatus( id, fracDone )
+%  tocstatus( ticId, fracDone )
 %
 % INPUTS
-%  ticstatusid - unique id of progress indicator
+%  ticId       - unique id of progress indicator
 %  fracDone    - value in (0,1] indicating percent operation completed
 %
 % OUTPUTS
@@ -40,7 +40,6 @@ t0          = TICTOCSTATUS(id).t0;
 tLast       = TICTOCSTATUS(id).tLast;
 lenPrev     = TICTOCSTATUS(id).lenPrev;
 
-
 %%% update if enough time has passed
 if( etime( clock, tLast )> updateFreq || (fracDone==1 && lenPrev>0) )
   tLast = clock;
@@ -73,7 +72,6 @@ if( etime( clock, tLast )> updateFreq || (fracDone==1 && lenPrev>0) )
     TICTOCSTATUS(id).tLast = tLast;
     TICTOCSTATUS(id).lenPrev = lenPrev;
   end;
-
 end;
 
 %%% free id if done

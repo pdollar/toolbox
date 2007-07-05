@@ -3,7 +3,7 @@
 % Uses booksteins PAMI89 method.  Can then apply warp to a new set of
 % points (tps_interpolate), or even an image (tps_interpolateiamge).
 %  "Principal Warps: Thin-Plate Splines and the Decomposition of 
-%   Deformations".  Bookstein.  PAMI 1989.
+%  Deformations".  Bookstein.  PAMI 1989.
 % 
 % USAGE
 %  [warp,L,LnInv,bendE] = tps_getwarp( lambda, xsS, ysS, xsD, ysD )
@@ -43,7 +43,7 @@ function [warp,L,LnInv,bendE] = tps_getwarp( lambda, xsS, ysS, xsD, ysD )
 
 dim = size( xsS );
 if( all(size(xsS)~=dim) || all(size(ysS)~=dim) || all(size(xsD)~=dim))
-    error( 'argument sizes do not match' );
+  error( 'argument sizes do not match' );
 end
 
 % get L

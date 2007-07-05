@@ -49,7 +49,7 @@
 %  erasePrev   - [] whether to attempt to erase prev message
 %
 % OUTPUTS
-%  ticId - unique id of progress indicator
+%  ticId       - unique id of progress indicator
 %
 % EXAMPLE
 %  ticId = ticstatus('example usage',.2,1); 

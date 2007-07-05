@@ -15,4 +15,4 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
 
-clear, close all, clc, clear global
+clear; close all; clc; clear global;

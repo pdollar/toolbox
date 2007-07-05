@@ -1,11 +1,11 @@
 % Applies num2str to each element of an array X.
 %
 % USAGE
-%  Y = num2strs( X, varargin )
+%  Y = num2strs( X, [varargin] )
 %
 % INPUTS
 %  X           - array of number to convert to strings
-%  varargin    - input to num2str
+%  varargin    - [] additional input to num2str
 %
 % OUTPUTS
 %  Y           - cell array of strings

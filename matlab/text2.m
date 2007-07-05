@@ -16,7 +16,7 @@
 % INPUTS
 %  varargin   - input to Matlab's text
 % 
-% OUTPUT
+% OUTPUTS
 %  varargout  - output to Matlab's text
 %
 % EXAMPLE
@@ -81,8 +81,8 @@ while( updated ); updated=0;
 end
 set(gca,'Units',oldunits); 
 
-    
-    
+
+
 %   % if necessary, move OuterPosition of axes accordingly
 %   if(p<=2 && pos(p)<0 )
 %       step = max(.01,abs(pos(p))/1.5);

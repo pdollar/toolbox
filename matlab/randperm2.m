@@ -20,7 +20,7 @@
 %  p 	- k length vector of permutations
 %
 % EXAMPLE
-%   randperm2(10,5)
+%  randperm2(10,5)
 %
 % See also RANDPERM
 

@@ -5,7 +5,7 @@
 % indicies at the same time. See help for ind2sub for more info.
 %
 % USAGE
-%  sub = ind2sub2(siz,ind)
+%  sub = ind2sub2( siz, ind )
 %
 % INPUTS
 %  siz     - size of array into which ind is an index
@@ -24,7 +24,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
  
-function sub = ind2sub2(siz,ind)
+function sub = ind2sub2( siz, ind )
 
 if( any(ind>prod(siz)) );  error('index out of range');  end;
 
