@@ -5,19 +5,18 @@
 % USAGE
 %  Xrbf = rbfComputeFeatures( X, rbfBasis )
 %
-% INPUT
+% INPUTS
 %  X         - [N x d] N points of d dimensions each
 %  rbfBasis  - rbfBasis struct (see rbfComputeBasis)
 %
-% OUTPUT
+% OUTPUTS
 %  Xrbf      - [N x k] computed feature vectors
 %
-% DATESTAMP
-%  09-Jan-2007  1:00pm
+% EXAMPLE
 %
 % See also RBFDEMO, RBFCOMPUTEBASIS
 
-% Piotr's Image&Video Toolbox      Version 1.03   
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
 

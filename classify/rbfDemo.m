@@ -22,52 +22,54 @@
 %  rbfDemo( 1, .2, 2, 50, 0, 3 );
 %  rbfDemo( 2, .2, 5, 50, 0, 5 );
 %
-% DATESTAMP
-%  09-Jan-2007  1:00pm
-%
 % See also RBFCOMPUTEBASIS, RBFCOMPUTEFEATURES
 
-% Piotr's Image&Video Toolbox      Version 1.03   
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
 
 function rbfDemo( dataType, noiseSig, scale, k, cluster, show )
 
-  %%% generate train/test data
-  if( 1 )
-    [Xtrain,ytrain] = rbfToyData( 500, noiseSig, dataType );
-    [Xtest,ytest]   = rbfToyData( 100, noiseSig, dataType );
-  end;
+%%% generate trn/tst data
+if( 1 )
+  [Xtrn,ytrn] = rbfToyData( 500, noiseSig, dataType );
+  [Xtst,ytst]   = rbfToyData( 100, noiseSig, dataType );
+end;
 
-  %%% train/apply rbfs
-  rbfBasis = rbfComputeBasis( Xtrain, k, cluster, scale, show )
-  rbfWeight = rbfComputeFeatures(Xtrain,rbfBasis) \ ytrain;
-  yTrainRes = rbfComputeFeatures(Xtrain,rbfBasis) * rbfWeight;
-  yTestRes  = rbfComputeFeatures(Xtest,rbfBasis) * rbfWeight;
+%%% trn/apply rbfs
+rbfBasis = rbfComputeBasis( Xtrn, k, cluster, scale, show );
+rbfWeight = rbfComputeFeatures(Xtrn,rbfBasis) \ ytrn;
+yTrnRes = rbfComputeFeatures(Xtrn,rbfBasis) * rbfWeight;
+yTstRes = rbfComputeFeatures(Xtst,rbfBasis) * rbfWeight;
 
-  %%% get relative errors
-  fracErrorTrain = sum((ytrain-yTrainRes).^2) / sum(ytrain.^2)
-  fracErrorTest  = sum((ytest-yTestRes).^2) / sum(ytest.^2)
+%%% get relative errors
+fracErrorTrn = sum((ytrn-yTrnRes).^2) / sum(ytrn.^2);
+fracErrorTst = sum((ytst-yTstRes).^2) / sum(ytst.^2);
 
-  %%% visualize surface
-  minX = min([Xtrain; Xtest],[],1);  maxX = max([Xtrain; Xtest],[],1);
-  if( size(Xtrain,2)==1 )
-    xs = linspace( minX, maxX, 1000 )';
-    ys = rbfComputeFeatures(xs,rbfBasis) * rbfWeight;
-    figure(show+1); clf; hold on;  plot( xs, ys ); 
-    plot( Xtrain, ytrain, '.b' );  plot( Xtest, ytest, '.r' ); 
-  elseif( size(Xtrain,2)==2 )
-    xs1 = linspace(minX(1),maxX(1),25); 
-    xs2 = linspace(minX(2),maxX(2),25);
-    [xs1,xs2] = ndgrid( xs1, xs2 );
-    ys = rbfComputeFeatures([xs1(:) xs2(:)],rbfBasis) * rbfWeight;
-    figure(show+1); clf; hold on;  surf( xs1, xs2, reshape(ys,size(xs1)) ); 
-    plot3( Xtrain(:,1), Xtrain(:,2), ytrain, '.b' );
-    plot3( Xtest(:,1), Xtest(:,2), ytest, '.r' );
-  end;
+%%% display output
+display(fracErrorTst);
+display(fracErrorTrn);
+display(rbfBasis);
+
+%%% visualize surface
+minX = min([Xtrn; Xtst],[],1);  maxX = max([Xtrn; Xtst],[],1);
+if( size(Xtrn,2)==1 )
+  xs = linspace( minX, maxX, 1000 )';
+  ys = rbfComputeFeatures(xs,rbfBasis) * rbfWeight;
+  figure(show+1); clf; hold on;  plot( xs, ys ); 
+  plot( Xtrn, ytrn, '.b' );  plot( Xtst, ytst, '.r' ); 
+elseif( size(Xtrn,2)==2 )
+  xs1 = linspace(minX(1),maxX(1),25); 
+  xs2 = linspace(minX(2),maxX(2),25);
+  [xs1,xs2] = ndgrid( xs1, xs2 );
+  ys = rbfComputeFeatures([xs1(:) xs2(:)],rbfBasis) * rbfWeight;
+  figure(show+1); clf; hold on;  surf( xs1, xs2, reshape(ys,size(xs1)) );
+  plot3( Xtrn(:,1), Xtrn(:,2), ytrn, '.b' );
+  plot3( Xtst(:,1), Xtst(:,2), ytst, '.r' );
+end;
 
   
-  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Toy data for rbfDemo.
 %
 % USAGE
@@ -83,20 +85,20 @@ function rbfDemo( dataType, noiseSig, scale, k, cluster, show )
 % OUTPUTS
 %  X          - [N x d] N points of d dimensions each
 %  y          - [1 x N] value at example i
-
 function [X,y] = rbfToyData( N, noiseSig, dataType )
-  %% generate data
-  if( dataType==0 )
-    X = rand( N, 1 ) * 10;
-    y = sin( X );
-  elseif( dataType==1 )
-    X = rand( N, 2 ) * 10;
-    y = sin( X(:,1)+X(:,2) );
-  elseif( dataType==2 )
-    X = rand( N, 2 ) * 10;
-    y = sin( X(:,1)+X(:,2) );
-    X(:,2) = X(:,2) * 5;
-  else
-    error('unknown dataType');
-  end  
-  y = y + randn(size(y))*noiseSig;  
+
+%%% generate data
+if( dataType==0 )
+  X = rand( N, 1 ) * 10;
+  y = sin( X );
+elseif( dataType==1 )
+  X = rand( N, 2 ) * 10;
+  y = sin( X(:,1)+X(:,2) );
+elseif( dataType==2 )
+  X = rand( N, 2 ) * 10;
+  y = sin( X(:,1)+X(:,2) );
+  X(:,2) = X(:,2) * 5;
+else
+  error('unknown dataType');
+end  
+y = y + randn(size(y))*noiseSig;  
