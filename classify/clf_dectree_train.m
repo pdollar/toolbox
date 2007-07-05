@@ -1,34 +1,37 @@
 % Train a decision tree classifier.
 %
+% USAGE
+%  clf = clf_dectree_train( clf, X, Y )
+%
 % INPUTS
-%   clf     - model to be trained
-%   X       - nxp data array
-%   Y       - nx1 array of labels
+%  clf     - model to be trained
+%  X       - nxp data array
+%  Y       - nx1 array of labels
 % 
 % OUTPUTS
-%   clf     - a trained binary clf_LDA clf 
+%  clf     - a trained binary clf_LDA clf 
 %
-% DATESTAMP
-%   11-Oct-2005  2:45pm
+% EXAMPLE
 %
 % See also CLF_DECTREE
 
-% Piotr's Image&Video Toolbox      Version 1.03   
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
  
 function clf = clf_dectree_train( clf, X, Y )
-    if( ~strcmp( clf.type, 'dectree' ) ) error( ['incorrect type: ' clf.type] ); end;
-    if( size(X,2)~= clf.p ) error( 'Incorrect data dimension' ); end;
 
-    % apply treefit
-    Y = int2str2( Y ); % convert Y to string format for treefit.
-    params = clf.params;
-    T = treefit(X,Y,'method','classification',params{:});
+if(~strcmp(clf.type,'dectree')); error( ['incor. type: ' clf.type] ); end;
+if( size(X,2)~= clf.p ); error( 'Incorrect data dimension' ); end;
 
-    % apply cross validation (on training data), and prune
-    [c,s,n,best] = treetest(T,'cross',X,Y);
-    T = treeprune(T,'level',best);
-    
-    clf.T = T;
-    
+% apply treefit
+Y = int2str2( Y ); % convert Y to string format for treefit.
+params = clf.params;
+T = treefit(X,Y,'method','classification',params{:});
+
+% apply cross validation (on training data), and prune
+[c,s,n,best] = treetest(T,'cross',X,Y);
+T = treeprune(T,'level',best);
+
+clf.T = T;
+

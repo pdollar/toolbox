@@ -128,7 +128,7 @@ function CM=nfoldxval( data, IDX, clfinit, clfparams, types, ignoretypes, fname,
         test = cell2mat( permute( {data{~traininds}}, [2 1] ) );
         trainIDX = cell2mat( permute( {IDX{traininds}}, [2 1] ) );
         testIDX = cell2mat( permute( {IDX{~traininds}}, [2 1] ) );
-        [ntrain p]=size(train);  [ntest p]=size(test);  
+        [nTrain p]=size(train);  [ntest p]=size(test);  
 
         % apply dim reduction [make sure data is well conditioned]
         if( 0 )
@@ -146,7 +146,7 @@ function CM=nfoldxval( data, IDX, clfinit, clfparams, types, ignoretypes, fname,
         % display update
         if( dispflag )
             msg = ['test set ' int2str(testind)];
-            disp([msg '; ntrain=' num2str(ntrain) ', ntest=' num2str(ntest)]);
+            disp([msg '; nTrain=' num2str(nTrain) ', ntest=' num2str(ntest)]);
         end
         if( ntest==0 ) if(dispflag) disp('no test data'); end; continue; end;
 
