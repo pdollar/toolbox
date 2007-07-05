@@ -47,6 +47,10 @@
  
 function [emsg,varargout]=getargs(pnames,dflts,varargin)
 
+wid = sprintf('Images:%s:obsoleteFunction',mfilename);
+warning(wid,[ '%s is obsolete in Piotr''s toolbox.\n It will be ' ...
+  'removed in the next version of the toolbox.'],upper(mfilename));
+
 % We always create (nparams+1) outputs:
 %    one for emsg
 %    nparams varargs for values corresponding to names in pnames
