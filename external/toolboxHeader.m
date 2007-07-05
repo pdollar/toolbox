@@ -21,8 +21,8 @@
 % In special cases some or all of these guidelines may need to be broken.
 %
 % USAGE
-%  xsum = toolbox_header( x1, x2, [x3], [prm] )
-%  [xprod, xdiff] = toolbox_header( x1, x2, [x3], [prm] )
+%  xsum = toolboxHeader( x1, x2, [x3], [prm] )
+%  [xprod, xdiff] = toolboxHeader( x1, x2, [x3], [prm] )
 %
 % INPUTS
 %  x1          - descr. of variable 1,
@@ -40,17 +40,19 @@
 %  xprod       - prod of xs
 %  xdiff       - negative sum of xs
 %
-% EXAMPLE
-%  y = toolbox_header( 1, 2 );
+% EXAMPLE (1)
+%  y = toolboxHeader( 1, 2 );
+%
+% EXAMPLE (2)
+%  y = toolboxHeader( 2, 3 );
 %
 % See also FUNCTIONALLCAPS
-%
-% Piotr's Image&Video Toolbox      Version 1.03
 
+% Piotr's Image&Video Toolbox      Version 1.03
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
 
-function [y1,y2] = toolbox_header( x1, x2, x3, prm )
+function [y1,y2] = toolboxHeader( x1, x2, x3, prm )
 
 % All indents should be set to two spaces.  
 

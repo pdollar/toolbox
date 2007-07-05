@@ -34,7 +34,7 @@ N=size(xs,2);
 
 if( rcond(C)<eps )
   % if matrix is badly conditioned
-  fprintf(1,'Covariance matrix close to singular. (gaussian.m)\n');
+  warning('normpdf2: Covariance matrix close to singular.'); %#ok<WNTAG>
   ps = zeros(N,1);
 
 else
