@@ -4,3 +4,6 @@ remove deprecated functions:
 -ranperm2
 -mode2
 -playmovies
+
+wish list
+-add function to return the ith color {'r','g','b',...}
