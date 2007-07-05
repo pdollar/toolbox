@@ -17,8 +17,8 @@
 % OUTPUTS
 %
 % EXAMPLE
-%  X=[randn(100,5); randn(100,5)+4];
-%  IDX=[ones(100,1); 2*ones(100,1)];
+%  X = [randn(100,5); randn(100,5)+4];
+%  IDX = [ones(100,1); 2*ones(100,1)];
 %  visualize_data( X, 2, IDX, {'type1','type2' });
 %
 % See also KMEANS2

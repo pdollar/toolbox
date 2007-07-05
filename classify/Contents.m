@@ -12,17 +12,18 @@
 % Calculating distances efficiently:
 %   dist_L1             - Calculates the L1 Distance between vectors (ie the City-Block distance).
 %   dist_chisquared     - Calculates the Chi Squared Distance between vectors (usually histograms).
+%   dist_cosine         - Defines distance as 1-cosine of angle between two vectors [FAST].
 %   dist_emd            - Calculates Earth Mover's Distance (EMD) between positive vectors.
-%   dist_euclidean      - Calculates the Euclidean distance between vectors [FAST].
+%   dist_euclidean      - Calculates the SQUARED Euclidean distance between vectors [FAST].
 %   distmatrix_show     - Useful visualization of a distance matrix of clustered points.
 %   softmin             - Calculates the softmin of a vector.
 %
 % Principal components analysis:
-%   pca                 - principal components analysis (alternative to princomp).
+%   pca                 - Principal components analysis (alternative to princomp).
 %   pca_apply           - Companion function to pca.
 %   pca_apply_large     - Wrapper for pca_apply that allows for application to large X.
 %   pca_randomvector    - Generate random vectors in PCA subspace.
-%   pca_visualize       - Visualization of quality of approximation of X given principal components.
+%   pca_visualize       - Visualization of quality of approximation of X given principal comp.
 %   visualize_data      - Project high dim. data unto principal components (PCA) for visualization.
 %
 % Classification methods with a common interface:
@@ -43,3 +44,8 @@
 %   clf_lda_fwd         - Apply the Linear Discriminant Analysis (LDA) classifier to data X.
 %   clf_lda_train       - Train a Linear Discriminant Analysis (LDA) classifier.
 %   clf_svm             - Wrapper for svm that makes svm compatible with nfoldxval.
+%
+% Radial Basis Functions (RBFs)
+%   rbfComputeBasis     - Get locations and sizes of radial basis functions for use in rbf network.
+%   rbfComputeFeatures  - Evaluate features of X given a set of radial basis functions.
+%   rbfDemo             - Demonstration of rbf networks for regression.
