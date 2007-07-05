@@ -1,0 +1,6 @@
+
+
+remove deprecated functions:
+-ranperm2
+-mode2
+-playmovies
