@@ -1,5 +1,7 @@
 % Returns the mode of a vector.
 % 
+% Was mode not part of Matlab before?
+%
 % USAGE
 %  y = mode2( x )
 %
@@ -11,9 +13,11 @@
 %
 % EXAMPLE
 %  x = randint2( 1, 10, [1 3] )
-%  mode2( x )
+%  mode(x), mode2( x )
+%
+% See also MODE
 
-% Piotr's Image&Video Toolbox      Version 1.03   
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
  

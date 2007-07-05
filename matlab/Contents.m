@@ -35,7 +35,7 @@
 %   ind2sub2             - Improved version of ind2sub.
 %   int2str2             - Convert integer to string of given length; improved version of int2str.  
 %   isfield2             - More comprehensive version of isfield.
-%   mode                 - Returns the mode of a vector.
+%   mode2                - Returns the mode of a vector.
 %   normpdf2             - Normal prob. density function (pdf) with arbitrary covariance matrix.
 %   num2strs             - Applies num2str to each element of an array X.
 %   randint2             - Faster but restricted version of randint.
