@@ -1,5 +1,21 @@
+% Compiles all the private routines
+%
+% assumes located in toolbox root directory
+%
+% USAGE
+%  toolbox_compile
+%
+% INPUTS
+%
+% OUTPUTS
+%
+% EXAMPLE
+%
+% See also
 
-%%% assumes located in toolbox root directory
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
 
 dir = 'classify/private/';
 mex([dir 'meanshift1.c'],'-outdir',dir);

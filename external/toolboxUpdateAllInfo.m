@@ -1,3 +1,22 @@
+% Update the headers of all the files.
+%
+% Must start in /toolbox base directory
+%
+% USAGE
+%  toolboxUpdateAllInfo
+%
+% INPUTS
+%
+% OUTPUTS
+%
+% EXAMPLE
+%
+% See also
+
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function toolboxUpdateAllInfo
 
 insertInfo('Contents.m');

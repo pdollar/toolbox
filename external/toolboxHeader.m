@@ -1,7 +1,7 @@
-% One line description of function (will appear in file summary).   
+% One line description of function (will appear in file summary).
 %
 % General commments explaining purpose of function [width is 75
-% characters]. There may be multiple paragraphs.  
+% characters]. There may be multiple paragraphs.
 %
 % Next come a series of sections, including USAGE, INPUTS, OUTPUTS,
 % EXAMPLE, DATESTAMP and "See also".  Each of these fields should always
@@ -11,12 +11,10 @@
 % surrounded by brackets. Occasionally, there may be more than 1 distinct
 % usage, in this case list additional usages.  In general try to avoid
 % this.  INPUTS/OUTPUTS are self explanatory, however if there are multiple
-% usages can be subdivided as below.  EXAMPLE should list 1 or more
-% useful examples.  DATESTAMP is useful for keeping track of when a file
-% was altered, should be manually updated after any tiny change to the
-% file.  Main comment should all appear as one contiguous block.  Next a
-% space, and then a short comment that includes the toolbox version.  All
-% other comments should appear after the function begins.  
+% usages can be subdivided as below.  EXAMPLE should list 1 or more useful
+% examples.  Main comment should all appear as one contiguous block.  Next
+% a space, and then a short comment that includes the toolbox version.  All
+% other comments should appear after the function begins.
 %
 % In special cases some or all of these guidelines may need to be broken.
 %
@@ -30,38 +28,43 @@
 %                if descr. spans multiple lines do this
 %  x3          - [0] indicates an optional variable, put def val in []
 %  prm         - [] param struct (preferred over key/value list)
-%       .p1      - prm1 descr. 
+%       .p1      - prm1 descr.
 %       .p2      - prm2 descr.
 %
-% OUTPUTS (usage 1)
+% OUTPUTS - and whatever after the dash (usage 1)
 %  xsum        - sum of xs
 %
-% OUTPUTS (usage 2)
+% OUTPUTS - (usage 2)
 %  xprod       - prod of xs
 %  xdiff       - negative sum of xs
 %
-% EXAMPLE (1)
+% EXAMPLE - and whatever after the dash (1)
 %  y = toolboxHeader( 1, 2 );
 %
-% EXAMPLE (2)
+% EXAMPLE - (2)
 %  y = toolboxHeader( 2, 3 );
 %
 % See also FUNCTIONALLCAPS
 
 % Piotr's Image&Video Toolbox      Version 1.03
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
 
-function [y1,y2] = toolboxHeader( x1, x2, x3, prm )
+function [y1,y2] = toolboxHeader( x1, x2, x3 )
 
-% All indents should be set to two spaces.  
+% A Blank line right after the function delclaration
+% All indents should be set using "smart indent" from Matlab
 
-if( nargin < 3 ); x3=0; end;
+if( nargin < 3 ); x3=0; end
 
 if( nargout==1 )
-  y1 = x1 + x2 + x3;
+  y1 = add(x1,x2) + x3;
 else
   y1 = x1 * x2 * x3;
   y2 = - x1 - x2 - x3;
-end;
+end
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% all the way for sub-functions
+function s=add(x,y)
+s=x+y;
