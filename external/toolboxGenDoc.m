@@ -13,7 +13,7 @@
 %  doc/matlab/menu.html
 % 
 % USAGE
-%  toolbox_generatedoc
+%  toolboxGenDoc
 %
 % INPUTS
 %

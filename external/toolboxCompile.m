@@ -3,7 +3,7 @@
 % assumes located in toolbox root directory
 %
 % USAGE
-%  toolbox_compile
+%  toolboxCompile
 %
 % INPUTS
 %

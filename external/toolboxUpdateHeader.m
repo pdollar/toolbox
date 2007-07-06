@@ -3,7 +3,7 @@
 % Must start in /toolbox base directory
 %
 % USAGE
-%  toolboxUpdateAllInfo
+%  toolboxUpdateHeader
 %
 % INPUTS
 %
@@ -17,7 +17,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function toolboxUpdateAllInfo
+function toolboxUpdateHeader
 
 header=[...
   '%% Piotr''s Image&Video Toolbox      Version 1.5\n' ...
@@ -35,9 +35,9 @@ for i=1:length(dirs)
   for j=1:length(mfiles);
     fname = [dirs{i} '/' mfiles(j).name];
     disp( fname );
-    success = removeInfo(fname);
+    success = removeHeader(fname);
     if(success); 
-      insertInfo(fname,header); 
+      insertHeader(fname,header); 
     else
       warning( ['skipping ' fname] ); %#ok<WNTAG>
     end;
@@ -49,7 +49,7 @@ end
 % Removes toolbox data after main comment in an .m file.
 %  ~ischar(fileLn{ind})          % true if fgetl returns eof (-1)
 %  isempty(strtrim(fileLn{ind})) % true if line is all whitespace
-function success = removeInfo( fname )
+function success = removeHeader( fname )
 
 fid = fopen( fname, 'rt' );
 fileLn = cell(10000,1);  ind=0;
@@ -86,7 +86,7 @@ fclose(fid);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Inserts toolbox data after main comment in an .m file.
 % Does not affect files with no body (such as Contents.m)
-function insertInfo( fname, header )
+function insertHeader( fname, header )
 
 fidIn = fopen( fname, 'rt' );
 fidOut = fopen( [fname '2'] , 'wt' );
