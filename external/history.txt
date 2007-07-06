@@ -3,6 +3,7 @@ Version 2.0 (06-July-07)
  -remove:
   -montages2 (see montages)
   -rotation_matrix2D,rotation_matrix3D,recover_rotation3D (see rotationMatrix)
+  -localsum, localsum_block (see localSum)
 
 Version 1.5 (05-Jul-07)
  -major documentation change
