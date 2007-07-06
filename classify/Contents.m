@@ -4,7 +4,7 @@
 % Clustering:
 %   democluster         - Clustering demo.
 %   demogendata         - Generate data drawn form a mixture of Gaussians.
-%   kmeans2             - Very fast version of kmeans clustering.
+%   kmeans2             - Fast version of kmeans clustering.
 %   meanshift           - meanshift clustering algorithm.
 %   meanshiftim         - Applies the meanshift algorithm to a joint spatial/range image.  
 %   meanshiftim_explore - Visualization to help choose sigmas for meanshiftim.

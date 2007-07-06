@@ -9,18 +9,21 @@
 % to IDX) are removed from D.
 %
 % USAGE
-%  distmatrix_show( D, IDX )
+%  [D, Dsm] = distmatrix_show( D, IDX, [show] )
 %
 % INPUTS
 %  D       - nxn distance matrix
 %  IDX     - cluster membership [see kmeans2.m]
-%   
+%  show    - [1] will display results in figure(show)
+%
 % OUTPUTS
+%  D       - sorted nxn distance matrix
+%  Dsm     - sorted and smoothed nxn distance matrix
 %
 % EXAMPLE
 %  % not the best example since points are already ordered
-%  [X,IDX_true] = demogendata(100,0,2,2,10,2,0);  
-%  distmatrix_show( dist_euclidean(X,X), IDX_true );
+%  [X,IDXtrue] = demogendata(100,0,2,2,10,2,0);  
+%  distmatrix_show( dist_euclidean(X,X), IDXtrue );
 %
 % See also VISUALIZE_DATA, KMEANS2
 
@@ -28,7 +31,9 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
 % Please email me if you find bugs, or have suggestions or questions! 
  
-function distmatrix_show( D, IDX )
+function [D, Dsm] = distmatrix_show( D, IDX, show )
+
+if( nargin<3 || isempty(show) ); show=1; end;
 
 k = max(IDX);
 n = size(D,1);
@@ -43,25 +48,27 @@ order = IDX2order( IDX );
 IDX = IDX( order );
 D = D( order, order );
 
-%%% show D and lines seperating super clusters.
-clf; subplot(1,2,1); im(D); hold('on')
-cnts = zeros(1,k); for i=1:k; cnts(i) = sum( IDX==i ); end; 
-cumCnts = cumsum(cnts); 
-for i=1:k-1
-  line( [.5,n+.5], [cumCnts(i)+.5,cumCnts(i)+.5] ); 
-  line( [cumCnts(i)+.5,cumCnts(i)+.5], [.5,n+.5] ); 
-end;
-hold('off')    
-
-%%% show smoothed version of D
+%%% compute smoothed version of D
+cnts = zeros(1,k); for i=1:k; cnts(i)=sum(IDX==i); end; 
+cumCnts = cumsum(cnts);  cumCnts2=[0 cumCnts];  Dsm = D;
 inds = 1:k; inds = inds( cnts>0 );
-cumCnts = [0 cumCnts];  Dsm = D;
-for i=inds; 
-  rs = cumCnts(i)+1:cumCnts(i+1);
-  for j=inds;    
-    cs = cumCnts(j)+1:cumCnts(j+1);
+for i=inds
+  rs = cumCnts2(i)+1:cumCnts2(i+1);
+  for j=inds
+    cs = cumCnts2(j)+1:cumCnts2(j+1);
     ds = D( rs, cs  );
     Dsm( rs, cs ) = mean(ds(:));
   end;
 end;
-subplot(1,2,2); im( Dsm );
+
+%%% show D and lines seperating super clusters.
+if(show)
+  figure(show); clf; 
+  subplot(1,2,1); im(D); hold('on')
+  for i=1:k-1
+    line( [.5,n+.5], [cumCnts(i)+.5,cumCnts(i)+.5] ); 
+    line( [cumCnts(i)+.5,cumCnts(i)+.5], [.5,n+.5] ); 
+  end;
+  hold('off');
+  subplot(1,2,2); im( Dsm );  
+end;
