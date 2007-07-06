@@ -11,7 +11,7 @@
 % patch).
 %
 % USAGE
-%  I2 = FB_reconstruct_2D( I, FB, patch )
+%  I2 = FbReconstruct2d( I, FB, patch )
 %
 % INPUTS
 %  I      - original image
@@ -23,13 +23,13 @@
 %
 % EXAMPLE
 %  load trees; X=imresize(X,.5); load FbDoG.mat;
-%  I2 = FB_reconstruct_2D( X, FB, 0 );
+%  I2 = FbReconstruct2d( X, FB, 0 );
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function I2 = FB_reconstruct_2D( I, FB, patch )
+function I2 = FbReconstruct2d( I, FB, patch )
 
 FBmrows = size(FB,1); FBncols = size(FB,2);
 FBrowRad = (FBmrows-1)/2;  FBcolRad = (FBncols-1)/2;
@@ -39,7 +39,7 @@ FBrowRad = (FBmrows-1)/2;  FBcolRad = (FBncols-1)/2;
 if(0); FB = cat(3, FB, ones([FBmrows FBncols])/FBmrows/FBncols ); end;
 
 % get FB responses
-IFR = FB_apply_2D( I, FB, 'same' );
+IFR = FbAapply2d( I, FB, 'same' );
 
 % create matrix F such that F*vectorized patch=filter response
 F = reshape( FB, FBmrows*FBncols, [] ); F=F'; F=fliplr(F);

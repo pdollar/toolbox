@@ -5,7 +5,7 @@
 % norm is 1, i.e. sum(sum(abs(F)))==1.
 %
 % USAGE
-%  FBC = FB_crop( FB, delta )
+%  FBC = FbCrop( FB, delta )
 %
 % INPUTS
 %  FB       - original filterbank
@@ -15,17 +15,17 @@
 %  FBC      - cropped filterbank
 %
 % EXAMPLE
-%  load FbDoG.mat;  FBC=FB_crop(FB,4);
+%  load FbDoG.mat;  FBC=FbCrop(FB,4);
 %  figure(1); montage2(FB,1,1);
 %  figure(2); montage2(FBC,1,1);
 %
-% See also FB_APPLY_2D
+% See also FBAPPLY2D
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function FBC = FB_crop( FB, delta )
+function FBC = FbCrop( FB, delta )
 
 nd = ndims(FB);
 if( nd~=2 && nd~=3 ); error('I must an MxNxK array'); end

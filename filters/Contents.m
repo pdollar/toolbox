@@ -14,8 +14,8 @@
 %   filter_visualize_3D - Used to visualize a 3D filter.
 %
 % Operations involving a set of filters (a filter bank or FB):
-%   FB_apply_2D         - Applies each of the filters in the filterbank FB to the image I.
-%   FB_crop             - Crop a 2D filterbank (adjusting filter norms).
+%   FbApply2d           - Applies each of the filters in the filterbank FB to the image I.
+%   FbCrop              - Crop a 2D filterbank (adjusting filter norms).
 %   FbMake              - Various 1D/2D/3D filterbanks (hardcoded).
-%   FB_reconstruct_2D   - Use to see how much image information is preserved in filter outputs.
+%   FbReconstruct2d     - Use to see how much image information is preserved in filter outputs.
 %   FbVisualize         - Used to visualize a series of 1D/2D/3D filters. 
