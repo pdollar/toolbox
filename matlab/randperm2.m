@@ -34,7 +34,7 @@ wid = sprintf('Images:%s:obsoleteFunction',mfilename);
 warning(wid,[ '%s is obsolete in Piotr''s toolbox.\n RANDSAMPLE is its '...
   'recommended replacement.'],upper(mfilename));
 
-randsample( n, k );
+p = randsample( n, k );
 
 %if (nargin<2); k=n; else k = min(k,n); end
 
