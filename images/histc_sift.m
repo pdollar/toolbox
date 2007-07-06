@@ -23,7 +23,7 @@
 %  hs          - histograms (array of size nbins x nmasks)
 %
 % EXAMPLE
-%  G = filter_gauss_nD([100 100],[],[],0);
+%  G = filterGauss([100 100],[],[],0);
 %  hs = histc_sift( G, 5, {2,.6,.1,0} ); figure(1); im(hs)
 %
 % See also HISTC_1D, MASK_GAUSSIANS, HISTC_SIFT_ND

@@ -29,14 +29,14 @@
 %  h           - histogram (array of size nbins1xnbins2x...)
 %
 % EXAMPLE
-%  G = filter_gauss_nD([1000 1000],[],[],0); G=G(:);
+%  G = filterGauss([1000 1000],[],[],0); G=G(:);
 %  h=histc_nD( [G G], 25 ); figure(1); im(h); %decreasing vals along diag
 %  h=histc_nD( [G G], 25, G ); figure(2); im(h); %constants along diagnol
 %  h=histc_nD( [randn(size(G)) G], 5 ); figure(3); im(h); % symmetric
 %
 % See also HISTC_1D
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 

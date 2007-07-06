@@ -45,7 +45,7 @@
 %
 % See also HISTC_SIFT, MASK_CIRCLE
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -77,7 +77,7 @@ else %%% create masks and keeplocs
   for c=1:prod(M) 
     sub = ind2sub2( M, c );
     mus = (sub-.5).* spacing + .5-offset*siz;
-    masks(inds{:},c) = filter_gauss_nD( siz, mus, C );
+    masks(inds{:},c) = filterGauss( siz, mus, C );
   end
   keeplocs = masks>1e-7;
 

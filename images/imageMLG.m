@@ -36,7 +36,7 @@
 %
 % EXAMPLE - 2D
 %  R = rotationMatrix2D( pi/6 );  C=R'*[10^2 0; 0 20^2]*R;
-%  G = filter_gauss_nD( [200, 300], [150,100], C, 0 );
+%  G = filterGauss( [200, 300], [150,100], C, 0 );
 %  [mu,C,GR,logl] = imageMLG( G, 0, 1 );
 %  mask = mask_ellipse( size(G,1), size(G,2), mu, C );
 %  figure(2); im(mask)
@@ -44,12 +44,12 @@
 % EXAMPLE - 3D
 %  R = rotationMatrix( [1,1,0], pi/4 );
 %  C = R'*[5^2 0 0; 0 2^2 0; 0 0 4^2]*R;
-%  G = filter_gauss_nD( [50,50,50], [25,25,25], C, 0 );
+%  G = filterGauss( [50,50,50], [25,25,25], C, 0 );
 %  [mu,C,GR,logl] = imageMLG( G, 0, 1 );
 %
 % See also GAUSS2ELLIPSE, PLOT_GAUSSELLIPSES, MASK_ELLIPSE
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -101,7 +101,7 @@ end
 
 % get the log likelihood of the data
 if (nargout>2)
-  GR = filter_gauss_nD( size(G), mu, C );
+  GR = filterGauss( size(G), mu, C );
   probs = GR; probs( probs<realmin ) = realmin;
   logl = G .* log( probs );
   logl = sum( logl(:) );
@@ -159,7 +159,7 @@ end
 
 % get the log likelihood of the data
 if( nargout>2 || (show) )
-  GR = filter_gauss_nD( size(G), mu, C );
+  GR = filterGauss( size(G), mu, C );
   probs = GR; probs( probs<realmin ) = realmin;
   logl = G .* log( probs );
   logl = sum( logl(:) );

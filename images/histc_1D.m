@@ -32,13 +32,13 @@
 %  h           - histogram (vector of size 1xnbins)
 %
 % EXAMPLE
-%  G = filter_gauss_nD([1000 1000],[],[],1);
+%  G = filterGauss([1000 1000],[],[],1);
 %  h1 = histc_1D( G, 25 );    figure(1); bar(h1);
 %  h2 = histc_1D( G, 25, G ); figure(2); bar(h2);
 %
 % See also HISTC, ASSIGN2BINS
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 

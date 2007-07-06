@@ -25,8 +25,8 @@
 %  vals    - values at non-suppressed point locations (n x 1)
 %
 % EXAMPLE - 1
-%   G = filter_gauss_nD( [25 25], [13,13], 3*eye(2), 1 );
-%   siz=[11 11]; G = filter_gauss_nD( siz, (siz+1)/2, eye(2), 1 );
+%   G = filterGauss( [25 25], [13,13], 3*eye(2), 1 );
+%   siz=[11 11]; G = filterGauss( siz, (siz+1)/2, eye(2), 1 );
 %   [subs,vals] = nonmaxsupr( G, 1, eps );
 %   figure(2); im( imsubs2array( subs, vals, siz ) );
 %   [subs,vals] = nonmaxsupr_list( ind2sub2(siz,(1:prod(siz))'), G(:)',1 );
@@ -46,7 +46,7 @@
 %
 % See also IMSUBS2ARRAY, NONMAXSUPR_LIST, NONMAXSUPR_WINDOW
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 

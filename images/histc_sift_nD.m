@@ -25,14 +25,14 @@
 %  hs          - histograms (array of size nmasks x nbins)
 %
 % EXAMPLE
-%  G = filter_gauss_nD([100 100],[],[],0);
+%  G = filterGauss([100 100],[],[],0);
 %  hs1 = histc_sift_nD( cat(3,G,G), 5, {2,.6,.1,0} );
 %  hs2 = histc_sift_nD( cat(3,G,randn(size(G))),5,{2,.6,.1,0});
 %  figure(1); montage2(hs1,1);  figure(2); montage2(hs2,1);
 %
 % See also HISTC_1D, HISTC_SIFT, MASK_GAUSSIANS, HISTC_ND
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 

@@ -28,7 +28,7 @@
 %
 % EXAMPLE
 %  load trees;
-%  L = conv2(X, filter_DOG_2D(10,4,1,0), 'valid' );
+%  L = conv2(X, filterDog2d(10,4,1,0), 'valid' );
 %  f1=filterGauss(25,[],25);  HS1 = histc_image( L, 15, {f1,f1'}, 'same' );
 %  f2=ones(1,15);             HS2 = histc_image( L, 15, {f2,f2'}, 'same' );
 %  figure(1); im(X); figure(2); im(L);   figure(3); montage2(HS1,1,1);
@@ -36,7 +36,7 @@
 %
 % See also ASSIGN2BINS, HISTC_1D
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 

@@ -16,7 +16,7 @@
 %  C           - correlation matrix
 %
 % EXAMPLE
-%  T = filter_gauss_nD( [21 21], [], [], 0 )*100;  A = rand(100);
+%  T = filterGauss( [21 21], [], [], 0 )*100;  A = rand(100);
 %  C1=normxcorrn(T,A);  C2=normxcorr2(T,A);  C3=xcorr2(A,T);
 %  C4=xcorrn(A,T); C4r = rot90( xcorrn(T,A),2 );
 %  C5=xeucn(A,T);  C5r = rot90( xeucn(T,A), 2 );
@@ -31,7 +31,7 @@
 %
 % See also NORMXCORRN_FG, XEUCN, XCORRN
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
