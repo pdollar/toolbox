@@ -27,6 +27,7 @@ header=[...
 % must start in /toolbox base directory  - cd( 'c:/code/toolbox' );
 dirs={ 'classify', 'classify/private', 'filters', 'images', ...
       'images/private', 'matlab', 'external' };
+%dirs = {'classify'};
 
 for i=1:length(dirs)
   mfiles = dir([ dirs{i}, '/*.m' ]);
