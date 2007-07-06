@@ -24,9 +24,9 @@
 %  [Feven,Fodd] = filter_gabor_2D(15,sqrt(2),4,45,1,1);
 %  [Feven,Fodd] = filter_gabor_2D(25,4,2,0,2,3);
 %
-% See also FILTER_GABOR_1D, FILTER_GAUSS_ND
+% See also FILTER_GABOR_1D, FILTERGAUSS
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 

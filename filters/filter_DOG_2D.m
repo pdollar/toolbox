@@ -21,7 +21,7 @@
 %  G = filter_DOG_2D( 40, 40, 1, 1 ); %order=1 (LoG)
 %  G = filter_DOG_2D( 40, 40, 2, 3 ); %order=2
 %
-% See also FILTER_DOOG_ND
+% See also FILTER_DOOG_ND, FILTERGAUSS
 
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -34,14 +34,14 @@ if( nargin<4 || isempty(show) ); show=0; end
 % create filter
 N = 2*r+1;
 if (order==1)
-  Ga = filter_gauss_nD( [N N], [], .71*var );
-  Gb = filter_gauss_nD( [N N], [], 1.14*var );
+  Ga = filterGauss( [N N], [], .71*var );
+  Gb = filterGauss( [N N], [], 1.14*var );
   a=1; b=-1; G = a*Ga + b*Gb;
 
 elseif (order==2)
-  Ga = filter_gauss_nD( [N N], [], 0.62*var );
-  Gb = filter_gauss_nD( [N N], [], var );
-  Gc = filter_gauss_nD( [N N], [], 1.6*var );
+  Ga = filterGauss( [N N], [], 0.62*var );
+  Gb = filterGauss( [N N], [], var );
+  Gc = filterGauss( [N N], [], 1.6*var );
   a=-1; b=2; c=-1; G = a*Ga + b*Gb + c*Gc;
 
 else

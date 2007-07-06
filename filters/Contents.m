@@ -8,7 +8,7 @@
 %   filter_gabor_1D     - Creates an even/odd pair of 1D Gabor filters.
 %   filter_gabor_2D     - Creates an even/odd pair of 2D Gabor filters.
 %   filter_gauss_1D     - 1D Gaussian filter.
-%   filter_gauss_nD     - n-dimensional Gaussian filter.
+%   filterGauss         - n-dimensional Gaussian filter.
 %   filter_steerable    - Steerable 2D Gaussian derivative filter (for visualization).
 %   filter_visualize_1D - Used to visualize a 1D filter.
 %   filter_visualize_2D - Used to visualize a 2D filter.

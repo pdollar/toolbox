@@ -10,7 +10,7 @@
 % to (siz/6)^2.
 %
 % USAGE
-%  G = filter_gauss_nD( dims, [mu], [C], [show] )
+%  G = filterGauss( dims, [mu], [C], [show] )
 %
 % INPUTS
 %  dims    - n element vector of dimensions of final Gaussian
@@ -22,19 +22,19 @@
 %  G       - image of the created Gaussian
 %
 % EXAMPLE
-%  g = filter_gauss_nD( 21, [], 4, 1); %1D
-%  sig=3; G = filter_gauss_nD( 4*[sig sig] + 1, [], [sig sig].^2, 2 ); %2D
-%  R = rotation_matrix3D( [1,1,0], pi/4 );
+%  g = filterGauss( 21, [], 4, 1); %1D
+%  sig=3; G = filterGauss( 4*[sig sig] + 1, [], [sig sig].^2, 2 ); %2D
+%  R = rotationMatrix( [1,1,0], pi/4 );
 %  C = R'*[10^2 0 0; 0 5^2 0; 0 0 16^2]*R;
-%  G3 = filter_gauss_nD( [51,51,51], [], C, 3 ); %3D
+%  G3 = filterGauss( [51,51,51], [], C, 3 ); %3D
 %
-% See also FILTER_GAUSS_1D, NORMPDF2
+% See also NORMPDF2
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function G = filter_gauss_nD( dims, mu, C, show )
+function G = filterGauss( dims, mu, C, show )
 
 nd = length( dims );
 if( nargin<2 || isempty(mu)); mu=(dims+1)/2; end
@@ -42,7 +42,6 @@ if( nargin<3 || isempty(C)); C=(dims/6).^2; end
 if( nargin<4 || isempty(show) ); show=0; end
 
 if( length(mu)~=nd ); error('invalid mu'); end
-if( any(size(C)~=nd)); error( 'invalid C'); end
 
 if( nd==1 ) % fast special case
   xs = 1:dims(1);
@@ -52,6 +51,7 @@ else
   % make C have correct dimensions
   if( numel(C)==1 ); C=repmat(C,[1 nd]); end
   if( size(C,1)==1 || size(C,2)==1 ); C=diag(C); end
+  if( any(size(C)~=nd)); error( 'invalid C'); end
 
   % get vector of grid locations
   temp = cell(1,nd);

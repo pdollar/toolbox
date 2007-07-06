@@ -21,7 +21,7 @@
 %  dG2 = filter_DooG_nD( [41 41], [3 3], [1,1], 2 ); %2D
 %  dG3 = filter_DooG_nD( [101 101 101], [4,4,10], [1,1,0], 3 ); %3D
 %
-% See also FILTER_GAUSS_ND, NORMPDF2, FILTER_DOG_2D, FILTER_GABOR_2D
+% See also FILTERGAUSS, NORMPDF2, FILTER_DOG_2D, FILTER_GABOR_2D
 
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -35,7 +35,7 @@ if( length(sigmas)~=nd ); error('invalid sigmas'); end
 if( length(nderivs)~=nd ); error('invalid nderivs'); end
 
 % get initial Gaussian
-dG = filter_gauss_nD( dims, [], sigmas.^2, 0 );
+dG = filterGauss( dims, [], sigmas.^2, 0 );
 
 % compute derivatives along each axis
 for d=1:nd
