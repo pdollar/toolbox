@@ -2,14 +2,14 @@
 %
 % Displays one set per row.  Each of the S sets is flattened to a single
 % long image by concatenating the T images in the set. Alternative to
-% makemoviesets. Works by calling montages2 once per frame.
+% makemoviesets. Works by calling montages once per frame.
 %
 % USAGE
 %  M = makemoviesets2( IS, [montagesparams] )
 %
 % INPUTS
 %  IS              - MxNxTxRxS or MxNx1xTxRxS or MxNx3xTxRxS array
-%  montagesparams  - [] cell array of params for montages2
+%  montagesparams  - [] cell array of params for montages
 %
 % OUTPUTS
 %  M               - resulting movie
@@ -51,9 +51,9 @@ params2{3} = clim;  montagesparams{1}=params2;
 h=figureresized(.8); axis off; M=repmat(getframe(h),[1,nframes]);
 for f=1:nframes
   if( ndims(IS)==5 )
-    montages2( squeeze(IS(:,:,f,:,:)), montagesparams{:} );
+    montages( squeeze(IS(:,:,f,:,:)), montagesparams{:},4 );
   else
-    montages2( squeeze(IS(:,:,:,f,:,:)), montagesparams{:} );
+    montages( squeeze(IS(:,:,:,f,:,:)), montagesparams{:},4 );
   end;
   M(f) = getframe(h);
 end

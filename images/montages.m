@@ -43,48 +43,49 @@
 function varargout = montages( IS, montage2prms, labels, montage2lbls )
 
 if( nargin<2 || isempty(montage2prms)); montage2prms = {}; end
-if( nargin<3 || isempty(labels) )
-  labels = {};
+if( nargin<3 || isempty(labels) ); labels = {}; end
+if( nargin<4 ); montage2lbls = {}; end
+
+% get/test image format info
+nd = ndims(IS); siz = size(IS);
+if( iscell(IS)) %testing for dims done in montage2
+  nmontages = numelem(IS);
+elseif( nd==4)  %MxNxTxR
+  nmontages = size(IS,4);
+elseif( nd==5)  %MxNx1xTxR or MxNx3xTxR
+  nmontages = size(IS,5);
+  nch = size(IS,3);
+  if( nch~=1 && nch~=3 ); error('illegal image stack format'); end
+  if( nch==1 ); IS = squeeze(IS); nd=4; siz=size(IS); end
 else
-  if isnumeric(labels)
-    padSiz=labels;
-    [padSiz,er] = checknumericargs( padSiz,[1 1], 0, 1 ); error(er);
-
-    % get/test image format info
-    nd = ndims(IS); siz = size(IS);
-    if( nd==5 )  %MxNx1xTxR or MxNx3xTxR
-      nch = size(IS,3);
-      if( nch~=1 && nch~=3 ); error('illegal image stack format'); end
-      if( nch==1 ); IS = squeeze(IS); nd=4; siz=size(IS); end
-    end
-    if ~any(nd==3:5)
-      error('unsupported dimension of IS');
-    end
-
-    % reshape IS so that each 3D element is concatenated to a 2D image, 
-    % adding padding
-    padEl = max(IS(:));
-    IS=arraycrop2dims(IS, [siz(1)+padSiz siz(2:end)], padEl ); %UD pad
-    siz=size(IS);
-    if(nd==3) % reshape bw single
-      IS=squeeze( reshape( IS, siz(1), [] ) );
-    elseif(nd==4) % reshape bw
-      IS=squeeze( reshape( IS, siz(1), [], siz(4) ) );
-    else % reshape color
-      IS=squeeze(reshape(permute(IS,[1 2 4 3 5]),siz(1),[],siz(3),siz(5)));
-    end; siz = size(IS);
-    IS=arraycrop2dims(IS, [siz(1) siz(2)+padSiz siz(3:end)], padEl);
-
-    % show using montage2
-    varargout = cell(1,nargout);
-    if( nargout); varargout{1}=IS; end
-    [varargout{2:end}] = montage2( IS, montage2prms{:} );
-    title(inputname(1));
-    return;
-  end
+  error('unsupported dimension of IS');
 end
 
-if( nargin<4 ); montage2lbls = {}; end
+if isnumeric(labels)
+  padSiz=labels;
+  [padSiz,er] = checknumericargs( padSiz,[1 1], 0, 1 ); error(er);
+
+  % reshape IS so that each 3D element is concatenated to a 2D image,
+  % adding padding
+  padEl = max(IS(:));
+  IS=arraycrop2dims(IS, [siz(1)+padSiz siz(2:end)], padEl ); %UD pad
+  siz=size(IS);
+  if(nd==3) % reshape bw single
+    IS=squeeze( reshape( IS, siz(1), [] ) );
+  elseif(nd==4) % reshape bw
+    IS=squeeze( reshape( IS, siz(1), [], siz(4) ) );
+  else % reshape color
+    IS=squeeze(reshape(permute(IS,[1 2 4 3 5]),siz(1),[],siz(3),siz(5)));
+  end; siz = size(IS);
+  IS=arraycrop2dims(IS, [siz(1) siz(2)+padSiz siz(3:end)], padEl);
+
+  % show using montage2
+  varargout = cell(1,nargout);
+  if( nargout); varargout{1}=IS; end
+  [varargout{2:end}] = montage2( IS, montage2prms{:} );
+  title(inputname(1));
+  return
+end
 
 % set up parameters for montage2
 nparams = length(montage2prms);
@@ -115,19 +116,6 @@ if( isempty(montage2prms{3}) )
 end
 
 
-% get/test image format info
-nd = ndims(IS);
-if( iscell(IS)) %testing for dims done in montage2
-  nmontages = numelem(IS);
-elseif( nd==4)  %MxNxTxR
-  nmontages = size(IS,4);
-elseif( nd==5)  %MxNx1xTxR or MxNx3xTxR
-  nmontages = size(IS,5);
-  nch = size(IS,3);  legal = (nch==1 || nch==3);
-  if( ~legal ); error('illegal image stack format'); end
-else
-  error('unsupported dimension of IS');
-end
 if( isempty(montage2lbls)); montage2lbls=cell(1,nmontages); end
 
 % get layout of images (mm=#montages/row, nn=#montages/col)
@@ -142,7 +130,7 @@ for i=1:nmontages
       montage2( IS{i}, montage2prms{:}, montage2lbls{i} );
     else
       set(gca,'XTick',[]); set(gca,'YTick',[]);  %extraInf off
-    end;
+    end
   elseif( nd==4)
     montage2( IS(:,:,:,i), montage2prms{:}, montage2lbls{i}  );
   else

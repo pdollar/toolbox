@@ -5,7 +5,6 @@
 %   im                  - [2D] Function for displaying grayscale images.
 %   montage2            - [3D] Used to display a stack of T images.
 %   montages            - [4D] Used to display R sets of T images each.
-%   montages2           - [4D] Used to display R sets of T images each.
 %   filmstrip           - [3D] Used to display a stack of T images as a filmstrip.
 %   filmstrips          - [4D] Used to display R sets of filmstrips.
 %   makemovie           - [3D] Used to convert a stack of T images into a movie.

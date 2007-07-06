@@ -5,7 +5,7 @@
 %
 % Displays one set per row.  Each of the S sets is flattened to a single
 % long image by concatenating the T images in the set. Alternative to
-% makemoviesets. Works by calling montages2 once per frame.
+% makemoviesets. Works by calling montages once per frame.
 %
 % USAGE
 %  M = makemoviesets2( IS, [montagesparams] )

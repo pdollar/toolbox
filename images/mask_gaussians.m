@@ -97,7 +97,7 @@ if( show )
     figure(show+1); clf; im(sum( masks,nd+1));
     title('coverage');
   elseif( nd==3)
-    figure(show); clf; montages2( masks, {0, 1} );        
+    figure(show); clf; montages( masks, {0, 1},4 );        
     figure(show+1); clf; montage2(sum( masks,nd+1), 1, 1 );
     title('coverage');
   end
