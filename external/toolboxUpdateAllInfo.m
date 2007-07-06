@@ -33,6 +33,8 @@ for i=1:length(dirTot)
   end
 end
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Inserts toolbox data after main comment in an .m file.
 % Does not affect files with no body (such as Contents.m)
 function insertInfo( fname )
@@ -47,7 +49,7 @@ while 1
   if( isempty(strtrim(tline)) && first_comment )
     first_comment = false;
     fprintf( fid_out, [...
-      '%% Piotr''s Image&Video Toolbox      Version 1.03   \n' ...
+      '%% Piotr''s Image&Video Toolbox      Version 1.5   \n' ...
       '%% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu \n' ...
       '%% Please email me if you find bugs, or have suggestions or questions! \n \n'] );
   end
@@ -56,6 +58,8 @@ end
 fclose(fid_in); fclose(fid_out);
 movefile( [fname '2'], fname );
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Removes toolbox data after main comment in an .m file.
 function removeInfo( fname )
 
@@ -63,7 +67,7 @@ function removeInfo( fname )
 fid = fopen( fname, 'rt' ); ind=0;
 while 1
   ind = ind + 1;
-  fileLine{ind} = fgetl(fid);
+  fileLine{ind} = fgetl(fid); %#ok<AGROW>
   if ~ischar(fileLine{ind}) || isempty(strtrim(fileLine{ind})); break; end
 end
 
@@ -78,7 +82,7 @@ end
 % Read the rest
 while 1
   ind = ind + 1;
-  fileLine{ind} = fgetl(fid);
+  fileLine{ind} = fgetl(fid); %#ok<AGROW>
   if ~ischar(fileLine{ind}); break; end
 end
 
