@@ -3,6 +3,9 @@ Todo:
 
 
 Version 1.04
+ -major documentation change
+ -formatting of code
+ -general code cleanup
  -fixed display bug in kmeans2
  -changed behavior of gauss_smooth if extra sigmas specified
  -tweaked playmovies
