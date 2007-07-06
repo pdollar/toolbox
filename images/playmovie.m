@@ -29,8 +29,7 @@
 %  load( 'images.mat' );
 %  playmovie( videos );
 %
-% See also MONTAGE2, PLAYMOVIES, MAKEMOVIE, MOVIE2IMAGES, MOVIE, MONTAGES,
-% MAKEMOVIES
+% See also MONTAGE2, MAKEMOVIE, MOVIE2IMAGES, MOVIE, MONTAGES, MAKEMOVIES
 
 % Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

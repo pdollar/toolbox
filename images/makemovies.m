@@ -20,7 +20,7 @@
 %  M = makemovies( videos );
 %  movie( M );
 %
-% See also MONTAGES, MONTAGE2, MAKEMOVIE, MAKEMOVIESETS, PLAYMOVIES
+% See also MONTAGES, MONTAGE2, MAKEMOVIE, MAKEMOVIESETS
 
 % Piotr's Image&Video Toolbox      Version 1.03   PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
