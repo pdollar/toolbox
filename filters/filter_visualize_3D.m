@@ -14,12 +14,12 @@
 % OUTPUTS
 %
 % EXAMPLE
-%  F = filter_DooG_nD( [51 51 101], [3 3 5], [1 2 3], 0 );
+%  F = filterDoog( [51 51 101], [3 3 5], [1 2 3], 0 );
 %  filter_visualize_3D( F, .1, 1 );
 %
 % See also FILTER_VISUALIZE_2D
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 

@@ -21,7 +21,7 @@
 %  G = filter_DOG_2D( 40, 40, 1, 1 ); %order=1 (LoG)
 %  G = filter_DOG_2D( 40, 40, 2, 3 ); %order=2
 %
-% See also FILTER_DOOG_ND, FILTERGAUSS
+% See also FILTERDOOG, FILTERGAUSS
 
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

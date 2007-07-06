@@ -5,7 +5,7 @@
 % indvidiual seperable kernels for efficiency purposes.
 %
 % USAGE
-%  dG = filter_DooG_nD( dims, sigmas, nderivs, [show] )
+%  dG = filterDoog( dims, sigmas, nderivs, [show] )
 %
 % INPUTS
 %  dims    - nd element vector of dimensions of final Gaussian
@@ -17,17 +17,17 @@
 %  dG      - The derivative of Gaussian filter
 %
 % EXAMPLE
-%  dG1 = filter_DooG_nD( 43, 2, 3, 1 ); %1D
-%  dG2 = filter_DooG_nD( [41 41], [3 3], [1,1], 2 ); %2D
-%  dG3 = filter_DooG_nD( [101 101 101], [4,4,10], [1,1,0], 3 ); %3D
+%  dG1 = filterDoog( 43, 2, 3, 1 ); %1D
+%  dG2 = filterDoog( [41 41], [3 3], [1,1], 2 ); %2D
+%  dG3 = filterDoog( [101 101 101], [4,4,10], [1,1,0], 3 ); %3D
 %
 % See also FILTERGAUSS, NORMPDF2, FILTER_DOG_2D, FILTER_GABOR_2D
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function dG = filter_DooG_nD( dims, sigmas, nderivs, show )
+function dG = filterDoog( dims, sigmas, nderivs, show )
 
 nd = length( dims );
 if( nargin<4 || isempty(show) ); show=0; end;

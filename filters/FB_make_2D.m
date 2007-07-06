@@ -58,12 +58,12 @@ switch flag
     cnt=1;  nderivs = size(derivs,1);
     for s=1:length(sigs)
       for i=1:nderivs
-        dG = filter_DooG_nD( dims, [sigs(s) sigs(s)], derivs(i,:), 0 );
+        dG = filterDoog( dims, [sigs(s) sigs(s)], derivs(i,:), 0 );
         if(s==1 && i==1); FB=repmat(dG,[1 1 length(sigs)*nderivs]); end
         FB(:,:,cnt) = dG; cnt=cnt+1;
-        %dG = filter_DooG_nD( dims, [sigs(s)*3 sigs(s)], derivs(i,:), 0 );
+        %dG = filterDoog( dims, [sigs(s)*3 sigs(s)], derivs(i,:), 0 );
         %FB(:,:,cnt) = dG; cnt=cnt+1;
-        %dG = filter_DooG_nD( dims, [sigs(s) sigs(s)*3], derivs(i,:), 0 );
+        %dG = filterDoog( dims, [sigs(s) sigs(s)*3], derivs(i,:), 0 );
         %FB(:,:,cnt) = dG; cnt=cnt+1;
       end
     end
@@ -75,7 +75,7 @@ switch flag
     cnt=1;  nderivs = size(derivs,1);
     for s=1:length(sigs)
       for i=1:nderivs
-        dG = filter_DooG_nD( dims, [sigs(s) sigs(s)], derivs(i,:), 0 );
+        dG = filterDoog( dims, [sigs(s) sigs(s)], derivs(i,:), 0 );
         if(s==1 && i==1); FB=repmat(dG,[1 1 length(sigs)*nderivs]); end
         FB(:,:,cnt) = dG; cnt=cnt+1;
       end
@@ -114,8 +114,8 @@ end
 function FB = FB_make_DooG_sym( r, num_ori, sigs )
 cnt=1; dims=[2*r+1 2*r+1];
 for s=1:length(sigs)
-  Fodd = -filter_DooG_nD( dims, [sigs(s) sigs(s)], [1 0], 0 );
-  Feven = filter_DooG_nD( dims, [sigs(s) sigs(s)], [2 0], 0 );
+  Fodd = -filterDoog( dims, [sigs(s) sigs(s)], [1 0], 0 );
+  Feven = filterDoog( dims, [sigs(s) sigs(s)], [2 0], 0 );
   if(s==1); FB=repmat(Fodd,[1 1 length(sigs)*num_ori*2]); end
   for n=1:num_ori
     theta = 180*(n-1)/num_ori;
@@ -131,8 +131,8 @@ function FB = FB_make_DooG( r, num_ori, num_scales, lambda, sigma )
 cnt=1; dims=[2*r+1 2*r+1];
 for m=1:num_scales
   sigma = sigma * m^.7;
-  Fodd = -filter_DooG_nD( dims, [sigma lambda*sigma^.6], [1,0], 0 );
-  Feven = filter_DooG_nD( dims, [sigma lambda*sigma^.6], [2,0], 0 );
+  Fodd = -filterDoog( dims, [sigma lambda*sigma^.6], [1,0], 0 );
+  Feven = filterDoog( dims, [sigma lambda*sigma^.6], [2,0], 0 );
   if(m==1); FB=repmat(Fodd,[1 1 num_scales*num_ori*2]); end
   for n=1:num_ori
     theta = 180*(n-1)/num_ori;

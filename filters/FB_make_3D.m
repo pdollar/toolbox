@@ -14,7 +14,7 @@
 % EXAMPLE
 %  FB = FB_make_3D( 1, 1 );
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NWE
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -30,7 +30,7 @@ switch flag
     cnt=1; nderivs = size(derivs,1);
     for s=1:length(sigs)
       for i=1:nderivs
-        dG = filter_DooG_nD( dims, repmat(sigs(s),[1 3]), derivs(i,:), 0 );
+        dG = filterDoog( dims, repmat(sigs(s),[1 3]), derivs(i,:), 0 );
         if(s==1 && i==1); FB=repmat(dG,[1 1 1 nderivs*length(sigs)]); end
         FB(:,:,:,cnt) = dG; cnt=cnt+1;
       end
