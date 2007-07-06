@@ -45,7 +45,7 @@ if ~any(nd==3:5)
   error('unsupported dimension of IS');
 end
 
-% reshape IS so that each 3D element is concatentated to a 2D image, adding
+% reshape IS so that each 3D element is concatenated to a 2D image, adding
 % padding
 padEl = max(IS(:));
 IS=arraycrop2dims(IS, [siz(1)+padSiz siz(2:end)], padEl ); %UD pad

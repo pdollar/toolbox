@@ -165,7 +165,7 @@ if( all(mod(trans,1))==0) % all integer translations [optimized for speed]
   IJ = repmat( I(1), [jsiz(1), jsiz(2), nops] );
   for phi=phis
     if( phi==0); IR = I; else
-      R = rotation_matrix2D( phi );
+      R = rotationMatrix( phi );
       H = [R [0;0]; 0 0 1];
       IR = apply_homography( I, H, method, 'crop' );
     end
@@ -178,7 +178,7 @@ if( all(mod(trans,1))==0) % all integer translations [optimized for speed]
 else % arbitrary translations
   IJ = repmat( I(1), [siz(1), siz(2), nops] );
   for phi=phis
-    R = rotation_matrix2D( phi );
+    R = rotationMatrix( phi );
     for tran=1:ntrans
       H = [R trans(:,tran); 0 0 1];
       I2 = apply_homography( I, H, method, 'crop' );

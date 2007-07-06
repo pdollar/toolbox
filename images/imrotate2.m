@@ -36,6 +36,6 @@ if( strcmp(method,'bilinear') || strcmp(method,'lin')); method='linear';end
 
 % convert arguments for apply_homography
 angle_rads = angle /180 * pi;
-R = rotation_matrix2D( angle_rads );
+R = rotationMatrix( angle_rads );
 H = [R [0;0]; 0 0 1];
 IR = apply_homography( I, H, method, bbox );

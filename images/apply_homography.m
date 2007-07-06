@@ -24,7 +24,7 @@
 %
 % EXAMPLE
 %  load trees; I=X;
-%  R = rotation_matrix2D( pi/4 ); T = [1; 3]; H = [R T; 0 0 1];
+%  R = rotationMatrix( pi/4 ); T = [1; 3]; H = [R T; 0 0 1];
 %  IR = apply_homography( I, H, [], 'crop', 1 );
 %
 % See also TEXTURE_MAP, IMROTATE2

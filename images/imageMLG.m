@@ -35,14 +35,14 @@
 %  logl     - log likelihood of G given recov. gaussian (faster if omitted)
 %
 % EXAMPLE - 2D
-%  R = rotation_matrix2D( pi/6 );  C=R'*[10^2 0; 0 20^2]*R;
+%  R = rotationMatrix2D( pi/6 );  C=R'*[10^2 0; 0 20^2]*R;
 %  G = filter_gauss_nD( [200, 300], [150,100], C, 0 );
 %  [mu,C,GR,logl] = imageMLG( G, 0, 1 );
 %  mask = mask_ellipse( size(G,1), size(G,2), mu, C );
 %  figure(2); im(mask)
 %
 % EXAMPLE - 3D
-%  R = rotation_matrix3D( [1,1,0], pi/4 );
+%  R = rotationMatrix( [1,1,0], pi/4 );
 %  C = R'*[5^2 0 0; 0 2^2 0; 0 0 4^2]*R;
 %  G = filter_gauss_nD( [50,50,50], [25,25,25], C, 0 );
 %  [mu,C,GR,logl] = imageMLG( G, 0, 1 );

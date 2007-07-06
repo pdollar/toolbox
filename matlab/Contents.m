@@ -42,9 +42,7 @@
 %   randint2             - Faster but restricted version of randint.
 %   randomsample         - Samples elements of X so result uses at most maxMegs megabytes of memory.
 %   randperm2            - Returns a random permutation of integers.
-%   recover_rotation3D   - Takes a rotation matrix and extracts the rotation angle and axis.
-%   rotation_matrix2D    - Returns the matrix: R=[cos(t) -sin(t); sin(t) cos(t)].
-%   rotation_matrix3D    - Uses Rodrigues's formula to create a 3x3 rotation matrix R.
+%   rotationMatrix       - Performs different operations dealing with a rotation matrix
 %   simplecache          - A very simply cache that can be used to store results of computations.
 %   sub2ind2             - Improved version of sub2ind.
 %
