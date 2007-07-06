@@ -13,7 +13,7 @@
 % EXAMPLE
 %  h = histc_1D( randn(2000,1), 20 ); histmontage([h; h]);
 %
-% See also HISTC, HISTC_1D, FILTER_GAUSS_1D
+% See also HISTC, HISTC_1D, FILTERGAUSS
 
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

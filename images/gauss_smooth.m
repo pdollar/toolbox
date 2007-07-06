@@ -19,12 +19,13 @@
 %  filters - actual filters used, cell array of length n
 %
 % EXAMPLE
-%  h = histc_1D( randn(2000,1), 20 );
-%  histmontage([h; h]);
+%  load trees; I=ind2gray(X,map);
+%  I2 = gauss_smooth( I, 1, 'same' );
+%  figure(1); im(I); figure(2); im(I2);
 %
-% See also
+% See also FILTERGAUSS
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -43,7 +44,7 @@ L = I;  filters = cell(1,nd);
 for i=1:nd
   if (sigmas(i)>.3)
     r = ceil( sigmas(i)*radius );
-    f = filter_gauss_1D( r, sigmas(i) );
+    f = filterGauss( 2*r+1, [], sigmas(i)^2 );
     f = permute( f, circshift(1:nd,[1,i-1]) );
     filters{i} = f;
     L = convn_fast( L, f, shape );

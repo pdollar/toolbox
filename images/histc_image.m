@@ -29,7 +29,7 @@
 % EXAMPLE
 %  load trees;
 %  L = conv2(X, filter_DOG_2D(10,4,1,0), 'valid' );
-%  f1=filter_gauss_1D([],5);  HS1 = histc_image( L, 15, {f1,f1'}, 'same' );
+%  f1=filterGauss(25,[],25);  HS1 = histc_image( L, 15, {f1,f1'}, 'same' );
 %  f2=ones(1,15);             HS2 = histc_image( L, 15, {f2,f2'}, 'same' );
 %  figure(1); im(X); figure(2); im(L);   figure(3); montage2(HS1,1,1);
 %  figure(4); montage2(HS2,1,1);         figure(5); montage2(HS1-HS2,1,1);

@@ -19,11 +19,11 @@
 %  f       - 1D binomial filter
 %
 % EXAMPLE
-%   r = 10;
-%   fbinom = filter_binomial_1D( r, 1 );
-%   fgauss = filter_gauss_1D( r, sqrt((2*r+1)/4), 2 );
+%  r = 10;
+%  fbinom = filter_binomial_1D( r, 1 );
+%  fgauss = filterGauss( 2*r+1, [], (2*r+1)/4, 2);
 %
-% See also FILTER_GAUSS_1D
+% See also FILTERGAUSS
 
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
