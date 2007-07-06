@@ -27,7 +27,7 @@ dirTot={ 'classify', 'classify/private', 'filters', 'images', ...
 
 for i=1:length(dirTot)
   mfiles = dir([ dirTot{i}, '/*.m' ]);
-  dirTot{i}
+  disp( dirTot{i} );
   for j=1:length(mfiles);
     removeInfo([dirTot{i} '/' mfiles(j).name]);
     insertInfo([dirTot{i} '/' mfiles(j).name]);
