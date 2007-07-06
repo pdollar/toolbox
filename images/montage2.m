@@ -63,29 +63,20 @@ if( ndims(IS)~=4 ); error('unsupported dimension of IS'); end
 siz = size(IS);  nch = siz(3);
 if( nch~=1 && nch~=3 ); error('illegal image stack format'); end
 if( ~isempty(labels) && siz(4)~=length(labels) )
-  error('incorrect number of labels'); end
+  error('incorrect number of labels');
+end
 
 % get layout of images (mm=#images/row, nn=#images/col) (bit hacky!!!)
 if( isempty(mm) || isempty(nn))
   if( isempty(mm) && isempty(nn))
-    nn = sqrt(siz(1)*siz(2)*siz(4)) / siz(2);
-    mm = siz(4)/nn;
+    nn = ceil(sqrt(siz(1)*siz(2)*siz(4)) / siz(2));
+    mm = ceil(siz(4)/nn);
   elseif( isempty(mm))
-    mm = siz(4)/nn;
+    mm = ceil(siz(4)/nn);
   else
-    nn = sqrt(prod(siz))/mm;
+    nn = ceil(siz(4)/mm);
   end
-
-  if( ceil(nn)-nn) < (ceil(mm)-mm),
-    nn = ceil(nn); mm = ceil(siz(4)/nn);
-  else
-    mm = ceil(mm); nn = ceil(siz(4)/mm);
-  end
-
-  while((mm-1)*nn>=siz(4)); mm = mm-1; end
-  while((nn-1)*mm>=siz(4)); nn = nn-1; end
 end
-
 
 % Calculate I (M*mm x N*nn size image)
 I = IS(1,1);
@@ -93,11 +84,11 @@ if(~isempty(clim)); I(1,1) = clim(1);  else  I(1,1) = min(IS(:)); end
 I = repmat(I, [mm*siz(1), nn*siz(2), nch]);
 rows = 1:siz(1); cols = 1:siz(2);
 for k=1:siz(4)
-  I(rows+floor((k-1)/nn)*siz(1),cols+mod(k-1,mm)*siz(2),:) = IS(:,:,:,k);
+  I(rows+floor((k-1)/nn)*siz(1),cols+mod(k-1,nn)*siz(2),:) = IS(:,:,:,k);
 end
 
 % display I
-if( ~isempty(clim)); h=imagesc(I,clim);  else  h=imagesc(I);  end;
+if( ~isempty(clim)); h=imagesc(I,clim);  else  h=imagesc(I);  end
 colormap(gray);  title(inputname(1));  axis('image');
 if( extrainfo)
   colorbar; impixelinfo;
