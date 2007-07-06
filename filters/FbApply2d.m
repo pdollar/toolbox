@@ -1,10 +1,10 @@
 % Applies each of the filters in the filterbank FB to the image I.
 %
 % To apply to a stack of images:
-%  IFS = feval_arrays( images, @FbAapply2d, FB, 'valid' );
+%  IFS = feval_arrays( images, @FbApply2d, FB, 'valid' );
 %
 % USAGE
-%  FR = FbAapply2d( I, FB, [shape], [show] )
+%  FR = FbApply2d( I, FB, [shape], [show] )
 %
 % INPUTS
 %  I       - 2D input array
@@ -17,7 +17,7 @@
 %
 % EXAMPLE
 %  load trees;  X=imresize(X,.5);  load FbDoG.mat;
-%  FR = FbAapply2d( X, FB, 'same', 1 );
+%  FR = FbApply2d( X, FB, 'same', 1 );
 %
 % See also CONV2
 
@@ -25,7 +25,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function FR = FbAapply2d( I, FB, shape, show )
+function FR = FbApply2d( I, FB, shape, show )
 
 if( nargin<3 || isempty(shape)); shape = 'full'; end
 if( nargin<4 || isempty(show)); show=0; end

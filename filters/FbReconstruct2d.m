@@ -39,7 +39,7 @@ FBrowRad = (FBmrows-1)/2;  FBcolRad = (FBncols-1)/2;
 if(0); FB = cat(3, FB, ones([FBmrows FBncols])/FBmrows/FBncols ); end;
 
 % get FB responses
-IFR = FbAapply2d( I, FB, 'same' );
+IFR = FbApply2d( I, FB, 'same' );
 
 % create matrix F such that F*vectorized patch=filter response
 F = reshape( FB, FBmrows*FBncols, [] ); F=F'; F=fliplr(F);
