@@ -38,13 +38,13 @@
 %
 % Image deformation:
 %   apply_homography    - Applies the homography defined by H on the image I.
-%   texture_map         - Maps texture in I according to row_dest and col_dest.
+%   texture_map         - Maps texture in I according to rowDst and colDst.
 %   imnormalize         - Various ways to normalize a (multidimensional) image.
 %   imrotate2           - Custom version of imrotate that demonstrates use of apply_homography.
 %   imtranslate         - Translate an image to subpixel accuracy.
 %   imshrink            - Used to shrink a multidimensional array I by integer amount.
 %   imsubs2array        - Converts subs/vals image representation to array representation.
-%   imsubs_resize       - Resizes subs in subs/vals image representation by resizevals.
+%   imsubs_resize       - Resizes subs in subs/vals image representation by resizVals.
 %
 % Generalized nonmaximal suppression:
 %   nonmaxsupr          - Applies nonmaximal suppression on an image of arbitrary dimension.
@@ -57,7 +57,7 @@
 %   optflow_lucaskanade - Calculate optical flow using Lucas & Kanade.  Fast, parallel code.
 %
 % Miscellaneous:
-%   imageMLG            - Calculates maximum likelihood parameters of gaussian that gave rise to image G.
+%   imageMLG            - Calculates max likelihood params of Gaussian that gave rise to image G.
 %   imwrite2            - Similar to imwrite, except follows a strict naming convention.
 %   imwrite2split       - Writes/reads a large set of images into/from multiple directories.
 %   jitter_image        - Creates multiple, slightly jittered versions of an image.
