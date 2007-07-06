@@ -14,7 +14,7 @@
 %  lam     - elongation of Gaussian mask
 %  theta   - orientation (in degrees)
 %  omega   - wavlength of underlying sine (sould be >1)
-%  show    - [optional] figure to use for display (no display if == 0)
+%  show    - [0] figure to use for optional display
 %
 % OUTPUTS
 %  Feven   - even symmetric filter (-cosine masked with Gaussian)
