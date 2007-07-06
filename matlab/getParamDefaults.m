@@ -20,10 +20,10 @@
 %  dfs = { 'x','REQ', 'y',0, 'z',[], 'eps',1e-3 };
 %  prm.x = 1;  prm = getParamDefaults( prm, dfs )
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function prm = getParamDefaults( prm, dfs )
 
 if(~isstruct(prm)); error('prm must be a struct'); end
@@ -38,3 +38,4 @@ for i=1:2:length(dfs)
     end
   end
 end
+

@@ -21,10 +21,10 @@
 %
 % See also CONV2
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function FR = FB_apply_2D( I, FB, shape, show )
 
 if( nargin<3 || isempty(shape)); shape = 'full'; end
@@ -49,3 +49,4 @@ if( show )
   figure(show+1); montage2(FB,1,1);
   figure(show+2); montage2(FR,1,1);
 end
+

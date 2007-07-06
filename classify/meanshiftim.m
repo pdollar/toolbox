@@ -56,10 +56,10 @@
 %
 % See also MEANSHIFT, MEANSHIFTIM_EXPLORE
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function [M,Vr,Vc] = meanshiftim( X,sigSpt,sigRng,softFlag,maxIter,minDel )
 
 [sigSpt,er] = checknumericargs( sigSpt, 1, 0, 1 ); error(er);
@@ -115,3 +115,8 @@ M = cat(3, M(:,:,1:2)*sigSpt, M(:,:,3:end)*sigRng );
 if( nargout>1 )
   Vr = M(:,:,1)-grid_rs;  Vc = M(:,:,2)-grid_cs;
 end
+
+
+
+
+

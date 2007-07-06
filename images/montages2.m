@@ -24,10 +24,10 @@
 %
 % See also MONTAGES, MAKEMOVIES, MONTAGE2, CLUSTERMONTAGE
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function varargout = montages2( IS, montage2prms, padSiz )
 
 if( nargin<2 || isempty(montage2prms) ); montage2prms = {}; end
@@ -64,3 +64,4 @@ varargout = cell(1,nargout);
 if( nargout); varargout{1}=IS; end;
 [varargout{2:end}] = montage2( IS, montage2prms{:} );
 title(inputname(1));
+

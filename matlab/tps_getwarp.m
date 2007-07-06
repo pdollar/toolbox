@@ -35,10 +35,10 @@
 %
 % See also TPS_INTERPOLATE, TPS_INTERPOLATEIMAGE, TPS_RANDOM
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function [warp,L,LnInv,bendE] = tps_getwarp( lambda, xsS, ysS, xsD, ysD )
 
 dim = size( xsS );
@@ -76,3 +76,4 @@ warp.xsD = xsD; warp.ysD = ysD;
 w = [wx'; wy'];
 K = K - lambda * eye( n );
 bendE = trace(w*K*w')/2;
+

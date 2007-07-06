@@ -22,10 +22,10 @@
 %
 % See also CONFMATRIX, TEXT2
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function confmatrix_show( CM, types, pvPairs, ndigits )
 
 if( nargin<2 ); types=[]; end
@@ -63,3 +63,8 @@ if( ~isempty(types) )
   imlabel( types, 'left', 0, pvPairs );
   imlabel( types, 'bottom', -35, pvPairs );
 end
+
+
+
+
+

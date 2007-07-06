@@ -32,9 +32,9 @@
 %
 % See also NLFILTBLOCK_SEP, RNLFILT_SUM, RNLFILT_MAX
 
-% Piotr's Image&Video Toolbox      Version 1.03   
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
+% Piotr's Image&Video Toolbox      Version 1.5
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
  
 function I = nlfilt_sep( I, dims, shape, fun, varargin )
 
@@ -73,3 +73,4 @@ end;
     
     
     
+

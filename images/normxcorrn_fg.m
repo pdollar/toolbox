@@ -31,10 +31,10 @@
 %
 % See also NORMXCORRN
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function C = normxcorrn_fg( T, T_fg, A, shape )
 if( nargin <4 || isempty(shape)); shape='full'; end;
 
@@ -70,3 +70,4 @@ A_mag = sqrt(A_mag);  A_mag(A_mag<.000001)=1; %removes divide by 0 error
 % "dot(T,(WA-WAav)) / mag(WA-WAav)"
 C = convn_fast(A,T,shape) - A_av*sum(T(:));
 C = C ./ A_mag;
+

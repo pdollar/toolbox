@@ -15,10 +15,10 @@
 %
 % See also HISTC, HISTC_1D, FILTER_GAUSS_1D
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
-% Please email me if you find bugs, or have suggestions or questions
-
+% Please email me if you find bugs, or have suggestions or questions!
+ 
 function histmontage( HS, mm, nn )
 
 [nhist, nbins] = size(HS);
@@ -46,3 +46,4 @@ for q=1:nhist
   ylim( [0,1] );   set( gca, 'YTick', [] );
   xlim( [.5, nbins+.5] );  set( gca, 'XTick', [] );
 end;
+

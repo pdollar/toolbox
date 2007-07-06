@@ -13,10 +13,10 @@
 % EXAMPLE
 %  democluster
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 %%% generate data
 if(1) % mixture of gaussians -- see demogendata
   kTr = 5; sep = 3; ecc = 3; nFracTr = 0.1;  nPnts = 1000;  d = 2;
@@ -50,3 +50,8 @@ if(~isempty(IDXtr))
 end;
 subplot(2,2,3); visualize_data(X, d2, IDX, [], C); title('rec clusters');
 subplot(2,2,4); D=distmatrix_show(sqrt(dist_euclidean(X,X)),IDX,0); im(D);
+
+
+
+
+

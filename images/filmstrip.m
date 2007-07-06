@@ -19,10 +19,10 @@
 %
 % See also MONTAGE2, FILMSTRIPS
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
-% Please email me if you find bugs, or have suggestions or questions
-
+% Please email me if you find bugs, or have suggestions or questions!
+ 
 function F = filmstrip( I, overlap, delta, border )
 
 I = double(I); I = I/max(I(:));
@@ -53,3 +53,4 @@ elseif( ndims(I)==4 ) % color images
 else
   error( ['Incorrect number of dimensions: ' int2str(ndims(I)) ] );
 end
+

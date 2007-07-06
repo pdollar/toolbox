@@ -17,10 +17,10 @@
 %
 % See also MODE
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function y = mode2( x )
 
 wid = sprintf('Images:%s:obsoleteFunction',mfilename);
@@ -32,3 +32,4 @@ y = mode( x );
 % [b,i,j] = unique(x);
 % [ mval, ind ] = max(hist(j,length(b)));
 % y = b(ind);
+

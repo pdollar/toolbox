@@ -20,10 +20,10 @@
 %
 % See also IND2SUB, SUB2IND2
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function sub = ind2sub2( siz, ind )
 
 if( any(ind>prod(siz)) ); error('index out of range'); end
@@ -38,3 +38,4 @@ for i = nd:-1:1
   sub(:,i) = floor(ind/k(i))+1;
   ind = rem(ind,k(i));
 end
+

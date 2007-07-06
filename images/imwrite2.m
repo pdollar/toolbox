@@ -39,10 +39,10 @@
 %
 % See also FEVAL_IMAGES, FEVAL_ARRAYS
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function I=imwrite2(I, mulFlag, imagei, path, name, ext, nDigits, varargin)
 
 % if I is empty read from disk
@@ -104,3 +104,4 @@ function imwrite2s( I, imagei, path, name, ext, nDigits, params )
 
 fullname = [path name int2str2(imagei,nDigits) '.' ext];
 imwrite( I, fullname, params{:} );
+

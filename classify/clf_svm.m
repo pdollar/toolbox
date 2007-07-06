@@ -15,12 +15,17 @@
 %
 % See also SVM, NFOLDXVAL
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function net = clf_svm(varargin)
 
 net = svm( varargin{:} );
 net.fun_train = @svmtrain;
 net.fun_fwd = @svmfwd;
+
+
+
+
+

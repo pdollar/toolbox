@@ -24,10 +24,10 @@
 %
 % See also XCORR2, NORMXCORRN, XEUCN
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function C = xcorrn( A, T, shape )
 
 if( nargin < 3 || isempty(shape)); shape='full'; end
@@ -41,3 +41,4 @@ if( nd==2 ); T = rot90( T,2 ); else for d=1:nd; T = flipdim(T,d); end; end
 
 % convolve [in frequency or spatial domain]
 C = convn_fast( A, T, shape );
+

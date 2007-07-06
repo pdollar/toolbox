@@ -18,10 +18,10 @@
 %
 % See also FILTER_GABOR_2D
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function [feven,fodd] = filter_gabor_1D( r, sig, omega, show )
 
 if( nargin<4 || isempty(show) ); show=0; end;
@@ -49,3 +49,4 @@ if( show )
   filter_visualize_1D( feven, show );
   filter_visualize_1D( fodd, show+1 );
 end
+

@@ -43,10 +43,10 @@
 %
 % See also PRINCOMP, PCA_APPLY, PCA_VISUALIZE, VISUALIZE_DATA, RANDOMSAMPLE
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function [ U, mu, vars ] = pca( X )
 
 % Will run out of memory if X has too many elements.
@@ -99,3 +99,8 @@ vars = diag(SS);
 % fplot( '1e-7*(x)^2.75', [1,1000] ); hold('off');
 % x=1500; 1e-7*(x)^2.75 / 60 %minutes
 %%%
+
+
+
+
+

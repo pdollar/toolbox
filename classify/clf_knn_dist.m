@@ -20,10 +20,10 @@
 %
 % See also CLF_KNN
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function IDXpred = clf_knn_dist( D, IDX, k )
 
 if( nargin<3 || isempty(k) );  k=1;  end
@@ -57,3 +57,8 @@ else
   %%% get IDXpred
   IDXpred = IDXnames( classes(:,1) );
 end
+
+
+
+
+

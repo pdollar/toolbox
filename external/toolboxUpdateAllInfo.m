@@ -19,17 +19,18 @@
 
 function toolboxUpdateAllInfo
 
-insertInfo('Contents.m');
+% cd( 'c:/code/toolbox' );
 
 % must start in /toolbox base directory
-dirTot={ 'classify/', 'classify/private', 'filters', 'images', ...
-  'images/private', 'matlab' };
+dirTot={ 'classify', 'classify/private', 'filters', 'images', ...
+        'images/private', 'matlab' };
 
 for i=1:length(dirTot)
   mfiles = dir([ dirTot{i}, '/*.m' ]);
+  dirTot{i}
   for j=1:length(mfiles);
-    removeInfo(mfiles(j).name);
-    insertInfo(mfiles(j).name);
+    removeInfo([dirTot{i} '/' mfiles(j).name]);
+    insertInfo([dirTot{i} '/' mfiles(j).name]);
   end
 end
 

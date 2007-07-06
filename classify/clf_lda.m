@@ -20,9 +20,9 @@
 %
 % See also NFOLDXVAL, CLASSIFY, CLF_LDA_TRAIN, CLF_LDA_FWD
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
+% Piotr's Image&Video Toolbox      Version 1.5
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
  
 function clf = clf_lda( p, type, prior )
 
@@ -50,3 +50,8 @@ clf.type = 'lda';
 clf.clf_lda_type = type;
 clf.fun_train = @clf_lda_train;
 clf.fun_fwd = @clf_lda_fwd;    
+
+
+
+
+

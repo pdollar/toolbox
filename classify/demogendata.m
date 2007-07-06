@@ -28,10 +28,10 @@
 %
 % See also VISUALIZE_DATA, DEMOCLUSTER, DEMOCLASSIFY
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function [X,IDX,T,IDT] = demogendata(n,m,k,d,c,e,f)
 
 if( nargin<7 ); f=0; end;
@@ -113,3 +113,8 @@ end
 
 % put into standard form (column format)
 IDX = IDX'; IDT = IDT';
+
+
+
+
+

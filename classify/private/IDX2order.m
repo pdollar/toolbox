@@ -17,9 +17,9 @@
 % EXAMPLE
 %  order = IDX2order( [1 1 3 1 2 2] )  % should be: [1 2 4 5 6 3]
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
+% Piotr's Image&Video Toolbox      Version 1.5
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
  
 function order = IDX2order( IDX )
 
@@ -31,3 +31,4 @@ for i=1:k
   count = count+sum(locs);
 end
 [dis,order] = sort(order);
+

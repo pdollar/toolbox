@@ -34,10 +34,10 @@
 %
 % See also IMSUBS2ARRAY, NONMAXSUPR, NONMAXSUPR_LIST
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function [subs,vals,keepLocs] = nonmaxsupr_list( subs, vals, radii, ...
                                              thresh, maxn, suprEq)
 
@@ -85,3 +85,4 @@ end
 
 % discard all vals/subs not in keepLocs
 vals = vals( keepLocs );  subs = subs( keepLocs, : );
+

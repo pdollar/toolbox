@@ -25,10 +25,10 @@
 %
 % See also DIST_EUCLIDEAN, DIST_EMD
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function D = dist_chisquared( X, Y )
 
 %%% supposedly it's possible to implement dist_chisquared without a loop!
@@ -41,3 +41,8 @@ for i=1:n
   D(:,i) = sum( d.^2 ./ (s+eps), 2 );
 end
 D = D/2;
+
+
+
+
+

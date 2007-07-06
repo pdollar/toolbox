@@ -14,10 +14,10 @@
 %
 % See also CLF_KNN, CLF_KNN_TRAIN
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function Y = clf_knn_fwd( clf, X )
 
 if( ~strcmp(clf.type,'knn')); error( ['incorrect type: ' clf.type] ); end
@@ -31,3 +31,8 @@ k = clf.k;
 % get nearest neighbors for each X point
 D = feval( dist_fn, X, Xtrain );
 Y = clf_knn_dist( D, Ytrain, k );
+
+
+
+
+

@@ -35,10 +35,10 @@
 %
 % See also OPTFLOW_HORN, OPTFLOW_CORR
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function [Vx,Vy,reliab]=optflow_lucaskanade( I1, I2, winN, ...
                                             winSig, sigma, thr, show )
 
@@ -122,3 +122,4 @@ if( show )
   figure(show); clf; im( I1 );
   hold('on'); quiver( Vx, Vy, 0,'-b' ); hold('off');
 end
+

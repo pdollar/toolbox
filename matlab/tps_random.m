@@ -14,10 +14,10 @@
 %
 % See also TPS_GETWARP
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function w = tps_random( LnInv, bendE )
 
 n = size(LnInv,1);
@@ -40,3 +40,4 @@ w = sqrt(bendE)* U * sqrt(SIG) * u;
 % sqrt(SIG_INV) * U' * LnInv * U * sqrt(SIG_INV)
 % % should be equal
 % v' * LnInv * v, bendE
+

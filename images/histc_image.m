@@ -36,10 +36,10 @@
 %
 % See also ASSIGN2BINS, HISTC_1D
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
-% Please email me if you find bugs, or have suggestions or questions
-
+% Please email me if you find bugs, or have suggestions or questions!
+ 
 function HS = histc_image( I, edges, weightMask, shape )
 
 if( nargin<4 || isempty(shape) ); shape = 'full';  end;
@@ -64,3 +64,4 @@ for i=1:length(weightMask)
 end;
     
 
+

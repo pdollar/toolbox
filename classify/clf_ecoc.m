@@ -19,10 +19,10 @@
 %
 % See also ECOC, NFOLDXVAL, CLF_ECOC_CODE
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function clf = clf_ecoc(p,clfinit,clfparams,nclasses,use01targets)
 
 if( nclasses<3 || nclasses>7 )
@@ -45,3 +45,8 @@ clf.fun_fwd = @ecocfwd;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function clf = clf_ecoctrain( clf, varargin )
 clf = ecoctrain( clf, clf.templearner, varargin{:} );
+
+
+
+
+

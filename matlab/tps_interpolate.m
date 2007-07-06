@@ -15,10 +15,10 @@
 %
 % See also TPS_GETWARP
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function [xsR,ysR] = tps_interpolate( warp, xs, ys, show )
 
 if( nargin<4 || isempty(show)); show = 1; end
@@ -53,3 +53,4 @@ dist_sq = dist_sq + eye(size(dist_sq)) + eps;
 U = dist_sq .* log( dist_sq ); U( isnan(U) )=0;
 zs = aff(1)*ones(ns,1)+aff(2)*xs'+aff(3)*ys';
 zs = zs + sum((U.*(ones(ns,1)*w')),2);
+

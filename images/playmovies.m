@@ -22,10 +22,10 @@
 %
 % See also MONTAGES, PLAYMOVIE, MAKEMOVIES
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function playmovies( I, fps, loop )
 
 wid = sprintf('Images:%s:obsoleteFunction',mfilename);
@@ -60,3 +60,4 @@ playmovie( I, fps, loop )
 %     if(fps>0); pause(1/fps - toc); else pause(eps); end
 %   end
 % end
+

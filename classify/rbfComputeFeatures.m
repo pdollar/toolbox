@@ -16,10 +16,10 @@
 %
 % See also RBFDEMO, RBFCOMPUTEBASIS
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function Xrbf = rbfComputeFeatures( X, rbfBasis )
 
 N = size(X,1);
@@ -45,3 +45,7 @@ if( 0 ); Xrbf = [Xrbf ones(N,1)]; end
 
 % add original features as features
 if( 0 );  Xrbf = [X Xrbf];  end
+
+
+
+

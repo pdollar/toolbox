@@ -26,10 +26,10 @@
 %
 % See also MAT2CELL, CELL2ARRAY, CELL2MAT
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function C = mat2cell2( X, parts )
 
 siz = size(X); nd = ndims(X);
@@ -43,3 +43,4 @@ if (~all( siz==size(X))); X = arraycrop_full( X, ones(1,nd), siz ); end
 bounds = cell(1,nd);
 for d=1:nd; bounds{d} = repmat( siz(d)/parts(d), [1 parts(d)] ); end
 C=mat2cell( X, bounds{:});
+

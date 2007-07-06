@@ -14,10 +14,10 @@
 %
 % See also CLF_ECOC
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function [C,nbits] = clf_ecoc_code( k )
 
 if( k<3 || k>7 )
@@ -36,3 +36,8 @@ nbits = size(C,2);
 
 % alter C to have entries [-1,1]
 C(C==0)=-1;
+
+
+
+
+

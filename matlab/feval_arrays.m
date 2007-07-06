@@ -38,10 +38,10 @@
 %
 % See also FEVAL_IMAGES, IMWRITE2, PERSISTENT, TICSTATUS
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function B = feval_arrays( A, fHandle, varargin )
 
 nd = ndims(A);  siz = size(A);  n = siz(end);
@@ -62,3 +62,4 @@ for i=1:n
   end;
   tocstatus( ticId, i/n );
 end
+

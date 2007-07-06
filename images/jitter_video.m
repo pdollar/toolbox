@@ -29,10 +29,10 @@
 %
 % See also JITTER_IMAGE
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function IS = jitter_video( I, nphis, maxphi, ntrans, maxtrans, ...
                             nttrans, maxttrans, jsiz )
 
@@ -66,3 +66,4 @@ elseif( nd==4)
   IS = feval_arrays( I, @jitter_video1, jitter_params{:} );
   IS = permute( IS, [1 2 3 5 4] );
 end
+

@@ -44,10 +44,10 @@
 %
 % See also PERSISTENT, MASK_GAUSSIANS
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function varargout = simplecache( op, cache, varargin )
 
 if( strcmp(op,'init') ) %%% init a cache
@@ -147,3 +147,4 @@ if( found )
   cache.keys{ind} = [];
   cache.vals{ind} = [];
 end
+

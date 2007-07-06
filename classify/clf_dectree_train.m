@@ -15,10 +15,10 @@
 %
 % See also CLF_DECTREE
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function clf = clf_dectree_train( clf, X, Y )
 
 if(~strcmp(clf.type,'dectree')); error( ['incor. type: ' clf.type] ); end
@@ -34,3 +34,8 @@ T = treefit(X,Y,'method','classification',params{:});
 T = treeprune(T,'level',best);
 
 clf.T = T;
+
+
+
+
+

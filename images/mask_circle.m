@@ -33,9 +33,9 @@
 %
 % See also MASK_ELLIPSE, MASK_SPHERE
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
+% Piotr's Image&Video Toolbox      Version 1.5
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
  
 function mask = mask_circle( angle_start, angle_size, r, nsamples )
 
@@ -63,3 +63,4 @@ if (nsamples>1)
   sampling= 1:nsamples:nsamples*r*2; 
   mask = mask(sampling,sampling) / nsamples^2;
 end
+

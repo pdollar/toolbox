@@ -29,10 +29,10 @@
 %
 % See also PCA
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
-
+ 
 function Xr = pca_randomvector( U, mu, vars, k, n, hypershpere, show )
 
 %%% Little test - see if eigenvectors induced by randomly generated vectors
@@ -89,3 +89,7 @@ end
 
 % optionaly show resulting vectors
 if (show); figure(show); montage2(Xr,1); end
+
+
+
+

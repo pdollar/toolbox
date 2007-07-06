@@ -19,10 +19,10 @@
 %
 % See also
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
-% Please email me if you find bugs, or have suggestions or questions
-
+% Please email me if you find bugs, or have suggestions or questions!
+ 
 function F = filmstrips( I, overlap, delta, border )
 
 nd = ndims(I);
@@ -45,3 +45,4 @@ for i=1:n
   F( h:(h+nrows-1), :  ) = Fc;
   h = h + nrows - ((nframes-1)*delta-2*delta);
 end
+

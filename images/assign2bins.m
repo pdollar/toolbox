@@ -23,10 +23,10 @@
 %
 % See also HISTC_1D
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
-% Please email me if you find bugs, or have suggestions or questions
-
+% Please email me if you find bugs, or have suggestions or questions!
+ 
 function B = assign2bins( I, edges )
 
 if(~isa(I,'double')); I = double(I); end;
@@ -38,3 +38,4 @@ B = assign2binsc( I, edges );   % assign bin number
 B = B + 1;                      % convert to 1 indexed
 B = reshape( B, size(I) );      % resize B to have correct shape
 B( B==(length(edges)) ) = 0;    % vals outside or range get bin 0
+
