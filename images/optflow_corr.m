@@ -145,7 +145,7 @@ end
 function C = xeuc2_small( B, I, shape )
 sizB = size(B);
 B = rot90( B,2 );
-I_mag = localsum( I.*I, sizB, shape );
+I_mag = localSum( I.*I, sizB, shape );
 B_mag = B.^2;  B_mag = sum( B_mag(:) );
 C = I_mag + B_mag - 2 * conv2(I,B,shape);
 

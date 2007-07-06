@@ -44,7 +44,7 @@ if( nd==2 ); T = rot90( T,2 ); else for d=1:nd; T = flipdim(T,d); end; end
 %          = sumj( Akj.^2 ) + sumj( Tlj.^2 ) - 2*sumj(Akj.*Tlj);
 % T is constant.  Hence simply need square of A in each window, as
 % well as each dot product between A and T.
-A_mag = localsum( A.*A, size(T), shape ); % sum of squares of A per window
+A_mag = localSum( A.*A, size(T), shape ); % sum of squares of A per window
 T_mag = T.^2;  T_mag = sum( T_mag(:) );    % constant (sum of squares of T)
 C = A_mag + T_mag - 2 * convn_fast(A,T,shape); % Distance squared
 % C( A_mag<.01 ) = T_mag;  % prevent numerical errors

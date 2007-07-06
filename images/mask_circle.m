@@ -59,7 +59,7 @@ end
 
 % shrink by counting samples per 'image' pixel
 if (nsamples>1)
-  mask = localsum( mask, nsamples, 'valid' );
+  mask = localSum( mask, nsamples, 'valid' );
   sampling= 1:nsamples:nsamples*r*2; 
   mask = mask(sampling,sampling) / nsamples^2;
 end

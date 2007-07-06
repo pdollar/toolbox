@@ -43,7 +43,7 @@ A( Ainds ) = 1;
 
 % apply local_sum (or smooth?)
 %A = gauss_smooth( A, [0 r/2-1], 'smooth' );
-A = localsum( A, [0 s], 'same' );
+A = localSum( A, [0 s], 'same' );
 
 % create y
 [vs,inds] = max( A,[],1 );

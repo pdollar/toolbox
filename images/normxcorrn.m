@@ -59,8 +59,8 @@ TN = T - sum(T(:)) / n;  TN = TN / norm( TN(:) );
 %   NormXCorr(Aw,T) = sum(Aw .* TN) / mag( AwN )
 % To get mag(AwN) we exploit the fact that: E[(X-EX)^2]= E[X^2]-E[X]^2:
 %   sqrt(sum((Aw-AwAve).^2)) = sqrt(sum( Aw.^2 ) - n*AwAve^2);
-AwAve = localsum( A, size(T), shape ) / n; % average of A in each window
-AwMag = real(sqrt(localsum(A.*A,size(T),shape)-n*(AwAve.*AwAve))); 
+AwAve = localSum( A, size(T), shape ) / n; % average of A in each window
+AwMag = real(sqrt(localSum(A.*A,size(T),shape)-n*(AwAve.*AwAve))); 
 % mag of Aw per win
 C = convn_fast(A,TN,shape) ./ (AwMag+eps);  % NormXCorr in each window
 C( AwMag<.00001 ) = 0; % prevent numerical errors

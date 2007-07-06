@@ -7,7 +7,7 @@
 % along a given dimension.
 %
 % Can handle very large arrays in a memory efficient manner. All the work
-% is done by localsum_block.
+% is done by localSum.
 %
 % USAGE
 %  I = imshrink( I, ratios )
@@ -21,7 +21,7 @@
 %
 % EXAMPLE
 %
-% See also IMRESIZE, LOCALSUM_BLOCK
+% See also IMRESIZE, LOCALSUM
 
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -50,10 +50,10 @@ if( prod(siz)*8e-6 > 200 ) % set max at 200MB, splits add overhead
   I = cat( d, I1, I2 ); return;
 end
 
-% run localsum_block then divide by prod( ratios )
+% run localSum then divide by prod( ratios )
 classname = class( I );
 I = double(I);
-I = localsum_block( I, ratios );
+I = localSum( I, ratios, 'block' );
 I = I * (1/prod( ratios ));
 I = feval( classname, I );
 

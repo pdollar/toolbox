@@ -61,8 +61,7 @@
 %   imwrite2split       - Writes/reads a large set of images into/from multiple directories.
 %   jitter_image        - Creates multiple, slightly jittered versions of an image.
 %   jitter_video        - Creates multiple, slightly jittered versions of a video.
-%   localsum            - Fast routine for box filtering.
-%   localsum_block      - Calculates the sum in non-overlapping blocks of I of size dims.
+%   localSum            - Fast routine for box filtering.
 %   mask_circle         - Creates an image of a 'pie slice' of a circle.
 %   mask_ellipse        - Creates a binary image of an ellipse.
 %   mask_gaussians      - Divides a volume into softly overlapping gaussian windows.
