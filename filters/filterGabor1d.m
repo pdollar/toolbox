@@ -1,7 +1,7 @@
 % Creates an even/odd pair of 1D Gabor filters.
 %
 % USAGE
-%  [feven,fodd] = filter_gabor_1D( r, sig, omega, [show] )
+%  [feven,fodd] = filterGabor1d( r, sig, omega, [show] )
 %
 % INPUTS
 %  r       - final filter will be 2r+1 (good choice for r is r=2*sig)
@@ -14,15 +14,15 @@
 %  fodd    - odd symmetric filter (-sine masked with Gaussian)
 %
 % EXAMPLE
-%  sig = 15; filter_gabor_1D(2*sig,sig,1/sig,1);
+%  sig = 15; filterGabor1d(2*sig,sig,1/sig,1);
 %
-% See also FILTER_GABOR_2D
+% See also FILTERGABOR2D
 
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [feven,fodd] = filter_gabor_1D( r, sig, omega, show )
+function [feven,fodd] = filterGabor1d( r, sig, omega, show )
 
 if( nargin<4 || isempty(show) ); show=0; end;
 

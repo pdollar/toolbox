@@ -21,7 +21,7 @@
 %  dG2 = filterDoog( [41 41], [3 3], [1,1], 2 ); %2D
 %  dG3 = filterDoog( [101 101 101], [4,4,10], [1,1,0], 3 ); %3D
 %
-% See also FILTERGAUSS, NORMPDF2, FILTERDOG2D, FILTER_GABOR_2D
+% See also FILTERGAUSS, NORMPDF2, FILTERDOG2D, FILTERGABOR2D
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

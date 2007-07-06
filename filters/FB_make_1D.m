@@ -40,7 +40,7 @@ FB_visualize( FB, show );
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function FB = FB_make_gabor1D( r, sigmas, omegas )
 for i=1:length(omegas)
-  [feven,fodd]=filter_gabor_1D(r,sigmas(i),omegas(i));
+  [feven,fodd]=filterGabor1d(r,sigmas(i),omegas(i));
   if( i==1 ); FB=repmat(feven,[2*length(omegas) 1]); end
   FB(i*2-1,:)=feven; FB(i*2,:)=fodd;
 end

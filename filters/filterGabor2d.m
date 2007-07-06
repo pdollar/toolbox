@@ -6,7 +6,7 @@
 % Gaussian, and not a sin/cos masked with a Gaussian.
 %
 % USAGE
-%  [Feven,Fodd] = filter_gabor_2D( r, sig, lam, theta, [omega], [show] )
+%  [Feven,Fodd] = filterGabor2d( r, sig, lam, theta, [omega], [show] )
 %
 % INPUTS
 %  r       - final mask will be 2r+1 x 2r+1
@@ -21,16 +21,16 @@
 %  Fodd    - odd symmetric filter (-sine masked with Gaussian)
 %
 % EXAMPLE
-%  [Feven,Fodd] = filter_gabor_2D(15,sqrt(2),4,45,1,1);
-%  [Feven,Fodd] = filter_gabor_2D(25,4,2,0,2,3);
+%  [Feven,Fodd] = filterGabor2d(15,sqrt(2),4,45,1,1);
+%  [Feven,Fodd] = filterGabor2d(25,4,2,0,2,3);
 %
-% See also FILTER_GABOR_1D, FILTERGAUSS
+% See also FILTERGABOR1D, FILTERGAUSS
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [Feven,Fodd] = filter_gabor_2D( r, sig, lam, theta, omega, show )
+function [Feven,Fodd] = filterGabor2d( r, sig, lam, theta, omega, show )
 
 if( nargin<5 || isempty(omega) ); omega=1; end
 if( nargin<6 || isempty(show) ); show=0; end
