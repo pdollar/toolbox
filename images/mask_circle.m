@@ -39,7 +39,7 @@
  
 function mask = mask_circle( angle_start, angle_size, r, nsamples )
 
-if( nargin<4 || isempty(nsamples) ); nsamples = 1; end;
+if( nargin<4 || isempty(nsamples) ); nsamples = 1; end
 
 % create circle
 sampling = -(r-.5/nsamples):1/nsamples:(r-.5/nsamples);
@@ -55,11 +55,11 @@ if (angle_start<angle_end)
   mask( angles<angle_start | angles>=angle_end ) = 0;
 else
   mask( angles>=angle_end & angles<angle_start ) = 0;
-end;
+end
 
 % shrink by counting samples per 'image' pixel
 if (nsamples>1)
   mask = localsum( mask, nsamples, 'valid' );
   sampling= 1:nsamples:nsamples*r*2; 
   mask = mask(sampling,sampling) / nsamples^2;
-end;
+end

@@ -18,7 +18,7 @@
 % can be 'loose' (default) or 'crop'. When BBOX is 'loose', IR includes the
 % whole transformed image, which generally is larger than I. When BBOX is
 % 'crop' IR is cropped to include only the central portion of the
-% transformed image and is the same size as I. 
+% transformed image and is the same size as I.
 %
 % USAGE
 %  IR = texture_map( I, row_dest, col_dest, [bbox] )
@@ -32,35 +32,34 @@
 % OUTPUTS
 %  IR          - result of texture mapping
 %
-% DATESTAMP
-%  15-Jan-2007  11:00am
+% EXAMPLE
 %
 % See also APPLY_HOMOGRAPHY
 
-% Piotr's Image&Video Toolbox      Version 1.03   
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function IR = texture_map( I, row_dest, col_dest, bbox )
-  if(isa( I, 'uint8' )); I = double(I); end;
-  if( nargin<4 || isempty(bbox)); bbox='loose'; end;
+if(isa( I, 'uint8' )); I = double(I); end;
+if( nargin<4 || isempty(bbox)); bbox='loose'; end;
 
-  siz = size(I);
-  if ( all(size(row_dest)~=siz) || all(size(col_dest)~=siz))
-    error( 'incorrect size for row_dest or col_dest' );
-  end;
+siz = size(I);
+if ( all(size(row_dest)~=siz) || all(size(col_dest)~=siz))
+  error( 'incorrect size for row_dest or col_dest' );
+end;
 
-  % find sampling points
-  if (strcmp('loose',bbox))
-    minr = floor(min(row_dest(:)));   minc = floor(min(col_dest(:)));
-    maxr = ceil(max(row_dest(:)));    maxc = ceil(max(col_dest(:)));   
-    [col_grid,row_grid] = meshgrid( minc:maxc, minr:maxr );
-  elseif (strcmp('crop',bbox))
-    [col_grid,row_grid] = meshgrid( 1:size(I,2), 1:size(I,1) );
-  else
-    error('illegal value for bbox');
-  end;
+% find sampling points
+if (strcmp('loose',bbox))
+  minr = floor(min(row_dest(:)));   minc = floor(min(col_dest(:)));
+  maxr = ceil(max(row_dest(:)));    maxc = ceil(max(col_dest(:)));
+  [col_grid,row_grid] = meshgrid( minc:maxc, minr:maxr );
+elseif (strcmp('crop',bbox))
+  [col_grid,row_grid] = meshgrid( 1:size(I,2), 1:size(I,1) );
+else
+  error('illegal value for bbox');
+end;
 
-  % Get values at col_samples and row_samples
-  IR = griddata( col_dest, row_dest, I, col_grid, row_grid );
-  IR(isnan(IR)) = 0; 
+% Get values at col_samples and row_samples
+IR = griddata( col_dest, row_dest, I, col_grid, row_grid );
+IR(isnan(IR)) = 0;
