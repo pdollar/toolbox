@@ -13,7 +13,7 @@
 %
 % EXAMPLE
 %  FB=FB_make_1D(1,0);  FB_visualize( FB, 1 );  %1D
-%  load FB_DoG.mat;     FB_visualize( FB, 2 );  %2D
+%  load FbDoG.mat;     FB_visualize( FB, 2 );  %2D
 %  FB=FB_make_3D(1,0);  FB_visualize( FB, 3 );  %3D
 %
 % See also

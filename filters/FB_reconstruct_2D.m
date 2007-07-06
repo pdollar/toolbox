@@ -22,7 +22,7 @@
 %  I2     - reconstructed image / patch
 %
 % EXAMPLE
-%  load trees; X=imresize(X,.5); load FB_DoG.mat;
+%  load trees; X=imresize(X,.5); load FbDoG.mat;
 %  I2 = FB_reconstruct_2D( X, FB, 0 );
 
 % Piotr's Image&Video Toolbox      Version NEW

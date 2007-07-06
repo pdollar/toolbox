@@ -16,12 +16,12 @@
 %  FR      - 3D set of filtered images
 %
 % EXAMPLE
-%  load trees;  X=imresize(X,.5);  load FB_DoG.mat;
+%  load trees;  X=imresize(X,.5);  load FbDoG.mat;
 %  FR = FB_apply_2D( X, FB, 'same', 1 );
 %
 % See also CONV2
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
