@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of filter_gabor_1D</title>
+  <meta name="keywords" content="filter_gabor_1D">
+  <meta name="description" content="Creates an even/odd pair of 1D Gabor filters.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html filters -->
+<h1>filter_gabor_1D
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Creates an even/odd pair of 1D Gabor filters.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [feven,fodd] = filter_gabor_1D( r, sig, omega, show ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Creates an even/odd pair of 1D Gabor filters.
+
+ USAGE
+  [feven,fodd] = filter_gabor_1D( r, sig, omega, [show] )
+
+ INPUTS
+  r       - final filter will be 2r+1 (good choice for r is r=2*sig)
+  sig     - standard deviation of Gaussian mask
+  omega   - frequency of underlying sine/cosine in [1/(2r+1) r/(2r+1)]
+  show    - [0] figure to use for optional display
+
+ OUTPUTS
+  feven   - even symmetric filter (-cosine masked with Gaussian)
+  fodd    - odd symmetric filter (-sine masked with Gaussian)
+
+ EXAMPLE
+  sig = 15; filter_gabor_1D(2*sig,sig,1/sig,1);
+
+ See also <a href="filter_gabor_2D.html" class="code" title="function [Feven,Fodd] = filter_gabor_2D( r, sig, lam, theta, omega, show )">FILTER_GABOR_2D</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="filter_visualize_1D.html" class="code" title="function filter_visualize_1D( f, show )">filter_visualize_1D</a>	Used to visualize a 1D filter.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="FB_make_1D.html" class="code" title="function FB = FB_make_1D( flag, show )">FB_make_1D</a>	Various 1D filterbanks (hardcoded).</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Fri 06-Jul-2007 14:02:06 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of mask_sphere</title>
+  <meta name="keywords" content="mask_sphere">
+  <meta name="description" content="Creates an 'image' of a n-dimensional hypersphere.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>mask_sphere
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Creates an 'image' of a n-dimensional hypersphere.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function mask = mask_sphere( d, r, show ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Creates an 'image' of a n-dimensional hypersphere.
+
+ Useful for testing visualization procedures.
+
+ Create a d-dimensional matrix mask of dimensions [s x s x s x ... x s]
+ where s=2r+1.  Each element mask(x1,x2...,xd) is 1 if (x1,...xd) falls
+ inside the centered hypersphere of rad r.
+
+ In 1d this corresponds to a vector of the form [.. 0 1 1 1 1 1 0 ..]
+ In 2d this corresponds to an image of a white circle.
+ In 3d and 4d, well try it and 'see' what it looks like.
+ 
+ USAGE
+  mask = mask_sphere( d, r, [show] )
+
+ INPUTS
+  d         - dimension (any positive integer)
+  r         - sphere integer radius 
+  show      - [] figure in which to display results
+
+ OUTPUTS
+  mask      - [s x s x s x ... x s] hypersphere image
+
+ EXAMPLE
+  mcircle = mask_sphere( 2, 20, 1 );
+  msphere = mask_sphere( 3, 10, 2 );
+  msphere = mask_sphere( 4, 10, 3 );
+
+ See also <a href="mask_circle.html" class="code" title="function mask = mask_circle( angle_start, angle_size, r, nsamples )">MASK_CIRCLE</a>, <a href="montage2.html" class="code" title="function varargout=montage2( IS, showLns, extraInf, clim, mm, nn, labels )">MONTAGE2</a>, <a href="montages2.html" class="code" title="function varargout = montages2( IS, montage2prms, padSiz )">MONTAGES2</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="im.html" class="code" title="function im( I, range )">im</a>	IM [2D] Function for displaying grayscale images.</li><li><a href="montage2.html" class="code" title="function varargout=montage2( IS, showLns, extraInf, clim, mm, nn, labels )">montage2</a>	[3D] Used to display a stack of T images.</li><li><a href="montages2.html" class="code" title="function varargout = montages2( IS, montage2prms, padSiz )">montages2</a>	MONTAGES2 [4D] Used to display R sets of T images each.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Fri 06-Jul-2007 14:02:06 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

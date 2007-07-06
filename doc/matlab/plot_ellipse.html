@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of plot_ellipse</title>
+  <meta name="keywords" content="plot_ellipse">
+  <meta name="description" content="Adds an ellipse to the current plot.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>plot_ellipse
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Adds an ellipse to the current plot.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function h = plot_ellipse( cRow, cCol, ra, rb, phi, color, nPnts ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Adds an ellipse to the current plot.
+
+ USAGE
+  h = plot_ellipse( cRow, cCol, ra, rb, phi, color, nPnts )
+
+ INPUTS
+  cRow    - the row location of the center of the ellipse
+  cCol    - the column location of the center of the ellipse
+  ra      - semi-major axis radius length (in pixels) of the ellipse
+  rb      - semi-minor axis radius length (in pixels) of the ellipse
+  phi     - rotation angle (radians) of semimajor axis from x-axis
+  color   - ['b'] color for ellipse
+  nPnts   - [] number of points used to draw each ellipse
+
+ OUTPUT
+  h       - handle to ellipse
+
+ EXAMPLE
+  plot_ellipse( 3, 2, 1, 5, pi/6, 'g');
+
+ See also <a href="plot_gaussellipses.html" class="code" title="function hs=plot_gaussellipses( mus, Cs, rad )">PLOT_GAUSSELLIPSES</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="plot_gaussellipses.html" class="code" title="function hs=plot_gaussellipses( mus, Cs, rad )">plot_gaussellipses</a>	Plots 2D ellipses derived from 2D Gaussians specified by mus & Cs.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Fri 06-Jul-2007 14:02:06 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>
