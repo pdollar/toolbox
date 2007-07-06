@@ -6,7 +6,7 @@
 %   g = fspecial( 'Gaussian', [2*r+1,1],sqrt((2*r+1)/4) );
 % Given sigma, use r ~= 2*sigma^2.
 %
-% Use F = f*f' to get the equivalent 2d filter. 
+% Use F = f*f' to get the equivalent 2d filter.
 %
 % USAGE
 %  f = filter_binomial_1D( r, [show] )
@@ -25,10 +25,10 @@
 %
 % See also FILTER_GAUSS_1D
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function f = filter_binomial_1D( r, show )
 
 if( nargin<2 ); show=0; end;

@@ -18,16 +18,16 @@
 %
 % See also FILTER_GABOR_2D
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function [feven,fodd] = filter_gabor_1D( r, sig, omega, show )
 
 if( nargin<4 || isempty(show) ); show=0; end;
 
 r = ceil(r);  n=2*r+1;
-if( omega<1/(n) || omega>r/(n) ) 
+if( omega<1/(n) || omega>r/(n) )
   error(['omega=' num2str(omega) ' out of range =[' num2str([1 r]/n) ']']);
 end;
 

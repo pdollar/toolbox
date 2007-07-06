@@ -22,7 +22,7 @@
  
 function FB_visualize( FB, show )
 
-if( nargin<2 || isempty(show) ); show=1; end;
+if( nargin<2 || isempty(show) ); show=1; end
 if( show<=0); return; end;
 
 % get Fourier Spectra for 1D and 2D filterbanks
@@ -30,9 +30,9 @@ nd = ndims(FB)-1;
 if( nd==1 || nd==2 )
   FBF=zeros(size(FB));
   if( nd==1 )
-    for n=1:size(FB,1);  FBF(n,:)=abs(fftshift(fft(FB(n,:)))); end;
+    for n=1:size(FB,1);  FBF(n,:)=abs(fftshift(fft(FB(n,:)))); end
   else
-    for n=1:size(FB,3);  FBF(:,:,n)=abs(fftshift(fft2(FB(:,:,n)))); end;
+    for n=1:size(FB,3);  FBF(:,:,n)=abs(fftshift(fft2(FB(:,:,n)))); end
   end
 end
 

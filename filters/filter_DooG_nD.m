@@ -1,4 +1,4 @@
-% n-dim difference of offset Gaussian DooG filter (Gaussian derivative). 
+% n-dim difference of offset Gaussian DooG filter (Gaussian derivative).
 %
 % Creates a nd derivative of Gaussian kernel.  For all but d==1 use
 % primarily for visualization purposes -- for filtering better to use the
@@ -24,30 +24,30 @@
 % See also FILTER_GAUSS_ND, NORMPDF2, FILTER_DOG_2D, FILTER_GABOR_2D
 
 % Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function dG = filter_DooG_nD( dims, sigmas, nderivs, show )
 
 nd = length( dims );
 if( nargin<4 || isempty(show) ); show=0; end;
-if( length(sigmas)~=nd ); error('invalid sigmas'); end;
-if( length(nderivs)~=nd ); error('invalid nderivs'); end;
+if( length(sigmas)~=nd ); error('invalid sigmas'); end
+if( length(nderivs)~=nd ); error('invalid nderivs'); end
 
 % get initial Gaussian
 dG = filter_gauss_nD( dims, [], sigmas.^2, 0 );
 
 % compute derivatives along each axis
 for d=1:nd
-  if( d==1 );  
-    dOp=.5*[-1 0 1]';  
+  if( d==1 );
+    dOp=.5*[-1 0 1]';
   else
     dOp = .5*permute( [-1 0 1]', d:-1:1 );
   end
   if( nd==1 || nd==2 )
-    for i=1:nderivs(d); dG = conv2( dG, dOp, 'same' ); end;
+    for i=1:nderivs(d); dG = conv2( dG, dOp, 'same' ); end
   else
-    for i=1:nderivs(d); dG = convn( dG, dOp, 'same' ); end;
+    for i=1:nderivs(d); dG = convn( dG, dOp, 'same' ); end
   end
 end
 
@@ -64,5 +64,4 @@ if( show && nd<=3 )
     filter_visualize_3D( dG, .1, show );
   end
   title( ['sigs=[' num2str(sigmas) '], derivs=[' num2str( nderivs ) ']']);
-end      
-  
+end

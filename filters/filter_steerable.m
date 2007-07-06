@@ -2,7 +2,7 @@
 %
 % This function is a demonstration of steerable filters.  The directional
 % derivative of G in an arbitrary direction theta can be found by taking a
-% linear combination of the directional derivatives dxG and dyG.  
+% linear combination of the directional derivatives dxG and dyG.
 %
 % USAGE
 %  filter_steerable( theta )
@@ -15,10 +15,10 @@
 % EXAMPLE
 %  filter_steerable( pi/4 );
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function filter_steerable( theta )
 
 % Get G

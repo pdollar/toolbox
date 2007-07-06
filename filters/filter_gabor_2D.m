@@ -27,13 +27,13 @@
 % See also FILTER_GABOR_1D, FILTER_GAUSS_ND
 
 % Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function [Feven,Fodd] = filter_gabor_2D( r, sig, lam, theta, omega, show )
 
-if( nargin<5 || isempty(omega) ); omega=1; end;
-if( nargin<6 || isempty(show) ); show=0; end;
+if( nargin<5 || isempty(omega) ); omega=1; end
+if( nargin<6 || isempty(show) ); show=0; end
 
 % create even/odd Gabor filters
 [x,y]=meshgrid(-r:r,-r:r);
@@ -57,5 +57,5 @@ Fodd=Fodd/norm(Fodd(:),1);
 % display
 if( show )
   filter_visualize_2D( Feven, 0, show );
-  filter_visualize_2D( Fodd, 0, show+1 );  
-end;
+  filter_visualize_2D( Fodd, 0, show+1 );
+end

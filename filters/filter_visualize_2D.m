@@ -1,8 +1,8 @@
-% Used to visualize a 2D filter.  
+% Used to visualize a 2D filter.
 %
 % Marks local image maxima with a green '+' and minima with a red '+'. Also
 % shows the fft response of the filter.  Can optionally also plot a
-% scanline through either center row/column.  
+% scanline through either center row/column.
 %
 % USAGE
 %  filter_visualize_2D( F, scanline, [show] )
@@ -20,15 +20,15 @@
 %
 % See also FILTER_VISUALIZE_1D, FILTER_VISUALIZE_3D
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function filter_visualize_2D( F, scanline, show )
 
-if( nargin<2 || isempty(scanline) ); scanline=''; end;
-if( nargin<3 || isempty(show) ); show=1; end;
-if( show>0); figure( show ); clf; end;
+if( nargin<2 || isempty(scanline) ); scanline=''; end
+if( nargin<3 || isempty(show) ); show=1; end
+if( show>0); figure( show ); clf; end
 
 F( abs(F)<.00001 ) = 0;
 
