@@ -1,3 +1,6 @@
+Version 2.0 (06-July-07)
+ -standardizing naming conventions (no more under_scores)
+
 Version 1.5 (05-Jul-07)
  -major documentation change
  -formatting of code
