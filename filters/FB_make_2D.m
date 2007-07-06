@@ -21,7 +21,7 @@
 %
 % See Also
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -146,6 +146,6 @@ end
 function FB = FB_make_DOG( r, sigma_st, sigma_end, n )
 sigs = sigma_st:(sigma_end-sigma_st)/(n-1):sigma_end;
 for s=1:length(sigs)
-  FB(:,:,s) = filter_DOG_2D(r,sigs(s),2);
+  FB(:,:,s) = filterDog2d(r,sigs(s),2);
   if( s==1 ); FB=repmat(FB,[1 1 length(sigs)]); end
 end

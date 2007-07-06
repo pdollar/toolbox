@@ -6,7 +6,7 @@
 % order==1).
 %
 % USAGE
-%  G = filter_DOG_2D( r, var, order, [show] )
+%  G = filterDog2d( r, var, order, [show] )
 %
 % INPUTS
 %  r       - Final filter will be 2*r+1 on each side
@@ -18,16 +18,16 @@
 %  G       - filter
 %
 % EXAMPLE
-%  G = filter_DOG_2D( 40, 40, 1, 1 ); %order=1 (LoG)
-%  G = filter_DOG_2D( 40, 40, 2, 3 ); %order=2
+%  G = filterDog2d( 40, 40, 1, 1 ); %order=1 (LoG)
+%  G = filterDog2d( 40, 40, 2, 3 ); %order=2
 %
 % See also FILTERDOOG, FILTERGAUSS
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function G = filter_DOG_2D( r, var, order, show )
+function G = filterDog2d( r, var, order, show )
 
 if( nargin<4 || isempty(show) ); show=0; end
 
