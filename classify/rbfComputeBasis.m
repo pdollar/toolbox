@@ -48,32 +48,32 @@
 % See also RBFDEMO, RBFCOMPUTEFEATURES
 
 % Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
 
 function rbfBasis = rbfComputeBasis( X, k, cluster, scale, show )
 
-if( nargin<2 || isempty(k)); error('k not specified'); end;
-if( nargin<3 || isempty(cluster)); cluster=1;  end;
-if( nargin<4 || isempty(scale)); scale=5;  end;
-if( nargin<5 || isempty(show)); show=0;  end;
+if( nargin<2 || isempty(k)); error('k not specified'); end
+if( nargin<3 || isempty(cluster)); cluster=1;  end
+if( nargin<4 || isempty(scale)); scale=5;  end
+if( nargin<5 || isempty(show)); show=0;  end
 [N d] = size(X);
 
-if( cluster ) 
+if( cluster )
   %%% CLUSTERS subsample, run kmeans
-  maxN=5000; if( N>maxN );  X=X(randperm2(N,maxN),:);  N=maxN;  end;
+  maxN=5000; if( N>maxN );  X=X(randperm2(N,maxN),:);  N=maxN;  end
   params = {'replicates', 5, 'display', 0};
-  [IDX,mu] = kmeans2( X, k, params{:} );  
+  [IDX,mu] = kmeans2( X, k, params{:} );
   mu = mu'; k = size(mu,2);
 else
-  %%% GRID generate locations evenly spaced on grid  
-  if( d>4 ); error('d too high. curse of dimensionality..'); end;
-  nBPer = round( k ^ (1/d) );  k = nBPer ^ d;  
-  rg=minmax(X'); del=(rg(:,2)-rg(:,1))/(nBPer-1); rg=rg+[-del del]/2;    
-  loc=cell(1,d);  for i=1:d; loc{i}=linspace(rg(i,1),rg(i,2),nBPer); end;
-  grid=cell(1,d); if(d>1); [grid{:}]=ndgrid(loc{:}); else grid=loc; end;
-  mu=zeros(d,k);   for i=1:d; mu(i,:) = grid{i}(:); end;
-end;
+  %%% GRID generate locations evenly spaced on grid
+  if( d>4 ); error('d too high. curse of dimensionality..'); end
+  nBPer = round( k ^ (1/d) );  k = nBPer ^ d;
+  rg=minmax(X'); del=(rg(:,2)-rg(:,1))/(nBPer-1); rg=rg+[-del del]/2;
+  loc=cell(1,d);  for i=1:d; loc{i}=linspace(rg(i,1),rg(i,2),nBPer); end
+  grid=cell(1,d); if(d>1); [grid{:}]=ndgrid(loc{:}); else grid=loc; end
+  mu=zeros(d,k);   for i=1:d; mu(i,:) = grid{i}(:); end
+end
 
 %%% Set var to be equal to average distance of neareast neighbor.
 dist = dist_euclidean( mu', mu' );
@@ -84,7 +84,7 @@ vars = max( vars, var/100 );
 
 %%% store results
 rbfBasis.d     = d;
-rbfBasis.k     = k; 
+rbfBasis.k     = k;
 rbfBasis.mu    = mu;
 rbfBasis.vars  = vars;
 rbfBasis.var   = var;
@@ -104,22 +104,21 @@ if( abs(show) )
       ys = exp( -(xs-mu(i)).^2 / 2 / var  );
       plot( xs, ys );
     end
-  elseif( d==2 ) % 2D data      
+  elseif( d==2 ) % 2D data
     figure(show); clf; hold on;
     minX = min(X,[],1 );  maxX = max(X,[],1 );
-    xs1 = linspace(minX(1),maxX(1),25); 
+    xs1 = linspace(minX(1),maxX(1),25);
     xs2 = linspace(minX(2),maxX(2),25);
     [xs1,xs2] = ndgrid( xs1, xs2 );
     xs = [xs1(:) xs2(:)]; n = size(xs,1);
     for i=1:k
       mui = repmat(mu(:,i),[1 n])';
       ys = exp( - sum( ((xs - mui)).^2, 2 ) / 2 / var );
-      surf( xs1, xs2, reshape(ys,size(xs1)) ); 
+      surf( xs1, xs2, reshape(ys,size(xs1)) );
     end;
   elseif( d==3 ) % 3D data (show data+centers)
     figure(show); clf; hold on;
-    scatter3( X(:,1),X(:,2),X(:,3),12,'filled'); 
-    scatter3( mu(1,:),mu(2,:),mu(3,:),30,'filled'); 
-  end;    
-end;
-  
+    scatter3( X(:,1),X(:,2),X(:,3),12,'filled');
+    scatter3( mu(1,:),mu(2,:),mu(3,:),30,'filled');
+  end
+end

@@ -5,7 +5,7 @@
 %
 % INPUTS
 %  p       - data dimension
-%  params  - params for treefit, ex: 'splitmin'',2,'priorprob',ones(1,n)/n
+%  varargin- params for treefit, ex: 'splitmin'',2,'priorprob',ones(1,n)/n
 %
 % OUTPUTS
 %  clf     - model ready to be trained
@@ -15,9 +15,9 @@
 % See also NFOLDXVAL, TREEFIT
 
 % Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function clf = clf_dectree( p, varargin )
 
 clf.p = p;

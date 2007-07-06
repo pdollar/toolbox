@@ -17,18 +17,18 @@
 % See also CLF_KNN, CLF_LDA, CLF_SVM, CLF_ECOC, VISUALIZE_DATA
 
 % Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function democlassify
-    
+
 %%% generate data
-nClasses = 4;  d = 3;  nTrn=250;  nTst=150;  show = 1; 
+nClasses = 4;  d = 3;  nTrn=250;  nTst=150;  show = 1;
 
 [trnData,trnIDX,tstData,tstIDX] = demogendata(nTrn,nTst,nClasses,d,1,6);
 nTrn=size(trnData,1);  nTst=size(tstData,1); %#ok<NASGU>
 if( show ) % make look different due to different projections
-  figure(show); clf; 
+  figure(show); clf;
   subplot(3,1,1); visualize_data(trnData, 2, trnIDX ); title( 'train set');
   subplot(3,1,2); visualize_data(tstData, 2, tstIDX ); title( 'test set');
 end;
@@ -36,22 +36,22 @@ end;
 %%% initialize learners:
 nnets=0; labels={};
 if(1); nnets=nnets+1; % linear LDA
-  nets{nnets}.func_netinit = @clf_lda; 
+  nets{nnets}.func_netinit = @clf_lda;
   nets{nnets}.netparams={'linear'};
   labels{nnets} = 'linear LDA';
 end
 if(1); nnets=nnets+1; % quadratic LDA
-  nets{nnets}.func_netinit = @clf_lda; 
+  nets{nnets}.func_netinit = @clf_lda;
   nets{nnets}.netparams={'quadratic'};
   labels{nnets} = 'quadratic LDA';
 end
 if(1); nnets=nnets+1; % kNN 5
-  nets{nnets}.func_netinit = @clf_knn; 
+  nets{nnets}.func_netinit = @clf_knn;
   nets{nnets}.netparams={5};
   labels{nnets} = 'kNN 5';
 end
 if(0); nnets=nnets+1; % svm ecoc [VERY SLOW]
-  nets{nnets}.func_netinit = @clf_ecoc; 
+  nets{nnets}.func_netinit = @clf_ecoc;
   nets{nnets}.netparams={@clf_svm,{'rbf',2^-1},nClasses};
   labels{nnets} = 'ecoc svm-rbf';
 end
@@ -65,7 +65,7 @@ for i=1:nnets
   pred(:,i) = feval( net.fun_fwd, net, tstData );
   ncorrect = length(find(tstIDX==pred(:,i)));
   fprintf(['Classification result for ' labels{i} ...
-           ':\n%i out of %i correct\n\n'], ncorrect, nTst);
+    ':\n%i out of %i correct\n\n'], ncorrect, nTst);
 end;
 
 %%% calculate and show confusion matricies [not using confmatrix_show]

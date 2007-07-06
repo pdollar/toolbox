@@ -28,12 +28,12 @@
 % See also MEANSHIFTIM
 
 % Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function meanshiftim_explore( I, X, sigSpt, sigRng, show )
 
-if( nargin<5 ); show = 1; end;
+if( nargin<5 ); show = 1; end
 [mrows, ncols, p] = size(X);
 
 %%% get input point
@@ -47,11 +47,11 @@ Deuc = ((grid_rs-r).^2 + (grid_cs-c).^2) / sigSpt^2;
 x = X(r,c,:); x = x(:)';  Xflat = reshape(X,[],p);
 Drange = dist_euclidean( x, Xflat );
 Drange = reshape( Drange, mrows, ncols ) / sigRng^2;
-D = Drange + Deuc;      
+D = Drange + Deuc;
 
-S = exp( -D );  
-Srange = exp( -Drange );  
-Seuc = exp( -Deuc );  
+S = exp( -D );
+Srange = exp( -Drange );
+Seuc = exp( -Deuc );
 
 %%% new c and r [stretched for display]
 c2 = (grid_cs .* S); c2 = sum( c2(:) ) / sum(S(:));
@@ -60,12 +60,11 @@ r2 = (grid_rs .* S); r2 = sum( r2(:) ) / sum(S(:));
 
 %%% show
 figure(show); clf;
-subplot(2,2,1); im(I);  
+subplot(2,2,1); im(I);
 hold('on'); plot( c, r, '.g' ); plot( c2, r2, '.b' ); hold('off');
 subplot(2,2,2); im(Srange);
 hold('on'); plot( c, r, '.g' ); plot( c2, r2, '.b' ); hold('off');
 subplot(2,2,3); im(Seuc);
 hold('on'); plot( c, r, '.g' ); plot( c2, r2, '.b' ); hold('off');
 subplot(2,2,4); im(S);
-hold('on'); plot( c, r, '.g' ); plot( c2, r2, '.b' ); hold('off');    
-
+hold('on'); plot( c, r, '.g' ); plot( c2, r2, '.b' ); hold('off');

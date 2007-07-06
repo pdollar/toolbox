@@ -22,14 +22,14 @@
 %  C       - cell array adjacent submatrices of X
 %
 % EXAMPLE
-%  A=rand(6,10); B = mat2cell2(A,[3 3]), 
+%  A=rand(6,10); B = mat2cell2(A,[3 3]),
 %
 % See also MAT2CELL, CELL2ARRAY, CELL2MAT
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function C = mat2cell2( X, parts )
 
 siz = size(X); nd = ndims(X);
@@ -37,7 +37,7 @@ siz = size(X); nd = ndims(X);
 
 % crop border areas so as to make dims of X divisible by parts
 parts = min(siz,parts);   siz = siz - mod( siz, parts );
-if (~all( siz==size(X))); X = arraycrop_full( X, ones(1,nd), siz ); end;
+if (~all( siz==size(X))); X = arraycrop_full( X, ones(1,nd), siz ); end
 
 % Convert to cell array by calling mat2cell
 bounds = cell(1,nd);

@@ -14,7 +14,7 @@
 %     end
 % Before the loop the timer is initialized, and then at the end of each
 % iteration a call to tocstatus is made 'tocstatus( ticId, i/n )'.
-% The progress indicator is of the form:  
+% The progress indicator is of the form:
 %  'my message   completed=4.5% [elapsed=1.0s / remaining~=21.5s]'
 %
 % The parameters passed to ticstatus control the behavior of the progress
@@ -44,20 +44,20 @@
 %
 % INPUTS
 %  msg         - [] additional msg to display in progress
-%  updateFreq  - [] frequency with which to update progress (in seconds)
-%  updateMinT  - [] no progress is shown if process takes time < updateMinT
-%  erasePrev   - [] whether to attempt to erase prev message
+%  updateFreq  - [1] frequency with which to update progress (in seconds)
+%  updateMinT  - [20] no progress is shown if process takes time<updateMinT
+%  erasePrev   - [1] whether to attempt to erase prev message
 %
 % OUTPUTS
-%  ticId       - unique id of progress indicator
+%  id       - unique id of progress indicator
 %
 % EXAMPLE
-%  ticId = ticstatus('example usage',.2,1); 
+%  ticId = ticstatus('example usage',.2,1);
 %  for i=1:100; pause(.1); tocstatus( ticId, i/100 ); end
 %
 % See also TOCSTATUS, TIC, TOC
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -65,11 +65,11 @@ function id = ticstatus( msg, updateFreq, updateMinT, erasePrev )
 
 global TICTOCSTATUS TICTOCFREEIDS
 
-if( nargin<1 || isempty(msg) ); msg = []; end;
-if( nargin<2 || isempty(updateFreq) ); updateFreq = 1; end;
-if( nargin<3 || isempty(updateMinT) ); updateMinT = 20; end;
-if( nargin<4 || isempty(erasePrev) ); erasePrev = 1; end;
-if( isempty(TICTOCFREEIDS) ); TICTOCFREEIDS = ones(1,128); end;
+if( nargin<1 || isempty(msg) ); msg = []; end
+if( nargin<2 || isempty(updateFreq) ); updateFreq = 1; end
+if( nargin<3 || isempty(updateMinT) ); updateMinT = 20; end
+if( nargin<4 || isempty(erasePrev) ); erasePrev = 1; end
+if( isempty(TICTOCFREEIDS) ); TICTOCFREEIDS = ones(1,128); end
 
 % get a free id
 [v,id] = max( TICTOCFREEIDS );
@@ -78,7 +78,7 @@ if( v==0 )
   TICTOCFREEIDS = [TICTOCFREEIDS ones(1,nids)];
   id = nids+1;
   warning('ticstatus: Doubling number of locations needed.'); %#ok<WNTAG>
-end;
+end
 TICTOCFREEIDS(id) = 0;
 
 % initialize TICTOCSTATUS

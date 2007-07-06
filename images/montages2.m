@@ -15,7 +15,7 @@
 %                        padding
 %
 % OUTPUTS
-%  I                   - 3D or 4D array of flattened images, displayed with
+%  IS                  - 3D or 4D array of flattened images, displayed with
 %                        montage2
 %  mm                  - #montages/row
 %  nn                  - #montages/col
@@ -31,7 +31,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function varargout = montages2( IS, montage2params, padsize )
+function [IS,mm,nn] = montages2( IS, montage2params, padsize )
 if( nargin<2 || isempty(montage2params) ); montage2params = {}; end
 if( nargin<3 || isempty(padsize) ); padsize = 4; end
 [padsize,er] = checknumericargs( padsize,[1 1], 0, 1 ); error(er);
@@ -59,10 +59,8 @@ elseif(nd==4) % reshape bw
 else % reshape color
   IS=squeeze( reshape( permute(IS,[1 2 4 3 5]),siz(1),[],siz(3),siz(5) ) );
 end; siz = size(IS);
-IS=arraycrop2dims(IS, [siz(1) siz(2)+padsize siz(3:end)], padelement);  
+IS=arraycrop2dims(IS, [siz(1) siz(2)+padsize siz(3:end)], padelement);
 
 % show using montage2
-varargout = cell(1,nargout);
-if( nargout); varargout{1}=IS; end;
-[varargout{2:end}] = montage2( IS, montage2params{:} );
+[mm,nn] = montage2( IS, montage2params{:} );
 title(inputname(1));

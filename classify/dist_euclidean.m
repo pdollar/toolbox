@@ -4,7 +4,7 @@
 % and Y be an n-by-p matrix representing another set of points in the same
 % space. This function computes the m-by-n distance matrix D where D(i,j)
 % is the SQUARED Euclidean distance between X(i,:) and Y(j,:). Running time
-% is O(m*n*p). 
+% is O(m*n*p).
 %
 % If x is a single data point, here is a faster, inline version to use:
 %  D = sum( (Y - ones(size(Y,1),1)*x).^2, 2 )';
@@ -13,8 +13,8 @@
 %  D = dist_euclidean( X, Y )
 %
 % INPUTS
-%  X   - [m x p] matrix of m p-dimensional vectors 
-%  Y   - [n x p] matrix of n p-dimensional vectors 
+%  X   - [m x p] matrix of m p-dimensional vectors
+%  Y   - [n x p] matrix of n p-dimensional vectors
 %
 % OUTPUTS
 %  D   - [m x n] distance matrix
@@ -26,48 +26,46 @@
 % See also DIST_CHISQUARED, DIST_EMD, DIST_L1, DIST_COSINE
 
 % Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function D = dist_euclidean( X, Y )
 
 if( ~isa(X,'double') || ~isa(Y,'double'))
   error( 'Inputs must be of type double'); end;
-m = size(X,1); n = size(Y,1);  
-Yt = Y';  
-XX = sum(X.*X,2);        
-YY = sum(Yt.*Yt,1);      
+m = size(X,1); n = size(Y,1);
+Yt = Y';
+XX = sum(X.*X,2);
+YY = sum(Yt.*Yt,1);
 D = XX(:,ones(1,n)) + YY(ones(1,m),:) - 2*X*Yt;
-
-    
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% code from Charles Elkan with variables renamed
 % m = size(X,1); n = size(Y,1);
 % D = sum(X.^2, 2) * ones(1,n) + ones(m,1) * sum(Y.^2, 2)' - 2.*X*Y';
-    
-    
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% LOOP METHOD - SLOW
-% [m p] = size(X);  
+% [m p] = size(X);
 % [n p] = size(Y);
-% 
+%
 % D = zeros(m,n);
 % ones_m_1 = ones(m,1);
 % for i=1:n
 %   y = Y(i,:);
 %   d = X - y(ones_m_1,:);
-%   D(:,i) = sum( d.*d, 2 );  
+%   D(:,i) = sum( d.*d, 2 );
 % end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% PARALLEL METHOD THAT IS SUPER SLOW (slower then loop)!
 % % From "MATLAB array manipulation tips and tricks" by Peter J. Acklam
-% Xb = permute(X, [1 3 2]);  
+% Xb = permute(X, [1 3 2]);
 % Yb = permute(Y, [3 1 2]);
-% D = sum( (Xb(:,ones(1,n),:) - Yb(ones(1,m),:,:)).^2, 3);    
+% D = sum( (Xb(:,ones(1,n),:) - Yb(ones(1,m),:,:)).^2, 3);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,5 +86,4 @@ D = XX(:,ones(1,n)) + YY(ones(1,m),:) - 2*X*Yt;
 %     D = cat( 2, D1, D2 );
 %   end
 %   return;
-% end 
-
+% end

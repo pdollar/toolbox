@@ -7,8 +7,8 @@
 %  [X,IDX,T,IDT] = demogendata(n,m,k,d,c,e,f)
 %
 % INPUTS
-%  n    - size of training set 
-%  m    - size of test set 
+%  n    - size of training set
+%  m    - size of test set
 %  k    - number of components
 %  d    - dimension
 %  c    - separation degree (c>0)
@@ -18,7 +18,7 @@
 % OUTPUTS
 %  X    - training set (n x d)
 %  IDX  - cluster membership [see kmeans2.m]
-%  T    - test set (m x d) 
+%  T    - test set (m x d)
 %  IDT  - cluster membership [see kmeans2.m]
 %
 % EXAMPLE
@@ -29,9 +29,9 @@
 % See also VISUALIZE_DATA, DEMOCLUSTER, DEMOCLASSIFY
 
 % Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function [X,IDX,T,IDT] = demogendata(n,m,k,d,c,e,f)
 
 if( nargin<7 ); f=0; end;
@@ -59,7 +59,7 @@ while( 1 )
   M = randn(k,d)*sqrt(k)*sqrt(c)*trials/10;
   Trace = zeros(k,1);
   for j = 1:k
-    U = rand(d,d)-0.5; 
+    U = rand(d,d)-0.5;
     U = sqrtm(inv(U*U')) * U;
     L = diag(rand(d,1)*(e-1)+1).^2/100;
     msg=1; while( msg ); [C,msg] = chol(U*L*U'); end;
@@ -92,10 +92,10 @@ end
 
 % make some uniformly distributed noise
 if( f~=0)
-  if (m>0) 
-      maxv=max( max(abs(X(:))), max(abs(T(:))) ); 
-  else 
-      maxv=max(abs(X(:))); 
+  if (m>0)
+    maxv=max( max(abs(X(:))), max(abs(T(:))) );
+  else
+    maxv=max(abs(X(:)));
   end;
 
   Xnoise = (rand( nnoise, d ) - .5) * maxv * 2.5;

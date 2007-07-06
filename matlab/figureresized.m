@@ -18,14 +18,14 @@
 %
 % See also FIGURE
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function varargout = figureresized( screenratio, varargin )
 
-if( nargin<1 ); screenratio=.3; end;
-if( screenratio>1 ); error('screenratio must be <= 1'); end;
+if( nargin<1 ); screenratio=.3; end
+if( screenratio>1 ); error('screenratio must be <= 1'); end
 
 % call figure
 h = figure( varargin{:} );
@@ -40,4 +40,3 @@ pos = [st*ss(3), st*ss(4), screenratio*ss(3), screenratio*ss(4)];
 % set dimensions of figure
 set( h, 'Units', units );
 set( h, 'Position', pos );
-

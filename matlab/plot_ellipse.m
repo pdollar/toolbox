@@ -20,25 +20,24 @@
 %
 % See also PLOT_GAUSSELLIPSES
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
-function varargout = plot_ellipse( cRow, cCol, ra, rb, phi, color, nPnts )
+% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
+function h = plot_ellipse( cRow, cCol, ra, rb, phi, color, nPnts )
 
 error(nargchk( 5, 7, nargin ));
-if( nargin<6 || isempty(color) ); color = 'b'; end;
-if( nargin<7 || isempty(nPnts) ); nPnts = 100; end;
-if( length(ra)~=length(rb)); error('length(ra)~=length(rb)'); end;
-if( length(cCol)~=length(cRow)); error('length(cCol)~=length(cRow)'); end;
+if( nargin<6 || isempty(color) ); color = 'b'; end
+if( nargin<7 || isempty(nPnts) ); nPnts = 100; end
+if( length(ra)~=length(rb)); error('length(ra)~=length(rb)'); end
+if( length(cCol)~=length(cRow)); error('length(cCol)~=length(cRow)'); end
 
 % plot ellipse (rotate a scaled circle):
-ts = linspace(-pi,pi,nPnts+1);  cts = cos(ts); sts = sin(ts); 
+ts = linspace(-pi,pi,nPnts+1);  cts = cos(ts); sts = sin(ts);
 h = plot( ra*cts*cos(-phi) + rb*sts*sin(-phi) + cCol, ...
-          rb*sts*cos(-phi) - ra*cts*sin(-phi) + cRow, color );
+  rb*sts*cos(-phi) - ra*cts*sin(-phi) + cRow, color );
 
 % plot center point
-washeld = ishold; if (~washeld); hold('on'); end;
+washeld = ishold; if (~washeld); hold('on'); end
 hc = plot( cCol, cRow, 'k+' ); set( hc, 'Color', color );
-if (~washeld); hold('off'); end;
-if( nargout>0 ); varargout={h}; end
+if (~washeld); hold('off'); end

@@ -1,6 +1,6 @@
 % Utility to process parameter name/value pairs.
 %
-% DEPRECATED -- ONLY USED BY KMEANS2?  SHOULD BE REMOVED. 
+% DEPRECATED -- ONLY USED BY KMEANS2?  SHOULD BE REMOVED.
 % USE GETPARAMDEFAULTS INSTEAD.
 %
 % Based on code fromt Matlab Statistics Toolobox's "private/statgetargs.m"
@@ -41,10 +41,10 @@
 %
 % See also GETPARAMDEFAULTS
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function [emsg,varargout]=getargs(pnames,dflts,varargin)
 
 wid = sprintf('Images:%s:obsoleteFunction',mfilename);
@@ -70,8 +70,8 @@ else
   for j=1:2:nargs
     pname = varargin{j};
     if ~ischar(pname)
-        emsg = sprintf('Parameter name must be text.');
-        break;
+      emsg = sprintf('Parameter name must be text.');
+      break;
     end
     i = strmatch(lower(pname),lower(pnames));
     if isempty(i)

@@ -24,7 +24,7 @@
 %  M = softmin( D, sigma )
 %
 % INPUTS
-%  D       - NxK dissimilarity matrix 
+%  D       - NxK dissimilarity matrix
 %  sigma   - controls 'softness' of softmin
 %
 % OUTPUTS
@@ -40,9 +40,9 @@
 % See also DIST_EUCLIDEAN, DIST_CHISQUARED
 
 % Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function M = softmin( D, sigma )
 
 M = exp( -D / sigma^2 );
@@ -52,7 +52,6 @@ if( any(sumMzero) )
   [vs, inds] = min(D,[],2);  [n k] = size(D);
   Mhard = imsubs2array( [(1:n)' inds], ones( n,1 ), [n k] );
   M( sumMzero, : ) = Mhard( sumMzero, : );
-  sumM = sum( M, 2 ); 
+  sumM = sum( M, 2 );
 end
 M = M ./ sumM( :, ones(1,size(M,2)) );
-    

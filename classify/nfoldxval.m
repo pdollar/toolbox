@@ -6,8 +6,8 @@
 %
 % The classifier is passed in as a parameter.  For this to work the
 % classifier (clf) must follow certain conventions.  The conventions are:
-%  1) To initialize the clf ('p' is the dimension of the data): 
-%     clf = clfinit( p, clfparams{:} ) 
+%  1) To initialize the clf ('p' is the dimension of the data):
+%     clf = clfinit( p, clfparams{:} )
 %  2) clf must point to 2 functions for training and applying it:
 %     clf.fun_train    and   clf.fun_fwd
 %  3) For training the following will be called:
@@ -18,10 +18,10 @@
 % dimension. The format for Y is nx1.
 %
 % Given data in a cell array, to string out into single array:
-%  IDX = cell2mat(permute(IDX,[2 1]));  
+%  IDX = cell2mat(permute(IDX,[2 1]));
 %  data = cell2mat(permute(data,[2 1]));
 % For a simple, small dataset, can do leave one out clf as follows:
-%  [n,p]=size(data); IDX=mat2cell(IDX,ones(1,n),1);  
+%  [n,p]=size(data); IDX=mat2cell(IDX,ones(1,n),1);
 %  data=mat2cell(data,ones(1,n),p);
 % Overall error can be calculated via:
 %   er = 1-sum(diag(CM))/sum(CM(:))
@@ -35,11 +35,11 @@
 %  data        - cell array of (n x p) arrays each of n samples of dim p
 %  IDX         - cell array of (n x 1) arrays each of n labels
 %  clfinit     - classifier initialization function
-%  clfparams   - classifier parameters 
+%  clfparams   - classifier parameters
 %  types       - [] cell array of string labels for types
 %  ignoreT     - [] array of types to ignore {eg: [1 4 5]}.
 %  fname       - [] specify a file to save CM to, as well as image
-%  show        - [] will display results in figure(show) 
+%  show        - [] will display results in figure(show)
 %
 % OUTPUTS
 %  CM          - confusion matrix
@@ -59,22 +59,22 @@
 % See also CLF_LDA, CLF_KNN, CLF_SVM, CLF_ECOC
 
 % Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
-function CM=nfoldxval( data, IDX, clfinit, clfparams, ...
-                       types, ignoreT, fname, show )
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
 
-if( nargin<5 || isempty(types) ); types=[]; end;
-if( nargin<6 || isempty(ignoreT) ); ignoreT=[]; end;
-if( nargin<7 || isempty(fname) ); fname=[]; end;
-if( nargin<8 || isempty(show) ); show=[]; end;
+function CM=nfoldxval( data, IDX, clfinit, clfparams, ...
+  types, ignoreT, fname, show )
+
+if( nargin<5 || isempty(types) ); types=[]; end
+if( nargin<6 || isempty(ignoreT) ); ignoreT=[]; end
+if( nargin<7 || isempty(fname) ); fname=[]; end
+if( nargin<8 || isempty(show) ); show=[]; end
 dispflag = 0;
 
 %%% divide n data points into n different sets, perform nfoldxval on each
 if( ~iscell(data) && ~iscell(IDX) )
-  [n,p]=size(data);  
-  IDX=mat2cell(IDX,ones(1,n),1);  
+  [n,p]=size(data);
+  IDX=mat2cell(IDX,ones(1,n),1);
   data=mat2cell(data,ones(1,n),p);
 end
 
@@ -84,16 +84,16 @@ nsets = length( data );
 
 %%% remove data points with type specified by ignoreT
 if( ~isempty(ignoreT) )
-  if(~isempty(types)) 
+  if(~isempty(types))
     keeptypes = setdiff( 1:length(types), ignoreT );
     types = types( keeptypes ); ntypes = length(types);  %#ok<NASGU>
-  end;   
+  end;
   ignoreT = sort(ignoreT);
   while( ~isempty(ignoreT) )
-    for i=1:nsets 
+    for i=1:nsets
       keeplocs = (IDX{i}~=ignoreT(1));
       data{i} = data{i}(keeplocs,:);  IDXi = IDX{i}(keeplocs);
-      big=IDXi>ignoreT(1); IDXi(big)=IDXi(big)-1; IDX{i}=IDXi; 
+      big=IDXi>ignoreT(1); IDXi(big)=IDXi(big)-1; IDX{i}=IDXi;
     end;
     ignoreT=ignoreT(2:end)-1;
   end;
@@ -101,59 +101,59 @@ end;
 
 %%% for binary classes convert to most common form [-1/+1]
 IDXall = cell2mat( permute( IDX, [2 1] ) );
-minIDX = min(IDXall);  maxIDX = max(IDXall); 
-if( minIDX==0 && maxIDX==1 ) 
-  for i=1:nsets; IDX{i}(IDX{i}==0)=-1; end;
-elseif( minIDX==1 && maxIDX==2 ) 
-  for i=1:nsets; IDX{i}(IDX{i}==2)=-1; end;
-end;    
+minIDX = min(IDXall);  maxIDX = max(IDXall);
+if( minIDX==0 && maxIDX==1 )
+  for i=1:nsets; IDX{i}(IDX{i}==0)=-1; end
+elseif( minIDX==1 && maxIDX==2 )
+  for i=1:nsets; IDX{i}(IDX{i}==2)=-1; end
+end;
 
 %%% create types string for display if not exist
 if( isempty(types) )
   types = unique(IDXall);
   types = int2str2( types );
 end;
-ntypes = length(types);    
+ntypes = length(types);
 
 %%% optionally visualize data by embedding in 3D space
 if( 0 )
   dataALL = cell2mat( permute( data, [2 1] ) );
-  figure(show); show=show+1; 
+  figure(show); show=show+1;
   visualize_data( dataALL, 3, IDXall+2, types );
 end;
 
 %%% train on n-1 of the sets, test on the remaining; repeat n times
-CM = zeros(ntypes); 
+CM = zeros(ntypes);
 for testind = 1:nsets
 
   % get training/testing data sets
   allinds = true(1,nsets);
-  traininds = allinds; traininds( testind ) = false; 
+  traininds = allinds; traininds( testind ) = false;
   train = cell2mat( permute( {data{traininds}}, [2 1] ) );
   test = cell2mat( permute( {data{~traininds}}, [2 1] ) );
   trainIDX = cell2mat( permute( {IDX{traininds}}, [2 1] ) );
   testIDX = cell2mat( permute( {IDX{~traininds}}, [2 1] ) );
-  nTrain=size(train,1);  [nTest p]=size(test);  
+  nTrain=size(train,1);  [nTest p]=size(test);
 
   % apply dim reduction [make sure data is well conditioned]
   if( 0 )
     [ U, mu, vars ] = pca( train' );
     maxp = size(U,2) -6; % -20; further reduce? -6
-    if( maxp < p ) 
+    if( maxp < p )
       warning(['reducing dim of data from: ' ...
-          int2str(p) ' to ' int2str(maxp)]); %#ok<WNTAG>
+        int2str(p) ' to ' int2str(maxp)]); %#ok<WNTAG>
       train = pca_apply( train', U, mu, vars, maxp )';
       test  = pca_apply( test',  U, mu, vars, maxp )';
       p = maxp;
-    end;
-  end;
+    end
+  end
 
   % display update
   if( dispflag )
     msg = ['test set ' int2str(testind)];
     disp([msg '; nTrain=' num2str(nTrain) ', nTest=' num2str(nTest)]);
   end
-  if( nTest==0 ); if(dispflag); disp('no test data'); end; continue; end;
+  if( nTest==0 ); if(dispflag); disp('no test data'); end; continue; end
 
   % learn a classifier on train and classify test
   clf = feval( clfinit, p, clfparams{:} );
@@ -164,24 +164,23 @@ for testind = 1:nsets
 end
 
 %%% show confusion matrix, optionally save image to file
-if( show ) 
-  figure(show); %show=show+1; 
+if( show )
+  figure(show); %show=show+1;
   confmatrix_show( CM, types );
   if( isempty(fname) )
     title( clf.type, 'FontSize', 20 );
   else
     title( fname, 'FontSize', 20 );
     print( [fname '.jpg'], '-djpeg' );
-  end;
-end;
+  end
+end
 
 %%% save data to file
 if( ~isempty(fname) )
   er = 1-sum(diag(CM))/sum(CM(:)); %#ok<NASGU>
   CMn = CM ./ repmat( sum(CM,2), [1 size(CM,2)] ); %#ok<NASGU>
   save( fname, 'CM', 'CMn', 'er' );
-  if( dispflag ); fprintf(['finished: ' fname '.\n\n\n']); end;
+  if( dispflag ); fprintf(['finished: ' fname '.\n\n\n']); end
 else
-  if( dispflag ); fprintf('finished.\n\n\n'); end;
-end;
-
+  if( dispflag ); fprintf('finished.\n\n\n'); end
+end

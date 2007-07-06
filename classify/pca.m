@@ -17,10 +17,10 @@
 % likewise for n videos X is MxNxKxn. If X is very large, it is sampled
 % before running PCA, using randomsample. Use this function to retrieve the
 % basis U.  Use pca_apply to retrieve that basis coefficients for a novel
-% vector x. Use pca_visualize(X,...) for visualization of approximated X. 
+% vector x. Use pca_visualize(X,...) for visualization of approximated X.
 %
-% To calculate residuals: 
-%  residuals = cumsum(vars / sum(vars)); 
+% To calculate residuals:
+%  residuals = cumsum(vars / sum(vars));
 %  plot( residuals, '-.' )
 %
 % USAGE
@@ -32,10 +32,10 @@
 % OUTPUTS
 %  U         - [d x r], d=prod(di), each column is a principal component
 %  mu        - [d1 x ... x dm] mean of X.
-%  vars      - sorted eigenvalues corresponding to eigenvectors in U 
+%  vars      - sorted eigenvalues corresponding to eigenvectors in U
 %
 % EXAMPLE
-%  load pca_data;  
+%  load pca_data;
 %  [ U, mu, vars ] = pca( I3D1(:,:,1:12) );
 %  [ Y, Xhat, avsq ] = pca_apply( I3D1(:,:,1), U, mu, vars, 5 );
 %  figure(1); im(I3D1(:,:,1));  figure(2); im(Xhat);
@@ -44,14 +44,14 @@
 % See also PRINCOMP, PCA_APPLY, PCA_VISUALIZE, VISUALIZE_DATA, RANDOMSAMPLE
 
 % Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function [ U, mu, vars ] = pca( X )
 
-% Will run out of memory if X has too many elements.  
+% Will run out of memory if X has too many elements.
 maxmegs = 80;
-if( ~isa(X,'double') )  
+if( ~isa(X,'double') )
   s=whos('X'); nbytes=s.bytes/numel(X);
   X = randomsample( X, maxmegs * nbytes/8 );
   X = double(X);
@@ -60,7 +60,7 @@ else
 end
 
 siz=size(X);  nd=ndims(X);  d=prod(siz(1:end-1));
-inds={':'};  inds=inds(:,ones(1,nd-1));   
+inds={':'};  inds=inds(:,ones(1,nd-1));
 
 % set X to be zero mean
 mu = mean( X, nd );
@@ -73,11 +73,11 @@ X = reshape(X, d, [] );
 if(n==1); U=zeros(d,1); vars=0; return; end
 X = X ./ sqrt(n-1);
 
-% get principal components using the SVD 
+% get principal components using the SVD
 % note: X = U * S * V';  maxrank = min(n-1,N)
 % basically same as svd(X,'econ'), slightly faster?
 if( N>n )
-  [V,SS,V] = svd( X' * X ); 
+  [V,SS,V] = svd( X' * X );
   keeplocs = diag(SS) > 1e-30;
   SS = SS(keeplocs,keeplocs);
   V = V(:,keeplocs);
@@ -87,16 +87,15 @@ else
   keeplocs = diag(SS) > 1e-30;
   SS = SS(keeplocs,keeplocs);
   U = U(:,keeplocs);
-end    
+end
 
 % eigenvalues squared
 vars = diag(SS);
 
 %%% THE FOLLOWING IS USED TO TIME SVD
-% t=[]; rs = 100:20:500; 
+% t=[]; rs = 100:20:500;
 % for r=rs tic; [u,s,v] = svd(rand(r)); t(end+1)=toc; end; plot(rs,t);
-% plot(rs,t,'r'); hold('on'); 
+% plot(rs,t,'r'); hold('on');
 % fplot( '1e-7*(x)^2.75', [1,1000] ); hold('off');
 % x=1500; 1e-7*(x)^2.75 / 60 %minutes
 %%%
-  

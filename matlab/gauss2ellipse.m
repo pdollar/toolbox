@@ -1,5 +1,5 @@
 % Creates an ellipse representing the 2D Gaussian distribution.
-% 
+%
 % Creates an ellipse representing the 2D Gaussian distribution with mean mu
 % and covariance matrix C.  Returns 5 parameters that specify the ellipse.
 %
@@ -24,17 +24,17 @@
 %
 % See also PLOT_ELLIPSE, PLOT_GAUSSELLIPSES, MASK_ELLIPSE
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function [cRow, cCol, ra, rb, phi] = gauss2ellipse( mu, C, rad )
 
 if (nargin<3 || isempty(rad) ); rad=2; end;
 
 % error check
 if (~all(size(mu)==[1,2]) || ~all(size(C)==[2,2]))
-    error('Works only for 2D Gaussians'); end
+  error('Works only for 2D Gaussians'); end
 
 % decompose using SVD
 [R,D,R] = svd(C);

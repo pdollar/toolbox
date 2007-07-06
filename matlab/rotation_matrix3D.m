@@ -18,10 +18,10 @@
 %
 % See also RECOVER_ROTATION3D, ROTATION_MATRIX2D
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function R = rotation_matrix3D( u, theta )
 
 u =  u / norm(u);

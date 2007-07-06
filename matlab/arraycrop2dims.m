@@ -1,4 +1,4 @@
-% Pads or crops I appropriately so that size(IC)==dims.  
+% Pads or crops I appropriately so that size(IC)==dims.
 %
 % For each dimension d, if size(I,d) is larger then dims(d) then
 % symmetrically crops along d (if cropping amount is odd crops one more
@@ -22,28 +22,28 @@
 %
 % See also ARRAYCROP_FULL, PADARRAY
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function IC = arraycrop2dims( I, dims, padEl )
 
-if( nargin<3 || isempty(padEl)); padEl=0; end;      
+if( nargin<3 || isempty(padEl)); padEl=0; end
 nd = ndims(I);  siz = size(I);
 [dims,er] = checknumericargs( dims, size(siz), 0, 1 ); error(er);
-if(any(dims==0)); IC=[]; return; end;
+if(any(dims==0)); IC=[]; return; end
 
 % get start and end locations for cropping
 strLocs = ones( 1, nd );  endLocs = siz;
 for d=1:nd
   delta = siz(d) - dims(d);
   if ( delta~=0 )
-    deltaHalf = floor( delta / 2 );  
+    deltaHalf = floor( delta / 2 );
     deltaRem = delta - 2*deltaHalf;
     strLocs(d) = 1 + (deltaHalf + deltaRem);
     endLocs(d) = siz(d) - deltaHalf;
   end
 end
 
-% call arraycrop_full 
+% call arraycrop_full
 IC = arraycrop_full( I, strLocs, endLocs, padEl );

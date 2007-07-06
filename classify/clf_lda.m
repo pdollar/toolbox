@@ -26,7 +26,7 @@
  
 function clf = clf_lda( p, type, prior )
 
-if( nargin<3 ); prior=[]; end;
+if( nargin<3 ); prior=[]; end
 
 %%% get type
 if( nargin < 2 || isempty(type) )

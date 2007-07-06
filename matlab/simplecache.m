@@ -1,4 +1,4 @@
-% A very simply cache that can be used to store results of computations.  
+% A very simply cache that can be used to store results of computations.
 %
 % Can save and retrieve arbitrary values using a vector (includnig char
 % vectors) as a key. Especially useful if a function must perform heavy
@@ -7,7 +7,7 @@
 % linear search for the key (a more refined implementation would use a hash
 % table), so it is not meant for large scale usage.
 %
-% To use inside a function, make the cache persistent: 
+% To use inside a function, make the cache persistent:
 %   persistent cache; if( isempty(cache) ) cache=simplecache('init'); end;
 % The following line, when placed inside a function, means the cache will
 % stay in memory until the matlab environment changes.  For an example
@@ -15,7 +15,7 @@
 %
 % USAGE
 %  % initialize a cache object
-%  cache = simplecache('init');   
+%  cache = simplecache('init');
 %
 %  % put something in a cache.  Note that key must be a numeric vector
 %  cache = simplecache( 'put', cache, key, val );
@@ -44,10 +44,10 @@
 %
 % See also PERSISTENT, MASK_GAUSSIANS
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function varargout = simplecache( op, cache, varargin )
 
 if( strcmp(op,'init') ) %%% init a cache
@@ -77,7 +77,7 @@ elseif( strcmp(op,'get') ) %%% a get operation
   found = ind>0;
   varargout = {found,val};
 
-elseif( strcmp(op,'remove') ) %%% a remove operation    
+elseif( strcmp(op,'remove') ) %%% a remove operation
   error(nargchk(3, 3, nargin));
   error(nargoutchk(0, 2, nargout));
   key = deal( varargin{:} );
@@ -87,62 +87,55 @@ elseif( strcmp(op,'remove') ) %%% a remove operation
 
 else %%% unknown op
   error( ['Unknown cache operation: ' op] );
-end;
+end
 
-    
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% double cache size
 function cache = cachegrow( cache )
-  cache_siz = length( cache.keyns ); 
-  if( cache_siz>64 ) % warn if getting big
-    warning(['doubling cache size to: ' int2str2(cache_siz*2)]);%#ok<WNTAG>
-  end;
-  cache.freeinds = [cache.freeinds (cache_siz+1):(2*cache_siz)];
-  cache.keyns = [cache.keyns -ones(1,cache_siz)];
-  cache.keys  = [cache.keys cell(1,cache_siz)];
-  cache.vals  = [cache.vals cell(1,cache_siz)];
+cache_siz = length( cache.keyns );
+if( cache_siz>64 ) % warn if getting big
+  warning(['doubling cache size to: ' int2str2(cache_siz*2)]);%#ok<WNTAG>
+end;
+cache.freeinds = [cache.freeinds (cache_siz+1):(2*cache_siz)];
+cache.keyns = [cache.keyns -ones(1,cache_siz)];
+cache.keys  = [cache.keys cell(1,cache_siz)];
+cache.vals  = [cache.vals cell(1,cache_siz)];
 
-    
-    
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% put something into the cache
 function cache = cacheput( cache, key, val )
-    
+
 % get location to place
 ind = cacheget( cache, key ); % see if already in cache
 if( ind==-1 )
   if( isempty( cache.freeinds ) )
-      cache = cachegrow( cache ); %grow cache
-  end;
+    cache = cachegrow( cache ); %grow cache
+  end
   ind = cache.freeinds(1); % get new cache loc
   cache.freeinds = cache.freeinds(2:end);
-end;
+end
 
 % now simply place in ind
 cache.keyns(ind) = length(key);
 cache.keys{ind} = key;
 cache.vals{ind} = val;
 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% get cache element, or fail
 function [ind,val] = cacheget( cache, key )
 
-cache_siz = length( cache.keyns ); 
-keyn = length( key );  
+cache_siz = length( cache.keyns );
+keyn = length( key );
 for i=1:cache_siz
   if(keyn==cache.keyns(i) && all(key==cache.keys{i}))
     val = cache.vals{i};
     ind = i;
     return;
   end
-end;
+end
 ind=-1; val=-1;
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% get cache element, or fail
 function [cache,found] = cacheremove( cache, key )
 

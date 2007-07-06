@@ -7,7 +7,7 @@
 % creating a matrix of size siz with x in each entry.  This is why the
 % function returns x.  siz=M is equivalent to siz=[M M]. If x does not
 % satisfy some criteria, an error message is returned in er. If x satisfied
-% all the criteria er=''.  Note that error('') has no effect, so can use: 
+% all the criteria er=''.  Note that error('') has no effect, so can use:
 %  [x,er] = checknumericargs( x, ... ); error(er);
 % which will throw an error only if something was wrong with x.
 %
@@ -29,30 +29,30 @@
 %                 2: entires of x must be strictly positive
 %
 % OUTPUTS
-%  x   - if x was a scalar it may have been replicated into a matrix 
+%  x   - if x was a scalar it may have been replicated into a matrix
 %  er  - contains error msg if anything was wrong with x
 %
 % EXAMPLE
 %  a=1;  [a,er] = checknumericargs( a, [1 3], 2, 0 ); a, error(er)
 
 % Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function [x,er] = checknumericargs( x, siz, intFlag, signFlag )
 
 xname = inputname(1); er='';
 if( isempty(siz) ); siz = size(x); end;
 if( length(siz)==1 ); siz=[siz siz]; end;
 
-% first check that x is numeric 
+% first check that x is numeric
 if( ~isnumeric(x) ); er = [xname ' not numeric']; return; end;
 
 % if x is a scalar, simply replicate it.
 xorig = x; if( length(x)==1); x = x(ones(siz)); end;
 
 % regardless, must have same number of x as n
-if( length(siz)~=ndims(x) || ~all(size(x)==siz) ) 
+if( length(siz)~=ndims(x) || ~all(size(x)==siz) )
   er = ['has size = [' num2str(size(x)) '], '];
   er = [er 'which is not the required size of [' num2str(siz) ']'];
   er = create_errormsg( xname, xorig, er ); return;
@@ -71,7 +71,7 @@ switch intFlag
       er = create_errormsg( xname, xorig, er); return;
     end;
   case 2
-    if( ~all(mod(x,2)==0)) 
+    if( ~all(mod(x,2)==0))
       er = 'must have even integer entries';
       er = create_errormsg( xname, xorig, er ); return;
     end;
@@ -85,12 +85,12 @@ switch signFlag
       er = create_errormsg( xname, xorig, er ); return;
     end;
   case -1
-    if( ~all(x<=0)) 
+    if( ~all(x<=0))
       er = 'must have negative entries';
       er = create_errormsg( xname, xorig, er ); return;
     end;
   case 1
-    if( ~all(x>=0)) 
+    if( ~all(x>=0))
       er = 'must have positive entries';
       er = create_errormsg( xname, xorig, er ); return;
     end;
@@ -98,10 +98,8 @@ switch signFlag
     if( ~all(x>0))
       er = 'must have strictly positive entries';
       er = create_errormsg( xname, xorig, er ); return;
-    end;
-end;
-
-
+    end
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function er = create_errormsg( xname, x, er )
@@ -109,4 +107,4 @@ if(numel(x)<10)
   er = ['Numeric input argument ' xname '=[' num2str(x) '] ' er '.'];
 else
   er = ['Numeric input argument ' xname ' ' er '.'];
-end;
+end

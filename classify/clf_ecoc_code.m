@@ -15,13 +15,13 @@
 % See also CLF_ECOC
 
 % Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function [C,nbits] = clf_ecoc_code( k )
 
 if( k<3 || k>7 )
-  error( 'method only works if k is small: 3<=k<=7'); end;
+  error( 'method only works if k is small: 3<=k<=7'); end
 
 % create C
 C = ones(k,2^(k-1));
@@ -36,4 +36,3 @@ nbits = size(C,2);
 
 % alter C to have entries [-1,1]
 C(C==0)=-1;
-    

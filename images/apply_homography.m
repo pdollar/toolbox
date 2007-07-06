@@ -40,7 +40,7 @@ if( ndims(I)~=2 ) error('I must a MxN array'); end;
 if(any(size(H)~=[3 3])) error('H must be 3 by 3'); end;
 if(rank(H)~=3) error('H must be full rank.'); end;
 if( nargin<3 || isempty(method)) method='linear'; end;
-if( nargin<4 || isempty(bbox)) bbox='loose'; end;
+if( nargin<4 || isempty(bbox)); bbox='loose'; end;
 if( nargin<5 || isempty(show)) show=0; end;
 
 classname = class( I );

@@ -1,5 +1,5 @@
 % Improved version of ind2sub.
-% 
+%
 % Almost the same as ind2sub, except always returns only a single output
 % that contains all the index locations.  Also handles multiple linear
 % indicies at the same time. See help for ind2sub for more info.
@@ -10,8 +10,8 @@
 % INPUTS
 %  siz     - size of array into which ind is an index
 %  ind     - linear index (or vector of indicies) into given array
-% 
-% OUTPUTS   
+%
+% OUTPUTS
 %  sub     - sub(i,:) is the ith set of subscripts into the array.
 %
 % EXAMPLE
@@ -20,13 +20,13 @@
 %
 % See also IND2SUB, SUB2IND2
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function sub = ind2sub2( siz, ind )
 
-if( any(ind>prod(siz)) );  error('index out of range');  end;
+if( any(ind>prod(siz)) ); error('index out of range'); end
 
 % taken almost directly from ind2sub.m
 ind = ind(:);

@@ -1,5 +1,5 @@
 % Improved version of sub2ind.
-% 
+%
 % Almost the same as sub2ind, except always returns only a single output
 % that contains all the subscript locations.  Also handles multiple linear
 % subscripts at the same time more conveniently then matlab's version. See
@@ -11,8 +11,8 @@
 % INPUTS
 %  siz     - size of array into which sub is an index
 %  sub     - sub(i,:) is the ith set of subscripts into the array.
-% 
-% OUTPUTS   
+%
+% OUTPUTS
 %  ind     - linear index (or vector of indicies) into given array
 %
 % EXAMPLE
@@ -21,24 +21,22 @@
 %
 % See also SUB2IND, IND2SUB2
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function ind = sub2ind2( siz, sub )
 
 if(isempty(sub)); ind=[]; return; end;
 n = length(siz);
 
 % error check (commented out to speed up substantially)
-if( size(sub,2)~=n ) 
-  error('Incorrect dimension for sub'); end;
-% for i = 1:n if( any( sub(:,i)<1 ) || any( sub(:,i)>siz(i) ) )
-%   error('subscript out of range'); end; end;
+if( size(sub,2)~=n )
+  error('Incorrect dimension for sub');
+  % for i = 1:n; if( any( sub(:,i)<1 ) || any( sub(:,i)>siz(i) ) )
+  %   error('subscript out of range'); end;
+end
 
 k = [1 cumprod(siz(1:end-1))];
 ind = 1;
-for i = 1:n,
-  ind = ind + (sub(:,i)-1)*k(i);
-end
-    
+for i = 1:n; ind = ind + (sub(:,i)-1)*k(i); end

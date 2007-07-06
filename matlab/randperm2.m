@@ -1,4 +1,4 @@
-% Returns a random permutation of integers. 
+% Returns a random permutation of integers.
 %
 % randperm2(n) is a random permutation of the integers from 1 to n.  For
 % example, randperm2(6) might be [2 4 5 6 1 3].  randperm2(n,k) is only
@@ -24,10 +24,10 @@
 %
 % See also RANDPERM
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function p = randperm2( n, k )
 
 wid = sprintf('Images:%s:obsoleteFunction',mfilename);
@@ -40,7 +40,7 @@ p = randsample( n, k );
 
 %  p = 1:n;
 %  for i=1:k
-%    r = i + floor( (n-i+1)*rand );     
+%    r = i + floor( (n-i+1)*rand );
 %    t = p(r);  p(r) = p(i);  p(i) = t;
 %  end
 %  p = p(1:k);

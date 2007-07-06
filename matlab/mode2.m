@@ -1,5 +1,5 @@
 % Returns the mode of a vector.
-% 
+%
 % Was mode not part of Matlab before?
 %
 % USAGE
@@ -8,7 +8,7 @@
 % INPUTS
 %  x   - vector of integers
 %
-% OUTPUTS   
+% OUTPUTS
 %  y   - mode
 %
 % EXAMPLE
@@ -17,16 +17,18 @@
 %
 % See also MODE
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function y = mode2( x )
 
 wid = sprintf('Images:%s:obsoleteFunction',mfilename);
 warning(wid,[ '%s is obsolete in Piotr''s toolbox.\n MODE is its '...
   'recommended replacement.'],upper(mfilename));
 
-[b,i,j] = unique(x);
-[ mval, ind ] = max(hist(j,length(b)));
-y = b(ind);
+y = mode( x );
+
+% [b,i,j] = unique(x);
+% [ mval, ind ] = max(hist(j,length(b)));
+% y = b(ind);

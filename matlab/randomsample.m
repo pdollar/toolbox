@@ -1,5 +1,5 @@
 % Samples elements of X so result uses at most maxMegs megabytes of memory.
-% 
+%
 % If X is m+1 dimensional, say of size [d1 x d2 x...x dm x n], each [d1 x
 % d2 x...x dm] element is treated as one observation, and X is treated as
 % having n such observations.  The subsampling then occurs over the last
@@ -20,27 +20,29 @@
 % INPUTS
 %  X         - [d1 x ... x dm x n], treated as n [d1 x ... x dm] elements
 %  maxMegs   - maximum number of megs Xsam is allowed to take up
-% 
+%
 % OUTPUTS
 %  Xsam      - [d1 x ... x dm x n'] (n'<=n) Xsam=X(:,..,:,keeplocs);
-%  keeplocs  - vector of indicies kept from X;  
+%  keeplocs  - vector of indicies kept from X;
 %
 % EXAMPLE
 %  % Xsam should have size: 1024xround(1024/10)
 %  X = uint8(ones(2^10,2^10));
 %  Xsam = randomsample( X, 1/10 );
-%  % Xsam should have size: 100x10x~(1000/8) 
+%  % Xsam should have size: 100x10x~(1000/8)
 %  X = rand(100,10,1000);
 %  Xsam = randomsample( X, 1 );
+%
+% See Also
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function [X,keeplocs] = randomsample( X, maxMegs )
 
-siz = size( X );  nd = ndims(X);  
-inds={':'};  inds=inds(:,ones(1,nd-1));   
+siz = size( X );  nd = ndims(X);
+inds={':'};  inds=inds(:,ones(1,nd-1));
 n=siz(end);   m=prod(siz(1:end-1));
 
 % get the number of elements of X that fit per meg
@@ -51,7 +53,7 @@ elsPerMeg = 2^20 / nbytes / m;
 memUsed = n / elsPerMeg;
 if( memUsed > maxMegs )
   nKeep = max(1,round(maxMegs*elsPerMeg));
-  keeplocs = randperm(n); 
+  keeplocs = randperm(n);
   keeplocs = keeplocs(1:nKeep);
   X = X( inds{:}, keeplocs );
 end

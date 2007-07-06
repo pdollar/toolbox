@@ -30,22 +30,22 @@
 % See also PCA, PCA_APPLY_LARGE, PCA_VISUALIZE
 
 % Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function [Yk,Xhat,avsq,avsqOrig] = pca_apply(X,U,mu,vars,k) %#ok<INUSL>
 
 siz = size(X); nd = ndims(X);  [N,r]  = size(U);
-if(N==prod(siz) && ~(nd==2 && siz(2)==1)); siz=[siz, 1]; nd=nd+1; end;
-inds = {':'}; inds = inds(:,ones(1,nd-1));   
+if(N==prod(siz) && ~(nd==2 && siz(2)==1)); siz=[siz, 1]; nd=nd+1; end
+inds = {':'}; inds = inds(:,ones(1,nd-1));
 d= prod(siz(1:end-1));
 
 % some error checking
-if(d~=N); error('incorrect size for X or U'); end;
-if(isa(X,'uint8')); X = double(X); end;
+if(d~=N); error('incorrect size for X or U'); end
+if(isa(X,'uint8')); X = double(X); end
 if( k>r )
   warning(['Only ' int2str(r) '<k comp. available.']); %#ok<WNTAG>
-  k=r; 
+  k=r;
 end
 
 % subtract mean, then flatten X
@@ -60,21 +60,21 @@ Uk = U(:,1:k);
 Yk = Uk' * X;
 
 % calculate Xhat - the approx of X using the first k princ components
-if( nargout>1 ) 
-  Xhat = Uk * Yk; 
+if( nargout>1 )
+  Xhat = Uk * Yk;
   Xhat = reshape( Xhat, siz );
   Xhat = Xhat + murep;
-end;
+end
 
 % caclulate average value of (Xhat-Xorig).^2 compared to average value
-% of X.^2, where X is Xorig without the mean.  This is equivalent to 
+% of X.^2, where X is Xorig without the mean.  This is equivalent to
 % what fraction of the variance is captured by Xhat.
 % Note: the 4 output version of this function is for pca_apply_large
 if( nargout>2 )
-  avsq = Xhat - Xorig; 
+  avsq = Xhat - Xorig;
   avsq = dot(avsq(:),avsq(:));
-  avsqOrig = dot(X(:),X(:)); 
+  avsqOrig = dot(X(:),X(:));
   if (nargout==3)
     avsq = avsq / avsqOrig;
   end
-end;
+end

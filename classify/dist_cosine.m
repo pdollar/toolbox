@@ -36,7 +36,6 @@ XX = sqrt(sum(X.*X,2)); X = X ./ XX(:,ones(1,p));
 YY = sqrt(sum(Y.*Y,2)); Y = Y ./ YY(:,ones(1,p));
 D = 1 - X*Y';
 
-
 %%%% LOOP METHOD - SLOW
 % m = size(X,1); n = size(Y,1); 
 % D = eye(m, n);

@@ -6,7 +6,7 @@
 %  varargout = montages( IS, montage2params, labels, montage2labels )
 %
 % INPUTS
-%   IS               - MxNxTxR or MxNx1xTxR or MxNx3xTxR array, or cell 
+%   IS               - MxNxTxR or MxNx1xTxR or MxNx3xTxR array, or cell
 %                      array where each element is an MxNxT or MxNx1xT or
 %                      MxNx3xT array
 %   montage2params   - [optional] params for montage2 EXCEPT labels;
@@ -26,15 +26,15 @@
 %
 % See also MONTAGES2, MAKEMOVIES, MONTAGE2, CLUSTERMONTAGE
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
+% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function varargout = montages( IS, montage2params, labels, montage2labels )
+function [mm,nn] = montages( IS, montage2params, labels, montage2labels )
 
-if( nargin<2 ); montage2params = {}; end;
-if( nargin<3 ); labels = {}; end;
-if( nargin<4 ); montage2labels = {}; end;
+if( nargin<2 ); montage2params = {}; end
+if( nargin<3 ); labels = {}; end
+if( nargin<4 ); montage2labels = {}; end
 
 % set up parameters for montage2
 nparams = length(montage2params);
@@ -64,7 +64,6 @@ if( isempty(montage2params{3}) )
   montage2params{3} = clim;
 end
 
-
 % get/test image format info
 nd = ndims(IS);
 if( iscell(IS)) %testing for dims done in montage2
@@ -74,7 +73,7 @@ elseif( nd==4)  %MxNxTxR
 elseif( nd==5)  %MxNx1xTxR or MxNx3xTxR
   nmontages = size(IS,5);
   nch = size(IS,3);  legal = (nch==1 || nch==3);
-  if( ~legal ); error('illegal image stack format'); end;
+  if( ~legal ); error('illegal image stack format'); end
 else
   error('unsupported dimension of IS');
 end
@@ -92,7 +91,7 @@ for i=1:nmontages
       montage2( IS{i}, montage2params{:}, montage2labels{i} );
     else
       set(gca,'XTick',[]); set(gca,'YTick',[]);  %extrainfo off
-    end;
+    end
   elseif( nd==4)
     montage2( IS(:,:,:,i), montage2params{:}, montage2labels{i}  );
   else
@@ -101,6 +100,3 @@ for i=1:nmontages
   if(~isempty(labels)); title(labels{i}); end
 end
 if( ~isempty(extrainfo) && extrainfo); pixval on; end
-
-% optional output
-if( nargout>0 ); varargout={mm,nn}; end

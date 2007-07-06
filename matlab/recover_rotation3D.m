@@ -16,15 +16,15 @@
 %
 % See also ROTATION_MATRIX3D
 
-% Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Piotr's Image&Video Toolbox      Version 1.03   PPD VR
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function [u,theta] = recover_rotation3D( R )
 
 % find location of eigenvector w evalue other than 1
 % eigenvalue has form cos(theta) +- i sin(theta)
-[v,d]=eig( R ); 
+[v,d]=eig( R );
 [dr, dc] = find( imag(d)==0 & real(d)~=0 );  %#ok<NASGU>
 u = v(:,dr);
 if (dr==1)

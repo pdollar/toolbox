@@ -1,5 +1,5 @@
 % Demonstration of rbf networks for regression.
-% 
+%
 % See rbfComputeBasis for discussion of rbfs.
 %
 % USAGE
@@ -25,8 +25,8 @@
 % See also RBFCOMPUTEBASIS, RBFCOMPUTEFEATURES
 
 % Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
 
 function rbfDemo( dataType, noiseSig, scale, k, cluster, show )
 
@@ -56,19 +56,19 @@ minX = min([Xtrn; Xtst],[],1);  maxX = max([Xtrn; Xtst],[],1);
 if( size(Xtrn,2)==1 )
   xs = linspace( minX, maxX, 1000 )';
   ys = rbfComputeFeatures(xs,rbfBasis) * rbfWeight;
-  figure(show+1); clf; hold on;  plot( xs, ys ); 
-  plot( Xtrn, ytrn, '.b' );  plot( Xtst, ytst, '.r' ); 
+  figure(show+1); clf; hold on;  plot( xs, ys );
+  plot( Xtrn, ytrn, '.b' );  plot( Xtst, ytst, '.r' );
 elseif( size(Xtrn,2)==2 )
-  xs1 = linspace(minX(1),maxX(1),25); 
+  xs1 = linspace(minX(1),maxX(1),25);
   xs2 = linspace(minX(2),maxX(2),25);
   [xs1,xs2] = ndgrid( xs1, xs2 );
   ys = rbfComputeFeatures([xs1(:) xs2(:)],rbfBasis) * rbfWeight;
   figure(show+1); clf; hold on;  surf( xs1, xs2, reshape(ys,size(xs1)) );
   plot3( Xtrn(:,1), Xtrn(:,2), ytrn, '.b' );
   plot3( Xtst(:,1), Xtst(:,2), ytst, '.r' );
-end;
+end
 
-  
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Toy data for rbfDemo.
 %
@@ -100,5 +100,5 @@ elseif( dataType==2 )
   X(:,2) = X(:,2) * 5;
 else
   error('unknown dataType');
-end  
-y = y + randn(size(y))*noiseSig;  
+end
+y = y + randn(size(y))*noiseSig;

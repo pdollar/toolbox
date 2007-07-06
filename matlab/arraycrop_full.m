@@ -1,5 +1,5 @@
-% Used to crop a rectangular region from an n dimensional array.  
-% 
+% Used to crop a rectangular region from an n dimensional array.
+%
 % Guarantees that the resulting array will have dims as specified by rect
 % by filling in locations with padEl if the locations are outside of array.
 %
@@ -21,16 +21,16 @@
 % See also PADARRAY, ARRAYCROP2DIMS
 
 % Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function I = arraycrop_full( I, strLocs, endLocs, padEl )
 
-if( nargin<4 || isempty(padEl)); padEl=0; end;
+if( nargin<4 || isempty(padEl)); padEl=0; end
 nd = ndims(I);  siz = size(I);
 [strLocs,er] = checknumericargs( strLocs, size(siz), 0, 0 ); error(er);
 [endLocs,er] = checknumericargs( endLocs, size(siz), 0, 0 ); error(er);
-if( any(strLocs>endLocs)); error('strLocs must be <= endLocs'); end;
+if( any(strLocs>endLocs)); error('strLocs must be <= endLocs'); end
 padEl = feval( class(I), padEl );
 
 % crop a real rect [accelerate implementation if nd==2 or nd==3]
@@ -57,18 +57,3 @@ if (any(padPre~=0) || any(padPost~=0))
   Ib = repmat( padEl, sizPadded );
   Ib(idx{:}) = I;  I = Ib;
 end
-    
-    
-% %%% Alternate method not based on padarray (slower)
-% for d=1:nd
-%   if (strLocs(d) <= 0 )
-%     dims = size(I);  dims(d) = 1-strLocs(d);
-%     A = repmat( padEl, dims ); %;  A = A( ones(dims) );
-%     I = cat(d,A,I); 
-%   end
-%   if (endLocs(d) - siz(d) > 0)
-%     dims = size(I);  dims(d) = endLocs(d) - siz(d);
-%     A = repmat( padEl, dims );
-%     I = cat(d,I,A);
-%   end
-% end

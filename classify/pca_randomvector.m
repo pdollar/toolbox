@@ -30,32 +30,32 @@
 % See also PCA
 
 % Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function Xr = pca_randomvector( U, mu, vars, k, n, hypershpere, show )
- 
-%%% Little test - see if eigenvectors induced by randomly generated vectors 
-%%% are the same as the original eigenvectors.  Assumes [U,mu,vars] exist.  
+
+%%% Little test - see if eigenvectors induced by randomly generated vectors
+%%% are the same as the original eigenvectors.  Assumes [U,mu,vars] exist.
 %   Xr = pca_randomvector( U, mu, vars, 3, 100 );
 %   [ Ur, mur, varsr ] = pca( Xr );
 %   ind = 3;
 %   Uim = reshape( U(:,ind), [ size(mu,1), size(mu,2) ]  );
 %   Uimr = reshape( Ur(:,ind), [ size(mu,1), size(mu,2) ]  );
 %   if( sum(abs(Uim-Uimr))>sum(abs(Uim+Uimr))) Uimr=Uimr*-1; end; %sign?
-%   clf; subplot(3,1,1); im( Uim ); subplot(3,1,2); im( Uimr ); 
+%   clf; subplot(3,1,1); im( Uim ); subplot(3,1,2); im( Uimr );
 %   subplot(3,1,3); im( Uim - Uimr);
 %%%
-if( nargin<6 || isempty(hypershpere) ); hypershpere=0; end;
-if( nargin<7 || isempty(show) ); show=0; end;
+if( nargin<6 || isempty(hypershpere) ); hypershpere=0; end
+if( nargin<7 || isempty(show) ); show=0; end
 
-siz = size(mu);  
-nd = ndims(mu);  
+siz = size(mu);
+nd = ndims(mu);
 sizX = [siz, n];
 d = prod(siz);
 
-% generate random vectors inside of subspace.  
-C = diag( vars(1:k).^-1 );    
+% generate random vectors inside of subspace.
+C = diag( vars(1:k).^-1 );
 Yr = C * randn(k,n);
 Uk = U(:,1:k);
 Xr = Uk * Yr;
@@ -88,7 +88,4 @@ else
 end
 
 % optionaly show resulting vectors
-if (show)
-  figure(show); montage2(Xr,1);
-end
-
+if (show); figure(show); montage2(Xr,1); end

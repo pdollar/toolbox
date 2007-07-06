@@ -17,10 +17,10 @@
 % A limitation of feval_arrays is that it does not pass state information
 % to fHandle.  For example, fHandle may want to know how many times it's
 % been called.  This can be overcome by saving state information inside
-% fHandle using 'persistent' variables.  For an example see imwrite2. 
+% fHandle using 'persistent' variables.  For an example see imwrite2.
 %
 % USAGE
-%  B = feval_arrays( A, fHandle, params )
+%  B = feval_arrays( A, fHandle, varargin )
 %
 % INPUTS
 %  A        - input array
@@ -39,9 +39,9 @@
 % See also FEVAL_IMAGES, IMWRITE2, PERSISTENT, TICSTATUS
 
 % Piotr's Image&Video Toolbox      Version 1.03   PPD
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
- 
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
+
 function B = feval_arrays( A, fHandle, varargin )
 
 nd = ndims(A);  siz = size(A);  n = siz(end);
@@ -53,7 +53,7 @@ for i=1:n
   b = feval( fHandle, A(indsA{:},i), varargin{:} );
   if( i==1 )
     ndb = ndims(b);
-    if(ndb==2 && size(b,2)==1); ndb=1; end;
+    if(ndb==2 && size(b,2)==1); ndb=1; end
     onesNdb = ones(1,ndb);
     B = repmat( b, [onesNdb,n] );
     indsB = {':'}; indsB = indsB(onesNdb);
@@ -62,15 +62,3 @@ for i=1:n
   end;
   tocstatus( ticId, i/n );
 end
-
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
