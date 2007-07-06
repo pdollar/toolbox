@@ -1,4 +1,4 @@
-% Calculates maximum likelihood parameters of gaussian that gave rise to image G.
+% Calculates max likelihood params of Gaussian that gave rise to image G.
 %
 % Suppose G contains an image of a gaussian distribution.  One way to
 % recover the parameters of the gaussian is to threshold the image, and
@@ -21,28 +21,27 @@
 % 0, but a possibly different variance in the 3rd (z or t) dimension.
 %
 % USAGE
-%  varargout = imageMLG( G, symmFlag, show )
+%  varargout = imageMLG( G, [symmFlag], [show] )
 %
 % INPUTS
-%  G           - image of a gaussian (weighted pixels)
-%  symmFlag    - [optional] see above
-%  show        - [optional] figure to use for display (no display if == 0)
+%  G        - image of a gaussian (weighted pixels)
+%  symmFlag - [0] see above
+%  show     - [0] figure to use for optional display
 %
 % OUTPUTS
-%  mu      - 2 or 3 element vector specifying the mean [row,col,z]
-%   C       - 2x2 or 3x3 covariance matrix [row,col,z]
-%   GR      - image of the recovered gaussian (faster if omitted)
-%   logl    - log likelihood of G given the recovered gaussian (faster if
-%   omitted)
+%  mu       - 2 or 3 element vector specifying the mean [row,col,z]
+%  C        - 2x2 or 3x3 covariance matrix [row,col,z]
+%  GR       - image of the recovered gaussian (faster if omitted)
+%  logl     - log likelihood of G given recov. gaussian (faster if omitted)
 %
-% EXAMPLE - 1 [2D]
+% EXAMPLE - 2D
 %  R = rotation_matrix2D( pi/6 );  C=R'*[10^2 0; 0 20^2]*R;
 %  G = filter_gauss_nD( [200, 300], [150,100], C, 0 );
 %  [mu,C,GR,logl] = imageMLG( G, 0, 1 );
 %  mask = mask_ellipse( size(G,1), size(G,2), mu, C );
-%  figure(3); im(mask)
+%  figure(2); im(mask)
 %
-% EXAMPLE - 2 [3D]
+% EXAMPLE - 3D
 %  R = rotation_matrix3D( [1,1,0], pi/4 );
 %  C = R'*[5^2 0 0; 0 2^2 0; 0 0 4^2]*R;
 %  G = filter_gauss_nD( [50,50,50], [25,25,25], C, 0 );
@@ -70,31 +69,34 @@ else
 end
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [mu,C,GR,logl] = imageMLG_2D( G, symmFlag, show )
 
 % to be used throughout calculations
-[ grid_cols, grid_rows ] = meshgrid( 1:size(G,2), 1:size(G,1)  );
+[ gridCols, gridRows ] = meshgrid( 1:size(G,2), 1:size(G,1)  );
 sumG = sum(G(:)); if(sumG==0); sumG=1; end;
 
 % recover mean
-mu_col = (grid_cols .* G); mu_col = sum( mu_col(:) ) / sumG;
-mu_row = (grid_rows .* G); mu_row = sum( mu_row(:) ) / sumG;
-mu = [mu_row, mu_col];
+muCol = (gridCols .* G); muCol = sum( muCol(:) ) / sumG;
+muRow = (gridRows .* G); muRow = sum( muRow(:) ) / sumG;
+mu = [muRow, muCol];
 
 % recover sigma
-dist_cols = (grid_cols - mu_col);
-dist_rows = (grid_rows - mu_row);
+distCols = (gridCols - muCol);
+distRows = (gridRows - muRow);
 if( symmFlag==0 )
-  Ccc = (dist_cols .^ 2) .* G;   Ccc = sum(Ccc(:)) / sumG;
-  Crr = (dist_rows .^ 2) .* G;   Crr = sum(Crr(:)) / sumG;
-  Crc = (dist_cols .* dist_rows) .* G;   Crc = sum(Crc(:)) / sumG;
+  Ccc = (distCols .^ 2) .* G;   Ccc = sum(Ccc(:)) / sumG;
+  Crr = (distRows .^ 2) .* G;   Crr = sum(Crr(:)) / sumG;
+  Crc = (distCols .* distRows) .* G;   Crc = sum(Crc(:)) / sumG;
   C = [Crr Crc; Crc Ccc];
+  
 elseif( symmFlag==1 )
-  sigma_sq = (dist_cols.^2 + dist_rows.^2) .* G;
-  sigma_sq = 1/2 * sum(sigma_sq(:)) / sumG;
-  C = sigma_sq*eye(2);
+  sigSq = (distCols.^2 + distRows.^2) .* G;
+  sigSq = 1/2 * sum(sigSq(:)) / sumG;
+  C = sigSq*eye(2);
+  
 else
-  error(['Illegal value for symmFlag: ' num2str(symmFlag)])
+  error(['Illegal value for symmFlag: ' num2str(symmFlag)]);
 end
 
 % get the log likelihood of the data
@@ -113,44 +115,50 @@ if (show)
   %hold('on'); plot_ellipses(crow, ccol, ra, rb, phi, 'r' ); hold('off');
 end
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [mu,C,GR,logl] = imageMLG_3D( G, symmFlag, show )
+
 % to be used throughout calculations
-[ grid_cols, grid_rows, grid_zs ] = meshgrid( 1:size(G,2), 1:size(G,1), 1:size(G,3) );
+[gridCols,gridRows,gridZs]=meshgrid(1:size(G,2),1:size(G,1),1:size(G,3));
 sumG = sum(G(:));
 
 % recover mean
-mu_col = (grid_cols .* G); mu_col = sum( mu_col(:) ) / sumG;
-mu_row = (grid_rows .* G); mu_row = sum( mu_row(:) ) / sumG;
-mu_z   = (grid_zs .* G);   mu_z = sum( mu_z(:) ) / sumG;
-mu = [mu_row, mu_col, mu_z];
+muCol = (gridCols .* G); muCol = sum( muCol(:) ) / sumG;
+muRow = (gridRows .* G); muRow = sum( muRow(:) ) / sumG;
+muZ   = (gridZs .* G);   muZ = sum( muZ(:) ) / sumG;
+mu = [muRow, muCol, muZ];
 
 % recover C
-dist_cols = (grid_cols - mu_col);
-dist_rows = (grid_rows - mu_row);
-dist_zs = (grid_zs - mu_z);
+distCols = (gridCols - muCol);
+distRows = (gridRows - muRow);
+distZs = (gridZs - muZ);
 if( symmFlag==0 )
-  dist_cols_G = dist_cols .* G; dist_rows_G = dist_rows .* G;
-  Ccc = dist_cols .* dist_cols_G;   Ccc = sum(Ccc(:));
-  Crc = dist_rows .* dist_cols_G;   Crc = sum(Crc(:));
-  Czc = dist_zs   .* dist_cols_G;   Czc = sum(Czc(:));
-  Crr = dist_rows .* dist_rows_G;   Crr = sum(Crr(:));
-  Czr = dist_zs   .* dist_rows_G;   Czr = sum(Czr(:));
-  Czz = dist_zs   .* dist_zs .* G;  Czz = sum(Czz(:));
+  distColsG = distCols .* G; distRowsG = distRows .* G;
+  Ccc = distCols .* distColsG;    Ccc = sum(Ccc(:));
+  Crc = distRows .* distColsG;    Crc = sum(Crc(:));
+  Czc = distZs   .* distColsG;    Czc = sum(Czc(:));
+  Crr = distRows .* distRowsG;    Crr = sum(Crr(:));
+  Czr = distZs   .* distRowsG;    Czr = sum(Czr(:));
+  Czz = distZs   .* distZs .* G;  Czz = sum(Czz(:));
   C = [Crr Crc Czr; Crc Ccc Czc; Czr Czc Czz] / sumG;
+  
 elseif( symmFlag==1 )
-  sigma_sq = (dist_cols.^2 + dist_rows.^2 + dist_zs .^ 2) .* G;
-  sigma_sq = 1/3 * sum(sigma_sq(:));
-  C = [sigma_sq 0 0; 0 sigma_sq 0; 0 0 sigma_sq] / sumG;
+  sigSq = (distCols.^2 + distRows.^2 + distZs .^ 2) .* G;
+  sigSq = 1/3 * sum(sigSq(:));
+  C = [sigSq 0 0; 0 sigSq 0; 0 0 sigSq] / sumG;
+  
 elseif( symmFlag==2 )
-  sigma_sq = (dist_cols.^2 + dist_rows.^2) .* G;  sigma_sq = 1/2 * sum(sigma_sq(:));
-  tau_sq = (dist_zs .^ 2) .* G;  tau_sq = sum(tau_sq(:));
-  C = [sigma_sq 0 0; 0 sigma_sq 0; 0 0 tau_sq] / sumG;
+  sigSq = (distCols.^2 + distRows.^2) .* G;  sigSq = 1/2 * sum(sigSq(:));
+  tauSq = (distZs .^ 2) .* G;  tauSq = sum(tauSq(:));
+  C = [sigSq 0 0; 0 sigSq 0; 0 0 tauSq] / sumG;
+  
 else
   error(['Illegal value for symmFlag: ' num2str(symmFlag)])
 end
 
 % get the log likelihood of the data
-if (nargout>2 || (show))
+if( nargout>2 || (show) )
   GR = filter_gauss_nD( size(G), mu, C );
   probs = GR; probs( probs<realmin ) = realmin;
   logl = G .* log( probs );
@@ -158,7 +166,7 @@ if (nargout>2 || (show))
 end
 
 % plot G and GR
-if (show)
+if( show )
   figure(show); montage2(G,1);
   figure(show+1); montage2(GR,1);
 end

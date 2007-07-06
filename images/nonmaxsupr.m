@@ -12,13 +12,13 @@
 % values.
 %
 % USAGE
-%  [subs,vals] = nonmaxsupr( I, radii, thresh, maxn )
+%  [subs,vals] = nonmaxsupr( I, radii, [thresh], [maxn] )
 %
 % INPUTS
 %  I       - matrix to apply nonmaxsupr to
 %  radii   - suppression window dimensions
-%  thresh  - [optional] minimum value below which not to look for maxes
-%  maxn:   - [optional] return at most maxn of the largest vals
+%  thresh  - [] minimum value below which not to look for maxes
+%  maxn:   - [0] return at most maxn of the largest vals
 %
 % OUTPUTS
 %  subs    - subscripts of non-suppressed point locations (n x d)
@@ -35,13 +35,13 @@
 % EXAMPLE - 2
 %   siz=[30 30]; I=ones(siz); I(22,23)=I(22,23)+3;
 %   I(12,23)=I(12,23)+5; I(7,1)=I(7,1)-.5; figure(1); im(I);
-%   r=3; supr_eq = 1; maxn=[]; thresh=eps;
+%   r=3; suprEq = 1; maxn=[]; thresh=eps;
 %   [subs,vals] = nonmaxsupr(I,r,thresh,maxn);
 %   figure(2); im( imsubs2array( subs, vals, siz ) );
 %   [subs,vals] = nonmaxsupr_window(subs,vals,[1 1]+6,siz-6);
 %   figure(3); im( imsubs2array( subs, vals, siz ) );
 %   [subs2,vals2] = nonmaxsupr_list( ind2sub2(siz,(1:prod(siz))'), ...
-%                                            I(:)',r,thresh,maxn,supr_eq );
+%                                            I(:)',r,thresh,maxn,suprEq );
 %   figure(4); im( imsubs2array( subs2, vals2, siz ) );
 %
 % See also IMSUBS2ARRAY, NONMAXSUPR_LIST, NONMAXSUPR_WINDOW

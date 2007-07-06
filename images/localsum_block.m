@@ -15,6 +15,9 @@
 %  I       - resulting array
 %
 % EXAMPLE
+%  load trees; I=ind2gray(X,map);
+%  I2 = localsum_block( I, 11 );
+%  figure(1); im(I); figure(2); im(I2);
 %
 % See also LOCALSUM
 

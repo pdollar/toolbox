@@ -1,12 +1,5 @@
 % Various ways to normalize a (multidimensional) image.
 %
-% Sets image X to have zero mean and unit variance (if flag==1).
-% Sets image X to range in [0,1] (if flag==2).
-% Sets image X to have zero mean (if flag==3).
-% Sets image X to have zero mean and unit magnitude (if flag==4).
-% Sets image X to have zero mean and unit variance, furthermore throws out
-%   extreme values and normalized to [0,1] (if flag==5)
-%
 % X may have arbitrary dimension (ie an image or video, etc).  X is treated
 % as a vector of pixel values.  Hence, the mean of X is the average pixel
 % value, and likewise the standard deviation is the std of the pixels from
@@ -17,7 +10,13 @@
 %
 % INPUTS
 %  X       - n dimensional array to standardize
-%  flag    - [optional] determines normalization procedure
+%  flag    - [1] determines normalization procedure. Sets X to:
+%            1: have zero mean and unit variance
+%            2: range in [0,1]
+%            3: have zero mean 
+%            4: have zero mean and unit magnitude
+%            5: zero mean/unit variance, throws out extreme values 
+%               and also normalizes to [0,1]
 %
 % OUTPUTS
 %  X       - X after normalization.
@@ -25,7 +24,7 @@
 % EXAMPLE
 %  I = double(imread('cameraman.tif'));
 %  N = imnormalize(I,1);
-%  mean(I(:)), std(I(:)), mean(N(:)), std(N(:))
+%  [mean(I(:)), std(I(:)), mean(N(:)), std(N(:))]
 %
 % See also FEVAL_ARRAYS
 

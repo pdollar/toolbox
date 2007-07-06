@@ -27,12 +27,12 @@
 % info see time_conv below.
 %
 % USAGE
-%  C = convn_fast( A, B, shape )
+%  C = convn_fast( A, B, [shape] )
 %
 % INPUTS
 %  A       - d dimensional input matrix
 %  B       - d dimensional matrix to convolve with A
-%  shape   - [optional] 'valid', ['full'], 'same', or 'smooth'
+%  shape   - ['full'] 'valid', 'full', 'same', or 'smooth'
 %
 % OUTPUTS
 %  C       - result of convolution

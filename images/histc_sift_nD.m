@@ -12,25 +12,23 @@
 % created for each using histc_nD.
 %
 % USAGE
-%  hs = histc_sift_nD( I, edges, pargmask, weightmask, multch )
+%  hs = histc_sift_nD( I, edges, parGmask, [weightMask], [multch] )
 %
 % INPUTS
-%  I           - M1xM2x...xMkxnd array, (nd channels each of dim
-%                M1xM2x...xMk)
-%  edges       - parameter to histc_nD, [either scalar, vector, or cell
-%                vector]
-%  pargmask    - cell of parameters to mask_gaussians
-%  weightmask  - [optional] M1xM2x...xMk numeric array of weights
-%  multch      - [optional] if 0 this becomes same as histc_sift.m (nd==1)
+%  I           - M1xM2x...xMkxnd array, (nd channels each of M1xM2x...xMk)
+%  edges       - parameter to histc_nD, either scalar, vector, or cell vec
+%  parGmask    - cell of parameters to mask_gaussians
+%  weightMask  - [] M1xM2x...xMk numeric array of weights
+%  multch      - [1] if 0 this becomes same as histc_sift.m (nd==1)
 %
 % OUTPUTS
 %  hs          - histograms (array of size nmasks x nbins)
 %
 % EXAMPLE
 %  G = filter_gauss_nD([100 100],[],[],0);
-%  hs = histc_sift_nD( cat(3,G,G), 5, {2,.6,.1,0} );
-%  hs = histc_sift_nD( cat(3,G,randn(size(G))),5,{2,.6,.1,0});
-%  figure(1); montage2(hs,1);  figure(2); montage2(hs,1);
+%  hs1 = histc_sift_nD( cat(3,G,G), 5, {2,.6,.1,0} );
+%  hs2 = histc_sift_nD( cat(3,G,randn(size(G))),5,{2,.6,.1,0});
+%  figure(1); montage2(hs1,1);  figure(2); montage2(hs2,1);
 %
 % See also HISTC_1D, HISTC_SIFT, MASK_GAUSSIANS, HISTC_ND
 
@@ -38,9 +36,9 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions
 
-function hs = histc_sift_nD( I, edges, pargmask, weightmask, multch )
+function hs = histc_sift_nD( I, edges, parGmask, weightMask, multch )
 
-if( nargin<4 ); weightmask=[]; end;
+if( nargin<4 ); weightMask=[]; end;
 if( nargin<5 ); multch=1; end;
 
 % set up for either multiple channels or 1 channel
@@ -52,10 +50,10 @@ else
 end;
 
 % create masks [slow but cached]
-[masks,keeplocs] = mask_gaussians( siz, pargmask{:} );
+[masks,keeplocs] = mask_gaussians( siz, parGmask{:} );
 nmasks = size(masks,nd+1);
-if( ~isempty(weightmask) )
-  masks = masks .* repmat(weightmask,[ones(1,nd) nmasks]); end;
+if( ~isempty(weightMask) )
+  masks = masks .* repmat(weightMask,[ones(1,nd) nmasks]); end;
 
 % flatten
 I = reshape( I, [], nch );
@@ -93,7 +91,6 @@ for m=1:nmasks
     % no smoothing, too slow
     %h = gauss_smooth( h, .5, 'same', 2.5 );
   end;
-
 
   % store results
   if( m==1 )

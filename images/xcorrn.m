@@ -10,12 +10,12 @@
 % parameters in different orders.
 %
 % USAGE
-%  C = xcorrn( A, T, shape )
+%  C = xcorrn( A, T, [shape] )
 %
 % INPUTS
 %  A           - first d-dimensional matrix
 %  T           - second d-dimensional matrix
-%  shape       - [optional] 'valid', 'full', or 'same', see convn_fast help
+%  shape       - ['full'] 'valid', 'full', or 'same', see convn_fast help
 %
 % OUTPUTS
 %  C           - correlation matrix

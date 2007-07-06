@@ -3,13 +3,13 @@
 % Works exactly the same as imrotate.  For usage see imrotate.
 %
 % USAGE
-%  IR = imrotate2( I, angle, method, bbox )
+%  IR = imrotate2( I, angle, [method], [bbox] )
 %
 % INPUTS
 %  I       - 2D image [converted to double]
 %  angle   - angle to rotate in degrees
-%  method  - 'nearest',{'linear'},'spline','cubic';
-%  bbox    - {'loose'}, 'crop'
+%  method  - ['linear'] 'nearest', 'linear', 'spline', 'cubic'
+%  bbox    - ['loose'] 'loose' or 'crop'
 %
 % OUTPUTS
 %  IR      - rotated image

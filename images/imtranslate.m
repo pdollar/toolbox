@@ -1,20 +1,19 @@
 % Translate an image to subpixel accuracy.
 %
-% Note that for subplixel accuracy cannot use nearest neighbor 
-% interpolation.
+% Note that for subplixel accuracy cannot use nearest neighbor interp.
 %
 % USAGE
-%  IR = imtranslate( I, dx, dy, method, bbox )
+%  IR = imtranslate( I, dx, dy, [method], [bbox] )
 %
 % INPUTS
 %  I       - 2D image [converted to double]
 %  dx      - x translation (right)
 %  dy      - y translation (up)
-%  method  - 'nearest',{'linear'},'spline','cubic';
-%  bbox    - {'loose'}, 'crop'
+%  method  - ['linear'] 'nearest', 'linear', 'spline', 'cubic'
+%  bbox    - ['loose'] 'loose' or 'crop'
 %
 % OUTPUTS
-%  IR      - rotated image
+%  IR      - translated image
 %
 % EXAMPLE
 %  load trees;

@@ -27,34 +27,30 @@
 % set of images.
 %
 % USAGE
-%  IJ = jitter_image( I, nphis, maxphi, ntrans, maxtrans, jsiz, ...
-%   reflectflag, scales )
+%  function IJ = jitter_image( I, nphis, maxphi, ntrans, maxtrans, ...
+%                              jsiz, reflFlag, scales )
 %
 % INPUTS
-%  I           - BW input image (MxN) or images (MxNxK), must have odd
-%                dimensions
+%  I           - BW image (MxN) or images (MxNxK), must have odd dims
 %  nphis       - number of rotations
 %  maxphis     - max value for rotation
 %  ntrans      - number of translations
 %  maxtrans    - max value for translation
-%  jsiz        - [optional] Final size of each image in IJ
-%  reflectflag - [optional] if true then also adds reflection of each image
-%  scales      - [optional] nscalesx2 array of vert/horiz scalings
+%  jsiz        - [] Final size of each image in IJ
+%  reflFlag    - [0] if true then also adds reflection of each image
+%  scales      - [1 1] nscalesx2 array of vert/horiz scalings
 %
 % OUTPUTS
 %  IJ          - MxNxR or MxNxKxR set of images where
-%  R=(ntrans*ntrans*nphis*nscales)
+%                R=(ntrans*ntrans*nphis*nscales)
 %
 % EXAMPLE
-%  load trees; I = ind2gray(X,map); I = imresize(I,[41 41]); 
-%  clear X caption map
-%  % creates 7^2*2 images of slight translations with reflection (but no 
-%  %rotation)
+%  load trees; I=imresize(ind2gray(X,map),[41 41]); clear X caption map
+%  % creates 7^2*2 images of slight trans with reflection (but no rotation)
 %  IJ = jitter_image( I, 0, 0, 7, 3, [35 35], 1 ); montage2(IJ,1,1)
 %  % creates 5 images of slight rotations (no translations)
 %  IJ = jitter_image( I, 5, 25, 0, 0, size(I) ); montage2(IJ,1,1)
-%  % creates 45 images of both rotation and slight translations
-%  % alternatively use (maxtrans=3) OR (nphis=5)
+%  % creates 45 images of both rot and slight trans
 %  IJ = jitter_image( I, 5, 10, 3, 2 ); montage2(IJ,1,1)
 %  % additionally create multiple scaled versions
 %  IJ = jitter_image( I, 1, 0, 1, 0, [], [], [1 1; 2 1; 1 2; 2 2] );
@@ -66,8 +62,8 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function IJ = jitter_image( I, nphis, maxphi, ntrans, maxtrans, jsiz, ...
-  reflectflag, scales )
+function IJ = jitter_image( I, nphis, maxphi, ntrans, maxtrans, ...
+                            jsiz, reflFlag, scales )
 
 % NOTE: CODE HAS BECOME REALLY MESSY :-(
 
@@ -83,7 +79,7 @@ nd = ndims(I); siz = size(I);
 
 % basic error checking and default parameter settings
 if( nargin<6 || isempty(jsiz)); jsiz = []; end
-if( nargin<7 || isempty(reflectflag)); reflectflag = 0; end
+if( nargin<7 || isempty(reflFlag)); reflFlag = 0; end
 if( nargin<8 || isempty(scales)); scales = [1 1]; end
 if( nphis==0 || nphis==1); maxphi=0; nphis = 1; end
 if( ntrans==0 || ntrans==1); maxtrans=0; ntrans = 1; end
@@ -118,10 +114,10 @@ end
 
 % now for each image jitter it!
 if( nd==2)
-  IJ = jitter_image1( I, jsiz, phis, trans, scales, reflectflag );
+  IJ = jitter_image1( I, jsiz, phis, trans, scales, reflFlag );
 elseif( nd==3)
   IJ = feval_arrays( I, @jitter_image1, jsiz, phis, trans, scales, ...
-    reflectflag );
+    reflFlag );
   IJ = reshape( IJ, size(IJ,1), size(IJ,2), [] );
 else
   error('Only defined for 2 or 3 dimensional I');
@@ -129,7 +125,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % this function does the work for SCALE
-function IJ = jitter_image1( I, jsiz, phis, trans, scales, reflectflag )
+function IJ = jitter_image1( I, jsiz, phis, trans, scales, reflFlag )
 method = 'linear';
 nscales = size(scales,1);
 if( nscales==1 ) % if just 1 scaling
@@ -151,8 +147,8 @@ else % multiple scales
   IJ = reshape( IJ, size(IJ,1), size(IJ,2), [] );
 end
 
-% add reflection if reflectflag
-if( reflectflag ); IJ = cat( 3, IJ, flipdim( IJ, 2 ) ); end
+% add reflection if reflFlag
+if( reflFlag ); IJ = cat( 3, IJ, flipdim( IJ, 2 ) ); end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % this function does the work for ROT/TRANS

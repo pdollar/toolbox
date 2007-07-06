@@ -3,8 +3,8 @@
 % The qth bin of each histogram contains the count of the number of
 % locations in I that have value in between edges(q)<=v< edges(q+1).
 % HS(i,j,...,k,:) will contain the histogram at location (i,j,...,k), as
-% calculated by weighing values in I by placing weightmask at that
-% location.  For example, if weightmask is ones(window_size) then the
+% calculated by weighing values in I by placing weightMask at that
+% location.  For example, if weightMask is ones(windowSize) then the
 % histogram at every location will simply be a histogram of the pixels
 % within that window.
 %
@@ -14,19 +14,17 @@
 % possible flags such as 'same', 'valid', 'full, or 'smooth'.
 %
 % USAGE
-%  HS = histc_image( I, edges, weightmask, shape )
+%  HS = histc_image( I, edges, weightMask, [shape] )
 %
 % INPUTS
 %  I           - Array with integer values [see above]
-%  edges       - either nbins+1 length vector of quantization bounds,
-%                or nbins
-%  weightmask  - numeric array of weights, or cell array of seperable
-%                weight kernels
-%  shape       - [optional] 'valid', ['full'], 'same', or 'smooth'
+%  edges       - either nbins+1 vec of quantization bounds, or scalar nbins
+%  weightMask  - numeric array of weights, or cell array of sep kernels
+%  shape       - ['full'] 'valid', 'full', 'same', or 'smooth'
 %
 % OUTPUTS
-%  HS          - ~size(I)xQ array where each ~size(I) elt is a Q element
-%                 histogram (~size(I) because depends on val of shape)
+%  HS          - ~size(I)xQ array where each ~size(I) elt is a Q elem hist
+%                (~size(I) because depends on val of shape)
 %
 % EXAMPLE
 %  load trees;
@@ -42,26 +40,27 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions
 
-function HS = histc_image( I, edges, weightmask, shape )
-if( nargin<4 || isempty(shape) ); shape = 'full';  end
-if( ~iscell(weightmask) ); weightmask={weightmask}; end
+function HS = histc_image( I, edges, weightMask, shape )
+
+if( nargin<4 || isempty(shape) ); shape = 'full';  end;
+if( ~iscell(weightMask) ); weightMask={weightMask}; end;
 
 % split I into channels
 I = assign2bins( I, edges );
-nbins=length(edges)-1; if(nbins==0); nbins=edges; end
+nbins=length(edges)-1; if(nbins==0); nbins=edges; end;
 nd = ndims(I); siz=size(I);  maxI = max(I(:));
-if( nd==2 && siz(2)==1); nd=1; siz=siz(1); end
-QI = false(siz, maxI);
+if( nd==2 && siz(2)==1); nd=1; siz=siz(1); end;
+QI = false( [siz maxI] );
 inds = {':'}; inds = inds(:,ones(1,nd));
-for i=1:nbins; QI(inds{:},i)=I==i; end
+for i=1:nbins;  QI(inds{:},i)=(I==i); end;
 HS = double( QI );
 
-% convolve with weightmask to get histograms, scale appropriately
-for i=1:length(weightmask)
-  weightmaski = weightmask{i};
-  for d=1:ndims(weightmaski); weightmaski = flipdim(weightmaski,d); end
-  weightmaski = weightmaski / sum(weightmaski(:));
-  HS = convn_fast( HS, weightmaski, shape );
+% convolve with weightMask to get histograms, scale appropriately
+for i=1:length(weightMask)
+  weightMaski = weightMask{i};
+  for d=1:ndims(weightMaski); weightMaski = flipdim(weightMaski,d); end;
+  weightMaski = weightMaski / sum(weightMaski(:));
+  HS = convn_fast( HS, weightMaski, shape );
 end;
-
+    
 

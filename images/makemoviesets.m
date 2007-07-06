@@ -8,13 +8,13 @@
 % makemoviesets. Works by calling montages2 once per frame.
 %
 % USAGE
-%  M = makemoviesets2( IS, montagesparams )
+%  M = makemoviesets2( IS, [montagesparams] )
 %
 % INPUTS
 %  IS              - MxNxTxRxS or MxNx1xTxRxS or MxNx3xTxRxS array, or cell
 %                    array where each element is an MxNxTxR or MxNx1xTxR or
 %                    MxNx3xTxR array
-%  montagesparams  - [optional] cell array of params for montages
+%  montagesparams  - [] cell array of params for montages
 %
 % OUTPUTS
 %  M               - resulting movie

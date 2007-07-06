@@ -5,19 +5,16 @@
 %   I = repmat( I, [1,1,1,3] ); I = permute(I, [1,2,4,3] );
 %
 % USAGE
-%  varargout = montage2( IS, showlines, extrainfo, clim, mm, nn, labels )
+%  varargout = montage2(IS,[showLns],[extraInf],[clim],[mm],[nn],[labels])
 %
 % INPUTS
 %  IS          - MxNxT or MxNx1xT or MxNx3xT array (of bw or color images)
-%  showlines   - [optional] whether to show lines separating the various
-%                frames
-%  extrainfo   - [optional] if 1 then a colorbar is shown as well as pixval
-%                bar
-%  clim        - [optional] clim = [clow chigh] optional scaling of data
-%  m           - [optional] #images/col (if [] then calculated)
-%  nn          - [optional] #images/row (if [] then calculated)
-%  labels      - [optional] cell array of strings specifying labels for
-%  each image
+%  showLns     - [0] whether to show lines separating the various frames
+%  extraInf    - [0] if 1 then a colorbar is shown as well as pixval bar
+%  clim        - [] clim = [clow chigh] optional scaling of data
+%  m           - [] #images/col (if [] then calculated)
+%  nn          - [] #images/row (if [] then calculated)
+%  labels      - [] cell array of strings specifying labels for each image
 %
 % OUTPUTS
 %  h           - image handle
@@ -25,8 +22,7 @@
 %  nn          - #images/row
 %
 % EXAMPLE
-%  load( 'images.mat' );
-%  montage2( images );
+%  load( 'images.mat' ); montage2( images, 1 );
 %
 % See also MONTAGE, MAKEMOVIE
 
@@ -34,11 +30,10 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function varargout = montage2( IS, showlines, extrainfo, clim, mm, nn, ...
-  labels )
+function varargout=montage2( IS, showLns, extraInf, clim, mm, nn, labels )
 
-if (nargin<2 || isempty(showlines)); showlines = 0; end;
-if (nargin<3 || isempty(extrainfo)); extrainfo = 0; end;
+if (nargin<2 || isempty(showLns)); showLns = 0; end;
+if (nargin<3 || isempty(extraInf)); extraInf = 0; end;
 if (nargin<4 || isempty(clim)); clim = []; end;
 if (nargin<5 || isempty(mm)); mm = []; end;
 if (nargin<6 || isempty(nn)); nn = []; end;
@@ -48,7 +43,7 @@ if (nargin<7 || isempty(labels)); labels = {}; end;
 if( ndims(IS)==2)
   if(~isempty(clim)); h=imagesc(IS,clim); else h=imagesc(IS); end;
   title(inputname(1)); colormap(gray);  axis('image');
-  if(extrainfo)
+  if(extraInf)
     colorbar; pixval on;
   else
     set(gca,'XTick',[]); set(gca,'YTick',[]);
@@ -90,20 +85,20 @@ end
 % display I
 if( ~isempty(clim)); h=imagesc(I,clim);  else  h=imagesc(I);  end
 colormap(gray);  title(inputname(1));  axis('image');
-if( extrainfo)
+if( extraInf)
   colorbar; impixelinfo;
 else
   set(gca,'XTick',[]); set(gca,'YTick',[]);
 end;
 
 % draw lines seperating frames
-if( showlines )
-  montage_width = nn * siz(2) + .5;  montage_height = mm * siz(1) + .5;
+if( showLns )
+  montageWd = nn * siz(2) + .5;  montageHt = mm * siz(1) + .5;
   for i=1:mm-1
-    height = i*siz(1)+.5; line([.5,montage_width],[height,height]); 
+    height = i*siz(1)+.5; line([.5,montageWd],[height,height]); 
   end
   for i=1:nn-1
-    width = i*siz(2)+.5; line([width,width],[.5,montage_height]);
+    width = i*siz(2)+.5; line([width,width],[.5,montageHt]);
   end
 end
 

@@ -5,13 +5,12 @@
 % normxcorr2.m.  Also see Forsyth & Ponce 11.3.1 (p241).
 %
 % USAGE
-%  C = normxcorrn( T, A, shape )
+%  C = normxcorrn( T, A, [shape] )
 %
 % INPUTS
-%  T           - template to correlate to each window in A, must be smaller
-%                than A
+%  T           - template to correlate to each window in A
 %  A           - matrix to correlate T to
-%  shape       - [optional] 'valid', 'full', or 'same', see convn_fast help
+%  shape       - ['full'] 'valid', 'full', or 'same', see convn_fast help
 %
 % OUTPUTS
 %  C           - correlation matrix

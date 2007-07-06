@@ -1,29 +1,24 @@
 % Calculate optical flow using Lucas & Kanade.  Fast, parallel code.
 %
 % Note that the window of integration can either be a hard square window of
-% radius win_n or it can be a soft 'gaussian' window with sigma win_sig.
+% radius winN or it can be a soft 'gaussian' window with sigma winSig.
 % In general the soft window should be more accurate.
 %
 % USAGE
-%  [Vx,Vy,reliab]=optflow_lucaskanade( I1, I2, win_n, win_sig, sigma, thr,
-%  show )
+%  [Vx,Vy,reliab]=optflow_lucaskanade( I1, I2, winN, ...
+%                                [winSig], [sigma], [thr], [show] )
 %
 % INPUTS
 %  I1, I2  - input images to calculate flow between
-%  win_n   - window radius for hard window (should be [] if win_sig is
-%            provided)
-%  win_sig - [optional] sigma for soft 'gauss' window (should be [] if
-%            win_n is provided)
-%  sigma   - [optional] amount to smooth by (may be 0)
-%  thr     - [optional] ABSOLUTE reliability threshold (min eigenvalue),
-%            [default: 3e-6]
-%  show    - [optional] figure to use for display (no display if == 0)
+%  winN    - window radius for hard window (=[] if winSig provided)
+%  winSig  - [] sigma for soft 'gauss' window (=[] if winN provided)
+%  sigma   - [1] amount to smooth by (may be 0)
+%  thr     - [3e-6] ABSOLUTE reliability threshold (min eigenvalue)
+%  show    - [0] figure to use for display (no display if == 0)
 %
 % OUTPUTS
-%  Vx, Vy  - x,y components of optical flow [Vx>0 -> flow is right,
-%            Vy>0 -> flow is down]
-%  reliab  - reliability of optical flow in given window (cornerness of
-%            window)
+%  Vx, Vy  - x,y components of flow  [Vx>0->right, Vy>0->down]
+%  reliab  - reliability of flow in given window (cornerness of window)
 %
 % EXAMPLE
 %  % create square + translated square (B) + rotated square (C)
@@ -44,18 +39,19 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [Vx,Vy,reliab]=optflow_lucaskanade( I1, I2, win_n, win_sig, ...
-  sigma, thr, show )
-if( nargin<4 || isempty(win_sig));  win_sig=[]; end
+function [Vx,Vy,reliab]=optflow_lucaskanade( I1, I2, winN, ...
+                                            winSig, sigma, thr, show )
+
+if( nargin<4 || isempty(winSig));  winSig=[]; end
 if( nargin<5 || isempty(sigma)); sigma=1; end
 if( nargin<6 || isempty(thr)); thr=3e-6; end
 if( nargin<7 || isempty(show)); show=0; end
 
 % error check inputs
-if( ~isempty(win_n) && ~isempty(win_sig))
-  error('Either win_n or win_sig should be empty!'); end
-if( isempty(win_n) && isempty(win_sig))
-  error('Either win_n or win_sig must be non-empty!'); end
+if( ~isempty(winN) && ~isempty(winSig))
+  error('Either winN or winSig should be empty!'); end
+if( isempty(winN) && isempty(winSig))
+  error('Either winN or winSig must be non-empty!'); end
 if( ndims(I1)~=2 || ndims(I2)~=2 )
   error('Only works for 2d input images.');
 end
@@ -83,17 +79,17 @@ I2 = gauss_smooth(I2,sigma,'same');
 % Compute components of outer product of gradient of frame 1
 [Gx,Gy]=gradient(I1);
 Gxx=Gx.^2;  Gxy=Gx.*Gy;   Gyy=Gy.^2;
-if( isempty(win_sig) )
-  win_mask = ones(2*win_n+1);
+if( isempty(winSig) )
+  win_mask = ones(2*winN+1);
   win_mask = win_mask / sum(win_mask(:));
   Axx=conv2(Gxx,win_mask,'same');
   Axy=conv2(Gxy,win_mask,'same');
   Ayy=conv2(Gyy,win_mask,'same');
 else
-  win_n = ceil(win_sig);
-  Axx=gauss_smooth(Gxx,win_sig,'same',2);
-  Axy=gauss_smooth(Gxy,win_sig,'same',2);
-  Ayy=gauss_smooth(Gyy,win_sig,'same',2);
+  winN = ceil(winSig);
+  Axx=gauss_smooth(Gxx,winSig,'same',2);
+  Axy=gauss_smooth(Gxy,winSig,'same',2);
+  Ayy=gauss_smooth(Gyy,winSig,'same',2);
 end;
 
 % Find determinant, trace, and eigenvalues of A'A
@@ -103,12 +99,12 @@ V1=0.5*sqrt(trA.^2-4*detA);
 
 % Compute inner product of gradient with time derivative
 It=I2-I1;    IxIt=-Gx.*It;   IyIt=-Gy.*It;
-if( isempty(win_sig) )
+if( isempty(winSig) )
   ATbx=conv2(IxIt,win_mask,'same');
   ATby=conv2(IyIt,win_mask,'same');
 else
-  ATbx=gauss_smooth(IxIt,win_sig,'same',2);
-  ATby=gauss_smooth(IyIt,win_sig,'same',2);
+  ATbx=gauss_smooth(IxIt,winSig,'same',2);
+  ATby=gauss_smooth(IyIt,winSig,'same',2);
 end;
 
 % Compute components of velocity vectors
@@ -117,8 +113,8 @@ Vy=(1./(detA+eps)).*(-Axy.*ATbx+Axx.*ATby);
 
 % Check for ill conditioned second moment matrices
 reliab = 0.5*trA-V1;
-reliab([1:win_n end-win_n+1:end],:)=0;
-reliab(:,[1:win_n end-win_n+1:end])=0;
+reliab([1:winN end-winN+1:end],:)=0;
+reliab(:,[1:winN end-winN+1:end])=0;
 Vx(reliab<thr) = 0;   Vy(reliab<thr) = 0;
 
 % show quiver plot on top of reliab

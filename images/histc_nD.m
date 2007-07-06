@@ -18,13 +18,12 @@
 % See histc_1D for more details about edges and nbins.
 %
 % USAGE
-%  h = histc_nD( I, edges, weightmask )
+%  h = histc_nD( I, edges, weightMask )
 %
 % INPUTS
 %  I           - 2D numeric array [n x nd]
-%  edges       - either a scalar, vector, or length n cell vector of
-%                scalars and vectors
-%  weightmask  - [optional] n length vector of weights
+%  edges       - either nbins+1 vec of quantization bounds, or scalar nbins
+%  weightMask  - [] n length vector of weights
 %
 % OUTPUTS
 %  h           - histogram (array of size nbins1xnbins2x...)
@@ -41,9 +40,9 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions
 
-function h = histc_nD( I, edges, weightmask )
+function h = histc_nD( I, edges, weightMask )
 
-if (nargin<3), weightmask=[]; end;
+if (nargin<3), weightMask=[]; end;
 if( ~isa(I,'double') ); I=double(I); end;
 [n nd] = size(I);
 if( ~iscell(edges ) )
@@ -51,8 +50,8 @@ if( ~iscell(edges ) )
 elseif( length(edges)~=nd )
   error( 'Illegal dimensions for edges' );
 end
-if( ~isempty(weightmask) && length(weightmask)~=n )
-  error( 'Illegal dimensions for weightmask' ); end
+if( ~isempty(weightMask) && length(weightMask)~=n )
+  error( 'Illegal dimensions for weightMask' ); end
 
 % if nbins given instead of edges calculate edges
 % minI = min(I,[],1); maxI = max(I,[],1);
@@ -63,6 +62,6 @@ for i=1:length( edges );
 end
 
 % create histogram
-if( isempty(weightmask) ); weightmask=ones(1,n); end;
-h = histc_nD_c( I, weightmask, edges{:} );
+if( isempty(weightMask) ); weightMask=ones(1,n); end;
+h = histc_nD_c( I, weightMask, edges{:} );
 h = h / sum(h(:));

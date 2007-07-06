@@ -17,7 +17,7 @@
 %  ratios  - k element vector of shrinking factors
 %
 % OUTPUTS
-%  I   - shrunk version of input
+%  I       - shrunk version of input
 %
 % EXAMPLE
 %
@@ -28,6 +28,7 @@
 % Please email me if you find bugs, or have suggestions or questions
 
 function I = imshrink( I, ratios )
+
 siz = size(I);  nd = ndims(I);
 while( length(ratios)>nd && ratios(end)==1 ); ratios=ratios(1:end-1); end
 [ratios,er] = checknumericargs( ratios, [1 nd], 0, 2 ); error(er);

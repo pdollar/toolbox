@@ -1,15 +1,15 @@
 % Calculate optical flow using Horn & Schunck.
 %
 % USAGE
-%  [Vx,Vy] = optflow_horn( I1, I2, sigma, show )
+%  [Vx,Vy] = optflow_horn( I1, I2, [sigma], [show] )
 %
 % INPUTS
 %  I1, I2      - input images to calculate flow between
-%  sigma       - [optional] amount to smooth by (may be 0)
-%  show        - [optional] figure to use for display (no display if == 0)
+%  sigma       - [1] amount to smooth by (may be 0)
+%  show        - [0] figure to use for display (no display if == 0)
 %
 % OUTPUTS
-% Vx, Vy  - x,y components of optical flow [Vx>0 -> flow is right, Vy>0 ->
+%  Vx, Vy      - x,y components of flow  [Vx>0->right, Vy>0->down]
 %
 % EXAMPLE
 %
@@ -20,6 +20,7 @@
 % Please email me if you find bugs, or have suggestions or questions!
 
 function [Vx,Vy] = optflow_horn( I1, I2, sigma, show )
+
 if (nargin < 3); sigma=1; end;
 if (nargin < 4); show=0; end;
 

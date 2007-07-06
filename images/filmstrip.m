@@ -10,10 +10,10 @@
 %  border     - width of black border around each frame
 %
 % OUTPUTS
-%  X       - X after normalization.
+%  X         - X after normalization.
 %
 % EXAMPLE
-%  load images;
+%  load images;  
 %  F = filmstrip( video(:,:,1:15), 10, 2, 5 );
 %  figure(1); im(F);
 %

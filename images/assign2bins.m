@@ -9,20 +9,17 @@
 % See histc_1D for more details about edges and nbins.
 %
 % USAGE
-%  histmontage( HS, mm, nn )
+%  B = assign2bins( I, edges )
 %
 % INPUTS
-%  I           - numeric array of arbitrary dimension
-%  edges       - either nbins+1 length vector of quantization bounds, or 
-%                scalar nbins
+%  I      - numeric array of arbitrary dimension
+%  edges  - either nbins+1 vector of quantization bounds, or scalar nbins
 %
 % OUTPUTS
-%  B           - size(I) array of quantization levels, int values between 
-%                [0,nbins]
+%  B      - size(I) array of quantization levels, int between [0,nbins]
 %
 % EXAMPLE
-%  I = rand(5,5)
-%  B = assign2bins(I,[0:.1:1])
+%  I = rand(5,5), B = assign2bins(I,[0:.1:1])
 %
 % See also HISTC_1D
 
@@ -32,7 +29,7 @@
 
 function B = assign2bins( I, edges )
 
-if(~isa(I,'double')) I = double(I); end;
+if(~isa(I,'double')); I = double(I); end;
 
 if( length(edges)==1 )  % if nbins given instead of edges calculate edges
   edges = linspace( min(I(:))-eps, max(I(:))+eps, edges+1 ); end;

@@ -4,13 +4,13 @@
 % sparse arrays.
 %
 % USAGE
-%  I = imsubs2array( subs, vals, siz, fillval )
+%  I = imsubs2array( subs, vals, siz, [fillVal] )
 %
 % INPUTS
 %  subs    - subscripts of point locations (n x d)
 %  vals    - values at point locations (n x 1)
 %  siz     - image size vector (1xd) - must fully contain subs
-%  fillval - [optional] value to fill array with at nonspecified locs
+%  fillVal - [0] value to fill array with at nonspecified locs
 %
 % OUTPUTS
 %  I       - array of size siz
@@ -23,9 +23,10 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions
 
-function I = imsubs2array( subs, vals, siz, fillval )
+function I = imsubs2array( subs, vals, siz, fillVal )
 
-if( nargin<4 || isempty(fillval) ); fillval=0; end
+if( nargin<4 || isempty(fillVal) ); fillVal=0; end
+
 inds = sub2ind2( siz, subs );
-I = repmat( fillval, siz );
+I = repmat( fillVal, siz );
 I(inds) = vals;

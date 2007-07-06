@@ -3,7 +3,7 @@
 % To display same data statically use montage.
 %
 % USAGE
-%  M = makemovies( IS, montage2params )
+%  M = makemovies( IS )
 %
 % INPUTS
 %  IS              - MxNxT or MxNx1xT or MxNx3xT array of movies.
@@ -39,7 +39,7 @@ for i=1:siz(4)
   Ii=IS(:,:,:,i);
   if( nch==1 ); [Ii,Mi] = gray2ind( Ii ); else Mi=[]; end
   if i==1
-    M=rapmat(im2frame( Ii, Mi ),[1,siz(4)]);
+    M=repmat(im2frame( Ii, Mi ),[1,siz(4)]);
   else
     M(i) = im2frame( Ii, Mi );
   end

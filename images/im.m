@@ -8,14 +8,13 @@
 %
 % INPUTS
 %  I       - image in a valid format
-%  range   - [optional] minval/maxval for imagesc
+%  range   - [] minval/maxval for imagesc
 %
 % OUTPUTS
 %  X       - X after normalization.
 %
 % EXAMPLE
-%  load clown
-%   im( X )
+%  load clown; im( X )
 %
 % See also IMSHOW, IMVIEW
 

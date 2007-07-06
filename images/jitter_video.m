@@ -9,23 +9,21 @@
 % Note: All temporal translations must have integer size.
 %
 % USAGE
-%  IS = jitter_video( I, nphis, maxphi, ntrans, maxtrans, nttrans,
-%    maxttrans, jsiz )
+%  IS = jitter_video( I, nphis, maxphi, ntrans, maxtrans, ...
+%                            nttrans, maxttrans, jsiz )
 %
 % INPUTS
-%  I           - BW input video (MxNxT) or videos (MxNxTxK), must have odd 
-%                dimensions
+%  I           - BW video (MxNxT) or videos (MxNxTxK), must have odd dims
 %  nphis       - number of spatial rotations (must be odd)
 %  maxphis     - max value for spatial rotation
 %  ntrans      - number of spatial translations (must be odd)
 %  maxtrans    - max value for spatial translations
 %  nttrans     - number of temporal translations (must be odd)
 %  maxttrans   - max value for temporal translations
-%  jsiz        - [optional] Final size of each video in IJ
+%  jsiz        - [] Final size of each video in IJ
 %
 % OUTPUTS
-%  IS          - MxNxTxR or MxNxTxKxR set of videos where
-%                R=(ntrans*ntrans*nphis)
+%  IS          - MxNxTxR or MxNxTxKxR set of vids, R=(ntrans*ntrans*nphis)
 %
 % EXAMPLE
 %
@@ -35,8 +33,8 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function IS = jitter_video( I, nphis, maxphi, ntrans, maxtrans, nttrans,...
-  maxttrans, jsiz )
+function IS = jitter_video( I, nphis, maxphi, ntrans, maxtrans, ...
+                            nttrans, maxttrans, jsiz )
 
 nd = ndims(I);  siz = size(I);
 

@@ -1,8 +1,9 @@
 % Writes/reads a large set of images into/from multiple directories.
 %
-% This is useful since certain OS handle very large directories (of say >20K images)
-% rather poorly (I'm talking to you Bill).  Thus, can take 100K images, and write into 5
-% separate directories, then read them back in.
+% This is useful since certain OS handle very large directories (of say
+% >20K images) rather poorly (I'm talking to you Bill).  Thus, can take
+% 100K images, and write into 5 separate directories, then read them back
+% in.
 %
 % USAGE
 %  I = imwrite2split( I, nSplits, spliti, path, varargin )
@@ -12,7 +13,7 @@
 %  nSplits     - number of directories to split data into
 %  spliti      - first split number
 %  path        - directory where images are
-%  writeparams - [varargin] additional parameters to imwrite2
+%  writePrms   - [varargin] additional parameters to imwrite2
 %
 % OUTPUTS
 %  I           - image or images (read from disk if input I=[])

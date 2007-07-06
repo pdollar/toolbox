@@ -12,22 +12,22 @@
 % because it cannot use the trick of precomputing sums.
 %
 % USAGE
-%  C = normxcorrn_fg( T, T_fg, A, shape )
+%  C = normxcorrn_fg( T, T_fg, A, [shape] )
 %
 % INPUTS
-%  T    - template to correlate to each window in A
-%  T_fg - figure/ground mask for the template
-%  A           - matrix to correlate template to
-%  shape       - [optional] 'valid', 'full', or 'same', see convn_fast help
+%  T           - template to correlate to each window in A
+%  T_fg        - figure/ground mask for the template
+%  A           - matrix to correlate T to
+%  shape       - ['full'] 'valid', 'full', or 'same', see convn_fast help
 %
 % OUTPUTS
 %  C           - correlation matrix
 %
 % EXAMPLE
-%   A=rand(50);  B=rand(11);  Bfg=ones(11);
-%   C1=normxcorrn_fg(B,Bfg,A);  C2=normxcorr2(B,A);
-%   figure(1); im(C1); figure(2); im(C2);
-%   figure(3); im(abs(C1-C2));
+%  A=rand(50);  B=rand(11);  Bfg=ones(11);
+%  C1=normxcorrn_fg(B,Bfg,A);  C2=normxcorr2(B,A);
+%  figure(1); im(C1); figure(2); im(C2);
+%  figure(3); im(abs(C1-C2));
 %
 % See also NORMXCORRN
 

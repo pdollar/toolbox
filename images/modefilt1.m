@@ -33,7 +33,7 @@ function y = modefilt1( x, s )
 [b,dis,inds] = unique(x(:)');
 m = length(b); n = length(x);
 if(m>256)
-  warning('modefilt1: x takes on a large number of different values'); %#ok<WNTAG>
+  warning('modefilt1: x takes on large number of diff vals'); %#ok<WNTAG>
 end
 
 % create quantized representation

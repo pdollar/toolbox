@@ -1,7 +1,6 @@
 % Creates a stack of images from a matlab movie M.
 %
-% Repeatedly calls frame2im.
-% Useful for playback with playmovie.
+% Repeatedly calls frame2im. Useful for playback with playmovie.
 %
 % USAGE
 %  I = movie2images( M )
@@ -27,8 +26,10 @@ function I = movie2images( M )
 
 I = feval_arrays( M, @frame2Ii );
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function I = frame2Ii( F )
+
 [I,map] = frame2im( F );
 if( isempty(map) )
   if( size(I,3)==3 )

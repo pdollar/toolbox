@@ -14,20 +14,19 @@
 % running on anything bigger.
 %
 % USAGE
-%  [Vx,Vy,reliab] = optflow_corr( I1, I2, patch_r, search_r, sigma, ...
-%                   thr, show )
+%  [Vx,Vy,reliab] = optflow_corr( I1, I2, patchR, searchR, 
+%                                 [sigma], [thr], [show] )
 %
 % INPUTS
 %  I1, I2      - input images to calculate flow between
-%  patch_r     - determines correlation patch size around each pixel
-%  search_r    - search radius for corresponding patch
-%  sigma       - [optional] amount to smooth by (may be 0)
-%  thr         - [optional] RELATIVE reliability threshold (.01 by default)
-%  show        - [optional] figure to use for display (no display if == 0)
+%  patchR      - determines correlation patch size around each pixel
+%  searchR     - search radius for corresponding patch
+%  sigma       - [1] amount to smooth by (may be 0)
+%  thr         - [.001] RELATIVE reliability threshold 
+%  show        - [0] figure to use for display (no display if == 0)
 %
 % OUTPUTS
-%  Vx, Vy  - x,y components of optical flow [Vx>0 -> flow is right,
-%            Vy>0 -> flow is down]
+%  Vx, Vy      - x,y components of flow  [Vx>0->right, Vy>0->down]
 %  reliab  - reliability of optical flow in given window (cornerness of
 %            window)
 %
@@ -35,8 +34,8 @@
 %
 % See also OPTFLOW_HORN, OPTFLOW_LUCASKANADE
 
-function [Vx,Vy,reliab] = optflow_corr( I1, I2, patch_r, search_r, ...
-  sigma, thr, show )
+function [Vx,Vy,reliab] = optflow_corr( I1, I2, patchR, searchR, ...
+                                        sigma, thr, show )
 
 if( nargin<5 || isempty(sigma)); sigma=1; end;
 if( nargin<6 || isempty(thr)); thr=0.001; end;
@@ -58,18 +57,18 @@ I2b = gauss_smooth( I2, [sigma sigma], 'smooth' );
 % precomputed constants
 subpixelaccuracy = 1;
 siz = size(I1);
-big_r = search_r + patch_r;
-n = (2*patch_r+1)^2;
-width_D = 2*search_r+1;
+big_r = searchR + patchR;
+n = (2*patchR+1)^2;
+width_D = 2*searchR+1;
 [ndxs,ndys] = meshgrid( 1:width_D, 1:width_D );
 
 % hack to penalize more distant translations (closest are best?)
-[xs,ys] = meshgrid(-search_r:search_r,-search_r:search_r);
-Dpenalty = ((xs.^2 + ys.^2)/search_r^2 + 1) .^(1/20);
+[xs,ys] = meshgrid(-searchR:searchR,-searchR:searchR);
+Dpenalty = ((xs.^2 + ys.^2)/searchR^2 + 1) .^(1/20);
 
-% pad I1 and I2 by search_r in each direction
-I1b = padarray(I1b,[search_r search_r],0,'both');
-I2b = padarray(I2b,[search_r search_r],0,'both');
+% pad I1 and I2 by searchR in each direction
+I1b = padarray(I1b,[searchR searchR],0,'both');
+I2b = padarray(I2b,[searchR searchR],0,'both');
 sizB = size(I1b);
 
 % precompute gradient for subpixel accuracy
@@ -79,7 +78,7 @@ sizB = size(I1b);
 Vx = zeros( sizB-2*big_r ); Vy = Vx;  reliab = Vx;
 for r = big_r+1:sizB(1)-big_r
   for c = big_r+1:sizB(2)-big_r
-    T = I1b( r-patch_r:r+patch_r, c-patch_r:c+patch_r );
+    T = I1b( r-patchR:r+patchR, c-patchR:c+patchR );
     IC = I2b( r-big_r:r+big_r, c-big_r:c+big_r );
 
     % get smallest distance
@@ -93,10 +92,10 @@ for r = big_r+1:sizB(1)-big_r
 
     % get subpixel movement using lucas kanade on rectified windows
     if( subpixelaccuracy )
-      T2 = I2b( r+v(1)-patch_r:r+v(1)+patch_r, c+v(2)-patch_r:c+v(2)+ ...
-        patch_r );
-      gEx_rc = gEx(r-patch_r:r+patch_r, c-patch_r:c+patch_r );
-      gEy_rc = gEy(r-patch_r:r+patch_r, c-patch_r:c+patch_r );
+      T2 = I2b( r+v(1)-patchR:r+v(1)+patchR, c+v(2)-patchR:c+v(2)+ ...
+        patchR );
+      gEx_rc = gEx(r-patchR:r+patchR, c-patchR:c+patchR );
+      gEy_rc = gEy(r-patchR:r+patchR, c-patchR:c+patchR );
       Et_rc = T2-T;
       A = [ gEx_rc(:), gEy_rc(:) ];  b = -Et_rc(:);
       AtA = A'*A;  detAtA = AtA(1)*AtA(4)-AtA(2)*AtA(3);

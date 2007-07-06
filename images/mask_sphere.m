@@ -16,7 +16,7 @@
 % INPUTS
 %  d         - dimension (any positive integer)
 %  r         - sphere integer radius 
-%  show      - [optional] figure in which to display results
+%  show      - [] figure in which to display results
 %
 % OUTPUTS
 %  mask      - [s x s x s x ... x s] hypersphere image

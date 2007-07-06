@@ -1,10 +1,10 @@
 % Used for visualization of clusters of images and videos.
 %
 % To display only a subset of clusters, given in a vector cs, use IDXb:
-%   IDXb = zeros(size(IDX)); for i=1:length(cs) IDXb(IDX==cs(i))=i; end;
+%  IDXb = zeros(size(IDX)); for i=1:length(cs) IDXb(IDX==cs(i))=i; end;
 %
 % To save created movie:
-%   movie2avi(M, ['example.avi'], 'compression','Cinepak');
+%  movie2avi( M, 'example.avi', 'compression', 'Cinepak' );
 %
 % USAGE
 %  XC = clustermontage( X, IDX, nvals, pad )
@@ -14,15 +14,15 @@
 %  IDX     - cluster membership (Rx1 integer vector) [see kmeans2.m]
 %  nvals   - max number of instances to show of each cluster
 %  pad     - pads each cluster w blanks so it has exactly nvals elements,
-%  if necessary
+%            if necessary
 %
 % OUTPUTS
-%  XC       - if pad==1
-%              M x N x nvals x nclusters if X contains images
-%              M x N x T x nvals x nclusters if X contains videos
-%            - if pad==0
-%              nclusters cell of M x N x c arrays if X contains images
-%              nclusters cell of M x N x T x c arrays if X contains videos
+%  XC      - if pad==1
+%            M x N x nvals x nclusters if X contains images
+%            M x N x T x nvals x nclusters if X contains videos
+%          - if pad==0
+%            nclusters cell of M x N x c arrays if X contains images
+%            nclusters cell of M x N x T x c arrays if X contains videos
 %
 % EXAMPLE
 %

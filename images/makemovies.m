@@ -4,13 +4,12 @@
 % Works by calling montage2 once per frame.
 %
 % USAGE
-%  M = makemovies( IS, montage2params )
+%  M = makemovies( IS, [montage2params] )
 %
 % INPUTS
 %  IS              - MxNxTxR or MxNx1xTxR or MxNx3xTxR array, or cell array
 %                    where each element is a MxNxT or MxNx1xT or MxNx3xT
-%  montage2params  - [optional] params for montage2 -- ex: {showlines,
-%                    extrainfo}
+%  montage2params  - [] params for montage2, ex: {showlines, extrainfo}
 %
 % OUTPUTS
 %  M               - resulting movie

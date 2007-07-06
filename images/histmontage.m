@@ -4,17 +4,14 @@
 %  histmontage( HS, mm, nn )
 %
 % INPUTS
-%  HS  - nhist x nbins array where HS(i,j) is the jth bin in the ith 
-%        histogram
-%  mm  - [optional] #images/row (if [] then calculated based on nn)
-%  nn  - [optional] #images/col(if [] then calculated based on mm)
+%  HS  - HS(i,j) is the jth bin in the ith histogram
+%  mm  - [] #images/row (if [] then calculated based on nn)
+%  nn  - [] #images/col (if [] then calculated based on mm)
 %
 % OUTPUTS
-%  X       - X after normalization.
 %
 % EXAMPLE
-%  h = histc_1D( randn(2000,1), 20 );
-%  histmontage([h; h]);
+%  h = histc_1D( randn(2000,1), 20 ); histmontage([h; h]);
 %
 % See also HISTC, HISTC_1D, FILTER_GAUSS_1D
 

@@ -10,12 +10,12 @@
 % similarity matrix, whereas xeucn gives a dissimilarity (distance) matrix.
 %
 % USAGE
-%  C = xeucn( A, T, shape )
+%  C = xeucn( A, T, [shape] )
 %
 % INPUTS
 %  A           - first d-dimensional matrix
 %  T           - second d-dimensional matrix
-%  shape       - [optional] 'valid', 'full', or 'same', see convn_fast help
+%  shape       - ['full'] 'valid', 'full', or 'same', see convn_fast help
 %
 % OUTPUTS
 %  C           - correlation matrix
@@ -29,6 +29,7 @@
 % Please email me if you find bugs, or have suggestions or questions!
 
 function C = xeucn( A, T, shape )
+
 if( nargin < 3 || isempty(shape)); shape='full'; end
 nd = ndims(T);
 if( nd~=ndims(A) )

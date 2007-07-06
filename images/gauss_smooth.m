@@ -5,15 +5,14 @@
 % seperable and is implemented as such.
 %
 % USAGE
-%  [L,filters] = gauss_smooth( I, sigmas, shape, radius )
+%  [L,filters] = gauss_smooth( I, sigmas, [shape], [radius] )
 %
 % INPUTS
-%  I       - imput image
+%  I       - input image
 %  sigmas  - either n dimensional or 1 dimensional vector of standard devs
-%          - if sigmas(n)<=.3 then does not smooth along that dimension
-%  shape   - [optional] shape to use in convolution 'valid', ['full'],
-%            'same', or 'smooth'
-%  radius  - [optional] radius in units of standard deviation [deflt=2.25]
+%            if sigmas(n)<=.3 then does not smooth along that dimension
+%  shape   - ['full'] shape flag 'valid', 'full', 'same', or 'smooth'
+%  radius  - [2.25] radius in units of standard deviation
 %
 % OUTPUTS
 %  L       - smoothed image

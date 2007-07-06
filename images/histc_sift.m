@@ -5,20 +5,19 @@
 % into approximately equally sized hyper-rectangular regions so that
 % together these hyper-rectangles cover I.  The hyper-rectangles are
 % actually 'soft', in that each region is actually defined by a gaussian
-% mask, for details see mask_gaussians. pargmask, parameters to
+% mask, for details see mask_gaussians. parGmask, parameters to
 % mask_gaussians, controls details about how the masks are created.
 % Optionally, each value in I may have associated weight given by
-% weightmask, which should have the same exact dimensions as I.
+% weightMask, which should have the same exact dimensions as I.
 %
 % USAGE
-%  hs = histc_sift( I, edges, pargmask, weightmask )
+%  hs = histc_sift( I, edges, parGmask, [weightMask] )
 %
 % INPUTS
 %  I           - M1xM2x...xMk numeric array
-%  edges       - either nbins+1 length vector of quantization bounds, or
-%                nbins
-%  pargmask    - cell of parameters to mask_gaussians
-%  weightmask  - [optional] size(I) numeric array of weights
+%  edges       - either nbins+1 vec of quantization bounds, or scalar nbins
+%  parGmask    - cell of parameters to mask_gaussians
+%  weightMask  - [] size(I) numeric array of weights
 %
 % OUTPUTS
 %  hs          - histograms (array of size nbins x nmasks)
@@ -33,8 +32,8 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions
 
-function hs = histc_sift( I, edges, pargmask, weightmask )
+function hs = histc_sift( I, edges, parGmask, weightMask )
 
-if( nargin<4 ); weightmask=[]; end;
-hs = histc_sift_nD( I, edges, pargmask, weightmask, 0 );
+if( nargin<4 ); weightMask=[]; end;
+hs = histc_sift_nD( I, edges, parGmask, weightMask, 0 );
 
