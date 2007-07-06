@@ -94,7 +94,7 @@ switch flag
 end
 
 % display
-FB_visualize( FB, show );
+FbVisualize( FB, show );
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -3,7 +3,7 @@
 % For 1D and 2D filterabnks also shows the Fourier spectra of the filters.
 %
 % USAGE
-%  FB_visualize( FB, [show] )
+%  FbVisualize( FB, [show] )
 %
 % INPUTS
 %  FB      - filter bank to visualize (either 2D, 3D, or 4D array)
@@ -12,9 +12,9 @@
 % OUTPUTS
 %
 % EXAMPLE
-%  FB=FB_make_1D(1,0);  FB_visualize( FB, 1 );  %1D
-%  load FbDoG.mat;     FB_visualize( FB, 2 );  %2D
-%  FB=FB_make_3D(1,0);  FB_visualize( FB, 3 );  %3D
+%  FB=FB_make_1D(1,0);  FbVisualize( FB, 1 );  %1D
+%  load FbDoG.mat;     FbVisualize( FB, 2 );  %2D
+%  FB=FB_make_3D(1,0);  FbVisualize( FB, 3 );  %3D
 %
 % See also
 
@@ -22,7 +22,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function FB_visualize( FB, show )
+function FbVisualize( FB, show )
 
 if( nargin<2 || isempty(show) ); show=1; end
 if( show<=0); return; end;
