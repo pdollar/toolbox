@@ -28,7 +28,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function I2 = FB_reconstruct_2D( I, FB, patch )
 
 FBmrows = size(FB,1); FBncols = size(FB,2);
@@ -98,4 +98,3 @@ else %%% recover entire image
   subplot(2,2,3); im( I );
   subplot(2,2,4); im( I2 );
 end
-

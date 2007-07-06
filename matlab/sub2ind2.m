@@ -24,7 +24,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function ind = sub2ind2( siz, sub )
 
 if(isempty(sub)); ind=[]; return; end;
@@ -40,4 +40,3 @@ end
 k = [1 cumprod(siz(1:end-1))];
 ind = 1;
 for i = 1:n; ind = ind + (sub(:,i)-1)*k(i); end
-

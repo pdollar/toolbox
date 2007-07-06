@@ -49,7 +49,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function [subs,vals] = nonmaxsupr( I, radii, thresh, maxn )
 
 % default values [error checking done by nlfilter_max]
@@ -67,4 +67,3 @@ if( ~isempty(maxn) && maxn>0 && maxn<length(vals) )
   subs = subs( 1:maxn ); vals = vals( 1:maxn );
 end
 subs = ind2sub2(size(I),subs);
-

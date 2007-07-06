@@ -27,7 +27,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function [L,filters] = gauss_smooth( I, sigmas, shape, radius )
 
 nd = ndims(I);  if(length(sigmas)==1); sigmas=repmat(sigmas,[1,nd]); end
@@ -52,4 +52,3 @@ for i=1:nd
   end
 end
 
-

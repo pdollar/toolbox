@@ -34,7 +34,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function C = normxcorrn( T, A, shape )
 
 if( nargin < 3 || isempty(shape)); shape='full'; end;
@@ -64,4 +64,3 @@ AwMag = real(sqrt(localsum(A.*A,size(T),shape)-n*(AwAve.*AwAve)));
 % mag of Aw per win
 C = convn_fast(A,TN,shape) ./ (AwMag+eps);  % NormXCorr in each window
 C( AwMag<.00001 ) = 0; % prevent numerical errors
-

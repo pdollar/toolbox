@@ -21,7 +21,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function imlabel( labels, position, S, pvPairs )
 
 if( nargin<3 || isempty(S) ); S=0; end
@@ -99,4 +99,3 @@ switch position
   otherwise
     error(['illegal position: ' position]);
 end
-

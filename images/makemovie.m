@@ -22,7 +22,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function M = makemovie( IS )
 
 % get images format (if image stack is MxNxT convert to MxNx1xT)
@@ -45,4 +45,3 @@ for i=1:siz(4)
   end
 end
 
-

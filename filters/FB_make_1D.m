@@ -18,7 +18,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function FB = FB_make_1D( flag, show )
 
 if( nargin<2 || isempty(show) ); show=0; end
@@ -44,4 +44,3 @@ for i=1:length(omegas)
   if( i==1 ); FB=repmat(feven,[2*length(omegas) 1]); end
   FB(i*2-1,:)=feven; FB(i*2,:)=fodd;
 end
-

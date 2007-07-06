@@ -27,7 +27,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function C = xeucn( A, T, shape )
 
 if( nargin < 3 || isempty(shape)); shape='full'; end
@@ -49,4 +49,3 @@ T_mag = T.^2;  T_mag = sum( T_mag(:) );    % constant (sum of squares of T)
 C = A_mag + T_mag - 2 * convn_fast(A,T,shape); % Distance squared
 % C( A_mag<.01 ) = T_mag;  % prevent numerical errors
 C = sqrt(real(C));
-

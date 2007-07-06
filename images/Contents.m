@@ -69,5 +69,3 @@
 %   mask_gaussians      - Divides a volume into softly overlapping gaussian windows.
 %   mask_sphere         - Creates an 'image' of a n-dimensional hypersphere.
 %   modefilt1           - One-dimensional mode filtering.
-
-

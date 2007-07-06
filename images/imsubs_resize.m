@@ -26,7 +26,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function subs = imsubs_resize( subs, resizVals )
 
 [n d] = size(subs);
@@ -36,4 +36,3 @@ function subs = imsubs_resize( subs, resizVals )
 resizVals = repmat( resizVals, [n, 1] );
 subs = (subs - .5) .* resizVals +.5;
 
-

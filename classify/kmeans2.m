@@ -50,7 +50,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function [ IDX, C, sumd ] = kmeans2( X, k, varargin )
 
 %%% get input args   (NOT SUPPORTED:  distance, emptyaction, start )
@@ -141,8 +141,3 @@ end
 
 % record within-cluster sums of point-to-centroid distances
 sumd = zeros(1,k); for i=1:k;  sumd(i) = sum( mind(IDX==i) ); end
-
-
-
-
-

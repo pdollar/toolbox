@@ -52,7 +52,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function varargout = imageMLG( G, symmFlag, show )
 
 if( nargin<2 || isempty(symmFlag) ); symmFlag=0; end;
@@ -170,4 +170,3 @@ if( show )
   figure(show); montage2(G,1);
   figure(show+1); montage2(GR,1);
 end
-

@@ -19,7 +19,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function democlassify
 
 %%% generate data
@@ -75,8 +75,3 @@ for i=1:nnets
   CM(:,:,i) = CMi ./ repmat( sum(CMi,2), [1 size(CMi,2)] );
 end;
 subplot(3,1,3); montage2( CM,1,1,[0,1],1,[],labels );
-
-
-
-
-

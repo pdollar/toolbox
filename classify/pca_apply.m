@@ -32,7 +32,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function [Yk,Xhat,avsq,avsqOrig] = pca_apply(X,U,mu,vars,k) %#ok<INUSL>
 
 siz = size(X); nd = ndims(X);  [N,r]  = size(U);
@@ -78,7 +78,3 @@ if( nargout>2 )
     avsq = avsq / avsqOrig;
   end
 end
-
-
-
-

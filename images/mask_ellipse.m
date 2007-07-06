@@ -40,7 +40,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function mask = mask_ellipse( mrows, ncols, varargin )
 
 if( nargin==7 )
@@ -63,4 +63,3 @@ locs = double( locs(1:n,:) );
 inds = locs(:,1) + (mrows)*(locs(:,2)-1); 
 mask = zeros( mrows, ncols );
 mask( inds ) = 1;
-

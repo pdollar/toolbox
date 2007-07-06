@@ -38,7 +38,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function [x,er] = checknumericargs( x, siz, intFlag, signFlag )
 
 xname = inputname(1); er='';
@@ -108,4 +108,3 @@ if(numel(x)<10)
 else
   er = ['Numeric input argument ' xname ' ' er '.'];
 end
-

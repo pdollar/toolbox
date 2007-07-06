@@ -32,7 +32,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function IR = apply_homography( I, H, method, bbox, show )
 
 if( ndims(I)~=2 ); error('I must a MxN array'); end;
@@ -92,4 +92,3 @@ if ( show)
   figure(show); clf; im(I);
   figure(show+1); clf; im(IR);
 end
-

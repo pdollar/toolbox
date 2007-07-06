@@ -18,7 +18,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function clf = clf_knn( p, k, dist_fn )
 
 if( nargin<3 ); dist_fn = @dist_euclidean; end
@@ -29,8 +29,3 @@ clf.k = k;
 clf.dist_fn = dist_fn;
 clf.fun_train = @clf_knn_train;
 clf.fun_fwd = @clf_knn_fwd;
-
-
-
-
-

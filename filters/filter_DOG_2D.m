@@ -26,7 +26,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function G = filter_DOG_2D( r, var, order, show )
 
 if( nargin<4 || isempty(show) ); show=0; end
@@ -54,4 +54,3 @@ G=G/norm(G(:),1);
 
 % display
 if(show); filter_visualize_2D( G, 'row', show ); end
-

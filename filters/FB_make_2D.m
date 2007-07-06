@@ -24,7 +24,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function FB = FB_make_2D( flag, show )
 
 if( nargin<2 || isempty(show) ); show=0; end
@@ -149,4 +149,3 @@ for s=1:length(sigs)
   FB(:,:,s) = filter_DOG_2D(r,sigs(s),2);
   if( s==1 ); FB=repmat(FB,[1 1 length(sigs)]); end
 end
-

@@ -19,7 +19,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function [u,theta] = recover_rotation3D( R )
 
 % find location of eigenvector w evalue other than 1
@@ -39,4 +39,3 @@ dif = R-rotation_matrix3D(u,theta);
 if (any(any(dif<-epsilon)) || any(any(dif>epsilon)))
   theta = -theta;
 end
-

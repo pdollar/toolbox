@@ -26,7 +26,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function IR = imrotate2( I, angle, method, bbox )
 
 if( ~isa( I, 'double' ) ); I = double(I); end
@@ -39,4 +39,3 @@ angle_rads = angle /180 * pi;
 R = rotation_matrix2D( angle_rads );
 H = [R [0;0]; 0 0 1];
 IR = apply_homography( I, H, method, bbox );
-

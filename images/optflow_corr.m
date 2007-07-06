@@ -37,7 +37,10 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
+function [Vx,Vy,reliab] = optflow_corr( I1, I2, patchR, searchR, ...
+                                        sigma, thr, show )
+
 if( nargin<5 || isempty(sigma)); sigma=1; end;
 if( nargin<6 || isempty(thr)); thr=0.001; end;
 if( nargin<7 || isempty(show)); show=0; end;
@@ -147,4 +150,3 @@ B_mag = B.^2;  B_mag = sum( B_mag(:) );
 C = I_mag + B_mag - 2 * conv2(I,B,shape);
 
 
-

@@ -1,8 +1,19 @@
-% toolbox_generatedoc - Generate documentation.  Must run from directory toolbox. 
+% Generate documentation, must run from dir toolbox.
+%
+% USAGE
+%  toolbox_generatedoc
+%
+% INPUTS
+%
+% OUTPUTS
+%
+% EXAMPLE
+%
+% See also
 
-% Piotr's Image&Video Toolbox      Version 1.03
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-% Please email me if you find bugs, or have suggestions or questions! 
+% Piotr's Image&Video Toolbox      Version 1.5
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
 
 % The template frame-piotr is frame copied over, with a special start page
 % (overview.html), and Contents.html given a link from every menu.  Also,

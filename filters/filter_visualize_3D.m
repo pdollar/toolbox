@@ -22,7 +22,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function filter_visualize_3D( F, frac, show )
 
 if( nargin<2 || isempty(frac)); frac = .1; end % 10% of peak
@@ -46,4 +46,3 @@ camlight; lighting gouraud; set(gca,'Box','on');
 set(gca,'YTick',[]); set(gca,'XTick',[]); set(gca,'ZTick',[]);
 xlabel('y'); ylabel('t'); zlabel('x');
 if(~washeld); hold('off'); end
-

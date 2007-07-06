@@ -17,7 +17,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function FB = FB_make_3D( flag, show )
 
 if( nargin<2 || isempty(show) ); show=0; end;
@@ -42,4 +42,3 @@ end
 
 % display
 FB_visualize( FB, show );
-

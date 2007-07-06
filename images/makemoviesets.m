@@ -30,7 +30,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function M = makemoviesets( IS, montagesparams )
 if( nargin<2 ); montagesparams = {}; end
 if( isempty(montagesparams) || isempty(montagesparams{1}))
@@ -97,4 +97,3 @@ for f=1:nframes
 end
 close(h);
 
-

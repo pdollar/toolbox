@@ -60,7 +60,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function id = ticstatus( msg, updateFreq, updateMinT, erasePrev )
 
 global TICTOCSTATUS TICTOCFREEIDS
@@ -90,4 +90,3 @@ TICTOCSTATUS(id).msg  = msg;
 TICTOCSTATUS(id).t0 = t0;
 TICTOCSTATUS(id).tLast = t0;
 TICTOCSTATUS(id).lenPrev = 0;
-

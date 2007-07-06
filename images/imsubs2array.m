@@ -22,7 +22,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function I = imsubs2array( subs, vals, siz, fillVal )
 
 if( nargin<4 || isempty(fillVal) ); fillVal=0; end
@@ -30,4 +30,3 @@ if( nargin<4 || isempty(fillVal) ); fillVal=0; end
 inds = sub2ind2( siz, subs );
 I = repmat( fillVal, siz );
 I(inds) = vals;
-

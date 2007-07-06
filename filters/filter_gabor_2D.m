@@ -29,7 +29,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function [Feven,Fodd] = filter_gabor_2D( r, sig, lam, theta, omega, show )
 
 if( nargin<5 || isempty(omega) ); omega=1; end
@@ -59,4 +59,3 @@ if( show )
   filter_visualize_2D( Feven, 0, show );
   filter_visualize_2D( Fodd, 0, show+1 );
 end
-

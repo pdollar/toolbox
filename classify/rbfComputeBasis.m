@@ -50,7 +50,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function rbfBasis = rbfComputeBasis( X, k, cluster, scale, show )
 
 if( nargin<2 || isempty(k)); error('k not specified'); end
@@ -122,7 +122,3 @@ if( abs(show) )
     scatter3( mu(1,:),mu(2,:),mu(3,:),30,'filled');
   end
 end
-
-
-
-

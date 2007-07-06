@@ -27,7 +27,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function y = modefilt1( x, s )
 
 [b,dis,inds] = unique(x(:)');
@@ -48,4 +48,3 @@ A = localsum( A, [0 s], 'same' );
 % create y
 [vs,inds] = max( A,[],1 );
 y=b( inds );
-

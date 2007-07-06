@@ -28,7 +28,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function f = filter_binomial_1D( r, show )
 
 if( nargin<2 ); show=0; end;
@@ -38,4 +38,3 @@ f = diag(fliplr(pascal(2*r+1))) / 4^r;
 
 % display
 if(show); filter_visualize_1D( f, show ); end;
-

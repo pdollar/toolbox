@@ -24,7 +24,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function FBC = FB_crop( FB, delta )
 
 nd = ndims(FB);
@@ -40,4 +40,3 @@ for f=1:size(FB,3)
   FC = FC / sum(sum(abs(FC))); % L1 norm == 1
   FBC(:,:,f) = FC;
 end
-

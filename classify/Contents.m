@@ -49,13 +49,3 @@
 %   rbfComputeBasis     - Get locations and sizes of radial basis functions for use in rbf network.
 %   rbfComputeFeatures  - Evaluate features of X given a set of radial basis functions.
 %   rbfDemo             - Demonstration of rbf networks for regression.
-
-
-
-
-
-
-
-
-
-

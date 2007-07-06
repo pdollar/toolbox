@@ -27,7 +27,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function [cRow, cCol, ra, rb, phi] = gauss2ellipse( mu, C, rad )
 
 if (nargin<3 || isempty(rad) ); rad=2; end;
@@ -52,4 +52,3 @@ rb = rad*normstd(2);
 % center of ellipse
 cRow = mu(1);
 cCol = mu(2);
-

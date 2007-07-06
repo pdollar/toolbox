@@ -30,7 +30,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function meanshiftim_explore( I, X, sigSpt, sigRng, show )
 
 if( nargin<5 ); show = 1; end
@@ -68,8 +68,3 @@ subplot(2,2,3); im(Seuc);
 hold('on'); plot( c, r, '.g' ); plot( c2, r2, '.b' ); hold('off');
 subplot(2,2,4); im(S);
 hold('on'); plot( c, r, '.g' ); plot( c2, r2, '.b' ); hold('off');
-
-
-
-
-

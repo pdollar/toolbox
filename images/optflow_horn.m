@@ -18,7 +18,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function [Vx,Vy] = optflow_horn( I1, I2, sigma, show )
 
 if (nargin < 3); sigma=1; end;
@@ -97,4 +97,3 @@ s4(2:end-1,3:end)=I;  %j-1
 
 s5 = zeros(N1+2,N2+2);
 s5(1:end-2,1:end-2)=I; % i+1,j+1
-

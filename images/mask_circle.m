@@ -36,7 +36,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function mask = mask_circle( angle_start, angle_size, r, nsamples )
 
 if( nargin<4 || isempty(nsamples) ); nsamples = 1; end
@@ -63,4 +63,3 @@ if (nsamples>1)
   sampling= 1:nsamples:nsamples*r*2; 
   mask = mask(sampling,sampling) / nsamples^2;
 end
-

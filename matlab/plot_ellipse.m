@@ -23,7 +23,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function h = plot_ellipse( cRow, cCol, ra, rb, phi, color, nPnts )
 
 error(nargchk( 5, 7, nargin ));
@@ -41,4 +41,3 @@ h = plot( ra*cts*cos(-phi) + rb*sts*sin(-phi) + cCol, ...
 washeld = ishold; if (~washeld); hold('on'); end
 hc = plot( cCol, cRow, 'k+' ); set( hc, 'Color', color );
 if (~washeld); hold('off'); end
-

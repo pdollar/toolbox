@@ -24,7 +24,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function f = filter_gauss_1D( r, sigma, show )
 
 if( nargin<3 || isempty(show) ); show=0; end
@@ -39,4 +39,3 @@ sumf = sum(f(:));  if(sumf~=0); f = f/sumf; end
 
 % display
 if(show); filter_visualize_1D( f, show ); end
-

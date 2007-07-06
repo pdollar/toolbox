@@ -26,7 +26,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function tf = isfield2( S, fs, isinit )
 
 if( nargin<3 ); isinit=0;  end
@@ -59,4 +59,3 @@ for i=1:nfs
     if( ~tf ); return; end
   end
 end
-

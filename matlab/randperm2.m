@@ -27,7 +27,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function p = randperm2( n, k )
 
 wid = sprintf('Images:%s:obsoleteFunction',mfilename);
@@ -44,4 +44,3 @@ p = randsample( n, k );
 %    t = p(r);  p(r) = p(i);  p(i) = t;
 %  end
 %  p = p(1:k);
-

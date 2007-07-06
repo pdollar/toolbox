@@ -30,7 +30,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function CM = confmatrix( IDXtrue, IDXpred, ntypes )
 
 IDXtrue=IDXtrue(:); IDXpred=IDXpred(:);
@@ -60,8 +60,3 @@ for i=1:ntypes
   vals = IDXpred( IDXtrue==i );
   for j=1:ntypes; CM(i,j) = sum(vals==j); end
 end
-
-
-
-
-

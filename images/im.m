@@ -21,7 +21,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function im( I, range )
 
 if( nargin==0 || isempty(I)); I=0; end;
@@ -39,4 +39,3 @@ colorbar; % appends a colorbar
 axis('image'); % used for images
 % whitebg('black'); set(gcf,'color', [0 0 0]); %black background:
 % set(gcf,'menubar','none'); % no menu
-

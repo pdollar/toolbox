@@ -23,7 +23,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function I = arraycrop_full( I, strLocs, endLocs, padEl )
 
 if( nargin<4 || isempty(padEl)); padEl=0; end
@@ -57,4 +57,3 @@ if (any(padPre~=0) || any(padPost~=0))
   Ib = repmat( padEl, sizPadded );
   Ib(idx{:}) = I;  I = Ib;
 end
-

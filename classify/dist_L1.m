@@ -27,7 +27,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function D = dist_L1( X, Y )
 
 m = size(X,1);  n = size(Y,1);
@@ -36,8 +36,3 @@ for i=1:n
   yi = Y(i,:);  yi = yi( m_ones, : );
   D(:,i) = sum( abs( X-yi),2 );
 end
-
-
-
-
-

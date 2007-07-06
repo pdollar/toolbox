@@ -39,7 +39,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function h = histc_nD( I, edges, weightMask )
 
 if (nargin<3), weightMask=[]; end;
@@ -65,4 +65,3 @@ end
 if( isempty(weightMask) ); weightMask=ones(1,n); end;
 h = histc_nD_c( I, weightMask, edges{:} );
 h = h / sum(h(:));
-

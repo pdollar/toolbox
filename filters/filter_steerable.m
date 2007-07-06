@@ -18,7 +18,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function filter_steerable( theta )
 
 % Get G
@@ -37,4 +37,3 @@ Gtheta = cos(theta)*dxG + sin(theta)*dyG;
 % dislpay (scale for visualization purposes)
 GS = cat(3,G,dxG*2,dyG*2,Gtheta*2);
 figure(1); montage2(GS,1);
-

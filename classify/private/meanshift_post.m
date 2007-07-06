@@ -14,7 +14,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function [IDX,C] = meanshift_post( X, IDX, C, minCsize, forceOutl )
 
 %%% force outliers to belong to IDX (mainly for visualization)
@@ -50,4 +50,3 @@ while( 1 )
   tocstatus( ticId, (kinit-k)/kinit );
 end
 tocstatus( ticId, 1 );
-

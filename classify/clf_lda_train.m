@@ -18,7 +18,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function clf = clf_lda_train( clf, X, Y )
 
 if( ~strcmp(clf.type,'lda')); error( ['incorrect type: ' clf.type] ); end
@@ -108,8 +108,3 @@ clf.gmeans = gmeans;
 clf.gtype = gtype;
 clf.groups = groups;
 clf.ngroups = ngroups;
-
-
-
-
-

@@ -39,7 +39,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function IR = texture_map( I, rowDst, colDst, bbox )
 
 if(isa( I, 'uint8' )); I = double(I); end;
@@ -64,4 +64,3 @@ end;
 % Get values at col_samples and row_samples
 IR = griddata( colDst, rowDst, I, colGrid, rowGrid );
 IR(isnan(IR)) = 0;
-

@@ -29,7 +29,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function varargout=pca_visualize( U, mu, vars, X, index, ks, fname, show )
 
 siz = size(X); nd = ndims(X);  [N,r]  = size(U);
@@ -109,7 +109,3 @@ elseif( nd==4 ) % videos
     if( nargout>2 ); movie2avi(MU,'prineigenimages.avi',compr{:} ); end;
   end
 end
-
-
-
-

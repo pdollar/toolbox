@@ -26,7 +26,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function dG = filter_DooG_nD( dims, sigmas, nderivs, show )
 
 nd = length( dims );
@@ -65,4 +65,3 @@ if( show && nd<=3 )
   end
   title( ['sigs=[' num2str(sigmas) '], derivs=[' num2str( nderivs ) ']']);
 end
-

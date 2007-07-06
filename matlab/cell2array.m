@@ -27,7 +27,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function Y = cell2array( X, padEl )
 
 if(~iscell(X)); error('X must be a cell array'); end
@@ -54,4 +54,3 @@ if( all(maxsiz==minsiz) )
 else
   for i=1:n; Y( inds{:}, i ) = arraycrop2dims( X{i}, maxsiz, padEl); end
 end
-

@@ -45,7 +45,7 @@
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
- 
+
 function [IDX,M] = meanshift(X, radius, rate, maxiter, minCsize, blur )
 
 if( nargin<3 ); rate =.2; end
@@ -71,8 +71,3 @@ ccounts = zeros(1,k); for i=1:k; ccounts(i) = sum( IDX==i ); end
 IDX2 = IDX;  for i=1:k; IDX2(IDX==order(i))=i; end; IDX = IDX2;
 [v,loc] = min( ccounts>=minCsize );
 if( v==0 ); M( loc:end, : ) = []; IDX( IDX>=loc ) = -1; end
-
-
-
-
-
