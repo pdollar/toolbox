@@ -154,7 +154,7 @@ if (nargout>2 || (show))
   GR = filter_gauss_nD( size(G), mu, C );
   probs = GR; probs( probs<realmin ) = realmin;
   logl = G .* log( probs );
-  logl = sum( logl(:) )
+  logl = sum( logl(:) );
 end
 
 % plot G and GR
