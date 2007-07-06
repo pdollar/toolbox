@@ -1,8 +1,4 @@
-Todo:
- -faster meanshit code from vincent
-
-
-Version 1.04
+Version 1.5 (05-Jul-07)
  -major documentation change
  -formatting of code
  -general code cleanup
