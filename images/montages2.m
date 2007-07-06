@@ -5,20 +5,17 @@
 % set. Alternative to montages.
 %
 % USAGE
-%  varargout = montages2( IS, montage2params, padsize )
+%  varargout = montages2( IS, [montage2prms], [padSiz] )
 %
 % INPUTS
-%  IS                  - MxNxTxR or MxNx1xTxR or MxNx3xTxR array
-%  montage2params      - [optional] params for montage2; ex: {showlines,
-%                        extrainfo}
-%  padsize             - [optional] total amount of vertical or horizontal
-%                        padding
+%  IS            - MxNxTxR or MxNx1xTxR or MxNx3xTxR array
+%  montage2prms  - [] params for montage2; ex: {showLns,extraInf}
+%  padSiz        - [4] total amount of vertical or horizontal padding
 %
 % OUTPUTS
-%  IS                  - 3D or 4D array of flattened images, displayed with
-%                        montage2
-%  mm                  - #montages/row
-%  nn                  - #montages/col
+%  I             - 3D or 4D array of flattened images, disp with montage2
+%  mm            - #montages/row
+%  nn            - #montages/col
 %
 % EXAMPLE
 %  load( 'images.mat' );
@@ -31,10 +28,11 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [IS,mm,nn] = montages2( IS, montage2params, padsize )
-if( nargin<2 || isempty(montage2params) ); montage2params = {}; end
-if( nargin<3 || isempty(padsize) ); padsize = 4; end
-[padsize,er] = checknumericargs( padsize,[1 1], 0, 1 ); error(er);
+function varargout = montages2( IS, montage2prms, padSiz )
+
+if( nargin<2 || isempty(montage2prms) ); montage2prms = {}; end
+if( nargin<3 || isempty(padSiz) ); padSiz = 4; end
+[padSiz,er] = checknumericargs( padSiz,[1 1], 0, 1 ); error(er);
 
 % get/test image format info
 nd = ndims(IS); siz = size(IS);
@@ -49,18 +47,20 @@ end
 
 % reshape IS so that each 3D element is concatentated to a 2D image, adding
 % padding
-padelement = max(IS(:));
-IS=arraycrop2dims(IS, [siz(1)+padsize siz(2:end)], padelement ); %UD pad
+padEl = max(IS(:));
+IS=arraycrop2dims(IS, [siz(1)+padSiz siz(2:end)], padEl ); %UD pad
 siz=size(IS);
 if(nd==3) % reshape bw single
   IS=squeeze( reshape( IS, siz(1), [] ) );
 elseif(nd==4) % reshape bw
   IS=squeeze( reshape( IS, siz(1), [], siz(4) ) );
 else % reshape color
-  IS=squeeze( reshape( permute(IS,[1 2 4 3 5]),siz(1),[],siz(3),siz(5) ) );
+  IS=squeeze( reshape(permute(IS,[1 2 4 3 5]),siz(1),[],siz(3),siz(5)));
 end; siz = size(IS);
-IS=arraycrop2dims(IS, [siz(1) siz(2)+padsize siz(3:end)], padelement);
+IS=arraycrop2dims(IS, [siz(1) siz(2)+padSiz siz(3:end)], padEl);  
 
 % show using montage2
-[mm,nn] = montage2( IS, montage2params{:} );
+varargout = cell(1,nargout);
+if( nargout); varargout{1}=IS; end;
+[varargout{2:end}] = montage2( IS, montage2prms{:} );
 title(inputname(1));

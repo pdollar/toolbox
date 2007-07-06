@@ -10,15 +10,14 @@
 % transformed image and is the same size as I.  Preserves I's type.
 %
 % USAGE
-%  IR = apply_homography( I, H, method, bbox, show )
+%  IR = apply_homography( I, H, [method], [bbox], [show] )
 %
 % INPUTS
 %  I       - input black and white image (2D double or unint8 array)
 %  H       - 3x3 nonsingular homography matrix
-%  method  - [optional] parameter for interp2 ('nearest',{'linear'},
-%             'spline','cubic');
-%  bbox    - [optional] see above for meaning of bbox ({'loose'},'crop')
-%  show    - [optional] figure to use for display (no display if == 0)
+%  method  - ['linear'] for interp2 'nearest','linear','spline','cubic'
+%  bbox    - ['loose'] see above for meaning of bbox 'loose','crop')
+%  show    - [0] figure to use for optional display
 %
 % OUTPUTS
 %  IR -  result of applying H to I.
@@ -36,15 +35,15 @@
 
 function IR = apply_homography( I, H, method, bbox, show )
 
-if( ndims(I)~=2 ) error('I must a MxN array'); end;
-if(any(size(H)~=[3 3])) error('H must be 3 by 3'); end;
-if(rank(H)~=3) error('H must be full rank.'); end;
-if( nargin<3 || isempty(method)) method='linear'; end;
+if( ndims(I)~=2 ); error('I must a MxN array'); end;
+if(any(size(H)~=[3 3])); error('H must be 3 by 3'); end;
+if(rank(H)~=3); error('H must be full rank.'); end;
+if( nargin<3 || isempty(method)); method='linear'; end;
 if( nargin<4 || isempty(bbox)); bbox='loose'; end;
-if( nargin<5 || isempty(show)) show=0; end;
+if( nargin<5 || isempty(show)); show=0; end;
 
 classname = class( I );
-if(~strcmp(classname,'double')) I = double(I); end
+if(~strcmp(classname,'double')); I = double(I); end
 I = padarray(I,[3,3],eps,'both');
 siz = size(I);
 
@@ -85,7 +84,7 @@ IR = interp2( I, col_sample_locs, row_sample_locs, method );
 IR(isnan(IR)) = 0;
 IR = arraycrop2dims( IR, size(IR)-6 ); %undo extra padding
 
-if(~strcmp(classname,'double'))  IR=feval(classname,IR );  end
+if(~strcmp(classname,'double')); IR=feval(classname,IR );  end
 
 % optionally show
 if ( show)
