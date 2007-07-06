@@ -5,7 +5,7 @@
 % linear combination of the directional derivatives dxG and dyG.
 %
 % USAGE
-%  filter_steerable( theta )
+%  filterSteerable( theta )
 %
 % INPUTS
 %  theta   - orientation in radians
@@ -13,13 +13,13 @@
 % OUTPUTS
 %
 % EXAMPLE
-%  filter_steerable( pi/4 );
+%  filterSteerable( pi/4 );
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function filter_steerable( theta )
+function filterSteerable( theta )
 
 % Get G
 [x,y]=meshgrid(-1:.1:1, -1:.1:1 );

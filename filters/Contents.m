@@ -2,13 +2,13 @@
 % See also
 %
 % Filters:
-%   filter_binomial_1D  - 1D binomial filter (approximation to Gaussian filter)
+%   filterBinomial1d    - 1D binomial filter (approximation to Gaussian filter)
 %   filter_DOG_2D       - Difference of Gaussian (Dog) Filter.
 %   filter_DooG_nD      - n-dim difference of offset Gaussian DooG filter (Gaussian derivative).
 %   filter_gabor_1D     - Creates an even/odd pair of 1D Gabor filters.
 %   filter_gabor_2D     - Creates an even/odd pair of 2D Gabor filters.
 %   filterGauss         - n-dimensional Gaussian filter.
-%   filter_steerable    - Steerable 2D Gaussian derivative filter (for visualization).
+%   filterSteerable     - Steerable 2D Gaussian derivative filter (for visualization).
 %   filter_visualize_1D - Used to visualize a 1D filter.
 %   filter_visualize_2D - Used to visualize a 2D filter.
 %   filter_visualize_3D - Used to visualize a 3D filter.

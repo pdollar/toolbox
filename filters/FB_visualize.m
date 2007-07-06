@@ -15,8 +15,10 @@
 %  FB=FB_make_1D(1,0);  FB_visualize( FB, 1 );  %1D
 %  load FB_DoG.mat;     FB_visualize( FB, 2 );  %2D
 %  FB=FB_make_3D(1,0);  FB_visualize( FB, 3 );  %3D
+%
+% See also
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 

@@ -9,7 +9,7 @@
 % Use F = f*f' to get the equivalent 2d filter.
 %
 % USAGE
-%  f = filter_binomial_1D( r, [show] )
+%  f = filterBinomial1d( r, [show] )
 %
 % INPUTS
 %  r       - mask will have length 2r+1 and var=(2*r+1)/4
@@ -20,16 +20,16 @@
 %
 % EXAMPLE
 %  r = 10;
-%  fbinom = filter_binomial_1D( r, 1 );
+%  fbinom = filterBinomial1d( r, 1 );
 %  fgauss = filterGauss( 2*r+1, [], (2*r+1)/4, 2);
 %
 % See also FILTERGAUSS
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function f = filter_binomial_1D( r, show )
+function f = filterBinomial1d( r, show )
 
 if( nargin<2 ); show=0; end;
 if( mod(r,1)~=0 ); error( 'r must be an integer'); end;

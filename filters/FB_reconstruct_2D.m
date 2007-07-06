@@ -25,7 +25,7 @@
 %  load trees; X=imresize(X,.5); load FB_DoG.mat;
 %  I2 = FB_reconstruct_2D( X, FB, 0 );
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -70,7 +70,7 @@ if( patch ) %%% recover a specific patch
 
 else %%% recover entire image
   if( 1 ) % reconstruction filter (for merging recovered patches)
-    W = filter_binomial_1D( 1 );
+    W = filterBinomial1d( 1 );
     W = W * W';
   else
     W = [0 0 0; 0 1 0; 0 0 0];
