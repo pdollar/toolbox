@@ -1,23 +1,28 @@
-% Various 2D filterbanks (hardcoded).
+% Various 1D/2D/3D filterbanks (hardcoded).
 %
 % USAGE
-%  FB = FB_make_2D( flag, [show] )
+%  FB = FbMake( dim, flag, [show] )
 %
 % INPUTS
+%  dim     - dimension
 %  flag    - controls type of filterbank to create
+%          - if d==1
+%            1: gabor filter bank for spatiotemporal stuff
+%          - if d==2
 %            1: filter bank from Serge Belongie
 %            2: 1st/2nd order DooG filters.  Similar to Gabor filterbank.
 %            3: similar to Laptev&Lindberg ICPR04
 %            4: decent seperable steerable? filterbank
 %            5: berkeley filterbank for textons papers
 %            6: symmetric DOOG filters
+%          - if d==3
+%            1: decent seperable steerable filterbank
 %  show    - [0] figure to use for optional display
 %
 % OUTPUTS
-%  FB      - filter bank
 %
 % EXAMPLE
-%  FB = FB_make_2D( 1, 1 );
+%  FB = FbMake( 1, 1, 1 ); 
 %
 % See Also
 
@@ -25,21 +30,69 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function FB = FB_make_2D( flag, show )
+function FB = FbMake( dim, flag, show )
 
-if( nargin<2 || isempty(show) ); show=0; end
+if( nargin<3 || isempty(show) ); show=0; end
+
+% create FB
+switch dim
+  case 1
+    FB = FbMake1D( flag );
+  case 2
+    FB = FbMake2D( flag );
+  case 3
+    FB = FbMake3d( flag );
+  otherwise
+    error( 'dim must be 1 2 or 3');
+end
+
+% display
+FbVisualize( FB, show );
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function FB = FbMake1D( flag )
+switch flag
+  case 1  %%% gabor filter bank for spatiotemporal stuff
+    omegas = 1 ./ [3 4 5 7.5 11];
+    sigmas =      [3 4 5 7.5 11];
+    FB = FbMakegabor1D( 15, sigmas, omegas );
+
+  otherwise
+    error('none created.');
+end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function FB = FbMakegabor1D( r, sigmas, omegas )
+for i=1:length(omegas)
+  [feven,fodd]=filterGabor1d(r,sigmas(i),omegas(i));
+  if( i==1 ); FB=repmat(feven,[2*length(omegas) 1]); end
+  FB(i*2-1,:)=feven; FB(i*2,:)=fodd;
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function FB = FbMake2D( flag )
 
 switch flag
   case 1  %%% filter bank from Berkeley / Serge Belongie
     r=15;
-    FB = FB_make_gabor( r, 6, 3, 3, sqrt(2) );
-    FB2 = FB_make_DOG( r, .6, 2.8, 4);
+    FB = FbMakegabor( r, 6, 3, 3, sqrt(2) );
+    FB2 = FbMakeDOG( r, .6, 2.8, 4);
     FB = cat(3, FB, FB2);
     %FB = FB(:,:,1:2:36); %include only even symmetric filters
     %FB = FB(:,:,2:2:36); %include only odd symmetric filters
 
   case 2 %%% 1st/2nd order DooG filters.  Similar to Gabor filterbank.
-    FB = FB_make_DooG( 15, 6, 3, 5, .5) ;
+    FB = FbMakeDooG( 15, 6, 3, 5, .5) ;
 
   case 3 %%% similar to Laptev&Lindberg ICPR04
     % Wierd filterbank of Gaussian derivatives at various scales
@@ -80,26 +133,23 @@ switch flag
         FB(:,:,cnt) = dG; cnt=cnt+1;
       end
     end
-    FB2 = FB_make_DOG( r, .6, 2.8, 4);
+    FB2 = FbMakeDOG( r, .6, 2.8, 4);
     FB = cat(3, FB, FB2);
 
   case 5  %%% berkeley filterbank for textons papers
-    FB = FB_make_gabor( 7, 6, 1, 2, 2 );
+    FB = FbMakegabor( 7, 6, 1, 2, 2 );
 
   case 6  %%% symmetric DOOG filters
-    FB = FB_make_DooG_sym( 4, 2, [.5 1] );
+    FB = FbMakeDooG_sym( 4, 2, [.5 1] );
 
   otherwise
     error('none created.');
 end
 
-% display
-FbVisualize( FB, show );
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % multi-scale even/odd gabor filters. Adapted from code by Serge Belongie.
-function FB = FB_make_gabor( r, num_ori, num_scales, lambda, sigma )
+function FB = FbMakegabor( r, num_ori, num_scales, lambda, sigma )
 cnt=1;
 for m=1:num_scales
   for n=1:num_ori
@@ -111,7 +161,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Adds symmetric DooG filters.  These are similar to gabor filters.
-function FB = FB_make_DooG_sym( r, num_ori, sigs )
+function FB = FbMakeDooG_sym( r, num_ori, sigs )
 cnt=1; dims=[2*r+1 2*r+1];
 for s=1:length(sigs)
   Fodd = -filterDoog( dims, [sigs(s) sigs(s)], [1 0], 0 );
@@ -127,7 +177,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 1st/2nd order DooG filters.  Similar to Gabor filterbank.
 % Defaults: num_ori=6, num_scales=3, lambda=5, sigma=.5,
-function FB = FB_make_DooG( r, num_ori, num_scales, lambda, sigma )
+function FB = FbMakeDooG( r, num_ori, num_scales, lambda, sigma )
 cnt=1; dims=[2*r+1 2*r+1];
 for m=1:num_scales
   sigma = sigma * m^.7;
@@ -143,9 +193,35 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % adds a serires of difference of Gaussian filters.
-function FB = FB_make_DOG( r, sigma_st, sigma_end, n )
+function FB = FbMakeDOG( r, sigma_st, sigma_end, n )
 sigs = sigma_st:(sigma_end-sigma_st)/(n-1):sigma_end;
 for s=1:length(sigs)
   FB(:,:,s) = filterDog2d(r,sigs(s),2);
   if( s==1 ); FB=repmat(FB,[1 1 length(sigs)]); end
+end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function FB = FbMake3d( flag )
+
+switch flag
+  case 1 % decent seperable steerable filterbank
+    r = 25; dims=[2*r+1 2*r+1 2*r+1];
+    sigs = [.5 1.5 3];
+    derivs = [0 0 1; 0 1 0; 1 0 0; 0 0 2; 0 2 0; 2 0 0];
+    cnt=1; nderivs = size(derivs,1);
+    for s=1:length(sigs)
+      for i=1:nderivs
+        dG = filterDoog( dims, repmat(sigs(s),[1 3]), derivs(i,:), 0 );
+        if(s==1 && i==1); FB=repmat(dG,[1 1 1 nderivs*length(sigs)]); end
+        FB(:,:,:,cnt) = dG; cnt=cnt+1;
+      end
+    end
+
+  otherwise
+    error('none created.');
 end
