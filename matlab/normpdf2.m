@@ -21,7 +21,7 @@
 %
 % See also NORMPDF
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -32,18 +32,17 @@ d=length(m);
 if( size(xs,1)~=d ); xs=xs'; end
 N=size(xs,2);
 
-if( rcond(C)<eps )
-  % if matrix is badly conditioned
+if( d==1 ) % fast special case
+  ps = 1/sqrt(2*pi*C) * exp(-(xs-m).*(xs-m)/(2*C))';
+
+elseif( rcond(C)<eps ) % if matrix is badly conditioned
   warning('normpdf2: Covariance matrix close to singular.'); %#ok<WNTAG>
   ps = zeros(N,1);
 
-else
-  % get probabilities
-  m=m(:);
-  M=m*ones(1,N);
-  detC = det(C);
-  denom=(2*pi)^(d/2)*sqrt(abs(detC));
-  mahal=sum(((xs-M)'*inv(C)).*(xs-M)',2);   % Chris Bregler's trick
-  numer=exp(-0.5*mahal);
+else % get probabilities
+  xs = (xs-m(:)*ones(1,N))';
+  denom = (2*pi)^(d/2)*sqrt(abs(det(C)));
+  mahal = sum( (xs*inv(C)).*xs, 2 );
+  numer = exp(-0.5*mahal);
   ps = numer/denom;
 end

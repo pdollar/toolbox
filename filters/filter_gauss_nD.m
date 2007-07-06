@@ -10,7 +10,7 @@
 % to (siz/6)^2.
 %
 % USAGE
-%  G = filter_gauss_nD( dims, mu, C, [show] )
+%  G = filter_gauss_nD( dims, [mu], [C], [show] )
 %
 % INPUTS
 %  dims    - n element vector of dimensions of final Gaussian
@@ -30,7 +30,7 @@
 %
 % See also FILTER_GAUSS_1D, NORMPDF2
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -41,32 +41,40 @@ if( nargin<2 || isempty(mu)); mu=(dims+1)/2; end
 if( nargin<3 || isempty(C)); C=(dims/6).^2; end
 if( nargin<4 || isempty(show) ); show=0; end
 
-if( numel(C)==1 ); C=repmat(C,[1 nd]); end
-if( size(C,1)==1 || size(C,2)==1 ); C=diag(C); end
 if( length(mu)~=nd ); error('invalid mu'); end
 if( any(size(C)~=nd)); error( 'invalid C'); end
 
-% get vector of grid locations
-if( nd==1 )
-  gridVec = 1:dims(1);
+if( nd==1 ) % fast special case
+  xs = 1:dims(1);
+  G = exp(-(xs-mu).*(xs-mu)/(2*C))';
+
 else
+  % make C have correct dimensions
+  if( numel(C)==1 ); C=repmat(C,[1 nd]); end
+  if( size(C,1)==1 || size(C,2)==1 ); C=diag(C); end
+
+  % get vector of grid locations
   temp = cell(1,nd);
   for d=1:nd; temp{d} = 1:dims(d); end
   [ temp{:}] = ndgrid( temp{:} );
-  gridVec = zeros( nd, prod(dims) );
-  for d=1:nd; gridVec( d, : ) = temp{d}(:)'; end
+  xs = zeros( nd, prod(dims) );
+  for d=1:nd; xs( d, : ) = temp{d}(:)'; end
+
+  % evaluate the Gaussian at those points
+  G = normpdf2( xs, mu, C );
+  if( nd>1 ); G = reshape( G, dims ); end
 end
 
-% evaluate the Gaussian at those points
-G = normpdf2( gridVec, mu, C );
-if( nd>1 ); G = reshape( G, dims ); end
+% suppress very small values and normalize
+G(G<eps*max(G(:))*10) = 0;
+G = G/sum(G(:));
 
 % display
 if( show )
   if( nd==1 )
     filter_visualize_1D( G, show );
   elseif( nd==2 )
-    filter_visualize_2D( G, '', show )
+    filter_visualize_2D( G, '', show );
   elseif( nd==3 )
     filter_visualize_3D( G, .2, show );
   end

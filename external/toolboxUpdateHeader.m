@@ -19,25 +19,27 @@
 
 function toolboxUpdateHeader
 
+headerL1def = '%% Piotr''s Image&Video Toolbox      Version 1.6\n';
 header=[...
-  '%% Piotr''s Image&Video Toolbox      Version 1.5\n' ...
   '%% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu\n' ...
   '%% Please email me if you find bugs, or have suggestions or questions!\n\n'];
 
 % must start in /toolbox base directory  - cd( 'c:/code/toolbox' );
-dirs={ 'classify', 'classify/private', 'filters', 'images', ...
-      'images/private', 'matlab', 'external' };
-%dirs = {'classify'};
+%dirs={ 'classify', 'classify/private', 'filters', 'images', ...
+%      'images/private', 'matlab', 'external' };
+dirs = {'classify'};
 
+% update the headers
 for i=1:length(dirs)
   mfiles = dir([ dirs{i}, '/*.m' ]);
   disp( ['--------------------------------->' dirs{i}] );
   for j=1:length(mfiles);
     fname = [dirs{i} '/' mfiles(j).name];
     disp( fname );
-    success = removeHeader(fname);
+    [success,headerL1] = removeHeader(fname);
     if(success); 
-      insertHeader(fname,header); 
+      if(any(strfind(headerL1,'NEW'))); headerL1=headerL1def; end;
+      insertHeader( fname, headerL1, header );
     else
       warning( ['skipping ' fname] ); %#ok<WNTAG>
     end;
@@ -49,11 +51,11 @@ end
 % Removes toolbox data after main comment in an .m file.
 %  ~ischar(fileLn{ind})          % true if fgetl returns eof (-1)
 %  isempty(strtrim(fileLn{ind})) % true if line is all whitespace
-function success = removeHeader( fname )
+function [success, headerL1] = removeHeader( fname )
 
 fid = fopen( fname, 'rt' );
 fileLn = cell(10000,1);  ind=0;
-success = 1;
+success=1;  headerL1=[];
 
 % Read first part of the comments - up to and including first empty line
 while( 1 )
@@ -68,7 +70,7 @@ while( 1 )
   fileLnTmp = fgetl(fid);
   if( ~ischar(fileLnTmp) || isempty(strtrim(fileLnTmp))); break; end
   if( frst && ~any(strfind(fileLnTmp,'Piotr')) ); success=0; return; end;
-  if( frst );  frst=0;  end;
+  if( frst ); headerL1=['%' fileLnTmp '\n']; frst=0; end;
 end
 
 % Read the rest
@@ -86,7 +88,7 @@ fclose(fid);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Inserts toolbox data after main comment in an .m file.
 % Does not affect files with no body (such as Contents.m)
-function insertHeader( fname, header )
+function insertHeader( fname, headerL1, header )
 
 fidIn = fopen( fname, 'rt' );
 fidOut = fopen( [fname '2'] , 'wt' );
@@ -97,7 +99,8 @@ while( 1 )
   if( ~ischar(tline) ); break; end;
   fprintf( fidOut, '%s\n', tline );
   if( isempty(strtrim(tline)) && firstComment )
-    firstComment = false;
+    firstComment = false;    
+    fprintf( fidOut, headerL1 );
     fprintf( fidOut, header );
   end
 end
