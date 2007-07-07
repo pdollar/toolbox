@@ -47,7 +47,7 @@
 %
 % See also DEMOCLUSTER
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -112,7 +112,7 @@ if( display ); fprintf( ['\b' repmat( '0',[1,ndisdigits] )] ); end
 while( sum(abs(oldIDX - IDX)) ~= 0 && nIter < maxIter)
 
   % assign each point to closest cluster center
-  oldIDX = IDX;  D = dist_euclidean( X, C ); [mind IDX] = min(D,[],2);
+  oldIDX = IDX;  D = pdist2( X, C ); [mind IDX] = min(D,[],2);
 
   % do not use most distant nOutl elements in computation of  centers
   mindsort = sort(mind); thr = mindsort(end-nOutl);  IDX(mind > thr) = -1;

@@ -23,7 +23,7 @@
 % EXAMPLE
 %  % not the best example since points are already ordered
 %  [X,IDXtrue] = demoGenData(100,0,2,2,10,2,0);
-%  distMatrixShow( dist_euclidean(X,X), IDXtrue );
+%  distMatrixShow( pdist2(X,X), IDXtrue );
 %
 % See also VISUALIZE_DATA, KMEANS2
 

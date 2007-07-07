@@ -76,7 +76,7 @@ else
 end
 
 %%% Set var to be equal to average distance of neareast neighbor.
-dist = dist_euclidean( mu', mu' );
+dist = pdist2( mu', mu' );
 dist = dist + realmax * eye( k );
 vars = min(dist)* scale;
 var  = mean(vars);

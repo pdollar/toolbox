@@ -49,4 +49,4 @@ if(~isempty(IDXtr))
   subplot(2,2,2); visualizeData(X, d2, IDXtr); title('true clusters');
 end;
 subplot(2,2,3); visualizeData(X, d2, IDX, [], C); title('rec clusters');
-subplot(2,2,4); D=distMatrixShow(sqrt(dist_euclidean(X,X)),IDX,0); im(D);
+subplot(2,2,4); D=distMatrixShow(sqrt(pdist2(X,X)),IDX,0); im(D);

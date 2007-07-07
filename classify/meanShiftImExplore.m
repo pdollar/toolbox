@@ -45,7 +45,7 @@ r=round(r); c=round(c);
 [grid_rs grid_cs] = ndgrid( 1:mrows, 1:ncols );
 Deuc = ((grid_rs-r).^2 + (grid_cs-c).^2) / sigSpt^2;
 x = X(r,c,:); x = x(:)';  Xflat = reshape(X,[],p);
-Drange = dist_euclidean( x, Xflat );
+Drange = pdist2( x, Xflat );
 Drange = reshape( Drange, mrows, ncols ) / sigRng^2;
 D = Drange + Deuc;
 

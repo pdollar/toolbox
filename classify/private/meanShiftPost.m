@@ -20,7 +20,7 @@ function [IDX,C] = meanShiftPost( X, IDX, C, minCsize, forceOutl )
 %%% force outliers to belong to IDX (mainly for visualization)
 if( forceOutl ) 
   for i=find(IDX<0)' 
-    D = dist_euclidean( X(i,:), C ); 
+    D = pdist2( X(i,:), C ); 
     [mind IDx] = min(D,[],2);  
     IDX(i) = IDx;
   end 
@@ -41,7 +41,7 @@ while( 1 )
   % otherwise discard smallest [last] cluster
   C( end, : ) = []; 
   for i=find(IDX==k)' 
-    D = dist_euclidean( X(i,:), C ); 
+    D = pdist2( X(i,:), C ); 
     [mind IDx] = min(D,[],2);  
     IDX(i) = IDx;
   end; 

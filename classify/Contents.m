@@ -10,13 +10,9 @@
 %   meanShiftImExplore  - Visualization to help choose sigmas for meanShiftIm.
 %
 % Calculating distances efficiently:
-%   dist_L1             - Calculates the L1 Distance between vectors (ie the City-Block distance).
-%   dist_chisquared     - Calculates the Chi Squared Distance between vectors (usually histograms).
-%   dist_cosine         - Defines distance as 1-cosine of angle between two vectors [FAST].
-%   dist_emd            - Calculates Earth Mover's Distance (EMD) between positive vectors.
-%   dist_euclidean      - Calculates the SQUARED Euclidean distance between vectors [FAST].
 %   distMatrixShow      - Useful visualization of a distance matrix of clustered points.
 %   softMin             - Calculates the softMin of a vector.
+%   pdist2              - Calculates the distance between sets of vectors.
 %
 % Principal components analysis:
 %   pca                 - Principal components analysis (alternative to princomp).
