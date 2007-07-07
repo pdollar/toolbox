@@ -31,7 +31,7 @@ function I = imshrink( I, ratios )
 
 siz = size(I);  nd = ndims(I);
 while( length(ratios)>nd && ratios(end)==1 ); ratios=ratios(1:end-1); end
-[ratios,er] = checknumericargs( ratios, [1 nd], 0, 2 ); error(er);
+[ratios,er] = checkNumArgs( ratios, [1 nd], 0, 2 ); error(er);
 
 % trim I to have integer number of blocks
 ratios = min(ratios,siz); siz = siz - mod( siz, ratios );

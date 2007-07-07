@@ -22,7 +22,7 @@
 %
 % See also ARRAYCROP_FULL, PADARRAY
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -30,7 +30,7 @@ function IC = arraycrop2dims( I, dims, padEl )
 
 if( nargin<3 || isempty(padEl)); padEl=0; end
 nd = ndims(I);  siz = size(I);
-[dims,er] = checknumericargs( dims, size(siz), 0, 1 ); error(er);
+[dims,er] = checkNumArgs( dims, size(siz), 0, 1 ); error(er);
 if(any(dims==0)); IC=[]; return; end
 
 % get start and end locations for cropping

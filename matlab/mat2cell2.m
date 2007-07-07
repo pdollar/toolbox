@@ -26,14 +26,14 @@
 %
 % See also MAT2CELL, CELL2ARRAY, CELL2MAT
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
 function C = mat2cell2( X, parts )
 
 siz = size(X); nd = ndims(X);
-[parts,er] = checknumericargs( parts, size(siz), 0, 2 ); error(er);
+[parts,er] = checkNumArgs( parts, size(siz), 0, 2 ); error(er);
 
 % crop border areas so as to make dims of X divisible by parts
 parts = min(siz,parts);   siz = siz - mod( siz, parts );

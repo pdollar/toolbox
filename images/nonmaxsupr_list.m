@@ -34,7 +34,7 @@
 %
 % See also IMSUBS2ARRAY, NONMAXSUPR, NONMAXSUPR_LIST
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -46,7 +46,7 @@ if( nargin<5 || isempty(maxn)); maxn=0; end;
 if( nargin<6 || isempty(suprEq)); suprEq=0; end;
 
 vals = vals(:); siz = max( subs ); nvals = length(vals);
-[radii,er] = checknumericargs( radii, size(siz), 0, 1 ); error(er);
+[radii,er] = checkNumArgs( radii, size(siz), 0, 1 ); error(er);
 
 % CAN ADD RECURSION TO SIGNIFICANTLY SPEED IT UP (under certain assump)!
 % simply divide into 2 eqal regions, (plus 3rd overlap region) using

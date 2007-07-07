@@ -63,7 +63,7 @@ end
 
 if isnumeric(labels)
   padSiz=labels;
-  [padSiz,er] = checknumericargs( padSiz,[1 1], 0, 1 ); error(er);
+  [padSiz,er] = checkNumArgs( padSiz,[1 1], 0, 1 ); error(er);
 
   % reshape IS so that each 3D element is concatenated to a 2D image,
   % adding padding

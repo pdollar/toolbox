@@ -27,7 +27,7 @@
 %
 % See also IMSUBS2ARRAY, NONMAXSUPR, NONMAXSUPR_LIST
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -38,8 +38,8 @@ vals = vals(:);  nvals = length(vals);  nd=size(subs,2);
 if( nargin<5 || isempty(thresh)); thresh=[]; end
 if( nargin<6 || isempty(maxn)); maxn = []; end
 
-[strLocs,er] = checknumericargs( strLocs, [1 nd], 0, 0 ); error(er);
-[endLocs,er] = checknumericargs( endLocs, [1 nd], 0, 0 ); error(er);
+[strLocs,er] = checkNumArgs( strLocs, [1 nd], 0, 0 ); error(er);
+[endLocs,er] = checkNumArgs( endLocs, [1 nd], 0, 0 ); error(er);
 if (any(strLocs>endLocs)); error('strLocs must be <= endLocs'); end
 
 % discard vals below thresh

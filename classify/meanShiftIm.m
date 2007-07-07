@@ -62,7 +62,7 @@
 
 function [M,Vr,Vc] = meanShiftIm( X,sigSpt,sigRng,softFlag,maxIter,minDel )
 
-[sigSpt,er] = checknumericargs( sigSpt, 1, 0, 1 ); error(er);
+[sigSpt,er] = checkNumArgs( sigSpt, 1, 0, 1 ); error(er);
 if( nargin<4 || isempty(softFlag)); softFlag = 0; end
 if( nargin<5 || isempty(maxIter) ); maxIter = 100; end
 if( nargin<6 || isempty(minDel)); minDel = .001; end

@@ -63,7 +63,7 @@ key = [nd siz M width offset];
 if( found ) %%% get masks and keeplocs from cache
   [masks,keeplocs] = deal(val{:});
 else %%% create masks and keeplocs
-  [M,er] = checknumericargs( M, [1 nd], 0, 2 ); error(er);
+  [M,er] = checkNumArgs( M, [1 nd], 0, 2 ); error(er);
   inds = {':'}; inds = inds(:,ones(1,nd));  
   if( offset<=-.5 || offset>=1 ); error('offset must be in (-.5,1)'); end;
 

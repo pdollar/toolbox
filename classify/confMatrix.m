@@ -47,8 +47,8 @@ if( ntypes==2 )
 end
 
 %%% error check
-[IDXtrue,er] = checknumericargs( IDXtrue, [], 0, 2 ); error(er);
-[IDXpred,er] = checknumericargs( IDXpred, [], 0, 2 ); error(er);
+[IDXtrue,er] = checkNumArgs( IDXtrue, [], 0, 2 ); error(er);
+[IDXpred,er] = checkNumArgs( IDXpred, [], 0, 2 ); error(er);
 if( length(IDXtrue)~=length(IDXpred) )
   error('Lengths of IDXs must match up.'); end
 if( max([IDXtrue;IDXpred])>ntypes )

@@ -15,7 +15,7 @@
 %
 % See also CLF_KNN, CLF_KNN_FWD
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -26,7 +26,7 @@ if( size(X,2)~= clf.p ); error( 'Incorrect data dimension' ); end;
 
 %%% error check
 n=size(X,1);  Y=double(Y);
-[Y,er] = checknumericargs( Y, [n 1], 0, 0 ); error(er);
+[Y,er] = checkNumArgs( Y, [n 1], 0, 0 ); error(er);
 
 %%% training is memorization
 clf.Xtrain = X;

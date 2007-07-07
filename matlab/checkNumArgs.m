@@ -8,11 +8,11 @@
 % function returns x.  siz=M is equivalent to siz=[M M]. If x does not
 % satisfy some criteria, an error message is returned in er. If x satisfied
 % all the criteria er=''.  Note that error('') has no effect, so can use:
-%  [x,er] = checknumericargs( x, ... ); error(er);
+%  [ x, er ] = checkNumArgs( x, ... ); error(er);
 % which will throw an error only if something was wrong with x.
 %
 % USAGE
-%  [x,er] = checknumericargs( x, siz, intFlag, signFlag )
+%  [ x, er ] = checkNumArgs( x, siz, intFlag, signFlag )
 %
 % INPUTS
 %  x           - numeric array
@@ -33,13 +33,15 @@
 %  er  - contains error msg if anything was wrong with x
 %
 % EXAMPLE
-%  a=1;  [a,er] = checknumericargs( a, [1 3], 2, 0 ); a, error(er)
+%  a=1; [a, er]=checkNumArgs( a, [1 3], 2, 0 ); a, error(er)
+%
+% See also
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [x,er] = checknumericargs( x, siz, intFlag, signFlag )
+function [ x, er ] = checkNumArgs( x, siz, intFlag, signFlag )
 
 xname = inputname(1); er='';
 if( isempty(siz) ); siz = size(x); end;

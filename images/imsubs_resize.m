@@ -23,14 +23,14 @@
 %
 % See also IMSUBS2ARRAY
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
 function subs = imsubs_resize( subs, resizVals )
 
 [n d] = size(subs);
-[resizVals,er] = checknumericargs( resizVals, [1 d], -1, 2 ); error(er);
+[resizVals,er] = checkNumArgs( resizVals, [1 d], -1, 2 ); error(er);
 
 % transform subs
 resizVals = repmat( resizVals, [n, 1] );

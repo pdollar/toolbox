@@ -39,7 +39,7 @@
 function I = nlfilt_sep( I, dims, shape, fun, varargin )
 
 params = varargin;   nd = ndims(I);  siz = size(I); 
-[dims,er] = checknumericargs( dims, size(siz), 0, 1 ); error(er);
+[dims,er] = checkNumArgs( dims, size(siz), 0, 1 ); error(er);
 rs1 = max(0,floor( (dims-1)/2 ));  rs2 = ceil( (dims-1)/2 );
 
 % pad I to 'full' dimensions, note must pad pre with rs2!
