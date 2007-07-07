@@ -17,7 +17,7 @@
 %  ps  - probability density at each x (Nx1)
 %
 % EXAMPLE
-%  ps = normpdf2( randn(10,1), 0, 1 )
+%  ps = normpdf2( randn(10,2), [0 0], eye(2) )
 %
 % See also NORMPDF
 

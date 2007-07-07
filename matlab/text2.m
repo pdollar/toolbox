@@ -20,11 +20,12 @@
 %  varargout  - output to Matlab's text
 %
 % EXAMPLE
-%  text2( -3 , 11, 'hello world' )
+%  figure(1); clf; text( -1 , 2, 'hello world' )  % will not appear
+%  figure(2); clf; text2( -1 , 2, 'hello world' ) % will appear
 %
 % See also TEXT, IMLABEL
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 

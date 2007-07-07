@@ -15,12 +15,12 @@
 %  sub     - sub(i,:) is the ith set of subscripts into the array.
 %
 % EXAMPLE
-%  sub = ind2sub2( [10,10], 20 )
-%  sub = ind2sub2( [10,10], [19 20] )
+%  sub = ind2sub2( [10,10], 20 )         % 10 2
+%  sub = ind2sub2( [10,10], [20 19] )    % 10 2; 9 2
 %
 % See also IND2SUB, SUB2IND2
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 

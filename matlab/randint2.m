@@ -4,7 +4,7 @@
 % R=randint2(m,n,range) generates an m-by-n matrix of random integers
 % between [range(1), range(2)].
 %
-% to test speed:
+% To test speed:
 %  tic, for i=1:1000; R = randint( 100, 10, [0 10] ); end; toc
 %  tic, for i=1:1000; R = randint2( 100, 10, [0 10] ); end; toc
 %

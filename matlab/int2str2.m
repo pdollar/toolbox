@@ -16,7 +16,7 @@
 %  nstr     - string repr. of n (or cell array of strings if n is array)
 %
 % EXAMPLE
-%  s = int2str2( 3, 3 )
+%  s = int2str2( 3, 3 ) % s='003'
 %
 % See also INT2STR
 
