@@ -55,8 +55,8 @@ end
 if( isa(I1,'uint8')); I1 = double(I1); I2 = double(I2); end;
 
 % smooth images (using the 'smooth' flag causes this to be slow)
-I1b = gaussSmoth( I1, [sigma sigma], 'smooth' );
-I2b = gaussSmoth( I2, [sigma sigma], 'smooth' );
+I1b = gaussSmooth( I1, [sigma sigma], 'smooth' );
+I2b = gaussSmooth( I2, [sigma sigma], 'smooth' );
 
 % precomputed constants
 subpixelaccuracy = 1;

@@ -34,7 +34,7 @@
 %  C           - correlation matrix
 %
 % EXAMPLE - 1 - normxcorrn vs nomrxcorr2
-%  T=gaussSmoth(rand(20,20),2); A=repmat(T,[3 3]);
+%  T=gaussSmooth(rand(20,20),2); A=repmat(T,[3 3]);
 %  C1=normxcorrn(T,A);  C2=normxcorr2(T,A);  C3=abs(C1-C2);
 %  figure(1); im(C1);  figure(2); im(C2);  figure(3); im(C3);
 %

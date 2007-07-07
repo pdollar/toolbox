@@ -20,7 +20,7 @@
 %  C           - correlation matrix
 %
 % EXAMPLE
-%  T=gaussSmoth(rand(20,20),2); A=repmat(T,[3 3]);
+%  T=gaussSmooth(rand(20,20),2); A=repmat(T,[3 3]);
 %  C1=xcorr2(A,T); C2=xcorrn(A,T); C3=rot90(xcorrn(T,A),2);
 %  figure(1); im(C1);  figure(2); im(C2);  figure(3); im(C3);
 %

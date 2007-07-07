@@ -30,8 +30,8 @@ end
 if( any(size(I1)~=size(I2)) ) 
   error('Input images must have same dimensions.'); 
 end
-I1 = gaussSmoth(I1,sigma,'smooth');
-I2 = gaussSmoth(I2,sigma,'smooth');
+I1 = gaussSmooth(I1,sigma,'smooth');
+I2 = gaussSmooth(I2,sigma,'smooth');
 
 % ALGORITHM:
 [N1,N2]=size(I1);

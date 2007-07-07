@@ -5,7 +5,7 @@
 % seperable and is implemented as such.
 %
 % USAGE
-%  [L,filters] = gaussSmoth( I, sigmas, [shape], [radius] )
+%  [L,filters] = gaussSmooth( I, sigmas, [shape], [radius] )
 %
 % INPUTS
 %  I       - input image
@@ -20,7 +20,7 @@
 %
 % EXAMPLE
 %  load trees; I=ind2gray(X,map);
-%  I2 = gaussSmoth( I, 1, 'same' );
+%  I2 = gaussSmooth( I, 1, 'same' );
 %  figure(1); im(I); figure(2); im(I2);
 %
 % See also FILTERGAUSS
@@ -29,7 +29,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [L,filters] = gaussSmoth( I, sigmas, shape, radius )
+function [L,filters] = gaussSmooth( I, sigmas, shape, radius )
 
 nd = ndims(I);  if(length(sigmas)==1); sigmas=repmat(sigmas,[1,nd]); end
 if( nd > length(sigmas)); error('Incorrect # of simgas specified'); end

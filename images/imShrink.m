@@ -78,7 +78,7 @@ I = feval( classname, I );
 % if(gauss)
 %   % get smoothed version of I
 %   sigmas = ratios/2 / 1.6; sigmas(ratios==1)=0; %is this ideal sigmas?
-%   I = gaussSmoth( I, sigmas, 'full' );
+%   I = gaussSmooth( I, sigmas, 'full' );
 %   I = arrayToDims( I, siz-ratios+1 );
 % 
 %   % now subsample smoothed I
