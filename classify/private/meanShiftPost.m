@@ -1,7 +1,7 @@
 % Some post processing routines for meanShift not currently being used.
 %
 % USAGE
-%  [IDX,C] = meanShiftPost( X, IDX, C, minCsize, forceOutl )
+%  [IDX,C] = meanShiftPost( X, IDX, C, minCl, forceOutl )
 %
 % INPUTS
 %  see meanShift
@@ -10,12 +10,14 @@
 %  see meanShift
 %
 % EXAMPLE
+%
+% See also MEANSHIFT, KMEANS2
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [IDX,C] = meanShiftPost( X, IDX, C, minCsize, forceOutl )
+function [IDX,C] = meanShiftPost( X, IDX, C, minCl, forceOutl )
 
 %%% force outliers to belong to IDX (mainly for visualization)
 if( forceOutl ) 
@@ -36,7 +38,7 @@ while( 1 )
   IDX2 = IDX;  for i=1:k; IDX2(IDX==order(i))=i; end; IDX = IDX2;     
 
   % stop if smallest cluster is big enough
-  if( cnts(k)>= minCsize ); break; end;
+  if( cnts(k)>= minCl ); break; end;
 
   % otherwise discard smallest [last] cluster
   C( end, : ) = []; 

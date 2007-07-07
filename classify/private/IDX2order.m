@@ -16,8 +16,10 @@
 %
 % EXAMPLE
 %  order = IDX2order( [1 1 3 1 2 2] )  % should be: [1 2 4 5 6 3]
+%
+% See also DISTMATRIXSHOW
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
