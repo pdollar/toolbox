@@ -4,14 +4,14 @@
 % gaussian data. Alter demo by edititing this file.
 %
 % USAGE
-%  democluster
+%  demoCluster
 %
 % INPUTS
 %
 % OUTPUTS
 %
 % EXAMPLE
-%  democluster
+%  demoCluster
 
 % Piotr's Image&Video Toolbox      Version PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
