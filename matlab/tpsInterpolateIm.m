@@ -19,7 +19,7 @@
 %  IR = tpsInterpolateIm( I, warp );
 %  figure(1); clf; im(I); figure(2); clf; im(IR);
 %
-% See also TPSGETWARP
+% See also TPSGETWARP, TEXTUREMAP
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -34,4 +34,4 @@ gxsTar = reshape( gxsTar, size(Isrc) );
 gysTar = reshape( gysTar, size(Isrc) );
 
 % use texture mapping to generate target image
-IR = texture_map( double(Isrc), gysTar, gxsTar, 'loose' );
+IR = textureMap( double(Isrc), gysTar, gxsTar, 'loose' );

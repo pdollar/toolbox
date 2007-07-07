@@ -50,7 +50,7 @@
 %  XT = imtransform2(X,0,1.5,'bicubic','crop');
 %  figure(1); clf; im(X,[0 255]); figure(2); clf; im(XT,[0 255]);
 %
-% See also TEXTURE_MAP, INTERP2
+% See also TEXTUREMAP, INTERP2
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

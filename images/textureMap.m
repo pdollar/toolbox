@@ -10,7 +10,7 @@
 %
 % If the inverse mapping is also available -- ie if we can go from the
 % coordinates in the destination to the coordinates in the source, then a
-% much more efficient procedure can be used to texture_map that involves
+% much more efficient procedure can be used to textureMap that involves
 % interp2 instead of griddata.  See imtransform2  for example usage in
 % this case.
 %
@@ -21,7 +21,7 @@
 % transformed image and is the same size as I.
 %
 % USAGE
-%  IR = texture_map( I, rowDst, colDst, [bbox] )
+%  IR = textureMap( I, rowDst, colDst, [bbox] )
 %
 % INPUTS
 %  I           - 2D input image
@@ -36,11 +36,11 @@
 %
 % See also IMTRANSFORM2
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function IR = texture_map( I, rowDst, colDst, bbox )
+function IR = textureMap( I, rowDst, colDst, bbox )
 
 if(isa( I, 'uint8' )); I = double(I); end;
 if( nargin<4 || isempty(bbox)); bbox='loose'; end;

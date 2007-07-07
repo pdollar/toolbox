@@ -39,7 +39,7 @@
 %   imsubs2array        - Converts subs/vals image representation to array representation.
 %   imsubs_resize       - Resizes subs in subs/vals image representation by resizVals.
 %   imtransform2        - Applies a general/special homography on an image I
-%   texture_map         - Maps texture in I according to rowDst and colDst.
+%   textureMap          - Maps texture in I according to rowDst and colDst.
 %
 % Generalized nonmaximal suppression:
 %   nonmaxsupr          - Applies nonmaximal suppression on an image of arbitrary dimension.
