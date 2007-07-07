@@ -60,6 +60,6 @@ end
 
 %%% now add type labels
 if( ~isempty(types) )
-  imlabel( types, 'left', 0, pvPairs );
-  imlabel( types, 'bottom', -35, pvPairs );
+  imLabel( types, 'left', 0, pvPairs );
+  imLabel( types, 'bottom', -35, pvPairs );
 end

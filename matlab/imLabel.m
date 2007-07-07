@@ -1,7 +1,7 @@
 % Improved method for labeling figure axes.
 %
 % USAGE
-%  imlabel( labels, position, [S], [pvPairs] )
+%  imLabel( labels, position, [S], [pvPairs] )
 %
 % INPUTS
 %  labels          - cell array of strings, labels for display
@@ -13,16 +13,16 @@
 %
 % EXAMPLE
 %  load( 'images.mat' ); clf; cla; montage2( images(:,:,1:9), 1 );
-%  imlabel( {'row1','row2','row3'}, 'left',[],{'FontSize',20} );
-%  imlabel( {'col1','col2','col3'}, 'bottom', -25, {'FontSize',20} );
+%  imLabel( {'row1','row2','row3'}, 'left',[],{'FontSize',20} );
+%  imLabel( {'col1','col2','col3'}, 'bottom', -25, {'FontSize',20} );
 %
 % See also MONTAGE2, TEXT2, TEXT
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function imlabel( labels, position, S, pvPairs )
+function imLabel( labels, position, S, pvPairs )
 
 if( nargin<3 || isempty(S) ); S=0; end
 if( nargin<4 || isempty(pvPairs) ); pvPairs={}; end
