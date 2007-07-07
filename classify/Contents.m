@@ -29,7 +29,7 @@
 %   democlassify        - A demo used to test and demonstrate the usage of classifiers (clf_*)
 %   nfoldxval           - Runs n-fold cross validation on data with a given classifier.
 %   confmatrix          - Generates a confusion matrix according to true and predicted data labels.
-%   confmatrix_show     - Used to display a confusion matrix.
+%   confmatrixShow      - Used to display a confusion matrix.
 %   clf_dectree         - Wrapper for treefit that makes decision trees compatible with nfoldxval.
 %   clf_dectree_fwd     - Apply the decision tree to data X.
 %   clf_dectree_train   - Train a decision tree classifier.

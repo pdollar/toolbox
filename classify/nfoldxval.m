@@ -166,7 +166,7 @@ end
 %%% show confusion matrix, optionally save image to file
 if( show )
   figure(show); %show=show+1;
-  confmatrix_show( CM, types );
+  confmatrixShow( CM, types );
   if( isempty(fname) )
     title( clf.type, 'FontSize', 20 );
   else

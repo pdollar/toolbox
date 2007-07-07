@@ -16,7 +16,7 @@
 %
 % See also CLF_KNN, CLF_LDA, CLF_SVM, CLF_ECOC, VISUALIZE_DATA
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -68,7 +68,7 @@ for i=1:nnets
     ':\n%i out of %i correct\n\n'], ncorrect, nTst);
 end;
 
-%%% calculate and show confusion matricies [not using confmatrix_show]
+%%% calculate and show confusion matricies [not using confmatrixShow]
 CM = zeros( nClasses, nClasses, nnets );
 for i=1:nnets
   CMi = confmatrix( tstIDX, pred(:,i), nClasses );
