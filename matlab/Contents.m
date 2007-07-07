@@ -40,7 +40,7 @@
 %   randint2             - Faster but restricted version of randint.
 %   randomsample         - Samples elements of X so result uses at most maxMegs megabytes of memory.
 %   rotationMatrix       - Performs different operations dealing with a rotation matrix
-%   simplecache          - A very simply cache that can be used to store results of computations.
+%   simpleCache          - A simple cache that can be used to store results of computations.
 %   sub2ind2             - Improved version of sub2ind.
 %
 % Thin plate splines:

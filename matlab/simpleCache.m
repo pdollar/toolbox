@@ -1,4 +1,4 @@
-% A very simply cache that can be used to store results of computations.
+% A simple cache that can be used to store results of computations.
 %
 % Can save and retrieve arbitrary values using a vector (includnig char
 % vectors) as a key. Especially useful if a function must perform heavy
@@ -8,23 +8,22 @@
 % table), so it is not meant for large scale usage.
 %
 % To use inside a function, make the cache persistent:
-%   persistent cache; if( isempty(cache) ) cache=simplecache('init'); end;
+%  persistent cache; if( isempty(cache) ) cache=simpleCache('init'); end;
 % The following line, when placed inside a function, means the cache will
 % stay in memory until the matlab environment changes.  For an example
 % usage see mask_gaussians.
 %
-% USAGE
-%  % initialize a cache object
-%  cache = simplecache('init');
+% USAGE - 'init': initialize a cache object
+%  cache = simpleCache('init');
 %
-%  % put something in a cache.  Note that key must be a numeric vector
-%  cache = simplecache( 'put', cache, key, val );
+% USAGE - 'put': put something in cache.  key must be a numeric vector
+%  cache = simpleCache( 'put', cache, key, val );
 %
-%  % retrieve from cache.  found==1 if obj was found, val is the obj
-%  [found,val] = simplecache( 'get', cache, key );
+% USAGE - 'get': retrieve from cache.  found==1 if obj was found
+%  [found,val] = simpleCache( 'get', cache, key );
 %
-%  % free key
-%  [cache,found] = simplecache( 'remove', cache, key );
+% USAGE - 'remove': free key
+%  [cache,found] = simpleCache( 'remove', cache, key );
 %
 % INPUTS
 %  op         - 'init', 'put', 'get', 'remove'
@@ -35,20 +34,20 @@
 %  varargout  - see USAGE above
 %
 % EXAMPLE
-%  cache = simplecache('init');
+%  cache = simpleCache('init');
 %  hellokey=rand(1,3); worldkey=rand(1,11);
-%  cache = simplecache( 'put', cache, hellokey, 'hello' );
-%  cache = simplecache( 'put', cache, worldkey, 'world' );
-%  [f,v]=simplecache( 'get', cache, hellokey ); disp(v);
-%  [f,v]=simplecache( 'get', cache, worldkey ); disp(v);
+%  cache = simpleCache( 'put', cache, hellokey, 'hello' );
+%  cache = simpleCache( 'put', cache, worldkey, 'world' );
+%  [f,v]=simpleCache( 'get', cache, hellokey ); disp(v);
+%  [f,v]=simpleCache( 'get', cache, worldkey ); disp(v);
 %
 % See also PERSISTENT, MASK_GAUSSIANS
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function varargout = simplecache( op, cache, varargin )
+function varargout = simpleCache( op, cache, varargin )
 
 if( strcmp(op,'init') ) %%% init a cache
   error(nargchk(1, 2, nargin));

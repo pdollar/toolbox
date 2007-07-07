@@ -57,9 +57,9 @@ if( nargin<4 || isempty(offset)); offset = .1; end;
 if( nargin<5 || isempty(show) || nd>3 ); show = 0; end;
 
 %%% uses a cache since this is slow but often called with same inputs.
-persistent cache; if( isempty(cache) ); cache=simplecache('init'); end;
+persistent cache; if( isempty(cache) ); cache=simpleCache('init'); end;
 key = [nd siz M width offset];
-[found,val] = simplecache( 'get', cache, key ); 
+[found,val] = simpleCache( 'get', cache, key ); 
 if( found ) %%% get masks and keeplocs from cache
   [masks,keeplocs] = deal(val{:});
 else %%% create masks and keeplocs
@@ -82,7 +82,7 @@ else %%% create masks and keeplocs
   keeplocs = masks>1e-7;
 
   %%% place into cache
-  cache = simplecache( 'put', cache, key, {masks,keeplocs} );
+  cache = simpleCache( 'put', cache, key, {masks,keeplocs} );
 end;
 
 %%% optionally display
