@@ -38,7 +38,7 @@
 %   imshrink            - Used to shrink a multidimensional array I by integer amount.
 %   imsubs2array        - Converts subs/vals image representation to array representation.
 %   imsubs_resize       - Resizes subs in subs/vals image representation by resizVals.
-%   imtransform2        - Applies a general/special homography on an image I 
+%   imtransform2        - Applies a general/special homography on an image I
 %   texture_map         - Maps texture in I according to rowDst and colDst.
 %
 % Generalized nonmaximal suppression:
