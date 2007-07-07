@@ -1,6 +1,6 @@
 % Principal components analysis (alternative to princomp).
 %
-% A simple dimensionality reduction technique.  Use to create an
+% A simple linear dimensionality reduction technique.  Use to create an
 % orthonormal basis for the points in R^N such that the coordinates of a
 % vector x in this basis are of decreasing importance.  Instead of
 % using all N coordinates to specify the location of x, using only the
@@ -37,7 +37,7 @@
 % EXAMPLE
 %  load pca_data;
 %  [ U, mu, vars ] = pca( I3D1(:,:,1:12) );
-%  [ Y, Xhat, avsq ] = pca_apply( I3D1(:,:,1), U, mu, vars, 5 );
+%  [ Y, Xhat, avsq ] = pca_apply( I3D1(:,:,1), U, mu, 5 );
 %  figure(1); im(I3D1(:,:,1));  figure(2); im(Xhat);
 %  pca_visualize( U, mu, vars, I3D1, 13, [0:12], [], 3 );
 %

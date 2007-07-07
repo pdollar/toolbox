@@ -49,7 +49,7 @@ ks = ks( ks<=r );
 x = double( X(inds{:},index) );
 xhats = x;  diffs = []; errors = zeros(1,length(ks));
 for k=1:length(ks)
-  [ Yk, xhat, errors(k) ] = pca_apply( x, U, mu, vars, ks(k) );
+  [ Yk, xhat, errors(k) ] = pca_apply( x, U, mu, ks(k) );
   xhats = cat( nd, xhats, xhat );
   diffs = cat( nd, diffs, (xhat-x).^2 );
 end

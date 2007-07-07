@@ -21,7 +21,6 @@
 % Principal components analysis:
 %   pca                 - Principal components analysis (alternative to princomp).
 %   pca_apply           - Companion function to pca.
-%   pca_apply_large     - Wrapper for pca_apply that allows for application to large X.
 %   pca_randomvector    - Generate random vectors in PCA subspace.
 %   pca_visualize       - Visualization of quality of approximation of X given principal comp.
 %   visualize_data      - Project high dim. data unto principal components (PCA) for visualization.

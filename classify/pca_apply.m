@@ -1,23 +1,19 @@
 % Companion function to pca.
 %
-% Use pca to retrieve the principal components U and the mean mu from a
-% set fo vectors X1 via [U,mu,vars] = pca(X1).  Then given a new
-% vector x, use y = pca_apply( x, U, mu, vars, k ) to get the first k
-% coefficients of x in the space spanned by the columns of U. See pca for
-% general information.
+% Use pca.m to retrieve the principal components U and the mean mu from a
+% set of vectors x, then use y pca_apply to get the first k coefficients of
+% x in the space spanned by the columns of U. See pca for general usage.
 %
 % This may prove useful:
-%  siz = size(X);  k = 100;
-%  Uim = reshape( U(:,1:k), [ siz(1:end-1) k ]  );
+%  siz=size(X);  k=100;  Uim=reshape(U(:,1:k),[siz(1:end-1) k ]);
 %
 % USAGE
-%  [ Yk, Xhat, avsq, avsqOrig ] = pca_apply( X, U, mu, vars, k )
+%  [ Yk, Xhat, avsq, avsqOrig ] = pca_apply( X, U, mu, k )
 %
 % INPUTS
-%  X           - array for which to get PCA coefficients
-%  U           - [returned by pca] -- see pca
-%  mu          - [returned by pca] -- see pca
-%  vars        - [returned by pca] -- see pca
+%  X           - data for which to get PCA coefficients
+%  U           - returned by pca.m
+%  mu          - returned by pca.m
 %  k           - number of principal coordinates to approximate X with
 %
 % OUTPUTS
@@ -27,26 +23,56 @@
 %
 % EXAMPLE
 %
-% See also PCA, PCA_APPLY_LARGE, PCA_VISUALIZE
+% See also PCA, PCA_VISUALIZE
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [Yk,Xhat,avsq,avsqOrig] = pca_apply(X,U,mu,vars,k) %#ok<INUSL>
+function varargout = pca_apply( X, U, mu, k )
 
-siz = size(X); nd = ndims(X);  [N,r]  = size(U);
-if(N==prod(siz) && ~(nd==2 && siz(2)==1)); siz=[siz, 1]; nd=nd+1; end
+% sizes / dimensions
+siz = size(X);  nd = ndims(X);  [d,r] = size(U);
+if(d==prod(siz) && ~(nd==2 && siz(2)==1)); siz=[siz, 1]; nd=nd+1; end
 inds = {':'}; inds = inds(:,ones(1,nd-1));
-d= prod(siz(1:end-1));
 
 % some error checking
-if(d~=N); error('incorrect size for X or U'); end
+if(prod(siz(1:end-1))~=d); error('incorrect size for X or U'); end
 if(isa(X,'uint8')); X = double(X); end
 if( k>r )
-  warning(['Only ' int2str(r) '<k comp. available.']); %#ok<WNTAG>
-  k=r;
+  warning(['Only ' int2str(r) '<k comp. available.']); k=r; %#ok<WNTAG>
 end
+
+% If X is small simply call pca_apply1 once.
+% OW break up X and call pca_apply1 multiple times and recombine.
+maxwidth = ceil( (10^7) / d );
+if( maxwidth > siz(end) )
+  varargout = cell(1,nargout);
+  [varargout{:}] = pca_apply1( X, U, mu, k );
+
+else
+  Yk = zeros( k, siz(end) );  Xhat = zeros( siz );
+  avsq = 0;  avsqOrig = 0;  last = 0;
+  if( nargout==3 ); out=cell(1,4); else out=cell(1,nargout); end;
+  while(last < siz(end))
+    first=last+1;  last=min(first+maxwidth-1,siz(end));
+    Xi = X(inds{:}, first:last);
+    [out{:}] = pca_apply1( Xi, U, mu, k );
+    Yk(:,first:last) = out{1};
+    if( nargout>=2 );  Xhat(inds{:},first:last)=out{2};  end;
+    if( nargout>=3 );  avsq=avsq+out{3}; avsqOrig=avsqOrig+out{4};  end;
+  end;
+  varargout = {Yk, Xhat, avsq/avsqOrig};
+end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function [ Yk, Xhat, avsq, avsqOrig ] = pca_apply1( X, U, mu, k )
+
+% sizes / dimensions
+siz = size(X);  nd = ndims(X);  [d,r] = size(U);
+if(d==prod(siz) && ~(nd==2 && siz(2)==1)); siz=[siz, 1]; nd=nd+1; end
+inds = {':'}; inds = inds(:,ones(1,nd-1));
 
 % subtract mean, then flatten X
 Xorig = X;
@@ -69,12 +95,9 @@ end
 % caclulate average value of (Xhat-Xorig).^2 compared to average value
 % of X.^2, where X is Xorig without the mean.  This is equivalent to
 % what fraction of the variance is captured by Xhat.
-% Note: the 4 output version of this function is for pca_apply_large
 if( nargout>2 )
   avsq = Xhat - Xorig;
   avsq = dot(avsq(:),avsq(:));
   avsqOrig = dot(X(:),X(:));
-  if (nargout==3)
-    avsq = avsq / avsqOrig;
-  end
+  if( nargout==3 ); avsq=avsq/avsqOrig; end
 end
