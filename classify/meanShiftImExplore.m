@@ -1,4 +1,4 @@
-% Visualization to help choose sigmas for meanshiftim.
+% Visualization to help choose sigmas for meanShiftIm.
 %
 % Displays the original image I, and prompts user to select a point on the
 % image.  For given point, calculates the distance (both spatial and range)
@@ -7,10 +7,10 @@
 % based on range only, 3) Seuc - similarity based on Euclidean distance
 % only, and 4) overall similarity.  Finally, in each image the green dot
 % (possibly occluded) shows the original point, and the blue dot shows the
-% new mean of the window after 1 step of meanshift.
+% new mean of the window after 1 step of meanShift.
 %
 % USAGE
-%  meanshiftim_explore( I, X, sigSpt, sigRng, show )
+%  meanShiftImExplore( I, X, sigSpt, sigRng, show )
 %
 % INPUTS
 %  I       - MxN image for display
@@ -23,15 +23,15 @@
 %
 % EXAMPLE
 %  I=double(imread('cameraman.tif'))/255;
-%  meanshiftim_explore( I, I, 5, .2, 1 );
+%  meanShiftImExplore( I, I, 5, .2, 1 );
 %
 % See also MEANSHIFTIM
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function meanshiftim_explore( I, X, sigSpt, sigRng, show )
+function meanShiftImExplore( I, X, sigSpt, sigRng, show )
 
 if( nargin<5 ); show = 1; end
 [mrows, ncols, p] = size(X);

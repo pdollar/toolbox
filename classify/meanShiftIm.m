@@ -1,9 +1,9 @@
-% Applies the meanshift algorithm to a joint spatial/range image.
+% Applies the meanShift algorithm to a joint spatial/range image.
 %
 % See "Mean Shift Analysis and Applications" by Comaniciu & Meer for info.
 %
 % Assumes X is an MxNxP array, where an X(i,j,:) represents the range data
-% at locations (i,j).  This function runs meanshift on each of the MxN data
+% at locations (i,j).  This function runs meanShift on each of the MxN data
 % points.  It takes advantage of the lattice structure of an image for
 % efficiency (it only needs to calculate full distance between two points
 % if they are near each other spatially).
@@ -30,7 +30,7 @@
 % its convergent location.  Display using quiver(Vc,Vr,0).
 %
 % USAGE
-%  [M,Vr,Vc] = meanshiftim( X,sigSpt,sigRng,[softFlag],[maxIter],[minDel] )
+%  [M,Vr,Vc] = meanShiftIm( X,sigSpt,sigRng,[softFlag],[maxIter],[minDel] )
 %
 % INPUTS
 %  X        - MxNxP data array, P may be 1
@@ -47,20 +47,20 @@
 %
 % EXAMPLE
 %  I=double(imread('cameraman.tif'))/255;
-%  [M,Vr,Vc] = meanshiftim( I,5,.2 );
+%  [M,Vr,Vc] = meanShiftIm( I,5,.2 );
 %  figure(1); im(I); figure(2); im( M(:,:,3) );
 %  % color image:
 %  I=double(imread('hestain.png'))/255;
-%  [M,Vr,Vc] = meanshiftim( I,5,.2 );
+%  [M,Vr,Vc] = meanShiftIm( I,5,.2 );
 %  figure(1); im(I); figure(2); im( M(:,:,3:end) );
 %
 % See also MEANSHIFT, MEANSHIFTIM_EXPLORE
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [M,Vr,Vc] = meanshiftim( X,sigSpt,sigRng,softFlag,maxIter,minDel )
+function [M,Vr,Vc] = meanShiftIm( X,sigSpt,sigRng,softFlag,maxIter,minDel )
 
 [sigSpt,er] = checknumericargs( sigSpt, 1, 0, 1 ); error(er);
 if( nargin<4 || isempty(softFlag)); softFlag = 0; end
@@ -73,7 +73,7 @@ data = cat( 3, cat( 3, grid_rs/sigSpt, grid_cs/sigSpt), X/sigRng );
 
 %%% MAIN LOOP
 M = data;
-ticstatusid = ticstatus('meanshiftim');  %t0 = clock;  tlast = t0;
+ticstatusid = ticstatus('meanShiftIm');  %t0 = clock;  tlast = t0;
 if( softFlag ); radius = sigSpt*2; else radius = sigSpt; end
 for i=1:mrows; for j=1:ncols; %#ok<ALIGN>
     Mij = data(i,j,:); Mij = Mij(:)';

@@ -18,7 +18,7 @@
 % Please email me if you find bugs, or have suggestions or questions!
 
 dir = 'classify/private/';
-mex([dir 'meanshift1.c'],       '-outdir', dir );
+mex([dir 'meanShift1.c'],       '-outdir', dir );
 
 dir = 'images/private/';
 mex([dir 'assign2binsc.c'],     '-outdir', dir );

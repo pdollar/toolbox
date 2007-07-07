@@ -37,9 +37,9 @@ switch 'kmeans2'
   case 'kmeans2'
     params = {'replicates', 4, 'display', 1, 'outlierfrac', nFrac};
     [IDX,C,sumd] = kmeans2( X, k, params{:} );  sum(sumd)
-  case 'meanshift'
+  case 'meanShift'
     %(X,radius,rate,maxiter,minCsize,blur)
-    [IDX,C] = meanshift( X, .3, .2, 100 , 10, 0 );
+    [IDX,C] = meanShift( X, .3, .2, 100 , 10, 0 );
 end
 
 %%% show data & clustering results

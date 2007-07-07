@@ -1,21 +1,21 @@
-% Some post processing routines for meanshift not currently being used.
+% Some post processing routines for meanShift not currently being used.
 %
 % USAGE
-%  [IDX,C] = meanshift_post( X, IDX, C, minCsize, forceOutl )
+%  [IDX,C] = meanShiftPost( X, IDX, C, minCsize, forceOutl )
 %
 % INPUTS
-%  see meanshift
+%  see meanShift
 %
 % OUTPUTS
-%  see meanshift
+%  see meanShift
 %
 % EXAMPLE
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [IDX,C] = meanshift_post( X, IDX, C, minCsize, forceOutl )
+function [IDX,C] = meanShiftPost( X, IDX, C, minCsize, forceOutl )
 
 %%% force outliers to belong to IDX (mainly for visualization)
 if( forceOutl ) 
@@ -28,7 +28,7 @@ end;
 
 %%% Delete smallest cluster, reassign points, re-sort, repeat...
 k = max(IDX);
-ticId = ticstatus('meanshift_post',[],5); kinit = k;
+ticId = ticstatus('meanShiftPost',[],5); kinit = k;
 while( 1 )
   % sort clusters [largest first] 
   cnts = zeros(1,k); for i=1:k; cnts(i) = sum( IDX==i ); end
