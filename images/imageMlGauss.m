@@ -13,15 +13,15 @@
 % returned regardless.  All operations are performed on abs(G) in case it
 % contains negative or complex values.
 %
-% symmFlag is an optional flag that if set to 1 then imageMLG recovers the
+% symmFlag is an optional flag that if set to 1 then imageMlGauss recovers the
 % maximum likelihood symmetric gaussian.  That is the variance in each
 % direction is equal, and all covariance terms are 0.  If symmFlag is set
-% to 2 and G is 3D, imageMLG recovers the ML guassian with equal variance
+% to 2 and G is 3D, imageMlGauss recovers the ML guassian with equal variance
 % in the 1st 2 dimensions (row and col) and all covariance terms equal to
 % 0, but a possibly different variance in the 3rd (z or t) dimension.
 %
 % USAGE
-%  varargout = imageMLG( G, [symmFlag], [show] )
+%  varargout = imageMlGauss( G, [symmFlag], [show] )
 %
 % INPUTS
 %  G        - image of a gaussian (weighted pixels)
@@ -35,9 +35,9 @@
 %  logl     - log likelihood of G given recov. gaussian (faster if omitted)
 %
 % EXAMPLE - 2D
-%  R = rotationMatrix2D( pi/6 );  C=R'*[10^2 0; 0 20^2]*R;
+%  R = rotationMatrix( pi/6 );  C=R'*[10^2 0; 0 20^2]*R;
 %  G = filterGauss( [200, 300], [150,100], C, 0 );
-%  [mu,C,GR,logl] = imageMLG( G, 0, 1 );
+%  [mu,C,GR,logl] = imageMlGauss( G, 0, 1 );
 %  mask = maskEllipse( size(G,1), size(G,2), mu, C );
 %  figure(2); im(mask)
 %
@@ -45,7 +45,7 @@
 %  R = rotationMatrix( [1,1,0], pi/4 );
 %  C = R'*[5^2 0 0; 0 2^2 0; 0 0 4^2]*R;
 %  G = filterGauss( [50,50,50], [25,25,25], C, 0 );
-%  [mu,C,GR,logl] = imageMLG( G, 0, 1 );
+%  [mu,C,GR,logl] = imageMlGauss( G, 0, 1 );
 %
 % See also GAUSS2ELLIPSE, PLOTGAUSSELLIPSES, MASKELLIPSE
 
@@ -53,7 +53,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function varargout = imageMLG( G, symmFlag, show )
+function varargout = imageMlGauss( G, symmFlag, show )
 
 if( nargin<2 || isempty(symmFlag) ); symmFlag=0; end;
 if( nargin<3 || isempty(show) ); show=0; end;
@@ -61,16 +61,16 @@ if( nargin<3 || isempty(show) ); show=0; end;
 varargout = cell(1,max(nargout,2));
 nd = ndims(G);  G = abs(G);
 if( nd==2 )
-  [varargout{:}] = imageMLG_2D( G, symmFlag, show );
+  [varargout{:}] = imageMlGauss2D( G, symmFlag, show );
 elseif( nd==3 )
-  [varargout{:}] = imageMLG_3D( G, symmFlag, show );
+  [varargout{:}] = imageMlGauss3D( G, symmFlag, show );
 else
   error( 'Unsupported dimension for G.  G must be 2D or 3D.' );
 end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [mu,C,GR,logl] = imageMLG_2D( G, symmFlag, show )
+function [mu,C,GR,logl] = imageMlGauss2D( G, symmFlag, show )
 
 % to be used throughout calculations
 [ gridCols, gridRows ] = meshgrid( 1:size(G,2), 1:size(G,1)  );
@@ -89,12 +89,12 @@ if( symmFlag==0 )
   Crr = (distRows .^ 2) .* G;   Crr = sum(Crr(:)) / sumG;
   Crc = (distCols .* distRows) .* G;   Crc = sum(Crc(:)) / sumG;
   C = [Crr Crc; Crc Ccc];
-  
+
 elseif( symmFlag==1 )
   sigSq = (distCols.^2 + distRows.^2) .* G;
   sigSq = 1/2 * sum(sigSq(:)) / sumG;
   C = sigSq*eye(2);
-  
+
 else
   error(['Illegal value for symmFlag: ' num2str(symmFlag)]);
 end
@@ -115,7 +115,7 @@ end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [mu,C,GR,logl] = imageMLG_3D( G, symmFlag, show )
+function [mu,C,GR,logl] = imageMlGauss3D( G, symmFlag, show )
 
 % to be used throughout calculations
 [gridCols,gridRows,gridZs]=meshgrid(1:size(G,2),1:size(G,1),1:size(G,3));
@@ -140,17 +140,17 @@ if( symmFlag==0 )
   Czr = distZs   .* distRowsG;    Czr = sum(Czr(:));
   Czz = distZs   .* distZs .* G;  Czz = sum(Czz(:));
   C = [Crr Crc Czr; Crc Ccc Czc; Czr Czc Czz] / sumG;
-  
+
 elseif( symmFlag==1 )
   sigSq = (distCols.^2 + distRows.^2 + distZs .^ 2) .* G;
   sigSq = 1/3 * sum(sigSq(:));
   C = [sigSq 0 0; 0 sigSq 0; 0 0 sigSq] / sumG;
-  
+
 elseif( symmFlag==2 )
   sigSq = (distCols.^2 + distRows.^2) .* G;  sigSq = 1/2 * sum(sigSq(:));
   tauSq = (distZs .^ 2) .* G;  tauSq = sum(tauSq(:));
   C = [sigSq 0 0; 0 sigSq 0; 0 0 tauSq] / sumG;
-  
+
 else
   error(['Illegal value for symmFlag: ' num2str(symmFlag)])
 end
