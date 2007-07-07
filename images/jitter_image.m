@@ -132,7 +132,7 @@ if( nscales==1 ) % if just 1 scaling
   if( ~all(scales==1) )
     S = [scales(1,1) 0; 0 scales(1,2)];
     H = [S [0;0]; 0 0 1];
-    I = apply_homography( I, H, method, 'crop' );
+    I = imtransform2( I, H, method, 'crop' );
   end
   IJ = jitter_image2( I, jsiz, phis, trans );
 else % multiple scales
@@ -140,7 +140,7 @@ else % multiple scales
   for i=1:nscales
     S = [scales(i,1) 0; 0 scales(i,2)];
     H = [S [0;0]; 0 0 1];
-    J = apply_homography( I, H, method, 'crop' );
+    J = imtransform2( I, H, method, 'crop' );
     IJ(:,:,i) = J;
   end
   IJ = feval_arrays( IJ, @jitter_image2, jsiz, phis, trans );
@@ -167,7 +167,7 @@ if( all(mod(trans,1))==0) % all integer translations [optimized for speed]
     if( phi==0); IR = I; else
       R = rotationMatrix( phi );
       H = [R [0;0]; 0 0 1];
-      IR = apply_homography( I, H, method, 'crop' );
+      IR = imtransform2( I, H, method, 'crop' );
     end
 
     for tran=1:ntrans
@@ -181,7 +181,7 @@ else % arbitrary translations
     R = rotationMatrix( phi );
     for tran=1:ntrans
       H = [R trans(:,tran); 0 0 1];
-      I2 = apply_homography( I, H, method, 'crop' );
+      I2 = imtransform2( I, H, method, 'crop' );
       IJ(:,:,index) = I2; index = index+1;
     end
   end

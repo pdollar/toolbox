@@ -35,14 +35,12 @@
 %   xeucn               - n-dimensional euclidean distance between each window in A and template T
 %
 % Image deformation:
-%   apply_homography    - Applies the homography defined by H on the image I.
-%   texture_map         - Maps texture in I according to rowDst and colDst.
 %   imnormalize         - Various ways to normalize a (multidimensional) image.
-%   imrotate2           - Custom version of imrotate that demonstrates use of apply_homography.
-%   imtranslate         - Translate an image to subpixel accuracy.
 %   imshrink            - Used to shrink a multidimensional array I by integer amount.
 %   imsubs2array        - Converts subs/vals image representation to array representation.
 %   imsubs_resize       - Resizes subs in subs/vals image representation by resizVals.
+%   imtransform2        - Applies a general/special homography on an image I 
+%   texture_map         - Maps texture in I according to rowDst and colDst.
 %
 % Generalized nonmaximal suppression:
 %   nonmaxsupr          - Applies nonmaximal suppression on an image of arbitrary dimension.

@@ -11,7 +11,7 @@
 % If the inverse mapping is also available -- ie if we can go from the
 % coordinates in the destination to the coordinates in the source, then a
 % much more efficient procedure can be used to texture_map that involves
-% interp2 instead of griddata.  See apply_homography for example usage in
+% interp2 instead of griddata.  See imtransform2  for example usage in
 % this case.
 %
 % The bounding box of the image is set by the BBOX argument, a string that
@@ -34,7 +34,7 @@
 %
 % EXAMPLE
 %
-% See also APPLY_HOMOGRAPHY
+% See also IMTRANSFORM2
 
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
