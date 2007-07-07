@@ -25,18 +25,18 @@ u = rand(n-3,1) - .5;
 u = u / norm(u);
 u = [u; 0; 0; 0];
 
-% get U, SIG, SIG_INV, requires some fanangling
-[U,SIG] = eig(LnInv);
-U = real(U); SIG=real(SIG);
-SIG( abs(SIG)<.000001)=0;
-%SIG_INV = SIG;
-%SIG_INV(abs(SIG)>.000001) = 1./SIG_INV(abs(SIG)>.000001);
+% get U, sig, sigInv, requires some fanangling
+[U,sig] = eig(LnInv);
+U = real(U); sig=real(sig);
+sig( abs(sig)<.000001)=0;
+%sigInv = sig;
+%sigInv(abs(sig)>.000001) = 1./sigInv(abs(sig)>.000001);
 
 % get w (and v?)
-%v = sqrt(bendE)* U * sqrt(SIG_INV) * u;
-w = sqrt(bendE)* U * sqrt(SIG) * u;
+%v = sqrt(bendE)* U * sqrt(sigInv) * u;
+w = sqrt(bendE)* U * sqrt(sig) * u;
 
 % % should be eye(N) with 3 0's
-% sqrt(SIG_INV) * U' * LnInv * U * sqrt(SIG_INV)
+% sqrt(sigInv) * U' * LnInv * U * sqrt(sigInv)
 % % should be equal
 % v' * LnInv * v, bendE

@@ -50,19 +50,19 @@ if( etime( clock, tLast )> updateFreq || (fracDone==1 && lenPrev>0) )
     if( ~lenPrev ); fprintf('\n'); end
 
     % create display message
-    fracdone_s = num2str(fracDone*100,'%.1f');
+    fracdoneS = num2str(fracDone*100,'%.1f');
     if( elptime/fracDone < 600 )
-      elptime_s  = num2str(elptime,'%.1f');
-      esttime_s  = num2str(esttime,'%.1f');
-      timetype_s = 's';
+      elptimeS  = num2str(elptime,'%.1f');
+      esttimeS  = num2str(esttime,'%.1f');
+      timetypeS = 's';
     else
-      elptime_s  = num2str(elptime/60,'%.1f');
-      esttime_s  = num2str(esttime/60,'%.1f');
-      timetype_s = 'm';
+      elptimeS  = num2str(elptime/60,'%.1f');
+      esttimeS  = num2str(esttime/60,'%.1f');
+      timetypeS = 'm';
     end
     if( ~isempty(msg) ); msg = [msg '   ']; end
-    msg = [msg 'completed=' fracdone_s '%% [elapsed=' elptime_s ];
-    msg = [msg timetype_s ' / remaining~=' esttime_s timetype_s ']' ];
+    msg = [msg 'completed=' fracdoneS '%% [elapsed=' elptimeS ];
+    msg = [msg timetypeS ' / remaining~=' esttimeS timetypeS ']' ];
 
     % erase previous display and create new display
     if( erasePrev ) % undo previous disp

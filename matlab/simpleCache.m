@@ -52,11 +52,11 @@ function varargout = simpleCache( op, cache, varargin )
 if( strcmp(op,'init') ) %%% init a cache
   error(nargchk(1, 2, nargin));
   error(nargoutchk(1, 1, nargout));
-  cache_siz = 8;
-  cache.freeinds = 1:cache_siz;
-  cache.keyns = -ones(1,cache_siz);
-  cache.keys = cell(1,cache_siz);
-  cache.vals = cell(1,cache_siz);
+  cacheSiz = 8;
+  cache.freeinds = 1:cacheSiz;
+  cache.keyns = -ones(1,cacheSiz);
+  cache.keys = cell(1,cacheSiz);
+  cache.vals = cell(1,cacheSiz);
   varargout = {cache};
 
 elseif( strcmp(op,'put') ) %%% a put operation
@@ -91,14 +91,14 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% double cache size
 function cache = cachegrow( cache )
-cache_siz = length( cache.keyns );
-if( cache_siz>64 ) % warn if getting big
-  warning(['doubling cache size to: ' int2str2(cache_siz*2)]);%#ok<WNTAG>
+cacheSiz = length( cache.keyns );
+if( cacheSiz>64 ) % warn if getting big
+  warning(['doubling cache size to: ' int2str2(cacheSiz*2)]);%#ok<WNTAG>
 end;
-cache.freeinds = [cache.freeinds (cache_siz+1):(2*cache_siz)];
-cache.keyns = [cache.keyns -ones(1,cache_siz)];
-cache.keys  = [cache.keys cell(1,cache_siz)];
-cache.vals  = [cache.vals cell(1,cache_siz)];
+cache.freeinds = [cache.freeinds (cacheSiz+1):(2*cacheSiz)];
+cache.keyns = [cache.keyns -ones(1,cacheSiz)];
+cache.keys  = [cache.keys cell(1,cacheSiz)];
+cache.vals  = [cache.vals cell(1,cacheSiz)];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% put something into the cache
@@ -123,9 +123,9 @@ cache.vals{ind} = val;
 %%% get cache element, or fail
 function [ind,val] = cacheget( cache, key )
 
-cache_siz = length( cache.keyns );
+cacheSiz = length( cache.keyns );
 keyn = length( key );
-for i=1:cache_siz
+for i=1:cacheSiz
   if(keyn==cache.keyns(i) && all(key==cache.keys{i}))
     val = cache.vals{i};
     ind = i;

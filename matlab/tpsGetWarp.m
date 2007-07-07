@@ -48,10 +48,10 @@ end
 
 % get L
 n = size(xsS,2);
-delta_xs = xsS'*ones(1,n) - ones(n,1) * xsS;
-delta_ys = ysS'*ones(1,n) - ones(n,1) * ysS;
-R_sq = (delta_xs .* delta_xs + delta_ys .* delta_ys);
-R_sq = R_sq+eye(n); K = R_sq .* log( R_sq ); K( isnan(K) )=0;
+deltaXs = xsS'*ones(1,n) - ones(n,1) * xsS;
+deltaYs = ysS'*ones(1,n) - ones(n,1) * ysS;
+Rsq = (deltaXs .* deltaXs + deltaYs .* deltaYs);
+Rsq = Rsq+eye(n); K = Rsq .* log( Rsq ); K( isnan(K) )=0;
 K = K + lambda * eye( n );
 P = [ ones(n,1), xsS', ysS' ];
 L = [ K, P; P', zeros(3,3) ];

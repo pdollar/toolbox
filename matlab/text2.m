@@ -57,11 +57,11 @@ while( updated ); updated=0;
 
       % convert pos to normalized FIGURE coordinates
       % must move origin, and also account for scaling
-      axis_pos = get(gca,'Position');
-      pos(1) = axis_pos(1) + pos(1) * axis_pos(3);
-      pos(2) = axis_pos(2) + pos(2) * axis_pos(4);
-      pos(3) = pos(3) * axis_pos(3);
-      pos(4) = pos(4) * axis_pos(4);
+      axisPos = get(gca,'Position');
+      pos(1) = axisPos(1) + pos(1) * axisPos(3);
+      pos(2) = axisPos(2) + pos(2) * axisPos(4);
+      pos(3) = pos(3) * axisPos(3);
+      pos(4) = pos(4) * axisPos(4);
     end
 
     % if necessary, move OuterPosition of axes accordingly

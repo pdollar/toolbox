@@ -47,10 +47,10 @@ end
 function zs = f( w, aff, xsS, ysS, xs, ys )
 
 n = size(w,1);   ns = size(xs,2);
-del_xs = xs'*ones(1,n) - ones(ns,1)*xsS;
-del_ys = ys'*ones(1,n) - ones(ns,1)*ysS;
-dist_sq = (del_xs .* del_xs + del_ys .* del_ys);
-dist_sq = dist_sq + eye(size(dist_sq)) + eps;
-U = dist_sq .* log( dist_sq ); U( isnan(U) )=0;
+delXs = xs'*ones(1,n) - ones(ns,1)*xsS;
+delYs = ys'*ones(1,n) - ones(ns,1)*ysS;
+distSq = (delXs .* delXs + delYs .* delYs);
+distSq = distSq + eye(size(distSq)) + eps;
+U = distSq .* log( distSq ); U( isnan(U) )=0;
 zs = aff(1)*ones(ns,1)+aff(2)*xs'+aff(3)*ys';
 zs = zs + sum((U.*(ones(ns,1)*w')),2);

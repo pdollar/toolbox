@@ -76,9 +76,9 @@ for i=1:n
   if (i==1)
     ndx = ndims(x);
     if(ndx==2 && size(x,2)==1); ndx=1; end;
-    ones_ndx = ones(1,ndx);
-    X = repmat( x, [ones_ndx,n] );
-    indsX = {':'}; indsX = indsX(ones_ndx);
+    onesNdx = ones(1,ndx);
+    X = repmat( x, [onesNdx,n] );
+    indsX = {':'}; indsX = indsX(onesNdx);
   else
     X(indsX{:},i) = x;
   end;

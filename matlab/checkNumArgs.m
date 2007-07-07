@@ -57,7 +57,7 @@ xorig = x; if( length(x)==1); x = x(ones(siz)); end;
 if( length(siz)~=ndims(x) || ~all(size(x)==siz) )
   er = ['has size = [' num2str(size(x)) '], '];
   er = [er 'which is not the required size of [' num2str(siz) ']'];
-  er = create_errormsg( xname, xorig, er ); return;
+  er = createErrMsg( xname, xorig, er ); return;
 end
 
 % check that x are the right type of integers (unless intFlag==-1)
@@ -65,17 +65,17 @@ switch intFlag
   case 0
     if( ~all(mod(x,1)==0))
       er = 'must have integer entries';
-      er = create_errormsg( xname, xorig, er); return;
+      er = createErrMsg( xname, xorig, er); return;
     end;
   case 1
     if( ~all(mod(x,2)==1))
       er = 'must have odd integer entries';
-      er = create_errormsg( xname, xorig, er); return;
+      er = createErrMsg( xname, xorig, er); return;
     end;
   case 2
     if( ~all(mod(x,2)==0))
       er = 'must have even integer entries';
-      er = create_errormsg( xname, xorig, er ); return;
+      er = createErrMsg( xname, xorig, er ); return;
     end;
 end;
 
@@ -84,27 +84,27 @@ switch signFlag
   case -2
     if( ~all(x<0))
       er = 'must have strictly negative entries';
-      er = create_errormsg( xname, xorig, er ); return;
+      er = createErrMsg( xname, xorig, er ); return;
     end;
   case -1
     if( ~all(x<=0))
       er = 'must have negative entries';
-      er = create_errormsg( xname, xorig, er ); return;
+      er = createErrMsg( xname, xorig, er ); return;
     end;
   case 1
     if( ~all(x>=0))
       er = 'must have positive entries';
-      er = create_errormsg( xname, xorig, er ); return;
+      er = createErrMsg( xname, xorig, er ); return;
     end;
   case 2
     if( ~all(x>0))
       er = 'must have strictly positive entries';
-      er = create_errormsg( xname, xorig, er ); return;
+      er = createErrMsg( xname, xorig, er ); return;
     end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function er = create_errormsg( xname, x, er )
+function er = createErrMsg( xname, x, er )
 if(numel(x)<10)
   er = ['Numeric input argument ' xname '=[' num2str(x) '] ' er '.'];
 else
