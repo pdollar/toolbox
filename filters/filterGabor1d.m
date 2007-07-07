@@ -46,6 +46,6 @@ fodd = fodd/norm(fodd(:),1);
 
 % visualization
 if( show )
-  filter_visualize_1D( feven, show );
-  filter_visualize_1D( fodd, show+1 );
+  filterVisualize( feven, show );
+  filterVisualize( fodd, show+1 );
 end

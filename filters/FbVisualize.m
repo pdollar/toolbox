@@ -12,9 +12,9 @@
 % OUTPUTS
 %
 % EXAMPLE
-%  FB=FB_make_1D(1,0);  FbVisualize( FB, 1 );  %1D
-%  load FbDoG.mat;     FbVisualize( FB, 2 );  %2D
-%  FB=FB_make_3D(1,0);  FbVisualize( FB, 3 );  %3D
+%  FB=FbMake(1,1,0);  FbVisualize( FB, 1 );  %1D
+%  load FbDoG.mat;    FbVisualize( FB, 2 );  %2D
+%  FB=FbMake(3,1,0);  FbVisualize( FB, 3 );  %3D
 %
 % See also
 
@@ -55,6 +55,6 @@ elseif( nd==3 )
   n = size(FB,4); nn = ceil( sqrt(n) ); mm = ceil( n/nn );
   for i=1:n 
     subplot(nn,mm,i); 
-    filter_visualize_3D( FB(:,:,:,i), [], 0 );
+    filterVisualize( FB(:,:,:,i), 0 );
   end
 end

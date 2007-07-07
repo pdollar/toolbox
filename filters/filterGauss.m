@@ -70,12 +70,5 @@ G(G<eps*max(G(:))*10) = 0;
 G = G/sum(G(:));
 
 % display
-if( show )
-  if( nd==1 )
-    filter_visualize_1D( G, show );
-  elseif( nd==2 )
-    filter_visualize_2D( G, '', show );
-  elseif( nd==3 )
-    filter_visualize_3D( G, .2, show );
-  end
-end
+if( show ); filterVisualize( G, show ); end
+

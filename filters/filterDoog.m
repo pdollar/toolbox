@@ -56,12 +56,6 @@ dG=dG/norm(dG(:),1);
 
 % display
 if( show && nd<=3 )
-  if( nd==1 )
-    filter_visualize_1D( dG, show );
-  elseif( nd==2 )
-    filter_visualize_2D( dG, '', show )
-  elseif( nd==3 )
-    filter_visualize_3D( dG, .1, show );
-  end
+  filterVisualize( dG, show );
   title( ['sigs=[' num2str(sigmas) '], derivs=[' num2str( nderivs ) ']']);
 end

@@ -53,4 +53,4 @@ G=G-mean(G(:));
 G=G/norm(G(:),1);
 
 % display
-if(show); filter_visualize_2D( G, 'row', show ); end
+if(show); filterVisualize( G, show, 'row' ); end

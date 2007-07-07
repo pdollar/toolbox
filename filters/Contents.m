@@ -9,7 +9,7 @@
 %   filterGabor2d       - Creates an even/odd pair of 2D Gabor filters.
 %   filterGauss         - n-dimensional Gaussian filter.
 %   filterSteerable     - Steerable 2D Gaussian derivative filter (for visualization).
-%   filterVisualize     - Used to visualize a 1D filter.
+%   filterVisualize     - Used to visualize a 1D/2D/3D filter.
 %
 % Operations involving a set of filters (a filter bank or FB):
 %   FbApply2d           - Applies each of the filters in the filterbank FB to the image I.

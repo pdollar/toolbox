@@ -14,8 +14,7 @@
 %  percentage of the peak filter response detemined by frac.
 %
 % USAGE
-%  filter_visualize_1D( f, [show], [arg] )
-%
+%  filterVisualize( f, [show], [arg] )
 %
 % INPUTS
 %  f         - filter to visualize
