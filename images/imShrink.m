@@ -7,19 +7,22 @@
 % along a given dimension.
 %
 % Can handle very large arrays in a memory efficient manner. All the work
-% is done by localSum.
+% is done by localSum with the 'block' shape flag.
 %
 % USAGE
 %  I = imShrink( I, ratios )
 %
 % INPUTS
 %  I       - k dimensional input array
-%  ratios  - k element vector of shrinking factors
+%  ratios  - k element int vector of shrinking factors
 %
 % OUTPUTS
 %  I       - shrunk version of input
 %
 % EXAMPLE
+%  load trees; I=ind2gray(X,map);
+%  I2 = imShrink( I, [2 2] );
+%  figure(1); im(I); figure(2); im(I2);
 %
 % See also IMRESIZE, LOCALSUM
 
@@ -74,13 +77,12 @@ I = feval( classname, I );
 %
 % if(gauss)
 %   % get smoothed version of I
-%   sigmas = ratios/2 / 1.6; sigmas(ratios==1)=0; %is this an ideal value
-% of sigmas?
-%    I = gauss_smooth( I, sigmas, 'full' );
-%    I = arrayToDims( I, siz-ratios+1 );
-%
-%    % now subsample smoothed I
-%    sizsum = size(I);
-%    extract={}; for d=1:nd extract{d}=1:ratios(d):sizsum(d); end;
-%    I = I( extract{:} );
+%   sigmas = ratios/2 / 1.6; sigmas(ratios==1)=0; %is this ideal sigmas?
+%   I = gauss_smooth( I, sigmas, 'full' );
+%   I = arrayToDims( I, siz-ratios+1 );
+% 
+%   % now subsample smoothed I
+%   sizsum = size(I);
+%   extract={}; for d=1:nd extract{d}=1:ratios(d):sizsum(d); end;
+%   I = I( extract{:} );
 % end

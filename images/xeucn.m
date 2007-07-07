@@ -1,13 +1,8 @@
-% n-dimensional euclidean distance between each window in A and template T
+% n-dimensional euclidean distance between each window in A and template T.
 %
 % Similar to normxcorrn, except at each point (i,j) calculates the 
 % euclidean distance between the T and the window in A surrounding the 
 % point, storing the result in C(i,j).
-%
-% The order of parameters is reversed from normxcorrn.  This is to be 
-% compatible with the matlab functions normxcorr2 anc xcorr2 which take 
-% parameters in different orders. Also, note that normxcorrn gives a 
-% similarity matrix, whereas xeucn gives a dissimilarity (distance) matrix.
 %
 % USAGE
 %  C = xeucn( A, T, [shape] )
@@ -15,16 +10,19 @@
 % INPUTS
 %  A           - first d-dimensional matrix
 %  T           - second d-dimensional matrix
-%  shape       - ['full'] 'valid', 'full', or 'same', see convn_fast help
+%  shape       - ['full'] 'valid', or 'same' (see convn)
 %
 % OUTPUTS
 %  C           - correlation matrix
 %
 % EXAMPLE
+%  T=gauss_smooth(rand(20,20),2); A=repmat(T,[3 3]);
+%  C1=normxcorrn(T,A);  C2=xcorrn(A,T);  C3=xeucn(A,T); 
+%  figure(1); im(C1);  figure(2); im(C2);  figure(3); im(-C3);
 %
-% See also NORMXCORRN, XCORRN
+% See also XCORRN
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -44,8 +42,8 @@ if( nd==2 ); T = rot90( T,2 ); else for d=1:nd; T = flipdim(T,d); end; end
 %          = sumj( Akj.^2 ) + sumj( Tlj.^2 ) - 2*sumj(Akj.*Tlj);
 % T is constant.  Hence simply need square of A in each window, as
 % well as each dot product between A and T.
-A_mag = localSum( A.*A, size(T), shape ); % sum of squares of A per window
-T_mag = T.^2;  T_mag = sum( T_mag(:) );    % constant (sum of squares of T)
-C = A_mag + T_mag - 2 * convn_fast(A,T,shape); % Distance squared
-% C( A_mag<.01 ) = T_mag;  % prevent numerical errors
-C = sqrt(real(C));
+Amag = localSum( A.*A, size(T), shape ); % sum of squares of A per window
+Tmag = T.^2;  Tmag = sum( Tmag(:) );    % constant (sum of squares of T)
+C = Amag + Tmag - 2 * convn_fast(A,T,shape); % Distance squared
+% C( Amag<.01 ) = Tmag;  % prevent numerical errors
+C = real(sqrt(real(C)));

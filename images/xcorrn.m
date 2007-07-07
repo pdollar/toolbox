@@ -1,13 +1,12 @@
 % n-dimensional cross-correlation.  Generalized version of xcorr2.
 %
 % For 2 dimensional inputs this function is exactly the same as xcorr2,
-% but also works in higher dimensions.   It can also be more efficient
-% because it performs convolution in either the spatial or frequency
-% domain.
+% but also works in higher dimensions.   Can also be more efficient
+% because it performs convolution using convn_fast.
 %
 % The order of parameters is reversed from normxcorrn.  This is to be
-% compatible with the matlab functions normxcorr2 anc xcorr2 which take
-% parameters in different orders.
+% compatible with the matlab functions normxcorr2 and xcorr2 (which take
+% parameters in different orders).
 %
 % USAGE
 %  C = xcorrn( A, T, [shape] )
@@ -15,16 +14,19 @@
 % INPUTS
 %  A           - first d-dimensional matrix
 %  T           - second d-dimensional matrix
-%  shape       - ['full'] 'valid', 'full', or 'same', see convn_fast help
+%  shape       - ['full'] 'valid', or 'same' (see convn)
 %
 % OUTPUTS
 %  C           - correlation matrix
 %
 % EXAMPLE
+%  T=gauss_smooth(rand(20,20),2); A=repmat(T,[3 3]);
+%  C1=xcorr2(A,T); C2=xcorrn(A,T); C3=rot90(xcorrn(T,A),2);
+%  figure(1); im(C1);  figure(2); im(C2);  figure(3); im(C3);
 %
-% See also XCORR2, NORMXCORRN, XEUCN
+% See also XCORR2, NORMXCORRN, XEUCN, CONVN_FAST
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
