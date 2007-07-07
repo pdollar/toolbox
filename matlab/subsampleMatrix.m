@@ -15,7 +15,7 @@
 %  s=whos('x'); mb=s.bytes/2^20
 %
 % USAGE
-%  [X,keeplocs] = randomsample( X, maxMegs )
+%  [X,keeplocs] = subsampleMatrix( X, maxMegs )
 %
 % INPUTS
 %  X         - [d1 x ... x dm x n], treated as n [d1 x ... x dm] elements
@@ -28,10 +28,10 @@
 % EXAMPLE
 %  % Xsam should have size: 1024xround(1024/10)
 %  X = uint8(ones(2^10,2^10));
-%  Xsam = randomsample( X, 1/10 );
+%  Xsam = subsampleMatrix( X, 1/10 );
 %  % Xsam should have size: 100x10x~(1000/8)
 %  X = rand(100,10,1000);
-%  Xsam = randomsample( X, 1 );
+%  Xsam = subsampleMatrix( X, 1 );
 %
 % See Also
 
@@ -39,7 +39,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [X,keeplocs] = randomsample( X, maxMegs )
+function [X,keeplocs] = subsampleMatrix( X, maxMegs )
 
 siz = size( X );  nd = ndims(X);
 inds={':'};  inds=inds(:,ones(1,nd-1));

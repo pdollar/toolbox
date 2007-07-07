@@ -1,24 +1,24 @@
 % Obtain a random warp with the same bending energy as the original.
 %
 % USAGE
-%  w = tps_random( LnInv, bendE )
+%  w = tpsRandom( LnInv, bendE )
 %
 % INPUTS
-%  LnInv   - [see tps_getwarp] bookstein warping parameters
+%  LnInv  - [see tpsGetWarp] bookstein warping parameters
 %  bendE  - amount of bening energy for random warp to have
 %
 % OUTPUTS
-%  w      - nonlinear component of warp for use in tps_interpolate
+%  w      - nonlinear component of warp for use in tpsInterpolate
 %
 % EXAMPLE
 %
-% See also TPS_GETWARP
+% See also TPSGETWARP
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function w = tps_random( LnInv, bendE )
+function w = tpsRandom( LnInv, bendE )
 
 n = size(LnInv,1);
 u = rand(n-3,1) - .5;

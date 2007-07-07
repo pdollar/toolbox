@@ -1,25 +1,25 @@
-% Apply warp (obtained by tps_getwarp) to a set of new points.
+% Apply warp (obtained by tpsGetWarp) to a set of new points.
 %
 % USAGE
-%  [xsR,ysR] = tps_interpolate( warp, xs, ys, [show] )
+%  [xsR,ysR] = tpsInterpolate( warp, xs, ys, [show] )
 %
 % INPUTS
-%  warp     - [see tps_getwarp] bookstein warping parameters
+%  warp     - [see tpsGetWarp] bookstein warping parameters
 %  xs, ys   - points to apply warp to
-%  [show]   - will display results in figure(show)
+%  show     - [1] will display results in figure(show)
 %
 % OUTPUTS
 %  xsR, ysR - result of warp applied to xs, ys
 %
 % EXAMPLE
 %
-% See also TPS_GETWARP
+% See also TPSGETWARP
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [xsR,ysR] = tps_interpolate( warp, xs, ys, show )
+function [xsR,ysR] = tpsInterpolate( warp, xs, ys, show )
 
 if( nargin<4 || isempty(show)); show = 1; end
 
@@ -40,6 +40,7 @@ if( show )
   subplot(2,1,2); plot( xsR, ysR, '.' );
   hold('on');  plot( xsD, ysD, '+' );  hold('off');
 end
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% find f(x,y) for xs and ys given W and original points

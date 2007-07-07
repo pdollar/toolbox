@@ -38,13 +38,13 @@
 %   normpdf2             - Normal prob. density function (pdf) with arbitrary covariance matrix.
 %   num2strs             - Applies num2str to each element of an array X.
 %   randint2             - Faster but restricted version of randint.
-%   randomsample         - Samples elements of X so result uses at most maxMegs megabytes of memory.
+%   subsampleMatrix      - Samples elements of X so result uses at most maxMegs megabytes of memory.
 %   rotationMatrix       - Performs different operations dealing with a rotation matrix
 %   simpleCache          - A simple cache that can be used to store results of computations.
 %   sub2ind2             - Improved version of sub2ind.
 %
 % Thin plate splines:
-%   tps_getwarp          - Given two sets of corresponding points, calculates warp between them.
-%   tps_interpolate      - Apply warp (obtained by tps_getwarp) to a set of new points.
-%   tps_interpolateimage - Interpolate Isrc according to the warp from Isrc->Idst.
-%   tps_random           - Obtain a random warp with the same bending energy as the original.
+%   tpsGetWarp           - Given two sets of corresponding points, calculates warp between them.
+%   tpsInterpolate       - Apply warp (obtained by tpsGetWarp) to a set of new points.
+%   tpsInterpolateIm     - Interpolate Isrc according to the warp from Isrc->Idst.
+%   tpsRandom            - Obtain a random warp with the same bending energy as the original.

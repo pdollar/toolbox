@@ -1,12 +1,12 @@
 % Given two sets of corresponding points, calculates warp between them.
 %
 % Uses booksteins PAMI89 method.  Can then apply warp to a new set of
-% points (tps_interpolate), or even an image (tps_interpolateiamge).
+% points (tpsInterpolate), or even an image (tpsInterpolateiamge).
 %  "Principal Warps: Thin-Plate Splines and the Decomposition of
 %  Deformations".  Bookstein.  PAMI 1989.
 %
 % USAGE
-%  [warp,L,LnInv,bendE] = tps_getwarp( lambda, xsS, ysS, xsD, ysD )
+%  [warp,L,LnInv,bendE] = tpsGetWarp( lambda, xsS, ysS, xsD, ysD )
 %
 % INPUTS
 %  lambda      - rigidity of warp (inf means warp becomes affine)
@@ -20,26 +20,26 @@
 %
 % EXAMPLE - 1
 %  xsS=[0 -1 0 1];  ysS=[1 0 -1 0];  xsD=xsS;  ysD=[3/4 1/4 -5/4 1/4];
-%  warp = tps_getwarp( 0, xsS, ysS, xsD, ysD );
+%  warp = tpsGetWarp( 0, xsS, ysS, xsD, ysD );
 %  [gxs, gys] = meshgrid(-1.25:.25:1.25,-1.25:.25:1.25);
-%  tps_interpolate( warp, gxs, gys, 1 );
+%  tpsInterpolate( warp, gxs, gys, 1 );
 %
 % EXAMPLE - 2
 %  xsS = [3.6929 6.5827 6.7756 4.8189 5.6969];
 %  ysS = [10.3819 8.8386 12.0866 11.2047 10.0748];
 %  xsD = [3.9724 6.6969 6.5394 5.4016 5.7756];
 %  ysD = [6.5354 4.1181 7.2362 6.4528 5.1142];
-%  warp = tps_getwarp( 0, xsS, ysS, xsD, ysD );
+%  warp = tpsGetWarp( 0, xsS, ysS, xsD, ysD );
 %  [gxs, gys] = meshgrid(3.5:.25:7, 8.5:.25: 12.5);
-%  tps_interpolate( warp, gxs, gys, 1 );
+%  tpsInterpolate( warp, gxs, gys, 1 );
 %
-% See also TPS_INTERPOLATE, TPS_INTERPOLATEIMAGE, TPS_RANDOM
+% See also TPSINTERPOLATE, TPSINTERPOLATEIM, TPSRANDOM
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [warp,L,LnInv,bendE] = tps_getwarp( lambda, xsS, ysS, xsD, ysD )
+function [warp,L,LnInv,bendE] = tpsGetWarp( lambda, xsS, ysS, xsD, ysD )
 
 dim = size( xsS );
 if( all(size(xsS)~=dim) || all(size(ysS)~=dim) || all(size(xsD)~=dim))

@@ -15,7 +15,7 @@
 % opposite of many matlab functions such as princomp.  If X is MxNxn, then
 % X(:,:,i) represents the ith observation (useful for stack of n images),
 % likewise for n videos X is MxNxKxn. If X is very large, it is sampled
-% before running PCA, using randomsample. Use this function to retrieve the
+% before running PCA, using subsampleMatrix. Use this function to retrieve the
 % basis U.  Use pcaApply to retrieve that basis coefficients for a novel
 % vector x. Use pcaVisualize(X,...) for visualization of approximated X.
 %
@@ -53,10 +53,10 @@ function [ U, mu, vars ] = pca( X )
 maxmegs = 80;
 if( ~isa(X,'double') )
   s=whos('X'); nbytes=s.bytes/numel(X);
-  X = randomsample( X, maxmegs * nbytes/8 );
+  X = subsampleMatrix( X, maxmegs * nbytes/8 );
   X = double(X);
 else
-  X = randomsample( X, maxmegs );
+  X = subsampleMatrix( X, maxmegs );
 end
 
 siz=size(X);  nd=ndims(X);  d=prod(siz(1:end-1));
