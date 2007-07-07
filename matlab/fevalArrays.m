@@ -35,7 +35,7 @@
 % EXAMPLE
 %  B = fevalArrays( A, @rgb2gray );      % where A is MxNx3xR
 %  B = fevalArrays( A, @imresize, .5 );  % where A is MxNxR
-%  B = fevalArrays( A, @imnormalize );   % where A has arbitrary dims
+%  B = fevalArrays( A, @imNormalize );   % where A has arbitrary dims
 %  B = fevalArrays( A, @(x) {imresize(x{1},.5)} ); % A is cell array
 %
 % See also FEVALIMAGES, FEVALMATS, ARRAYFUN

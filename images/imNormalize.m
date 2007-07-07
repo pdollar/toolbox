@@ -6,7 +6,7 @@
 % the mean pixel.
 %
 % USAGE
-%  X = imnormalize( X, flag )
+%  X = imNormalize( X, flag )
 %
 % INPUTS
 %  X       - n dimensional array to standardize
@@ -23,16 +23,16 @@
 %
 % EXAMPLE
 %  I = double(imread('cameraman.tif'));
-%  N = imnormalize(I,1);
+%  N = imNormalize(I,1);
 %  [mean(I(:)), std(I(:)), mean(N(:)), std(N(:))]
 %
 % See also FEVALARRAYS
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function X = imnormalize( X, flag )
+function X = imNormalize( X, flag )
 
 if (isa(X,'uint8')); X = double(X); end
 if (nargin<2 || isempty(flag)); flag=1; end
@@ -62,7 +62,7 @@ elseif(flag==2)
   X = X - min(X(:));  X = X / max(X(:));
 
 elseif( flag==5 )
-  X = imnormalize( X, 1 );
+  X = imNormalize( X, 1 );
   t=2;
   X( X<-t )= -t;
   X( X >t )=  t;

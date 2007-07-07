@@ -10,7 +10,7 @@
 % is done by localSum.
 %
 % USAGE
-%  I = imshrink( I, ratios )
+%  I = imShrink( I, ratios )
 %
 % INPUTS
 %  I       - k dimensional input array
@@ -27,7 +27,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function I = imshrink( I, ratios )
+function I = imShrink( I, ratios )
 
 siz = size(I);  nd = ndims(I);
 while( length(ratios)>nd && ratios(end)==1 ); ratios=ratios(1:end-1); end
@@ -40,13 +40,13 @@ if (~all( siz==size(I))); I = arrayCrop( I, ones(1,nd), siz ); end
 % if memory is large, recursively call on subparts and recombine
 if( prod(siz)*8e-6 > 200 ) % set max at 200MB, splits add overhead
   d = randint(1,1,[1 nd]);  nblocks = siz(d)/ratios(d);
-  if( nblocks==1 ); I = imshrink( I, ratios ); return; end
+  if( nblocks==1 ); I = imShrink( I, ratios ); return; end
   midblock = floor(nblocks/2) * ratios(d);
   inds = {':'}; inds = inds(:,ones(1,nd));
   inds1 = inds; inds1{d}=1:midblock;
   inds2 = inds; inds2{d}=midblock+1:siz(d);
-  I1 = imshrink( I(inds1{:}), ratios );
-  I2 = imshrink( I(inds2{:}), ratios );
+  I1 = imShrink( I(inds1{:}), ratios );
+  I2 = imShrink( I(inds2{:}), ratios );
   I = cat( d, I1, I2 ); return;
 end
 

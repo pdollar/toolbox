@@ -5,7 +5,7 @@
 % distribution from within the subspace. Can optionally generate points on
 % the subspace that are also on a hypershpere centered on the origin.  This
 % may be useful if the original data points were all from a hypershpere --
-% for example they were normalized via imnormalize.  Set the optional
+% for example they were normalized via imNormalize.  Set the optional
 % hypershpere flag to 1 to generate points only on the hypersphere.
 %
 % USAGE
@@ -25,7 +25,7 @@
 %
 % EXAMPLE
 %
-% See also PCA
+% See also PCA IMNORMALIZE
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -61,7 +61,7 @@ if(hypershpere)
   end
 
   Xr = reshape( Xr, sizX );
-  Xr = fevalArrays( Xr, @imnormalize );
+  Xr = fevalArrays( Xr, @imNormalize );
 else
   % simply add the mean to reshaped Xr
   Xr = reshape( Xr, sizX );
