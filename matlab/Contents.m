@@ -26,7 +26,7 @@
 %   plot_ellipse         - Adds an ellipse to the current plot.
 %   plot_gaussellipses   - Plots 2D ellipses derived from 2D Gaussians specified by mus & Cs.
 %   text2                - Wrapper for text.m that ensures displayed text fits in figure.
-%   figureresized        - Creates a figures that takes up certain area of screen.
+%   figureResized        - Creates a figures that takes up certain area of screen.
 %
 % Miscellaneous:
 %   checkNumArgs         - Helper utility for checking numeric vector arguments.

@@ -22,7 +22,7 @@
 %
 % See also MAKEMOVIE, MAKEMOVIESETS, CLUSTERMONTAGE
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -48,7 +48,7 @@ A=IS(:); clim=[min(A) max(A)];
 params2{3} = clim;  montagesparams{1}=params2;
 
 % make the movie by calling montages and getframe repeatedly
-h=figureresized(.8); axis off; M=repmat(getframe(h),[1,nframes]);
+h=figureResized(.8); axis off; M=repmat(getframe(h),[1,nframes]);
 for f=1:nframes
   if( ndims(IS)==5 )
     montages( squeeze(IS(:,:,f,:,:)), montagesparams{:},4 );

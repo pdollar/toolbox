@@ -4,7 +4,7 @@
 % screen space figure should take up.  Figure appears in center of screen.
 %
 % USAGE
-%  varargout = figureresized( screenratio, varargin )
+%  varargout = figureResized( screenratio, varargin )
 %
 % INPUTS
 %  screenratio - controls fraction of screen image takes out (<=.8)
@@ -14,15 +14,15 @@
 %  varargout   - out from figure
 %
 % EXAMPLE
-%  figureresized( .75 )
+%  figureResized( .75 )
 %
 % See also FIGURE
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function varargout = figureresized( screenratio, varargin )
+function varargout = figureResized( screenratio, varargin )
 
 if( nargin<1 ); screenratio=.3; end
 if( screenratio>1 ); error('screenratio must be <= 1'); end

@@ -21,7 +21,7 @@
 %
 % See also MONTAGES, MONTAGE2, MAKEMOVIE, MAKEMOVIESETS
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -49,7 +49,7 @@ padsiz = zeros( ndims(IS)-1,1 ); padsiz(1:2)=1;
 IS = padarray( IS, padsiz, min(IS(:)), 'both' );
 
 % make the movie by calling montage2 and getframe repeatedly
-h=figureresized(.8); M=repmat(getframe,[1 nframes]);
+h=figureResized(.8); M=repmat(getframe,[1 nframes]);
 for i=1:nframes
   if( nd==4) % MxNxTxR
     montage2( IS(:,:,i,:), montage2params{:} );

@@ -88,15 +88,15 @@ if( nd==3 ) % images
 
 elseif( nd==4 ) % videos
   %%% create movies
-  if( nargout>0 ); figureresized(.6,show+1); clf;
+  if( nargout>0 ); figureResized(.6,show+1); clf;
     M = makemovies( xhats, {0, [], [], 0, {'original' labels{:}}} );
     varargout={M};
   end;
-  if( nargout>1 ); figureresized(.6,show+1); clf;
+  if( nargout>1 ); figureResized(.6,show+1); clf;
     MDiff = makemovies( diffs, {0, [], [], 0, labels} );
     varargout{2} = MDiff;
   end;
-  if( nargout>2 ); figureresized(.6,show+1); clf;
+  if( nargout>2 ); figureResized(.6,show+1); clf;
     MU = makemovies( Uim );
     varargout{3} = MU;
   end;
