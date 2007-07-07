@@ -15,7 +15,7 @@
 %   dist_cosine         - Defines distance as 1-cosine of angle between two vectors [FAST].
 %   dist_emd            - Calculates Earth Mover's Distance (EMD) between positive vectors.
 %   dist_euclidean      - Calculates the SQUARED Euclidean distance between vectors [FAST].
-%   distmatrix_show     - Useful visualization of a distance matrix of clustered points.
+%   distMatrixShow      - Useful visualization of a distance matrix of clustered points.
 %   softmin             - Calculates the softmin of a vector.
 %
 % Principal components analysis:

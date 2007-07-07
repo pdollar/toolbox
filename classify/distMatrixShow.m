@@ -9,7 +9,7 @@
 % to IDX) are removed from D.
 %
 % USAGE
-%  [D, Dsm] = distmatrix_show( D, IDX, [show] )
+%  [D, Dsm] = distMatrixShow( D, IDX, [show] )
 %
 % INPUTS
 %  D       - nxn distance matrix
@@ -23,7 +23,7 @@
 % EXAMPLE
 %  % not the best example since points are already ordered
 %  [X,IDXtrue] = demoGenData(100,0,2,2,10,2,0);
-%  distmatrix_show( dist_euclidean(X,X), IDXtrue );
+%  distMatrixShow( dist_euclidean(X,X), IDXtrue );
 %
 % See also VISUALIZE_DATA, KMEANS2
 
@@ -31,7 +31,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [D, Dsm] = distmatrix_show( D, IDX, show )
+function [D, Dsm] = distMatrixShow( D, IDX, show )
 
 if( nargin<3 || isempty(show) ); show=1; end
 

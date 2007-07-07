@@ -71,7 +71,7 @@ end;
 %%% calculate and show confusion matricies [not using confMatrixShow]
 CM = zeros( nClasses, nClasses, nnets );
 for i=1:nnets
-  CMi = confmatrix( tstIDX, pred(:,i), nClasses );
+  CMi = confMatrix( tstIDX, pred(:,i), nClasses );
   CM(:,:,i) = CMi ./ repmat( sum(CMi,2), [1 size(CMi,2)] );
 end;
 subplot(3,1,3); montage2( CM,1,1,[0,1],1,[],labels );
