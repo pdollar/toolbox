@@ -41,7 +41,7 @@ A = zeros( m, n );
 Ainds = sub2ind2( [m,n], [inds; 1:n]' );
 A( Ainds ) = 1;
 
-% apply local_sum (or smooth?)
+% apply localSum (or smooth?)
 %A = gaussSmooth( A, [0 r/2-1], 'smooth' );
 A = localSum( A, [0 s], 'same' );
 

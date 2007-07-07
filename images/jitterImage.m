@@ -27,8 +27,8 @@
 % set of images.
 %
 % USAGE
-%  function IJ = jitter_image( I, nphis, maxphi, ntrans, maxtrans, ...
-%                              jsiz, reflFlag, scales )
+%  function IJ = jitterImage( I, nphis, maxphi, ntrans, maxtrans, ...
+%                              [jsiz], [reflFlag], [scales] )
 %
 % INPUTS
 %  I           - BW image (MxN) or images (MxNxK), must have odd dims
@@ -47,30 +47,30 @@
 % EXAMPLE
 %  load trees; I=imresize(ind2gray(X,map),[41 41]); clear X caption map
 %  % creates 7^2*2 images of slight trans with reflection (but no rotation)
-%  IJ = jitter_image( I, 0, 0, 7, 3, [35 35], 1 ); montage2(IJ,1,1)
+%  IJ = jitterImage( I, 0, 0, 7, 3, [35 35], 1 ); montage2(IJ,1,1)
 %  % creates 5 images of slight rotations (no translations)
-%  IJ = jitter_image( I, 5, 25, 0, 0, size(I) ); montage2(IJ,1,1)
+%  IJ = jitterImage( I, 5, 25, 0, 0, size(I) ); montage2(IJ,1,1)
 %  % creates 45 images of both rot and slight trans
-%  IJ = jitter_image( I, 5, 10, 3, 2 ); montage2(IJ,1,1)
+%  IJ = jitterImage( I, 5, 10, 3, 2 ); montage2(IJ,1,1)
 %  % additionally create multiple scaled versions
-%  IJ = jitter_image( I, 1, 0, 1, 0, [], [], [1 1; 2 1; 1 2; 2 2] );
+%  IJ = jitterImage( I, 1, 0, 1, 0, [], [], [1 1; 2 1; 1 2; 2 2] );
 %  montage2(IJ,1)
 %
-% See also JITTER_VIDEO
+% See also JITTERVIDEO
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function IJ = jitter_image( I, nphis, maxphi, ntrans, maxtrans, ...
+function IJ = jitterImage( I, nphis, maxphi, ntrans, maxtrans, ...
                             jsiz, reflFlag, scales )
 
 % NOTE: CODE HAS BECOME REALLY MESSY :-(
 
 % Eigenanalysis of IJ can be informative:
 %   I = double(I);
-%   IJ = jitter_image( I, 111, 10, 0, 0 );
-%   IJ = jitter_image( I, 11, 10, 11, 3 ); %slow
+%   IJ = jitterImage( I, 111, 10, 0, 0 );
+%   IJ = jitterImage( I, 11, 10, 11, 3 ); %slow
 %   [ U, mu, variances ] = pca( IJ );
 %   ks = 0:min(11,size(U,2));   % should need about 4
 %   pcaVisualize( U, mu, variances, IJ, [], ks );
@@ -107,16 +107,16 @@ if( ndims(I)==3 ); need_siz = [need_siz siz(3)]; end
 deltas_grow = ceil( max( (need_siz - size(I))/2, 0 ) );
 if( any(deltas_grow>0) )
   I = padarray(I,deltas_grow,'replicate','both');
-  warning(['jitter_image: Not enough image data - growing image need ' ...
+  warning(['jitterImage: Not enough image data - growing image need ' ...
     'size:' int2str(need_siz) ' have size: ' int2str(siz(1:2))]);...
     %#ok<WNTAG>
 end
 
 % now for each image jitter it!
 if( nd==2)
-  IJ = jitter_image1( I, jsiz, phis, trans, scales, reflFlag );
+  IJ = jitterImage1( I, jsiz, phis, trans, scales, reflFlag );
 elseif( nd==3)
-  IJ = fevalArrays( I, @jitter_image1, jsiz, phis, trans, scales, ...
+  IJ = fevalArrays( I, @jitterImage1, jsiz, phis, trans, scales, ...
     reflFlag );
   IJ = reshape( IJ, size(IJ,1), size(IJ,2), [] );
 else
@@ -125,7 +125,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % this function does the work for SCALE
-function IJ = jitter_image1( I, jsiz, phis, trans, scales, reflFlag )
+function IJ = jitterImage1( I, jsiz, phis, trans, scales, reflFlag )
 method = 'linear';
 nscales = size(scales,1);
 if( nscales==1 ) % if just 1 scaling
@@ -134,7 +134,7 @@ if( nscales==1 ) % if just 1 scaling
     H = [S [0;0]; 0 0 1];
     I = imtransform2( I, H, method, 'crop' );
   end
-  IJ = jitter_image2( I, jsiz, phis, trans );
+  IJ = jitterImage2( I, jsiz, phis, trans );
 else % multiple scales
   IJ = repmat( I(1), [size(I) nscales] );
   for i=1:nscales
@@ -143,7 +143,7 @@ else % multiple scales
     J = imtransform2( I, H, method, 'crop' );
     IJ(:,:,i) = J;
   end
-  IJ = fevalArrays( IJ, @jitter_image2, jsiz, phis, trans );
+  IJ = fevalArrays( IJ, @jitterImage2, jsiz, phis, trans );
   IJ = reshape( IJ, size(IJ,1), size(IJ,2), [] );
 end
 
@@ -152,7 +152,7 @@ if( reflFlag ); IJ = cat( 3, IJ, flipdim( IJ, 2 ) ); end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % this function does the work for ROT/TRANS
-function IJ = jitter_image2( I, jsiz, phis, trans )
+function IJ = jitterImage2( I, jsiz, phis, trans )
 method = 'linear';
 ntrans = size(trans,2); nphis = length(phis); nops = ntrans*nphis;
 siz = size(I);   deltas = (siz - jsiz)/2;

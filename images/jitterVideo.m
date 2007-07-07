@@ -2,15 +2,15 @@
 %
 % Takes a video and creats multiple versions of the video with offsets in
 % both space and time and rotations in space.  Basically, for each frame in
-% the video calls jitter_image, and then also adds some temporal offsets.
-% In all respects this it basically functions like jitter_image -- see that
+% the video calls jitterImage, and then also adds some temporal offsets.
+% In all respects this it basically functions like jitterImage -- see that
 % function for more information.
 %
 % Note: All temporal translations must have integer size.
 %
 % USAGE
-%  IS = jitter_video( I, nphis, maxphi, ntrans, maxtrans, ...
-%                            nttrans, maxttrans, jsiz )
+%  IS = jitterVideo( I, nphis, maxphi, ntrans, maxtrans, ...
+%                            nttrans, maxttrans, [jsiz] )
 %
 % INPUTS
 %  I           - BW video (MxNxT) or videos (MxNxTxK), must have odd dims
@@ -27,18 +27,18 @@
 %
 % EXAMPLE
 %
-% See also JITTER_IMAGE
+% See also JITTERIMAGE
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function IS = jitter_video( I, nphis, maxphi, ntrans, maxtrans, ...
+function IS = jitterVideo( I, nphis, maxphi, ntrans, maxtrans, ...
                             nttrans, maxttrans, jsiz )
 
 nd = ndims(I);  siz = size(I);
 
-% default param settings [some params dealt with by jitter_image]
+% default param settings [some params dealt with by jitterImage]
 if( nargin<8 || isempty(jsiz)); jsiz = []; end;
 if( nphis==0 || nphis==1); maxphi=0; nphis = 1; end;
 if( ntrans==0 || ntrans==1); maxtrans=0; ntrans = 1; end;
@@ -59,10 +59,10 @@ if( ~all(mod(ttrans,1)==0))
   error('All temporal translations must have integer size'); end;
 
 % now for each video jitter it
-jitter_params = {nphis, maxphi, ntrans, maxtrans, ttrans, jsiz};
+jitterPrms = {nphis, maxphi, ntrans, maxtrans, ttrans, jsiz};
 if( nd==3)
-  IS = jitter_video1( I, jitter_params{:} );
+  IS = jitterVideo1( I, jitterPrms{:} );
 elseif( nd==4)
-  IS = fevalArrays( I, @jitter_video1, jitter_params{:} );
+  IS = fevalArrays( I, @jitterVideo1, jitterPrms{:} );
   IS = permute( IS, [1 2 3 5 4] );
 end
