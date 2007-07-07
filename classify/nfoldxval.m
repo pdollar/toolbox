@@ -142,8 +142,8 @@ for testind = 1:nsets
     if( maxp < p )
       warning(['reducing dim of data from: ' ...
         int2str(p) ' to ' int2str(maxp)]); %#ok<WNTAG>
-      train = pca_apply( train', U, mu, maxp )';
-      test  = pca_apply( test',  U, mu, maxp )';
+      train = pcaApply( train', U, mu, maxp )';
+      test  = pcaApply( test',  U, mu, maxp )';
       p = maxp;
     end
   end

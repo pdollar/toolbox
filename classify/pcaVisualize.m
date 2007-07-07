@@ -5,7 +5,7 @@
 % apply visualization to, if unspecified it is chosen randomly.
 %
 % USAGE
-%  varargout=pca_visualize(U, mu, vars, X, [index], [ks], [fname], [show])
+%  varargout=pcaVisualize(U, mu, vars, X, [index], [ks], [fname], [show])
 %
 % INPUTS
 %  U           - returned by pca.m
@@ -13,7 +13,7 @@
 %  vars        - returned by pca.m
 %  X           - Set of images or videos, or a single image or video
 %  index       - [] controls which element of X to aplply visualization to
-%  ks          - [] ks values of k for pca_apply (ex. ks=[1 4 8 16])
+%  ks          - [] ks values of k for pcaApply (ex. ks=[1 4 8 16])
 %  fname       - [] if specified outputs avis
 %  show        - [] will display results in figure(show) and figure(show+1)
 %
@@ -30,7 +30,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function varargout=pca_visualize( U, mu, vars, X, index, ks, fname, show )
+function varargout=pcaVisualize( U, mu, vars, X, index, ks, fname, show )
 
 siz = size(X); nd = ndims(X);  [N,r]  = size(U);
 if(N==prod(siz) && ~(nd==2 && siz(2)==1)); siz=[siz, 1]; nd=nd+1; end
@@ -49,7 +49,7 @@ ks = ks( ks<=r );
 x = double( X(inds{:},index) );
 xhats = x;  diffs = []; errors = zeros(1,length(ks));
 for k=1:length(ks)
-  [ Yk, xhat, errors(k) ] = pca_apply( x, U, mu, ks(k) );
+  [ Yk, xhat, errors(k) ] = pcaApply( x, U, mu, ks(k) );
   xhats = cat( nd, xhats, xhat );
   diffs = cat( nd, diffs, (xhat-x).^2 );
 end

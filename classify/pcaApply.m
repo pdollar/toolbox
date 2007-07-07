@@ -1,17 +1,17 @@
 % Companion function to pca.
 %
 % Use pca.m to retrieve the principal components U and the mean mu from a
-% set of vectors x, then use y pca_apply to get the first k coefficients of
+% set of vectors x, then use y pcaApply to get the first k coefficients of
 % x in the space spanned by the columns of U. See pca for general usage.
 %
-% If x is large, pca_apply first splits and processes x in parts. This
-% allows pca_apply to work even for very large arrays.
+% If x is large, pcaApply first splits and processes x in parts. This
+% allows pcaApply to work even for very large arrays.
 %
 % This may prove useful:
 %  siz=size(X);  k=100;  Uim=reshape(U(:,1:k),[siz(1:end-1) k ]);
 %
 % USAGE
-%  [ Yk, Xhat, avsq ] = pca_apply( X, U, mu, k )
+%  [ Yk, Xhat, avsq ] = pcaApply( X, U, mu, k )
 %
 % INPUTS
 %  X           - data for which to get PCA coefficients
@@ -32,7 +32,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function varargout = pca_apply( X, U, mu, k )
+function varargout = pcaApply( X, U, mu, k )
 
 % sizes / dimensions
 siz = size(X);  nd = ndims(X);  [d,r] = size(U);
@@ -46,12 +46,12 @@ if( k>r )
   warning(['Only ' int2str(r) '<k comp. available.']); k=r; %#ok<WNTAG>
 end
 
-% If X is small simply call pca_apply1 once.
-% OW break up X and call pca_apply1 multiple times and recombine.
+% If X is small simply call pcaApply1 once.
+% OW break up X and call pcaApply1 multiple times and recombine.
 maxwidth = ceil( (10^7) / d );
 if( maxwidth > siz(end) )
   varargout = cell(1,nargout);
-  [varargout{:}] = pca_apply1( X, U, mu, k );
+  [varargout{:}] = pcaApply1( X, U, mu, k );
 
 else
   Yk = zeros( k, siz(end) );  Xhat = zeros( siz );
@@ -60,7 +60,7 @@ else
   while(last < siz(end))
     first=last+1;  last=min(first+maxwidth-1,siz(end));
     Xi = X(inds{:}, first:last);
-    [out{:}] = pca_apply1( Xi, U, mu, k );
+    [out{:}] = pcaApply1( Xi, U, mu, k );
     Yk(:,first:last) = out{1};
     if( nargout>=2 );  Xhat(inds{:},first:last)=out{2};  end;
     if( nargout>=3 );  avsq=avsq+out{3}; avsqOrig=avsqOrig+out{4};  end;
@@ -70,7 +70,7 @@ end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [ Yk, Xhat, avsq, avsqOrig ] = pca_apply1( X, U, mu, k )
+function [ Yk, Xhat, avsq, avsqOrig ] = pcaApply1( X, U, mu, k )
 
 % sizes / dimensions
 siz = size(X);  nd = ndims(X);  [d,r] = size(U);

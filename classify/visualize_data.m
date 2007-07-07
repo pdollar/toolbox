@@ -38,8 +38,8 @@ if( nargin<5 || isempty(C) ); C=[]; end
 % apply PCA if necessary
 if( size(X,2)~= k )
   [ U, mu ] = pca( X' );
-  X = pca_apply( X', U, mu, k )';
-  if(~isempty(C)); C = pca_apply( C', U, mu, k )'; end
+  X = pcaApply( X', U, mu, k )';
+  if(~isempty(C)); C = pcaApply( C', U, mu, k )'; end
 end
 
 %%% get k

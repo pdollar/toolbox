@@ -73,7 +73,7 @@ function IJ = jitter_image( I, nphis, maxphi, ntrans, maxtrans, ...
 %   IJ = jitter_image( I, 11, 10, 11, 3 ); %slow
 %   [ U, mu, variances ] = pca( IJ );
 %   ks = 0:min(11,size(U,2));   % should need about 4
-%   pca_visualize( U, mu, variances, IJ, [], ks );
+%   pcaVisualize( U, mu, variances, IJ, [], ks );
 
 nd = ndims(I); siz = size(I);
 

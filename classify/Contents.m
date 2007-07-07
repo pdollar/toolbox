@@ -16,13 +16,13 @@
 %   dist_emd            - Calculates Earth Mover's Distance (EMD) between positive vectors.
 %   dist_euclidean      - Calculates the SQUARED Euclidean distance between vectors [FAST].
 %   distMatrixShow      - Useful visualization of a distance matrix of clustered points.
-%   softmin             - Calculates the softmin of a vector.
+%   softMin             - Calculates the softmin of a vector.
 %
 % Principal components analysis:
 %   pca                 - Principal components analysis (alternative to princomp).
-%   pca_apply           - Companion function to pca.
-%   pca_randomvector    - Generate random vectors in PCA subspace.
-%   pca_visualize       - Visualization of quality of approximation of X given principal comp.
+%   pcaApply            - Companion function to pca.
+%   pcaRandVec          - Generate random vectors in PCA subspace.
+%   pcaVisualize        - Visualization of quality of approximation of X given principal comp.
 %   visualize_data      - Project high dim. data unto principal components (PCA) for visualization.
 %
 % Classification methods with a common interface:

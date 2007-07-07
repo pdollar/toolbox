@@ -9,7 +9,7 @@
 % hypershpere flag to 1 to generate points only on the hypersphere.
 %
 % USAGE
-%  Xr = pca_randomvector( U, mu, vars, k, n, hypershpere, [show] )
+%  Xr = pcaRandVec( U, mu, vars, k, n, hypershpere, [show] )
 %
 % INPUTS
 %  U           - returned by pca.m
@@ -31,7 +31,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function Xr = pca_randomvector( U, mu, vars, k, n, hypershpere, show )
+function Xr = pcaRandVec( U, mu, vars, k, n, hypershpere, show )
 
 if( nargin<6 || isempty(hypershpere) ); hypershpere=0; end
 if( nargin<7 || isempty(show) ); show=0; end
@@ -76,7 +76,7 @@ if(show && nd==2); figure(show); montage2(Xr,1); end
 
 %%% Little test - see if eigenvectors induced by randomly generated vectors
 %%% are the same as the original eigenvectors.  Assumes [U,mu,vars] exist.
-%   Xr = pca_randomvector( U, mu, vars, 3, 100 );
+%   Xr = pcaRandVec( U, mu, vars, 3, 100 );
 %   [ Ur, mur, varsr ] = pca( Xr );
 %   ind = 3;
 %   Uim = reshape( U(:,ind), [ size(mu,1), size(mu,2) ]  );
