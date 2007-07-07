@@ -8,9 +8,9 @@
 %  varargout=pca_visualize(U, mu, vars, X, [index], [ks], [fname], [show])
 %
 % INPUTS
-%  U           - [returned by pca] -- see pca
-%  mu          - [returned by pca] -- see pca
-%  vars        - [returned by pca] -- see pca
+%  U           - returned by pca.m
+%  mu          - returned by pca.m
+%  vars        - returned by pca.m
 %  X           - Set of images or videos, or a single image or video
 %  index       - [] controls which element of X to aplply visualization to
 %  ks          - [] ks values of k for pca_apply (ex. ks=[1 4 8 16])
@@ -26,7 +26,7 @@
 %
 % See also PCA, PCA_APPLY
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 

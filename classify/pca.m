@@ -40,10 +40,12 @@
 %  [ Y, Xhat, avsq ] = pca_apply( I3D1(:,:,1), U, mu, 5 );
 %  figure(1); im(I3D1(:,:,1));  figure(2); im(Xhat);
 %  pca_visualize( U, mu, vars, I3D1, 13, [0:12], [], 3 );
+%  Xr = pca_randomvector( U, mu, vars, 1, 25, 0, 5 );
 %
-% See also PRINCOMP, PCA_APPLY, PCA_VISUALIZE, VISUALIZE_DATA, RANDOMSAMPLE
+% See also PRINCOMP, PCA_APPLY, PCA_VISUALIZE,
+% VISUALIZE_DATA, RANDOMSAMPLE
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 

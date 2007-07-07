@@ -4,11 +4,14 @@
 % set of vectors x, then use y pca_apply to get the first k coefficients of
 % x in the space spanned by the columns of U. See pca for general usage.
 %
+% If x is large, pca_apply first splits and processes x in parts. This
+% allows pca_apply to work even for very large arrays.
+%
 % This may prove useful:
 %  siz=size(X);  k=100;  Uim=reshape(U(:,1:k),[siz(1:end-1) k ]);
 %
 % USAGE
-%  [ Yk, Xhat, avsq, avsqOrig ] = pca_apply( X, U, mu, k )
+%  [ Yk, Xhat, avsq ] = pca_apply( X, U, mu, k )
 %
 % INPUTS
 %  X           - data for which to get PCA coefficients
