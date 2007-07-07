@@ -22,7 +22,7 @@
 %  [cRow, cCol, ra, rb, phi] = gauss2ellipse( [5 5], [1 0; .5 2] )
 %  plotEllipse( cRow, cCol, ra, rb, phi );
 %
-% See also PLOTELLIPSE, PLOT_GAUSSELLIPSES, MASK_ELLIPSE
+% See also PLOTELLIPSE, PLOTGAUSSELLIPSES, MASK_ELLIPSE
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

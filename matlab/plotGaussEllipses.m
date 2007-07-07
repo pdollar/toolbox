@@ -1,7 +1,7 @@
 % Plots 2D ellipses derived from 2D Gaussians specified by mus & Cs.
 %
 % USAGE
-%  hs = plot_gaussellipses( mus, Cs, [rad] )
+%  hs = plotGaussEllipses( mus, Cs, [rad] )
 %
 % INPUTS
 %  mus     - k x 2 matrix of means
@@ -12,7 +12,7 @@
 %  hs      - handles to ellipses
 %
 % EXAMPLE
-%  plot_gaussellipses( [ 10 10; 10 10 ], cat(3,eye(2),eye(2)*2) );
+%  plotGaussEllipses( [ 10 10; 10 10 ], cat(3,eye(2),eye(2)*2) );
 %
 % See also PLOTELLIPSE, GAUSS2ELLIPSE
 
@@ -20,7 +20,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function hs=plot_gaussellipses( mus, Cs, rad )
+function hs = plotGaussEllipses( mus, Cs, rad )
 
 if (nargin<3 || isempty(rad) ); rad=2; end
 colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']; nc = length(colors);

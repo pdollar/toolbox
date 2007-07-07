@@ -18,7 +18,7 @@
 % EXAMPLE
 %  plotEllipse( 3, 2, 1, 5, pi/6, 'g');
 %
-% See also PLOT_GAUSSELLIPSES
+% See also PLOTGAUSSELLIPSES
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

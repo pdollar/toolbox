@@ -47,7 +47,7 @@
 %  G = filterGauss( [50,50,50], [25,25,25], C, 0 );
 %  [mu,C,GR,logl] = imageMLG( G, 0, 1 );
 %
-% See also GAUSS2ELLIPSE, PLOT_GAUSSELLIPSES, MASK_ELLIPSE
+% See also GAUSS2ELLIPSE, PLOTGAUSSELLIPSES, MASK_ELLIPSE
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -110,7 +110,7 @@ end
 % plot ellipses
 if (show)
   figure(show); im(G);
-  hold('on'); plot_gaussellipses( mu, C, 2 ); hold('off');
+  hold('on'); plotGaussEllipses( mu, C, 2 ); hold('off');
 end
 
 
