@@ -132,5 +132,5 @@ switch nd
 
   otherwise %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     error('f must be 1 2 or 3 dimensional');
-    
+
 end;

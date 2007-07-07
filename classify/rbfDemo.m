@@ -24,7 +24,7 @@
 %
 % See also RBFCOMPUTEBASIS, RBFCOMPUTEFEATURES
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -33,7 +33,7 @@ function rbfDemo( dataType, noiseSig, scale, k, cluster, show )
 %%% generate trn/tst data
 if( 1 )
   [Xtrn,ytrn] = rbfToyData( 500, noiseSig, dataType );
-  [Xtst,ytst]   = rbfToyData( 100, noiseSig, dataType );
+  [Xtst,ytst] = rbfToyData( 100, noiseSig, dataType );
 end;
 
 %%% trn/apply rbfs
@@ -63,7 +63,7 @@ elseif( size(Xtrn,2)==2 )
   xs2 = linspace(minX(2),maxX(2),25);
   [xs1,xs2] = ndgrid( xs1, xs2 );
   ys = rbfComputeFeatures([xs1(:) xs2(:)],rbfBasis) * rbfWeight;
-  figure(show+1); clf; hold on;  surf( xs1, xs2, reshape(ys,size(xs1)) );
+  figure(show+1); clf; surf( xs1, xs2, reshape(ys,size(xs1)) ); hold on; 
   plot3( Xtrn(:,1), Xtrn(:,2), ytrn, '.b' );
   plot3( Xtst(:,1), Xtst(:,2), ytst, '.r' );
 end

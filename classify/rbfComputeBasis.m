@@ -47,7 +47,7 @@
 %
 % See also RBFDEMO, RBFCOMPUTEFEATURES
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -105,7 +105,7 @@ if( abs(show) )
       plot( xs, ys );
     end
   elseif( d==2 ) % 2D data
-    figure(show); clf; hold on;
+    figure(show); clf; 
     minX = min(X,[],1 );  maxX = max(X,[],1 );
     xs1 = linspace(minX(1),maxX(1),25);
     xs2 = linspace(minX(2),maxX(2),25);
@@ -115,6 +115,7 @@ if( abs(show) )
       mui = repmat(mu(:,i),[1 n])';
       ys = exp( - sum( ((xs - mui)).^2, 2 ) / 2 / var );
       surf( xs1, xs2, reshape(ys,size(xs1)) );
+      hold on;
     end;
   elseif( d==3 ) % 3D data (show data+centers)
     figure(show); clf; hold on;
