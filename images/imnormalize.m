@@ -26,7 +26,7 @@
 %  N = imnormalize(I,1);
 %  [mean(I(:)), std(I(:)), mean(N(:)), std(N(:))]
 %
-% See also FEVAL_ARRAYS
+% See also FEVALARRAYS
 
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

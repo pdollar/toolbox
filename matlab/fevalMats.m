@@ -10,14 +10,14 @@
 % fHandle must point to a function that takes two inputs: vals and params.
 % vals is a cell array that contains the values for the variables denoted
 % by matCont and contained in the mat file, and params are the
-% additional static parameters passed to feval_arrays.  Continuing the
+% additional static parameters passed to fevalArrays.  Continuing the
 % example above vals would be {y,z} - (use deal to extract):
 %  x=feval(fHandle,{y,z},params)
 % Each returned x must have the same dimensions, X is a concatentation of
 % the returned x's along the (d+1) dimension.
 %
 % USAGE
-%  X = feval_mats( fHandle, matCont, params, srcDir, [prefix] )
+%  X = fevalMats( fHandle, matCont, params, srcDir, [prefix] )
 %
 % INPUTS
 %  fHandle  - function to apply to contents of each mat file [see above]
@@ -31,20 +31,20 @@
 %
 % EXAMPLE
 %
-% See also FEVAL_IMAGES, FEVAL_ARRAYS
+% See also FEVALIMAGES, FEVALARRAYS
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function X = feval_mats( fHandle, matCont, params, srcDir, prefix )
+function X = fevalMats( fHandle, matCont, params, srcDir, prefix )
 
 error(nargchk( 4, 5, nargin ));
 
 %%% Check if srcDir is valid and add '/' at end if needed
 if( ~isempty(srcDir) )
   if(~exist(srcDir,'dir'));
-    error(['feval_mats: dir ' srcDir ' not found']); end
+    error(['fevalMats: dir ' srcDir ' not found']); end
   if( srcDir(end)~='\' && srcDir(end)~='/' ); srcDir(end+1) = '/'; end
 end
 
@@ -58,7 +58,7 @@ fileNames = {dirCont.name}; n = length(dirCont);
 if( n==0 ); error( ['No appropriate mat files found in ' srcDir] ); end
 
 %%% load each mat file and apply fHandle
-ticId = ticStatus('feval_mats',[],40);
+ticId = ticStatus('fevalMats',[],40);
 ncontents = length( matCont );
 for i=1:n
   % load mat file and get contents

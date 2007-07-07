@@ -63,6 +63,6 @@ jitter_params = {nphis, maxphi, ntrans, maxtrans, ttrans, jsiz};
 if( nd==3)
   IS = jitter_video1( I, jitter_params{:} );
 elseif( nd==4)
-  IS = feval_arrays( I, @jitter_video1, jitter_params{:} );
+  IS = fevalArrays( I, @jitter_video1, jitter_params{:} );
   IS = permute( IS, [1 2 3 5 4] );
 end

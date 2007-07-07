@@ -61,7 +61,7 @@ if(hypershpere)
   end
 
   Xr = reshape( Xr, sizX );
-  Xr = feval_arrays( Xr, @imnormalize );
+  Xr = fevalArrays( Xr, @imnormalize );
 else
   % simply add the mean to reshaped Xr
   Xr = reshape( Xr, sizX );

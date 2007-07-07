@@ -16,13 +16,13 @@
 % result of applying fHandle to A(:,:,...,i).  A may also be a cell array,
 % see the last example.
 %
-% A limitation of feval_arrays is that it does not pass state information
+% A limitation of fevalArrays is that it does not pass state information
 % to fHandle.  For example, fHandle may want to know how many times it's
 % been called.  This can be overcome by saving state information inside
 % fHandle using 'persistent' variables.  For an example see imwrite2.
 %
 % USAGE
-%  B = feval_arrays( A, fHandle, varargin )
+%  B = fevalArrays( A, fHandle, varargin )
 %
 % INPUTS
 %  A        - input array
@@ -33,23 +33,24 @@
 %  B        - output array
 %
 % EXAMPLE
-%  B = feval_arrays( A, @rgb2gray );      % where A is MxNx3xR
-%  B = feval_arrays( A, @imresize, .5 );  % where A is MxNxR
-%  B = feval_arrays( A, @imnormalize );   % where A has arbitrary dims
-%  B = feval_arrays( A, @(x) {imresize(x{1},.5)} ); % A is cell array
+%  B = fevalArrays( A, @rgb2gray );      % where A is MxNx3xR
+%  B = fevalArrays( A, @imresize, .5 );  % where A is MxNxR
+%  B = fevalArrays( A, @imnormalize );   % where A has arbitrary dims
+%  B = fevalArrays( A, @(x) {imresize(x{1},.5)} ); % A is cell array
 %
-% See also FEVAL_IMAGES, IMWRITE2, PERSISTENT, TICSTATUS, ARRAYFUN
+% See also FEVALIMAGES, FEVALMATS, ARRAYFUN
+% IMWRITE2, PERSISTENT, TICSTATUS, 
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function B = feval_arrays( A, fHandle, varargin )
+function B = fevalArrays( A, fHandle, varargin )
 
 nd = ndims(A);  siz = size(A);  n = siz(end);
 indsA = {':'}; indsA = indsA(ones(nd-1,1));
 
-ticId = ticStatus('feval_arrays',[],60);
+ticId = ticStatus('fevalArrays',[],60);
 for i=1:n
   % apply fHandle to each element of A
   b = feval( fHandle, A(indsA{:},i), varargin{:} );

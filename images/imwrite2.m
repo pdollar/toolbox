@@ -11,7 +11,7 @@
 %
 % mulFlag controls how I is interpreted.  If mulFlag==0, then I is
 % intrepreted as a single image, otherwise I is interpreted as a stack of
-% images, where I(:,:,...,j) represents the jth image (see feval_arrays for
+% images, where I(:,:,...,j) represents the jth image (see fevalArrays for
 % more info).
 %
 % USAGE
@@ -35,9 +35,9 @@
 %  imwrite2( images(:,:,1), 0, 0, 'rats/', 'rats', 'png', 5 );
 %  imwrite2( images(:,:,1:5), 1, 0, 'rats/', 'rats', 'png', 5 );
 %  images2 = imwrite2( [], 1, 0, 'rats/', 'rats', 'png', 5 );
-%  images2 = feval_images(@(x) x,{},'rats/','rats','png',0,4,5);
+%  images2 = fevalImages(@(x) x,{},'rats/','rats','png',0,4,5);
 %
-% See also FEVAL_IMAGES, FEVAL_ARRAYS
+% See also FEVALIMAGES, FEVALARRAYS
 
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -47,7 +47,7 @@ function I=imwrite2(I, mulFlag, imagei, path, name, ext, nDigits, varargin)
 
 % if I is empty read from disk
 if( isempty(I) )
-  I = feval_images( @(x) x, {}, path, name, ext, imagei, [], nDigits );
+  I = fevalImages( @(x) x, {}, path, name, ext, imagei, [], nDigits );
   return;
 end
 
@@ -65,9 +65,9 @@ params = varargin;
 if( mulFlag )
   imwrite2m( [], 'init', imagei, path, name, ext, nDigits, params );
   if( ~iscell(I) )
-    feval_arrays( I, @imwrite2m, 'write' );
+    fevalArrays( I, @imwrite2m, 'write' );
   else
-    feval_arrays( I, @(x) imwrite2m(x{1},'write') );
+    fevalArrays( I, @(x) imwrite2m(x{1},'write') );
   end
 else
   if( ~iscell(I) )
@@ -79,7 +79,7 @@ end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% helper for writing multiple images (passed to feval_arrays)
+% helper for writing multiple images (passed to fevalArrays)
 function varargout = imwrite2m( I, type, varargin  )
 
 persistent imagei path name ext nDigits params

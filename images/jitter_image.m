@@ -116,7 +116,7 @@ end
 if( nd==2)
   IJ = jitter_image1( I, jsiz, phis, trans, scales, reflFlag );
 elseif( nd==3)
-  IJ = feval_arrays( I, @jitter_image1, jsiz, phis, trans, scales, ...
+  IJ = fevalArrays( I, @jitter_image1, jsiz, phis, trans, scales, ...
     reflFlag );
   IJ = reshape( IJ, size(IJ,1), size(IJ,2), [] );
 else
@@ -143,7 +143,7 @@ else % multiple scales
     J = imtransform2( I, H, method, 'crop' );
     IJ(:,:,i) = J;
   end
-  IJ = feval_arrays( IJ, @jitter_image2, jsiz, phis, trans );
+  IJ = fevalArrays( IJ, @jitter_image2, jsiz, phis, trans );
   IJ = reshape( IJ, size(IJ,1), size(IJ,2), [] );
 end
 

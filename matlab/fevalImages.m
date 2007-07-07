@@ -6,7 +6,7 @@
 % of I, then all images in the directory must have the same size.  Also I
 % may have a different format depending on how it is stored on disk -
 % example: MxN for grayscale, MxNx3 for RGB, MxNx4 for CMYK. This function
-% is similar to feval_arrays, except instead of operating on images in
+% is similar to fevalArrays, except instead of operating on images in
 % memory it operates on images on disk.  For long operations shows progress
 % info.
 %
@@ -17,19 +17,19 @@
 % convention is that it allows a certain range of images to be operated on,
 % specified by [nStr,nEnd]. For example, to operate on images
 % "rats0003.tif ... rats0113.tif" in directory '../rats/' use:
-%  feval_images( fHandle, prms, '../rats/', 'rats' , 'tif', 3, 113, 4 );
+%  fevalImages( fHandle, prms, '../rats/', 'rats' , 'tif', 3, 113, 4 );
 % If the parameter name is specified ('rats' in the example above), the
 % rigid naming convention is assumed.  All further input arguments are
 % optional. imwrite2 writes images in the format described above.
 %
-% A limitation of feval_images is that it does not pass state information
+% A limitation of fevalImages is that it does not pass state information
 % to fHandle.  For example, fHandle may want to know how many times it's
 % been  called. This can be overcome by saving state information inside
 % fHandle using 'persistent' variables.  For an example see imwrite2 (which
-% uses persistent variables with feval_arrays).
+% uses persistent variables with fevalArrays).
 %
 % USAGE
-%  X = feval_images( fHandle, prms, srcDir, [name], [ext],
+%  X = fevalImages( fHandle, prms, srcDir, [name], [ext],
 %                    [nStr], [nEnd], [nDigits] )
 %
 % INPUTS
@@ -47,19 +47,19 @@
 %
 % EXAMPLE
 %  % reads in all images in directory (note that fHandle is identity):
-%  X = feval_images( @(x) x, {}, srcDir );
+%  X = fevalImages( @(x) x, {}, srcDir );
 %  % reads in different sized images into cell array:
-%  X = feval_images( @(x) {x}, {}, srcDir );
+%  X = fevalImages( @(x) {x}, {}, srcDir );
 %  % reads in all images converting to grayscale:
-%  X = feval_images( @(x) rgb2gray(x), {}, srcDir );
+%  X = fevalImages( @(x) rgb2gray(x), {}, srcDir );
 %
-% See also FEVAL_ARRAYS, IMWRITE2, PERSISTENT, TICSTATUS
+% See also FEVALARRAYS, IMWRITE2, PERSISTENT, TICSTATUS
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function X = feval_images( fHandle, prms, srcDir, name, ext, ...
+function X = fevalImages( fHandle, prms, srcDir, name, ext, ...
   nStr, nEnd, nDigits )
 
 error(nargchk( 3, 8, nargin ));
@@ -67,7 +67,7 @@ error(nargchk( 3, 8, nargin ));
 %%% Check if srcDir is valid and add '/' at end if needed
 if( ~isempty(srcDir) )
   if(~exist(srcDir,'dir'))
-    error( ['feval_images: directory ' srcDir ' not found' ] ); end;
+    error( ['fevalImages: directory ' srcDir ' not found' ] ); end;
   if( srcDir(end)~='\' && srcDir(end)~='/' ); srcDir(end+1) = '/'; end;
 end
 
@@ -96,7 +96,7 @@ end;
 if( n==0 ); X=[]; return; end;
 
 %%% load each image and apply func
-ticId = ticStatus('feval_images',[],40);
+ticId = ticStatus('fevalImages',[],40);
 for i=1:n
   % load image
   if( nargin==3 )

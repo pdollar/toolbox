@@ -1,7 +1,7 @@
 % Applies each of the filters in the filterbank FB to the image I.
 %
 % To apply to a stack of images:
-%  IFS = feval_arrays( images, @FbApply2d, FB, 'valid' );
+%  IFS = fevalArrays( images, @FbApply2d, FB, 'valid' );
 %
 % USAGE
 %  FR = FbApply2d( I, FB, [shape], [show] )

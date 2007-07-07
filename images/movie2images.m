@@ -24,7 +24,7 @@
 
 function I = movie2images( M )
 
-I = feval_arrays( M, @frame2Ii );
+I = fevalArrays( M, @frame2Ii );
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
