@@ -6,7 +6,7 @@
 % involving plot), any cluster with a label>12 is assigned the label 12.
 %
 % USAGE
-%  visualize_data( X, k, [IDX], [types], [C] )
+%  visualizeData( X, k, [IDX], [types], [C] )
 %
 % INPUTS
 %  X       - column vector of data - N vectors of dimension p (X is Nxp)
@@ -21,7 +21,7 @@
 %  X = [randn(100,5); randn(100,5)+4];
 %  C = [mean(X(1:100,:)); mean(X(101:200,:))];
 %  IDX = [ones(100,1); 2*ones(100,1)];
-%  visualize_data( X, 2, IDX, {'type1','type2' }, C);
+%  visualizeData( X, 2, IDX, {'type1','type2' }, C);
 %
 % See also KMEANS2, DEMOCLUSTER
 
@@ -29,7 +29,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function visualize_data( X, k, IDX, types, C )
+function visualizeData( X, k, IDX, types, C )
 
 if( nargin<3 || isempty(IDX) ); IDX=[]; end
 if( nargin<4 || isempty(types) ); types=[]; end

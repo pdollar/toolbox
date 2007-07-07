@@ -23,8 +23,8 @@
 %
 % EXAMPLE
 %  [X,IDX,T,IDT] = demoGenData(250,250,4,4,.5,.5,.1);
-%  figure(1); clf; visualize_data( X, 2, IDX ); title('train');
-%  figure(2); clf; visualize_data( T, 2, IDT ); title('test');
+%  figure(1); clf; visualizeData( X, 2, IDX ); title('train');
+%  figure(2); clf; visualizeData( T, 2, IDT ); title('test');
 %
 % See also VISUALIZE_DATA, DEMOCLUSTER, DEMOCLASSIFY
 

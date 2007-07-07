@@ -23,7 +23,7 @@
 %   pcaApply            - Companion function to pca.
 %   pcaRandVec          - Generate random vectors in PCA subspace.
 %   pcaVisualize        - Visualization of quality of approximation of X given principal comp.
-%   visualize_data      - Project high dim. data unto principal components (PCA) for visualization.
+%   visualizeData       - Project high dim. data unto principal components (PCA) for visualization.
 %
 % Classification methods with a common interface:
 %   demoClassify        - A demo used to test and demonstrate the usage of classifiers (clf_*)

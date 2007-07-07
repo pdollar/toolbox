@@ -2,7 +2,7 @@
 %
 % To change the demo parameters alter this function. Note that the
 % visualization of the train and test data may look different due to
-% different 2D projections (see visualize_data).
+% different 2D projections (see visualizeData).
 %
 % USAGE
 %  demoClassify
@@ -14,7 +14,7 @@
 % EXAMPLE
 %  demoClassify
 %
-% See also CLF_KNN, CLF_LDA, CLF_SVM, CLF_ECOC, VISUALIZE_DATA
+% See also CLF_KNN, CLF_LDA, CLF_SVM, CLF_ECOC, VISUALIZEDATA
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -29,8 +29,8 @@ nClasses = 4;  d = 3;  nTrn=250;  nTst=150;  show = 1;
 nTrn=size(trnData,1);  nTst=size(tstData,1); %#ok<NASGU>
 if( show ) % make look different due to different projections
   figure(show); clf;
-  subplot(3,1,1); visualize_data(trnData, 2, trnIDX ); title( 'train set');
-  subplot(3,1,2); visualize_data(tstData, 2, tstIDX ); title( 'test set');
+  subplot(3,1,1); visualizeData(trnData, 2, trnIDX ); title( 'train set');
+  subplot(3,1,2); visualizeData(tstData, 2, tstIDX ); title( 'test set');
 end;
 
 %%% initialize learners:

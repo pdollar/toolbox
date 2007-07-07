@@ -44,9 +44,9 @@ end
 
 %%% show data & clustering results
 figure(1); clf; d2 = min(d,3);
-subplot(2,2,1); visualize_data(X, d2); title('orig points');
+subplot(2,2,1); visualizeData(X, d2); title('orig points');
 if(~isempty(IDXtr))
-  subplot(2,2,2); visualize_data(X, d2, IDXtr); title('true clusters');
+  subplot(2,2,2); visualizeData(X, d2, IDXtr); title('true clusters');
 end;
-subplot(2,2,3); visualize_data(X, d2, IDX, [], C); title('rec clusters');
+subplot(2,2,3); visualizeData(X, d2, IDX, [], C); title('rec clusters');
 subplot(2,2,4); D=distMatrixShow(sqrt(dist_euclidean(X,X)),IDX,0); im(D);

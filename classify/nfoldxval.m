@@ -119,7 +119,7 @@ ntypes = length(types);
 if( 0 )
   dataALL = cell2mat( permute( data, [2 1] ) );
   figure(show); show=show+1;
-  visualize_data( dataALL, 3, IDXall+2, types );
+  visualizeData( dataALL, 3, IDXall+2, types );
 end;
 
 %%% train on n-1 of the sets, test on the remaining; repeat n times
