@@ -44,10 +44,11 @@
 %  D        - [m x n] distance matrix
 %
 % EXAMPLE
-%  X = [randn(100,5)]; Y=randn(40,5)+2;
-%  D = pdist2( abs([X; Y]), abs([X; Y]), 'sqeuclidean' ); im(D)
+%  X = demoGenData(100,0,2,2,10,2,0);
+%  D = pdist2( X, X, 'sqeuclidean' );
+%  distMatrixShow( D, IDXtrue );
 %
-% See also PDIST
+% See also PDIST, DISTMATRIXSHOW
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

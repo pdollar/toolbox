@@ -31,15 +31,14 @@ else
 end;
 nFrac = nFracTr;  k = kTr;
 
-
 %%% cluster
-switch 'kmeans2'
+switch 'meanShift'
   case 'kmeans2'
-    params = {'replicates', 4, 'display', 1, 'outlierfrac', nFrac};
-    [IDX,C,sumd] = kmeans2( X, k, params{:} );  sum(sumd)
+    prm.nTrial=4; prm.display=1; prm.outFrac=nFrac;
+    [IDX,C,sumd] = kmeans2( X, k, prm ); 
   case 'meanShift'
     %(X,radius,rate,maxiter,minCsize,blur)
-    [IDX,C] = meanShift( X, .3, .2, 100 , 10, 0 );
+    [IDX,C] = meanShift( X, .4, .2, 100 , 10, 0 );
 end
 
 %%% show data & clustering results
