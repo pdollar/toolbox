@@ -23,7 +23,7 @@
 %  IDXtrue = [ones(1,25) ones(1,25)*2];
 %  IDXpred = [ones(1,10) randint(1,30,[1 2]) ones(1,10)*2];
 %  CM = confmatrix( IDXtrue, IDXpred, 2 )
-%  confmatrixShow( CM, {'class-A','class-B'}, {'FontSize',20} )
+%  confmatrix_show( CM, {'class-A','class-B'}, {'FontSize',20} )
 %
 % See also CONFMATRIX_SHOW
 
