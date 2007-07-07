@@ -38,7 +38,7 @@
 %  R = rotationMatrix2D( pi/6 );  C=R'*[10^2 0; 0 20^2]*R;
 %  G = filterGauss( [200, 300], [150,100], C, 0 );
 %  [mu,C,GR,logl] = imageMLG( G, 0, 1 );
-%  mask = mask_ellipse( size(G,1), size(G,2), mu, C );
+%  mask = maskEllipse( size(G,1), size(G,2), mu, C );
 %  figure(2); im(mask)
 %
 % EXAMPLE - 3D
@@ -47,7 +47,7 @@
 %  G = filterGauss( [50,50,50], [25,25,25], C, 0 );
 %  [mu,C,GR,logl] = imageMLG( G, 0, 1 );
 %
-% See also GAUSS2ELLIPSE, PLOTGAUSSELLIPSES, MASK_ELLIPSE
+% See also GAUSS2ELLIPSE, PLOTGAUSSELLIPSES, MASKELLIPSE
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

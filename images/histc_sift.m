@@ -5,8 +5,8 @@
 % into approximately equally sized hyper-rectangular regions so that
 % together these hyper-rectangles cover I.  The hyper-rectangles are
 % actually 'soft', in that each region is actually defined by a gaussian
-% mask, for details see mask_gaussians. parGmask, parameters to
-% mask_gaussians, controls details about how the masks are created.
+% mask, for details see maskGaussians. parGmask, parameters to
+% maskGaussians, controls details about how the masks are created.
 % Optionally, each value in I may have associated weight given by
 % weightMask, which should have the same exact dimensions as I.
 %
@@ -16,7 +16,7 @@
 % INPUTS
 %  I           - M1xM2x...xMk numeric array
 %  edges       - either nbins+1 vec of quantization bounds, or scalar nbins
-%  parGmask    - cell of parameters to mask_gaussians
+%  parGmask    - cell of parameters to maskGaussians
 %  weightMask  - [] size(I) numeric array of weights
 %
 % OUTPUTS
@@ -26,9 +26,9 @@
 %  G = filterGauss([100 100],[],[],0);
 %  hs = histc_sift( G, 5, {2,.6,.1,0} ); figure(1); im(hs)
 %
-% See also HISTC_1D, MASK_GAUSSIANS, HISTC_SIFT_ND
+% See also HISTC_1D, MASKGAUSSIANS, HISTC_SIFT_ND
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 

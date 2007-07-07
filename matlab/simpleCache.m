@@ -11,7 +11,7 @@
 %  persistent cache; if( isempty(cache) ) cache=simpleCache('init'); end;
 % The following line, when placed inside a function, means the cache will
 % stay in memory until the matlab environment changes.  For an example
-% usage see mask_gaussians.
+% usage see maskGaussians.
 %
 % USAGE - 'init': initialize a cache object
 %  cache = simpleCache('init');
@@ -41,7 +41,7 @@
 %  [f,v]=simpleCache( 'get', cache, hellokey ); disp(v);
 %  [f,v]=simpleCache( 'get', cache, worldkey ); disp(v);
 %
-% See also PERSISTENT, MASK_GAUSSIANS
+% See also PERSISTENT, MASKGAUSSIANS
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

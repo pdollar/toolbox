@@ -9,8 +9,8 @@
 % gauss2ellipse.
 % 
 % USAGE
-%  mask = mask_ellipse( mrows, ncols, crow, ccol, ra, rb, phi )
-%  mask = mask_ellipse( mrows, ncols, mu, C, [rad] )
+%  mask = maskEllipse( mrows, ncols, crow, ccol, ra, rb, phi )
+%  mask = maskEllipse( mrows, ncols, mu, C, [rad] )
 %
 % INPUTS [version 1]
 %  mrows   - number of rows in mask
@@ -32,16 +32,16 @@
 %  mask    - created image mask
 %
 % EXAMPLE
-%  mask = mask_ellipse(  200, 200, 40, 100,  20, 15, pi/4 );
+%  mask = maskEllipse(  200, 200, 40, 100,  20, 15, pi/4 );
 %  figure(1); im(mask); [mu,C] = imageMLG( mask, 0, 2 );
 %
-% See also PLOTELLIPSE, GAUSS2ELLIPSE, MASK_GAUSSIANS, IMAGEMLG
+% See also PLOTELLIPSE, GAUSS2ELLIPSE, MASKCIRCLE, MASKGAUSSIANS, IMAGEMLG
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function mask = mask_ellipse( mrows, ncols, varargin )
+function mask = maskEllipse( mrows, ncols, varargin )
 
 if( nargin==7 )
   [crow, ccol, ra, rb, phi] = deal( varargin{:} );
@@ -56,7 +56,7 @@ else
 end;
 
 % get indicies of locations inside ellipse
-[n, locs] = mask_ellipse1( crow, ccol, ra, rb, phi, mrows, ncols );
+[n, locs] = maskEllipse1( crow, ccol, ra, rb, phi, mrows, ncols );
 
 % create binary mask
 locs = double( locs(1:n,:) );

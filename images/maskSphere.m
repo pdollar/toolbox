@@ -11,7 +11,7 @@
 % In 3d and 4d, well try it and 'see' what it looks like.
 % 
 % USAGE
-%  mask = mask_sphere( d, r, [show] )
+%  mask = maskSphere( d, r, [show] )
 %
 % INPUTS
 %  d         - dimension (any positive integer)
@@ -22,19 +22,20 @@
 %  mask      - [s x s x s x ... x s] hypersphere image
 %
 % EXAMPLE
-%  mcircle = mask_sphere( 2, 20, 1 );
-%  msphere = mask_sphere( 3, 10, 2 );
-%  msphere = mask_sphere( 4, 10, 3 );
+%  mcircle = maskSphere( 2, 20, 1 );
+%  msphere = maskSphere( 3, 10, 2 );
+%  msphere = maskSphere( 4, 10, 3 );
 %
-% See also MASK_CIRCLE, MONTAGE2, MONTAGES
+% See also MASKCIRCLE, MONTAGE2, MONTAGES
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function mask = mask_sphere( d, r, show )
+function mask = maskSphere( d, r, show )
 
-if( nargin<2 || isempty(show) ); show = 1; end
+if( nargin<3 || isempty(show) ); show = 1; end
+
 xs=cell(1,d); 
 for i=1:d; xs{i}=-r:r; end
 if( d>1 ); [xs{:}] = ndgrid(xs{:}); else xs{1}=xs{1}'; end

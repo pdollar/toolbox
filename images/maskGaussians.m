@@ -25,7 +25,7 @@
 % coverage to areas near the borders.
 %
 % USAGE
-%  [masks,keeplocs] = mask_gaussians( siz, M, [width], [offset], [show] )
+%  [masks,keeplocs] = maskGaussians( siz, M, [width], [offset], [show] )
 % 
 % INPUTS
 %  siz         - dimensions of each mask
@@ -39,17 +39,17 @@
 %  keeplocs    - logical array of all locs where masks is nonzero
 %
 % EXAMPLE
-%  masks = mask_gaussians( 100, 10, .6, -.1, 1 );  %1D
-%  masks = mask_gaussians( [35 35], 3, .6, .1, 1 );  %2D
-%  masks = mask_gaussians( [35 35 35], [2 2 4], .6, .1, 1 ); %3D
+%  masks = maskGaussians( 100, 10, .6, -.1, 1 );  %1D
+%  masks = maskGaussians( [35 35], 3, .6, .1, 1 );  %2D
+%  masks = maskGaussians( [35 35 35], [2 2 4], .6, .1, 1 ); %3D
 %
-% See also HISTC_SIFT, MASK_CIRCLE
+% See also HISTC_SIFT, MASKCIRCLE
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [masks,keeplocs] = mask_gaussians( siz, M, width, offset, show )
+function [masks,keeplocs] = maskGaussians( siz, M, width, offset, show )
 
 nd = length(siz);
 if( nargin<3 || isempty(width)); width = .6; end;    

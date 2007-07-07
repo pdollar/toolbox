@@ -17,7 +17,7 @@
 % INPUTS
 %  I           - M1xM2x...xMkxnd array, (nd channels each of M1xM2x...xMk)
 %  edges       - parameter to histc_nD, either scalar, vector, or cell vec
-%  parGmask    - cell of parameters to mask_gaussians
+%  parGmask    - cell of parameters to maskGaussians
 %  weightMask  - [] M1xM2x...xMk numeric array of weights
 %  multch      - [1] if 0 this becomes same as histc_sift.m (nd==1)
 %
@@ -30,7 +30,7 @@
 %  hs2 = histc_sift_nD( cat(3,G,randn(size(G))),5,{2,.6,.1,0});
 %  figure(1); montage2(hs1,1);  figure(2); montage2(hs2,1);
 %
-% See also HISTC_1D, HISTC_SIFT, MASK_GAUSSIANS, HISTC_ND
+% See also HISTC_1D, HISTC_SIFT, MASKGAUSSIANS, HISTC_ND
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -50,7 +50,7 @@ else
 end;
 
 % create masks [slow but cached]
-[masks,keeplocs] = mask_gaussians( siz, parGmask{:} );
+[masks,keeplocs] = maskGaussians( siz, parGmask{:} );
 nmasks = size(masks,nd+1);
 if( ~isempty(weightMask) )
   masks = masks .* repmat(weightMask,[ones(1,nd) nmasks]); end;

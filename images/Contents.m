@@ -58,8 +58,8 @@
 %   jitter_image        - Creates multiple, slightly jittered versions of an image.
 %   jitter_video        - Creates multiple, slightly jittered versions of a video.
 %   localSum            - Fast routine for box filtering.
-%   mask_circle         - Creates an image of a 'pie slice' of a circle.
-%   mask_ellipse        - Creates a binary image of an ellipse.
-%   mask_gaussians      - Divides a volume into softly overlapping gaussian windows.
-%   mask_sphere         - Creates an 'image' of a n-dimensional hypersphere.
+%   maskCircle          - Creates an image of a 'pie slice' of a circle.
+%   maskEllipse         - Creates a binary image of an ellipse.
+%   maskGaussians       - Divides a volume into softly overlapping gaussian windows.
+%   maskSphere          - Creates an 'image' of a n-dimensional hypersphere.
 %   modefilt1           - One-dimensional mode filtering.
