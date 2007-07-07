@@ -49,7 +49,7 @@ function B = feval_arrays( A, fHandle, varargin )
 nd = ndims(A);  siz = size(A);  n = siz(end);
 indsA = {':'}; indsA = indsA(ones(nd-1,1));
 
-ticId = ticstatus('feval_arrays',[],60);
+ticId = ticStatus('feval_arrays',[],60);
 for i=1:n
   % apply fHandle to each element of A
   b = feval( fHandle, A(indsA{:},i), varargin{:} );
@@ -62,5 +62,5 @@ for i=1:n
   else
     B(indsB{:},i) = b;
   end;
-  tocstatus( ticId, i/n );
+  tocStatus( ticId, i/n );
 end

@@ -1,9 +1,9 @@
 % Used to display the progress of a long process.
 %
-% For more information see ticstatus.
+% For more information see ticStatus.
 %
 % USAGE
-%  tocstatus( id, fracDone )
+%  tocStatus( id, fracDone )
 %
 % INPUTS
 %  id          - unique id of progress indicator
@@ -19,13 +19,13 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function tocstatus( id, fracDone )
+function tocStatus( id, fracDone )
 
 global TT_STATUS TT_FREE_IDS
 
 %%% error check
 if( length(TT_STATUS)<id || TT_FREE_IDS(id)==1 )
-  error('MATLAB:tocstatus:callTicstatusFirst', ...
+  error('MATLAB:tocStatus:callTicstatusFirst', ...
     'You must call TICSTATUS before calling TOCSTATUS.');
 end
 [fracDone,er] = checkNumArgs( fracDone, [1 1], -1, 1 ); error(er)

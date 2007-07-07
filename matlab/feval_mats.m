@@ -33,7 +33,7 @@
 %
 % See also FEVAL_IMAGES, FEVAL_ARRAYS
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -58,7 +58,7 @@ fileNames = {dirCont.name}; n = length(dirCont);
 if( n==0 ); error( ['No appropriate mat files found in ' srcDir] ); end
 
 %%% load each mat file and apply fHandle
-ticstatusid = ticstatus('feval_mats',[],40);
+ticId = ticStatus('feval_mats',[],40);
 ncontents = length( matCont );
 for i=1:n
   % load mat file and get contents
@@ -82,5 +82,5 @@ for i=1:n
   else
     X(indsX{:},i) = x;
   end;
-  tocstatus( ticstatusid, i/n );
+  tocStatus( ticId, i/n );
 end

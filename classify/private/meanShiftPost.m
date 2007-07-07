@@ -30,7 +30,7 @@ end;
 
 %%% Delete smallest cluster, reassign points, re-sort, repeat...
 k = max(IDX);
-ticId = ticstatus('meanShiftPost',[],5); kinit = k;
+ticId = ticStatus('meanShiftPost',[],5); kinit = k;
 while( 1 )
   % sort clusters [largest first] 
   cnts = zeros(1,k); for i=1:k; cnts(i) = sum( IDX==i ); end
@@ -49,6 +49,6 @@ while( 1 )
   end; 
   k = k-1;
 
-  tocstatus( ticId, (kinit-k)/kinit );
+  tocStatus( ticId, (kinit-k)/kinit );
 end
-tocstatus( ticId, 1 );
+tocStatus( ticId, 1 );

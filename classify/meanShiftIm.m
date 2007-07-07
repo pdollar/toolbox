@@ -73,7 +73,7 @@ data = cat( 3, cat( 3, grid_rs/sigSpt, grid_cs/sigSpt), X/sigRng );
 
 %%% MAIN LOOP
 M = data;
-ticstatusid = ticstatus('meanShiftIm');  %t0 = clock;  tlast = t0;
+ticId = ticStatus('meanShiftIm');  %t0 = clock;  tlast = t0;
 if( softFlag ); radius = sigSpt*2; else radius = sigSpt; end
 for i=1:mrows; for j=1:ncols; %#ok<ALIGN>
     Mij = data(i,j,:); Mij = Mij(:)';
@@ -106,7 +106,7 @@ for i=1:mrows; for j=1:ncols; %#ok<ALIGN>
     end
     M(i,j,:) = Mij(:);
     fracdone = ((i-1)*ncols+j) / (mrows*ncols);
-    tocstatus( ticstatusid, fracdone );
+    tocStatus( ticId, fracdone );
   end
 end
 M = cat(3, M(:,:,1:2)*sigSpt, M(:,:,3:end)*sigRng );

@@ -12,8 +12,8 @@
 %   feval_mats           - Used to apply the same operation to all .mat files in given directory.
 %
 % Timing:
-%   ticstatus            - Used to display the progress of a long process.
-%   tocstatus            - Used to display the progress of a long process.
+%   ticStatus            - Used to display the progress of a long process.
+%   tocStatus            - Used to display the progress of a long process.
 %
 % Array manipulation:
 %   arrayToDims          - Pads or crops I appropriately so that size(IC)==dims.

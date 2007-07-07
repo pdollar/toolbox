@@ -55,7 +55,7 @@
 %
 % See also FEVAL_ARRAYS, IMWRITE2, PERSISTENT, TICSTATUS
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -96,7 +96,7 @@ end;
 if( n==0 ); X=[]; return; end;
 
 %%% load each image and apply func
-ticstatusid = ticstatus('feval_images',[],40);
+ticId = ticStatus('feval_images',[],40);
 for i=1:n
   % load image
   if( nargin==3 )
@@ -121,5 +121,5 @@ for i=1:n
   else
     X(indsX{:},i) = x;
   end;
-  tocstatus( ticstatusid, i/n );
+  tocStatus( ticId, i/n );
 end;
