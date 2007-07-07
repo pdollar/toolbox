@@ -20,7 +20,7 @@
 %  C           - correlation matrix
 %
 % EXAMPLE
-%  T=gaussSmooth(rand(20,20),2); A=repmat(T,[3 3]);
+%  T=gaussSmooth(rand(20),2); A=repmat(T,[3 3]);
 %  C1=xcorr2(A,T); C2=xcorrn(A,T); C3=rot90(xcorrn(T,A),2);
 %  figure(1); im(C1);  figure(2); im(C2);  figure(3); im(C3);
 %
@@ -32,14 +32,12 @@
 
 function C = xcorrn( A, T, shape )
 
-if( nargin < 3 || isempty(shape)); shape='full'; end
+if( nargin<3 || isempty(shape)); shape='full'; end
 nd = ndims(A);
-if( nd~=ndims(T) );
-  error('A and T must have same number of dimensions');
-end
+if(nd~=ndims(A)); error('xcorrn: T and A must have same ndims'); end;
 
-% flip for conv purposes [accelerated for 2D]
-if( nd==2 ); T = rot90( T,2 ); else for d=1:nd; T = flipdim(T,d); end; end
+% flip for conv purposes
+if(nd==2); T=rot90(T,2); else for d=1:nd; T=flipdim(T,d); end; end
 
 % convolve [in frequency or spatial domain]
 C = convnFast( A, T, shape );

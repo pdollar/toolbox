@@ -35,7 +35,7 @@
 % EXAMPLE
 %  a=1; [a, er]=checkNumArgs( a, [1 3], 2, 0 ); a, error(er)
 %
-% See also
+% See also NARGCHK
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
