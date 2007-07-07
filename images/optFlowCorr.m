@@ -14,7 +14,7 @@
 % running on anything bigger.
 %
 % USAGE
-%  [Vx,Vy,reliab] = optflow_corr( I1, I2, patchR, searchR, 
+%  [Vx,Vy,reliab] = optFlowCorr( I1, I2, patchR, searchR, 
 %                                 [sigma], [thr], [show] )
 %
 % INPUTS
@@ -32,13 +32,13 @@
 %
 % EXAMPLE
 %
-% See also OPTFLOW_HORN, OPTFLOW_LUCASKANADE
+% See also OPTFLOWHORN, OPTFLOWLK
 
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [Vx,Vy,reliab] = optflow_corr( I1, I2, patchR, searchR, ...
+function [Vx,Vy,reliab] = optFlowCorr( I1, I2, patchR, searchR, ...
                                         sigma, thr, show )
 
 if( nargin<5 || isempty(sigma)); sigma=1; end;

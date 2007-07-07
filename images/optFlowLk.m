@@ -5,7 +5,7 @@
 % In general the soft window should be more accurate.
 %
 % USAGE
-%  [Vx,Vy,reliab]=optflow_lucaskanade( I1, I2, winN, ...
+%  [Vx,Vy,reliab]=optFlowLk( I1, I2, winN, ...
 %                                [winSig], [sigma], [thr], [show] )
 %
 % INPUTS
@@ -25,21 +25,21 @@
 %  A=zeros(50,50); A(16:35,16:35)=1;
 %  B=zeros(50,50); B(17:36,17:36)=1;
 %  C=imrotate(A,5,'bil','crop');
-%  optflow_lucaskanade( A, B, [], 2, 2, 3e-6, 1 );
-%  optflow_lucaskanade( A, C, [], 2, 2, 3e-6, 4 );
+%  optFlowLk( A, B, [], 2, 2, 3e-6, 1 );
+%  optFlowLk( A, C, [], 2, 2, 3e-6, 4 );
 %  % compare on stored real images (of mice)
-%  load optflow_data;
-%  [Vx,Vy,reliab] = optflow_lucaskanade( I5A, I5B, [], 4, 1.2, 3e-6, 1 );
-%  [Vx,Vy,reliab] = optflow_corr( I5A, I5B, 3, 5, 1.2, .01, 2 );
-%  [Vx,Vy] = optflow_horn( I5A, I5B, 2, 3 );
+%  load optFlowData;
+%  [Vx,Vy,reliab] = optFlowLk( I5A, I5B, [], 4, 1.2, 3e-6, 1 );
+%  [Vx,Vy,reliab] = optFlowCorr( I5A, I5B, 3, 5, 1.2, .01, 2 );
+%  [Vx,Vy] = optFlowHorn( I5A, I5B, 2, 3 );
 %
-% See also OPTFLOW_HORN, OPTFLOW_CORR
+% See also OPTFLOWHORN, OPTFLOWCORR
 
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [Vx,Vy,reliab]=optflow_lucaskanade( I1, I2, winN, ...
+function [Vx,Vy,reliab]=optFlowLk( I1, I2, winN, ...
                                             winSig, sigma, thr, show )
 
 if( nargin<4 || isempty(winSig));  winSig=[]; end

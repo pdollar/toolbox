@@ -1,7 +1,7 @@
 % Calculate optical flow using Horn & Schunck.
 %
 % USAGE
-%  [Vx,Vy] = optflow_horn( I1, I2, [sigma], [show] )
+%  [Vx,Vy] = optFlowHorn( I1, I2, [sigma], [show] )
 %
 % INPUTS
 %  I1, I2      - input images to calculate flow between
@@ -13,13 +13,13 @@
 %
 % EXAMPLE
 %
-% See also OPTFLOW_CORR, OPTFLOW_LUCASKANADE
+% See also OPTFLOWCORR, OPTFLOWLK
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [Vx,Vy] = optflow_horn( I1, I2, sigma, show )
+function [Vx,Vy] = optFlowHorn( I1, I2, sigma, show )
 
 if (nargin < 3); sigma=1; end;
 if (nargin < 4); show=0; end;

@@ -13,12 +13,13 @@
 % returned regardless.  All operations are performed on abs(G) in case it
 % contains negative or complex values.
 %
-% symmFlag is an optional flag that if set to 1 then imageMlGauss recovers the
-% maximum likelihood symmetric gaussian.  That is the variance in each
+% symmFlag is an optional flag that if set to 1 then imageMlGauss recovers
+% the maximum likelihood symmetric gaussian.  That is the variance in each
 % direction is equal, and all covariance terms are 0.  If symmFlag is set
-% to 2 and G is 3D, imageMlGauss recovers the ML guassian with equal variance
-% in the 1st 2 dimensions (row and col) and all covariance terms equal to
-% 0, but a possibly different variance in the 3rd (z or t) dimension.
+% to 2 and G is 3D, imageMlGauss recovers the ML guassian with equal
+% variance in the 1st 2 dimensions (row and col) and all covariance terms
+% equal to 0, but a possibly different variance in the 3rd (z or t)
+% dimension.
 %
 % USAGE
 %  varargout = imageMlGauss( G, [symmFlag], [show] )

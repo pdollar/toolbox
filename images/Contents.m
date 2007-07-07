@@ -43,11 +43,11 @@
 %   nonMaxSuprWin       - Nonmaximal suppression of values outside of a given window.
 %
 % Optical Flow:
-%   optflow_corr        - Calculate optical flow using cross-correlation.
-%   optflow_horn        - Calculate optical flow using Horn & Schunck.
-%   optflow_lucaskanade - Calculate optical flow using Lucas & Kanade.  Fast, parallel code.
+%   optFlowCorr         - Calculate optical flow using cross-correlation.
+%   optFlowHorn         - Calculate optical flow using Horn & Schunck.
+%   optFlowLk           - Calculate optical flow using Lucas & Kanade.  Fast, parallel code.
 %
-% Miscellaneous:
+% Miscellaneous: PPD
 %   convnFast           - Fast convolution, replacement for both conv2 and convn.
 %   gaussSmooth         - Applies Gaussian smoothing to a (multidimensional) image.
 %   imageMlGauss        - Calculates max likelihood params of Gaussian that gave rise to image G.
