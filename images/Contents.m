@@ -42,7 +42,7 @@
 %   nonMaxSuprList      - Applies nonmaximal suppression to a list.
 %   nonMaxSuprWin       - Nonmaximal suppression of values outside of a given window.
 %
-% Optical Flow:
+% Optical Flow: PPD
 %   optFlowCorr         - Calculate optical flow using cross-correlation.
 %   optFlowHorn         - Calculate optical flow using Horn & Schunck.
 %   optFlowLk           - Calculate optical flow using Lucas & Kanade.  Fast, parallel code.

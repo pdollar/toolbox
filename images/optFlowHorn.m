@@ -24,11 +24,11 @@ function [Vx,Vy] = optFlowHorn( I1, I2, sigma, show )
 if (nargin < 3); sigma=1; end;
 if (nargin < 4); show=0; end;
 
-if( ndims(I1)~=2 || ndims(I2)~=2 ) 
-  error('Only works for 2d input images.'); 
+if( ndims(I1)~=2 || ndims(I2)~=2 )
+  error('Only works for 2d input images.');
 end
-if( any(size(I1)~=size(I2)) ) 
-  error('Input images must have same dimensions.'); 
+if( any(size(I1)~=size(I2)) )
+  error('Input images must have same dimensions.');
 end
 I1 = gaussSmooth(I1,sigma,'smooth');
 I2 = gaussSmooth(I2,sigma,'smooth');

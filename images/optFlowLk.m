@@ -26,7 +26,7 @@
 %  B=zeros(50,50); B(17:36,17:36)=1;
 %  C=imrotate(A,5,'bil','crop');
 %  optFlowLk( A, B, [], 2, 2, 3e-6, 1 );
-%  optFlowLk( A, C, [], 2, 2, 3e-6, 4 );
+%  optFlowLk( A, C, [], 2, 2, 3e-6, 2 );
 %  % compare on stored real images (of mice)
 %  load optFlowData;
 %  [Vx,Vy,reliab] = optFlowLk( I5A, I5B, [], 4, 1.2, 3e-6, 1 );
@@ -35,12 +35,12 @@
 %
 % See also OPTFLOWHORN, OPTFLOWCORR
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
 function [Vx,Vy,reliab]=optFlowLk( I1, I2, winN, ...
-                                            winSig, sigma, thr, show )
+  winSig, sigma, thr, show )
 
 if( nargin<4 || isempty(winSig));  winSig=[]; end
 if( nargin<5 || isempty(sigma)); sigma=1; end

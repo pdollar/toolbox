@@ -14,7 +14,7 @@
 % running on anything bigger.
 %
 % USAGE
-%  [Vx,Vy,reliab] = optFlowCorr( I1, I2, patchR, searchR, 
+%  [Vx,Vy,reliab] = optFlowCorr( I1, I2, patchR, searchR,
 %                                 [sigma], [thr], [show] )
 %
 % INPUTS
@@ -22,7 +22,7 @@
 %  patchR      - determines correlation patch size around each pixel
 %  searchR     - search radius for corresponding patch
 %  sigma       - [1] amount to smooth by (may be 0)
-%  thr         - [.001] RELATIVE reliability threshold 
+%  thr         - [.001] RELATIVE reliability threshold
 %  show        - [0] figure to use for display (no display if == 0)
 %
 % OUTPUTS
@@ -34,12 +34,12 @@
 %
 % See also OPTFLOWHORN, OPTFLOWLK
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
 function [Vx,Vy,reliab] = optFlowCorr( I1, I2, patchR, searchR, ...
-                                        sigma, thr, show )
+  sigma, thr, show )
 
 if( nargin<5 || isempty(sigma)); sigma=1; end;
 if( nargin<6 || isempty(thr)); thr=0.001; end;
@@ -49,7 +49,7 @@ if( nargin<7 || isempty(show)); show=0; end;
 if( ndims(I1)~=2 || ndims(I2)~=2 )
   error('Only works for 2d input images.');
 end
-if( any(size(I1)~=size(I2)) ) 
+if( any(size(I1)~=size(I2)) )
   error('Input images must have same dimensions.');
 end
 if( isa(I1,'uint8')); I1 = double(I1); I2 = double(I2); end;
