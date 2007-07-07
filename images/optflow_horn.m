@@ -15,7 +15,7 @@
 %
 % See also OPTFLOW_CORR, OPTFLOW_LUCASKANADE
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -30,8 +30,8 @@ end
 if( any(size(I1)~=size(I2)) ) 
   error('Input images must have same dimensions.'); 
 end
-I1 = gauss_smooth(I1,sigma,'smooth');
-I2 = gauss_smooth(I2,sigma,'smooth');
+I1 = gaussSmoth(I1,sigma,'smooth');
+I2 = gaussSmoth(I2,sigma,'smooth');
 
 % ALGORITHM:
 [N1,N2]=size(I1);

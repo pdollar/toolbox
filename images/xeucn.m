@@ -16,11 +16,11 @@
 %  C           - correlation matrix
 %
 % EXAMPLE
-%  T=gauss_smooth(rand(20,20),2); A=repmat(T,[3 3]);
+%  T=gaussSmoth(rand(20,20),2); A=repmat(T,[3 3]);
 %  C1=normxcorrn(T,A);  C2=xcorrn(A,T);  C3=xeucn(A,T); 
 %  figure(1); im(C1);  figure(2); im(C2);  figure(3); im(-C3);
 %
-% See also XCORRN
+% See also XCORRN, CONVNFAST
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -44,6 +44,6 @@ if( nd==2 ); T = rot90( T,2 ); else for d=1:nd; T = flipdim(T,d); end; end
 % well as each dot product between A and T.
 Amag = localSum( A.*A, size(T), shape ); % sum of squares of A per window
 Tmag = T.^2;  Tmag = sum( Tmag(:) );    % constant (sum of squares of T)
-C = Amag + Tmag - 2 * convn_fast(A,T,shape); % Distance squared
+C = Amag + Tmag - 2 * convnFast(A,T,shape); % Distance squared
 % C( Amag<.01 ) = Tmag;  % prevent numerical errors
 C = real(sqrt(real(C)));

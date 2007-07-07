@@ -27,7 +27,7 @@
 % info see time_conv below.
 %
 % USAGE
-%  C = convn_fast( A, B, [shape] )
+%  C = convnFast( A, B, [shape] )
 %
 % INPUTS
 %  A       - d dimensional input matrix
@@ -45,11 +45,11 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function C = convn_fast( A, B, shape )
+function C = convnFast( A, B, shape )
 
 if( nargin<3 || isempty(shape)); shape='full'; end
 if(isempty(strmatch(shape, char({'same', 'valid', 'full', 'smooth'}))))
-  error( 'convn_fast: unknown shape flag' ); end
+  error( 'convnFast: unknown shape flag' ); end
 
 shapeorig = shape;
 smoothFlag = (strcmp(shape,'smooth'));
@@ -81,11 +81,11 @@ end
 if( ndA==3 && ndB==3 && (sizB(1)==1 || sizB(2)==1) )
   if (sizB(1)==1)
     A = permute( A, [2 3 1]);  B = permute( B, [2 3 1]);
-    C = convn_fast( A, B, shapeorig );
+    C = convnFast( A, B, shapeorig );
     C = permute( C, [3 1 2] );
   elseif (sizB(2)==1)
     A = permute( A, [3 1 2]);  B = permute( B, [3 1 2]);
-    C = convn_fast( A, B, shapeorig );
+    C = convnFast( A, B, shapeorig );
     C = permute( C, [2 3 1] );
   end
   return;

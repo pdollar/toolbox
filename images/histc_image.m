@@ -10,7 +10,7 @@
 %
 % See histc_1D for more details about edges and nbins.
 %
-% The shape flag specifies what to do at boundaries.  See convn_fast for
+% The shape flag specifies what to do at boundaries.  See convnFast for
 % possible flags such as 'same', 'valid', 'full, or 'smooth'.
 %
 % USAGE
@@ -60,7 +60,7 @@ for i=1:length(weightMask)
   weightMaski = weightMask{i};
   for d=1:ndims(weightMaski); weightMaski = flipdim(weightMaski,d); end;
   weightMaski = weightMaski / sum(weightMaski(:));
-  HS = convn_fast( HS, weightMaski, shape );
+  HS = convnFast( HS, weightMaski, shape );
 end;
     
 

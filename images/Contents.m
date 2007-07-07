@@ -24,10 +24,6 @@
 %   histc_sift_nD       - Creates a series of locally position dependent histograms.
 %   histmontage         - Used to display multiple 1D histograms.
 %
-% Convolution:
-%   convn_fast          - Fast convolution, replacement for both conv2 and convn.
-%   gauss_smooth        - Applies Gaussian smoothing to a (multidimensional) image.
-%
 % Generalized correlation:
 %   normxcorrn          - Normalized n-dimensional cross-correlation.
 %   xcorrn              - n-dimensional cross-correlation.  Generalized version of xcorr2.
@@ -52,6 +48,8 @@
 %   optflow_lucaskanade - Calculate optical flow using Lucas & Kanade.  Fast, parallel code.
 %
 % Miscellaneous:
+%   convnFast           - Fast convolution, replacement for both conv2 and convn.
+%   gaussSmooth         - Applies Gaussian smoothing to a (multidimensional) image.
 %   imageMLG            - Calculates max likelihood params of Gaussian that gave rise to image G.
 %   imwrite2            - Similar to imwrite, except follows a strict naming convention.
 %   imwrite2split       - Writes/reads a large set of images into/from multiple directories.

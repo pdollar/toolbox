@@ -24,7 +24,7 @@
 %
 % See also MEDFILT1
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -42,7 +42,7 @@ Ainds = sub2ind2( [m,n], [inds; 1:n]' );
 A( Ainds ) = 1;
 
 % apply local_sum (or smooth?)
-%A = gauss_smooth( A, [0 r/2-1], 'smooth' );
+%A = gaussSmoth( A, [0 r/2-1], 'smooth' );
 A = localSum( A, [0 s], 'same' );
 
 % create y

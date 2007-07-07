@@ -22,19 +22,19 @@
 % INPUTS -  without a mask
 %  T           - template to correlate to each window in A
 %  A           - matrix to correlate T to
-%  shape       - ['full'] 'valid', 'full', or 'same', see convn_fast help
+%  shape       - ['full'] 'valid', 'full', or 'same', see convnFast help
 %
 % INPUTS - with a mask
 %  T           - template to correlate to each window in A
 %  Tfg         - figure/ground mask for the template
 %  A           - matrix to correlate T to
-%  shape       - ['full'] 'valid', 'full', or 'same', see convn_fast help
+%  shape       - ['full'] 'valid', 'full', or 'same', see convnFast help
 %
 % OUTPUTS
 %  C           - correlation matrix
 %
 % EXAMPLE - 1 - normxcorrn vs nomrxcorr2
-%  T=gauss_smooth(rand(20,20),2); A=repmat(T,[3 3]);
+%  T=gaussSmoth(rand(20,20),2); A=repmat(T,[3 3]);
 %  C1=normxcorrn(T,A);  C2=normxcorr2(T,A);  C3=abs(C1-C2);
 %  figure(1); im(C1);  figure(2); im(C2);  figure(3); im(C3);
 %
@@ -43,7 +43,7 @@
 %  C1=normxcorrn(T,Tfg,A);  C2=normxcorr2(T,A);  C3=abs(C1-C2);
 %  figure(1); im(C1);  figure(2); im(C2);  figure(3); im(C3);
 %
-% See also XEUCN, XCORRN
+% See also XEUCN, XCORRN, CONVNFAST
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -81,7 +81,7 @@ if(nargin==2 || (nargin==3 && ischar(varargin{2}))) %%% no mask
   AwAve = localSum( A, size(T), shape ) / n; % average of A in each window
   AwMag = real(sqrt(localSum(A.*A,size(T),shape)-n*(AwAve.*AwAve)));
   % mag of Aw per win
-  C = convn_fast(A,TN,shape) ./ (AwMag+eps);  % NormXCorr in each window
+  C = convnFast(A,TN,shape) ./ (AwMag+eps);  % NormXCorr in each window
   C( AwMag<.00001 ) = 0; % prevent numerical errors
   
 else %%% mask case 
@@ -105,20 +105,20 @@ else %%% mask case
   T(Tfg==0)=0;
   T = T / norm( T(:) );
 
-  % flip for convn_fast purposes
+  % flip for convnFast purposes
   for d=1:ndims(T); T = flipdim(T,d); end;
   for d=1:ndims(Tfg); Tfg = flipdim(Tfg,d); end;
 
   % get average over each window over A
-  A_av = convn_fast( A, Tfg/nkeep, shape );
+  A_av = convnFast( A, Tfg/nkeep, shape );
 
   % get magnitude over each window over A "mag(WA-WAav)"
   % We can rewrite the above as "sqrt(SUM(WAi^2)-n*WAav^2)". so:
-  A_mag = convn_fast( A.*A, Tfg, shape ) - nkeep * A_av .* A_av;
+  A_mag = convnFast( A.*A, Tfg, shape ) - nkeep * A_av .* A_av;
   A_mag = sqrt(A_mag);  A_mag(A_mag<.000001)=1; %removes divide by 0 error
 
   % finally get C.  in each image window, we will now do:
   % "dot(T,(WA-WAav)) / mag(WA-WAav)"
-  C = convn_fast(A,T,shape) - A_av*sum(T(:));
+  C = convnFast(A,T,shape) - A_av*sum(T(:));
   C = C ./ A_mag;
 end

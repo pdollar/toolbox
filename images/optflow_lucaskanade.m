@@ -73,8 +73,8 @@ else
 end;
 
 % smooth images (using the 'smooth' flag causes this to be slow)
-I1 = gauss_smooth(I1,sigma,'same');
-I2 = gauss_smooth(I2,sigma,'same');
+I1 = gaussSmoth(I1,sigma,'same');
+I2 = gaussSmoth(I2,sigma,'same');
 
 % Compute components of outer product of gradient of frame 1
 [Gx,Gy]=gradient(I1);
@@ -87,9 +87,9 @@ if( isempty(winSig) )
   Ayy=conv2(Gyy,win_mask,'same');
 else
   winN = ceil(winSig);
-  Axx=gauss_smooth(Gxx,winSig,'same',2);
-  Axy=gauss_smooth(Gxy,winSig,'same',2);
-  Ayy=gauss_smooth(Gyy,winSig,'same',2);
+  Axx=gaussSmoth(Gxx,winSig,'same',2);
+  Axy=gaussSmoth(Gxy,winSig,'same',2);
+  Ayy=gaussSmoth(Gyy,winSig,'same',2);
 end;
 
 % Find determinant, trace, and eigenvalues of A'A
@@ -103,8 +103,8 @@ if( isempty(winSig) )
   ATbx=conv2(IxIt,win_mask,'same');
   ATby=conv2(IyIt,win_mask,'same');
 else
-  ATbx=gauss_smooth(IxIt,winSig,'same',2);
-  ATby=gauss_smooth(IyIt,winSig,'same',2);
+  ATbx=gaussSmoth(IxIt,winSig,'same',2);
+  ATby=gaussSmoth(IyIt,winSig,'same',2);
 end;
 
 % Compute components of velocity vectors

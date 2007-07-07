@@ -2,7 +2,7 @@
 %
 % For 2 dimensional inputs this function is exactly the same as xcorr2,
 % but also works in higher dimensions.   Can also be more efficient
-% because it performs convolution using convn_fast.
+% because it performs convolution using convnFast.
 %
 % The order of parameters is reversed from normxcorrn.  This is to be
 % compatible with the matlab functions normxcorr2 and xcorr2 (which take
@@ -20,11 +20,11 @@
 %  C           - correlation matrix
 %
 % EXAMPLE
-%  T=gauss_smooth(rand(20,20),2); A=repmat(T,[3 3]);
+%  T=gaussSmoth(rand(20,20),2); A=repmat(T,[3 3]);
 %  C1=xcorr2(A,T); C2=xcorrn(A,T); C3=rot90(xcorrn(T,A),2);
 %  figure(1); im(C1);  figure(2); im(C2);  figure(3); im(C3);
 %
-% See also XCORR2, NORMXCORRN, XEUCN, CONVN_FAST
+% See also XCORR2, NORMXCORRN, XEUCN, CONVNFAST
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -42,4 +42,4 @@ end
 if( nd==2 ); T = rot90( T,2 ); else for d=1:nd; T = flipdim(T,d); end; end
 
 % convolve [in frequency or spatial domain]
-C = convn_fast( A, T, shape );
+C = convnFast( A, T, shape );

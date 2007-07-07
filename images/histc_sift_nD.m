@@ -86,10 +86,10 @@ for m=1:nmasks
     h = conv2( h, fsmooth', 'same' );
     h = conv2( h, fsmooth , 'same' );
   elseif( nch==3 )
-    h = gauss_smooth( h, .5, 'same', 2.5 );
+    h = gaussSmoth( h, .5, 'same', 2.5 );
   else
     % no smoothing, too slow
-    %h = gauss_smooth( h, .5, 'same', 2.5 );
+    %h = gaussSmoth( h, .5, 'same', 2.5 );
   end;
 
   % store results
