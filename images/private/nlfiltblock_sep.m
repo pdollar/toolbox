@@ -25,7 +25,7 @@
 % EXAMPLE
 %  I = nlfiltblock_sep( I, dims, @rnlfiltblock_sum ); % local block sums
 %
-% See also NLFILT_SEP, RNLFILTBLOCK_SUM, LOCALSUM_BLOCK
+% See also NLFILT_SEP, RNLFILTBLOCK_SUM, LOCALSUM
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -39,7 +39,7 @@ params = varargin;
 
 % trim I to have integer number of blocks
 dims = min(dims,siz);  siz = siz - mod( siz, dims ); 
-if (~all( siz==size(I))); I = arraycrop_full( I, ones(1,nd), siz ); end;
+if (~all( siz==size(I))); I = arrayCrop( I, ones(1,nd), siz ); end;
 
 % Apply rnlfiltblock filter along each dimension of I.  Actually filter
 % is always aplied along first dimension of I and then I is shifted.

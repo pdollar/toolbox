@@ -32,7 +32,7 @@
 %
 % See also NLFILTBLOCK_SEP, RNLFILT_SUM, RNLFILT_MAX
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -62,7 +62,7 @@ end
 
 % crop to appropriate size
 if(strcmp(shape,'valid'))
-  I = arraycrop_full( I, rs1+1, size(I)-rs2 );
+  I = arrayCrop( I, rs1+1, size(I)-rs2 );
 elseif(~strcmp(shape,'full') && ~strcmp(shape,'same'))
   error('unknown shape');
 end;

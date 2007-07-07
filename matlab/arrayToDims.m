@@ -7,7 +7,7 @@
 % even then pads one more unit along the start of the dimension).
 %
 % USAGE
-%  IC = arraycrop2dims( I, dims, [padEl] )
+%  IC = arrayToDims( I, dims, [padEl] )
 %
 % INPUTS
 %  I         - n dim array to crop window from (for arrays can only crop)
@@ -18,15 +18,15 @@
 %  IC        - cropped array
 %
 % EXAMPLE
-%  I=randn(10); delta=1; IC=arraycrop2dims(I,size(I)-2*delta);
+%  I=randn(10); delta=1; IC=arrayToDims(I,size(I)-2*delta);
 %
-% See also ARRAYCROP_FULL, PADARRAY
+% See also ARRAYCROP, PADARRAY
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function IC = arraycrop2dims( I, dims, padEl )
+function IC = arrayToDims( I, dims, padEl )
 
 if( nargin<3 || isempty(padEl)); padEl=0; end
 nd = ndims(I);  siz = size(I);
@@ -45,5 +45,5 @@ for d=1:nd
   end
 end
 
-% call arraycrop_full
-IC = arraycrop_full( I, strLocs, endLocs, padEl );
+% call arrayCrop
+IC = arrayCrop( I, strLocs, endLocs, padEl );

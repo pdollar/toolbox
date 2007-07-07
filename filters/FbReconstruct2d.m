@@ -89,7 +89,7 @@ else %%% recover entire image
       I2(r:r+2,c:c+2) = I2( r:r+2,c:c+2 ) + Idelta;
     end;
   end;
-  I2 = arraycrop2dims( I2, size(I2)-2 );
+  I2 = arrayToDims( I2, size(I2)-2 );
 
   % display
   figure(1); clf;

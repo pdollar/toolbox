@@ -37,7 +37,7 @@ siz = size(X); nd = ndims(X);
 
 % crop border areas so as to make dims of X divisible by parts
 parts = min(siz,parts);   siz = siz - mod( siz, parts );
-if (~all( siz==size(X))); X = arraycrop_full( X, ones(1,nd), siz ); end
+if (~all( siz==size(X))); X = arrayCrop( X, ones(1,nd), siz ); end
 
 % Convert to cell array by calling mat2cell
 bounds = cell(1,nd);

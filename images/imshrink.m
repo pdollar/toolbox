@@ -23,7 +23,7 @@
 %
 % See also IMRESIZE, LOCALSUM
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -35,7 +35,7 @@ while( length(ratios)>nd && ratios(end)==1 ); ratios=ratios(1:end-1); end
 
 % trim I to have integer number of blocks
 ratios = min(ratios,siz); siz = siz - mod( siz, ratios );
-if (~all( siz==size(I))); I = arraycrop_full( I, ones(1,nd), siz ); end
+if (~all( siz==size(I))); I = arrayCrop( I, ones(1,nd), siz ); end
 
 % if memory is large, recursively call on subparts and recombine
 if( prod(siz)*8e-6 > 200 ) % set max at 200MB, splits add overhead
@@ -77,7 +77,7 @@ I = feval( classname, I );
 %   sigmas = ratios/2 / 1.6; sigmas(ratios==1)=0; %is this an ideal value
 % of sigmas?
 %    I = gauss_smooth( I, sigmas, 'full' );
-%    I = arraycrop2dims( I, siz-ratios+1 );
+%    I = arrayToDims( I, siz-ratios+1 );
 %
 %    % now subsample smoothed I
 %    sizsum = size(I);

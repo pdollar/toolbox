@@ -41,7 +41,7 @@
 %
 % See also CONV2, CONVN
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -201,9 +201,9 @@ if(isreal(A) && isreal(B)); C = real(C); end
 
 % crop to size
 if(strcmp(shape,'valid'))
-  C = arraycrop2dims( C, max(0,sizA-sizB+1 ) );
+  C = arrayToDims( C, max(0,sizA-sizB+1 ) );
 elseif(strcmp(shape,'same'))
-  C = arraycrop2dims( C, sizA );
+  C = arrayToDims( C, sizA );
 elseif(~strcmp(shape,'full'))
   error('unknown shape');
 end

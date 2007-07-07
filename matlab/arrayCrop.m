@@ -4,7 +4,7 @@
 % by filling in locations with padEl if the locations are outside of array.
 %
 % USAGE
-%  I = arraycrop_full( I, strLocs, endLocs, [padEl] )
+%  I = arrayCrop( I, strLocs, endLocs, [padEl] )
 %
 % INPUTS
 %  I          - n dimensional array to crop window from
@@ -16,15 +16,15 @@
 %  I          - cropped array
 %
 % EXAMPLE
-%  I=randn(10);  IC=arraycrop_full( I, [-1 1], [10 10], 0 );
+%  I=randn(10);  IC=arrayCrop( I, [-1 1], [10 10], 0 );
 %
-% See also PADARRAY, ARRAYCROP2DIMS
+% See also PADARRAY, ARRAYTODIMS
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function I = arraycrop_full( I, strLocs, endLocs, padEl )
+function I = arrayCrop( I, strLocs, endLocs, padEl )
 
 if( nargin<4 || isempty(padEl)); padEl=0; end
 nd = ndims(I);  siz = size(I);

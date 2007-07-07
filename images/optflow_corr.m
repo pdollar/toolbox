@@ -124,9 +124,9 @@ end;
 
 
 % resize all to get rid of padding
-Vx = arraycrop2dims( Vx, siz );
-Vy = arraycrop2dims( Vy, siz );
-reliab = arraycrop2dims( reliab, siz );
+Vx = arrayToDims( Vx, siz );
+Vy = arrayToDims( Vy, siz );
+reliab = arrayToDims( reliab, siz );
 
 % scale reliab to be between [0,1]
 reliab = reliab / max([reliab(:); eps]);

@@ -32,7 +32,7 @@ if( nd~=2 && nd~=3 ); error('I must an MxNxK array'); end
 
 cropsiz = size(FB);
 cropsiz = [cropsiz(1:2)-2*delta, cropsiz(3)];
-FBC = arraycrop2dims( FB, cropsiz );
+FBC = arrayToDims( FB, cropsiz );
 
 for f=1:size(FB,3)
   FC = FBC(:,:,f);

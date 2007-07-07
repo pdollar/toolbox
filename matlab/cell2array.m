@@ -24,7 +24,7 @@
 %
 % See also MAT2CELL2, CELL2MAT
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -52,5 +52,5 @@ Y = X{i}(1);  Y = repmat( Y, [maxsiz n] );
 if( all(maxsiz==minsiz) )
   for i=1:n; Y( inds{:}, i ) = X{i}; end
 else
-  for i=1:n; Y( inds{:}, i ) = arraycrop2dims( X{i}, maxsiz, padEl); end
+  for i=1:n; Y( inds{:}, i ) = arrayToDims( X{i}, maxsiz, padEl); end
 end

@@ -138,13 +138,13 @@ col_sample_locs = reshape(col_sample_locs,mrows,ncols);
 % now texture map results
 IR = interp2( I, col_sample_locs, row_sample_locs, method );
 IR(isnan(IR)) = 0;
-IR = arraycrop2dims( IR, size(IR)-6 ); %undo extra padding
+IR = arrayToDims( IR, size(IR)-6 ); %undo extra padding
 
 if(~strcmp(classname,'double')); IR=feval(classname,IR ); end
 
 % optionally show
 if ( show)
-  I = arraycrop2dims( I, size(IR)-2 );
+  I = arrayToDims( I, size(IR)-2 );
   figure(show); clf; im(I);
   figure(show+1); clf; im(IR);
 end

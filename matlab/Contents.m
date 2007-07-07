@@ -16,8 +16,8 @@
 %   tocstatus            - Used to display the progress of a long process.
 %
 % Array manipulation:
-%   arraycrop2dims       - Pads or crops I appropriately so that size(IC)==dims.
-%   arraycrop_full       - Used to crop a rectangular region from an n dimensional array.
+%   arrayToDims          - Pads or crops I appropriately so that size(IC)==dims.
+%   arrayCrop            - Used to crop a rectangular region from an n dimensional array.
 %   cell2array           - Flattens a cell array of regular arrays into a regular array.
 %   mat2cell2            - Break matrix up into a cell array of same sized matrices.
 %
