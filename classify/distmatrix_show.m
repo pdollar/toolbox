@@ -22,12 +22,12 @@
 %
 % EXAMPLE
 %  % not the best example since points are already ordered
-%  [X,IDXtrue] = demogendata(100,0,2,2,10,2,0);
+%  [X,IDXtrue] = demoGenData(100,0,2,2,10,2,0);
 %  distmatrix_show( dist_euclidean(X,X), IDXtrue );
 %
 % See also VISUALIZE_DATA, KMEANS2
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 

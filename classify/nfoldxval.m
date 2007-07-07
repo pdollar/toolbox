@@ -159,14 +159,14 @@ for testind = 1:nsets
   clf = feval( clfinit, p, clfparams{:} );
   clf = feval( clf.fun_train, clf, train, trainIDX );
   testIDXpred = feval( clf.fun_fwd, clf, test );
-  CMi = confmatrix( testIDX, testIDXpred, ntypes );
+  CMi = confMatrix( testIDX, testIDXpred, ntypes );
   CM = CM + CMi;
 end
 
 %%% show confusion matrix, optionally save image to file
 if( show )
   figure(show); %show=show+1;
-  confmatrixShow( CM, types );
+  confMatrixShow( CM, types );
   if( isempty(fname) )
     title( clf.type, 'FontSize', 20 );
   else

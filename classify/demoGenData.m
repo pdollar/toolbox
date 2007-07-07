@@ -4,7 +4,7 @@
 % For definitions see [Sanjoy Dasgupta, 1999].
 %
 % USAGE
-%  [X,IDX,T,IDT] = demogendata(n,m,k,d,c,e,f)
+%  [X,IDX,T,IDT] = demoGenData(n,m,k,d,c,e,f)
 %
 % INPUTS
 %  n    - size of training set
@@ -22,17 +22,17 @@
 %  IDT  - cluster membership [see kmeans2.m]
 %
 % EXAMPLE
-%  [X,IDX,T,IDT] = demogendata(250,250,4,4,.5,.5,.1);
+%  [X,IDX,T,IDT] = demoGenData(250,250,4,4,.5,.5,.1);
 %  figure(1); clf; visualize_data( X, 2, IDX ); title('train');
 %  figure(2); clf; visualize_data( T, 2, IDT ); title('test');
 %
 % See also VISUALIZE_DATA, DEMOCLUSTER, DEMOCLASSIFY
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [X,IDX,T,IDT] = demogendata(n,m,k,d,c,e,f)
+function [X,IDX,T,IDT] = demoGenData(n,m,k,d,c,e,f)
 
 if( nargin<7 ); f=0; end;
 if (f<0 || f>=1 ); error('illegal value for f'); end

@@ -2,8 +2,8 @@
 % See also
 %
 % Clustering:
-%   democluster         - Clustering demo.
-%   demogendata         - Generate data drawn form a mixture of Gaussians.
+%   demoCluster         - Clustering demo.
+%   demoGenData         - Generate data drawn form a mixture of Gaussians.
 %   kmeans2             - Fast version of kmeans clustering.
 %   meanshift           - meanshift clustering algorithm.
 %   meanshiftim         - Applies the meanshift algorithm to a joint spatial/range image.
@@ -26,10 +26,10 @@
 %   visualize_data      - Project high dim. data unto principal components (PCA) for visualization.
 %
 % Classification methods with a common interface:
-%   democlassify        - A demo used to test and demonstrate the usage of classifiers (clf_*)
+%   demoClassify        - A demo used to test and demonstrate the usage of classifiers (clf_*)
 %   nfoldxval           - Runs n-fold cross validation on data with a given classifier.
-%   confmatrix          - Generates a confusion matrix according to true and predicted data labels.
-%   confmatrixShow      - Used to display a confusion matrix.
+%   confMatrix          - Generates a confusion matrix according to true and predicted data labels.
+%   confMatrixShow      - Used to display a confusion matrix.
 %   clf_dectree         - Wrapper for treefit that makes decision trees compatible with nfoldxval.
 %   clf_dectree_fwd     - Apply the decision tree to data X.
 %   clf_dectree_train   - Train a decision tree classifier.

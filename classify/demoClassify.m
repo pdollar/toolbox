@@ -5,14 +5,14 @@
 % different 2D projections (see visualize_data).
 %
 % USAGE
-%  democlassify
+%  demoClassify
 %
 % INPUTS
 %
 % OUTPUTS
 %
 % EXAMPLE
-%  democlassify
+%  demoClassify
 %
 % See also CLF_KNN, CLF_LDA, CLF_SVM, CLF_ECOC, VISUALIZE_DATA
 
@@ -20,12 +20,12 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function democlassify
+function demoClassify
 
 %%% generate data
 nClasses = 4;  d = 3;  nTrn=250;  nTst=150;  show = 1;
 
-[trnData,trnIDX,tstData,tstIDX] = demogendata(nTrn,nTst,nClasses,d,1,6);
+[trnData,trnIDX,tstData,tstIDX] = demoGenData(nTrn,nTst,nClasses,d,1,6);
 nTrn=size(trnData,1);  nTst=size(tstData,1); %#ok<NASGU>
 if( show ) % make look different due to different projections
   figure(show); clf;

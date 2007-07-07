@@ -13,14 +13,14 @@
 % EXAMPLE
 %  democluster
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version PPD
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
 %%% generate data
-if(1) % mixture of gaussians -- see demogendata
+if(1) % mixture of gaussians -- see demoGenData
   kTr = 5; sep = 3; ecc = 3; nFracTr = 0.1;  nPnts = 1000;  d = 2;
-  [X,IDXtr] = demogendata(nPnts,0,kTr,d,sep,ecc,nFracTr);
+  [X,IDXtr] = demoGenData(nPnts,0,kTr,d,sep,ecc,nFracTr);
 else
   % two parallel clusters - kmeans will fail
   kTr = 2;  nPnts = 200;  sep = 4;

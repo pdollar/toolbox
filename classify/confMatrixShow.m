@@ -1,14 +1,14 @@
 % Used to display a confusion matrix.
 %
-% See confmatrix for general format and info on confusion matricies.  This
+% See confMatrix for general format and info on confusion matricies.  This
 % function normalizes the CM before displaying, hence all values range in
 % [0,1] and rows sum to 1.
 %
 % USAGE
-%  confmatrixShow( CM, types, pvPairs, ndigits )
+%  confMatrixShow( CM, types, pvPairs, ndigits )
 %
 % INPUTS
-%  CM          - [ntypes x ntypes] confusion array -- see confmatrix
+%  CM          - [ntypes x ntypes] confusion array -- see confMatrix
 %  types       - [] cell array of length ntypes of text labels
 %  pvPairs     - [] parameter / value list for text.m
 %  ndigits     - [] number of digits after decimal to display
@@ -17,7 +17,7 @@
 %
 % EXAMPLE
 %  cliptypes = { 'anger','disgust','fear','joy','sadness','surprise' };
-%  confmatrixShow( rand(6)/3+eye(6), cliptypes, {'FontSize',20} )
+%  confMatrixShow( rand(6)/3+eye(6), cliptypes, {'FontSize',20} )
 %  title('confusion matrix','FontSize',24);
 %
 % See also CONFMATRIX, TEXT2
@@ -26,7 +26,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function confmatrixShow( CM, types, pvPairs, ndigits )
+function confMatrixShow( CM, types, pvPairs, ndigits )
 
 if( nargin<2 ); types=[]; end
 if( nargin<3 || isempty(pvPairs)); pvPairs = {'FontSize',20}; end

@@ -9,7 +9,7 @@
 %  CMnorm = CM ./ repmat( sum(CM,2), [1 size(CM,2)] );
 %
 % USAGE
-%  CM = confmatrix( IDXtrue, IDXpred, ntypes )
+%  CM = confMatrix( IDXtrue, IDXpred, ntypes )
 %
 % INPUTS
 %  IDXtrue     - [nx1] array of true labels [int values in 1-ntypes]
@@ -22,8 +22,8 @@
 % EXAMPLE
 %  IDXtrue = [ones(1,25) ones(1,25)*2];
 %  IDXpred = [ones(1,10) randint(1,30,[1 2]) ones(1,10)*2];
-%  CM = confmatrix( IDXtrue, IDXpred, 2 )
-%  confmatrix_show( CM, {'class-A','class-B'}, {'FontSize',20} )
+%  CM = confMatrix( IDXtrue, IDXpred, 2 )
+%  confMatrix_show( CM, {'class-A','class-B'}, {'FontSize',20} )
 %
 % See also CONFMATRIX_SHOW
 
@@ -31,7 +31,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function CM = confmatrix( IDXtrue, IDXpred, ntypes )
+function CM = confMatrix( IDXtrue, IDXpred, ntypes )
 
 IDXtrue=IDXtrue(:); IDXpred=IDXpred(:);
 
