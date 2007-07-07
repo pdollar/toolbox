@@ -4,6 +4,10 @@
 % R=randint2(m,n,range) generates an m-by-n matrix of random integers
 % between [range(1), range(2)].
 %
+% to test speed:
+%  tic, for i=1:1000; R = randint( 100, 10, [0 10] ); end; toc
+%  tic, for i=1:1000; R = randint2( 100, 10, [0 10] ); end; toc
+%
 % USAGE
 %  R = randint2( m, n, range )
 %
@@ -20,7 +24,7 @@
 %
 % See also RANDINT
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -28,3 +32,4 @@ function R = randint2( m, n, range )
 
 R = rand( m, n );
 R = range(1) + floor( (range(2)-range(1)+1)*R );
+

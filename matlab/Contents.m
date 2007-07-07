@@ -35,12 +35,10 @@
 %   ind2sub2             - Improved version of ind2sub.
 %   int2str2             - Convert integer to string of given length; improved version of int2str.
 %   isfield2             - More comprehensive version of isfield.
-%   mode2                - Returns the mode of a vector.
 %   normpdf2             - Normal prob. density function (pdf) with arbitrary covariance matrix.
 %   num2strs             - Applies num2str to each element of an array X.
 %   randint2             - Faster but restricted version of randint.
 %   randomsample         - Samples elements of X so result uses at most maxMegs megabytes of memory.
-%   randperm2            - Returns a random permutation of integers.
 %   rotationMatrix       - Performs different operations dealing with a rotation matrix
 %   simplecache          - A very simply cache that can be used to store results of computations.
 %   sub2ind2             - Improved version of sub2ind.
