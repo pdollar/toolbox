@@ -10,7 +10,7 @@
 % new mean of the window after 1 step of meanShift.
 %
 % USAGE
-%  meanShiftImExplore( I, X, sigSpt, sigRng, show )
+%  meanShiftImExplore( I, X, sigSpt, sigRng, [show] )
 %
 % INPUTS
 %  I       - MxN image for display

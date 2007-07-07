@@ -11,9 +11,9 @@
 % large the gradient decent steps are.  The smaller the rate, the more
 % iterations are needed for convergence, but the more likely minima are not
 % overshot.  A reasonable value for the rate is .2.  Low value of the rate
-% may require an increase in maxiter.  Increase maxiter until convergence
+% may require an increase in maxIter.  Increase maxIter until convergence
 % occurs regularly for a given data set (versus the algorithm being cut off
-% at maxiter).
+% at maxIter).
 %
 % Note the cluster means M do not refer to the actual mean of the points
 % that belong to the same cluster, but rather the values to which the
@@ -23,13 +23,13 @@
 % points [see kmeans2 for a definition of C].
 %
 % USAGE
-%  [IDX,M] = meanShift(X, radius, rate, maxiter, minCsize, blur )
+%  [IDX,M] = meanShift(X, radius, [rate], [maxIter], [minCsize], [blur] )
 %
 % INPUTS
 %  X           - column vector of data - N vectors of dim p (X is Nxp)
 %  radius      - the bandwidth (radius of the window)
 %  rate        - [] gradient descent proportionality factor in (0,1]
-%  maxiter     - [] maximum number of iterations
+%  maxIter     - [] maximum number of iterations
 %  minCsize    - [] min cluster size (smaller clusters get eliminated)
 %  blur        - [] if blur then at each iter data is 'blurred', ie the
 %                original data points move (can cause 'incorrect' results)
@@ -46,10 +46,10 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [IDX,M] = meanShift(X, radius, rate, maxiter, minCsize, blur )
+function [IDX,M] = meanShift(X, radius, rate, maxIter, minCsize, blur )
 
 if( nargin<3 ); rate =.2; end
-if( nargin<4 ); maxiter =100; end
+if( nargin<4 ); maxIter =100; end
 if( nargin<5 ); minCsize = 1; end
 if( nargin<6 ); blur =0; end
 if( rate<=0 || rate>1 ); error('rate must be between 0 and 1'); end
@@ -58,7 +58,7 @@ if( rate<=0 || rate>1 ); error('rate must be between 0 and 1'); end
 % rate = rate * (size(X,2) + 2) / radius^2;
 
 % c code does the work  (meanShift1 requires X')
-[IDX,meansFinal] = meanShift1(X',radius,rate,maxiter,blur);
+[IDX,meansFinal] = meanShift1(X',radius,rate,maxIter,blur);
 meansFinal = meansFinal';
 
 % calculate final cluster means per cluster

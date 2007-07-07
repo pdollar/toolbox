@@ -35,7 +35,7 @@
 %  vars      - sorted eigenvalues corresponding to eigenvectors in U
 %
 % EXAMPLE
-%  load pca_data;
+%  load pcaData;
 %  [ U, mu, vars ] = pca( I3D1(:,:,1:12) );
 %  [ Y, Xhat, avsq ] = pcaApply( I3D1(:,:,1), U, mu, 5 );
 %  figure(1); im(I3D1(:,:,1));  figure(2); im(Xhat);

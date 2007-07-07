@@ -45,7 +45,7 @@
 %  CM          - confusion matrix
 %
 % EXAMPLE
-%  load clf_data;
+%  load clfData;
 %  %%% 2 class
 %  nfoldxval( data, IDX, @clf_lda,{'linear'}, [],[],[],1 );   % LDA
 %  nfoldxval( data, IDX, @clf_knn,{4},[],[],[],2 );           % 4 kNN
