@@ -31,7 +31,6 @@
 %
 % Generalized correlation:
 %   normxcorrn          - Normalized n-dimensional cross-correlation.
-%   normxcorrn_fg       - Normalized n-dimensional cross-correlation with a mask.
 %   xcorrn              - n-dimensional cross-correlation.  Generalized version of xcorr2.
 %   xeucn               - n-dimensional euclidean distance between each window in A and template T
 %
