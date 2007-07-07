@@ -10,90 +10,80 @@
 % transformed image and is the same size as I.  Preserves I's type.
 %
 % USAGE
-%  IR = imtransform2( I, H, [method], [bbox], [show] )
-%  IR = imtransform2( I, angle, [method], [bbox], [show] )
-%  IR = imtransform2( I, dx, dy, [method], [bbox], [show] )
+%  IR = imtransform2( I, H, [method], [bbox], [show] )      % general hom
+%  IR = imtransform2( I, angle, [method], [bbox], [show] )  % rotation
+%  IR = imtransform2( I, dx, dy, [method], [bbox], [show] ) % translation
 %
-% INPUTS - 1 - general homography
-%  I       - input black and white image (2D double or unint8 array)
+% INPUTS - common
+%  I       - 2D image [converted to double]
+%  method  - ['linear'] 'nearest', 'spline', 'cubic' (for interp2)
+%  bbox    - ['loose'] or 'crop'
+%  show    - [0] figure to use for optional display
+%
+% INPUTS - specific to general homography
 %  H       - 3x3 nonsingular homography matrix
-%  method  - ['linear'] for interp2 'nearest','linear','spline','cubic'
-%  bbox    - ['loose'] see above for meaning of bbox 'loose','crop')
-%  show    - [0] figure to use for optional display
 %
-% INPUTS - 2 - rotation case
-%  I       - 2D image [converted to double]
+% INPUTS - specific to rotation
 %  angle   - angle to rotate in degrees
-%  method  - ['linear'] 'nearest', 'linear', 'spline', 'cubic'
-%  bbox    - ['loose'] 'loose' or 'crop'
-%  show    - [0] figure to use for optional display
 %
-% INPUTS - 3 - translation case
-%  I       - 2D image [converted to double]
+% INPUTS - specific to translation
 %  dx      - x translation (right)
 %  dy      - y translation (up)
-%  method  - ['linear'] 'nearest', 'linear', 'spline', 'cubic'
-%  bbox    - ['loose'] 'loose' or 'crop'
-%  show    - [0] figure to use for optional display
 %
 % OUTPUTS
 %  IR      - transformed image
 %
-% EXAMPLE - 1
+% EXAMPLE - general homography
 %  load trees; I=X;
 %  R = rotationMatrix( pi/4 ); T = [1; 3]; H = [R T; 0 0 1];
 %  IR = imtransform2( I, H, [], 'crop', 1 );
 %
-% EXAMPLE - 2
+% EXAMPLE - rotation
 %  load trees;
 %  tic; X1 = imrotate( X, 55, 'bicubic', 'crop' ); toc,
 %  tic; X2 = imtransform2( X, 55, 'bicubic', 'crop' ); toc
 %  clf;  subplot(2,2,1); im(X); subplot(2,2,2); im(X1-X2);
 %  subplot(2,2,3); im(X1); subplot(2,2,4); im(X2);
 %
-% EXAMPLE - 3
+% EXAMPLE - translation
 %  load trees;
 %  XT = imtransform2(X,0,1.5,'bicubic','crop');
-%  figure(1); im(X,[0 255]); figure(2); im(XT,[0 255]);
+%  figure(1); clf; im(X,[0 255]); figure(2); clf; im(XT,[0 255]);
 %
-% See also TEXTURE_MAP
+% See also TEXTURE_MAP, INTERP2
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function IR = imtransform2( varargin )
+function IR = imtransform2( I, varargin )
 
-I=varargin{1};
-try %#ok<TRYNC>
-  H=varargin{2}; method=varargin{3}; bbox=varargin{4}; show=varargin{5};
+% parse inputs and switch between cases
+if( nargin>1 && isscalar(varargin{1}) && ...
+    (nargin==2 || ischar(varargin{2})) ) % rotation
+  angle = varargin{1};  angle = angle /180 * pi;
+  H = [rotationMatrix(angle) [0;0]; 0 0 1];
+  IR = imtransform2main( I, H, varargin{2:end} );
+
+elseif( nargin>2 && isscalar(varargin{1}) ...
+    && isscalar(varargin{2}) ) % translation
+  dx=varargin{1}; dy=varargin{2};
+  H = [eye(2) [dy; dx]; 0 0 1];
+  IR = imtransform2main( I, H, varargin{3:end} );
+
+else % presumably a general homography
+  IR = imtransform2main( I, varargin{:} );
 end
 
-if size(varargin{2})==1
-  if nargin==2 || ischar(varargin{3}) % Rotation case
-    angle=varargin{2};
 
-    angle_rads = angle /180 * pi;
-    R = rotationMatrix( angle_rads );
-    H = [R [0;0]; 0 0 1];
-    IR = imtransform2( I, H, method, bbox,show );
-    return
-  else % Translation case
-    dy=varargin{2}; dx=varargin{3};
-    try %#ok<TRYNC>
-      method=varargin{4}; bbox=varargin{5}; show=varargin{6};
-    end
-
-    H = [eye(2) [dy; dx]; 0 0 1];
-    IR = imtransform2( I, H, method, bbox, show );
-    return
-  end
-end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function IR = imtransform2main( I, H, method, bbox, show )
 
 % General homography case
 if( ndims(I)~=2 ); error('I must a MxN array'); end
 if(any(size(H)~=[3 3])); error('H must be 3 by 3'); end
 if(rank(H)~=3); error('H must be full rank.'); end
+
 if( nargin<3 || isempty(method)); method='linear'; end
 if( nargin<4 || isempty(bbox)); bbox='loose'; end
 if( nargin<5 || isempty(show)); show=0; end
@@ -114,9 +104,9 @@ cstart = (-siz(2)+1)/2; cend = (siz(2)-1)/2;
 % If 'same' then simply use the original image bounds.
 if (strcmp(bbox,'loose'))
   pr = H * [rstart rend rstart rend; cstart cstart cend cend; 1 1 1 1];
-  row_dest = pr(1,:) ./ pr(3,:);  col_dest = pr(2,:) ./ pr(3,:);
-  minr = floor(min(row_dest(:)));  maxr = ceil(max(row_dest(:)));
-  minc = floor(min(col_dest(:)));  maxc = ceil(max(col_dest(:)));
+  rowDst = pr(1,:) ./ pr(3,:);  colDst = pr(2,:) ./ pr(3,:);
+  minr = floor(min(rowDst(:)));  maxr = ceil(max(rowDst(:)));
+  minc = floor(min(colDst(:)));  maxc = ceil(max(colDst(:)));
 elseif (strcmp(bbox,'crop'))
   minr = rstart; maxr = rend;
   minc = cstart; maxc = cend;
@@ -128,15 +118,15 @@ mrows = maxr-minr+1;
 ncols = maxc-minc+1;
 
 % apply inverse homography on meshgrid in destination image
-[col_dest_grid,row_dest_grid] = meshgrid( minc:maxc, minr:maxr );
-pr = inv(H) * [row_dest_grid(:)'; col_dest_grid(:)'; ones(1,mrows*ncols)];
-row_sample_locs = pr(1,:) ./ pr(3,:) + (siz(1)+1)/2;
-row_sample_locs = reshape(row_sample_locs,mrows,ncols);
-col_sample_locs = pr(2,:) ./ pr(3,:) + (siz(2)+1)/2;
-col_sample_locs = reshape(col_sample_locs,mrows,ncols);
+[colDstGrid,rowDstGrid] = meshgrid( minc:maxc, minr:maxr );
+pr = inv(H) * [rowDstGrid(:)'; colDstGrid(:)'; ones(1,mrows*ncols)];
+rowSampleLocs = pr(1,:) ./ pr(3,:) + (siz(1)+1)/2;
+rowSampleLocs = reshape(rowSampleLocs,mrows,ncols);
+colSampleLocs = pr(2,:) ./ pr(3,:) + (siz(2)+1)/2;
+colSampleLocs = reshape(colSampleLocs,mrows,ncols);
 
 % now texture map results
-IR = interp2( I, col_sample_locs, row_sample_locs, method );
+IR = interp2( I, colSampleLocs, rowSampleLocs, method );
 IR(isnan(IR)) = 0;
 IR = arrayToDims( IR, size(IR)-6 ); %undo extra padding
 
