@@ -3,7 +3,7 @@
 % Creates a binomial filter of size 2*r+1 x 1.  This can be used to
 % approximate the Gaussian distribution with sigma=sqrt((2*r+1)/4). For
 % large r, should give same output as:
-%   g = fspecial( 'Gaussian', [2*r+1,1],sqrt((2*r+1)/4) );
+%  g = fspecial( 'Gaussian', [2*r+1,1],sqrt((2*r+1)/4) );
 % Given sigma, use r ~= 2*sigma^2.
 %
 % Use F = f*f' to get the equivalent 2d filter.

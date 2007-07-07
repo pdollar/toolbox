@@ -14,11 +14,11 @@
 %  fodd    - odd symmetric filter (-sine masked with Gaussian)
 %
 % EXAMPLE
-%  sig = 15; filterGabor1d(2*sig,sig,1/sig,1);
+%  sig = 15; f=filterGabor1d(2*sig,sig,1/sig,1);
 %
 % See also FILTERGABOR2D
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 

@@ -70,5 +70,10 @@ G(G<eps*max(G(:))*10) = 0;
 G = G/sum(G(:));
 
 % display
-if( show ); filterVisualize( G, show ); end
-
+if( show );
+  if( nd==3 )
+    filterVisualize( G, show, .2 );
+  else
+    filterVisualize( G, show );
+  end
+end

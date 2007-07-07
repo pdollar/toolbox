@@ -21,7 +21,7 @@
 %  show      - [1] figure to use for display (0->uses current)
 %  arg       - different meanding depending on dimension
 %              d=1: [] not used
-%              d=2: [0] 'row' OR 'col': display centeral row OR col line
+%              d=2: [''] 'row' OR 'col': display centeral row OR col line
 %              d=3: [.1] frac of max value of f at which to draw surfaces
 %
 % OUTPUTS
@@ -31,7 +31,7 @@
 %  f=filterDog2d( 15, 10, 1 ); filterVisualize( f, 2, 'row' ); %2d
 %  f=filterDoog([51 51 99],[3 3 5],[1 2 3],0); filterVisualize(f,4,.1); %3d
 %
-% See also
+% See also FILTERGAUSS
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -70,7 +70,7 @@ switch nd
 
 
   case 2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
+
     scanline=arg; if( isempty(scanline) ); scanline=''; end
 
     f( abs(f)<.00001 ) = 0;
@@ -110,7 +110,7 @@ switch nd
 
   case 3 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    frac=arg; if( isempty(frac) ); frac = .1; end % 10% of peak
+    frac=arg; if( isempty(frac) ); frac = .1; end
 
     % better visualization this way, t left to right
     f = flipdim( permute( f, [3, 1, 2] ), 1 );
@@ -129,8 +129,8 @@ switch nd
     set(gca,'YTick',[]); set(gca,'XTick',[]); set(gca,'ZTick',[]);
     xlabel('y'); ylabel('t'); zlabel('x');
     if(~washeld); hold('off'); end
-    
+
   otherwise %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     error('f must be 1 2 or 3 dimensional');
+    
 end;
-

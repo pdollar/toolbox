@@ -22,7 +22,7 @@
 % OUTPUTS
 %
 % EXAMPLE
-%  FB = FbMake( 1, 1, 1 ); 
+%  FB = FbMake( 2, 1, 1 ); 
 %
 % See Also
 
