@@ -42,9 +42,9 @@
 %   textureMap          - Maps texture in I according to rowDst and colDst.
 %
 % Generalized nonmaximal suppression:
-%   nonmaxsupr          - Applies nonmaximal suppression on an image of arbitrary dimension.
-%   nonmaxsupr_list     - Applies nonmaximal suppression to a list.
-%   nonmaxsupr_window   - Nonmaximal suppression of values outside of a given window.
+%   nonMaxSupr          - Applies nonmaximal suppression on an image of arbitrary dimension.
+%   nonMaxSuprList      - Applies nonmaximal suppression to a list.
+%   nonMaxSuprWin       - Nonmaximal suppression of values outside of a given window.
 %
 % Optical Flow:
 %   optflow_corr        - Calculate optical flow using cross-correlation.

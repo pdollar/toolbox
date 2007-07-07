@@ -1,20 +1,20 @@
 % Applies nonmaximal suppression to a list.
 %
-% See nonmaxsupr for more information.  Has the same effect as nonmaxsupr
+% See nonMaxSupr for more information.  Has the same effect as nonMaxSupr
 % except it operates on a list of position/values pairs.  Running time is
 % n^2 in the number of such pairs.  For comparison running time of
-% nonmaxsupr is order( sum( size(I,d)*radii(d) ).
+% nonMaxSupr is order( sum( size(I,d)*radii(d) ).
 %
 % This function has an additional parameter - suprEq that causes a value
 % in a given window to be suppressed unless it is the UNIQUE maximum in the
 % window.  This is if suprEq==1, then all locations that are not strictly
 % the biggest in their window are suppressed.  This can be useful for large
-% flat regions -- nonmaxsupr(ones(30),3) does no suppression since all
-% values are equal in each window, but nonmaxsupr_list(ones(30),3)
+% flat regions -- nonMaxSupr(ones(30),3) does no suppression since all
+% values are equal in each window, but nonMaxSuprList(ones(30),3)
 % suppresses all locations.
 %
 % USAGE
-%  [subs,vals,keepLocs] = nonmaxsupr_list( subs, vals, radii, ...
+%  [subs,vals,keepLocs] = nonMaxSuprList( subs, vals, radii, ...
 %                                        [thresh], [maxn], [suprEq] )
 %
 % INPUTS
@@ -32,13 +32,13 @@
 %
 % EXAMPLE
 %
-% See also IMSUBS2ARRAY, NONMAXSUPR, NONMAXSUPR_LIST
+% See also IMSUBS2ARRAY, NONMAXSUPR, NONMAXSUPRWIN
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [subs,vals,keepLocs] = nonmaxsupr_list( subs, vals, radii, ...
+function [subs,vals,keepLocs] = nonMaxSuprList( subs, vals, radii, ...
                                              thresh, maxn, suprEq)
 
 if( nargin<4 || isempty(thresh)); thresh=[]; end;
@@ -48,10 +48,10 @@ if( nargin<6 || isempty(suprEq)); suprEq=0; end;
 vals = vals(:); siz = max( subs ); nvals = length(vals);
 [radii,er] = checkNumArgs( radii, size(siz), 0, 1 ); error(er);
 
-% CAN ADD RECURSION TO SIGNIFICANTLY SPEED IT UP (under certain assump)!
+% CAN ADD RECURSION TO SIGNIFICANTLY SPEED IT UP (under certain assump)
 % simply divide into 2 eqal regions, (plus 3rd overlap region) using
-% nonmaxsupr_window.  then & keepLocs results from all 3.
-if( nvals>5000 ); error('Input too large - use nonmaxsupr.'); end;
+% nonMaxSuprWin.  then & keepLocs results from all 3.
+if( nvals>5000 ); error('Input too large - use nonMaxSupr.'); end;
 
 % discard vals below thresh
 if (~isempty(thresh))

@@ -2,12 +2,12 @@
 %
 % Suppresses all location in subs that do not fall in given range (defined
 % by strLocs and endLocs).  For example, if subs are 3D coordinates of
-% maxes over an array of size siz,  "nonmaxsupr_window( subs, vals,
+% maxes over an array of size siz,  "nonMaxSuprWin( subs, vals,
 % [1,1,1]+10, siz-10 )" suppreses all locations within 10 pixels of the
 % border of I.
 %
 % USAGE
-%  [subs,vals,keepLocs] = nonmaxsupr_window( subs, vals, ...
+%  [subs,vals,keepLocs] = nonMaxSuprWin( subs, vals, ...
 %                                      strLocs, endLocs, thresh, maxn )
 %
 % INPUTS
@@ -25,13 +25,13 @@
 %
 % EXAMPLE
 %
-% See also IMSUBS2ARRAY, NONMAXSUPR, NONMAXSUPR_LIST
+% See also IMSUBS2ARRAY, NONMAXSUPR, NONMAXSUPRLIST
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [subs,vals,keepLocs] = nonmaxsupr_window( subs, vals, ...
+function [subs,vals,keepLocs] = nonMaxSuprWin( subs, vals, ...
                                      strLocs, endLocs, thresh, maxn )
 
 vals = vals(:);  nvals = length(vals);  nd=size(subs,2);
