@@ -111,8 +111,6 @@ end
 if (show)
   figure(show); im(G);
   hold('on'); plot_gaussellipses( mu, C, 2 ); hold('off');
-  %[ crow, ccol, ra, rb, phi ] = gauss2ellipse( mu, C, 2 );
-  %hold('on'); plot_ellipses(crow, ccol, ra, rb, phi, 'r' ); hold('off');
 end
 
 

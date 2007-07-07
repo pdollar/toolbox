@@ -23,8 +23,8 @@
 %
 % Display:
 %   imlabel              - Improved method for labeling figure axes.
-%   plot_ellipse         - Adds an ellipse to the current plot.
-%   plot_gaussellipses   - Plots 2D ellipses derived from 2D Gaussians specified by mus & Cs.
+%   plotEllipse          - Adds an ellipse to the current plot.
+%   plotGaussEllipses    - Plots 2D ellipses derived from 2D Gaussians specified by mus & Cs.
 %   text2                - Wrapper for text.m that ensures displayed text fits in figure.
 %   figureResized        - Creates a figures that takes up certain area of screen.
 %

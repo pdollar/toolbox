@@ -20,11 +20,11 @@
 %
 % EXAMPLE
 %  [cRow, cCol, ra, rb, phi] = gauss2ellipse( [5 5], [1 0; .5 2] )
-%  plot_ellipse( cRow, cCol, ra, rb, phi );
+%  plotEllipse( cRow, cCol, ra, rb, phi );
 %
-% See also PLOT_ELLIPSE, PLOT_GAUSSELLIPSES, MASK_ELLIPSE
+% See also PLOTELLIPSE, PLOT_GAUSSELLIPSES, MASK_ELLIPSE
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 

@@ -1,7 +1,7 @@
 % Adds an ellipse to the current plot.
 %
 % USAGE
-%  h = plot_ellipse( cRow, cCol, ra, rb, phi, color, nPnts )
+%  h = plotEllipse( cRow, cCol, ra, rb, phi, color, nPnts )
 %
 % INPUTS
 %  cRow    - the row location of the center of the ellipse
@@ -16,15 +16,15 @@
 %  h       - handle to ellipse
 %
 % EXAMPLE
-%  plot_ellipse( 3, 2, 1, 5, pi/6, 'g');
+%  plotEllipse( 3, 2, 1, 5, pi/6, 'g');
 %
 % See also PLOT_GAUSSELLIPSES
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function h = plot_ellipse( cRow, cCol, ra, rb, phi, color, nPnts )
+function h = plotEllipse( cRow, cCol, ra, rb, phi, color, nPnts )
 
 error(nargchk( 5, 7, nargin ));
 if( nargin<6 || isempty(color) ); color = 'b'; end

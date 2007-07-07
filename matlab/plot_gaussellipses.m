@@ -14,9 +14,9 @@
 % EXAMPLE
 %  plot_gaussellipses( [ 10 10; 10 10 ], cat(3,eye(2),eye(2)*2) );
 %
-% See also PLOT_ELLIPSE, GAUSS2ELLIPSE
+% See also PLOTELLIPSE, GAUSS2ELLIPSE
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -29,6 +29,6 @@ washeld = ishold; if (~washeld); hold('on'); end
 hs = zeros( size(mus,1),1 );
 for i=1:size( mus,1)
   [ cRow, ccol, ra, rb, phi ] = gauss2ellipse( mus(i,:), Cs(:,:,i), rad );
-  hs(i)=plot_ellipse( cRow, ccol, ra, rb, phi, colors( mod(i-1,nc)+1) );
+  hs(i)=plotEllipse( cRow, ccol, ra, rb, phi, colors( mod(i-1,nc)+1) );
 end
 if (~washeld); hold('off'); end
