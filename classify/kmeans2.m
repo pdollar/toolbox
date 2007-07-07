@@ -57,7 +57,7 @@ function [ IDX, C, sumd ] = kmeans2( X, k, prm )
 %%% get input args
 dfs = {'nTrial',1, 'maxIter',100, 'display',0, 'rndSeed',[],...
        'outFrac',0, 'minCl',1, 'metric',[] };
-prm = getParamDefaults( prm, dfs );
+prm = getPrmDflt( prm, dfs );
 nTrial  =prm.nTrial;    maxIter =prm.maxIter;  display =prm.display;
 rndSeed =prm.rndSeed;   outFrac =prm.outFrac;  minCl   =prm.minCl;
 metric  =prm.metric;

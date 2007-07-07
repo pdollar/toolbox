@@ -18,14 +18,14 @@
 %
 % See also
 
-% Piotr's Image&Video Toolbox      Version 1.03
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
 function [hPoint, hCam]=initializeCloud( prm )
 
 dfs = {'cam',[],'nCamera',0,'c',[0 0 1],'N',[],'i',1,'A','REQ','bound',[]};
-prm = getParamDefaults( prm, dfs );
+prm = getPrmDflt( prm, dfs );
 cam=prm.cam; nCamera=prm.nCamera; c=prm.c; N=prm.N; i=prm.i;
 A=prm.A; bound=prm.bound;
 

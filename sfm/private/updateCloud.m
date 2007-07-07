@@ -18,7 +18,7 @@
 %
 % See also
 
-% Piotr's Image&Video Toolbox      Version 1.03
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -26,7 +26,7 @@ function hCam=updateCloud( prm )
 
 dfs = {'hPoint','REQ','hCam',[],'nCamera',0,'conn',[],'i',1,'A','REQ',...
   'cam',[]};
-prm = getParamDefaults( prm, dfs );
+prm = getPrmDflt( prm, dfs );
 hPoint=prm.hPoint; hCam=prm.hCam; nCamera=prm.nCamera; conn=prm.conn;
 i=prm.i; A=prm.A; cam=prm.cam;
 

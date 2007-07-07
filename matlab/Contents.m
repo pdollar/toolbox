@@ -31,7 +31,7 @@
 % Miscellaneous:
 %   checknumericargs     - Helper utility for checking numeric vector arguments.
 %   gauss2ellipse        - Creates an ellipse representing the 2D Gaussian distribution.
-%   getParamDefaults     - Helper to set default values (if not already set) of parameter struct.
+%   getPrmDflt           - Helper to set default values (if not already set) of parameter struct.
 %   ind2sub2             - Improved version of ind2sub.
 %   int2str2             - Convert integer to string of given length; improved version of int2str.
 %   isfield2             - More comprehensive version of isfield.

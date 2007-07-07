@@ -18,14 +18,14 @@
 %
 % See also
 
-% Piotr's Image&Video Toolbox      Version 1.03
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
 function playAnim( anim, prm )
 
 dfs = {'nCamera',-1,'fps',100, 'loop',1, 'N',[]};
-prm = getParamDefaults( prm, dfs );
+prm = getPrmDflt( prm, dfs );
 nCamera=prm.nCamera; fps=prm.fps; loop=prm.loop; N=prm.N;
 
 A=anim.A3; cam=anim.cam;
