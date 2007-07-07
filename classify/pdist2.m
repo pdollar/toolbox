@@ -55,7 +55,7 @@
 
 function D = pdist2( X, Y, metric )
 
-if( nargin<3 ); metric=0; end;
+if( nargin<3 || isempty(metric) ); metric=0; end;
 
 switch metric
   case {0,'sqeuclidean'}
