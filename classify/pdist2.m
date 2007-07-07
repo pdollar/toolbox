@@ -33,7 +33,7 @@
 %
 %
 % USAGE
-%  D = D = pdist2( X, Y, [metric] )
+%  D = pdist2( X, Y, [metric] )
 %
 % INPUTS
 %  X        - [m x p] matrix of m p-dimensional vectors
@@ -44,9 +44,9 @@
 %  D        - [m x n] distance matrix
 %
 % EXAMPLE
-%  X = demoGenData(100,0,2,2,10,2,0);
+%  [X,IDX] = demoGenData(100,0,5,4,10,2,0);
 %  D = pdist2( X, X, 'sqeuclidean' );
-%  distMatrixShow( D, IDXtrue );
+%  distMatrixShow( D, IDX );
 %
 % See also PDIST, DISTMATRIXSHOW
 

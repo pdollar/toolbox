@@ -15,7 +15,7 @@
 %  index       - [] controls which element of X to aplply visualization to
 %  ks          - [] ks values of k for pcaApply (ex. ks=[1 4 8 16])
 %  fname       - [] if specified outputs avis
-%  show        - [] will display results in figure(show) and figure(show+1)
+%  show        - [1] will display in figure(show) and figure(show+1)
 %
 % OUTPUTS
 %  M           - [only if X is a movie] movie of xhats (see pcaapply)
@@ -24,7 +24,7 @@
 %
 % EXAMPLE
 %
-% See also PCA, PCA_APPLY
+% See also PCA, PCAAPPLY
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -40,6 +40,7 @@ inds = {':'}; inds = inds(:,ones(1,nd-1));
 if( d~=N ); error('incorrect size for X or U'); end
 if( nargin<5 || isempty(index) ); index = 1+randint(1,1,siz(end)); end
 if( index>siz(end) ); error(['index >' num2str(siz(end))]); end
+
 if( nargin<6 || isempty(ks) ); maxp=floor(log2(r)); ks=2.^(0:maxp); end
 if( nargin<7 || isempty(fname)); fname = []; end
 if( nargin<8 || isempty(show)); show = 1; end

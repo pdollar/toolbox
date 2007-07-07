@@ -26,7 +26,7 @@
 %
 % EXAMPLE
 %
-% See also PCA, PCA_VISUALIZE
+% See also PCA, PCAVISUALIZE
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

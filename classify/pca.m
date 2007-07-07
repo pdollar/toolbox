@@ -20,8 +20,7 @@
 % vector x. Use pcaVisualize(X,...) for visualization of approximated X.
 %
 % To calculate residuals:
-%  residuals = cumsum(vars / sum(vars));
-%  plot( residuals, '-.' )
+%  residuals = cumsum(vars / sum(vars)); plot( residuals, '-.' )
 %
 % USAGE
 %  [ U, mu, vars ] = pca( X )
@@ -38,12 +37,11 @@
 %  load pcaData;
 %  [ U, mu, vars ] = pca( I3D1(:,:,1:12) );
 %  [ Y, Xhat, avsq ] = pcaApply( I3D1(:,:,1), U, mu, 5 );
-%  figure(1); im(I3D1(:,:,1));  figure(2); im(Xhat);
-%  pcaVisualize( U, mu, vars, I3D1, 13, [0:12], [], 3 );
-%  Xr = pcaRandVec( U, mu, vars, 1, 25, 0, 5 );
+%  pcaVisualize( U, mu, vars, I3D1, 13, [0:12], [], 1 );
+%  Xr = pcaRandVec( U, mu, vars, 1, 25, 0, 3 );
 %
-% See also PRINCOMP, PCA_APPLY, PCA_VISUALIZE,
-% VISUALIZE_DATA, RANDOMSAMPLE
+% See also PRINCOMP, PCAAPPLY, PCAVISUALIZE, PCARANDVEC
+% VISUALIZEDATA, RANDOMSAMPLE
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

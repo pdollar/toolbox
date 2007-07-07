@@ -4,7 +4,7 @@
 % For definitions see [Sanjoy Dasgupta, 1999].
 %
 % USAGE
-%  [X,IDX,T,IDT] = demoGenData(n,m,k,d,c,e,f)
+%  [X,IDX,T,IDT] = demoGenData(n,m,k,d,c,e,[f])
 %
 % INPUTS
 %  n    - size of training set
@@ -26,7 +26,7 @@
 %  figure(1); clf; visualizeData( X, 2, IDX ); title('train');
 %  figure(2); clf; visualizeData( T, 2, IDT ); title('test');
 %
-% See also VISUALIZE_DATA, DEMOCLUSTER, DEMOCLASSIFY
+% See also VISUALIZEDATA, DEMOCLUSTER, DEMOCLASSIFY
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

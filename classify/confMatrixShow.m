@@ -5,13 +5,13 @@
 % [0,1] and rows sum to 1.
 %
 % USAGE
-%  confMatrixShow( CM, types, pvPairs, ndigits )
+%  confMatrixShow( CM, [types], [pvPairs], [nDigits] )
 %
 % INPUTS
-%  CM          - [ntypes x ntypes] confusion array -- see confMatrix
-%  types       - [] cell array of length ntypes of text labels
+%  CM          - [nTypes x nTypes] confusion array -- see confMatrix
+%  types       - [] cell array of length nTypes of text labels
 %  pvPairs     - [] parameter / value list for text.m
-%  ndigits     - [] number of digits after decimal to display
+%  nDigits     - [2] number of digits after decimal to display
 %
 % OUTPUTS
 %
@@ -22,37 +22,37 @@
 %
 % See also CONFMATRIX, TEXT2
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function confMatrixShow( CM, types, pvPairs, ndigits )
+function confMatrixShow( CM, types, pvPairs, nDigits )
 
 if( nargin<2 ); types=[]; end
 if( nargin<3 || isempty(pvPairs)); pvPairs = {'FontSize',20}; end
-if( nargin<4 || isempty(ndigits)); ndigits=2; end
-if( ndigits<1 || ndigits>10 ); error('too few or too many digits'); end
+if( nargin<4 || isempty(nDigits)); nDigits=2; end
+if( nDigits<1 || nDigits>10 ); error('too few or too many digits'); end
 if( any(CM)<0 ); error( 'CM must have non-negative entries' ); end
 
 %%% normalize and convert to integer matrix
 CM = CM ./ repmat( sum(CM,2), [1 size(CM,2)] );
-CM = round(CM*10^ndigits);
+CM = round(CM*10^nDigits);
 
 %%% display as image
-clf; imagesc(10^ndigits-CM,[0,10^ndigits]);
+clf; imagesc(10^nDigits-CM,[0,10^nDigits]);
 colormap gray; axis square;
 set(gca,'XTick',[]); set(gca,'YTick',[]);
 
 %%% now write text of actual confusion value
-ntypes = size(CM,1);
+nTypes = size(CM,1);
 txtAlign = {'VerticalAlignment','middle', 'HorizontalAlignment','center'};
-for i=1:ntypes
-  for j=1:ntypes
-    if( CM(i,j)>10^ndigits/2 ); color = 'w'; else color = 'k'; end
-    if( CM(i,j)==10^ndigits )
-      label = ['1.' repmat('0',[1 ndigits-1]) ];
+for i=1:nTypes
+  for j=1:nTypes
+    if( CM(i,j)>10^nDigits/2 ); color = 'w'; else color = 'k'; end
+    if( CM(i,j)==10^nDigits )
+      label = ['1.' repmat('0',[1 nDigits-1]) ];
     else
-      label = ['.' int2str2( CM(i,j),ndigits) ];
+      label = ['.' int2str2( CM(i,j),nDigits) ];
     end
     text(j,i,label,'color',color,txtAlign{:},pvPairs{:});
   end;

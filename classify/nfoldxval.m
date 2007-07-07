@@ -56,14 +56,14 @@
 %  clfparams = {@clf_svm,{'rbf',2^-12},nclasses};
 %  nfoldxval( data, IDX, @clf_ecoc,clfparams,[],[],[],6 );    % ECOC
 %
-% See also CLF_LDA, CLF_KNN, CLF_SVM, CLF_ECOC
+% See also CLF_LDA, CLF_KNN, CLF_SVM, CLF_ECOC, DEMOCLASSIFY
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
 function CM=nfoldxval( data, IDX, clfinit, clfparams, ...
-  types, ignoreT, fname, show )
+                                 types, ignoreT, fname, show )
 
 if( nargin<5 || isempty(types) ); types=[]; end
 if( nargin<6 || isempty(ignoreT) ); ignoreT=[]; end

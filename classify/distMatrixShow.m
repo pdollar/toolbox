@@ -22,10 +22,10 @@
 %
 % EXAMPLE
 %  % not the best example since points are already ordered
-%  [X,IDXtrue] = demoGenData(100,0,2,2,10,2,0);
-%  distMatrixShow( pdist2(X,X), IDXtrue );
+%  [X,IDX] = demoGenData(100,0,5,2,10,2,0);
+%  distMatrixShow( pdist2(X,X), IDX );
 %
-% See also VISUALIZE_DATA, KMEANS2
+% See also VISUALIZEDATA, KMEANS2
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

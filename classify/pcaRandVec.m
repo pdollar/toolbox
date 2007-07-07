@@ -9,7 +9,7 @@
 % hypershpere flag to 1 to generate points only on the hypersphere.
 %
 % USAGE
-%  Xr = pcaRandVec( U, mu, vars, k, n, hypershpere, [show] )
+%  Xr = pcaRandVec( U, mu, vars, k, n, [hypershpere], [show] )
 %
 % INPUTS
 %  U           - returned by pca.m

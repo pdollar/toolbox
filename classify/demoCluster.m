@@ -12,6 +12,8 @@
 %
 % EXAMPLE
 %  demoCluster
+%
+% See also KMEANS2, MEANSHIFT
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -32,7 +34,7 @@ end;
 nFrac = nFracTr;  k = kTr;
 
 %%% cluster
-switch 'meanShift'
+switch 'kmeans2'
   case 'kmeans2'
     prm.nTrial=4; prm.display=1; prm.outFrac=nFrac;
     [IDX,C,sumd] = kmeans2( X, k, prm ); 

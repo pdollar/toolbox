@@ -54,7 +54,7 @@
 %  [M,Vr,Vc] = meanShiftIm( I,5,.2 );
 %  figure(1); im(I); figure(2); im( M(:,:,3:end) );
 %
-% See also MEANSHIFT, MEANSHIFTIM_EXPLORE
+% See also MEANSHIFT, MEANSHIFTIMEXPLORE
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
