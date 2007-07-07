@@ -4,6 +4,7 @@ Version 2.0 (06-July-07)
   -montages2 (see montages)
   -rotation_matrix2D,rotation_matrix3D,recover_rotation3D (see rotationMatrix)
   -localsum, localsum_block (see localSum)
+- for filters merged lots of 1d/nd functions such as visalizeFilters, FbMake, filterGauss
 
 Version 1.5 (05-Jul-07)
  -major documentation change
