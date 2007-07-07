@@ -21,10 +21,10 @@
 
 function tocstatus( id, fracDone )
 
-global TICTOCSTATUS TICTOCFREEIDS
+global TT_STATUS TT_FREE_IDS
 
 %%% error check
-if( length(TICTOCSTATUS)<id || TICTOCFREEIDS(id)==1 )
+if( length(TT_STATUS)<id || TT_FREE_IDS(id)==1 )
   error('MATLAB:tocstatus:callTicstatusFirst', ...
     'You must call TICSTATUS before calling TOCSTATUS.');
 end
@@ -32,13 +32,13 @@ end
 if( fracDone>1 ); error(['fracDone: ' num2str(fracDone) ' > 1'] ); end;
 
 %%% get parameters
-updateFreq  = TICTOCSTATUS(id).updateFreq;
-updateMinT  = TICTOCSTATUS(id).updateMinT;
-erasePrev   = TICTOCSTATUS(id).erasePrev;
-msg         = TICTOCSTATUS(id).msg;
-t0          = TICTOCSTATUS(id).t0;
-tLast       = TICTOCSTATUS(id).tLast;
-lenPrev     = TICTOCSTATUS(id).lenPrev;
+updateFreq  = TT_STATUS(id).updateFreq;
+updateMinT  = TT_STATUS(id).updateMinT;
+erasePrev   = TT_STATUS(id).erasePrev;
+msg         = TT_STATUS(id).msg;
+t0          = TT_STATUS(id).t0;
+tLast       = TT_STATUS(id).tLast;
+lenPrev     = TT_STATUS(id).lenPrev;
 
 %%% update if enough time has passed
 if( etime( clock, tLast )> updateFreq || (fracDone==1 && lenPrev>0) )
@@ -69,13 +69,13 @@ if( etime( clock, tLast )> updateFreq || (fracDone==1 && lenPrev>0) )
       fprintf( repmat('\b', [1 lenPrev] ) ); end
     fprintf( msg );  % fprintf( [msg '\n'] );
     lenPrev = length( msg ) - 1; %note %% (+1 if using \n)
-    TICTOCSTATUS(id).tLast = tLast;
-    TICTOCSTATUS(id).lenPrev = lenPrev;
+    TT_STATUS(id).tLast = tLast;
+    TT_STATUS(id).lenPrev = lenPrev;
   end
 end
 
 %%% free id if done
 if( fracDone==1 )
   if(lenPrev); fprintf('\n'); end
-  TICTOCFREEIDS(id) = 1;
+  TT_FREE_IDS(id) = 1;
 end

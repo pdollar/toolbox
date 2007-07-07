@@ -63,30 +63,30 @@
 
 function id = ticstatus( msg, updateFreq, updateMinT, erasePrev )
 
-global TICTOCSTATUS TICTOCFREEIDS
+global TT_STATUS TT_FREE_IDS
 
 if( nargin<1 || isempty(msg) ); msg = []; end
 if( nargin<2 || isempty(updateFreq) ); updateFreq = 1; end
 if( nargin<3 || isempty(updateMinT) ); updateMinT = 20; end
 if( nargin<4 || isempty(erasePrev) ); erasePrev = 1; end
-if( isempty(TICTOCFREEIDS) ); TICTOCFREEIDS = ones(1,128); end
+if( isempty(TT_FREE_IDS) ); TT_FREE_IDS = ones(1,128); end
 
 % get a free id
-[v,id] = max( TICTOCFREEIDS );
+[v,id] = max( TT_FREE_IDS );
 if( v==0 )
-  nids = length(TICTOCFREEIDS);
-  TICTOCFREEIDS = [TICTOCFREEIDS ones(1,nids)];
+  nids = length(TT_FREE_IDS);
+  TT_FREE_IDS = [TT_FREE_IDS ones(1,nids)];
   id = nids+1;
   warning('ticstatus: Doubling number of locations needed.'); %#ok<WNTAG>
 end
-TICTOCFREEIDS(id) = 0;
+TT_FREE_IDS(id) = 0;
 
-% initialize TICTOCSTATUS
+% initialize TT_STATUS
 t0 = clock;
-TICTOCSTATUS(id).updateFreq = updateFreq;
-TICTOCSTATUS(id).updateMinT = updateMinT;
-TICTOCSTATUS(id).erasePrev  = erasePrev;
-TICTOCSTATUS(id).msg  = msg;
-TICTOCSTATUS(id).t0 = t0;
-TICTOCSTATUS(id).tLast = t0;
-TICTOCSTATUS(id).lenPrev = 0;
+TT_STATUS(id).updateFreq = updateFreq;
+TT_STATUS(id).updateMinT = updateMinT;
+TT_STATUS(id).erasePrev  = erasePrev;
+TT_STATUS(id).msg  = msg;
+TT_STATUS(id).t0 = t0;
+TT_STATUS(id).tLast = t0;
+TT_STATUS(id).lenPrev = 0;
