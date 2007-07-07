@@ -52,7 +52,6 @@
 %   gaussSmooth         - Applies Gaussian smoothing to a (multidimensional) image.
 %   imageMLG            - Calculates max likelihood params of Gaussian that gave rise to image G.
 %   imwrite2            - Similar to imwrite, except follows a strict naming convention.
-%   imwrite2split       - Writes/reads a large set of images into/from multiple directories.
 %   jitterImage         - Creates multiple, slightly jittered versions of an image.
 %   jitterVideo         - Creates multiple, slightly jittered versions of a video.
 %   localSum            - Fast routine for box filtering.

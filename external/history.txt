@@ -9,7 +9,8 @@ Version 2.0 (06-July-07)
  -removed randperm2 (see randsample in the matlab statistics toolbox)
  -merged pca_apply and pca_apply_large
  -removed mode2.m (now apparently part of matlab)
- -merged  all the dist_*.m -> into pdist2.m
+ -merged all the dist_*.m -> into pdist2.m
+ -merged imwrite2split into imwrite2
 
 Version 1.5 (05-Jul-07)
  -major documentation change
