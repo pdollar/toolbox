@@ -1,5 +1,7 @@
 % Used to apply the same operation to a stack of array elements.
 %
+% *********** HOW DOES THIS COMPARE TO ARAYFUN *********** 
+%
 % The only constraint on the function specified in fHandle is that given
 % two differrent input arrays a1 and a2, if a1 and a2 have the same
 % dimensions then the outputs b1 and b2 must have the same dimensions. For
@@ -36,9 +38,9 @@
 %  B = feval_arrays( A, @imnormalize );   % where A has arbitrary dims
 %  B = feval_arrays( A, @(x) {imresize(x{1},.5)} ); % A is cell array
 %
-% See also FEVAL_IMAGES, IMWRITE2, PERSISTENT, TICSTATUS
+% See also FEVAL_IMAGES, IMWRITE2, PERSISTENT, TICSTATUS, ARRAYFUN
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
