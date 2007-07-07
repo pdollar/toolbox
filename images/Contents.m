@@ -12,7 +12,6 @@
 %   makemoviesets       - [5D] Used to convert S sets of R videos into a movie.
 %   makemoviesets2      - [5D] Used to convert S sets of R videos into a movie.
 %   playmovie           - [3D] shows the image sequence I as a movie.
-%   playmovies          - [4D] shows R videos simultaneously as a movie.
 %   clustermontage      - Used for visualization of clusters of images and videos.
 %   movie2images        - Creates a stack of images from a matlab movie M.
 %
