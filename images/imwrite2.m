@@ -1,11 +1,11 @@
 % Similar to imwrite, except follows a strict naming convention.
 %
 % Wrapper for imwrite that writes file to the filename:
-%  imagename = [path name int2str2(i,nDigits) '.' ext];
+%  fName = [path name int2str2(i,nDigits) '.' ext];
 % Using imwrite:
-%  imwrite( I, imagename, writePrms )
+%  imwrite( I, fName, writePrms )
 % If I represents a stack of images, the ith image is written to:
-%  imagenamei = [path name int2str2(i+imagei-1,nDigits) '.' ext];
+%  fNamei = [path name int2str2(i+imagei-1,nDigits) '.' ext];
 % If I=[], then imwrite2 will attempt to read images from disk instead.
 % If dir spec. by 'path' does not exist, imwrite2 attempts to create it.
 %
@@ -14,39 +14,79 @@
 % images, where I(:,:,...,j) represents the jth image (see fevalArrays for
 % more info).
 %
+% If nSplits>1, writes/reads images into/from multiple directories. This is
+% useful since certain OS handle very large directories (of say >20K
+% images) rather poorly (I'm talking to you Bill).  Thus, can take 100K
+% images, and write into 5 separate dirs, then read them back in.
+%
 % USAGE
-%  I = imwrite2( I, mulFlag, imagei, path, name, ext, nDigits, varargin )
+%   I = imwrite2( I, mulFlag, imagei, path, ...
+%     [name], [ext], [nDigits], [nSplits], [spliti], [varargin] )
 %
 % INPUTS
 %  I           - image or array or cell of images (if [] reads else writes)
 %  mulFlag     - set to 1 if I represents a stack of images
 %  imagei      - first image number
 %  path        - directory where images are
-%  name        - base name of images
-%  ext         - extension of image
-%  nDigits     - number of digits for filename index
-%  writePrms   - [varargin] additional parameters to imwrite
+%  name        - ['I'] base name of images
+%  ext         - ['png'] extension of image
+%  nDigits     - [5] number of digits for filename index
+%  nSplits     - [1] number of dirs to break data into
+%  spliti      - [0] first split (dir) number
+%  writePrms   - [varargin] parameters to imwrite
 %
 % OUTPUTS
 %  I           - image or images (read from disk if input I=[])
 %
 % EXAMPLE
-%  load images; clear IDXi IDXv t video videos;
-%  imwrite2( images(:,:,1), 0, 0, 'rats/', 'rats', 'png', 5 );
-%  imwrite2( images(:,:,1:5), 1, 0, 'rats/', 'rats', 'png', 5 );
-%  images2 = imwrite2( [], 1, 0, 'rats/', 'rats', 'png', 5 );
-%  images2 = fevalImages(@(x) x,{},'rats/','rats','png',0,4,5);
+%  load images; I=images(:,:,1:10); clear IDXi IDXv t video videos images;
+%  imwrite2( I(:,:,1), 0, 0, 'rats/', 'rats', 'png', 5 );   % write 1
+%  imwrite2( I, 1, 0, 'rats/', 'rats', 'png', 5 );          % write 5
+%  I2 = imwrite2( [], 1, 0, 'rats/', 'rats', 'png', 5 );    % read 5
+%  I3 = fevalImages(@(x) x,{},'rats/','rats','png',0,4,5);  % read 5
+%  
+% EXAMPLE - multiple splits
+%  load images; I=images(:,:,1:10); clear IDXi IDXv t video videos images;
+%  imwrite2( I, 1, 0, 'rats', 'rats', 'png', 5, 2, 0 );      % write 10
+%  I2=imwrite2( [], 1, 0, 'rats', 'rats', 'png', 5, 2, 0 );  % read 10
 %
 % See also FEVALIMAGES, FEVALARRAYS
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function I=imwrite2(I, mulFlag, imagei, path, name, ext, nDigits, varargin)
+function I = imwrite2( I, mulFlag, imagei, path, ...
+  name, ext, nDigits, nSplits, spliti, varargin )
+
+if( nargin<5 || isempty(name) );    name='I'; end;
+if( nargin<6 || isempty(ext) );     ext='png'; end;
+if( nargin<7 || isempty(nDigits) ); nDigits=5; end;
+if( nargin<8 || isempty(nSplits) ); nSplits=1; end;
+if( nargin<9 || isempty(spliti) );  spliti=0; end;
+n = size(I,3);  if(isempty(I)); n=0; end
+
+% multiple splits -- call imwrite2 recursively
+if( nSplits>1 )
+  write2inp = { name, ext, nDigits, 1, 0, varargin{:} };
+  if(n>0); nSplits=min(n,nSplits); end;
+  for s=1:nSplits
+    pathS = [path int2str2(s-1+spliti,2)];
+    if( n>0 ) % write
+      nPerDir = ceil( n / nSplits );
+      ISplit = I(:,:,1:min(end,nPerDir));      
+      imwrite2( ISplit, nPerDir>1, 0, pathS, write2inp{:} );
+      if( s~=nSplits ); I = I(:,:,(nPerDir+1):end); end
+    else % read
+      ISplit = imwrite2( [], 1, 0, pathS, write2inp{:} );
+      I = cat(3,I,ISplit);
+    end
+  end
+  return;
+end
 
 % if I is empty read from disk
-if( isempty(I) )
+if( n==0 )
   I = fevalImages( @(x) x, {}, path, name, ext, imagei, [], nDigits );
   return;
 end
@@ -80,7 +120,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % helper for writing multiple images (passed to fevalArrays)
-function varargout = imwrite2m( I, type, varargin  )
+function varargout = imwrite2m( I, type, varargin )
 
 persistent imagei path name ext nDigits params
 switch type

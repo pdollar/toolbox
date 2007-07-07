@@ -24,7 +24,7 @@
 %   histc_sift_nD       - Creates a series of locally position dependent histograms.
 %   histmontage         - Used to display multiple 1D histograms.
 %
-% Generalized correlation:
+% Generalized correlation: PPD
 %   normxcorrn          - Normalized n-dimensional cross-correlation.
 %   xcorrn              - n-dimensional cross-correlation.  Generalized version of xcorr2.
 %   xeucn               - n-dimensional euclidean distance between each window in A and template T
@@ -37,7 +37,7 @@
 %   imtransform2        - Applies a general/special homography on an image I
 %   textureMap          - Maps texture in I according to rowDst and colDst.
 %
-% Generalized nonmaximal suppression:
+% Generalized nonmaximal suppression: PPD
 %   nonMaxSupr          - Applies nonmaximal suppression on an image of arbitrary dimension.
 %   nonMaxSuprList      - Applies nonmaximal suppression to a list.
 %   nonMaxSuprWin       - Nonmaximal suppression of values outside of a given window.
