@@ -25,7 +25,7 @@
 %
 % See also KMEANS2, DEMOCLUSTER
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -37,9 +37,9 @@ if( nargin<5 || isempty(C) ); C=[]; end
 
 % apply PCA if necessary
 if( size(X,2)~= k )
-  [ U, mu, vars ] = pca( X' );
-  X = pca_apply( X', U, mu, vars, k )';
-  if(~isempty(C)); C = pca_apply( C', U, mu, vars, k )'; end
+  [ U, mu ] = pca( X' );
+  X = pca_apply( X', U, mu, k )';
+  if(~isempty(C)); C = pca_apply( C', U, mu, k )'; end
 end
 
 %%% get k

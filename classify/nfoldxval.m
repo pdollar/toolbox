@@ -58,7 +58,7 @@
 %
 % See also CLF_LDA, CLF_KNN, CLF_SVM, CLF_ECOC
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -142,8 +142,8 @@ for testind = 1:nsets
     if( maxp < p )
       warning(['reducing dim of data from: ' ...
         int2str(p) ' to ' int2str(maxp)]); %#ok<WNTAG>
-      train = pca_apply( train', U, mu, vars, maxp )';
-      test  = pca_apply( test',  U, mu, vars, maxp )';
+      train = pca_apply( train', U, mu, maxp )';
+      test  = pca_apply( test',  U, mu, maxp )';
       p = maxp;
     end
   end
