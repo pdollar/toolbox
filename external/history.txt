@@ -13,7 +13,7 @@ Version 2.0 (06-July-07)
  -merged all the dist_*.m -> into pdist2.m
  -merged imwrite2split into imwrite2
  -merged nlfilt_sep and nlfiltblock_sep into nlfiltersep
- 
+ -merged 1d/nd histogram function, cleaned up commenting
 
 Version 1.5 (05-Jul-07)
  -major documentation change
