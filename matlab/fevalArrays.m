@@ -1,7 +1,5 @@
 % Used to apply the same operation to a stack of array elements.
 %
-% *********** HOW DOES THIS COMPARE TO ARAYFUN *********** 
-%
 % The only constraint on the function specified in fHandle is that given
 % two differrent input arrays a1 and a2, if a1 and a2 have the same
 % dimensions then the outputs b1 and b2 must have the same dimensions. For

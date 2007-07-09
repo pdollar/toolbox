@@ -29,7 +29,7 @@
 %   xcorrn         - n-dimensional cross-correlation.  Generalized version of xcorr2.
 %   xeucn          - n-dimensional euclidean distance between each window in A and template T.
 %
-% Image deformation:
+% Image deformation: PPD
 %   imNormalize    - Various ways to normalize a (multidimensional) image.
 %   imShrink       - Used to shrink a multidimensional array I by integer amount.
 %   imtransform2   - Applies a general/special homography on an image I
