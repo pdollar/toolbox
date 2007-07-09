@@ -17,9 +17,9 @@
 %  F = filmstrips( videos(:,:,:,1:10), 5, 2, 3 );
 %  figure(1); im(F);
 %
-% See also
+% See also FILMSTRIP
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 

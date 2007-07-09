@@ -33,9 +33,9 @@
 %
 % EXAMPLE
 %  mask = maskEllipse(  200, 200, 40, 100,  20, 15, pi/4 );
-%  figure(1); im(mask); [mu,C] = imageMlGauss( mask, 0, 2 );
+%  figure(1); im(mask); [mu,C] = imMlGauss( mask, 0, 2 );
 %
-% See also PLOTELLIPSE, GAUSS2ELLIPSE, MASKCIRCLE, MASKGAUSSIANS, IMAGEMLG
+% See also PLOTELLIPSE, GAUSS2ELLIPSE, MASKCIRCLE, MASKGAUSSIANS, IMMLGAUSS
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

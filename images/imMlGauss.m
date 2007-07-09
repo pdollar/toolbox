@@ -13,16 +13,16 @@
 % returned regardless.  All operations are performed on abs(G) in case it
 % contains negative or complex values.
 %
-% symmFlag is an optional flag that if set to 1 then imageMlGauss recovers
+% symmFlag is an optional flag that if set to 1 then imMlGauss recovers
 % the maximum likelihood symmetric gaussian.  That is the variance in each
 % direction is equal, and all covariance terms are 0.  If symmFlag is set
-% to 2 and G is 3D, imageMlGauss recovers the ML guassian with equal
+% to 2 and G is 3D, imMlGauss recovers the ML guassian with equal
 % variance in the 1st 2 dimensions (row and col) and all covariance terms
 % equal to 0, but a possibly different variance in the 3rd (z or t)
 % dimension.
 %
 % USAGE
-%  varargout = imageMlGauss( G, [symmFlag], [show] )
+%  varargout = imMlGauss( G, [symmFlag], [show] )
 %
 % INPUTS
 %  G        - image of a gaussian (weighted pixels)
@@ -38,7 +38,7 @@
 % EXAMPLE - 2D
 %  R = rotationMatrix( pi/6 );  C=R'*[10^2 0; 0 20^2]*R;
 %  G = filterGauss( [200, 300], [150,100], C, 0 );
-%  [mu,C,GR,logl] = imageMlGauss( G, 0, 1 );
+%  [mu,C,GR,logl] = imMlGauss( G, 0, 1 );
 %  mask = maskEllipse( size(G,1), size(G,2), mu, C );
 %  figure(2); im(mask)
 %
@@ -46,7 +46,7 @@
 %  R = rotationMatrix( [1,1,0], pi/4 );
 %  C = R'*[5^2 0 0; 0 2^2 0; 0 0 4^2]*R;
 %  G = filterGauss( [50,50,50], [25,25,25], C, 0 );
-%  [mu,C,GR,logl] = imageMlGauss( G, 0, 1 );
+%  [mu,C,GR,logl] = imMlGauss( G, 0, 1 );
 %
 % See also GAUSS2ELLIPSE, PLOTGAUSSELLIPSES, MASKELLIPSE
 
@@ -54,7 +54,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function varargout = imageMlGauss( G, symmFlag, show )
+function varargout = imMlGauss( G, symmFlag, show )
 
 if( nargin<2 || isempty(symmFlag) ); symmFlag=0; end;
 if( nargin<3 || isempty(show) ); show=0; end;
@@ -62,16 +62,16 @@ if( nargin<3 || isempty(show) ); show=0; end;
 varargout = cell(1,max(nargout,2));
 nd = ndims(G);  G = abs(G);
 if( nd==2 )
-  [varargout{:}] = imageMlGauss2D( G, symmFlag, show );
+  [varargout{:}] = imMlGauss2D( G, symmFlag, show );
 elseif( nd==3 )
-  [varargout{:}] = imageMlGauss3D( G, symmFlag, show );
+  [varargout{:}] = imMlGauss3D( G, symmFlag, show );
 else
   error( 'Unsupported dimension for G.  G must be 2D or 3D.' );
 end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [mu,C,GR,logl] = imageMlGauss2D( G, symmFlag, show )
+function [mu,C,GR,logl] = imMlGauss2D( G, symmFlag, show )
 
 % to be used throughout calculations
 [ gridCols, gridRows ] = meshgrid( 1:size(G,2), 1:size(G,1)  );
@@ -116,7 +116,7 @@ end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [mu,C,GR,logl] = imageMlGauss3D( G, symmFlag, show )
+function [mu,C,GR,logl] = imMlGauss3D( G, symmFlag, show )
 
 % to be used throughout calculations
 [gridCols,gridRows,gridZs]=meshgrid(1:size(G,2),1:size(G,1),1:size(G,3));

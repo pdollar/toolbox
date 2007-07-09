@@ -46,7 +46,7 @@
 % Miscellaneous:
 %   convnFast      - Fast convolution, replacement for both conv2 and convn.
 %   gaussSmooth    - Applies Gaussian smoothing to a (multidimensional) image.
-%   imageMlGauss   - Calculates max likelihood params of Gaussian that gave rise to image G.
+%   imMlGauss      - Calculates max likelihood params of Gaussian that gave rise to image G.
 %   imwrite2       - Similar to imwrite, except follows a strict naming convention.
 %   jitterImage    - Creates multiple, slightly jittered versions of an image.
 %   jitterVideo    - Creates multiple, slightly jittered versions of a video.
