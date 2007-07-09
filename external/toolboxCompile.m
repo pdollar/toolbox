@@ -29,5 +29,5 @@ mex([dir 'nlfiltersep_sum.c'],      '-outdir', dir );
 mex([dir 'nlfiltersep_blocksum.c'], '-outdir', dir );
 
 % requires c++ compiler
-dir = 'external/dijkstra/private/';
-mex([dir 'fibheap.cpp'],            '-outdir', dir );
+% dir = 'external/dijkstra/private/';
+% mex([dir 'fibheap.cpp'],            '-outdir', dir );
