@@ -14,6 +14,8 @@
 %
 % EXAMPLE
 %  filterSteerable( pi/4 );
+%
+% See also filterGauss
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

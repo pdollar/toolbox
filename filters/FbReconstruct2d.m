@@ -24,6 +24,8 @@
 % EXAMPLE
 %  load trees; X=imresize(X,.5); load FbDoG.mat;
 %  I2 = FbReconstruct2d( X, FB, 0 );
+%
+% See also FBAPPLY2D
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

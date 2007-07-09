@@ -24,7 +24,7 @@
 % EXAMPLE
 %  FB = FbMake( 2, 1, 1 ); 
 %
-% See Also
+% See also FBAPPLY2D
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

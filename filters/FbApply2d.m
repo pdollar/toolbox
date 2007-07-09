@@ -19,7 +19,7 @@
 %  load trees;  X=imresize(X,.5);  load FbDoG.mat;
 %  FR = FbApply2d( X, FB, 'same', 1 );
 %
-% See also CONV2
+% See also CONV2, FBMAKE
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

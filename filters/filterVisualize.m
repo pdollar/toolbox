@@ -31,7 +31,7 @@
 %  f=filterDog2d( 15, 10, 1 ); filterVisualize( f, 2, 'row' ); %2d
 %  f=filterDoog([51 51 99],[3 3 5],[1 2 3],0); filterVisualize(f,4,.1); %3d
 %
-% See also FILTERGAUSS
+% See also FILTERGAUSS, FBVISUALIZE
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

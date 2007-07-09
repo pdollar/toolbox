@@ -16,7 +16,7 @@
 %  load FbDoG.mat;    FbVisualize( FB, 2 );  %2D
 %  FB=FbMake(3,1,0);  FbVisualize( FB, 3 );  %3D
 %
-% See also
+% See also FBAPPLY2D, FILTERVISUALIZE
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
