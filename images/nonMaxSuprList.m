@@ -62,14 +62,14 @@ end
 
 % now supress equals - for each (nonsuppressed) i, suppress it if any
 % of its neighbors are greater then (or greater then or equal) to it.
-radii_rep = repmat( radii, [nvals,1] );
+radiiRep = repmat( radii, [nvals,1] );
 for i=1:nvals
   if( keepLocs(i) )
     if( suprEq ); geqlocs = (vals >= vals(i)); geqlocs(i)=0;
     else geqlocs = (vals > vals(i)); end;
     ngeqlocs=sum(geqlocs);
     dists = abs( subs(geqlocs,:) - ones(ngeqlocs,1) * subs(i,:));
-    if( any( all( dists <= radii_rep(1:ngeqlocs,:), 2 ) ) )
+    if( any( all( dists <= radiiRep(1:ngeqlocs,:), 2 ) ) )
       keepLocs(i)=0;
     end
   end

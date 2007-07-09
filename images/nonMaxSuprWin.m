@@ -52,8 +52,8 @@ end
 % suppress all values outside of window defined by start and end locs
 for d=1:nd
   if (strLocs(d)>0)
-    keeplocs_i = (subs(:,d)>=strLocs(d)) & (subs(:,d)<=endLocs(d));
-    keepLocs = keepLocs & keeplocs_i;
+    keepLocsi = (subs(:,d)>=strLocs(d)) & (subs(:,d)<=endLocs(d));
+    keepLocs = keepLocs & keepLocsi;
   end
 end
 

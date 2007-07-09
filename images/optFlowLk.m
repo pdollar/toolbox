@@ -80,11 +80,11 @@ I2 = gaussSmooth(I2,sigma,'same');
 [Gx,Gy]=gradient(I1);
 Gxx=Gx.^2;  Gxy=Gx.*Gy;   Gyy=Gy.^2;
 if( isempty(winSig) )
-  win_mask = ones(2*winN+1);
-  win_mask = win_mask / sum(win_mask(:));
-  Axx=conv2(Gxx,win_mask,'same');
-  Axy=conv2(Gxy,win_mask,'same');
-  Ayy=conv2(Gyy,win_mask,'same');
+  winMask = ones(2*winN+1);
+  winMask = winMask / sum(winMask(:));
+  Axx=conv2(Gxx,winMask,'same');
+  Axy=conv2(Gxy,winMask,'same');
+  Ayy=conv2(Gyy,winMask,'same');
 else
   winN = ceil(winSig);
   Axx=gaussSmooth(Gxx,winSig,'same',2);
@@ -100,8 +100,8 @@ V1=0.5*sqrt(trA.^2-4*detA);
 % Compute inner product of gradient with time derivative
 It=I2-I1;    IxIt=-Gx.*It;   IyIt=-Gy.*It;
 if( isempty(winSig) )
-  ATbx=conv2(IxIt,win_mask,'same');
-  ATby=conv2(IyIt,win_mask,'same');
+  ATbx=conv2(IxIt,winMask,'same');
+  ATby=conv2(IyIt,winMask,'same');
 else
   ATbx=gaussSmooth(IxIt,winSig,'same',2);
   ATby=gaussSmooth(IyIt,winSig,'same',2);

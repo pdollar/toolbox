@@ -24,7 +24,7 @@
 %
 % For optimal performance some timing constants must be set to choose
 % between doing convolution in the spatial and frequency domains, for more
-% info see time_conv below.
+% info see timeConv below.
 %
 % USAGE
 %  C = convnFast( A, B, [shape] )
@@ -76,7 +76,7 @@ end
 
 % OPTIMIZATION for 3D conv when B is actually 2D - calls (spatial) conv2
 % repeatedly on 2D slices of A.  Note that may need to rearange A and B
-% first and use recursion. The benefits carry over to convn_boundaries
+% first and use recursion. The benefits carry over to convnBound
 % (which is faster for 2D arrays).
 if( ndA==3 && ndB==3 && (sizB(1)==1 || sizB(2)==1) )
   if (sizB(1)==1)
@@ -95,41 +95,41 @@ elseif( ndA==3 && ndB==2 )
   for i=2:sizA(3); C(:,:,i) = conv2( A(:,:,i), B, shape ); end
   if (smoothFlag)
     for i=1:sizA(3)
-      C(:,:,i) = convn_boundaries(A(:,:,i),B,C(:,:,i),sizA(1:2),sizB(1:2));
+      C(:,:,i) = convnBound(A(:,:,i),B,C(:,:,i),sizA(1:2),sizB(1:2));
     end
   end
   return;
 end
 
 % get predicted time of convolution in frequency and spatial domain
-% constants taken from time_conv
+% constants taken from timeConv
 sizfft = 2.^ceil(real(log2(sizA+sizB-1))); psizfft=prod(sizfft);
-frequen_pt = 3 * 1e-7 * psizfft * log(psizfft);
+frequenPt = 3 * 1e-7 * psizfft * log(psizfft);
 if (nd==2)
-  spatial_pt = 5e-9 * sizA(1) * sizA(2) * sizB(1) * sizB(2);
+  spatialPt = 5e-9 * sizA(1) * sizA(2) * sizB(1) * sizB(2);
 else
-  spatial_pt = 5e-8 * prod(sizA) * prod(sizB);
+  spatialPt = 5e-8 * prod(sizA) * prod(sizB);
 end
 
 % perform convolution
-if ( spatial_pt < frequen_pt )
+if ( spatialPt < frequenPt )
   if (nd==2)
     C = conv2( A, B, shape );
   else
     C = convn( A, B, shape );
   end
 else
-  C = convn_freq( A, B, sizA, sizB, shape );
+  C = convnFreq( A, B, sizA, sizB, shape );
 end;
 
 
 % now correct boundary effects (if shape=='smooth')
 if( ~smoothFlag ); return; end;
-C = convn_boundaries( A, B, C, sizA, sizB );
+C = convnBound( A, B, C, sizA, sizB );
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % calculate boundary values for C in spatial domain
-function C = convn_boundaries( A, B, C, sizA, sizB )
+function C = convnBound( A, B, C, sizA, sizB )
 nd = length(sizA);
 radii = (sizB-1)/2;
 
@@ -150,11 +150,11 @@ Dndx = ind2sub2( sizA, Dind );
 nlocs = length(Dind);
 
 % get cuboid dimensions for all the boundary regions
-sizA_rep = repmat( sizA, [nlocs,1] );
-radii_rep = repmat( radii, [nlocs,1] );
-Astarts = max(1,Dndx-radii_rep);
-Aends = min( sizA_rep, Dndx+radii_rep);
-Bstarts = Astarts + (1-Dndx+radii_rep);
+sizeArep = repmat( sizA, [nlocs,1] );
+radiiRep = repmat( radii, [nlocs,1] );
+Astarts = max(1,Dndx-radiiRep);
+Aends = min( sizeArep, Dndx+radiiRep);
+Bstarts = Astarts + (1-Dndx+radiiRep);
 Bends = Bstarts + (Aends-Astarts);
 
 % now update these locations
@@ -188,7 +188,7 @@ C( Dind ) = vs * sum(B(:));
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Convolution as multiplication in the frequency domain
-function C = convn_freq( A, B, sizA, sizB, shape )
+function C = convnFreq( A, B, sizA, sizB, shape )
 siz = sizA + sizB - 1;
 
 % calculate correlation in frequency domain
@@ -213,7 +213,7 @@ end
 % frequency and spatial domains.  Method taken from normxcorr2.m
 % May need to reset K's if placing this on a new machine, however, their
 % ratio should be about the same..
-function K = time_conv() %#ok<DEFNU>
+function K = timeConv() %#ok<DEFNU>
 mintime = 4;
 
 switch 3
@@ -243,7 +243,7 @@ switch 3
     % size of power of 2?).  2 dimensional fft has to apply single
     % dimensional fft to each column, and then signle dimensional fft
     % to each resulting row.  time = K * (mn)log(mn).  Likewise for
-    % highter dimensions.  convn_freq requires 3 such ffts.
+    % highter dimensions.  convnFreq requires 3 such ffts.
     n = 2^nextpow2(2^15);
     vec = complex(rand(n,1),rand(n,1));
     t1 = cputime;  t2 = t1;  k = 0;

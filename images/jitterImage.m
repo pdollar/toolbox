@@ -91,24 +91,24 @@ if( nd~=2 && nd~=3 || length(jsiz)~=2)
 trans = linspace( -maxtrans, maxtrans, ntrans );
 ntrans = length(trans);
 trans = trans( ones(1,ntrans), : );
-trans_x = trans(:)'; trans_y = trans'; trans_y = trans_y(:)';
-trans = [ trans_x; trans_y ];
+transX = trans(:)'; transY = trans'; transY = transY(:)';
+trans = [ transX; transY ];
 phis = linspace( -maxphi, maxphi, nphis );
 phis = phis / 180 * pi;
 
 % I must be big enough to support given ops.  So grow I if necessary.
-need_siz = jsiz + 2*max(trans(1,:)); % size needed for translation
-if( nphis>1 ); need_siz = sqrt(2)*need_siz+1; end
+needSiz = jsiz + 2*max(trans(1,:)); % size needed for translation
+if( nphis>1 ); needSiz = sqrt(2)*needSiz+1; end
 if( size(scales,1)>1 ) % size needed for scaling
-  need_siz = [need_siz(1)*max(scales(:,1)) need_siz(2)*max(scales(:,2))];
+  needSiz = [needSiz(1)*max(scales(:,1)) needSiz(2)*max(scales(:,2))];
 end
-need_siz = ceil(need_siz); 
-if( ndims(I)==3 ); need_siz = [need_siz siz(3)]; end
-deltas_grow = ceil( max( (need_siz - size(I))/2, 0 ) );
-if( any(deltas_grow>0) )
-  I = padarray(I,deltas_grow,'replicate','both');
+needSiz = ceil(needSiz); 
+if( ndims(I)==3 ); needSiz = [needSiz siz(3)]; end
+deltasGrow = ceil( max( (needSiz - size(I))/2, 0 ) );
+if( any(deltasGrow>0) )
+  I = padarray(I,deltasGrow,'replicate','both');
   warning(['jitterImage: Not enough image data - growing image need ' ...
-    'size:' int2str(need_siz) ' have size: ' int2str(siz(1:2))]);...
+    'size:' int2str(needSiz) ' have size: ' int2str(siz(1:2))]);...
     %#ok<WNTAG>
 end
 

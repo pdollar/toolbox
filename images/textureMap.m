@@ -61,6 +61,6 @@ else
   error('illegal value for bbox');
 end;
 
-% Get values at col_samples and row_samples
+% Get values at colGrid and rowGrid
 IR = griddata( colDst, rowDst, I, colGrid, rowGrid );
 IR(isnan(IR)) = 0;

@@ -61,10 +61,10 @@ I2b = gaussSmooth( I2, [sigma sigma], 'smooth' );
 % precomputed constants
 subpixelaccuracy = 1;
 siz = size(I1);
-big_r = searchR + patchR;
+bigR = searchR + patchR;
 n = (2*patchR+1)^2;
-width_D = 2*searchR+1;
-[ndxs,ndys] = meshgrid( 1:width_D, 1:width_D );
+widthD = 2*searchR+1;
+[ndxs,ndys] = meshgrid( 1:widthD, 1:widthD );
 
 % hack to penalize more distant translations (closest are best?)
 [xs,ys] = meshgrid(-searchR:searchR,-searchR:searchR);
@@ -79,29 +79,29 @@ sizB = size(I1b);
 [gEy,gEx] = gradient( I1b );
 
 % loop over each window
-Vx = zeros( sizB-2*big_r ); Vy = Vx;  reliab = Vx;
-for r = big_r+1:sizB(1)-big_r
-  for c = big_r+1:sizB(2)-big_r
+Vx = zeros( sizB-2*bigR ); Vy = Vx;  reliab = Vx;
+for r = bigR+1:sizB(1)-bigR
+  for c = bigR+1:sizB(2)-bigR
     T = I1b( r-patchR:r+patchR, c-patchR:c+patchR );
-    IC = I2b( r-big_r:r+big_r, c-big_r:c+big_r );
+    IC = I2b( r-bigR:r+bigR, c-bigR:c+bigR );
 
     % get smallest distance
-    D = xeuc2_small( T, IC, 'valid' );
+    D = xeuc2Sm( T, IC, 'valid' );
     D = (D+eps) .* Dpenalty;
     [disc, ind] = min(D(:));
 
     % get offset to smallest distance
     ndx = [ndys(ind(1)) ndxs(ind(1))];
-    v = ndx - (width_D + 1)/2;
+    v = ndx - (widthD + 1)/2;
 
     % get subpixel movement using lucas kanade on rectified windows
     if( subpixelaccuracy )
       T2 = I2b( r+v(1)-patchR:r+v(1)+patchR, c+v(2)-patchR:c+v(2)+ ...
         patchR );
-      gEx_rc = gEx(r-patchR:r+patchR, c-patchR:c+patchR );
-      gEy_rc = gEy(r-patchR:r+patchR, c-patchR:c+patchR );
-      Et_rc = T2-T;
-      A = [ gEx_rc(:), gEy_rc(:) ];  b = -Et_rc(:);
+      gExRc = gEx(r-patchR:r+patchR, c-patchR:c+patchR );
+      gEyRc = gEy(r-patchR:r+patchR, c-patchR:c+patchR );
+      EtRc = T2-T;
+      A = [ gExRc(:), gEyRc(:) ];  b = -EtRc(:);
       AtA = A'*A;  detAtA = AtA(1)*AtA(4)-AtA(2)*AtA(3);
       if( abs(detAtA) > eps )
         invA = ([AtA(4) -AtA(2); -AtA(3) AtA(1)] / detAtA) * A'; veps = ...
@@ -116,9 +116,9 @@ for r = big_r+1:sizB(1)-big_r
     x=T(:); rel = sum(x.*x)/n - (sum(x)/n)^2; % variance
 
     % record reliability and velocity
-    reliab(r-big_r,c-big_r) = rel;
-    Vx(r-big_r,c-big_r) = v(2);
-    Vy(r-big_r,c-big_r) = v(1);
+    reliab(r-bigR,c-bigR) = rel;
+    Vx(r-bigR,c-bigR) = v(2);
+    Vy(r-bigR,c-bigR) = v(1);
   end;
 end;
 
@@ -142,11 +142,11 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % since the convolutions are so small just call conv2 everywhere
 % see xeucn.m for more general version
-function C = xeuc2_small( B, I, shape )
+function C = xeuc2Sm( B, I, shape )
 sizB = size(B);
 B = rot90( B,2 );
-I_mag = localSum( I.*I, sizB, shape );
-B_mag = B.^2;  B_mag = sum( B_mag(:) );
-C = I_mag + B_mag - 2 * conv2(I,B,shape);
+Imag = localSum( I.*I, sizB, shape );
+Bmag = B.^2;  Bmag = sum( Bmag(:) );
+C = Imag + Bmag - 2 * conv2(I,B,shape);
 
 

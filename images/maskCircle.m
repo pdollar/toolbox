@@ -49,12 +49,12 @@ mask( x.^2+y.^2<r^2 ) = 1;
 
 % keep only values at appropriate angles
 angles = atan2(y,x); angles(angles<0)=angles(angles<0)+2*pi;
-angle_end = mod( angleStart + angleSiz, 2*pi );
+angleEnd = mod( angleStart + angleSiz, 2*pi );
 angleStart = mod( angleStart, 2*pi );
-if (angleStart<angle_end)
-  mask( angles<angleStart | angles>=angle_end ) = 0;
+if (angleStart<angleEnd)
+  mask( angles<angleStart | angles>=angleEnd ) = 0;
 else
-  mask( angles>=angle_end & angles<angleStart ) = 0;
+  mask( angles>=angleEnd & angles<angleStart ) = 0;
 end
 
 % shrink by counting samples per 'image' pixel
