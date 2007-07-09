@@ -10,7 +10,7 @@
 % image, NOT 2.  It may be necessary to round the values afterward.
 %
 % USAGE
-%  subs = imsubs_resize( subs, resizVals )
+%  subs = imSubsResize( subs, resizVals )
 %
 % INPUTS
 %  subs        - subscripts of point locations (n x d)
@@ -21,13 +21,13 @@
 %
 % EXAMPLE
 %
-% See also IMSUBS2ARRAY
+% See also IMSUBSTOARRAY
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function subs = imsubs_resize( subs, resizVals )
+function subs = imSubsResize( subs, resizVals )
 
 [n d] = size(subs);
 [resizVals,er] = checkNumArgs( resizVals, [1 d], -1, 2 ); error(er);
@@ -35,4 +35,3 @@ function subs = imsubs_resize( subs, resizVals )
 % transform subs
 resizVals = repmat( resizVals, [n, 1] );
 subs = (subs - .5) .* resizVals +.5;
-

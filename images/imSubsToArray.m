@@ -4,7 +4,7 @@
 % sparse arrays.
 %
 % USAGE
-%  I = imsubs2array( subs, vals, siz, [fillVal] )
+%  I = imSubsToArray( subs, vals, siz, [fillVal] )
 %
 % INPUTS
 %  subs    - subscripts of point locations (n x d)
@@ -17,13 +17,13 @@
 %
 % EXAMPLE
 %
-% See also IMSUBS_RESIZE
+% See also IMSUBSRESIZE
 
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function I = imsubs2array( subs, vals, siz, fillVal )
+function I = imSubsToArray( subs, vals, siz, fillVal )
 
 if( nargin<4 || isempty(fillVal) ); fillVal=0; end
 

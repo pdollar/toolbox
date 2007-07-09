@@ -32,8 +32,8 @@
 % Image deformation:
 %   imNormalize         - Various ways to normalize a (multidimensional) image.
 %   imShrink            - Used to shrink a multidimensional array I by integer amount.
-%   imsubs2array        - Converts subs/vals image representation to array representation.
-%   imsubs_resize       - Resizes subs in subs/vals image representation by resizVals.
+%   imSubsToArray       - Converts subs/vals image representation to array representation.
+%   imSubsResize        - Resizes subs in subs/vals image representation by resizVals.
 %   imtransform2        - Applies a general/special homography on an image I
 %   textureMap          - Maps texture in I according to rowDst and colDst.
 %

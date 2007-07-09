@@ -6,7 +6,7 @@
 % can be smoothed first to make method more robust. The first output is an
 % array of the subscript locations of maximal values in I and the second
 % output contains the corresponding maximal values.  One can convert
-% subs/vals back to an array representation using imsubs2array. Note that
+% subs/vals back to an array representation using imSubsToArray. Note that
 % values are suppressed iff there are strictly greater values in the
 % neighborhood.  Hences nonMaxSupr(ones(10),5) would not suppress any
 % values.
@@ -28,23 +28,23 @@
 %  G = filterGauss( [25 25], [13,13], 3*eye(2), 1 );
 %  siz=[11 11]; G = filterGauss( siz, (siz+1)/2, eye(2), 1 );
 %  [subs,vals] = nonMaxSupr( G, 1, eps );
-%  figure(2); im( imsubs2array( subs, vals, siz ) );
+%  figure(2); im( imSubsToArray( subs, vals, siz ) );
 %  [subs,vals] = nonMaxSuprList( ind2sub2(siz,(1:prod(siz))'), G(:)',1 );
-%  figure(3); im( imsubs2array( subs, vals, siz ) );
+%  figure(3); im( imSubsToArray( subs, vals, siz ) );
 %
 % EXAMPLE - 2
 %  siz=[30 30]; I=ones(siz); I(22,23)=I(22,23)+3;
 %  I(12,23)=I(12,23)+5; I(7,1)=I(7,1)-.5; figure(1); im(I);
 %  r=3; suprEq = 1; maxn=[]; thresh=eps;
 %  [subs,vals] = nonMaxSupr(I,r,thresh,maxn);
-%  figure(2); im( imsubs2array( subs, vals, siz ) );
+%  figure(2); im( imSubsToArray( subs, vals, siz ) );
 %  [subs,vals] = nonMaxSuprWin(subs,vals,[1 1]+6,siz-6);
-%  figure(3); im( imsubs2array( subs, vals, siz ) );
+%  figure(3); im( imSubsToArray( subs, vals, siz ) );
 %  [subs2,vals2] = nonMaxSuprList( ind2sub2(siz,(1:prod(siz))'), ...
 %                                           I(:)',r,thresh,maxn,suprEq );
-%  figure(4); im( imsubs2array( subs2, vals2, siz ) );
+%  figure(4); im( imSubsToArray( subs2, vals2, siz ) );
 %
-% See also IMSUBS2ARRAY, NONMAXSUPRLIST, NONMAXSUPRWIN
+% See also IMSUBSTOARRAY, NONMAXSUPRLIST, NONMAXSUPRWIN
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

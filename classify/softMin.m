@@ -50,7 +50,7 @@ sumM = sum( M, 2 );
 sumMzero = (sumM==0);
 if( any(sumMzero) )
   [vs, inds] = min(D,[],2);  [n k] = size(D);
-  Mhard = imsubs2array( [(1:n)' inds], ones( n,1 ), [n k] );
+  Mhard = imSubsToArray( [(1:n)' inds], ones( n,1 ), [n k] );
   M( sumMzero, : ) = Mhard( sumMzero, : );
   sumM = sum( M, 2 );
 end
