@@ -43,7 +43,7 @@
 %  masks = maskGaussians( [35 35], 3, .6, .1, 1 );  %2D
 %  masks = maskGaussians( [35 35 35], [2 2 4], .6, .1, 1 ); %3D
 %
-% See also HISTCIMAGELOC, MASKCIRCLE
+% See also HISTCIMLOC, MASKCIRCLE
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

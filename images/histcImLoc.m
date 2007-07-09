@@ -14,15 +14,15 @@
 %  I is an [M1xM2x...xMkxnd] array of nd channels
 % otherwise
 %  I is an [M1xM2x...xMk] array of 1 channel
-% If nd==1, histcImageLoc creates a 1D histogram using histc2.  More
-% generally, histcImageLoc creates an nd dimensional histogram (again using
-% hist2c).  histcImageLoc creates nMasks (number of masks) histgorams, each
+% If nd==1, histcImLoc creates a 1D histogram using histc2.  More
+% generally, histcImLoc creates an nd dimensional histogram (again using
+% hist2c).  histcImLoc creates nMasks (number of masks) histgorams, each
 % which have dimension nbins^nd.  So if nd==1 the output of his function is
 % [nBins x nMasks], and for example if nd==2 the output is [nBins x nBins x
 % nMasks].  If nd is large computing the histograms is time consuming.
 %
 % USAGE
-%  hs = histcImageLoc( I, edges, parMask, [wtMask], [multCh] )
+%  hs = histcImLoc( I, edges, parMask, [wtMask], [multCh] )
 %
 % INPUTS
 %  I           - M1xM2x...xMkxnd array, (nd channels each of M1xM2x...xMk)
@@ -36,13 +36,13 @@
 %
 % EXAMPLE - multCh==0
 %  I = filterGauss([100 100],[],[],0);
-%  hs = histcImageLoc(I,10,{2,.6,.1,1},[],0); 
+%  hs = histcImLoc(I,10,{2,.6,.1,1},[],0); 
 %  figure(3); im(hs)
 %
 % EXAMPLE - multCh==1
 %  I = filterGauss([100 100],[],[],0);
-%  hs1 = histcImageLoc( cat(3,I,I), 10, {2,.6,.1,0},[],1);
-%  hs2 = histcImageLoc( cat(3,I,randn(size(I))),10,{2,.6,.1,0},[],1);
+%  hs1 = histcImLoc( cat(3,I,I), 10, {2,.6,.1,0},[],1);
+%  hs2 = histcImLoc( cat(3,I,randn(size(I))),10,{2,.6,.1,0},[],1);
 %  figure(1); montage2(hs1,1);  figure(2); montage2(hs2,1);
 %
 % See also HISTC2, HISTC_SIFT, MASKGAUSSIANS
@@ -51,7 +51,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function hs = histcImageLoc( I, edges, parMask, wtMask, multCh )
+function hs = histcImLoc( I, edges, parMask, wtMask, multCh )
 
 if( nargin<4 ); wtMask=[]; end;
 if( nargin<5 ); multCh=0; end;

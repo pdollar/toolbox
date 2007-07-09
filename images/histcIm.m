@@ -11,7 +11,7 @@
 % See histc2 for more details about edges and nBins.
 %
 % USAGE
-%  HS = histcImage( I, edges, wtMask, [shape] )
+%  HS = histcIm( I, edges, wtMask, [shape] )
 %
 % INPUTS
 %  I           - Array with integer values [see above]
@@ -26,8 +26,8 @@
 % EXAMPLE
 %  load trees; L=conv2(X,filterDog2d(10,4,1,0),'valid'); figure(1); im(L);
 %  f1=filterGauss(25,[],25);  f2=ones(1,15);
-%  HS1=histcImage(L, 15, {f1,f1'}, 'same');  figure(2); montage2(HS1,1);
-%  HS2=histcImage(L, 15, {f2,f2'}, 'same');  figure(3); montage2(HS2,1);
+%  HS1 = histcIm(L, 15, {f1,f1'}, 'same');  figure(2); montage2(HS1,1);
+%  HS2 = histcIm(L, 15, {f2,f2'}, 'same');  figure(3); montage2(HS2,1);
 %
 % See also ASSIGNTOBINS, HISTC2, CONVNFAST
 
@@ -35,7 +35,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function HS = histcImage( I, edges, wtMask, shape )
+function HS = histcIm( I, edges, wtMask, shape )
 
 if( nargin<4 || isempty(shape) ); shape = 'full';  end;
 if( ~iscell(wtMask) ); wtMask={wtMask}; end;
