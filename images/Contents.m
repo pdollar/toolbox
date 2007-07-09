@@ -33,7 +33,6 @@
 %   imNormalize         - Various ways to normalize a (multidimensional) image.
 %   imShrink            - Used to shrink a multidimensional array I by integer amount.
 %   imtransform2        - Applies a general/special homography on an image I
-%   subsToArray         - Converts subs/vals image representation to array representation.
 %   textureMap          - Maps texture in I according to rowDst and colDst.
 %
 % Generalized nonmaximal suppression: PPD

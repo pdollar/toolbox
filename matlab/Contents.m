@@ -39,6 +39,7 @@
 %   rotationMatrix    - Performs different operations dealing with a rotation matrix
 %   simpleCache       - A simple cache that can be used to store results of computations.
 %   sub2ind2          - Improved version of sub2ind.
+%   subsToArray       - Converts subs/vals image representation to array representation.
 %   subsampleMatrix   - Samples elements of X so result uses at most maxMegs megabytes of memory.
 %
 % Thin plate splines:
