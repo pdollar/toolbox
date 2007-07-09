@@ -32,7 +32,7 @@
 %
 % EXAMPLE
 %
-% See also IMSUBSTOARRAY, NONMAXSUPR, NONMAXSUPRWIN
+% See also SUBSTOARRAY, NONMAXSUPR, NONMAXSUPRWIN
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

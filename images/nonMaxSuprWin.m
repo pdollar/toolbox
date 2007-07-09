@@ -25,7 +25,7 @@
 %
 % EXAMPLE
 %
-% See also IMSUBSTOARRAY, NONMAXSUPR, NONMAXSUPRLIST
+% See also SUBSTOARRAY, NONMAXSUPR, NONMAXSUPRLIST
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
