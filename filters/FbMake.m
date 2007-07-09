@@ -140,7 +140,7 @@ switch flag
     FB = FbMakegabor( 7, 6, 1, 2, 2 );
 
   case 6  %%% symmetric DOOG filters
-    FB = FbMakeDooG_sym( 4, 2, [.5 1] );
+    FB = FbMakeDooGSym( 4, 2, [.5 1] );
 
   otherwise
     error('none created.');
@@ -149,26 +149,26 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % multi-scale even/odd gabor filters. Adapted from code by Serge Belongie.
-function FB = FbMakegabor( r, num_ori, num_scales, lambda, sigma )
+function FB = FbMakegabor( r, nOrient, nScales, lambda, sigma )
 cnt=1;
-for m=1:num_scales
-  for n=1:num_ori
-    [F1,F2]=filterGabor2d(r,sigma^m,lambda,180*(n-1)/num_ori);
-    if(m==1 && n==1); FB=repmat(F1,[1 1 num_scales*num_ori*2]); end
+for m=1:nScales
+  for n=1:nOrient
+    [F1,F2]=filterGabor2d(r,sigma^m,lambda,180*(n-1)/nOrient);
+    if(m==1 && n==1); FB=repmat(F1,[1 1 nScales*nOrient*2]); end
     FB(:,:,cnt)=F1;  cnt=cnt+1;   FB(:,:,cnt)=F2;  cnt=cnt+1;
   end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Adds symmetric DooG filters.  These are similar to gabor filters.
-function FB = FbMakeDooG_sym( r, num_ori, sigs )
+function FB = FbMakeDooGSym( r, nOrient, sigs )
 cnt=1; dims=[2*r+1 2*r+1];
 for s=1:length(sigs)
   Fodd = -filterDoog( dims, [sigs(s) sigs(s)], [1 0], 0 );
   Feven = filterDoog( dims, [sigs(s) sigs(s)], [2 0], 0 );
-  if(s==1); FB=repmat(Fodd,[1 1 length(sigs)*num_ori*2]); end
-  for n=1:num_ori
-    theta = 180*(n-1)/num_ori;
+  if(s==1); FB=repmat(Fodd,[1 1 length(sigs)*nOrient*2]); end
+  for n=1:nOrient
+    theta = 180*(n-1)/nOrient;
     FB(:,:,cnt) = imrotate( Feven, theta, 'bil', 'crop' );  cnt=cnt+1;
     FB(:,:,cnt) = imrotate( Fodd,  theta, 'bil', 'crop' );  cnt=cnt+1;
   end
@@ -176,16 +176,16 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 1st/2nd order DooG filters.  Similar to Gabor filterbank.
-% Defaults: num_ori=6, num_scales=3, lambda=5, sigma=.5,
-function FB = FbMakeDooG( r, num_ori, num_scales, lambda, sigma )
+% Defaults: nOrient=6, nScales=3, lambda=5, sigma=.5,
+function FB = FbMakeDooG( r, nOrient, nScales, lambda, sigma )
 cnt=1; dims=[2*r+1 2*r+1];
-for m=1:num_scales
+for m=1:nScales
   sigma = sigma * m^.7;
   Fodd = -filterDoog( dims, [sigma lambda*sigma^.6], [1,0], 0 );
   Feven = filterDoog( dims, [sigma lambda*sigma^.6], [2,0], 0 );
-  if(m==1); FB=repmat(Fodd,[1 1 num_scales*num_ori*2]); end
-  for n=1:num_ori
-    theta = 180*(n-1)/num_ori;
+  if(m==1); FB=repmat(Fodd,[1 1 nScales*nOrient*2]); end
+  for n=1:nOrient
+    theta = 180*(n-1)/nOrient;
     FB(:,:,cnt) = imrotate( Feven, theta, 'bil', 'crop' );  cnt=cnt+1;
     FB(:,:,cnt) = imrotate( Fodd,  theta, 'bil', 'crop' );  cnt=cnt+1;
   end
@@ -193,8 +193,8 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % adds a serires of difference of Gaussian filters.
-function FB = FbMakeDOG( r, sigma_st, sigma_end, n )
-sigs = sigma_st:(sigma_end-sigma_st)/(n-1):sigma_end;
+function FB = FbMakeDOG( r, sigmaStr, sigmaEnd, n )
+sigs = sigmaStr:(sigmaEnd-sigmaStr)/(n-1):sigmaEnd;
 for s=1:length(sigs)
   FB(:,:,s) = filterDog2d(r,sigs(s),2);
   if( s==1 ); FB=repmat(FB,[1 1 length(sigs)]); end

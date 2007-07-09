@@ -79,7 +79,7 @@ else %%% recover entire image
   end
 
   I2 = zeros( size(IFR,1)+2, size(IFR,2)+2 );
-  ind_r = (FBmrows+1)/2;  ind_c = (FBncols+1)/2;
+  indR = (FBmrows+1)/2;  indC = (FBncols+1)/2;
   for r=1:size(IFR,1);
     for c=1:size(IFR,2)
       % recover the patch (vectorized) at this point
@@ -87,7 +87,7 @@ else %%% recover entire image
       P = reshape( Finv*IFRrc, FBmrows, FBncols );
 
       % update overall image by adding central 3x3 patch (weighted)
-      Idelta = W .* P( ind_r-1:ind_r+1, ind_c-1:ind_c+1 );
+      Idelta = W .* P( indR-1:indR+1, indC-1:indC+1 );
       I2(r:r+2,c:c+2) = I2( r:r+2,c:c+2 ) + Idelta;
     end;
   end;
