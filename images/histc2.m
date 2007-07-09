@@ -1,11 +1,11 @@
-% Multidimensional histogram count with allows weighted values.
+% Multidimensional histogram count with weighted values.
 %
 % Creates a histogram h of the values in A, with edges as specified.  h
-% will have length nbins, where nbins=length(edges)-1.  Each value in A has
+% will have length nBins, where nBins=length(edges)-1.  Each value in A has
 % associated weight given by wtMask, which should have the same
 % dimensions as A. h(q) contains the weighted count of values v in A such
-% that edges(q) <= v < edges(q+1). h(nbins) additionally contains the
-% weighted count of values in A such that v==edges(nbins+1) -- which is
+% that edges(q) <= v < edges(q+1). h(nBins) additionally contains the
+% weighted count of values in A such that v==edges(nBins+1) -- which is
 % different then how histc treates the boundary condition. Finally, h is
 % normalized so that sum(h(:))==1.
 %
@@ -13,10 +13,10 @@
 % different histograms are going to be compared.  In general, edges must
 % have monotonically non-decreasing values.  Also, if the exact bounds are
 % unknown then it is convenient to set the first element in edges to -inf
-% and the last to inf.  If h = histc2( A, nbins, ...), edges are
+% and the last to inf.  If h = histc2( A, nBins, ...), edges are
 % automatically generated and have bins equally spaced between min(A) and
 % max(A). That is edges is generated via: 'edges = linspace( minI-eps,
-% maxI+eps, nbins+1 )'.
+% maxI+eps, nBins+1 )'.
 %
 % See histc for more information.
 %
@@ -25,7 +25,7 @@
 %
 % INPUTS
 %  A           - 2D numeric array [n x nd]
-%  edges       - either nbins+1 vec of quantization bounds, or scalar nbins
+%  edges       - either nBins+1 vec of quantization bounds, or scalar nBins
 %  wtMask      - [] n length vector of weights
 %
 % OUTPUTS
@@ -58,7 +58,7 @@ if( ~isempty(wtMask) && n~=numel(wtMask) )
   error( 'wtMask must have n elements (A is nxnd)' ); end
 
 if( nd==1 )
-  % if nbins given instead of edges calculate edges
+  % if nBins given instead of edges calculate edges
   if(length(edges)==1)
     edges = linspace(min(A)-eps,max(A)+eps,edges+1);
   end
@@ -74,7 +74,7 @@ if( nd==1 )
   end
 
 else
-  % if nbins given instead of edges calculate edges per dimension
+  % if nBins given instead of edges calculate edges per dimension
   if( ~iscell(edges ) )
     edges=repmat({edges},[1 nd]);
   elseif( length(edges)~=nd )

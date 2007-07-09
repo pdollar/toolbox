@@ -25,7 +25,7 @@
 % coverage to areas near the borders.
 %
 % USAGE
-%  [masks,keeplocs] = maskGaussians( siz, M, [width], [offset], [show] )
+%  [masks,keepLocs] = maskGaussians( siz, M, [width], [offset], [show] )
 % 
 % INPUTS
 %  siz         - dimensions of each mask
@@ -36,20 +36,20 @@
 %
 % OUTPUTS
 %  masks       - [see above] array of size [siz x M^nd]
-%  keeplocs    - logical array of all locs where masks is nonzero
+%  keepLocs    - logical array of all locs where masks is nonzero
 %
 % EXAMPLE
 %  masks = maskGaussians( 100, 10, .6, -.1, 1 );  %1D
 %  masks = maskGaussians( [35 35], 3, .6, .1, 1 );  %2D
 %  masks = maskGaussians( [35 35 35], [2 2 4], .6, .1, 1 ); %3D
 %
-% See also HISTC_SIFT, MASKCIRCLE
+% See also HISTCIMAGELOC, MASKCIRCLE
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [masks,keeplocs] = maskGaussians( siz, M, width, offset, show )
+function [masks,keepLocs] = maskGaussians( siz, M, width, offset, show )
 
 nd = length(siz);
 if( nargin<3 || isempty(width)); width = .6; end;    
@@ -60,9 +60,9 @@ if( nargin<5 || isempty(show) || nd>3 ); show = 0; end;
 persistent cache; if( isempty(cache) ); cache=simpleCache('init'); end;
 key = [nd siz M width offset];
 [found,val] = simpleCache( 'get', cache, key ); 
-if( found ) %%% get masks and keeplocs from cache
-  [masks,keeplocs] = deal(val{:});
-else %%% create masks and keeplocs
+if( found ) %%% get masks and keepLocs from cache
+  [masks,keepLocs] = deal(val{:});
+else %%% create masks and keepLocs
   [M,er] = checkNumArgs( M, [1 nd], 0, 2 ); error(er);
   inds = {':'}; inds = inds(:,ones(1,nd));  
   if( offset<=-.5 || offset>=1 ); error('offset must be in (-.5,1)'); end;
@@ -79,10 +79,10 @@ else %%% create masks and keeplocs
     mus = (sub-.5).* spacing + .5-offset*siz;
     masks(inds{:},c) = filterGauss( siz, mus, C );
   end
-  keeplocs = masks>1e-7;
+  keepLocs = masks>1e-7;
 
   %%% place into cache
-  cache = simpleCache( 'put', cache, key, {masks,keeplocs} );
+  cache = simpleCache( 'put', cache, key, {masks,keepLocs} );
 end;
 
 %%% optionally display

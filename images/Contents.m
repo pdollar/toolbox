@@ -18,9 +18,8 @@
 % Histograms:
 %   assignToBins   - Quantizes A according to values in edges.
 %   histc2         - Multidimensional histogram count with allows weighted values.
-%   histc_image    - Calculates histograms at every point in an array I.
-%   histc_sift     - Creates a series of locally position dependent histograms of values in I.
-%   histc_sift_nD  - Creates a series of locally position dependent histograms.
+%   histcImage     - Calculates histograms at every point in an array I.
+%   histcImageLoc  - Creates a series of locally position dependent histograms.
 %   histmontage    - Used to display multiple 1D histograms.
 %
 % Generalized correlation: PPD
