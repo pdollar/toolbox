@@ -41,7 +41,7 @@
 %  Xr = pcaRandVec( U, mu, vars, 1, 25, 0, 3 );
 %
 % See also PRINCOMP, PCAAPPLY, PCAVISUALIZE, PCARANDVEC
-% VISUALIZEDATA, RANDOMSAMPLE
+% VISUALIZEDATA, SUBSAMPLEMATRIX
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

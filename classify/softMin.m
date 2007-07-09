@@ -37,7 +37,7 @@
 % EXAMPLE - 2
 %  fplot( 'softMin( [0.5 0.2 .4], x )', [eps 10] );
 %
-% See also PDIST2
+% See also PDIST2, SOFTMAX
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

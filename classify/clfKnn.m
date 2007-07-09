@@ -13,7 +13,7 @@
 %
 % EXAMPLE
 %
-% See also NFOLDXVAL, CLFKNNTRAIN, CLFKNNFWD
+% See also NFOLDXVAL, CLFKNNTRAIN, CLFKNNFWD, CLFKNNDIST
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
