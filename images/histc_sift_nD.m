@@ -12,14 +12,14 @@
 % created for each using histc_nD.
 %
 % USAGE
-%  hs = histc_sift_nD( I, edges, parGmask, [weightMask], [multch] )
+%  hs = histc_sift_nD( I, edges, parGmask, [weightMask], [multCh] )
 %
 % INPUTS
 %  I           - M1xM2x...xMkxnd array, (nd channels each of M1xM2x...xMk)
 %  edges       - parameter to histc_nD, either scalar, vector, or cell vec
 %  parGmask    - cell of parameters to maskGaussians
 %  weightMask  - [] M1xM2x...xMk numeric array of weights
-%  multch      - [1] if 0 this becomes same as histc_sift.m (nd==1)
+%  multCh      - [1] if 0 this becomes same as histc_sift.m (nd==1)
 %
 % OUTPUTS
 %  hs          - histograms (array of size nmasks x nbins)
@@ -36,14 +36,14 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function hs = histc_sift_nD( I, edges, parGmask, weightMask, multch )
+function hs = histc_sift_nD( I, edges, parGmask, weightMask, multCh )
 
 if( nargin<4 ); weightMask=[]; end;
-if( nargin<5 ); multch=1; end;
+if( nargin<5 ); multCh=1; end;
 
 % set up for either multiple channels or 1 channel
 siz = size(I); nd=ndims(I);
-if( multch )
+if( multCh )
   nch=siz(end); siz=siz(1:end-1); nd=nd-1;
 else
   nch=1;

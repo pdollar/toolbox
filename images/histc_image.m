@@ -20,19 +20,19 @@
 %  I           - Array with integer values [see above]
 %  edges       - either nbins+1 vec of quantization bounds, or scalar nbins
 %  weightMask  - numeric array of weights, or cell array of sep kernels
-%  shape       - ['full'] 'valid', 'full', 'same', or 'smooth'
+%  shape       - ['full'], 'valid', 'same', or 'smooth'
 %
 % OUTPUTS
 %  HS          - ~size(I)xQ array where each ~size(I) elt is a Q elem hist
 %                (~size(I) because depends on val of shape)
 %
 % EXAMPLE
-%  load trees;
-%  L = conv2(X, filterDog2d(10,4,1,0), 'valid' );
-%  f1=filterGauss(25,[],25);  HS1 = histc_image( L, 15, {f1,f1'}, 'same' );
-%  f2=ones(1,15);             HS2 = histc_image( L, 15, {f2,f2'}, 'same' );
-%  figure(1); im(X); figure(2); im(L);   figure(3); montage2(HS1,1,1);
-%  figure(4); montage2(HS2,1,1);         figure(5); montage2(HS1-HS2,1,1);
+%  load trees;  L=conv2(X, filterDog2d(10,4,1,0), 'valid' );
+%  f1=filterGauss(25,[],25);  HS1=histc_image( L, 15, {f1,f1'}, 'same' );
+%  f2=ones(1,15);             HS2=histc_image( L, 15, {f2,f2'}, 'same' );
+%  figure(1); im(L);
+%  figure(2); montage2(HS1,1,1);
+%  figure(3); montage2(HS2,1,1);
 %
 % See also ASSIGN2BINS, HISTC_1D
 
@@ -62,5 +62,5 @@ for i=1:length(weightMask)
   weightMaski = weightMaski / sum(weightMaski(:));
   HS = convnFast( HS, weightMaski, shape );
 end;
-    
+
 
