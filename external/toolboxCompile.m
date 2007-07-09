@@ -18,15 +18,16 @@
 % Please email me if you find bugs, or have suggestions or questions!
 
 dir = 'classify/private/';
-mex([dir 'meanShift1.c'],        '-outdir', dir );
+mex([dir 'meanShift1.c'],           '-outdir', dir );
 
 dir = 'images/private/';
-mex([dir 'assignToBins1.c'],     '-outdir', dir );
-mex([dir 'histc2c.c'],           '-outdir', dir );
-mex([dir 'maskEllipse1.c'],      '-outdir', dir );
-mex([dir 'nlfilter_max.c'],      '-outdir', dir );
-mex([dir 'nlfilter_sum.c'],      '-outdir', dir );
-mex([dir 'nlfilter_blocksum.c'], '-outdir', dir );
+mex([dir 'assignToBins1.c'],        '-outdir', dir );
+mex([dir 'histc2c.c'],              '-outdir', dir );
+mex([dir 'maskEllipse1.c'],         '-outdir', dir );
+mex([dir 'nlfiltersep_max.c'],      '-outdir', dir );
+mex([dir 'nlfiltersep_sum.c'],      '-outdir', dir );
+mex([dir 'nlfiltersep_blocksum.c'], '-outdir', dir );
 
+% requires c++ compiler
 dir = 'external/dijkstra/private/';
-mex([dir 'fibheap.cpp'],         '-outdir', dir );
+mex([dir 'fibheap.cpp'],            '-outdir', dir );
