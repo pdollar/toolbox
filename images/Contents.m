@@ -17,33 +17,33 @@
 %
 % Histograms:
 %   assignToBins   - Quantizes A according to values in edges.
-%   histc2         - Multidimensional histogram count with allows weighted values.
-%   histcIm        - Calculates histograms at every point in an array I.
-%   histcImLoc    - Creates a series of locally position dependent histograms.
+%   histc2         - Multidimensional histogram count with weighted values.
+%   histcIm        - Calculates local histograms at every point in an array I.
+%   histcImLoc     - Creates a series of locally position dependent histograms.
 %   histmontage    - Used to display multiple 1D histograms.
 %
-% Generalized correlation: PPD
+% Generalized correlation:
 %   normxcorrn     - Normalized n-dimensional cross-correlation.
 %   xcorrn         - n-dimensional cross-correlation.  Generalized version of xcorr2.
 %   xeucn          - n-dimensional euclidean distance between each window in A and template T.
 %
-% Image deformation: PPD
+% Image deformation:
 %   imNormalize    - Various ways to normalize a (multidimensional) image.
 %   imShrink       - Used to shrink a multidimensional array I by integer amount.
 %   imtransform2   - Applies a general/special homography on an image I
 %   textureMap     - Maps texture in I according to rowDst and colDst.
 %
-% Generalized nonmaximal suppression: PPD
+% Generalized nonmaximal suppression:
 %   nonMaxSupr     - Applies nonmaximal suppression on an image of arbitrary dimension.
 %   nonMaxSuprList - Applies nonmaximal suppression to a list.
 %   nonMaxSuprWin  - Nonmaximal suppression of values outside of a given window.
 %
-% Optical Flow: PPD
+% Optical Flow:
 %   optFlowCorr    - Calculate optical flow using cross-correlation.
 %   optFlowHorn    - Calculate optical flow using Horn & Schunck.
 %   optFlowLk      - Calculate optical flow using Lucas & Kanade.  Fast, parallel code.
 %
-% Miscellaneous: PPD
+% Miscellaneous:
 %   convnFast      - Fast convolution, replacement for both conv2 and convn.
 %   gaussSmooth    - Applies Gaussian smoothing to a (multidimensional) image.
 %   imageMlGauss   - Calculates max likelihood params of Gaussian that gave rise to image G.

@@ -13,7 +13,7 @@
 % EXAMPLE
 %  h = histc2( randn(2000,1), 20 )'; clf; histmontage([h; h]);
 %
-% See also HISTC, HISTC2, FILTERGAUSS
+% See also HISTC, HISTC2
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

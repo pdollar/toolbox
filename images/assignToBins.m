@@ -1,25 +1,27 @@
 % Quantizes A according to values in edges.
 %
-% assignToBins replaces each value in A with a value between [0,nbins] where
-% nbins=length(edges)-1.  edges must be a vector of monotonically
+% assignToBins replaces each value in A with a value between [0,nBins] where
+% nBins=length(edges)-1.  edges must be a vector of monotonically
 % increasing values.  Each element v in A gets converted to a discrete
-% value q such that edges(q)<=v< edges(q+1). If v==edges(end) then q=nbins.
-% If v does not fall into any bin, then q=0.
-%
-% See histc2 for more details about edges and nbins.
+% value q such that edges(q)<=v< edges(q+1). If v==edges(end) then q=nBins.
+% If v does not fall into any bin, then q=0. See histc2 for more details
+% about edges.  For even spaced edges can get away with rounding A
+% appropriately, see example below.
 %
 % USAGE
 %  B = assignToBins( A, edges )
 %
 % INPUTS
 %  A      - numeric array of arbitrary dimension
-%  edges  - either nbins+1 vector of quantization bounds, or scalar nbins
+%  edges  - quantization bounds, see histc2
 %
 % OUTPUTS
-%  B      - size(A) array of quantization levels, ints between [0,nbins]
+%  B      - size(A) array of quantization levels, ints between [0,nBins]
 %
 % EXAMPLE
-%  A = rand(5,5), B = assignToBins(A,[0:.1:1])
+%  A = rand(5,5);
+%  B1 = assignToBins(A,[0:.1:1]);
+%  B2 = ceil(A*10); B1-B2
 %
 % See also HISTC2
 
@@ -31,7 +33,7 @@ function B = assignToBins( A, edges )
 
 if(~isa(A,'double')); A = double(A); end;
 
-if( length(edges)==1 )  % if nbins given instead of edges calculate edges
+if( length(edges)==1 )  % if nBins given instead of edges calculate edges
   edges = linspace( min(A(:))-eps, max(A(:))+eps, edges+1 ); end;
 
 B = assignToBins1( A, edges );  % assign bin number

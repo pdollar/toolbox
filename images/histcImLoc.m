@@ -17,41 +17,42 @@
 % If nd==1, histcImLoc creates a 1D histogram using histc2.  More
 % generally, histcImLoc creates an nd dimensional histogram (again using
 % hist2c).  histcImLoc creates nMasks (number of masks) histgorams, each
-% which have dimension nbins^nd.  So if nd==1 the output of his function is
-% [nBins x nMasks], and for example if nd==2 the output is [nBins x nBins x
-% nMasks].  If nd is large computing the histograms is time consuming.
+% which have dimension nBins^nd.  So if nd==1 the output of this function
+% is [nBins x nMasks], and for example if nd==2 the output is [nBins x
+% nBins x nMasks].  If nd is large computing the histograms is time
+% consuming.
 %
 % USAGE
-%  hs = histcImLoc( I, edges, parMask, [wtMask], [multCh] )
+%  h = histcImLoc( I, edges, parMask, [wtMask], [multCh] )
 %
 % INPUTS
 %  I           - M1xM2x...xMkxnd array, (nd channels each of M1xM2x...xMk)
-%  edges       - parameter to histc2, either scalar, vector, or cell vec
+%  edges       - quantization bounds, see histc2
 %  parMask     - cell of parameters to maskGaussians
 %  wtMask      - [] M1xM2x...xMk numeric array of weights
 %  multCh      - [0] if 1 last dimension of I is number of channels
 %
 % OUTPUTS
-%  hs          - nd-histograms [nBins^nd x nMasks]
+%  h           - nd-histograms [nBins^nd x nMasks]
 %
 % EXAMPLE - multCh==0
 %  I = filterGauss([100 100],[],[],0);
-%  hs = histcImLoc(I,10,{2,.6,.1,1},[],0); 
-%  figure(3); im(hs)
+%  h = histcImLoc(I,10,{2,.6,.1,1},[],0);
+%  figure(3); im(h)
 %
 % EXAMPLE - multCh==1
 %  I = filterGauss([100 100],[],[],0);
-%  hs1 = histcImLoc( cat(3,I,I), 10, {2,.6,.1,0},[],1);
-%  hs2 = histcImLoc( cat(3,I,randn(size(I))),10,{2,.6,.1,0},[],1);
-%  figure(1); montage2(hs1,1);  figure(2); montage2(hs2,1);
+%  h1 = histcImLoc( cat(3,I,I), 10, {2,.6,.1,0},[],1);
+%  h2 = histcImLoc( cat(3,I,randn(size(I))),10,{2,.6,.1,0},[],1);
+%  figure(1); montage2(h1,1);  figure(2); montage2(h2,1);
 %
-% See also HISTC2, HISTC_SIFT, MASKGAUSSIANS
+% See also HISTC2, MASKGAUSSIANS, ASSIGNTOBINS, HISTCIM
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function hs = histcImLoc( I, edges, parMask, wtMask, multCh )
+function h = histcImLoc( I, edges, parMask, wtMask, multCh )
 
 if( nargin<4 ); wtMask=[]; end;
 if( nargin<5 ); multCh=0; end;
@@ -80,7 +81,7 @@ keepLocs = reshape( keepLocs, [], nMasks );
 fsmooth = [0.0003 0.1065 0.7866 0.1065 0.0003]; %$P: gauss w std==.5
 
 % create all the histograms
-inds={':'};  indshs=inds(:,ones(1,nch));
+inds={':'};  indsh=inds(:,ones(1,nch));
 for m=1:nMasks
   % remove locations not contributing to minimze work for histc
   keepLocsi = keepLocs(:,m);
@@ -88,23 +89,23 @@ for m=1:nMasks
   Ii = reshape( I(repmat(keepLocsi,[1,nch])), [], nch );
 
   % create histograms
-  h = histc2( Ii, edges, maski );
+  hi = histc2( Ii, edges, maski );
 
   % smooth [if nch==1 or 2 do locally for speed, if nch>3 too slow]
   if( nch==1 )
-    h = conv2( h, fsmooth, 'same' );
+    hi = conv2( hi, fsmooth, 'same' );
   elseif( nch==2 )
-    h = conv2( h, fsmooth', 'same' );
-    h = conv2( h, fsmooth , 'same' );
+    hi = conv2( hi, fsmooth', 'same' );
+    hi = conv2( hi, fsmooth , 'same' );
   elseif( nch==3 )
-    h = gaussSmooth( h, .5, 'same', 2.5 );
+    hi = gaussSmooth( hi, .5, 'same', 2.5 );
   end;
-  if( nch<=3 ); h=h/sum(h(:));  end;
+  if( nch<=3 ); hi=hi/sum(hi(:));  end;
 
   % store results
   if( m==1 )
-    hs=repmat(h, [ones(1,nch), nMasks] );
+    h=repmat(hi, [ones(1,nch), nMasks] );
   else
-    hs(indshs{:},m) = h;
+    h(indsh{:},m) = hi;
   end
 end
