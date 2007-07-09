@@ -34,7 +34,7 @@
 %  figure(2); montage2(HS1,1,1);
 %  figure(3); montage2(HS2,1,1);
 %
-% See also ASSIGN2BINS, HISTC2
+% See also ASSIGNTOBINS, HISTC2
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -46,7 +46,7 @@ if( nargin<4 || isempty(shape) ); shape = 'full';  end;
 if( ~iscell(weightMask) ); weightMask={weightMask}; end;
 
 % split I into channels
-I = assign2bins( I, edges );
+I = assignToBins( I, edges );
 nbins=length(edges)-1; if(nbins==0); nbins=edges; end;
 nd = ndims(I); siz=size(I);  maxI = max(I(:));
 if( nd==2 && siz(2)==1); nd=1; siz=siz(1); end;

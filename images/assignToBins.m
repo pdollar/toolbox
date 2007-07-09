@@ -1,6 +1,6 @@
 % Quantizes A according to values in edges.
 %
-% assign2bins replaces each value in A with a value between [0,nbins] where
+% assignToBins replaces each value in A with a value between [0,nbins] where
 % nbins=length(edges)-1.  edges must be a vector of monotonically
 % increasing values.  Each element v in A gets converted to a discrete
 % value q such that edges(q)<=v< edges(q+1). If v==edges(end) then q=nbins.
@@ -9,7 +9,7 @@
 % See histc2 for more details about edges and nbins.
 %
 % USAGE
-%  B = assign2bins( A, edges )
+%  B = assignToBins( A, edges )
 %
 % INPUTS
 %  A      - numeric array of arbitrary dimension
@@ -19,7 +19,7 @@
 %  B      - size(A) array of quantization levels, ints between [0,nbins]
 %
 % EXAMPLE
-%  A = rand(5,5), B = assign2bins(A,[0:.1:1])
+%  A = rand(5,5), B = assignToBins(A,[0:.1:1])
 %
 % See also HISTC2
 
@@ -27,14 +27,14 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function B = assign2bins( A, edges )
+function B = assignToBins( A, edges )
 
 if(~isa(A,'double')); A = double(A); end;
 
 if( length(edges)==1 )  % if nbins given instead of edges calculate edges
   edges = linspace( min(A(:))-eps, max(A(:))+eps, edges+1 ); end;
 
-B = assign2binsc( A, edges );   % assign bin number
+B = assignToBins1( A, edges );  % assign bin number
 B = B + 1;                      % convert to 1 indexed
 B = reshape( B, size(A) );      % resize B to have correct shape
 B( B==(length(edges)) ) = 0;    % vals outside or range get bin 0

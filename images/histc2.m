@@ -43,7 +43,7 @@
 %  h=histc2( [A A], 25, A ); figure(2); im(h); % constant along diag
 %  h=histc2( [randn(size(A)) A], 5 ); figure(3); im(h); % roughly symmetric
 %
-% See also HISTC, ASSIGN2BINS, BAR
+% See also HISTC, ASSIGNTOBINS, BAR
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -69,7 +69,7 @@ if( nd==1 )
     h(end-1) = h(end-1)+h(end);
     h = h(1:end-1); h = h / sum(h);
   else
-    h = histc_nD_c( A, wtMask, edges );
+    h = histc2c( A, wtMask, edges );
     h = h / sum(h);
   end
 
@@ -88,7 +88,7 @@ else
 
   % create multidimensional histogram
   if( isempty(wtMask) ); wtMask=ones(1,n); end;
-  h = histc_nD_c( A, wtMask, edges{:} );
+  h = histc2c( A, wtMask, edges{:} );
   h = h / sum(h(:));
 end
 
