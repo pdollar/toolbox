@@ -1,7 +1,7 @@
 % Apply a k-nearest neighbor classifier to X.
 %
 % USAGE
-%  Y = clf_knn_fwd( clf, X )
+%  Y = clfKnnFwd( clf, X )
 %
 % INPUTS
 %  clf     - trained model
@@ -12,13 +12,13 @@
 %
 % EXAMPLE
 %
-% See also CLF_KNN, CLF_KNN_TRAIN
+% See also CLFKNN, CLFKNNTRAIN
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function Y = clf_knn_fwd( clf, X )
+function Y = clfKnnFwd( clf, X )
 
 if( ~strcmp(clf.type,'knn')); error( ['incorrect type: ' clf.type] ); end
 if( size(X,2)~= clf.p ); error( 'Incorrect data dimension' ); end
@@ -30,4 +30,4 @@ k = clf.k;
 
 % get nearest neighbors for each X point
 D = pdist2( X, Xtrain, metric );
-Y = clf_knn_dist( D, Ytrain, k );
+Y = clfKnnDist( D, Ytrain, k );

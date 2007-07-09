@@ -1,7 +1,7 @@
 % Apply the decision tree to data X.
 %
 % USAGE
-%  Y = clf_dectree_fwd( clf, X )
+%  Y = clfDecTreeFwd( clf, X )
 %
 % INPUTS
 %  clf     - trained model
@@ -12,13 +12,13 @@
 %
 % EXAMPLE
 %
-% See also CLF_DECTREE
+% See also CLFDECTREE
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function Y = clf_dectree_fwd( clf, X )
+function Y = clfDecTreeFwd( clf, X )
 
 if(~strcmp(clf.type,'dectree')); error( ['incor. type: ' clf.type] ); end;
 if( size(X,2)~= clf.p ); error( 'Incorrect data dimension' ); end;

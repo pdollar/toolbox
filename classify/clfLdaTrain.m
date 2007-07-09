@@ -1,7 +1,7 @@
 % Train a Linear Discriminant Analysis (LDA) classifier.
 %
 % USAGE
-%  clf = clf_lda_train( clf, X, Y )
+%  clf = clfLdaTrain( clf, X, Y )
 %
 % INPUTS
 %  clf     - model to be trained
@@ -9,23 +9,23 @@
 %  Y       - nx1 array of labels (or cell array, see classify.m)
 %
 % OUTPUTS
-%  clf     - a trained clf_LDA model
+%  clf     - a trained LDA model
 %
 % EXAMPLE
 %
-% See also CLF_LDA, CLF_LDA_FWD
+% See also CLFLDA, CLFLDAFWD
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function clf = clf_lda_train( clf, X, Y )
+function clf = clfLdaTrain( clf, X, Y )
 
 if( ~strcmp(clf.type,'lda')); error( ['incorrect type: ' clf.type] ); end
 if( size(X,2)~= clf.p ); error( 'Incorrect data dimension' ); end
 
 %er = consist( clf, , X );  error(er);
-prior = clf.prior;  type = clf.clf_lda_type;
+prior = clf.prior;  type = clf.clfLda_type;
 
 % grp2idx sorts a numeric grouping var ascending, and a string grouping
 % var by order of first occurrence

@@ -1,7 +1,7 @@
 % Train a decision tree classifier.
 %
 % USAGE
-%  clf = clf_dectree_train( clf, X, Y )
+%  clf = clfDecTreeTrain( clf, X, Y )
 %
 % INPUTS
 %  clf     - model to be trained
@@ -9,17 +9,17 @@
 %  Y       - nx1 array of labels
 %
 % OUTPUTS
-%  clf     - a trained binary clf_LDA clf
+%  clf     - a trained binary decision tree clf
 %
 % EXAMPLE
 %
-% See also CLF_DECTREE
+% See also CLFDECTREE
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function clf = clf_dectree_train( clf, X, Y )
+function clf = clfDecTreeTrain( clf, X, Y )
 
 if(~strcmp(clf.type,'dectree')); error( ['incor. type: ' clf.type] ); end
 if( size(X,2)~= clf.p ); error( 'Incorrect data dimension' ); end

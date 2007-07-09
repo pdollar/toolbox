@@ -9,11 +9,11 @@
 %  1) To initialize the clf ('p' is the dimension of the data):
 %     clf = clfinit( p, clfparams{:} )
 %  2) clf must point to 2 functions for training and applying it:
-%     clf.fun_train    and   clf.fun_fwd
+%     clf.funTrain    and   clf.funFwd
 %  3) For training the following will be called:
-%     clf = clf.fun_train( clf, X, Y );
+%     clf = clf.funTrain( clf, X, Y );
 %  4) For testing the following will be called:
-%     pred = clf.fun_fwd( clf, Xtest );
+%     pred = clf.funFwd( clf, Xtest );
 % The format for X is nxp where there are n data points and p is their
 % dimension. The format for Y is nx1.
 %
@@ -47,16 +47,16 @@
 % EXAMPLE
 %  load clfData;
 %  %%% 2 class
-%  nfoldxval( data, IDX, @clf_lda,{'linear'}, [],[],[],1 );   % LDA
-%  nfoldxval( data, IDX, @clf_knn,{4},[],[],[],2 );           % 4 kNN
-%  nfoldxval( data, IDX, @clf_svm,{'poly',2},[],[],[],3 );    % poly SVM
-%  nfoldxval( data, IDX, @clf_svm,{'rbf',2^-12},[],[],[],4 ); % rbf SVM
-%  nfoldxval( data, IDX, @clf_dectree,{},[],[],[],5 );        % dec. tree
+%  nfoldxval( data, IDX, @clfLda,{'linear'}, [],[],[],1 );   % LDA
+%  nfoldxval( data, IDX, @clfKnn,{4},[],[],[],2 );           % 4 kNN
+%  nfoldxval( data, IDX, @clfSvm,{'poly',2},[],[],[],3 );    % poly SVM
+%  nfoldxval( data, IDX, @clfSvm,{'rbf',2^-12},[],[],[],4 ); % rbf SVM
+%  nfoldxval( data, IDX, @clfDecTree,{},[],[],[],5 );        % dec. tree
 %  %%% multiclass
-%  clfparams = {@clf_svm,{'rbf',2^-12},nclasses};
-%  nfoldxval( data, IDX, @clf_ecoc,clfparams,[],[],[],6 );    % ECOC
+%  clfparams = {@clfSvm,{'rbf',2^-12},nclasses};
+%  nfoldxval( data, IDX, @clfEcoc,clfparams,[],[],[],6 );    % ECOC
 %
-% See also CLF_LDA, CLF_KNN, CLF_SVM, CLF_ECOC, DEMOCLASSIFY
+% See also CLFKNN, CLFLDA, CLFSVM, CLFECOC, CLFDECTREE, DEMOCLASSIFY
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -157,8 +157,8 @@ for testind = 1:nsets
 
   % learn a classifier on train and classify test
   clf = feval( clfinit, p, clfparams{:} );
-  clf = feval( clf.fun_train, clf, train, trainIDX );
-  testIDXpred = feval( clf.fun_fwd, clf, test );
+  clf = feval( clf.funTrain, clf, train, trainIDX );
+  testIDXpred = feval( clf.funFwd, clf, test );
   CMi = confMatrix( testIDX, testIDXpred, ntypes );
   CM = CM + CMi;
 end

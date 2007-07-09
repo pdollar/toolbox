@@ -1,7 +1,7 @@
 % Apply the Linear Discriminant Analysis (LDA) classifier to data X.
 %
 % USAGE
-%  Y = clf_lda_fwd( clf, X )
+%  Y = clfLdaFwd( clf, X )
 %
 % INPUTS
 %  clf     - trained model
@@ -12,19 +12,19 @@
 %
 % EXAMPLE
 %
-% See also CLF_LDA, CLF_LDA_TRAIN
+% See also CLFLDA, CLFLDATRAIN
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function Y = clf_lda_fwd( clf, X )
+function Y = clfLdaFwd( clf, X )
 
 if( ~strcmp(clf.type,'lda')); error( ['incorrect type: ' clf.type] ); end
 if( size(X,2)~= clf.p ); error( 'Incorrect data dimension' ); end
 
 %%% get clf settings
-type = clf.clf_lda_type;
+type = clf.clfLda_type;
 prior = clf.prior;
 gmeans = clf.gmeans;
 gtype = clf.gtype;

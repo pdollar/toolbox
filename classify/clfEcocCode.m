@@ -1,7 +1,7 @@
 % Generates optimal ECOC codes when 3<=nclasses<=7.
 %
 % USAGE
-%  [C,nbits] = clf_ecoc_code( k )
+%  [C,nbits] = clfEcocCode( k )
 %
 % INPUTS
 %  k      - number of classes
@@ -12,13 +12,13 @@
 %
 % EXAMPLE
 %
-% See also CLF_ECOC
+% See also CLFECOC
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [C,nbits] = clf_ecoc_code( k )
+function [C,nbits] = clfEcocCode( k )
 
 if( k<3 || k>7 )
   error( 'method only works if k is small: 3<=k<=7'); end

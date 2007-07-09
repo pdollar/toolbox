@@ -3,7 +3,7 @@
 % Requires the SVM toolbox by Anton Schwaighofer.
 %
 % USAGE
-%  net = clf_svm(varargin)
+%  net = clfSvm(varargin)
 %
 % INPUTS
 %  see svm in SVM toolbox by Anton Schwaighofer.
@@ -19,8 +19,8 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function net = clf_svm(varargin)
+function net = clfSvm(varargin)
 
 net = svm( varargin{:} );
-net.fun_train = @svmtrain;
-net.fun_fwd = @svmfwd;
+net.funTrain = @svmtrain;
+net.funFwd = @svmfwd;

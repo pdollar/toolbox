@@ -3,7 +3,7 @@
 % k==1 is much faster than k>1.  For k>1, ties are broken randomly.
 %
 % USAGE
-%  IDXpred = clf_knn_dist( D, IDX, k )
+%  IDXpred = clfKnnDist( D, IDX, k )
 %
 % INPUTS
 %  D       - MxN array of distances from M-TEST points to N-TRAIN points.
@@ -15,16 +15,16 @@
 %
 % EXAMPLE
 %  % (given D and IDX)
-%  for k=1:size(D,2) err(k)=sum(IDX==clf_knn_dist(D,IDX,k)); end;
+%  for k=1:size(D,2) err(k)=sum(IDX==clfKnnDist(D,IDX,k)); end;
 %  figure(1); plot(err)
 %
-% See also CLF_KNN
+% See also CLFKNN
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function IDXpred = clf_knn_dist( D, IDX, k )
+function IDXpred = clfKnnDist( D, IDX, k )
 
 if( nargin<3 || isempty(k) );  k=1;  end
 

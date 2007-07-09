@@ -3,7 +3,7 @@
 % Requires the SVM toolbox by Anton Schwaighofer.
 %
 % USAGE
-%  clf = clf_ecoc(p,clfinit,clfparams,nclasses,use01targets)
+%  clf = clfEcoc(p,clfinit,clfparams,nclasses,use01targets)
 %
 % INPUTS
 %  p               - data dimension
@@ -17,20 +17,20 @@
 %
 % EXAMPLE
 %
-% See also ECOC, NFOLDXVAL, CLF_ECOC_CODE
+% See also ECOC, NFOLDXVAL, CLFECOCCODE
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function clf = clf_ecoc(p,clfinit,clfparams,nclasses,use01targets)
+function clf = clfEcoc(p,clfinit,clfparams,nclasses,use01targets)
 
 if( nclasses<3 || nclasses>7 )
   error( 'currently only works if 3<=nclasses<=7'); end;
 if( nargin<5 || isempty(use01targets)); use01targets=0; end;
 
 % create code (limited for now)
-[C,nbits] = clf_ecoc_code( nclasses );
+[C,nbits] = clfEcoc_code( nclasses );
 clf = ecoc(nclasses, nbits, C, use01targets  ); % didn't use to pass use01?
 clf.verbosity = 0; % don't diplay output
 
@@ -38,10 +38,11 @@ clf.verbosity = 0; % don't diplay output
 clf.templearner = feval( clfinit, p, clfparams{:} );
 
 % ecoctrain2 is custom version of ecoctrain
-clf.fun_train = @clf_ecoctrain;
-clf.fun_fwd = @ecocfwd;
+clf.funTrain = @clfEcocTrain;
+clf.funFwd = @ecocfwd;
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function clf = clf_ecoctrain( clf, varargin )
+function clf = clfEcocTrain( clf, varargin )
+
 clf = ecoctrain( clf, clf.templearner, varargin{:} );

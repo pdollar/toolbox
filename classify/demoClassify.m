@@ -1,4 +1,4 @@
-% A demo used to test and demonstrate the usage of classifiers (clf_*)
+%DEMOCLASSIFY A demo used to test and demonstrate the usage of classifiers (clf*)
 %
 % To change the demo parameters alter this function. Note that the
 % visualization of the train and test data may look different due to
@@ -14,7 +14,7 @@
 % EXAMPLE
 %  demoClassify
 %
-% See also CLF_KNN, CLF_LDA, CLF_SVM, CLF_ECOC, VISUALIZEDATA
+% See also CLFKNN, CLFLDA, CLFSVM, CLFECOC, CLFDECTREE, VISUALIZEDATA
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -36,23 +36,23 @@ end;
 %%% initialize learners:
 nnets=0; labels={};
 if(1); nnets=nnets+1; % linear LDA
-  nets{nnets}.func_netinit = @clf_lda;
-  nets{nnets}.netparams={'linear'};
+  nets{nnets}.funNetInit = @clfLda;
+  nets{nnets}.netPrms={'linear'};
   labels{nnets} = 'linear LDA';
 end
 if(1); nnets=nnets+1; % quadratic LDA
-  nets{nnets}.func_netinit = @clf_lda;
-  nets{nnets}.netparams={'quadratic'};
+  nets{nnets}.funNetInit = @clfLda;
+  nets{nnets}.netPrms={'quadratic'};
   labels{nnets} = 'quadratic LDA';
 end
 if(1); nnets=nnets+1; % kNN 5
-  nets{nnets}.func_netinit = @clf_knn;
-  nets{nnets}.netparams={5};
+  nets{nnets}.funNetInit = @clfKnn;
+  nets{nnets}.netPrms={5};
   labels{nnets} = 'kNN 5';
 end
 if(0); nnets=nnets+1; % svm ecoc [VERY SLOW]
-  nets{nnets}.func_netinit = @clf_ecoc;
-  nets{nnets}.netparams={@clf_svm,{'rbf',2^-1},nClasses};
+  nets{nnets}.funNetInit = @clfEcoc;
+  nets{nnets}.netPrms={@clfSvm,{'rbf',2^-1},nClasses};
   labels{nnets} = 'ecoc svm-rbf';
 end
 
@@ -60,9 +60,9 @@ end
 pred = zeros( nTst, nnets );
 for i=1:nnets
   disp(['training ' labels{i} ' classifier']);
-  net = feval( nets{i}.func_netinit, d, nets{i}.netparams{:} );
-  net = feval( net.fun_train, net, trnData, trnIDX );
-  pred(:,i) = feval( net.fun_fwd, net, tstData );
+  net = feval( nets{i}.funNetInit, d, nets{i}.netPrms{:} );
+  net = feval( net.funTrain, net, trnData, trnIDX );
+  pred(:,i) = feval( net.funFwd, net, tstData );
   ncorrect = length(find(tstIDX==pred(:,i)));
   fprintf(['Classification result for ' labels{i} ...
     ':\n%i out of %i correct\n\n'], ncorrect, nTst);

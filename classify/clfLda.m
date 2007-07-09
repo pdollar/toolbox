@@ -6,7 +6,7 @@
 % classify.m 
 %
 % USAGE
-%  clf = clf_lda( p, [type], [prior] )
+%  clf = clfLda( p, [type], [prior] )
 %
 % INPUTS
 %  p       - data dimension
@@ -14,17 +14,17 @@
 %  prior   - [] prior to use 
 % 
 % OUTPUTS
-%  clf     - an clf_LDA model ready to be trained (see clf_lda_train)
+%  clf     - an LDA model ready to be trained (see clfLdaTrain)
 %
 % EXAMPLE
 %
-% See also NFOLDXVAL, CLASSIFY, CLF_LDA_TRAIN, CLF_LDA_FWD
+% See also NFOLDXVAL, CLASSIFY, CLFLDATRAIN, CLFLDAFWD
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function clf = clf_lda( p, type, prior )
+function clf = clfLda( p, type, prior )
 
 if( nargin<3 ); prior=[]; end
 
@@ -43,10 +43,10 @@ else
   error('TYPE must be a string.'); 
 end
 
-%%% save clf_lda parameters
+%%% save clfLda parameters
 clf.prior = prior;
 clf.p = p;
 clf.type = 'lda';
-clf.clf_lda_type = type;
-clf.fun_train = @clf_lda_train;
-clf.fun_fwd = @clf_lda_fwd;    
+clf.clfLda_type = type;
+clf.funTrain = @clfLdaTrain;
+clf.funFwd = @clfLdaFwd;    
