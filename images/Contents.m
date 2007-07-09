@@ -27,7 +27,7 @@
 % Generalized correlation: PPD
 %   normxcorrn          - Normalized n-dimensional cross-correlation.
 %   xcorrn              - n-dimensional cross-correlation.  Generalized version of xcorr2.
-%   xeucn               - n-dimensional euclidean distance between each window in A and template T
+%   xeucn               - n-dimensional euclidean distance between each window in A and template T.
 %
 % Image deformation:
 %   imNormalize         - Various ways to normalize a (multidimensional) image.
