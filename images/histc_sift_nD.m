@@ -7,16 +7,16 @@
 % I is an M1xM2x...xMkxnd array, it consists of nd channels each of
 % dimension (M1xM2x...xMk).  histc_sift_nD works by dividing a
 % (M1xM2x...xMk) array into seperate regions and creating a 1D histogram
-% for each using histc_1D.  histc_sift_nD does the same thing except each
+% for each using histc2.  histc_sift_nD does the same thing except each
 % region now has multiple channels, and an nd-dimensional histogram is
-% created for each using histc_nD.
+% created for each using histc2.
 %
 % USAGE
 %  hs = histc_sift_nD( I, edges, parGmask, [weightMask], [multCh] )
 %
 % INPUTS
 %  I           - M1xM2x...xMkxnd array, (nd channels each of M1xM2x...xMk)
-%  edges       - parameter to histc_nD, either scalar, vector, or cell vec
+%  edges       - parameter to histc2, either scalar, vector, or cell vec
 %  parGmask    - cell of parameters to maskGaussians
 %  weightMask  - [] M1xM2x...xMk numeric array of weights
 %  multCh      - [1] if 0 this becomes same as histc_sift.m (nd==1)
@@ -30,7 +30,7 @@
 %  hs2 = histc_sift_nD( cat(3,G,randn(size(G))),5,{2,.6,.1,0});
 %  figure(1); montage2(hs1,1);  figure(2); montage2(hs2,1);
 %
-% See also HISTC_1D, HISTC_SIFT, MASKGAUSSIANS, HISTC_ND
+% See also HISTC2, HISTC_SIFT, MASKGAUSSIANS
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -74,9 +74,9 @@ for m=1:nmasks
 
   % create histograms
   if( nch==1 )
-    h = squeeze(histc_1D( Ii, edges, maski ));
+    h = squeeze(histc2( Ii(:), edges, maski(:) ));
   else
-    h = histc_nD( Ii, edges, maski );
+    h = histc2( Ii, edges, maski );
   end;
 
   % smooth [if nch==1 or 2 do locally for speed]

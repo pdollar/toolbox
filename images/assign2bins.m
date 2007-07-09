@@ -6,7 +6,7 @@
 % value q such that edges(q)<=v< edges(q+1). If v==edges(end) then q=nbins.
 % If v does not fall into any bin, then q=0.
 %
-% See histc_1D for more details about edges and nbins.
+% See histc2 for more details about edges and nbins.
 %
 % USAGE
 %  B = assign2bins( A, edges )
@@ -21,7 +21,7 @@
 % EXAMPLE
 %  A = rand(5,5), B = assign2bins(A,[0:.1:1])
 %
-% See also HISTC_1D
+% See also HISTC2
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

@@ -26,7 +26,7 @@
 %  G = filterGauss([100 100],[],[],0);
 %  hs = histc_sift( G, 5, {2,.6,.1,0} ); figure(1); im(hs)
 %
-% See also HISTC_1D, MASKGAUSSIANS, HISTC_SIFT_ND
+% See also HISTC2, MASKGAUSSIANS, HISTC_SIFT_ND
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

@@ -18,21 +18,21 @@
 % See histc_1D for more details about edges and nbins.
 %
 % USAGE
-%  h = histc_nD( A, edges, [weightMask] )
+%  h = histc_nD( A, edges, [wtMask] )
 %
 % INPUTS
 %  A           - 2D numeric array [n x nd]
 %  edges       - either nbins+1 vec of quantization bounds, or scalar nbins
-%  weightMask  - [] n length vector of weights
+%  wtMask      - [] n length vector of weights
 %
 % OUTPUTS
 %  h           - histogram (array of size nbins1xnbins2x...)
 %
 % EXAMPLE
-%  G = filterGauss([1000 1000],[],[],0); G=G(:);
-%  h=histc_nD( [G G], 25 ); figure(1); im(h); %decreasing vals along diag
-%  h=histc_nD( [G G], 25, G ); figure(2); im(h); %constants along diag
-%  h=histc_nD( [randn(size(G)) G], 5 ); figure(3); im(h); % symmetric
+%  A = filterGauss([1000 1000],[],[],0); A=A(:);
+%  h=histc_nD( [A A], 25 ); figure(1); im(h); %decreasing vals along diag
+%  h=histc_nD( [A A], 25, A ); figure(2); im(h); %constants along diag
+%  h=histc_nD( [randn(size(A)) A], 5 ); figure(3); im(h); % symmetric
 %
 % See also HISTC_1D
 
@@ -40,22 +40,22 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function h = histc_nD( A, edges, weightMask )
-
-if (nargin<3), weightMask=[]; end;
-if( ~isa(A,'double') ); A=double(A); end;
+function h = histc_nD( A, edges, wtMask )
 
 [n nd] = size(A);
+
+if( nargin<3 ); wtMask=[]; end;
+if( ~isa(A,'double') ); A=double(A); end;
+if( ~isempty(wtMask) && n~=numel(wtMask) )
+  error( 'wtMask must have n elements (A is nxnd)' ); end
+
 if( ~iscell(edges ) )
   edges=repmat({edges},[1 nd]);
 elseif( length(edges)~=nd )
   error( 'Illegal dimensions for edges' );
 end
-if( ~isempty(weightMask) && length(weightMask)~=n )
-  error( 'Illegal dimensions for weightMask' ); end
 
 % if nbins given instead of edges calculate edges
-% minI = min(A,[],1); maxI = max(A,[],1);
 for i=1:length( edges );
   if(length(edges{i})==1)
     edges{i}=linspace(min(A(:,i))-eps,max(A(:,i))+eps,edges{i}+1);
@@ -63,6 +63,6 @@ for i=1:length( edges );
 end
 
 % create histogram
-if( isempty(weightMask) ); weightMask=ones(1,n); end;
-h = histc_nD_c( A, weightMask, edges{:} );
+if( isempty(wtMask) ); wtMask=ones(1,n); end;
+h = histc_nD_c( A, wtMask, edges{:} );
 h = h / sum(h(:));

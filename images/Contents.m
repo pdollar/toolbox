@@ -17,9 +17,8 @@
 %
 % Histograms:
 %   assign2bins    - Quantizes I according to values in edges.
-%   histc_1D       - Generalized, version of histc (histogram count), allows weighted values.
+%   histc2         - Generalized, version of histc (histogram count), allows weighted values.
 %   histc_image    - Calculates histograms at every point in an array I.
-%   histc_nD       - Generalized, multidimensional version of normalized histc
 %   histc_sift     - Creates a series of locally position dependent histograms of values in I.
 %   histc_sift_nD  - Creates a series of locally position dependent histograms.
 %   histmontage    - Used to display multiple 1D histograms.

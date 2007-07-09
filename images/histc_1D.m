@@ -2,7 +2,7 @@
 %
 % Creates a histogram h of the values in A, with edges as specified.  h
 % will have length nbins, where nbins=length(edges)-1.  Each value in A has
-% associated weight given by weightMask, which should have the same
+% associated weight given by wtMask, which should have the same
 % dimensions as A. h(q) contains the weighted count of values v in A such
 % that edges(q) <= v < edges(q+1). h(nbins) additionally contains the
 % weighted count of values in A such that v==edges(nbins+1) -- which is
@@ -21,20 +21,20 @@
 % See histc for more information.
 %
 % USAGE
-%  h = histc_1D( A, edges, [weightMask] )
+%  h = histc_1D( A, edges, [wtMask] )
 %
 % INPUTS
 %  A           - numeric array [treated as a vector]
 %  edges       - either nbins+1 vec of quantization bounds, or scalar nbins
-%  weightMask  - [] size(A) numeric array of weights
+%  wtMask      - [] size(A) numeric array of weights
 %
 % OUTPUTS
-%  h           - histogram (vector of size 1xnbins)
+%  h           - [nbins x 1] histogram
 %
 % EXAMPLE
-%  G = filterGauss([1000 1000],[],[],1);
-%  h1 = histc_1D( G, 25 );    figure(1); bar(h1);
-%  h2 = histc_1D( G, 25, G ); figure(2); bar(h2);
+%  A = filterGauss([1000 1000],[],[],0);
+%  h1 = histc_1D( A, 25 );    figure(1); bar(h1);
+%  h2 = histc_1D( A, 25, A ); figure(2); bar(h2);
 %
 % See also HISTC, ASSIGN2BINS
 
@@ -42,9 +42,9 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function h = histc_1D( A, edges, weightMask )
+function h = histc_1D( A, edges, wtMask )
 
-if( nargin<3 ); weightMask=[]; end
+if( nargin<3 ); wtMask=[]; end;
 if( ~isa(A,'double') ); A=double(A); end
 
 % if nbins given instead of edges calculate edges
@@ -53,13 +53,13 @@ if(length(edges)==1)
 end
 
 % create histogram
-if(isempty(weightMask))
-  % If no weightMask specified then basically call histc and normalize
-  h = histc( A(:), edges )';
+if(isempty(wtMask))
+  % If no wtMask specified then basically call histc and normalize
+  h = histc( A(:), edges );
   h(end-1) = h(end-1)+h(end);
   h = h(1:end-1); h = h / sum(h);
 else
   % create masked histograms
-  h = histc_nD_c( A(:), weightMask(:), edges );
+  h = histc_nD_c( A(:), wtMask(:), edges );
   h = h / sum(h);
 end

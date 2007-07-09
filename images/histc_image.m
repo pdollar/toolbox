@@ -8,7 +8,7 @@
 % histogram at every location will simply be a histogram of the pixels
 % within that window.
 %
-% See histc_1D for more details about edges and nbins.
+% See histc2 for more details about edges and nbins.
 %
 % The shape flag specifies what to do at boundaries.  See convnFast for
 % possible flags such as 'same', 'valid', 'full, or 'smooth'.
@@ -34,7 +34,7 @@
 %  figure(2); montage2(HS1,1,1);
 %  figure(3); montage2(HS2,1,1);
 %
-% See also ASSIGN2BINS, HISTC_1D
+% See also ASSIGN2BINS, HISTC2
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

@@ -47,7 +47,7 @@ if( show>0); figure( show ); clf; end;
 switch nd
   case 1 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     r = (length(f)-1)/2;
-    f( abs(f)<.00001 ) = 0;
+    f( abs(f)<1e-10 ) = 0;
 
     % show original filter
     subplot(2,1,1); plot(-r:r, f);
@@ -73,7 +73,7 @@ switch nd
 
     scanline=arg; if( isempty(scanline) ); scanline=''; end
 
-    f( abs(f)<.00001 ) = 0;
+    f( abs(f)<1e-10 ) = 0;
 
     % image of filter
     subplot(2,1,1); im(f);
