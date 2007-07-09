@@ -5,6 +5,7 @@ Version 2.0 (06-July-07)
   -rotation_matrix2D,rotation_matrix3D,recover_rotation3D (see rotationMatrix)
   -localsum, localsum_block (see localSum)
   -normxcorrn_fg (see normxcorrn)
+  -imsubs_resize (not useful/general)
  -filters merged lots of 1d/nd functions (visalizeFilters, FbMake, filterGauss)
  -removed randperm2 (see randsample in the matlab statistics toolbox)
  -merged pca_apply and pca_apply_large
@@ -12,6 +13,7 @@ Version 2.0 (06-July-07)
  -merged all the dist_*.m -> into pdist2.m
  -merged imwrite2split into imwrite2
  -merged nlfilt_sep and nlfiltblock_sep into nlfiltersep
+ 
 
 Version 1.5 (05-Jul-07)
  -major documentation change
