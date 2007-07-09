@@ -30,8 +30,8 @@
 %
 % EXAMPLE
 %  load trees; I=ind2gray(X,map);
-%  Cs = nlfiltersep( I, [11 11], 'same', @nlfilter_sum ); % local sums
-%  Cm = nlfiltersep( I, [11 11], 'same', @nlfilter_max ); % local maxes
+%  Cs = nlfiltersep( I, [11 11], 'same', @nlfiltersep_sum ); % local sums
+%  Cm = nlfiltersep( I, [11 11], 'same', @nlfiltersep_max ); % local maxes
 %  figure(1); im(I); figure(2); im(Cs); figure(3); im(Cm);
 %
 % See also NLFILTER

@@ -52,12 +52,12 @@
 
 function [subs,vals] = nonMaxSupr( I, radii, thresh, maxn )
 
-% default values [error checking done by nlfilter_max]
+% default values [error checking done by nlfiltersep_max]
 if( nargin<3 || isempty(thresh)); thresh=min(I(:))-eps; end;
 if( nargin<4 || isempty(maxn)); maxn = 0; end;
 
-% all the work is really done by nlfilter_max.m
-IR = nlfiltersep( I, 2*radii+1, 'same', @nlfilter_max );
+% all the work is really done by nlfiltersep_max.m
+IR = nlfiltersep( I, 2*radii+1, 'same', @nlfiltersep_max );
 suprlocs = (I < IR) | (I <= thresh);
 
 % create output accordingly

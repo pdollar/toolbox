@@ -38,9 +38,9 @@ function I = localSum( I, dims, shape )
 if( nargin<3 || isempty(shape));  shape='full'; end;
 
 if( nargin==3 && strcmp(shape,'block') )
-  funH = @rnlfiltblock_sum;
+  funH = @nlfiltersep_blocksum;
 else
-  funH = @rnlfilt_sum;
+  funH = @nlfiltersep_sum;
 end;
 
 I = nlfiltersep( I, dims, shape, funH );
