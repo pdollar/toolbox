@@ -7,19 +7,19 @@
 %  R = rotationMatrix( u )
 %  R = rotationMatrix( u, theta )
 %
-% INPUTS - 1 - Finds the closest matrix to a given matrix M
+% INPUTS - 1) Finds the closest matrix to a given matrix M
 %  M       - 3x3 matrix
 %
-% INPUTS - 2 - Extract the axis and the angle of a 3x3 rotation matrix
+% INPUTS - 2) Extract the axis and the angle of a 3x3 rotation matrix
 %  R       - 3x3 Rotation matrix
 %
-% INPUTS - 3 - Creates a 2x2 rotation matrix from an angle
+% INPUTS - 3) Creates a 2x2 rotation matrix from an angle
 %  theta   - angle of rotation (radians)
 %
-% INPUTS - 4 - creates a 3x3 rotation matrix from a rotation vector
+% INPUTS - 4) creates a 3x3 rotation matrix from a rotation vector
 %  u       - 1x3 or 3x1 axis of rotation - norm is theta
 %
-% INPUTS - 5 - creates a 3x3 rotation matrix from a rotation vector
+% INPUTS - 5) creates a 3x3 rotation matrix from a rotation vector
 %  u       - axis of rotation
 %  theta   - angle of rotation (radians)
 %
@@ -33,9 +33,23 @@
 % OUTPUTS - 3
 %  R       - 2x2 Rotation matrix
 %
-% EXAMPLE
-%  R = rotationMatrix( [0 0 1], pi/4 );
-%  [u,theta]  = rotationMatrix( R )
+% EXAMPLE - 1
+%  R3 = rotationMatrix( [0 0 1], pi/4 )+rand(3)/50
+%  R3r = rotationMatrix( R3 )
+%  [u,theta]  = rotationMatrix( R3r )
+%
+% EXAMPLE - 2
+%  R3 = rotationMatrix( [0 0 1], pi/4 );
+%  [u,theta]  = rotationMatrix( R3 )
+%
+% EXAMPLE - 3
+%  R3 = rotationMatrix( pi/4 )
+%
+% EXAMPLE - 4
+%  R3 = rotationMatrix( [0 0 .5] )
+%
+% EXAMPLE - 5
+%  R3 = rotationMatrix( [0 0 1], pi/4 )
 %
 % See also
 
@@ -70,7 +84,7 @@ if all(size(varargin{1})==[3 3]) && nargout==2
   %now resolve sign ambiguity
   epsilon = ones(3)*.000001;
   dif = R-rotationMatrix(u,theta);
-  if (any(any(dif<-epsilon)) || any(any(dif>epsilon))); theta = -theta; end
+  if( any(any(dif<-epsilon)) || any(any(dif>epsilon))); theta = -theta; end
   varargout{2}=theta;
   return
 end

@@ -1,7 +1,8 @@
 % Converts subs/vals image representation to array representation.
 %
-% imsubs is a 'bag of pixels' image representation which is useful for
-% sparse arrays.
+% Constructs array from subs/vals representation.  Similar to Matlab's
+% sparse command, except doesn't actually produce a sparse matrix.  Uses
+% different conventions as well.
 %
 % USAGE
 %  I = subsToArray( subs, vals, siz, [fillVal] )
@@ -17,7 +18,7 @@
 %
 % EXAMPLE
 %
-% See also SUB2IND2
+% See also SUB2IND2, SPARSE
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
