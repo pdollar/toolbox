@@ -68,8 +68,8 @@ if( nargin<5 || isempty(maxIter) ); maxIter = 100; end
 if( nargin<6 || isempty(minDel)); minDel = .001; end
 
 [mrows, ncols, p] = size(X); p = p+2;
-[grid_rs grid_cs] = ndgrid( 1:mrows, 1:ncols );
-data = cat( 3, cat( 3, grid_rs/sigSpt, grid_cs/sigSpt), X/sigRng );
+[gridRs gridCs] = ndgrid( 1:mrows, 1:ncols );
+data = cat( 3, cat( 3, gridRs/sigSpt, gridCs/sigSpt), X/sigRng );
 
 %%% MAIN LOOP
 M = data;
@@ -84,23 +84,23 @@ for i=1:mrows; for j=1:ncols; %#ok<ALIGN>
       r = round( Mij(1)*sigSpt );  c = round( Mij(2)*sigSpt );
       boundsr = max(1,r-radius):min(mrows,r+radius);
       boundsc = max(1,c-radius):min(ncols,c+radius);
-      data_window = data( boundsr, boundsc, : );
-      data_windowf = reshape( data_window, [], p );
+      dataWin = data( boundsr, boundsc, : );
+      dataWinF = reshape( dataWin, [], p );
 
       % get next mean
-      Mij_old = Mij;
-      n = size( data_windowf, 1);
-      D = sum( (data_windowf - ones(n,1)*Mij).^2, 2 );
+      MijOld = Mij;
+      n = size( dataWinF, 1);
+      D = sum( (dataWinF - ones(n,1)*Mij).^2, 2 );
       if( softFlag )
         S = exp( -D ); sumS = sum(S); Srep = S(:,ones(1,p));
-        Mij = sum( data_windowf .* Srep, 1 ) / sumS;
+        Mij = sum( dataWinF .* Srep, 1 ) / sumS;
       else
-        data_windowf = data_windowf( D < 1, : );
-        Mij = sum( data_windowf, 1 ) / size( data_windowf,1 );
+        dataWinF = dataWinF( D < 1, : );
+        Mij = sum( dataWinF, 1 ) / size( dataWinF,1 );
       end
 
       % check if Mij changed [only on basis of x,y location]
-      diff = sum( (Mij_old(1:2)-Mij(1:2)).^2 );
+      diff = sum( (MijOld(1:2)-Mij(1:2)).^2 );
       itercount = itercount+1;
 
     end
@@ -113,5 +113,5 @@ M = cat(3, M(:,:,1:2)*sigSpt, M(:,:,3:end)*sigRng );
 
 %%% Output spatial difference
 if( nargout>1 )
-  Vr = M(:,:,1)-grid_rs;  Vc = M(:,:,2)-grid_cs;
+  Vr = M(:,:,1)-gridRs;  Vc = M(:,:,2)-gridCs;
 end

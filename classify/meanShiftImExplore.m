@@ -42,8 +42,8 @@ figure(show); clf; im(I);
 r=round(r); c=round(c);
 
 %%% get D and S
-[grid_rs grid_cs] = ndgrid( 1:mrows, 1:ncols );
-Deuc = ((grid_rs-r).^2 + (grid_cs-c).^2) / sigSpt^2;
+[gridRs gridCs] = ndgrid( 1:mrows, 1:ncols );
+Deuc = ((gridRs-r).^2 + (gridCs-c).^2) / sigSpt^2;
 x = X(r,c,:); x = x(:)';  Xflat = reshape(X,[],p);
 Drange = pdist2( x, Xflat );
 Drange = reshape( Drange, mrows, ncols ) / sigRng^2;
@@ -54,8 +54,8 @@ Srange = exp( -Drange );
 Seuc = exp( -Deuc );
 
 %%% new c and r [stretched for display]
-c2 = (grid_cs .* S); c2 = sum( c2(:) ) / sum(S(:));
-r2 = (grid_rs .* S); r2 = sum( r2(:) ) / sum(S(:));
+c2 = (gridCs .* S); c2 = sum( c2(:) ) / sum(S(:));
+r2 = (gridRs .* S); r2 = sum( r2(:) ) / sum(S(:));
 %c2 = c+(c2-c)*2; r2 = r+(r2-r)*2;
 
 %%% show

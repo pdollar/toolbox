@@ -80,9 +80,9 @@ end
 function D = distL1( X, Y )
 
 m = size(X,1);  n = size(Y,1);
-m_ones = ones(1,m); D = zeros(m,n);
+mOnes = ones(1,m); D = zeros(m,n);
 for i=1:n
-  yi = Y(i,:);  yi = yi( m_ones, : );
+  yi = Y(i,:);  yi = yi( mOnes, : );
   D(:,i) = sum( abs( X-yi),2 );
 end
 
@@ -104,23 +104,23 @@ Xcdf = cumsum(X,2);
 Ycdf = cumsum(Y,2);
 
 m = size(X,1);  n = size(Y,1);
-m_ones = ones(1,m); D = zeros(m,n);
+mOnes = ones(1,m); D = zeros(m,n);
 for i=1:n
   ycdf = Ycdf(i,:);
-  ycdf_rep = ycdf( m_ones, : );
-  D(:,i) = sum(abs(Xcdf - ycdf_rep),2);
+  ycdfRep = ycdf( mOnes, : );
+  D(:,i) = sum(abs(Xcdf - ycdfRep),2);
 end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function D = distChiSq( X, Y )
 
-%%% supposedly it's possible to implement dist_chisquared without a loop!
+%%% supposedly it's possible to implement this without a loop!
 m = size(X,1);  n = size(Y,1);
-m_ones = ones(1,m); D = zeros(m,n);
+mOnes = ones(1,m); D = zeros(m,n);
 for i=1:n
-  yi = Y(i,:);  yi_rep = yi( m_ones, : );
-  s = yi_rep + X;    d = yi_rep - X;
+  yi = Y(i,:);  yiRep = yi( mOnes, : );
+  s = yiRep + X;    d = yiRep - X;
   D(:,i) = sum( d.^2 ./ (s+eps), 2 );
 end
 D = D/2;
@@ -151,10 +151,10 @@ D = XX(:,ones(1,n)) + YY(ones(1,m),:) - 2*X*Yt;
 % [n p] = size(Y);
 %
 % D = zeros(m,n);
-% ones_m_1 = ones(m,1);
+% onesM = ones(m,1);
 % for i=1:n
 %   y = Y(i,:);
-%   d = X - y(ones_m_1,:);
+%   d = X - y(onesM,:);
 %   D(:,i) = sum( d.*d, 2 );
 % end
 

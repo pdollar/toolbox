@@ -25,7 +25,7 @@ if( ~strcmp(clf.type,'lda')); error( ['incorrect type: ' clf.type] ); end
 if( size(X,2)~= clf.p ); error( 'Incorrect data dimension' ); end
 
 %er = consist( clf, , X );  error(er);
-prior = clf.prior;  type = clf.clfLda_type;
+prior = clf.prior;  type = clf.clfLdaType;
 
 % grp2idx sorts a numeric grouping var ascending, and a string grouping
 % var by order of first occurrence

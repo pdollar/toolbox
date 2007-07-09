@@ -47,6 +47,6 @@ end
 clf.prior = prior;
 clf.p = p;
 clf.type = 'lda';
-clf.clfLda_type = type;
+clf.clfLdaType = type;
 clf.funTrain = @clfLdaTrain;
 clf.funFwd = @clfLdaFwd;    

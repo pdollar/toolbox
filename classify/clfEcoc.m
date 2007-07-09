@@ -30,7 +30,7 @@ if( nclasses<3 || nclasses>7 )
 if( nargin<5 || isempty(use01targets)); use01targets=0; end;
 
 % create code (limited for now)
-[C,nbits] = clfEcoc_code( nclasses );
+[C,nbits] = clfEcocCode( nclasses );
 clf = ecoc(nclasses, nbits, C, use01targets  ); % didn't use to pass use01?
 clf.verbosity = 0; % don't diplay output
 

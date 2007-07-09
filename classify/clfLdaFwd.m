@@ -24,7 +24,7 @@ if( ~strcmp(clf.type,'lda')); error( ['incorrect type: ' clf.type] ); end
 if( size(X,2)~= clf.p ); error( 'Incorrect data dimension' ); end
 
 %%% get clf settings
-type = clf.clfLda_type;
+type = clf.clfLdaType;
 prior = clf.prior;
 gmeans = clf.gmeans;
 gtype = clf.gtype;
