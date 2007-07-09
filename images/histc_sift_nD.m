@@ -12,22 +12,22 @@
 % created for each using histc2.
 %
 % USAGE
-%  hs = histc_sift_nD( I, edges, parGmask, [weightMask], [multCh] )
+%  hs = histc_sift_nD( I, edges, parMask, [wtMask], [multCh] )
 %
 % INPUTS
 %  I           - M1xM2x...xMkxnd array, (nd channels each of M1xM2x...xMk)
 %  edges       - parameter to histc2, either scalar, vector, or cell vec
-%  parGmask    - cell of parameters to maskGaussians
-%  weightMask  - [] M1xM2x...xMk numeric array of weights
+%  parMask     - cell of parameters to maskGaussians
+%  wtMask      - [] M1xM2x...xMk numeric array of weights
 %  multCh      - [1] if 0 this becomes same as histc_sift.m (nd==1)
 %
 % OUTPUTS
 %  hs          - histograms (array of size nmasks x nbins)
 %
 % EXAMPLE
-%  G = filterGauss([100 100],[],[],0);
-%  hs1 = histc_sift_nD( cat(3,G,G), 5, {2,.6,.1,0} );
-%  hs2 = histc_sift_nD( cat(3,G,randn(size(G))),5,{2,.6,.1,0});
+%  I = filterGauss([100 100],[],[],0);
+%  hs1 = histc_sift_nD( cat(3,I,I), 5, {2,.6,.1,0} );
+%  hs2 = histc_sift_nD( cat(3,I,randn(size(I))),5,{2,.6,.1,0});
 %  figure(1); montage2(hs1,1);  figure(2); montage2(hs2,1);
 %
 % See also HISTC2, HISTC_SIFT, MASKGAUSSIANS
@@ -36,9 +36,9 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function hs = histc_sift_nD( I, edges, parGmask, weightMask, multCh )
+function hs = histc_sift_nD( I, edges, parMask, wtMask, multCh )
 
-if( nargin<4 ); weightMask=[]; end;
+if( nargin<4 ); wtMask=[]; end;
 if( nargin<5 ); multCh=1; end;
 
 % set up for either multiple channels or 1 channel
@@ -50,10 +50,10 @@ else
 end;
 
 % create masks [slow but cached]
-[masks,keeplocs] = maskGaussians( siz, parGmask{:} );
+[masks,keeplocs] = maskGaussians( siz, parMask{:} );
 nmasks = size(masks,nd+1);
-if( ~isempty(weightMask) )
-  masks = masks .* repmat(weightMask,[ones(1,nd) nmasks]); end;
+if( ~isempty(wtMask) )
+  masks = masks .* repmat(wtMask,[ones(1,nd) nmasks]); end;
 
 % flatten
 I = reshape( I, [], nch );
