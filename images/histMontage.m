@@ -1,7 +1,7 @@
 % Used to display multiple 1D histograms.
 %
 % USAGE
-%  histmontage( HS, mm, nn )
+%  histMontage( HS, mm, nn )
 %
 % INPUTS
 %  HS  - HS(i,j) is the jth bin in the ith histogram
@@ -11,7 +11,7 @@
 % OUTPUTS
 %
 % EXAMPLE
-%  h = histc2( randn(2000,1), 20 )'; clf; histmontage([h; h]);
+%  h = histc2( randn(2000,1), 20 )'; clf; histMontage([h; h]);
 %
 % See also HISTC, HISTC2
 
@@ -19,7 +19,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function histmontage( HS, mm, nn )
+function histMontage( HS, mm, nn )
 
 [nhist, nbins] = size(HS);
 if( nhist>100 || nhist*nbins>10000 )

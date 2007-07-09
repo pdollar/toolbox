@@ -20,7 +20,7 @@
 %   histc2         - Multidimensional histogram count with weighted values.
 %   histcIm        - Calculates local histograms at every point in an array I.
 %   histcImLoc     - Creates a series of locally position dependent histograms.
-%   histmontage    - Used to display multiple 1D histograms.
+%   histMontage    - Used to display multiple 1D histograms.
 %
 % Generalized correlation:
 %   normxcorrn     - Normalized n-dimensional cross-correlation.
