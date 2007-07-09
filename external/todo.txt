@@ -1,8 +1,2 @@
--faster meanshit code from vincent
--add function to return the ith color {'r','g','b',...}
-
--is feval_arrays same as arrayfun????
-
-remove deprecated functions:
--playmovies
-
+-toolboxCompile c++ fix?
+-image display functions cleanup
