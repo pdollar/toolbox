@@ -8,15 +8,15 @@
 %
 % The function fun must be able to take an input of the form
 % C=fun(I,radius,param1,...paramk).  The return C must be the result of
-% applying the nlfilt operation to the local column (of size 2r+1) of A.  
+% applying the nlfilt operation to the local column (of size 2r+1) of A.
 %
 % USAGE
 %  I = nlfiltblock_sep( I, dims, fun, params  )
 %
 % INPUTS
 %  I       - matrix to compute fun over
-%  dims    - size of volume to compute fun over 
-%  fun     - nonlinear filter 
+%  dims    - size of volume to compute fun over
+%  fun     - nonlinear filter
 %  params  - optional parameters for nonlinear filter
 %
 % OUTPUTS
@@ -25,7 +25,7 @@
 % EXAMPLE
 %  I = nlfiltblock_sep( I, dims, @rnlfiltblock_sum ); % local block sums
 %
-% See also NLFILT_SEP, RNLFILTBLOCK_SUM, LOCALSUM
+% See also NLFILT_SEP, RNLFILTBLOCK_SUM, LOCALSUM, NLFILTER
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -33,12 +33,11 @@
 
 function I = nlfiltblock_sep( I, dims, fun, varargin  )
 
-nd = ndims(I);  siz = size(I);   
+params = varargin;  nd = ndims(I);  siz = size(I);
 [dims,er] = checkNumArgs( dims, size(siz), 0, 1 ); error(er);
-params = varargin;
 
 % trim I to have integer number of blocks
-dims = min(dims,siz);  siz = siz - mod( siz, dims ); 
+dims = min(dims,siz);  siz = siz - mod( siz, dims );
 if (~all( siz==size(I))); I = arrayCrop( I, ones(1,nd), siz ); end;
 
 % Apply rnlfiltblock filter along each dimension of I.  Actually filter
@@ -47,8 +46,7 @@ for d=1:nd
   if( dims(d)>1 )
     siz = size(I);  siz(1) = siz(1)/dims(d);
     I = feval( fun, I, dims(d), params{:} );
-    I = reshape( I, siz ); 
+    I = reshape( I, siz );
   end
   I = shiftdim( I, 1 );
-end    
-    
+end

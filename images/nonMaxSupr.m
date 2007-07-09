@@ -57,7 +57,7 @@ if( nargin<3 || isempty(thresh)); thresh=min(I(:))-eps; end;
 if( nargin<4 || isempty(maxn)); maxn = 0; end;
 
 % all the work is really done by nlfilter_max.m
-IR = nlfilt_sep( I, 2*radii+1, 'same', @rnlfilt_max );
+IR = nlfiltersep( I, 2*radii+1, 'same', @rnlfilt_max );
 suprlocs = (I < IR) | (I <= thresh);
 
 % create output accordingly

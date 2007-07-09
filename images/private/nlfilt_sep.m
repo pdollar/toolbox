@@ -6,21 +6,21 @@
 % window.  max could also be applied to each row of the window, then to the
 % resulting column, insead of being applied to the entire window
 % simultaneously.  This is what is meant here by a seperable nonlinear
-% filter.   
+% filter.
 %
 % The function fun must be able to take an input of the form
 % C=fun(I,radius,param1,...paramk).  The return C must have the same size
 % as I, and each element of C must be the result of applying the nlfilt
-% operation to the local column (of size 2r+1) of A.  
+% operation to the local column (of size 2r+1) of A.
 %
 % USAGE
 %  I = nlfilt_sep( I, dims, shape, fun, varargin )
-% 
+%
 % INPUTS
 %  I       - matrix to compute fun over
-%  dims    - size of volume to compute fun over 
+%  dims    - size of volume to compute fun over
 %  shape   - 'valid', 'full', or 'same', see conv2 help
-%  fun     - nonlinear filter 
+%  fun     - nonlinear filter
 %  params  - optional parameters for nonlinear filter
 %
 % OUTPUTS
@@ -30,7 +30,7 @@
 %  C = nlfilt_sep( I, dims, shape, @rnlfilt_sum ); % local sums
 %  C = nlfilt_sep( I, dims, shape, @rnlfilt_max ); % local maxes
 %
-% See also NLFILTBLOCK_SEP, RNLFILT_SUM, RNLFILT_MAX
+% See also NLFILTBLOCK_SEP, RNLFILT_SUM, RNLFILT_MAX, NLFILTER
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -38,13 +38,13 @@
 
 function I = nlfilt_sep( I, dims, shape, fun, varargin )
 
-params = varargin;   nd = ndims(I);  siz = size(I); 
+params = varargin;   nd = ndims(I);  siz = size(I);
 [dims,er] = checkNumArgs( dims, size(siz), 0, 1 ); error(er);
-rs1 = max(0,floor( (dims-1)/2 ));  rs2 = ceil( (dims-1)/2 );
 
 % pad I to 'full' dimensions, note must pad pre with rs2!
-if(strcmp(shape,'valid') && any(dims>size(I)) ) I=[]; return; end;
-if(strcmp(shape,'full')) 
+rs1 = max(0,floor( (dims-1)/2 ));  rs2 = ceil( (dims-1)/2 );
+if(strcmp(shape,'valid') && any(dims>size(I)) ); I=[]; return; end;
+if(strcmp(shape,'full'))
   I = padarray(I,rs2,0,'pre');
   I = padarray(I,rs1,0,'post');
 end
@@ -53,12 +53,12 @@ end
 % is always applied along first dimension of I and then I is shifted.
 for d=1:nd
   if( dims(d)>0 )
-    siz = size(I); 
+    siz = size(I);
     I = feval( fun, I, rs1(d), rs2(d), params{:} );
-    I = reshape( I, siz ); 
+    I = reshape( I, siz );
   end
   I = shiftdim( I, 1 );
-end 
+end
 
 % crop to appropriate size
 if(strcmp(shape,'valid'))
@@ -66,10 +66,3 @@ if(strcmp(shape,'valid'))
 elseif(~strcmp(shape,'full') && ~strcmp(shape,'same'))
   error('unknown shape');
 end;
-    
-    
-    
-    
-    
-    
-    
