@@ -13,8 +13,8 @@
 %
 % EXAMPLE
 %  load( 'images.mat' );
-%  M = makemovies( videos );
-%  playmovie(movie2images(M));
+%  M = playMovie( videos );
+%  playMovie(movie2images(M));
 %
 % See also PLAYMOVIE
 

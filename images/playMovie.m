@@ -24,12 +24,12 @@
 %
 % EXAMPLE - 1
 %  load( 'images.mat' );
-%  playmovie( videos(:,:,:,1) );
-%  playmovie( video(:,:,1:3), [], -50 );
+%  playMovie( videos(:,:,:,1) );
+%  playMovie( video(:,:,1:3), [], -50 );
 %
 % EXAMPLE - 2
 %  load( 'images.mat' );
-%  playmovie( videos );
+%  playMovie( videos );
 %
 % EXAMPLE - 3
 %  load( 'images.mat' );

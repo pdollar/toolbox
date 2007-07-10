@@ -7,7 +7,7 @@
 %   filmstrip      - [3D] Used to display a stack of T images as a filmstrip.
 %   filmstrips     - [4D] Used to display R sets of filmstrips.
 %   playMovie      - [6D] Shows/makes an/several movie(s) from an image sequence
-%   clustermontage - Used for visualization of clusters of images and videos.
+%   clusterMontage - Used for visualization of clusters of images and videos.
 %   movie2images   - Creates a stack of images from a matlab movie M.
 %
 % Histograms:

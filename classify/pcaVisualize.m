@@ -89,7 +89,7 @@ if( nd==3 ) % images
 elseif( nd==4 ) % videos
   %%% create movies
   if( nargout>0 ); figureResized(.6,show+1); clf;
-    M = makemovies( xhats, {0, [], [], 0, {'original' labels{:}}} );
+    M = playMovie( xhats,{'label','original','montagelabel', {labels{:}}});
     varargout={M};
   end;
   if( nargout>1 ); figureResized(.6,show+1); clf;
