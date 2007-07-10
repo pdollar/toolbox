@@ -1,4 +1,4 @@
-% [4D] Used to display R stacks of T images as a filmstrip.
+% Used to display R stacks of T images as a filmstrip.
 %
 % USAGE
 %  Ftot = filmStrip( Itot, overlap, delta, border )
@@ -13,11 +13,14 @@
 % OUTPUTS
 %  Ftot       - filmstrip
 %
-% EXAMPLE
+% EXAMPLE - 1 One filmstrip
 %  load images;
 %  F = filmStrip( video(:,:,1:15), 10, 2, 5 );
 %  figure(1); im(F);
-%  F = filmStrips( videos(:,:,:,1:10), 5, 2, 3 );
+%
+% EXAMPLE - 1 Multiple filmstrips
+%  load images;
+%  F = filmStrip( videos(:,:,:,1:10), 5, 2, 3 );
 %  figure(2); im(F);
 %
 % See also MONTAGE2

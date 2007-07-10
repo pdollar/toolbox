@@ -38,4 +38,4 @@ Gtheta = cos(theta)*dxG + sin(theta)*dyG;
 
 % dislpay (scale for visualization purposes)
 GS = cat(3,G,dxG*2,dyG*2,Gtheta*2);
-figure(1); montage2(GS,1);
+figure(1); montage2(GS,struct('showLine',1));

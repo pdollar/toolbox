@@ -70,7 +70,7 @@ else
 end
 
 % optionaly show resulting vectors
-if(show && nd==2); figure(show); montage2(Xr,1); end
+if(show && nd==2); figure(show); montage2(Xr,struct('showLine',1)); end
 
 
 

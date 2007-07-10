@@ -2,10 +2,10 @@
 % See also
 %
 % Display:
-%   im             - [2D] Function for displaying grayscale images.
-%   montage2       - [3D] Used to display a stack of T images.
-%   filmStrip      - [4D] Used to display R stacks of T images as a filmstrip.
-%   playMovie      - [6D] Shows/makes an/several movie(s) from an image sequence
+%   im             - Function for displaying grayscale images.
+%   montage2       - Used to display a stack of T images.
+%   filmStrip      - Used to display R stacks of T images as a filmstrip.
+%   playMovie      - Shows/makes an/several movie(s) from an image sequence
 %   clusterMontage - Used for visualization of clusters of images and videos.
 %   movie2images   - Creates a stack of images from a matlab movie M.
 %

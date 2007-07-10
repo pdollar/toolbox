@@ -1,4 +1,4 @@
-% IM [2D] Function for displaying grayscale images.
+% Function for displaying grayscale images.
 %
 % Handy function for showing a grayscale image with a colorbar and
 % interactive pixel value tool.

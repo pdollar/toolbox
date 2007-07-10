@@ -1,4 +1,4 @@
-% [5D] Used to display a stack of T images.
+% Used to display a stack of T images.
 %
 % Improved version of montage, with more control over display.
 % NOTE: Can convert between MxNxT and MxNx3xT image stack via:
@@ -26,19 +26,16 @@
 %  m           - #images/col
 %  nn          - #images/row
 %
-% EXAMPLE - 1
-%
+% EXAMPLE - 1 - show stacks of images in a row
 %  load( 'images.mat' );
 %  imClusters = clustermontage( images, IDXi, 16, 1 );
 %  figure(1); montage2( imClusters, struct('perRow',1,'padSize',1) );
 %  figure(2); montage2( videos, struct('perRow',1));
 %
-% EXAMPLE - 2
-%
+% EXAMPLE - 2 - show a montage of several groups of pictures
 %  load( 'images.mat' ); montage2( videos );
 %
-% EXAMPLE - 3
-%
+% EXAMPLE - 2 - show a montage of several pictures
 %  load( 'images.mat' ); montage2( images );
 %
 % See also MONTAGE, PLAYMOVIE

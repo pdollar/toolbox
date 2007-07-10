@@ -76,11 +76,13 @@ labels=cell(1,length(ks));
 for k=1:length(ks); labels{k} = ['k=' num2str(ks(k))]; end
 if( nd==3 ) % images
   figure(show+1); clf;
-  subplot(2,2,1); montage2( Uim, 1,0 ); title('principal components');
+  subplot(2,2,1); montage2( Uim, struct('showLine',1) ); title('principal components');
   subplot(2,2,2); im( mu ); title('mean');
-  subplot(2,2,3); montage2(xhats,1,0,[],[],[],{'original' labels{:}} );
+  subplot(2,2,3); montage2(xhats,struct('showLine',1,'labelMontage',...
+    labels{:}) );
   title('various approximations of x');
-  subplot(2,2,4); montage2( diffs, 1, 0, [], [], [], labels );
+  subplot(2,2,4); montage2( diffs, struct('showLine',1,'labelMontage',...
+    labels{:}) );
   title('difference images');
   if (~isempty(fname))
     print( [fname '_eigenanalysis.jpg'], '-djpeg' );

@@ -1,4 +1,4 @@
-% [6D] Shows/makes an/several movie(s) from an image sequence.
+% Shows/makes an/several movie(s) from an image sequence.
 %
 % To play a matlab movie file, as an alternative to movie, use:
 %  playMovie(movie2images(M));
@@ -18,20 +18,19 @@
 %            fast as possible
 %  loop    - [0] number of time to loop video (may be inf),
 %            if neg plays video forward then backward then forward etc.
-%  prm     - parameters to use calling montage2
+%  prm     - [] parameters to use calling montage2
 %
 % OUTPUTS
 %
-% EXAMPLE - 1
+% EXAMPLE - 1 - show 1 video
 %  load( 'images.mat' );
-%  playMovie( videos(:,:,:,1) );
-%  playMovie( video(:,:,1:3), [], -50 );
+%  playMovie( video, [], -50 );
 %
-% EXAMPLE - 2
+% EXAMPLE - 2 - show a montage of videos
 %  load( 'images.mat' );
 %  playMovie( videos );
 %
-% EXAMPLE - 3
+% EXAMPLE - 3 - show a montage of groups of videos in 2 ways
 %  load( 'images.mat' );
 %  videoclusters = clustermontage( videos, IDXv, 9, 1 );
 %  M = playMovie( videoclusters );
@@ -47,6 +46,7 @@ function M = playMovie( I, fps, loop, prm )
 
 if( nargin<2 || isempty(fps)); fps = 100; end
 if( nargin<3 || isempty(loop)); loop = 1; end
+if nargin<4; prm=struct(); end
 
 nd=ndims(I); siz=size(I);
 if ~iscell(I);

@@ -46,6 +46,6 @@ end
 % optionally display
 if( show )
   figure(show); im(I);
-  figure(show+1); montage2(FB,1,1);
-  figure(show+2); montage2(FR,1,1);
+  figure(show+1); montage2(FB,struct('showLine',1,'extraInfo',1));
+  figure(show+2); montage2(FR,struct('showLine',1,'extraInfo',1));
 end
