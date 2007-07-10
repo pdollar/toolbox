@@ -1,6 +1,6 @@
 % Creates a stack of images from a matlab movie M.
 %
-% Repeatedly calls frame2im. Useful for playback with playmovie.
+% Repeatedly calls frame2im. Useful for playback with playMovie.
 %
 % USAGE
 %  I = movie2images( M )

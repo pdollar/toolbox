@@ -94,8 +94,8 @@ if( abs(show) )
   if( show<0 ) % if images can display
     siz = sqrt(d);
     I = clustermontage( reshape(X,siz,siz,N), IDX, 25, 1 );
-    figure(-show); clf; montages( I, {1} );
-    figure(-show+1); clf; montage2(reshape(mu,siz,siz,[]),1);
+    figure(-show); clf; montage2( I );
+    figure(-show+1); clf; montage2(reshape(mu,siz,siz,[]));
   elseif( d==1 ) % 1D data
     figure(show); clf; hold on;
     minX = min(X,[],1 );  maxX = max(X,[],1 );

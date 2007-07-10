@@ -22,8 +22,10 @@
 % EXAMPLE
 %  load trees; L=conv2(X,filterDog2d(10,4,1,0),'valid'); figure(1); im(L);
 %  f1=filterGauss(25,[],25);  f2=ones(1,15);
-%  H1 = histcIm(L, 15, {f1,f1'}, 'same');  figure(2); montage2(H1,1);
-%  H2 = histcIm(L, 15, {f2,f2'}, 'same');  figure(3); montage2(H2,1);
+%  H1 = histcIm(L, 15, {f1,f1'}, 'same');  figure(2); montage2(H1,...
+%      struct('showLine',1));
+%  H2 = histcIm(L, 15, {f2,f2'}, 'same');  figure(3); montage2(H2,...
+%      struct('showLine',1));
 %
 % See also ASSIGNTOBINS, HISTC2, CONVNFAST, HISTCIMLOC
 

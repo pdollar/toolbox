@@ -7,12 +7,12 @@
 % cases)x(S=number of sets)
 %
 % USAGE
-%  playMovie( I, [fps], [loop] )
+%  playMovie( I, [fps], [loop], [prm] )
 %
 % INPUTS
 %  I       - MxNxTxRxS or MxNx1xTxRxS or MxNx3xTxRxS or cell
 %            array where each element is a MxNxTxR or MxNx1xTxR or
-%            MxNx3xTxR (R or S can equal 1)
+%            MxNx3xTxR (R ans S can equal 1)
 %  fps     - [100] maximum number of frames to display per second
 %            use fps==0 to introduce no pause and have the movie play as
 %            fast as possible
@@ -39,7 +39,7 @@
 %
 % See also MONTAGE2, MOVIE2IMAGES, MOVIE
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
@@ -54,8 +54,8 @@ if ~iscell(I);
   if ~any(size(I,3)==[1 3]);
     I=reshape(I,[siz(1),siz(2),1,siz(3:end)]);
   else
-    error(['Invalid input, I has to be MxNxT or MxNx1xT or MxNx3xTxR '...
-      'or MxNxTxRxS or MxNx1xTxS or MxNx3xTxRxS']);
+    error(['Invalid input, I has to be MxNxT or MxNx1xTxRxS or ' ...
+      'or MxNx3xTxRxS, with Rand S possibly equal to 1']);
   end
   nframes=size(I,4);
   nd=ndims(I);

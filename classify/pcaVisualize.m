@@ -93,11 +93,11 @@ elseif( nd==4 ) % videos
     varargout={M};
   end;
   if( nargout>1 ); figureResized(.6,show+1); clf;
-    MDiff = makemovies( diffs, {0, [], [], 0, labels} );
+    MDiff = playMovie( diffs );
     varargout{2} = MDiff;
   end;
   if( nargout>2 ); figureResized(.6,show+1); clf;
-    MU = makemovies( Uim );
+    MU = playMovie( Uim );
     varargout{3} = MU;
   end;
 

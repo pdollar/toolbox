@@ -47,14 +47,17 @@
 % EXAMPLE
 %  load trees; I=imresize(ind2gray(X,map),[41 41]); clear X caption map
 %  % creates 7^2*2 images of slight trans with reflection (but no rotation)
-%  IJ = jitterImage( I, 0, 0, 7, 3, [35 35], 1 ); montage2(IJ,1,1)
+%  IJ = jitterImage( I, 0, 0, 7, 3, [35 35], 1 ); montage2(IJ,...
+%       struct('showLine',1,'extraInf',1));
 %  % creates 5 images of slight rotations (no translations)
-%  IJ = jitterImage( I, 5, 25, 0, 0, size(I) ); montage2(IJ,1,1)
+%  IJ = jitterImage( I, 5, 25, 0, 0, size(I) ); montage2(IJ,...
+%       struct('showLine',1,'extraInf',1));
 %  % creates 45 images of both rot and slight trans
-%  IJ = jitterImage( I, 5, 10, 3, 2 ); montage2(IJ,1,1)
+%  IJ = jitterImage( I, 5, 10, 3, 2 ); montage2(IJ,...
+%       struct('showLine',1,'extraInf',1));
 %  % additionally create multiple scaled versions
 %  IJ = jitterImage( I, 1, 0, 1, 0, [], [], [1 1; 2 1; 1 2; 2 2] );
-%  montage2(IJ,1)
+%  montage2(IJ,struct('showLine',1))
 %
 % See also JITTERVIDEO
 

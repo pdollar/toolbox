@@ -166,6 +166,6 @@ end
 
 % plot G and GR
 if( show )
-  figure(show); montage2(G,1);
-  figure(show+1); montage2(GR,1);
+  figure(show); montage2(G,struct('showLine',1));
+  figure(show+1); montage2(GR,struct('showLine',1));
 end

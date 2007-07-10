@@ -74,4 +74,5 @@ for i=1:nnets
   CMi = confMatrix( tstIDX, pred(:,i), nClasses );
   CM(:,:,i) = CMi ./ repmat( sum(CMi,2), [1 size(CMi,2)] );
 end;
-subplot(3,1,3); montage2( CM,1,1,[0,1],1,[],labels );
+subplot(3,1,3); montage2( CM, struct('showLine',1,'extraInf',1,'clim',...
+  [0,1],'mm',1,nn,[],'label',labels ) );

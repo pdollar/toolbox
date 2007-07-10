@@ -26,7 +26,7 @@
 %  msphere = maskSphere( 3, 10, 2 );
 %  msphere = maskSphere( 4, 10, 3 );
 %
-% See also MASKCIRCLE, MONTAGE2, MONTAGES
+% See also MASKCIRCLE, MONTAGE2
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -47,10 +47,8 @@ if( show )
   figure(show); clf;
   if( d<=2 ) 
     im( mask );
-  elseif( d==3 )
+  elseif any(d==3:4)
     montage2( mask );
-  elseif( d==4 )
-    montages( mask,[],4 );
   else 
     disp('no visualization available for d>4');
   end

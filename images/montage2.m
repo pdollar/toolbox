@@ -1,4 +1,4 @@
-% [3D] Used to display a stack of T images.
+% [5D] Used to display a stack of T images.
 %
 % Improved version of montage, with more control over display.
 % NOTE: Can convert between MxNxT and MxNx3xT image stack via:
@@ -8,15 +8,18 @@
 %  varargout = montage2(IS,[showLns],[extraInf],[clim],[mm],[nn],[labels])
 %
 % INPUTS
-%  IS          - MxNxT or MxNx1xT or MxNx3xT array (of bw or color images)
-%                MxNxTxR or MxNx1xTxR or MxNx3xTxR array, or cell array
-%                  where each element is MxNxT or MxNx1xT or MxNx3xT
-%  showLns     - [0] whether to show lines separating the various frames
-%  extraInf    - [0] if 1 then a colorbar is shown as well as pixval bar
-%  clim        - [] clim = [clow chigh] optional scaling of data
-%  m           - [] #images/col (if [] then calculated)
-%  nn          - [] #images/row (if [] then calculated)
-%  label       - [] cell array of strings specifying labels for each image
+%  IS          - MxNxTxR or MxNx1xTxR or MxNx3xTxR array 
+%                (of bw or color images). R can equal 1
+%  prm
+%   .showLns    - [0] whether to show lines separating the various frames
+%   .extraInf   - [0] if 1 then a colorbar is shown as well as pixval bar
+%   .clim       - [] clim = [clow chigh] optional scaling of data
+%   .mm         - [] #images/col (if [] then calculated)
+%   .nn         - [] #images/row (if [] then calculated)
+%   .label      - [] cell array of strings specifying labels for each image
+%   .perRow     - [0] displays several movies in rows
+%   .padSize    - [4] used to pad when in row mode
+%   .montageLabel- list of labels for groups of movies
 %
 % OUTPUTS
 %  h           - image handle
@@ -38,7 +41,7 @@
 %
 %  load( 'images.mat' ); montage2( images );
 %
-% See also MONTAGE, MAKEMOVIE
+% See also MONTAGE, PLAYMOVIE
 
 % Piotr's Image&Video Toolbox      Version 1.5
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -85,7 +88,7 @@ if perRow
   IS=arrayCrop(IS, [(1-padSize)*[1 1], ones(1,nd-2)], ...
     [siz(1) siz(2)+padSize siz(3:end)], padEl);
 
-  % show using montage2
+  % show using subMontage
   varargout = cell(1,nargout);
   if( nargout); varargout{1}=IS; end
   prm.perRow=false;
