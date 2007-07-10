@@ -10,8 +10,8 @@
 % The metric can be one of the following:
 %
 % 'euclidean' / 'sqeuclidean':
-%   Euclidean and SQAURED Euclidean distance.  Note that 'sqeuclidean', 
-%   that the squared version is significantly faster.
+%   Euclidean / SQUARED Euclidean distance.  Note that 'sqeuclidean'
+%   is significantly faster.
 %
 % 'chisq'
 %   The chi-squared distance between two vectors is defined as:

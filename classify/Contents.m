@@ -2,6 +2,7 @@
 % See also
 %
 % Clustering:
+%   computeNeighbor    - Find neighbors (must be close in Euclidean space and from the same set).
 %   demoCluster        - Clustering demo.
 %   demoGenData        - Generate data drawn form a mixture of Gaussians.
 %   kmeans2            - Fast version of kmeans clustering.
