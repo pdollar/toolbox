@@ -4,14 +4,9 @@
 % Display:
 %   im             - [2D] Function for displaying grayscale images.
 %   montage2       - [3D] Used to display a stack of T images.
-%   montages       - [4D] Used to display R sets of T images each.
 %   filmstrip      - [3D] Used to display a stack of T images as a filmstrip.
 %   filmstrips     - [4D] Used to display R sets of filmstrips.
-%   makemovie      - [3D] Used to convert a stack of T images into a movie.
-%   makemovies     - [4D] Used to convert R sets of equal length videos into a single movie.
-%   makemoviesets  - [5D] Used to convert S sets of R videos into a movie.
-%   makemoviesets2 - [5D] Used to convert S sets of R videos into a movie.
-%   playmovie      - [3D] shows the image sequence I as a movie.
+%   playMovie      - [6D] Shows/makes an/several movie(s) from an image sequence
 %   clustermontage - Used for visualization of clusters of images and videos.
 %   movie2images   - Creates a stack of images from a matlab movie M.
 %

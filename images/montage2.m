@@ -56,9 +56,6 @@ extraInf=prm.extraInf;
 label=prm.label; perRow=prm.perRow; padSize=prm.padSize;
 montageLabel=prm.montageLabel;
 
-siz=size(IS); nd=ndims(IS);
-
-
 %%% Deal with the special way of doing a montage
 if perRow
   [padSize,er] = checkNumArgs( padSize,[1 1], 0, 1 ); error(er);
@@ -67,15 +64,15 @@ if perRow
     error('Invalid input, IS cannot be a cell');
   end
   if ~any(size(IS,3)==[1 3]);
-    reshape(IS,[siz(1),siz(2),1,siz(3:end)]);
+    siz=size(IS); IS=reshape(IS,[siz(1),siz(2),1,siz(3:end)]);
   else
     error('Invalid input, IS has to be MxNxT or MxNx1xT or MxNx3xTxR');
   end
   % reshape IS so that each 3D element is concatenated to a 2D image,
   % adding padding
   padEl = max(IS(:));
-  size(IS)
-  IS=arrayCrop(IS, ones(1,nd), [siz(1)+padSize siz(2:end)], padEl ); %UD pad
+  siz=size(IS); nd=ndims(IS);
+  IS=arrayCrop(IS, ones(1,nd), [siz(1)+padSize siz(2:end)], padEl );%UD pad
   siz=size(IS);
   switch nd
     case 4
