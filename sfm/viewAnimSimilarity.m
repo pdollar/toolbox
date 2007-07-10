@@ -24,7 +24,7 @@ dfs = {'nCamera',-1,'N',[],'S','REQ'};
 prm = getPrmDflt( prm, dfs );
 nCamera=prm.nCamera; N=prm.N; S=prm.S; A=anim.A2; 
 
-siz=size(A); nframes=siz(3); nDim=siz(1); nPoint=siz(2);
+nDim=size(A,1);
 
 % Determine the boundaries of the data
 if nCamera<0; bound=minmax(reshape(A,nDim,[]));
@@ -49,7 +49,7 @@ marker1 = plot( 10, 1, 'r*' ); marker2 = plot( 1, 10, 'g*' );
 set( gcf, 'WindowButtonMotionFcn', { @interface } );
 set( gcf, 'KeyPressFcn', { @interface } );
 
-conn=[]; hLine=0; hPoint=0;
+conn=[]; hPoint=[0 0];
 
 c=[ 1 0.4 0.4; 0.4 1 0.4 ];
 for i=1:2
