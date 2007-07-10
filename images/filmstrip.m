@@ -1,7 +1,7 @@
 % [4D] Used to display R stacks of T images as a filmstrip.
 %
 % USAGE
-%  Ftot = filmstrip( Itot, overlap, delta, border )
+%  Ftot = filmStrip( Itot, overlap, delta, border )
 %
 % INPUTS
 %  Itot       - MxNxTxR or MxNx1xTxR or MxNx3xTxR array
@@ -15,9 +15,9 @@
 %
 % EXAMPLE
 %  load images;
-%  F = filmstrip( video(:,:,1:15), 10, 2, 5 );
+%  F = filmStrip( video(:,:,1:15), 10, 2, 5 );
 %  figure(1); im(F);
-%  F = filmstrips( videos(:,:,:,1:10), 5, 2, 3 );
+%  F = filmStrips( videos(:,:,:,1:10), 5, 2, 3 );
 %  figure(2); im(F);
 %
 % See also MONTAGE2
@@ -26,7 +26,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function Ftot = filmstrip( Itot, overlap, delta, border )
+function Ftot = filmStrip( Itot, overlap, delta, border )
 
 Itot = double(Itot); Itot = Itot/max(Itot(:));
 

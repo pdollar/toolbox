@@ -14,6 +14,8 @@ Version 2.0 (06-July-07)
  -merged imwrite2split into imwrite2
  -merged nlfilt_sep and nlfiltblock_sep into nlfiltersep
  -merged 1d/nd histogram function, cleaned up commenting
+ -merged makemovie, makemovies, makemovieset, makemovisets, playmovie into playMovie
+ -merged filmstrip, filmstrips into filmStrip
 
 Version 1.5 (05-Jul-07)
  -major documentation change
