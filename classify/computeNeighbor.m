@@ -54,7 +54,7 @@ Nmat = logical(sparse(n,n)); Dmat=sparse(n,n);
 scale=zeros(1,nSet);
 for i=1:nSet
   Xi = squeeze( X3(i,:,:) );
-  Di = dist_euclidean( Xi, Xi );
+  Di = pdist2( Xi, Xi, 'sqeuclidean' );
   Di = Di + eye(nPoint)*realmax;
   if( ~isempty( k ) )
     [ordered]=sort(Di,2);
@@ -96,7 +96,7 @@ if( (prm.forceConn>0 && any(conn==0)) || prm.forceConn>1 )
   if(~isempty(k)); prm.k=k+1; else prm.maxDist=maxDist*1.05; end
   if( all(conn==1) ); prm.forceConn=prm.forceConn-1; end
   neigh = computeNeighbor( X3, prm ); return;
-end;
+end
 
 % compute N (neighbors list); stats; store
 N=cell(1,n);  for i=1:n; N{i}=find(Nmat(i,:)); end
