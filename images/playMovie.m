@@ -32,7 +32,7 @@
 %
 % EXAMPLE - 3 - show a montage of groups of videos in 2 ways
 %  load( 'images.mat' );
-%  videoclusters = clustermontage( videos, IDXv, 9, 1 );
+%  videoclusters = clusterMontage( videos, IDXv, 9, 1 );
 %  M = playMovie( videoclusters );
 %  M = playMovie( videoclusters,[],[],struct('perRow',1,'showLine',0) );
 %

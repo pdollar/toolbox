@@ -33,7 +33,7 @@
 %  scale       - [5] Alter computed value of sigma by given factor
 %                set larger for smoother results, too small -> bad interp
 %  show        - [0] will display results in figure(show)
-%                if negative, assumes X is array Nxs^2 of N sxs patches
+%                if show<0, assumes X is array Nxs^2 of N sxs patches
 %
 % OUTPUTS
 %  rfbBasis
@@ -93,7 +93,7 @@ rbfBasis.var   = var;
 if( abs(show) )
   if( show<0 ) % if images can display
     siz = sqrt(d);
-    I = clustermontage( reshape(X,siz,siz,N), IDX, 25, 1 );
+    I = clusterMontage( reshape(X,siz,siz,N), IDX, 25, 1 );
     figure(-show); clf; montage2( I );
     figure(-show+1); clf; montage2(reshape(mu,siz,siz,[]));
   elseif( d==1 ) % 1D data

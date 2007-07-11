@@ -28,7 +28,7 @@
 %
 % EXAMPLE - 1 - show stacks of images in a row
 %  load( 'images.mat' );
-%  imClusters = clustermontage( images, IDXi, 16, 1 );
+%  imClusters = clusterMontage( images, IDXi, 16, 1 );
 %  figure(1); montage2( imClusters, struct('perRow',1,'padSize',1) );
 %  figure(2); montage2( videos, struct('perRow',1));
 %
