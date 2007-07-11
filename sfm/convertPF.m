@@ -1,7 +1,16 @@
 % Canonical case
-function M=convertPF(P,Pp,F)
+function M=convertPF(P,Pp)
 
-if nargin==2; F=Pp; end
+if ~isempty(P) && ~isempty(Pp)
+  % Reference: HZ2, p246, Table 9.1
+  [U,S,V]=svd(P);
+  C = V(:,3);
+  ep = Pp*C;
+  M=skew(ep)*Pp*pinv(P);
+  return
+end
+
+F=Pp;
 
 if isempty(P)
   % Reference: HZ2, p256, Result 9.14
@@ -13,12 +22,8 @@ end
 
 if isempty(F)
   % Reference: HZ2, p246, Table 9.1
-  if nargin==3
-    
-  else
-    ep=P(:,4);
-    M = skew(ep)
-  end
+  ep=P(:,4);
+  M = skew(ep)*P(:,1:3);
   return
 end
 
