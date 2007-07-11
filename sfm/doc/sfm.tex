@@ -1,0 +1,73 @@
+\input{preamble}
+
+\begin{document}
+\maketitle
+
+\section{Sparse Levenberg-Marquardt for F estimation}
+We use notations of section A6.5 of HZ2.
+
+\underline{Notations}\\
+The parameter vector is partitioned as $\mathbf{P}=(\mathbf{a}^\top,\mathbf{b}_1^\top, \ldots, \mathbf{b}_n^\top)^\top$, and the measurement vector as $\mathbf{X}=(\mathbf{X}_1^\top, \ldots, \mathbf{X}_n^\top)^\top$.
+
+$\mathbf{a}$ is made of the entries of $P'$ by taking the elements row by row: $\bfa=(\Prow{1},\Prow{2},\Prow{3})$.
+
+$\mathbf{b}_i=(X_i,Y_i,T_i)^\top$ parametrizes the 3D point $\bfXDi=(X_i,Y_i,1,T_i)^\top$
+
+$\bfX_i=(x_i^\top,x_i'^\top)^\top$ contains the measurements.
+
+We do have $\partial \bfXhat_i / \partial \bfb_j=0$ for $i \neq j$.
+
+\underline{Algorithm}
+\renewcommand{\labelenumi}{(\roman{enumi})}
+\begin{enumerate}
+ \item Compute:
+  \begin{align}
+  \nonumber
+  A_i &= \left[ \partial \bfXhat_i / \partial \bfa \right] =
+ \begin{bmatrix} 0 \\ \partial \bfxhatp_i / \partial \bfa \end{bmatrix}\\
+ &= \frac{1}{\Prow{3} \bfXDi}
+ \begin{bmatrix} \multicolumn{3}{c}{\zero{2}{12}} \\ 
+ \bfXDi^\top & \zero{1}{4} & -   \dfrac{\Prow{1} \bfXDi}{\Prow{3} \bfXDi} \bfXDi^\top \\
+ \zero{1}{4} & \bfXDi^\top & -   \dfrac{\Prow{2} \bfXDi}{\Prow{3} \bfXDi} \bfXDi^\top \end{bmatrix}\\
+ &= \begin{bmatrix} \multicolumn{3}{c}{\zero{2}{12}} \\
+ \bfXDit^\top & \zero{1}{4} & -(\Prow{1} \bfXDit) \bfXDit^\top \\
+ \zero{1}{4} & \bfXDit^\top & -(\Prow{2} \bfXDit) \bfXDit^\top \end{bmatrix}
+ \end{align}
+where: $$\bfXDit=\dfrac{1}{\Prow{3} \bfXDi}\bfXDi$$
+
+
+ \begin{align}
+  \nonumber
+  B_i &= \left[ \partial \bfXhat_i / \partial \bfb_i \right] =
+ \begin{bmatrix} \eye{2}{3} \\ \partial \bfxhatp_i / \partial \bfb_i \end{bmatrix}\\
+ &= \frac{1}{\Prow{3}^\top \bfXDi}
+ \begin{bmatrix} \eye{2}{3} \\
+  \Pelem{1}{[1,2,4]}  - \dfrac{\Prow{1} \bfXDi}{\Prow{3} \bfXDi} \Pelem{3}{[1,2,4]} \\
+  \Pelem{2}{[1,2,4]}  - \dfrac{\Prow{2} \bfXDi}{\Prow{3} \bfXDi} \Pelem{3}{[1,2,4]} 
+ \end{bmatrix}\\
+ &= \frac{1}{\Prow{3}^\top \bfXDi}
+ \begin{bmatrix} \eye{2}{3} \\
+  \Pelem{1}{[1,2,4]}  - (\Prow{1} \bfXDit) \Pelem{3}{[1,2,4]} \\
+  \Pelem{2}{[1,2,4]}  - (\Prow{2} \bfXDit) \Pelem{3}{[1,2,4]} 
+ \end{bmatrix}
+ \end{align}\\
+
+$\mathbf{\epsilon}_i=\bfX_i-\bfXhat_i$
+ \item we assume $\Sigma_{\bfX_i}=\eye{4}{4}$. We start with $\Delta_\text{left}=\zero{12}{12}$ and $\Delta_\text{right}=\zero{12}{1}$. At each iteration, we compute the following items:
+ \begin{eqnarray*}
+  U_i &= & A_i^\top A_i \\
+  V_i^* &= &\{B_i^\top B_i \text{ with diagonal multiplied by } 1+\lambda \}\\
+  W_i &= &A_i^\top B_i \\
+  F_i &= &{V_i^*}^{-1} B_i^\top \\
+  G_i &= &F_i A_i \\
+  H_i &= &F_i \bfeps_i \\
+  \Delta_\text{left} &\leftarrow &\Delta_\text{left} + W_i G_i \\
+  \Delta_\text{right} &\leftarrow &\Delta_\text{right} + A_i^\top \bfeps_i -W_i H_i
+ \end{eqnarray*}
+\item Compute $U=\sum_i U_i$ and $U^*$ ($U$ with its diagonal multiplied by  $1+\lambda$). Solve: $$( U^* - \Delta_\text{left} ) \delta_\bfa =\Delta_\text{right}$$
+
+\item Compute: $\delta_{\bfb_i}=H_i-G_i \delta_\bfa$
+\end{enumerate}
+
+\end{document}
+
