@@ -3,7 +3,7 @@
 % Repeatedly calls frame2im. Useful for playback with playMovie.
 %
 % USAGE
-%  I = movie2images( M )
+%  I = movieToImages( M )
 %
 % INPUTS
 %  M   - a matlab movie
@@ -14,15 +14,16 @@
 % EXAMPLE
 %  load( 'images.mat' );
 %  M = playMovie( videos );
-%  playMovie(movie2images(M));
+%  I = movieToImages(M);
+%  playMovie(I);
 %
 % See also PLAYMOVIE
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function I = movie2images( M )
+function I = movieToImages( M )
 
 I = fevalArrays( M, @frame2Ii );
 

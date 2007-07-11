@@ -7,7 +7,7 @@
 %   filmStrip      - Used to display R stacks of T images as a "filmstrip".
 %   playMovie      - Shows/makes an/several movie(s) from an image sequence.
 %   clusterMontage - Used for visualization of clusters of images and videos.
-%   movie2images   - Creates a stack of images from a matlab movie M.
+%   movieToImages  - Creates a stack of images from a matlab movie M.
 %
 % Histograms:
 %   assignToBins   - Quantizes A according to values in edges.

@@ -1,7 +1,7 @@
 % Shows/makes an/several movie(s) from an image sequence.
 %
 % To play a matlab movie file, as an alternative to movie, use:
-%  playMovie(movie2images(M));
+%  playMovie(movieToImages(M));
 % The images to display are stacked in a higher dimensional array.
 % MxNx(number of colors, nothing, 1 or 3)x(T=number of frames)x(R=number of
 % cases)x(S=number of sets)
