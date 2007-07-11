@@ -47,7 +47,7 @@ switch method
       lambda = 0.001;
 
       P = eye(3,4);
-      Pp = computePfromF(F);
+      Pp = convertPF([],F);
       % Impose the constraint on PP{2}
       switch caseCons
         case 'rot'
@@ -61,7 +61,7 @@ switch method
       end
       % Create P
       warning off all;
-      X=computeXfromxP(x,xp,P,Pp);
+      X=computeSMFromx(x,xp,P,Pp);
 
       % Initialize Pb, Pb stands for P bold
       Pb = zeros( 1, 12 + 3*n );
@@ -206,8 +206,8 @@ switch method
       F=zeros(3,3); F(1,1)=V(1,end); F(2,1)=V(2,end); F(3,1)=V(3,end);
       F(3,2)=V(4,end); F(3,3)=-V(:,4)'*Xbar';
 
-      Pp = computePfromF(F);
-      X=computeXfromxP(x,xp,eye(3,4),Pp);
+      Pp = convertPF([],F);
+      X=computeSMFromx(x,xp,eye(3,4),Pp);
     end
 end
 
