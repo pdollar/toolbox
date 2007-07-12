@@ -63,6 +63,7 @@ if ~iscell(I);
   if ~any(ismember(nd, 3:6)); error('unsupported dimension of I'); end
   if( ~any(size(I,3)==[1 3])); % should be controlled by flag hasChn?
     I=reshape(I,[siz(1),siz(2),1,siz(3:end)]);
+    prm.hasChn=1;
   end
   nframes=size(I,4); nd=ndims(I);
   if( nd<3 || nd>6 )
@@ -75,31 +76,31 @@ else
   for i=1:length(I)
     if ~any(size(I,3)==[1 3]);
       siz=size(I{i}); I{i}=reshape(I{i},[siz(1),siz(2),1,siz(3:end)]);
+      prm.hasChn=1;
     end
     nframes=max(nframes,siz(3));
     cLim = [min(I(:),cLim(1)) max(I(:),cLim(2))];
   end
-  nd=ndims(I{1});
   cLim = [min(I(:)) max(I(:))];
 end
 prm.cLim=cLim;
-if( size(I,3)==1 ); prm.hasChn=0; else prm.hasChn=1; end
 
 h=gcf; colormap gray; figure(h); % bring to focus
 if nargout>0; M=repmat(getframe,[1 nframes]); end
-order = 1:nframes;  j=1; 
+order = 1:nframes;  j=1; siz=size(I);
 for nplayed = 1 : abs(loop)
   for i=order
     tic; try disc=get(h); catch return; end %#ok<NASGU>
     if ~iscell(I)
-      if nd==5
-        montage2(squeeze(I(:,:,:,i,:)),prm);
-      else
-        montage2(squeeze(I(:,:,:,i,:,:)),prm);
-      end
+       montage2(reshape(I(:,:,:,i,:,:),[siz(1:3) siz(5:end)]),prm);
     else
       I2=cell(1,length(I));
-      for j=1:length(I); try I2{j}=I{j}(:,:,:,i,:); catch I2{j}=[]; end;end
+      for j=1:length(I)
+        siz=size(I{j});
+        try I2{j}=reshape(I{j}(:,:,:,i,:),[siz(1:3) siz(5)]);
+        catch I2{j}=[]; 
+        end
+      end
       montage2(I2,prm);
     end
     title(sprintf('frame %d of %d',i,nframes));
