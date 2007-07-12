@@ -46,6 +46,10 @@
 %  clf; M = playMovie( IC );
 %  clf; M = playMovie( IC, [], 5, struct('perRow',1,'showLines',0) );
 %
+% EXAMPLE - {S}[MxNxTxR] show groups of videos given in a cell
+%  IS = squeeze(mat2cell2( IC, [1 1 1 1 9] ));
+%  clf; M = playMovie( IS, [], 5, struct('showLines',0) );
+%
 % See also MONTAGE2, MOVIETOIMAGES, MOVIE
 
 % Piotr's Image&Video Toolbox      Version NEW
@@ -72,16 +76,16 @@ if ~iscell(I);
   end
   cLim = [min(I(:)) max(I(:))];
 else
-  cLim=[Inf -Inf];
+  cLim=[Inf -Inf]; nframes=0;
   for i=1:length(I)
-    if ~any(size(I,3)==[1 3]);
-      siz=size(I{i}); I{i}=reshape(I{i},[siz(1),siz(2),1,siz(3:end)]);
+    siz=size(I{i});
+    if ~any(size(I{i},3)==[1 3])
+      I{i}=reshape(I{i},[siz(1),siz(2),1,siz(3:end)]);
       prm.hasChn=1;
     end
-    nframes=max(nframes,siz(3));
-    cLim = [min(I(:),cLim(1)) max(I(:),cLim(2))];
+    nframes=max(nframes,size(I{i},4));
+    cLim = [min(min(I{i}(:)),cLim(1)) max(max(I{i}(:)),cLim(2))];
   end
-  cLim = [min(I(:)) max(I(:))];
 end
 prm.cLim=cLim;
 
@@ -96,7 +100,7 @@ for nplayed = 1 : abs(loop)
     else
       I2=cell(1,length(I));
       for j=1:length(I)
-        siz=size(I{j});
+        siz=size(I{j}); siz(end+1:5)=1;
         try I2{j}=reshape(I{j}(:,:,:,i,:),[siz(1:3) siz(5)]);
         catch I2{j}=[]; 
         end
