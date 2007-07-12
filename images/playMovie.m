@@ -3,8 +3,13 @@
 % To play a matlab movie file, as an alternative to movie, use:
 %  playMovie(movieToImages(M));
 % The images to display are stacked in a higher dimensional array.
-% MxNx(number of colors, nothing, 1 or 3)x(T=number of frames)x(R=number of
-% cases)x(S=number of sets)
+% MxNxCxTxRxS, where:
+%  M - height
+%  N - width
+%  C - number of channels, nothing, 1 or 3
+%  T - number of videos
+%  R - number of cases
+%  S - number of sets
 %
 % USAGE
 %  playMovie( I, [fps], [loop], [prm] )
@@ -22,21 +27,21 @@
 %
 % OUTPUTS
 %
-% EXAMPLE - 1 - show 1 video
+% EXAMPLE - [MxNxT] 1 video
 %  load( 'images.mat' );
 %  playMovie( video, [], -50 );
 %
-% EXAMPLE - 2 - show a montage of videos
+% EXAMPLE - [MxNxTxR] many videos at same time
 %  load( 'images.mat' );
 %  playMovie( videos, [], 5 );
 %
-% EXAMPLE - 3 - show a montage of groups of videos in 2 ways
+% EXAMPLE - [MxNxTxRxS] show groups of videos in 2 ways
 %  load( 'images.mat' );
-%  videoclusters = clusterMontage( videos, IDXv, 9, 1 );
-%  M = playMovie( videoclusters );
-%  M = playMovie( videoclusters,[],5,struct('perRow',1,'showLine',0) );
+%  IC = clusterMontage( videos, IDXv, 9, 1 );
+%  clf; M = playMovie( IC );
+%  clf; M = playMovie( IC, [], 5, struct('perRow',1,'showLines',0) );
 %
-% See also MONTAGE2, MOVIE2IMAGES, MOVIE
+% See also MONTAGE2, MOVIETOIMAGES, MOVIE
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -46,36 +51,33 @@ function M = playMovie( I, fps, loop, prm )
 
 if( nargin<2 || isempty(fps)); fps = 100; end
 if( nargin<3 || isempty(loop)); loop = 1; end
-if nargin<4; prm=struct(); end
+if( nargin<4 || isempty(prm)); prm=struct(); end
 
 nd=ndims(I); siz=size(I);
 if ~iscell(I);
   if ~any(ismember(nd, 3:6)); error('unsupported dimension of I'); end
-  if ~any(size(I,3)==[1 3]);
+  if ~any(size(I,3)==[1 3]); % should be controlled by flag hasChn
     I=reshape(I,[siz(1),siz(2),1,siz(3:end)]);
   else
-    error(['Invalid input, I has to be MxNxT or MxNx1xTxRxS or ' ...
-      'or MxNx3xTxRxS, with Rand S possibly equal to 1']);
+    error(['Invalid input, I has to be MxNxTxRxS or MxNx1xTxRxS or ' ...
+      'or MxNx3xTxRxS, with R and S possibly equal to 1']);
   end
   nframes=size(I,4);
   nd=ndims(I);
-  clim = [min(I(:)) max(I(:))];
+  cLim = [min(I(:)) max(I(:))];
 else
-  clim=[Inf -Inf];
+  cLim=[Inf -Inf];
   for i=1:length(I)
     if ~any(size(I,3)==[1 3]);
       siz=size(I{i}); I{i}=reshape(I{i},[siz(1),siz(2),1,siz(3:end)]);
     end
     nframes=max(nframes,siz(3));
-    clim = [min(I(:),clim(1)) max(I(:),clim(2))];
+    cLim = [min(I(:),cLim(1)) max(I(:),cLim(2))];
   end
   nd=ndims(I{1});
-  clim = [min(I(:)) max(I(:))];
+  cLim = [min(I(:)) max(I(:))];
 end
-
-dfs = {'showLine',1,'extraInf',0,'clim',clim,'mm',[],'nn',[],...
-  'label',[],'perRow',false,'padSize',4,'montageLabel',[]};
-prm = getPrmDflt( prm, dfs );
+prm.cLim=cLim;
 
 h=gcf; colormap gray; figure(h); % bring to focus
 if nargout>0; M=repmat(getframe,[1 nframes]); end

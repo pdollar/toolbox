@@ -12,10 +12,9 @@
 %  I   - MxNxT array (of images)
 %
 % EXAMPLE
-%  load( 'images.mat' );
-%  M = playMovie( videos );
-%  I = movieToImages(M);
-%  playMovie(I);
+%  load( 'images.mat' );  [X,map]=gray2ind(video(:,:,1));
+%  M = fevalArrays( video, @(x) im2frame(gray2ind(x),map) );
+%  I = movieToImages(M); playMovie(I);
 %
 % See also PLAYMOVIE
 
