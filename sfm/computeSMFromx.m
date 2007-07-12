@@ -23,7 +23,7 @@ switch method
       [U,S,V]=svd(A,0); F=reshape(V(:,end),[3,3])';
       [U,S,V]=svd(F,0); F=U*diag([S(1,1) S(2,2) 0])*V';
 
-      F=Tp'*F*T
+      F=Tp'*F*T;
     else
       % Linear Algorithm
       % Reference: HZ2, p348
@@ -43,41 +43,19 @@ switch method
 
       [X,Pp]=computeSMFromx(x,xp,0,isProj);
 
-      
-      Xtemp=X./repmat(X(3,:),[4,1]);
-      norm(Xtemp(1:3,:)-x,'fro')
-      Xtemp=Pp*X;
-      Xtemp=Xtemp./repmat(Xtemp(3,:),[3,1]);
-      norm(Xtemp(1:3,:)-xp,'fro')
-      
-      caseCons = 'none';
-
       % Initialize some variables
-      lambda = 0.001;
-
-      % Impose the constraint on PP{2}
-      switch caseCons
-        case 'rot'
-          for j = 1 : 3
-            for i = 1 : 3
-              if abs( Pp( j, i ) )>1
-                Pp( j, i ) = sign( Pp( j, i ) );
-              end
-            end
-          end
-      end
+      lambda = 0.01;
 
       % Initialize Pb, Pb stands for P bold
       Pb = zeros( 1, 12 + 3*n );
       temp = Pp';
       Pb( 1 : 12 ) = temp(1:12);
 
-      X([ 1 2 4 ],:)=X([ 1 2 4 ],:)./repmat(X(3,:),[3 1]); X(3,:) = 1;
+      X([ 1 2 4 ],:)=X([ 1 2 4 ],:)./X([3;3;3],:); X(3,:) = 1;
       Pb( 13 : end ) = reshape( X( [1 2 4], : ), 3*n, 1 )';
 
       % Initialize XHat
-      errMin = computeError( x, xp, Pb );
-
+      errMin = computeError( Pb )
       XDiff = XDiffNew;
       X3D = X3DNew;
 
@@ -98,17 +76,17 @@ switch method
 
         % Define the Ai
         PpXtRep=cell(1,3);
-        PpXtRep{3}=repmat( 1./(Pp(3,:)*X3D), [ 4, 1 ] );
+        PpXtRep{3}=repmat( 1./(Pp(3,:)*X3D), [ 4 1 ] );
         Xt = X3D.*PpXtRep{3};
 
         for i=1:2
-          PpXtRep{i}=repmat( Pp(i,:)*Xt, [ 4, 1 ] );
+          PpXtRep{i}=repmat( Pp(i,:)*Xt, [ 4 1 ] );
         end
 
-        A( 3, 1:4, : ) = reshape( Xt, [ 1, 4, n ] );
+        A( 3, 1:4, : ) = reshape( Xt, [ 1 4 n ] );
         A( 4, 5:8, : ) = A( 3, 1:4, : );
-        A( 3, 9:12, : ) = reshape( -PpXtRep{1}.*Xt, [ 1, 4, n ] );
-        A( 4, 9:12, : ) = reshape( -PpXtRep{2}.*Xt, [ 1, 4, n ] );
+        A( 3, 9:12, : ) = reshape( -PpXtRep{1}.*Xt, [ 1 4 n ] );
+        A( 4, 9:12, : ) = reshape( -PpXtRep{2}.*Xt, [ 1 4 n ] );
 
         % Define the Bi
         Pp( :, 3 ) = []; for i=1:3 PpXtRep{i}(4,:)=[]; end
@@ -117,34 +95,32 @@ switch method
         B( 4, :, : ) = reshape( PpXtRep{3}.*(repmat(Pp(2,:)',[ 1 n ]) - ...
           PpXtRep{2}.*repmat( Pp( 3, : )', [ 1 n ] ) ), [ 1 3 n ] );
 
-        % Compute some values independent from delta
-        U = zeros( 12 );
-        DeltaLeft = zeros( 12 );
-        DeltaRight = zeros( 12, 1 );
+        % Compute some values independent of delta
+        U = zeros( 12 ); epsAi=zeros( 12, 1 );
         for i = 1 : n
-          Ai = A( :, :, i );
-          Aip = Ai';
-          Bi = B( :, :, i );
+          Ai = A(:,:,i); Aip = Ai';
 
           % Compute Ui, Ui is 12*12
           U = U + Aip*Ai; %Ai'*sigmaInvi*Ai.*UiStarFactor;
 
           % Compute Wi, Wi is 12*3
-          Wi(:,:,i) = Aip*Bi; %Ai'*sigmaInvi*Bi;
+          Wi(:,:,i) = Aip*B(:,:,i); %Ai'*sigmaInvi*Bi;
+          epsAi=epsAi+Aip*XDiff( :, i );
         end
 
         % Perform the sparse computation
         while j<nIter
+          DeltaLeft = zeros( 12 );
+          DeltaRight = zeros( 12, 1 );
           for i = 1 : n
-            Ai = A( :, :, i );
-            Bi = B( :, :, i );
-            Bip = Bi';
+            Ai = A(:,:,i);
+            Bi = B(:,:,i); Bip = Bi';
 
             % Compute Vi, Vi is 3*3
             ViStar = Bip*Bi;%Bi'*sigmaInvi*Bi.*ViStarFactor;
-            for k = 1 : 3
-              ViStar( k, k ) = ViStar( k, k )*( 1 + lambda );
-            end
+            for k = 1 : 3; ViStar(k,k)=ViStar(k,k)*(1+lambda); end
+
+            if rcond(ViStar)<eps; j=nIter; end
 
             % Use different temp variables
             Fi = inv(ViStar)*Bip;
@@ -155,21 +131,15 @@ switch method
             DeltaLeft = DeltaLeft + Wi(:,:,i)*Gi(:,:,i);
 
             % Compute the right of the equation in deltaA, it is 12*1
-            DeltaRight = DeltaRight + Aip*XDiff( :, i )- Wi(:,:,i)*Hi(:,i);
+            DeltaRight = DeltaRight + Wi(:,:,i)*Hi(:,i);
           end
           % Compute deltaA and update P
-          UStar=U;
-          for k = 1 : 12; UStar(k,k) = U(k,k)*( 1 + lambda ); end
-
-          deltaA = (UStar-DeltaLeft)\DeltaRight;
           PbNew = Pb;
+          
+          UStar=U; for k = 1 : 12; UStar(k,k) = U(k,k)*( 1 + lambda ); end
+          deltaA = (UStar-DeltaLeft)\(epsAi-DeltaRight);
+          
           PbNew( 1 : 12 ) = PbNew( 1 : 12 ) + deltaA';
-          switch caseCons
-            case 'rot'
-              temp = find( abs( PbNew( 1 : nParam ) )>1 );
-              temp( ismember( temp, [ 4, 8 ,12 ] ) ) = [];
-              PbNew( temp ) = sign( PbNew( temp ) );
-          end
 
           % Compute each deltaBi and update P
           PbNew( 13 : end ) = PbNew( 13 : end ) + Hi(:)';
@@ -178,66 +148,58 @@ switch method
           end
 
           % Compute the new error
-          err = computeError( x,xp,PbNew);
+          err = computeError( PbNew)
 
           % Update lambda
           j = j + 1;
           if err<errMin
+            %if any(abs(Pp(:,1:3))>1e10); j=nIter; break; end
             Pb = PbNew;
             lambda = lambda/10;
-            errMin = err;
-            XDiff = XDiffNew;
-            X3D = X3DNew;
-            break;
+            errMin = err; XDiff = XDiffNew; X3D = X3DNew;
+            break
           else
             lambda = lambda*10;
+            %if any(abs(Pp(:,1:3))>1e2); j=nIter; end
           end
         end
       end
-      
+
       Pp = reshape( Pb( 1 : 12 ), [ 4 3 ] )';
-      X = X3D./repmat( X3D( 4, : ), [ 4 1 ] );
+      X = X3D./X3D( [4;4;4;4], : );
     else
       % Affine camera matrix
       % Reference: HZ2, p351, Algorithm 14.1
 
-      A=[ xp(1:2,:)./repmat(xp(3,:),[2,1]); x(1:2,:)./repmat(x(3,:),[2,1]) ]';
+      A=[xp(1:2,:)./repmat(xp(3,:),[2,1]);x(1:2,:)./repmat(x(3,:),[2,1])]';
       Xbar=mean(A,1);
       A=A-repmat(Xbar,[ n 1 ]);
 
       [U,S,V]=svd(A);
 
-      F=zeros(3,3); F(1,1)=V(1,end); F(2,1)=V(2,end); F(3,1)=V(3,end);
-      F(3,2)=V(4,end); F(3,3)=-V(:,4)'*Xbar';
+      F=zeros(3,3); F(1,3)=V(1,end); F(2,3)=V(2,end); F(3,1)=V(3,end);
+      F(3,2)=V(4,end); F(3,3)=-V(:,end)'*Xbar';
 
-      Pp = convertPF([],F);
-      X=computeSFromxM(x,xp,eye(3,4),Pp);
+      Pp = convertPF([],F,false);
+      P=eye(3,4); P(3,3:4)=[0 1];
+      X=computeSFromxM(x,xp,P,Pp);
     end
 end
 
 
 %%%%%%%%%%%
 % Compute the reconstruction error for each point
-  function err = computeError( x, xp, Pb )
+  function err = computeError( Pb )
 
-    if isProj
-      Pp = reshape( Pb( 1 : 12 ), [ 4, 3 ] )'; nParam=12;
-    else
-      Pp = [ Pb( 1 : 4 ); Pb( 5 : 8 ); 0, 0, 0, 1 ]; nParam=8;
-    end
+    Pp = reshape( Pb( 1 : 12 ), [ 4 3 ] )';
 
-    X3DNew = [ Pb( nParam+1 : 3 : end ); Pb( nParam+2 : 3 : end ); ...
-      ones( 1, size(x,2) ); Pb( nParam+3 : 3 : end ) ];
+    X3DNew = [ Pb( 13 : 3 : end ); Pb( 14 : 3 : end ); ...
+      ones( 1, size(x,2) ); Pb( 15 : 3 : end ) ];
 
     xpHat = Pp*X3DNew;
     xpHat( 1:2, : )= xpHat( 1:2, : )./repmat(xpHat( 3, : ),[2 1]);
 
-    if isProj
-      XHat = [ X3DNew(1:2,:); xpHat(1:2,:) ];
-    else
-      XHat = [ X3DNew(1,:)./X3DNew(4,:); X3DNew(2,:)./X3DNew(4,:); ...
-        xpHat(1:2,:) ];
-    end
+    XHat = [ X3DNew(1:2,:); xpHat(1:2,:) ];
 
     XDiffNew=[x(1:2,:);xp(1:2,:)]-XHat;
     err = norm( XDiffNew, 'fro' );

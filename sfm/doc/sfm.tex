@@ -40,12 +40,12 @@ where: $$\bfXDit=\dfrac{1}{\Prow{3} \bfXDi}\bfXDi$$
   \nonumber
   B_i &= \left[ \partial \bfXhat_i / \partial \bfb_i \right] =
  \begin{bmatrix} \eye{2}{3} \\ \partial \bfxhatp_i / \partial \bfb_i \end{bmatrix}\\
- &= \frac{1}{\Prow{3}^\top \bfXDi}
+ &= \frac{1}{\Prow{3} \bfXDi}
  \begin{bmatrix} \eye{2}{3} \\
   \Pelem{1}{[1,2,4]}  - \dfrac{\Prow{1} \bfXDi}{\Prow{3} \bfXDi} \Pelem{3}{[1,2,4]} \\
   \Pelem{2}{[1,2,4]}  - \dfrac{\Prow{2} \bfXDi}{\Prow{3} \bfXDi} \Pelem{3}{[1,2,4]} 
  \end{bmatrix}\\
- &= \frac{1}{\Prow{3}^\top \bfXDi}
+ &= \frac{1}{\Prow{3} \bfXDi}
  \begin{bmatrix} \eye{2}{3} \\
   \Pelem{1}{[1,2,4]}  - (\Prow{1} \bfXDit) \Pelem{3}{[1,2,4]} \\
   \Pelem{2}{[1,2,4]}  - (\Prow{2} \bfXDit) \Pelem{3}{[1,2,4]} 
