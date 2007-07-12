@@ -1,44 +1,54 @@
-% Used to display a stack of T images.
+% Used to display collections of images and videos.
 %
 % Improved version of montage, with more control over display.
 % NOTE: Can convert between MxNxT and MxNx3xT image stack via:
 %   I = repmat( I, [1,1,1,3] ); I = permute(I, [1,2,4,3] );
 %
 % USAGE
-%  varargout = montage2(IS,[showLns],[extraInf],[clim],[mm],[nn],[labels])
+%  varargout = montage2( IS, [prm] )
 %
 % INPUTS
-%  IS          - MxNxTxR or MxNx1xTxR or MxNx3xTxR array 
-%                (of bw or color images). R can equal 1
+%  IS           - MxNxTxR or MxNxCxTxR, where C==1 or C==3, and R may be 1
+%                 or cell vector of MxNxT or MxNxCxT matricies
 %  prm
-%   .showLns    - [0] whether to show lines separating the various frames
-%   .extraInf   - [0] if 1 then a colorbar is shown as well as pixval bar
-%   .clim       - [] clim = [clow chigh] optional scaling of data
-%   .mm         - [] #images/col (if [] then calculated)
-%   .nn         - [] #images/row (if [] then calculated)
-%   .label      - [] cell array of strings specifying labels for each image
-%   .perRow     - [0] displays several movies in rows
-%   .padSize    - [4] used to pad when in row mode
-%   .montageLabel- list of labels for groups of movies
+%   .showLines  - [1] whether to show lines separating the various frames
+%   .extraInfo  - [0] if 1 then a colorbar is shown as well as impixelinfo
+%   .cLim       - [] cLim = [clow chigh] optional scaling of data
+%   .mm         - [] #images/col per montage
+%   .nn         - [] #images/row per montage
+%   .labels     - [] cell array of labels (strings) (T if R==1 else R)
+%   .perRow     - [0] only if R>1 and not cell, alternative displays method
+%   .padSize    - [4] only if perRow, amount to pad when in row mode
+%   .hasChn     - [0] if true assumes IS is MxNxCxTxR else MxNxTxR
 %
 % OUTPUTS
 %  h           - image handle
 %  m           - #images/col
 %  nn          - #images/row
 %
-% EXAMPLE - 1 - show stacks of images in a row
+% EXAMPLE - [2D] simply calls im
+%  load( 'images.mat' );  clf; montage2( images(:,:,1) );
+%
+% EXAMPLE - [3D] show a montage of images
+%  load( 'images.mat' );  clf; montage2( images );
+%
+% EXAMPLE - [3D] show a montage of images (with parameters specified)
 %  load( 'images.mat' );
-%  imClusters = clusterMontage( images, IDXi, 16, 1 );
-%  figure(1); montage2( imClusters, struct('perRow',1,'padSize',1) );
-%  figure(2); montage2( videos, struct('perRow',1));
+%  for i=1:50; labels{i}=['I-' int2str2(i,2)]; end
+%  prm = struct('extraInfo',0,'perRow',0,'labels',{labels});
+%  clf; montage2( images(:,:,1:50), prm );
 %
-% EXAMPLE - 2 - show a montage of several groups of pictures
-%  load( 'images.mat' ); montage2( videos );
+% EXAMPLE - [4D] show a montage of several groups of pictures
+%  for i=1:25; labels{i}=['V-' int2str2(i,2)]; end
+%  prm = struct('labels',{labels});
+%  load( 'images.mat' ); clf; montage2( videos(:,:,:,1:25), prm );
 %
-% EXAMPLE - 2 - show a montage of several pictures
-%  load( 'images.mat' ); montage2( images );
+% EXAMPLE - [4D] show using 'row' format
+%  load( 'images.mat' );
+%  prm = struct('perRow',1,'padSize',10);
+%  figure(1); clf; montage2( videos(:,:,:,1:10), prm );
 %
-% See also MONTAGE, PLAYMOVIE
+% See also MONTAGE, PLAYMOVIE, FILMSTRIP
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -46,153 +56,148 @@
 
 function varargout = montage2( IS, prm )
 
-if nargin<2; prm=struct(); end
+if( nargin<2 ); prm=struct(); end
+varargout = cell(1,nargout);
 
 %%% get parameters (set defaults)
-dfs = {'showLine',0,'extraInf',0,'clim',[],'mm',[],'nn',[],...
-  'label',[],'perRow',false,'padSize',4,'montageLabel',[]};
+dfs = {'showLines',1, 'extraInfo',0, 'cLim',[], 'mm',[], 'nn',[],...
+  'labels',[], 'perRow',false, 'padSize',4, 'hasChn',false };
 prm = getPrmDflt( prm, dfs );
-extraInf=prm.extraInf;
-label=prm.label; perRow=prm.perRow; padSize=prm.padSize;
-montageLabel=prm.montageLabel;
+extraInfo=prm.extraInfo; labels=prm.labels;
+perRow=prm.perRow; padSize=prm.padSize;  hasChn=prm.hasChn;
 
-%%% Deal with the special way of doing a montage
-if perRow
-  [padSize,er] = checkNumArgs( padSize,[1 1], 0, 1 ); error(er);
-
-  if iscell(IS)
-    error('Invalid input, IS cannot be a cell');
-  end
-  if ~any(size(IS,3)==[1 3]);
-    siz=size(IS); IS=reshape(IS,[siz(1),siz(2),1,siz(3:end)]);
-  else
-    error('Invalid input, IS has to be MxNxT or MxNx1xT or MxNx3xTxR');
-  end
-  % reshape IS so that each 3D element is concatenated to a 2D image,
-  % adding padding
-  padEl = max(IS(:));
-  siz=size(IS); nd=ndims(IS);
-  IS=arrayCrop(IS, ones(1,nd), [siz(1)+padSize siz(2:end)], padEl );%UD pad
+%%% If IS is not a cell convert to MxNxCxTxR array
+if( iscell(IS) && numel(IS)==1 ); IS=IS{1}; end;
+if( ~iscell(IS) && ndims(IS)>2 )
   siz=size(IS);
-  switch nd
-    case 4
-      IS=squeeze( reshape( IS, siz(1), [], siz(4) ) );
-    case 5
-      IS=squeeze(reshape(permute(IS,[1 2 4 3 5]),size(IS,1),[],...
-        size(IS,3),size(IS,5)));
-  end
-  siz=size(IS); nd=ndims(IS);
-  IS=arrayCrop(IS, [(1-padSize)*[1 1], ones(1,nd-2)], ...
-    [siz(1) siz(2)+padSize siz(3:end)], padEl);
+  if( ~hasChn );
+    IS=reshape(IS,[siz(1:2),1,siz(3:end)]);
+    prm.hasChn = true;
+  end;
+  if(ndims(IS)>5); error('montage2: input too large'); end;
+end
+
+%%% take care of special case where calling subMontage only once
+if( ~iscell(IS) && size(IS,5)==1 );
+  [varargout{:}] = subMontage(IS,prm);
+  return;
+end;
+
+if( perRow ) %%% display each montage in row format
+  [padSize,er] = checkNumArgs( padSize,[1 1], 0, 1 ); error(er);
+  if(iscell(IS)); error('montage2: IS cannot be a cell if perRow'); end;
+
+  % reshape IS so each 3D element is concatenated to a 2D image (and pad)
+  padEl = max(IS(:)); siz = size(IS);
+  IS=arrayToDims(IS, [siz(1)+padSize siz(2:end)], padEl );
+  siz = size(IS);
+  IS=reshape(permute(IS,[1 2 4 3 5]),siz(1),[],siz(3),siz(5));
+  siz = size(IS);
+  IS=arrayToDims(IS, [siz(1) siz(2)+padSize siz(3:end)], padEl);
 
   % show using subMontage
-  varargout = cell(1,nargout);
-  if( nargout); varargout{1}=IS; end
-  prm.perRow=false;
+  if( nargout ); varargout{1}=IS; end
+  prm.perRow = false;  prm.hasChn=true;
   [varargout{2:end}] = subMontage( IS, prm );
   title(inputname(1));
-  return
-end
 
+else %%% display each montage using subMontage
 
-%%% Otherwise, display each montage
-siz=size(IS);
-if ~iscell(IS)
-  if ~any(size(IS,3)==[1 3]); IS=reshape(IS,[siz(1:2),1,siz(3:end)]); end
-  IS2=cell(1,size(IS,5));
-  for i=1:size(IS,5); IS2{i}=IS(:,:,:,:,i); end
-  IS=IS2; clear IS2;
-end
-
-nmontages = numel(IS);
-
-if numel(IS)>1; 
-  nn2 = ceil( sqrt(nmontages) ); mm2 = ceil(nmontages/nn2); 
-else
-  mm2=1; nn2=1;
-end
-
-% draw each montage
-for i=1:nmontages
-  subplot(mm2,nn2,i);
-
-  prm2=prm;
-  if ~isempty(montageLabel); prm2.label=prm.montageLabel{i}; end
-  if( ~isempty(IS{i}) )
-    subMontage( IS{i}, prm2 );
+  % convert to cell array
+  if( iscell(IS) )
+    nMontages = numel(IS);
   else
-    set(gca,'XTick',[]); set(gca,'YTick',[]);  %extraInf off
+    nMontages = size(IS,5);
+    IS = squeeze(mat2cell2( IS, [1 1 1 1 nMontages] ));
   end
-  if(~isempty(label)); title(label{i}); end
-end
-if extraInf; pixval on; end
 
+  % draw each montage
+  clf;
+  nn = ceil( sqrt(nMontages) ); mm = ceil(nMontages/nn);
+  for i=1:nMontages
+    subplot(mm,nn,i);
+    prmSub=prm;  prmSub.extraInfo=0;  prmSub.labels=[];
+    if( ~isempty(IS{i}) )
+      subMontage( IS{i}, prmSub );
+    else
+      set(gca,'XTick',[]); set(gca,'YTick',[]);
+    end
+    if(~isempty(labels)); title(labels{i}); end
+  end
+  if( extraInfo ); impixelinfo; end;
+end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function varargout=subMontage( IS, prm )
+% this function is a generalized version of Matlab's montage.m
+function varargout = subMontage( IS, prm )
 
-dfs = {'showLine',0,'extraInf',0,'clim',[],'mm',[],'nn',[],...
-  'labels',[],'perRow',false,'padSize',0};
+% get parameters (set defaults)
+dfs = {'showLines',1, 'extraInfo',0, 'cLim',[], 'mm',[], 'nn',[], ...
+  'labels',[], 'perRow',false, 'hasChn',false };
+prm = getPrmDflt( prm, dfs );
+showLines=prm.showLines;   extraInfo=prm.extraInfo;  cLim=prm.cLim;
+mm=prm.mm; nn=prm.nn;  labels=prm.labels;  hasChn=prm.hasChn;
+if( prm.perRow ); mm=1; end;
 
-prm = getPrmDflt( prm, dfs );  showLine=prm.showLine;
-extraInf=prm.extraInf;  clim=prm.clim; mm=prm.mm; nn=prm.nn;
-labels=prm.labels;
-
-% take care of single images
-if( ndims(IS)==2)
-  if(~isempty(clim)); h=imagesc(IS,clim); else h=imagesc(IS); end;
-  title(inputname(1)); colormap(gray);  axis('image');
-  if(extraInf)
-    colorbar; pixval on;
-  else
-    set(gca,'XTick',[]); set(gca,'YTick',[]);
-  end
-  if( nargout>0 ); varargout={h,1,1}; end;
+% take care of single bw or color image (similar to im)
+if( (size(IS,4)==1 && hasChn) || (size(IS,3)==1 && ~hasChn) )
+  im( IS, cLim, extraInfo );
+  if( length(labels)==1 ); title(labels{1}); else title(''); end
   return;
 end
 
-% get/test image format info
-if( ndims(IS)==3); IS = permute(IS, [1 2 4 3] ); end
-if( ndims(IS)~=4 ); error('unsupported dimension of IS'); end
-siz = size(IS);  nch = siz(3);
-if( nch~=1 && nch~=3 ); error('illegal image stack format'); end
-if( ~isempty(labels) && siz(4)~=length(labels) )
-  error('incorrect number of labels');
+% get/test image format info and parameters
+if( hasChn )
+  if( ndims(IS)~=4 || ~any(size(IS,3)==[1 3]) )
+    error('montage2: unsupported dimension of IS');end
+else
+  if( ndims(IS)~=3 );
+    error('montage2: unsupported dimension of IS'); end
+  IS = permute(IS, [1 2 4 3] );
+end
+siz = size(IS);  nCh=siz(3);  nIm = siz(4);
+if( ~isempty(labels) && nIm~=length(labels) )
+  error('montage2: incorrect number of labels');
 end
 
-% get layout of images (mm=#images/row, nn=#images/col) (bit hacky!!!)
+% get layout of images (mm=#images/row, nn=#images/col)
 if( isempty(mm) || isempty(nn))
   if( isempty(mm) && isempty(nn))
-    nn = ceil(sqrt(siz(1)*siz(2)*siz(4)) / siz(2));
-    mm = ceil(siz(4)/nn);
-  elseif( isempty(mm))
-    mm = ceil(siz(4)/nn);
+    nn = min( ceil(sqrt(siz(1)*nIm/siz(2))), nIm );
+    mm = ceil( nIm/nn );
+  elseif( isempty(mm) )
+    nn = min( nn, nIm );
+    mm = ceil(nIm/nn);
   else
-    nn = ceil(siz(4)/mm);
+    mm = min( mm, nIm );
+    nn = ceil(nIm/mm);
   end
+  % often can shrink dimension further
+  while((mm-1)*nn>=nIm); mm=mm-1; end;
+  while((nn-1)*mm>=nIm); nn=nn-1; end;
 end
 
 % Calculate I (M*mm x N*nn size image)
 I = IS(1,1);
-if(~isempty(clim)); I(1,1) = clim(1);  else  I(1,1) = min(IS(:)); end
-I = repmat(I, [mm*siz(1), nn*siz(2), nch]);
+if(~isempty(cLim)); I(1,1)=cLim(1);  else  I(1,1)=min(IS(:)); end
+I = repmat(I, [mm*siz(1), nn*siz(2), nCh]);
 rows = 1:siz(1); cols = 1:siz(2);
-for k=1:siz(4)
+for k=1:nIm
   I(rows+floor((k-1)/nn)*siz(1),cols+mod(k-1,nn)*siz(2),:) = IS(:,:,:,k);
 end
 
 % display I
-if( ~isempty(clim)); h=imagesc(I,clim);  else  h=imagesc(I);  end
+if( ~isempty(cLim)); h=imagesc(I,cLim);  else  h=imagesc(I);  end
 colormap(gray);  title(inputname(1));  axis('image');
-if( extraInf)
+if( extraInfo )
   colorbar; impixelinfo;
 else
   set(gca,'XTick',[]); set(gca,'YTick',[]);
 end;
 
 % draw lines separating frames
-if( showLine )
+if( showLines )
   montageWd = nn * siz(2) + .5;  montageHt = mm * siz(1) + .5;
   for i=1:mm-1
     height = i*siz(1)+.5; line([.5,montageWd],[height,height]);
@@ -206,9 +211,9 @@ end
 textalign = { 'VerticalAlignment','bottom','HorizontalAlignment','left'};
 if( ~isempty(labels) )
   count=1;
-  for i=1:mm
+  for i=1:mm;
     for j=1:nn
-      if( count<=siz(4))
+      if( count<=nIm )
         rstart = i*siz(1); cstart =(j-1+.1)*siz(2);
         text(cstart,rstart,labels{count},'color','r',textalign{:});
         count = count+1;
@@ -218,7 +223,7 @@ if( ~isempty(labels) )
 end
 
 % cross out unused frames
-[nns,mms] = ind2sub( [nn,mm], siz(4)+1 );
+[nns,mms] = ind2sub( [nn,mm], nIm+1 );
 for i=mms-1:mm-1
   for j=nns-1:nn-1,
     rstart = (i+1)*siz(1)+.5; cstart =j*siz(2)+.5;

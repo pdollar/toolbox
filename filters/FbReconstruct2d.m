@@ -95,8 +95,8 @@ else %%% recover entire image
 
   % display
   figure(1); clf;
-  subplot(2,2,1); montage2( IFR, struct('showLine',1) );
-  subplot(2,2,2); montage2( FB, struct('showLine',1) );
+  subplot(2,2,1); montage2( IFR );
+  subplot(2,2,2); montage2( FB );
   subplot(2,2,3); im( I );
   subplot(2,2,4); im( I2 );
 end

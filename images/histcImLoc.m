@@ -44,7 +44,7 @@
 %  I = filterGauss([100 100],[],[],0);
 %  h1 = histcImLoc( cat(3,I,I), 10, {2,.6,.1,0},[],1);
 %  h2 = histcImLoc( cat(3,I,randn(size(I))),10,{2,.6,.1,0},[],1);
-%  figure(1); montage2(h1,1); figure(2); montage2(h2,struct('showLine',1));
+%  figure(1); montage2(h1); figure(2); montage2(h2);
 %
 % See also HISTC2, MASKGAUSSIANS, ASSIGNTOBINS, HISTCIM
 

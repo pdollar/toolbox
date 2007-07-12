@@ -28,13 +28,13 @@
 %
 % EXAMPLE - 2 - show a montage of videos
 %  load( 'images.mat' );
-%  playMovie( videos );
+%  playMovie( videos, [], 5 );
 %
 % EXAMPLE - 3 - show a montage of groups of videos in 2 ways
 %  load( 'images.mat' );
 %  videoclusters = clusterMontage( videos, IDXv, 9, 1 );
 %  M = playMovie( videoclusters );
-%  M = playMovie( videoclusters,[],[],struct('perRow',1,'showLine',0) );
+%  M = playMovie( videoclusters,[],5,struct('perRow',1,'showLine',0) );
 %
 % See also MONTAGE2, MOVIE2IMAGES, MOVIE
 

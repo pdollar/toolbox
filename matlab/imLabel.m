@@ -12,8 +12,7 @@
 % OUTPUTS
 %
 % EXAMPLE
-%  load( 'images.mat' ); clf; cla; montage2( images(:,:,1:9), ...
-%    struct('showLine',1) );
+%  load( 'images.mat' ); clf; cla; montage2( images(:,:,1:9) );
 %  imLabel( {'row1','row2','row3'}, 'left',[],{'FontSize',20} );
 %  imLabel( {'col1','col2','col3'}, 'bottom', -25, {'FontSize',20} );
 %

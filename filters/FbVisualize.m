@@ -47,8 +47,8 @@ if( nd==1 )
   subplot(1,3,3); stem( (-r:r)/(2*r+1), max(FBF,[],1) );
   
 elseif( nd==2 )
-  subplot(1,3,1); montage2(FB,struct('showLine',1));  title('filter bank');
-  subplot(1,3,2); montage2(FBF,struct('showLine',1));
+  subplot(1,3,1); montage2(FB);  title('filter bank');
+  subplot(1,3,2); montage2(FBF);
   title('filter bank fft');
   subplot(1,3,3); im(sum(FBF,3));  title('filter bank fft coverage');
   

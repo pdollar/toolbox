@@ -16,8 +16,8 @@
 %
 % EXAMPLE
 %  load FbDoG.mat;  FBC=FbCrop(FB,4);
-%  figure(1); montage2(FB,struct('showLine',1,'extraInfo',1));
-%  figure(2); montage2(FBC,struct('showLine',1,'extraInfo',1));
+%  figure(1); montage2(FB,struct('extraInfo',1));
+%  figure(2); montage2(FBC,struct('extraInfo',1));
 %
 % See also FBAPPLY2D
 

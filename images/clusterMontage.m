@@ -26,7 +26,8 @@
 %
 % EXAMPLE
 %  load( 'images.mat' );
-%  IC = clusterMontage( images, IDXi, 16 );
+%  keep=randsample(144,80); IDXi=IDXi(keep); images=images(:,:,keep);
+%  IC = clusterMontage( images, IDXi, 9, 0 );
 %  figure(1); montage2( IC )
 %
 % See also KMEANS2, MONTAGE2, PLAYMOVIE, CELL2ARRAY
