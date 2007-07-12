@@ -56,14 +56,14 @@ if( nargin<4 || isempty(prm)); prm=struct(); end
 nd=ndims(I); siz=size(I);
 if ~iscell(I);
   if ~any(ismember(nd, 3:6)); error('unsupported dimension of I'); end
-  if ~any(size(I,3)==[1 3]); % should be controlled by flag hasChn
+  if( ~any(size(I,3)==[1 3])); % should be controlled by flag hasChn?
     I=reshape(I,[siz(1),siz(2),1,siz(3:end)]);
-  else
+  end
+  nframes=size(I,4); nd=ndims(I);
+  if( nd<3 || nd>5 )
     error(['Invalid input, I has to be MxNxTxRxS or MxNx1xTxRxS or ' ...
       'or MxNx3xTxRxS, with R and S possibly equal to 1']);
   end
-  nframes=size(I,4);
-  nd=ndims(I);
   cLim = [min(I(:)) max(I(:))];
 else
   cLim=[Inf -Inf];
@@ -78,11 +78,12 @@ else
   cLim = [min(I(:)) max(I(:))];
 end
 prm.cLim=cLim;
+prm.hasChn=1;
 
 h=gcf; colormap gray; figure(h); % bring to focus
 if nargout>0; M=repmat(getframe,[1 nframes]); end
 order = 1:nframes;
-j=1;
+j=1; siz=size(I);
 for nplayed = 1 : abs(loop)
   for i=order
     tic; try disc=get(h); catch return; end %#ok<NASGU>
