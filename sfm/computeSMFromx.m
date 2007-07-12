@@ -17,37 +17,44 @@ switch method
       [x T]=normalizex(x);
       [xp Tp]=normalizex(xp);
 
-      A=[repmat(xp(1,:),[2,1]).*x(1:2,:); xp(1,:); ...
-        repmat(xp(2,:),[2,1]).*x(1:2,:); xp(2,:); x ]';
+      A=[repmat(xp(1,:),[2 1]).*x(1:2,:); xp(1,:); ...
+        repmat(xp(2,:),[2 1]).*x(1:2,:); xp(2,:); x ]';
 
       [U,S,V]=svd(A,0); F=reshape(V(:,end),[3,3])';
       [U,S,V]=svd(F,0); F=U*diag([S(1,1) S(2,2) 0])*V';
 
-      F=Tp'*F*T;
+      F=Tp'*F*T
     else
       % Linear Algorithm
       % Reference: HZ2, p348
 
-      % Not implemented because there is no point :) The Gold Standard is as fast
+      error(['Not implemented because there is no point :) ' ...
+        'The Gold Standard is as fast']);
     end
 
-    Pp = computePfromF(F);
-    X=computeXfromxP(x,xp,eye(3,4),Pp);
+    Pp = convertPF([],F);
+    X=computeSFromxM(x,xp,eye(3,4),Pp);
+    return
   case Inf
     % Gold Standard algorithm
     if isProj
       % Reference: HZ2, p285, Algorithm 11.3
       % Reference: HZ2, p609, Sparse LM
 
-      F=computeFfromx(x,xp,0,isProj);
+      [X,Pp]=computeSMFromx(x,xp,0,isProj);
 
+      
+      Xtemp=X./repmat(X(3,:),[4,1]);
+      norm(Xtemp(1:3,:)-x,'fro')
+      Xtemp=Pp*X;
+      Xtemp=Xtemp./repmat(Xtemp(3,:),[3,1]);
+      norm(Xtemp(1:3,:)-xp,'fro')
+      
       caseCons = 'none';
 
       % Initialize some variables
       lambda = 0.001;
 
-      P = eye(3,4);
-      Pp = convertPF([],F);
       % Impose the constraint on PP{2}
       switch caseCons
         case 'rot'
@@ -59,16 +66,13 @@ switch method
             end
           end
       end
-      % Create P
-      warning off all;
-      X=computeSMFromx(x,xp,P,Pp);
 
       % Initialize Pb, Pb stands for P bold
       Pb = zeros( 1, 12 + 3*n );
       temp = Pp';
       Pb( 1 : 12 ) = temp(1:12);
 
-      for i = [ 1 2 4 ]; X( i, : ) = X( i, : )./X( 3, : ); end; X( 3, : ) = 1;
+      X([ 1 2 4 ],:)=X([ 1 2 4 ],:)./repmat(X(3,:),[3 1]); X(3,:) = 1;
       Pb( 13 : end ) = reshape( X( [1 2 4], : ), 3*n, 1 )';
 
       % Initialize XHat
@@ -81,7 +85,7 @@ switch method
       A = zeros( 4, 12, n );	% The first 2 rows are zeros (no P' is in there, as it is multiplied by [I|0]
       B = zeros( 4, 3, n );
       B( 1, 1, : ) = 1; B( 2, 2, : ) = 1;
-      
+
       Hi = zeros( 3, n );
       Gi = zeros( 3, 12, n );
       Wi=zeros(12,3,n);
@@ -126,16 +130,16 @@ switch method
           U = U + Aip*Ai; %Ai'*sigmaInvi*Ai.*UiStarFactor;
 
           % Compute Wi, Wi is 12*3
-          Wi(:,:,i) = Aip*Bi;%Ai'*sigmaInvi*Bi;
+          Wi(:,:,i) = Aip*Bi; %Ai'*sigmaInvi*Bi;
         end
-        
+
         % Perform the sparse computation
         while j<nIter
           for i = 1 : n
             Ai = A( :, :, i );
             Bi = B( :, :, i );
             Bip = Bi';
-            
+
             % Compute Vi, Vi is 3*3
             ViStar = Bip*Bi;%Bi'*sigmaInvi*Bi.*ViStarFactor;
             for k = 1 : 3
@@ -175,7 +179,7 @@ switch method
 
           % Compute the new error
           err = computeError( x,xp,PbNew);
-          
+
           % Update lambda
           j = j + 1;
           if err<errMin
@@ -191,8 +195,8 @@ switch method
         end
       end
       
-      Pp = reshape( Pb( 1 : 12 ), [ 4, 3 ] )';
-      X = X3D./repmat( X3D( 4, : ), [ 4, 1 ] );
+      Pp = reshape( Pb( 1 : 12 ), [ 4 3 ] )';
+      X = X3D./repmat( X3D( 4, : ), [ 4 1 ] );
     else
       % Affine camera matrix
       % Reference: HZ2, p351, Algorithm 14.1
@@ -207,7 +211,7 @@ switch method
       F(3,2)=V(4,end); F(3,3)=-V(:,4)'*Xbar';
 
       Pp = convertPF([],F);
-      X=computeSMFromx(x,xp,eye(3,4),Pp);
+      X=computeSFromxM(x,xp,eye(3,4),Pp);
     end
 end
 
@@ -225,17 +229,17 @@ end
     X3DNew = [ Pb( nParam+1 : 3 : end ); Pb( nParam+2 : 3 : end ); ...
       ones( 1, size(x,2) ); Pb( nParam+3 : 3 : end ) ];
 
-    xpHatNew = Pp*X3DNew;
-    xpHatNew( 1:2, : )= xpHatNew( 1:2, : )./repmat(xpHatNew( 3, : ),[2 1]);
+    xpHat = Pp*X3DNew;
+    xpHat( 1:2, : )= xpHat( 1:2, : )./repmat(xpHat( 3, : ),[2 1]);
 
     if isProj
-      XHatNew = [ X3DNew(1:2,:); xpHatNew(1:2,:) ];
+      XHat = [ X3DNew(1:2,:); xpHat(1:2,:) ];
     else
-      XHatNew = [ X3DNew(1,:)./X3DNew(4,:); X3DNew(2,:)./X3DNew(4,:); ...
-        xpHatNew(1:2,:) ];
+      XHat = [ X3DNew(1,:)./X3DNew(4,:); X3DNew(2,:)./X3DNew(4,:); ...
+        xpHat(1:2,:) ];
     end
 
-    XDiffNew=[x(1:2,:);xp(1:2,:)]-XHatNew;
+    XDiffNew=[x(1:2,:);xp(1:2,:)]-XHat;
     err = norm( XDiffNew, 'fro' );
   end
 end

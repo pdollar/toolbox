@@ -1,6 +1,6 @@
 function A=skew(a)
 
-if numel(e)==3
+if numel(a)==3
   % returns the skew matrix of a vector
   % Reference: HZ2, p581, equation (A4.5)
   A=[0 -a(3) a(2); a(3) 0 -a(1); -a(2) a(1) 0];
