@@ -31,6 +31,11 @@
 %  load( 'images.mat' );
 %  playMovie( video, [], -50 );
 %
+% EXAMPLE - [MxNx3xT] 1 video
+%  video3=permute(video,[1 2 4 3]); 
+%  video3=repmat(video3,[1 1 3 1]);
+%  playMovie( video3, [], -50 );
+%
 % EXAMPLE - [MxNxTxR] many videos at same time
 %  load( 'images.mat' );
 %  playMovie( videos, [], 5 );
@@ -60,7 +65,7 @@ if ~iscell(I);
     I=reshape(I,[siz(1),siz(2),1,siz(3:end)]);
   end
   nframes=size(I,4); nd=ndims(I);
-  if( nd<3 || nd>5 )
+  if( nd<3 || nd>6 )
     error(['Invalid input, I has to be MxNxTxRxS or MxNx1xTxRxS or ' ...
       'or MxNx3xTxRxS, with R and S possibly equal to 1']);
   end
@@ -78,12 +83,11 @@ else
   cLim = [min(I(:)) max(I(:))];
 end
 prm.cLim=cLim;
-prm.hasChn=1;
+if( size(I,3)==1 ); prm.hasChn=0; else prm.hasChn=1; end
 
 h=gcf; colormap gray; figure(h); % bring to focus
 if nargout>0; M=repmat(getframe,[1 nframes]); end
-order = 1:nframes;
-j=1; siz=size(I);
+order = 1:nframes;  j=1; 
 for nplayed = 1 : abs(loop)
   for i=order
     tic; try disc=get(h); catch return; end %#ok<NASGU>
