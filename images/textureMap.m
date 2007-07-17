@@ -21,16 +21,19 @@
 % transformed image and is the same size as I.
 %
 % USAGE
-%  IR = textureMap( I, rowDst, colDst, [bbox] )
+%  IR = textureMap( I, rowDst, colDst, [bbox], [holeValue] )
 %
 % INPUTS
 %  I           - 2D input image
 %  rowDst      - rowDst(i,j) is row loc where I(i,j) gets mapped to
 %  colDst      - colDst(i,j) is col loc where I(i,j) gets mapped to
 %  bbox        - ['loose'] see above for meaning of bbox 'loose' or 'crop'
+%  holeValue   - [0] Value of the empty warps
 %
 % OUTPUTS
 %  IR          - result of texture mapping
+%  boundaryX   - returns the smallest/biggest x coordinate of the output
+%  boundaryY   - returns the smallest/biggest y coordinate of the output
 %
 % EXAMPLE
 %
@@ -40,27 +43,35 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function IR = textureMap( I, rowDst, colDst, bbox )
+function [IR,boundX,boundY] = textureMap( I, rowDst, colDst, bbox, ...
+  holeValue )
 
-if(isa( I, 'uint8' )); I = double(I); end;
-if( nargin<4 || isempty(bbox)); bbox='loose'; end;
+if(isa( I, 'uint8' )); I = double(I); end
+if( nargin<4 || isempty(bbox)); bbox='loose'; end
 
 siz = size(I);
 if ( all(size(rowDst)~=siz) || all(size(colDst)~=siz))
   error( 'incorrect size for rowDst or colDst' );
-end;
+end
 
 % find sampling points
 if (strcmp('loose',bbox))
   minr = floor(min(rowDst(:)));   minc = floor(min(colDst(:)));
   maxr = ceil(max(rowDst(:)));    maxc = ceil(max(colDst(:)));
   [colGrid,rowGrid] = meshgrid( minc:maxc, minr:maxr );
+  boundX=[minc maxc]; boundY=[minr maxr];
 elseif (strcmp('crop',bbox))
   [colGrid,rowGrid] = meshgrid( 1:size(I,2), 1:size(I,1) );
+  boundX=[1 size(I,1)]; boundY=[1 size(I,2)];
 else
   error('illegal value for bbox');
-end;
+end
 
 % Get values at colGrid and rowGrid
 IR = griddata( colDst, rowDst, I, colGrid, rowGrid );
-IR(isnan(IR)) = 0;
+
+if ( nargin<0 || ~isnumeric(holeValue) || isempty(holeValue) )
+  IR(isnan(IR)) = 0;
+else
+  IR(isnan(IR)) = holeValue;
+end

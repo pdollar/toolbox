@@ -1,7 +1,7 @@
 % Given two sets of corresponding points, calculates warp between them.
 %
 % Uses booksteins PAMI89 method.  Can then apply warp to a new set of
-% points (tpsInterpolate), or even an image (tpsInterpolateiamge).
+% points (tpsInterpolate), or even an image (tpsInterpolateIm).
 %  "Principal Warps: Thin-Plate Splines and the Decomposition of
 %  Deformations".  Bookstein.  PAMI 1989.
 %
@@ -72,7 +72,7 @@ warp.wy = wy; warp.affiney = affiney;
 warp.xsS = xsS; warp.ysS = ysS;
 warp.xsD = xsD; warp.ysD = ysD;
 
-% get bending energy (without regulariztion)
+% get bending energy (without regularization)
 w = [wx'; wy'];
 K = K - lambda * eye( n );
 bendE = trace(w*K*w')/2;
