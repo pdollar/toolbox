@@ -3,12 +3,12 @@
 % Use tpsGetWarp to obtain the warp.
 %
 % USAGE
-%  IR = tpsInterpolateIm( Isrc, warp, [holeValue] )
+%  IR = tpsInterpolateIm( Isrc, warp, [holeVal] )
 %
 % INPUTS
 %  Isrc        - image to interpolate
 %  warp        - [see tpsGetWarp] bookstein warping parameters
-%  holeValue   - [0] Value of the empty warps
+%  holeVal     - [0] Value of the empty warps
 %
 % OUTPUTS
 %  IR          - warped image
@@ -26,9 +26,9 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function [IR,boundX,boundY] = tpsInterpolateIm( Isrc, warp, holeValue )
+function [IR,boundX,boundY] = tpsInterpolateIm( Isrc, warp, holeVal )
 
-if nargin<3 || isempty(holeValue); holeValue=0; end
+if( nargin<3 || isempty(holeVal) ); holeVal=0; end
 
 % warp grid points
 [ gxs, gys ] = meshgrid( 1:size(Isrc,2), 1:size(Isrc,1) );
@@ -37,4 +37,4 @@ gxsTar = reshape( gxsTar, size(Isrc) );
 gysTar = reshape( gysTar, size(Isrc) );
 
 % use texture mapping to generate target image
-[IR,boundX,boundY] = textureMap( double(Isrc), gysTar, gxsTar, 'loose', holeValue );
+[IR,boundX,boundY]=textureMap(double(Isrc),gysTar,gxsTar,'loose',holeVal);

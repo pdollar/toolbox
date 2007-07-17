@@ -32,6 +32,7 @@
 
 function I = imShrink( I, ratios )
 
+if( all(ratios==1) ); return; end
 siz = size(I);  nd = ndims(I);
 while( length(ratios)>nd && ratios(end)==1 ); ratios=ratios(1:end-1); end
 [ratios,er] = checkNumArgs( ratios, [1 nd], 0, 2 ); error(er);

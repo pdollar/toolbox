@@ -80,6 +80,7 @@ end
 %%% take care of special case where calling subMontage only once
 if( ~iscell(IS) && size(IS,5)==1 );
   [varargout{:}] = subMontage(IS,prm);
+  title(inputname(1));
   return;
 end;
 
@@ -189,7 +190,7 @@ end
 
 % display I
 if( ~isempty(cLim)); h=imagesc(I,cLim);  else  h=imagesc(I);  end
-colormap(gray);  title(inputname(1));  axis('image');
+colormap(gray);  axis('image');
 if( extraInfo )
   colorbar; impixelinfo;
 else
