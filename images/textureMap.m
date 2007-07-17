@@ -62,7 +62,7 @@ if (strcmp('loose',bbox))
   boundX=[minc maxc]; boundY=[minr maxr];
 elseif (strcmp('crop',bbox))
   [colGrid,rowGrid] = meshgrid( 1:size(I,2), 1:size(I,1) );
-  boundX=[1 size(I,1)]; boundY=[1 size(I,2)];
+  boundX=[1 size(I,2)]; boundY=[1 size(I,1)];
 else
   error('illegal value for bbox');
 end

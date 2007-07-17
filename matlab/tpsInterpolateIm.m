@@ -28,7 +28,7 @@
 
 function [IR,boundX,boundY] = tpsInterpolateIm( Isrc, warp, holeValue )
 
-if isempty(holeValue) || nargin<3; holeValue=0; end
+if nargin<3 || isempty(holeValue); holeValue=0; end
 
 % warp grid points
 [ gxs, gys ] = meshgrid( 1:size(Isrc,2), 1:size(Isrc,1) );
