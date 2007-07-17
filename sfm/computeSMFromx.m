@@ -1,6 +1,6 @@
-function [X,Pp]=computeSMFromx(x,xp,method,isProj)
+function [X,Pp]=computeSMFromx(x,xp,isProj,method)
 
-if nargin<3; method=0; end
+if nargin<4; method=0; end
 if any(size(x)~=size(xp)); error('x1 and x2 have different size'); end
 if size(x,1)>3; x=x'; xp=xp'; end
 if size(x,1)==2; x(3,:)=1; xp(3,:)=1; end
@@ -14,8 +14,8 @@ switch method
       % Reference: HZ2, p279
 
       % Normalize input data
-      [x T]=normalizex(x);
-      [xp Tp]=normalizex(xp);
+      [x T]=normalizePoint(x,Inf);
+      [xp Tp]=normalizePoint(xp,Inf);
 
       A=[repmat(xp(1,:),[2 1]).*x(1:2,:); xp(1,:); ...
         repmat(xp(2,:),[2 1]).*x(1:2,:); xp(2,:); x ]';
@@ -55,7 +55,7 @@ switch method
       Pb( 13 : end ) = reshape( X( [1 2 4], : ), 3*n, 1 )';
 
       % Initialize XHat
-      errMin = computeError( Pb )
+      errMin = computeError( Pb );
       XDiff = XDiffNew;
       X3D = X3DNew;
 
@@ -135,10 +135,10 @@ switch method
           end
           % Compute deltaA and update P
           PbNew = Pb;
-          
+
           UStar=U; for k = 1 : 12; UStar(k,k) = U(k,k)*( 1 + lambda ); end
           deltaA = (UStar-DeltaLeft)\(epsAi-DeltaRight);
-          
+
           PbNew( 1 : 12 ) = PbNew( 1 : 12 ) + deltaA';
 
           % Compute each deltaBi and update P
@@ -148,7 +148,7 @@ switch method
           end
 
           % Compute the new error
-          err = computeError( PbNew)
+          err = computeError( PbNew);
 
           % Update lambda
           j = j + 1;
@@ -171,18 +171,44 @@ switch method
       % Affine camera matrix
       % Reference: HZ2, p351, Algorithm 14.1
 
-      A=[xp(1:2,:)./repmat(xp(3,:),[2,1]);x(1:2,:)./repmat(x(3,:),[2,1])]';
-      Xbar=mean(A,1);
-      A=A-repmat(Xbar,[ n 1 ]);
+      %       A=[xp(1:2,:)./repmat(xp(3,:),[2,1]);x(1:2,:)./repmat(x(3,:),[2,1])]';
+      %       Xbar=mean(A,1);
+      %       A=A-repmat(Xbar,[ n 1 ]);
+      %
+      %       [U,S,V]=svd(A);
+      %
+      %       F=zeros(3,3); F(1,3)=V(1,end); F(2,3)=V(2,end); F(3,1)=V(3,end);
+      %       F(3,2)=V(4,end); F(3,3)=-V(:,end)'*Xbar';
+      %         Pp = convertPF([],F,false);
+      %         P=eye(3,4); P(3,3:4)=[0 1];
+      %         X=computeSFromxM(x,xp,P,Pp);
 
-      [U,S,V]=svd(A);
+      % Affine camera matrix, MLE estimation (Tomasi Kanade)
+      % Reference: HZ2, p437, Algorithm 18.1
 
-      F=zeros(3,3); F(1,3)=V(1,end); F(2,3)=V(2,end); F(3,1)=V(3,end);
-      F(3,2)=V(4,end); F(3,3)=-V(:,end)'*Xbar';
+      m=size(x,3); n=size(x,2);
+      if m>1
+        W=reshape(x,2*m,n); 
+      else
+        x=normalizePoint(x,3); xp=normalizePoint(xp,3);
+        W=[x(1:2,:);xp(1:2,:)]; m=2;
+      end
+      ti=mean(W,2);
+      W=W-ti(:,ones(1,n)); [U,S,V]=svd(W);
+      M=[S(1,1)*U(:,1),S(2,2)*U(:,2),S(3,3)*U(:,3)];
+      H=[M(1:2,:);cross(M(1,:),M(2,:))]; %Get the first matrix to be Id
+      M=M*inv(H);
 
-      Pp = convertPF([],F,false);
-      P=eye(3,4); P(3,3:4)=[0 1];
-      X=computeSFromxM(x,xp,P,Pp);
+      Pp=zeros(3*(m-1),4);
+      Pp(1:3:end,1:3)=M(3:2:end,:); Pp(2:3:end,1:3)=M(4:2:end,:);
+      Pp(3:3:end,4)=1;
+      for i=1:m-1
+        Pp(2*i-1:2*i,4)=ti(2*i+1:2*i+2)-M(2*i+1:2*i+2,:)*[ti(1:2);0];
+      end
+
+      X=H*[V(:,1),V(:,2),V(:,3)]';
+      X(1,:)=X(1,:)+ti(1); X(2,:)=X(2,:)+ti(2);
+      X(4,:)=1;
     end
 end
 

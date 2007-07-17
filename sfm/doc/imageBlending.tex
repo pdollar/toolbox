@@ -1,2 +1,9 @@
 \section{Image Blending}
-Based on \cite{IJCV2007_MatthewBrown_AutomaticPanoramicImage}
+Based on \cite{IJCV2007_MatthewBrown_AutomaticPanoramicImage}, we rewrite their \refeq{29} as:
+$$e=\sum_{i=1}^n \sum_{j>i} N_{ij} \dfrac{(g_i \overline{I}_{ij} -g_j \overline{I}_{ji})^2}{\sigma_N^2} + \dfrac{n}{2} \sum_{i=1}^n \dfrac{(1-g_i)^2}{\sigma_g^2}$$
+
+At the optimum:
+$$\deriv{e}{g_i}=\sum_{j>i} N_{ij} 2 \overline{I}_{ij} \dfrac{g_i \overline{I}_{ij} -g_j \overline{I}_{ji}}{\sigma_N^2} - n \dfrac{1-g_i}{\sigma_g^2}=0$$
+Hence:
+$$\left( \dfrac{n}{\sigma_g^2} + \sum_{j>i} N_{ij}  \dfrac{\overline{I}_{ij}^2}{\sigma_N^2} \right) g_i -\sum_{j>i} N_{ij} \dfrac{\overline{I}_{ij} \overline{I}_{ji}}{\sigma_N^2}g_j = \dfrac{n}{\sigma_g^2}$$
+Simply solved by least squares minimization $Ax=b$ where $A$ is upper triangular. $\sigma_N=10.0$ and $\sigma_g=0.1$.
