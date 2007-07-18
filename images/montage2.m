@@ -18,34 +18,38 @@
 %   .nn         - [] #images/row per montage
 %   .labels     - [] cell array of labels (strings) (T if R==1 else R)
 %   .perRow     - [0] only if R>1 and not cell, alternative displays method
-%   .padSize    - [4] only if perRow, amount to pad when in row mode
 %   .hasChn     - [0] if true assumes IS is MxNxCxTxR else MxNxTxR
+%   .padAmt     - [0] only if perRow, amount to pad when in row mode
+%   .padEl      - [] pad element, defaults to min value in IS
 %
 % OUTPUTS
 %  h           - image handle
 %  m           - #images/col
 %  nn          - #images/row
 %
-% EXAMPLE - [2D] simply calls im
-%  load( 'images.mat' );  clf; montage2( images(:,:,1) );
-%
 % EXAMPLE - [3D] show a montage of images
-%  load( 'images.mat' );  clf; montage2( images );
+%  load( 'images.mat' ); clf; montage2( images );
 %
-% EXAMPLE - [3D] show a montage of images (with parameters specified)
+% EXAMPLE - [3D] show a montage of images with labels
 %  load( 'images.mat' );
 %  for i=1:50; labels{i}=['I-' int2str2(i,2)]; end
-%  prm = struct('extraInfo',0,'perRow',0,'labels',{labels});
+%  prm = struct('extraInfo',1,'perRow',0,'labels',{labels});
 %  clf; montage2( images(:,:,1:50), prm );
 %
-% EXAMPLE - [4D] show a montage of several groups of pictures
+% EXAMPLE - [3D] show a montage of images with color boundaries
+%  load( 'images.mat' );
+%  I3 = repmat(permute(images,[1 2 4 3]),[1,1,3,1]); % add color chnls
+%  prm = struct('padAmt',4,'padEl',[50 180 50],'hasChn',1,'showLines',0);
+%  clf; montage2( I3(:,:,:,1:48), prm )
+%
+% EXAMPLE - [4D] show a montage of several groups of images
 %  for i=1:25; labels{i}=['V-' int2str2(i,2)]; end
 %  prm = struct('labels',{labels});
 %  load( 'images.mat' ); clf; montage2( videos(:,:,:,1:25), prm );
 %
 % EXAMPLE - [4D] show using 'row' format
 %  load( 'images.mat' );
-%  prm = struct('perRow',1,'padSize',10);
+%  prm = struct('perRow',1, 'padAmt',6, 'padEl',255 );
 %  figure(1); clf; montage2( videos(:,:,:,1:10), prm );
 %
 % See also MONTAGE, PLAYMOVIE, FILMSTRIP
@@ -61,10 +65,10 @@ varargout = cell(1,nargout);
 
 %%% get parameters (set defaults)
 dfs = {'showLines',1, 'extraInfo',0, 'cLim',[], 'mm',[], 'nn',[],...
-  'labels',[], 'perRow',false, 'padSize',4, 'hasChn',false };
+  'labels',[], 'perRow',false, 'padAmt',0, 'padEl',[], 'hasChn',false };
 prm = getPrmDflt( prm, dfs );
-extraInfo=prm.extraInfo; labels=prm.labels;
-perRow=prm.perRow; padSize=prm.padSize;  hasChn=prm.hasChn;
+extraInfo=prm.extraInfo; labels=prm.labels;  perRow=prm.perRow;
+hasChn=prm.hasChn;
 
 %%% If IS is not a cell convert to MxNxCxTxR array
 if( iscell(IS) && numel(IS)==1 ); IS=IS{1}; end;
@@ -85,18 +89,9 @@ if( ~iscell(IS) && size(IS,5)==1 );
 end;
 
 if( perRow ) %%% display each montage in row format
-  [padSize,er] = checkNumArgs( padSize,[1 1], 0, 1 ); error(er);
   if(iscell(IS)); error('montage2: IS cannot be a cell if perRow'); end;
-
-  % reshape IS so each 3D element is concatenated to a 2D image (and pad)
-  padEl = max(IS(:)); siz = size(IS);
-  IS=arrayToDims(IS, [siz(1)+padSize siz(2:end)], padEl );
   siz = size(IS);
   IS=reshape(permute(IS,[1 2 4 3 5]),siz(1),[],siz(3),siz(5));
-  siz = size(IS);
-  IS=arrayToDims(IS, [siz(1) siz(2)+padSize siz(3:end)], padEl);
-
-  % show using subMontage
   if( nargout ); varargout{1}=IS; end
   prm.perRow = false;  prm.hasChn=true;
   [varargout{2:end}] = subMontage( IS, prm );
@@ -135,37 +130,40 @@ function varargout = subMontage( IS, prm )
 
 % get parameters (set defaults)
 dfs = {'showLines',1, 'extraInfo',0, 'cLim',[], 'mm',[], 'nn',[], ...
-  'labels',[], 'perRow',false, 'hasChn',false };
+  'labels',[], 'perRow',false, 'hasChn',false, 'padAmt',0, 'padEl',[] };
 prm = getPrmDflt( prm, dfs );
 showLines=prm.showLines;   extraInfo=prm.extraInfo;  cLim=prm.cLim;
 mm=prm.mm; nn=prm.nn;  labels=prm.labels;  hasChn=prm.hasChn;
+padAmt=prm.padAmt;  padEl=prm.padEl;
 if( prm.perRow ); mm=1; end;
-
-% take care of single bw or color image (similar to im)
-if( (size(IS,4)==1 && hasChn) || (size(IS,3)==1 && ~hasChn) )
-  im( IS, cLim, extraInfo );
-  if( length(labels)==1 ); title(labels{1}); else title(''); end
-  return;
-end
 
 % get/test image format info and parameters
 if( hasChn )
-  if( ndims(IS)~=4 || ~any(size(IS,3)==[1 3]) )
-    error('montage2: unsupported dimension of IS');end
+  if( ndims(IS)>4 || ~any(size(IS,3)==[1 3]) )
+    error('montage2: unsupported dimension of IS'); end
 else
-  if( ndims(IS)~=3 );
+  if( ndims(IS)>3 );
     error('montage2: unsupported dimension of IS'); end
   IS = permute(IS, [1 2 4 3] );
 end
-siz = size(IS);  nCh=siz(3);  nIm = siz(4);
+siz = size(IS);  nCh=size(IS,3);  nIm = size(IS,4);  sizPad=siz+padAmt;
 if( ~isempty(labels) && nIm~=length(labels) )
   error('montage2: incorrect number of labels');
 end
 
+% set up the padEl correctly (must have same type / nCh as IS)
+if(isempty(padEl))
+  if(isempty(cLim)); padEl=min(IS(:)); else padEl=cLim(1); end; end
+if(length(padEl)==1); padEl=repmat(padEl,[1 nCh]); end;
+if(length(padEl)~=nCh); error( 'invalid padEl' ); end;
+padEl = feval( class(IS), padEl );
+padEl = reshape( padEl, 1, 1, [] );
+padAmt = floor(padAmt/2 + .5)*2;
+
 % get layout of images (mm=#images/row, nn=#images/col)
 if( isempty(mm) || isempty(nn))
   if( isempty(mm) && isempty(nn))
-    nn = min( ceil(sqrt(siz(1)*nIm/siz(2))), nIm );
+    nn = min( ceil(sqrt(sizPad(1)*nIm/sizPad(2))), nIm );
     mm = ceil( nIm/nn );
   elseif( isempty(mm) )
     nn = min( nn, nIm );
@@ -180,12 +178,12 @@ if( isempty(mm) || isempty(nn))
 end
 
 % Calculate I (M*mm x N*nn size image)
-I = IS(1,1);
-if(~isempty(cLim)); I(1,1)=cLim(1);  else  I(1,1)=min(IS(:)); end
-I = repmat(I, [mm*siz(1), nn*siz(2), nCh]);
+I = repmat(padEl, [mm*sizPad(1), nn*sizPad(2), 1]);
 rows = 1:siz(1); cols = 1:siz(2);
 for k=1:nIm
-  I(rows+floor((k-1)/nn)*siz(1),cols+mod(k-1,nn)*siz(2),:) = IS(:,:,:,k);
+  rowsK = rows + floor((k-1)/nn)*sizPad(1)+padAmt/2;
+  colsK = cols + mod(k-1,nn)*sizPad(2)+padAmt/2;
+  I(rowsK,colsK,:) = IS(:,:,:,k);
 end
 
 % display I
@@ -199,12 +197,13 @@ end;
 
 % draw lines separating frames
 if( showLines )
-  montageWd = nn * siz(2) + .5;  montageHt = mm * siz(1) + .5;
+  montageWd = nn * sizPad(2) + .5;
+  montageHt = mm * sizPad(1) + .5;
   for i=1:mm-1
-    height = i*siz(1)+.5; line([.5,montageWd],[height,height]);
+    ht = i*sizPad(1) +.5; line([.5,montageWd],[ht,ht]);
   end
   for i=1:nn-1
-    width = i*siz(2)+.5; line([width,width],[.5,montageHt]);
+    wd = i*sizPad(2) +.5; line([wd,wd],[.5,montageHt]);
   end
 end
 
@@ -215,8 +214,9 @@ if( ~isempty(labels) )
   for i=1:mm;
     for j=1:nn
       if( count<=nIm )
-        rstart = i*siz(1); cstart =(j-1+.1)*siz(2);
-        text(cstart,rstart,labels{count},'color','r',textalign{:});
+        rStr = i*sizPad(1)-padAmt/2; 
+        cStr =(j-1+.1)*sizPad(2)+padAmt/2;
+        text(cStr,rStr,labels{count},'color','r',textalign{:});
         count = count+1;
       end
     end
@@ -227,8 +227,8 @@ end
 [nns,mms] = ind2sub( [nn,mm], nIm+1 );
 for i=mms-1:mm-1
   for j=nns-1:nn-1,
-    rstart = (i+1)*siz(1)+.5; cstart =j*siz(2)+.5;
-    cs = [cstart,cstart+siz(2)]; rs = [rstart,rstart-siz(1)];
+    rStr = i*sizPad(1)+.5+padAmt/2; rs = [rStr,rStr+siz(1)];
+    cStr = j*sizPad(2)+.5+padAmt/2; cs = [cStr,cStr+siz(2)];
     line( cs, rs );  line( fliplr(cs), rs );
   end
 end

@@ -32,9 +32,9 @@
 %  playMovie( video, [], -50 );
 %
 % EXAMPLE - [MxNx3xT] 1 video
-%  video3=permute(video,[1 2 4 3]); 
-%  video3=repmat(video3,[1 1 3 1]);
-%  playMovie( video3, [], -50 );
+%  load( 'images.mat' );
+%  video3=repmat(permute(video,[1 2 4 3]),[1 1 3 1]);
+%  playMovie( video3, [], -50, struct('hasChn',true));
 %
 % EXAMPLE - [MxNxTxR] many videos at same time
 %  load( 'images.mat' );
@@ -44,11 +44,12 @@
 %  load( 'images.mat' );
 %  IC = clusterMontage( videos, IDXv, 9, 1 );
 %  clf; M = playMovie( IC );
-%  clf; M = playMovie( IC, [], 5, struct('perRow',1,'showLines',0) );
+%  prm = struct('perRow',1,'padAmt',4,'showLines',0,'nn',1);
+%  clf; M = playMovie( IC, [], 5, prm );
 %
 % EXAMPLE - {S}[MxNxTxR] show groups of videos given in a cell
-%  IS = squeeze(mat2cell2( IC, [1 1 1 1 9] ));
-%  clf; M = playMovie( IS, [], 5, struct('showLines',0) );
+%  ICcell = squeeze(mat2cell2( IC, [1 1 1 1 9] ));
+%  clf; M = playMovie( ICcell, [], 5, struct('showLines',0) );
 %
 % See also MONTAGE2, MOVIETOIMAGES, MOVIE
 
@@ -64,7 +65,7 @@ if( nargin<4 || isempty(prm)); prm=struct(); end
 
 nd=ndims(I); siz=size(I);
 if ~iscell(I);
-  if ~any(ismember(nd, 3:6)); error('unsupported dimension of I'); end
+  if( ~any(ismember(nd, 3:6))); error('unsupported dimension of I'); end
   if( ~any(size(I,3)==[1 3])); % should be controlled by flag hasChn?
     I=reshape(I,[siz(1),siz(2),1,siz(3:end)]);
     prm.hasChn=1;
