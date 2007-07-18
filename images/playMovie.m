@@ -48,6 +48,8 @@
 %  clf; M = playMovie( IC, [], 5, prm );
 %
 % EXAMPLE - {S}[MxNxTxR] show groups of videos given in a cell
+%  load( 'images.mat' );
+%  IC = clusterMontage( videos, IDXv, 9, 1 );
 %  ICcell = squeeze(mat2cell2( IC, [1 1 1 1 9] ));
 %  clf; M = playMovie( ICcell, [], 5, struct('showLines',0) );
 %
@@ -62,15 +64,13 @@ function M = playMovie( I, fps, loop, prm )
 if( nargin<2 || isempty(fps)); fps = 100; end
 if( nargin<3 || isempty(loop)); loop = 1; end
 if( nargin<4 || isempty(prm)); prm=struct(); end
+dfs = {'hasChn',false }; prm = getPrmDflt( prm, dfs );
 
-nd=ndims(I); siz=size(I);
+nd=ndims(I);
 if ~iscell(I);
   if( ~any(ismember(nd, 3:6))); error('unsupported dimension of I'); end
-  if( ~any(size(I,3)==[1 3])); % should be controlled by flag hasChn?
-    I=reshape(I,[siz(1),siz(2),1,siz(3:end)]);
-    prm.hasChn=1;
-  end
-  nframes=size(I,4); nd=ndims(I);
+  if( prm.hasChn ) nframes=size(I,4); else nframes=size(I,3); end
+  nd=ndims(I);
   if( nd<3 || nd>6 )
     error(['Invalid input, I has to be MxNxTxRxS or MxNx1xTxRxS or ' ...
       'or MxNx3xTxRxS, with R and S possibly equal to 1']);
@@ -79,39 +79,40 @@ if ~iscell(I);
 else
   cLim=[Inf -Inf]; nframes=0;
   for i=1:length(I)
-    siz=size(I{i});
-    if ~any(size(I{i},3)==[1 3])
-      I{i}=reshape(I{i},[siz(1),siz(2),1,siz(3:end)]);
-      prm.hasChn=1;
-    end
     nframes=max(nframes,size(I{i},4));
     cLim = [min(min(I{i}(:)),cLim(1)) max(max(I{i}(:)),cLim(2))];
   end
 end
 prm.cLim=cLim;
 
+inds={':' ':'}; if prm.hasChn inds{3}=inds{1}; end
+
 h=gcf; colormap gray; figure(h); % bring to focus
 if nargout>0; M=repmat(getframe,[1 nframes]); end
-order = 1:nframes;  j=1; siz=size(I);
+order = 1:nframes;  j=1;
 for nplayed = 1 : abs(loop)
   for i=order
     tic; try disc=get(h); catch return; end %#ok<NASGU>
     if ~iscell(I)
-       montage2(reshape(I(:,:,:,i,:,:),[siz(1:3) siz(5:end)]),prm);
+      montage2(reshape(I(inds{:},i,:,:),sizeWithouti(I)),prm);
     else
       I2=cell(1,length(I));
-      for j=1:length(I)
-        siz=size(I{j}); siz(end+1:5)=1;
-        try I2{j}=reshape(I{j}(:,:,:,i,:),[siz(1:3) siz(5)]);
-        catch I2{j}=[]; 
-        end
+      for k=1:length(I)
+        try I2{k}=reshape(I{k}(inds{:},i,:),sizeWithouti(I{k})); catch end
       end
       montage2(I2,prm);
     end
     title(sprintf('frame %d of %d',i,nframes));
-    if (fps>0); pause(1/fps - toc); end
-    if nargout>0; M(j) = getframe; j=j+1; else drawnow; end
+    if fps>0; pause(1/fps - toc); end
+    if nargout>0; try M(j) = getframe; catch end; j=j+1; else drawnow; end
+    try geth=get(h); catch return; end %#ok<NASGU>
   end
   if loop<0; order = order(end:-1:1); end
 end
 if nargout>0; close(h); end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  function siz=sizeWithouti(I)
+    siz=size(I); if prm.hasChn siz(4)=[]; else siz(3)=[];end
+  end
+end
