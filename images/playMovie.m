@@ -69,7 +69,7 @@ dfs = {'hasChn',false }; prm = getPrmDflt( prm, dfs );
 nd=ndims(I);
 if ~iscell(I);
   if( ~any(ismember(nd, 3:6))); error('unsupported dimension of I'); end
-  if( prm.hasChn ) nframes=size(I,4); else nframes=size(I,3); end
+  if( prm.hasChn ); nframes=size(I,4); else nframes=size(I,3); end
   nd=ndims(I);
   if( nd<3 || nd>6 )
     error(['Invalid input, I has to be MxNxTxRxS or MxNx1xTxRxS or ' ...
@@ -85,7 +85,7 @@ else
 end
 prm.cLim=cLim;
 
-inds={':' ':'}; if prm.hasChn inds{3}=inds{1}; end
+inds={':' ':'}; if( prm.hasChn ); inds{3}=inds{1}; end
 
 h=gcf; colormap gray; figure(h); % bring to focus
 if nargout>0; M=repmat(getframe,[1 nframes]); end
@@ -105,7 +105,6 @@ for nplayed = 1 : abs(loop)
     title(sprintf('frame %d of %d',i,nframes));
     if fps>0; pause(1/fps - toc); end
     if nargout>0; try M(j) = getframe; catch end; j=j+1; else drawnow; end
-    try geth=get(h); catch return; end %#ok<NASGU>
   end
   if loop<0; order = order(end:-1:1); end
 end
@@ -113,6 +112,6 @@ if nargout>0; close(h); end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   function siz=sizeWithouti(I)
-    siz=size(I); if prm.hasChn siz(4)=[]; else siz(3)=[];end
+    siz=size(I); if( prm.hasChn ); siz(4)=[]; else siz(3)=[];end
   end
 end
