@@ -8,10 +8,10 @@
 % See convnFast for information on shape flags.
 %
 % USAGE
-%  H = histcIm( I, edges, wtMask, [shape] )
+%  H = histcImWin( I, edges, wtMask, [shape] )
 %
 % INPUTS
-%  I           - Array with integer values [see above]
+%  I           - image (possibly multidimensional) [see above]
 %  edges       - quantization bounds, see histc2
 %  wtMask      - numeric array of weights, or cell array of sep kernels
 %  shape       - ['full'], 'valid', 'same', or 'smooth'
@@ -22,8 +22,8 @@
 % EXAMPLE
 %  load trees; L=conv2(X,filterDog2d(10,4,1,0),'valid'); figure(1); im(L);
 %  f1=filterGauss(25,[],25);  f2=ones(1,15);
-%  H1 = histcIm(L, 15, {f1,f1'}, 'same');  figure(2); montage2(H1);
-%  H2 = histcIm(L, 15, {f2,f2'}, 'same');  figure(3); montage2(H2);
+%  H1 = histcImWin(L, 15, {f1,f1'}, 'same');  figure(2); montage2(H1);
+%  H2 = histcImWin(L, 15, {f2,f2'}, 'same');  figure(3); montage2(H2);
 %
 % See also ASSIGNTOBINS, HISTC2, CONVNFAST, HISTCIMLOC
 
@@ -31,7 +31,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function H = histcIm( I, edges, wtMask, shape )
+function H = histcImWin( I, edges, wtMask, shape )
 
 if( nargin<4 || isempty(shape) ); shape = 'full';  end;
 if( ~iscell(wtMask) ); wtMask={wtMask}; end;
@@ -53,5 +53,3 @@ for i=1:length(wtMask)
   wtMaski = wtMaski / sum(wtMaski(:));
   H = convnFast( H, wtMaski, shape );
 end;
-
-

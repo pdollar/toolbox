@@ -38,7 +38,7 @@
 % EXAMPLE - multCh==0
 %  I = filterGauss([100 100],[],[],0);
 %  h = histcImLoc(I,10,{2,.6,.1,1},[],0);
-%  figure(3); im(h)
+%  figure(1); im(h)
 %
 % EXAMPLE - multCh==1
 %  I = filterGauss([100 100],[],[],0);
@@ -46,7 +46,7 @@
 %  h2 = histcImLoc( cat(3,I,randn(size(I))),10,{2,.6,.1,0},[],1);
 %  figure(1); montage2(h1); figure(2); montage2(h2);
 %
-% See also HISTC2, MASKGAUSSIANS, ASSIGNTOBINS, HISTCIM
+% See also HISTC2, MASKGAUSSIANS, ASSIGNTOBINS, HISTCIMWIN
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

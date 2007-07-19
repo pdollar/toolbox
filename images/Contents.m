@@ -12,7 +12,7 @@
 % Histograms:
 %   assignToBins   - Quantizes A according to values in edges.
 %   histc2         - Multidimensional histogram count with weighted values.
-%   histcIm        - Calculates local histograms at every point in an array I.
+%   histcImWin     - Calculates local histograms at every point in image I.
 %   histcImLoc     - Creates a series of locally position dependent histograms.
 %   histMontage    - Used to display multiple 1D histograms.
 %
