@@ -35,7 +35,8 @@
 %  D = pdist2( x, C ), M = softMin( D, .25 )
 %
 % EXAMPLE - 2
-%  fplot( 'softMin( [0.5 0.2 .4], x )', [eps 10] );
+%  fplot( 'softMin( [0.5 0.2 .4], x )', [0 5] );
+%  xlabel('sigma'); ylabel('assignments')
 %
 % See also PDIST2, SOFTMAX
 
@@ -45,13 +46,20 @@
 
 function M = softMin( D, sigma )
 
-M = exp( -D / sigma^2 );
-sumM = sum( M, 2 );
-sumMzero = (sumM==0);
-if( any(sumMzero) )
-  [vs, inds] = min(D,[],2);  [n k] = size(D);
-  Mhard = subsToArray( [(1:n)' inds], ones( n,1 ), [n k] );
-  M( sumMzero, : ) = Mhard( sumMzero, : );
+if( sigma==0 ) % special case, make fast
+  [vs, inds] = min(D,[],2); [n k] = size(D);
+  M = subsToArray( [(1:n)' inds], ones(n,1), [n k] );
+
+else % general case
+  M = exp( -D / sigma^2 );
+  M(isinf(M))=1e50;
   sumM = sum( M, 2 );
+  sumMzero = (sumM==0);
+  if( any(sumMzero) )
+    [vs, inds] = min(D,[],2); [n k] = size(D);
+    Mhard = subsToArray( [(1:n)' inds], ones(n,1), [n k] );
+    M( sumMzero, : ) = Mhard( sumMzero, : );
+    sumM = sum( M, 2 );
+  end
+  M = M ./ sumM( :, ones(1,size(M,2)) );
 end
-M = M ./ sumM( :, ones(1,size(M,2)) );
