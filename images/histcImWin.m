@@ -1,4 +1,4 @@
-% Calculates local histograms at every point in an array I.
+% Calculates local histograms at every point in an image I.
 %
 % H(i,j,...,k,:) will contain the histogram at location (i,j,...,k), as
 % calculated by weighing values in I by placing wtMask at that

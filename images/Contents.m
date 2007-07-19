@@ -3,7 +3,7 @@
 %
 % Display:
 %   im             - Function for displaying grayscale images.
-%   montage2       - Used to display a stack of T images.
+%   montage2       - Used to display collections of images and videos.
 %   filmStrip      - Used to display R stacks of T images as a "filmstrip".
 %   playMovie      - Shows/makes an/several movie(s) from an image sequence.
 %   clusterMontage - Used for visualization of clusters of images and videos.
@@ -12,7 +12,7 @@
 % Histograms:
 %   assignToBins   - Quantizes A according to values in edges.
 %   histc2         - Multidimensional histogram count with weighted values.
-%   histcImWin     - Calculates local histograms at every point in image I.
+%   histcImWin     - Calculates local histograms at every point in an image I.
 %   histcImLoc     - Creates a series of locally position dependent histograms.
 %   histMontage    - Used to display multiple 1D histograms.
 %
