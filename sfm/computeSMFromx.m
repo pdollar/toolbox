@@ -60,7 +60,9 @@ switch method
       X3D = X3DNew;
 
       %Initial definition of the derivative matrices
-      A = zeros( 4, 12, n );	% The first 2 rows are zeros (no P' is in there, as it is multiplied by [I|0]
+      % The first 2 rows are zeros (no P' is in there, as it is ...
+      %multiplied by [I|0]
+      A = zeros( 4, 12, n );
       B = zeros( 4, 3, n );
       B( 1, 1, : ) = 1; B( 2, 2, : ) = 1;
 
@@ -71,7 +73,8 @@ switch method
       % compute the Sigma_xi
       j = 0;nIter=100;
       while j<nIter
-        %XHati = [ [[I|0],P']'bi], every 1 and 2 row is divided by the 3 and the 3 is removed too, is 4*1
+        %XHati = [ [[I|0],P']'bi], every 1 and 2 row is divided by the ...
+        %3 and the 3 is removed too, is 4*1
         % Compute Ai=dxHat_i/da, Ai is 4*12 and Bi=dxHat_i/db_i, Bi is 4*3
 
         % Define the Ai
@@ -168,27 +171,29 @@ switch method
       Pp = reshape( Pb( 1 : 12 ), [ 4 3 ] )';
       X = X3D./X3D( [4;4;4;4], : );
     else
-      % Affine camera matrix
-      % Reference: HZ2, p351, Algorithm 14.1
+      if 0
+        % Affine camera matrix
+        % Reference: HZ2, p351, Algorithm 14.1
 
-      %       A=[xp(1:2,:)./repmat(xp(3,:),[2,1]);x(1:2,:)./repmat(x(3,:),[2,1])]';
-      %       Xbar=mean(A,1);
-      %       A=A-repmat(Xbar,[ n 1 ]);
-      %
-      %       [U,S,V]=svd(A);
-      %
-      %       F=zeros(3,3); F(1,3)=V(1,end); F(2,3)=V(2,end); F(3,1)=V(3,end);
-      %       F(3,2)=V(4,end); F(3,3)=-V(:,end)'*Xbar';
-      %         Pp = convertPF([],F,false);
-      %         P=eye(3,4); P(3,3:4)=[0 1];
-      %         X=computeSFromxM(x,xp,P,Pp);
+        A=[xp(1:2,:)./xp([3 3],:);x(1:2,:)./x([3 3],:)]';
+        Xbar=mean(A,1);
+        A=A-repmat(Xbar,[ n 1 ]);
+
+        [U,S,V]=svd(A);
+
+        F=zeros(3,3); F(1,3)=V(1,end); F(2,3)=V(2,end); F(3,1)=V(3,end);
+        F(3,2)=V(4,end); F(3,3)=-V(:,end)'*Xbar';
+        Pp = convertPF([],F,false);
+        P=eye(3,4); P(3,3:4)=[0 1];
+        X=computeSFromxM(x,xp,P,Pp); return
+      end
 
       % Affine camera matrix, MLE estimation (Tomasi Kanade)
       % Reference: HZ2, p437, Algorithm 18.1
 
       m=size(x,3); n=size(x,2);
       if m>1
-        W=reshape(x,2*m,n); 
+        W=reshape(x,2*m,n);
       else
         x=normalizePoint(x,3); xp=normalizePoint(xp,3);
         W=[x(1:2,:);xp(1:2,:)]; m=2;
@@ -205,6 +210,7 @@ switch method
       for i=1:m-1
         Pp(2*i-1:2*i,4)=ti(2*i+1:2*i+2)-M(2*i+1:2*i+2,:)*[ti(1:2);0];
       end
+      Pp=permute(reshape(Pp',4,3,[]),[2,1,3]);
 
       X=H*[V(:,1),V(:,2),V(:,3)]';
       X(1,:)=X(1,:)+ti(1); X(2,:)=X(2,:)+ti(2);
@@ -213,7 +219,7 @@ switch method
 end
 
 
-%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Compute the reconstruction error for each point
   function err = computeError( Pb )
 

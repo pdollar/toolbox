@@ -37,14 +37,11 @@ for i=1:nframes
   for j=i+1:nframes
     % Alg 14.1 p.351 from HZ2
     X=[A(:,:,i); A(:,:,j)]';
-    Xbar=mean(X,1);
-    a=X-repmat(Xbar,[nPoint 1]);
+    Xbar=mean(X,1); a=X-repmat(Xbar,[nPoint 1]);
     [disc disc V] = svd(a,0);
 
-    N=V(:,4)';
-    S(i,j)=norm(N*a')/norm(N);
-    S(j,i)=S(i,j);
+    N=V(:,4)'; S(i,j)=norm(N*a')/norm(N);
   end
-  imshow(S,[]);
-  drawnow;
+  S(i+1:end,i)=S(i,i+1:end);
+  imshow(S,[]); drawnow;
 end

@@ -4,7 +4,7 @@
 %  playAnimation( A, [fps], [loop], [N] )
 %
 % INPUTS
-%  I       - Nx3xT or Nx2xT array (N=num points, T=num frames)
+%  I       - 3xNxT or 2xNxT array (N=num points, T=num frames)
 %  fps     - [100] maximum number of frames to display per second
 %            use fps==0 to introduce no pause and have the movie play as
 %            fast as possible
@@ -24,6 +24,7 @@
 
 function playAnim( anim, prm )
 
+if nargin<2 || isempty(prm); prm=struct(); end
 dfs = {'nCamera',-1,'fps',100, 'loop',1, 'N',[]};
 prm = getPrmDflt( prm, dfs );
 nCamera=prm.nCamera; fps=prm.fps; loop=prm.loop; N=prm.N;
@@ -57,7 +58,7 @@ for nplayed = 1 : abs(loop)
 
   % Play the animation once
   for i=order
-    tic; try geth=get(h); catch return; end
+    tic; try geth=get(h); catch return; end %#ok<NASGU>
     if doReturn; return; end
 
     hCam=updateCloud( struct('hPoint',hPoint,'hCam',hCam,'nCamera',...
@@ -95,4 +96,3 @@ end
     end
   end
 end
-

@@ -1,6 +1,7 @@
 function mergeImage( folderIn, folderOut )
 
 folderIn='~/LDVM/input/';
+tileSize=1000; sigma=5; nBand=10;
 
 % read the given files and store their relative positions
 d=dir([ folderIn '/*.mat' ]);
@@ -16,7 +17,6 @@ g=bestGain();
 % Create the different tiles of the big image
 boundYTot=boundYTot-min(boundYTot(:))+1;
 boundXTot=boundXTot-min(boundXTot(:))+1;
-tileSize=1000; sigma=5; nBand=2;
 
 for y=1:ceil(max(boundYTot(:))/tileSize)
   for x=1:ceil(max(boundXTot(:))/tileSize)
@@ -116,12 +116,6 @@ end
       % Define the first band
       ISigPrev{ii}=gaussSmooth( IPart(:,:,ii), sigma, 'smooth');
       BSig=IPart(:,:,ii)-ISigPrev{ii};
-      
-      
-%       pause
-%       imshow(IPart(:,:,ii),[]); pause
-%       imshow(ISigPrev{ii},[]); pause
-      
       WSigPrev{ii}=gaussSmooth( double(WMax{ii}), sigma, 'smooth' );
       %BSig(ind{ii})=0; ISigPrev{ii}(ind{ii})=0; WSigPrev{ii}(ind{ii})=0;
 
