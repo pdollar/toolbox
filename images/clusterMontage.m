@@ -24,11 +24,16 @@
 %  IC      - if pad==1  [M x N x T x nElem x nCluster] array
 %          - if pad==0  nCluster cell of [M x N x T x nElem_i] arrays
 %
-% EXAMPLE
+% EXAMPLE - images
 %  load( 'images.mat' );
 %  keep=randsample(144,80); IDXi=IDXi(keep); images=images(:,:,keep);
 %  IC = clusterMontage( images, IDXi, 9, 0 );
 %  figure(1); montage2( IC )
+%
+% EXAMPLE - videos
+%  load( 'images.mat' );
+%  IC = clusterMontage( videos, IDXv, 9, 0 );
+%  figure(1); playMovie( IC )
 %
 % See also KMEANS2, MONTAGE2, PLAYMOVIE, CELL2ARRAY
 

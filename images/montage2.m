@@ -81,14 +81,12 @@ if( ~iscell(IS) && ndims(IS)>2 )
   if(ndims(IS)>5); error('montage2: input too large'); end;
 end
 
-%%% take care of special case where calling subMontage only once
-if( ~iscell(IS) && size(IS,5)==1 );
+
+if( ~iscell(IS) && size(IS,5)==1 ) %%% special case call subMontage once
   [varargout{:}] = subMontage(IS,prm);
   title(inputname(1));
-  return;
-end;
-
-if( perRow ) %%% display each montage in row format
+  
+elseif( perRow ) %%% display each montage in row format
   if(iscell(IS)); error('montage2: IS cannot be a cell if perRow'); end;
   siz = size(IS);
   IS=reshape(permute(IS,[1 2 4 3 5]),siz(1),[],siz(3),siz(5));
