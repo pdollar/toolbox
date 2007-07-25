@@ -30,6 +30,7 @@
 %  X       - [n x p] matrix of n p-dim vectors.
 %  k       - maximum nuber of clusters (actual number may be smaller)
 %  prm     - parameters struct (all are optional)
+%   .k         - [] alternate way of specifying k (if not given above)
 %   .nTrial    - [1] number random restarts
 %   .maxIter   - [100] max number of iterations
 %   .display   - [0] Whether or not to display algorithm status
@@ -57,10 +58,12 @@ function [ IDX, C, sumd ] = kmeans2( X, k, prm )
 %%% get input args
 dfs = {'nTrial',1, 'maxIter',100, 'display',0, 'rndSeed',[],...
        'outFrac',0, 'minCl',1, 'metric',[] };
+if(isempty(k)); dfs={dfs{:} 'k', 'REQ'}; end;
 prm = getPrmDflt( prm, dfs );
 nTrial  =prm.nTrial;    maxIter =prm.maxIter;  display =prm.display;
 rndSeed =prm.rndSeed;   outFrac =prm.outFrac;  minCl   =prm.minCl;
-metric  =prm.metric;
+metric  =prm.metric;    
+if(isempty(k)); k=prm.k; end;
 
 % error checking
 if(k<1); error('k must be greater than 1'); end
@@ -104,7 +107,7 @@ function [ IDX, C, sumd, nIter ] = kmeans2main( X, k, nOutl, ...
                                         minCl, maxIter, display, metric )
 
 % initialize cluster centers to be k random X points
-[N p] = size(X);
+[N p] = size(X);  k = min(k,N);
 IDX = ones(N,1); oldIDX = zeros(N,1);
 index = randsample(N,k);  C = X(index,:);
 

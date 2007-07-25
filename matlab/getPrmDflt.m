@@ -34,7 +34,7 @@ if(mod(length(dfs),2)~=0); error('incorrect num dfs'); end
 for i=1:2:length(dfs)
   if(~isfield2(prm,dfs{i},1));
     if(strcmp('REQ',dfs{i+1}))
-      error(['Required field ' dfs{i} ' not specified.'] );
+      error(['Required field ''' dfs{i} ''' not specified.'] );
     else
       prm.(dfs{i})=dfs{i+1};
     end

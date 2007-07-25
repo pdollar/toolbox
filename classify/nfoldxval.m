@@ -7,7 +7,7 @@
 % The classifier is passed in as a parameter.  For this to work the
 % classifier (clf) must follow certain conventions.  The conventions are:
 %  1) To initialize the clf ('p' is the dimension of the data):
-%     clf = clfinit( p, clfparams{:} )
+%     clf = clfInit( p, clfparams{:} )
 %  2) clf must point to 2 functions for training and applying it:
 %     clf.funTrain    and   clf.funFwd
 %  3) For training the following will be called:
@@ -29,12 +29,12 @@
 %   CMn = CM ./ repmat( sum(CM,2), [1 size(CM,2)] );
 %
 % USAGE
-%  CM=nfoldxval( data, IDX, clfinit, clfparams, ...
+%  CM=nfoldxval( data, IDX, clfInit, clfparams, ...
 %                [types], [ignoreT], [fname], [show] )
 % INPUTS
 %  data        - cell array of (n x p) arrays each of n samples of dim p
 %  IDX         - cell array of (n x 1) arrays each of n labels
-%  clfinit     - classifier initialization function
+%  clfInit     - classifier initialization function
 %  clfparams   - classifier parameters
 %  types       - [] cell array of string labels for types
 %  ignoreT     - [] array of types to ignore {eg: [1 4 5]}.
@@ -62,7 +62,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function CM=nfoldxval( data, IDX, clfinit, clfparams, ...
+function CM=nfoldxval( data, IDX, clfInit, clfparams, ...
                                  types, ignoreT, fname, show )
 
 if( nargin<5 || isempty(types) ); types=[]; end
@@ -156,7 +156,7 @@ for testind = 1:nsets
   if( nTest==0 ); if(dispflag); disp('no test data'); end; continue; end
 
   % learn a classifier on train and classify test
-  clf = feval( clfinit, p, clfparams{:} );
+  clf = feval( clfInit, p, clfparams{:} );
   clf = feval( clf.funTrain, clf, train, trainIDX );
   testIDXpred = feval( clf.funFwd, clf, test );
   CMi = confMatrix( testIDX, testIDXpred, ntypes );
