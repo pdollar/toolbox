@@ -9,7 +9,7 @@
 %
 % INPUTS
 %  IS           - MxNxTxR or MxNxCxTxR, where C==1 or C==3, and R may be 1
-%                 or cell vector of MxNxT or MxNxCxT matricies
+%                 or cell vector of MxNxT or MxNxCxT matrices
 %  prm
 %   .showLines  - [1] whether to show lines separating the various frames
 %   .extraInfo  - [0] if 1 then a colorbar is shown as well as impixelinfo
@@ -190,8 +190,8 @@ colormap(gray);  axis('image');
 if( extraInfo )
   colorbar; impixelinfo;
 else
-  set(gca,'XTick',[]); set(gca,'YTick',[]);
-end;
+  set(gca,'Visible','off')
+end
 
 % draw lines separating frames
 if( showLines )
@@ -212,7 +212,7 @@ if( ~isempty(labels) )
   for i=1:mm;
     for j=1:nn
       if( count<=nIm )
-        rStr = i*sizPad(1)-padAmt/2; 
+        rStr = i*sizPad(1)-padAmt/2;
         cStr =(j-1+.1)*sizPad(2)+padAmt/2;
         text(cStr,rStr,labels{count},'color','r',textalign{:});
         count = count+1;
