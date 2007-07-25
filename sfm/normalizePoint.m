@@ -11,7 +11,7 @@
 % OUTPUTS
 %  xHat    - the normalized points
 %  T       - if method==Inf, it returns the transformation such that
-%            xHat=T*x
+%            xHat=T*x  (T is 3x3)
 % EXAMPLE
 %
 % See also
