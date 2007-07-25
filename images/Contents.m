@@ -2,13 +2,13 @@
 % See also
 %
 % Display:
-%   im             - Function for displaying grayscale images.
-%   montage2       - Used to display collections of images and videos.
-%   filmStrip      - Used to display R stacks of T images as a "filmstrip".
-%   makeGif        - Writes a matlab movie to an animated GIF
-%   playMovie      - Shows/makes an/several movie(s) from an image sequence.
 %   clusterMontage - Used for visualization of clusters of images and videos.
+%   im             - Function for displaying grayscale images.
+%   filmStrip      - Used to display R stacks of T images as a "filmstrip".
+%   makeGif        - Writes a matlab movie to an animated GIF.
+%   montage2       - Used to display collections of images and videos.
 %   movieToImages  - Creates a stack of images from a matlab movie M.
+%   playMovie      - Shows/makes an/several movie(s) from an image sequence.
 %
 % Histograms:
 %   assignToBins   - Quantizes A according to values in edges.
