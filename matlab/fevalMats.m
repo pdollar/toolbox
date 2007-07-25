@@ -7,22 +7,22 @@
 % file contains two variables y and z, then matCont should be
 % {'y','z'}.  For long operations shows progress info.
 %
-% fHandle must point to a function that takes two inputs: vals and params.
+% fHandle must point to a function that takes two inputs: vals and prm.
 % vals is a cell array that contains the values for the variables denoted
-% by matCont and contained in the mat file, and params are the
+% by matCont and contained in the mat file, and prm are the
 % additional static parameters passed to fevalArrays.  Continuing the
 % example above vals would be {y,z} - (use deal to extract):
-%  x=feval(fHandle,{y,z},params)
+%  x=feval(fHandle,{y,z},prm)
 % Each returned x must have the same dimensions, X is a concatentation of
 % the returned x's along the (d+1) dimension.
 %
 % USAGE
-%  X = fevalMats( fHandle, matCont, params, srcDir, [prefix] )
+%  X = fevalMats( fHandle, matCont, prm, srcDir, [prefix] )
 %
 % INPUTS
 %  fHandle  - function to apply to contents of each mat file [see above]
 %  matCont  - cell array of strings of expected contents of each mat file
-%  params   - cell array of additional parameters to fHandle (may be {})
+%  prm      - cell array of additional parameters to fHandle (may be {})
 %  srcDir   - directory containg mat files
 %  prefix   - [] only consider mat files in srcDir of the form prefix_*.mat
 %
@@ -31,13 +31,13 @@
 %
 % EXAMPLE
 %
-% See also FEVALIMAGES, FEVALARRAYS
+% See also FEVALIMAGES, FEVALARRAYS, DEAL
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function X = fevalMats( fHandle, matCont, params, srcDir, prefix )
+function X = fevalMats( fHandle, matCont, prm, srcDir, prefix )
 
 error(nargchk( 4, 5, nargin ));
 
@@ -59,20 +59,20 @@ if( n==0 ); error( ['No appropriate mat files found in ' srcDir] ); end
 
 %%% load each mat file and apply fHandle
 ticId = ticStatus('fevalMats',[],40);
-ncontents = length( matCont );
+nCont = length( matCont );
 for i=1:n
   % load mat file and get contents
   S = load( [srcDir fileNames{i}] );
   errmsg = ['Unexpected contents for mat file: ' fileNames{i}];
-  if( length(fieldnames(S))<ncontents); error( errmsg ); end
-  inputs = cell(1,ncontents);
-  for j=1:ncontents
+  if( length(fieldnames(S))<nCont); error( errmsg ); end
+  inputs = cell(1,nCont);
+  for j=1:nCont
     if( ~isfield(S,matCont{j}) ); error( errmsg ); end
-    inputs{j} = S.matCont{j}; %getfield(S,matCont{j});
+    inputs{j} = S.(matCont{j});
   end; clear S;
 
   % apply fHandle
-  x = feval( fHandle, inputs, params );
+  x = feval( fHandle, inputs, prm );
   if (i==1)
     ndx = ndims(x);
     if(ndx==2 && size(x,2)==1); ndx=1; end;
