@@ -6,13 +6,7 @@
 %  playAnimation( A, [fps], [loop], [N] )
 %
 % INPUTS
-%  I       - 3xNxT or 2xNxT array (N=num points, T=num frames)
-%  fps     - [100] maximum number of frames to display per second
-%            use fps==0 to introduce no pause and have the movie play as
-%            fast as possible
-%  loop    - [0] number of time to loop video (may be inf),
-%            if neg plays video forward then backward then forward etc.
-%  N       - [] cell array containing the connectivity neighbors
+%  A     - 2xNxT or 3xNxT array (N=num points, T=num frames)
 %
 % OUTPUTS
 %
@@ -29,7 +23,8 @@ function S = computeAnimSimilarity( A )
 if( iscell(A) ); error('cell arrays not supported.'); end;
 if( ~ismember(ndims(A),[2 3]) ); error('unsupported dimension of A'); end
 
-siz=size(A); nframes=siz(3); nDim=siz(1); nPoint=siz(2);
+siz=size(A); nframes=siz(3); nPoint=siz(2);
+if size(A,1)==3; A=A(1:2,:,:)./A([3 3],:,:); end
 
 % Compute the similarities
 S=zeros(nframes,nframes);
@@ -37,10 +32,10 @@ for i=1:nframes
   for j=i+1:nframes
     % Alg 14.1 p.351 from HZ2
     X=[A(:,:,i); A(:,:,j)]';
-    Xbar=mean(X,1); a=X-repmat(Xbar,[nPoint 1]);
+    XBar=mean(X,1); a=X-repmat(XBar,[nPoint 1]);
     [disc disc V] = svd(a,0);
 
-    N=V(:,4)'; S(i,j)=norm(N*a')/norm(N);
+    N=V(:,4); S(i,j)=(norm(a*N)/norm(N))^2;
   end
   S(i+1:end,i)=S(i,i+1:end);
   imshow(S,[]); drawnow;

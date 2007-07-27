@@ -24,9 +24,10 @@
 
 function [hPoint, hCam]=initializeCloud( prm )
 
-dfs = {'cam',[],'nCamera',0,'c',[0 0 1],'N',[],'i',1,'A','REQ','bound',[]};
+dfs = {'t',[],'R',[],'nCam',-1,'c',[0 0 1],'N',[],'i',1,'A','REQ',...
+  'bound',[]};
 prm = getPrmDflt( prm, dfs );
-cam=prm.cam; nCamera=prm.nCamera; c=prm.c; N=prm.N; i=prm.i;
+t=prm.t; R=prm.R; nCam=prm.nCam; c=prm.c; N=prm.N; i=prm.i;
 A=prm.A; bound=prm.bound;
 
 nDim=size(A,1);
@@ -38,7 +39,7 @@ if ~isempty(N)
   for j = 1 : nPoint; conn{j}(:,2) = N{j}'; conn{j}(:,1) = i; end
   conn = cell2mat(conn');
   for j=1:nDim; coord{j}=[A(j,conn(:,1),i),A(j,conn(:,2),i)]'; end
-  
+
   if nDim==3; hPoint=line(coord{1},coord{2},coord{3});
   else hPoint=line(coord{1},coord{2}); end
 else
@@ -46,13 +47,32 @@ else
   else hPoint=plot(A(1,:,i),A(2,:,i)); end
   set(hPoint,'LineStyle','none');
 end
-set(hPoint,'Color',c,'Marker','.');
+set(hPoint,'Color',c,'Marker','.'); hold on;
+hPoint(2)=plot3(A(1,1,i),A(2,1,i),A(3,1,i),'ks','MarkerSize',10);
 
 % Initialize the cameras
-hold on;
-inter=i-nCamera:i+nCamera;
-inter((inter<1) | (inter>size(A,3)))=[];
-hCam=plot3(cam(1,inter),cam(2,inter),cam(3,inter),'Color','b',...
-  'Marker','s','LineStyle','none');
-
+if nCam>=0
+  hCam=zeros(1+2*nCam,8);
+  hCam(1,:)=plotPyramid(t(:,i),R(:,:,i),'r',1); l=2;
+  for j=[i-nCam:i-1,i+1:i+nCam]
+    m=j; m=max([1 m]); m=min([m size(A,3)]);
+    hCam(l,:)=plotPyramid(t(:,m),R(:,:,m),'b',0.5);
+    l=l+1;
+  end
+else
+  hCam=[];
+end
 axis(bound);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function h=plotPyramid(t,R,c,scale)
+
+X=[-1 -1 0; 1 -1 0; 1 1 0; -1 1 0; 0 0 2]'*scale;
+X(3,:)=X(3,:)+5; X=R'*(X-repmat(t,[1 5]));
+
+XX=cell(1,3);
+for k=1:3
+  XX{k}=[X(k,1:2); X(k,2:3); X(k,3:4); X(k,[4 1]); X(k,[1 5]); ...
+    X(k,[2 5]); X(k,[3 5]); X(k,[4 5])]';
+end
+h=line(XX{1},XX{2},XX{3},'Color',c)';

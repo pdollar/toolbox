@@ -4,9 +4,13 @@
 %  viewAnimSimilarity( A, S, [N] )
 %
 % INPUTS
-%  A       - 3xNxT or 2xNxT array (N=num points, T=num frames)
-%  S       - TxT similarity matrix
-%  N       - [] cell array containing the connectivity neighbors
+%  anim     - anim object
+%  prm
+%   .S      - TxT similarity matrix
+%   .N      - [] cell array containing the connectivity neighbors
+%   .nCam   - [-1] Number of cameras to display before and after the
+%               current one (-1, don't display the current one)
+%   .is3D   - [true] Show the 3D views
 %
 % OUTPUTS
 %
@@ -20,21 +24,29 @@
 
 function viewAnimSimilarity( anim, prm )
 
-dfs = {'nCamera',-1,'N',[],'S','REQ'};
+dfs = {'nCam',-1,'N',[],'S','REQ','is3D',true};
 prm = getPrmDflt( prm, dfs );
-nCamera=prm.nCamera; N=prm.N; S=prm.S; A=anim.A2; 
+nCam=prm.nCam; N=prm.N; S=prm.S;
+if prm.is3D; A=anim.A3; else A=anim.A2; end
 
-nDim=size(A,1);
+nCamIni=nCam;
 
 % Determine the boundaries of the data
-if nCamera<0; bound=minmax(reshape(A,nDim,[]));
-else bound=minmax([reshape(A,nDim,[]), cam]);end
-maxB=max(bound(:,2)-bound(:,1))/2;
-bound=mean(bound,2); bound=[bound-maxB bound+maxB]; % make axes equal
-bound=reshape(bound',1,[]);
+boundTot{1}=minmax(reshape(anim.A2,2,[]));
+boundTot{2}=minmax([reshape(anim.A3,3,[]), anim.cam]);
+for i=1:2
+  maxB=max(boundTot{i}(:,2)-boundTot{i}(:,1))/2;
+  % make axes equal
+  boundTot{i}=mean(boundTot{i},2); boundTot{i}=[boundTot{i}-maxB ...
+    boundTot{i}+maxB];
+  boundTot{i}=reshape(boundTot{i}',1,[]);
+end
+
+if prm.is3D; bound=boundTot{2}; else bound=boundTot{1}; end
 
 % Create the plots
 figure(gcf); % bring to focus
+clf;
 h(1) = subplot( 'position', [ 0, 0, 0.3, 1 ] );
 h(2) = subplot( 'position', [ 0.3, 0, 0.3, 1 ] );
 h(3) = subplot( 'position', [ 0.6, 0, 0.4, 1 ] );
@@ -49,33 +61,29 @@ marker1 = plot( 10, 1, 'r*' ); marker2 = plot( 1, 10, 'g*' );
 set( gcf, 'WindowButtonMotionFcn', { @interface } );
 set( gcf, 'KeyPressFcn', { @interface } );
 
-conn=[]; hPoint=[0 0];
+conn=[]; hPoint=cell(1,2); hCam=hPoint; viewAng=hPoint;
 
-c=[ 1 0.4 0.4; 0.4 1 0.4 ];
+c=[ 1 0.4 0.4; 0.4 0.4 1 ];
 for i=1:2
   axes(h(i));
-  hPoint(i)=initializeCloud( struct('cam',anim.cam,'nCamera',nCamera,...
-    'c',c(i,:),'N',N,'A',anim.A2,'bound',bound) );
+  [hPoint{i},hCam{i}]=initializeCloud( struct('nCam',nCam,...
+    'c',c(i,:),'N',N,'A',A,'bound',bound,'t',anim.t,'R',anim.R) );
+  viewAng{i}=view;
 end
 axes(h(3));
 
-%%%%%%%%%%
-  function interface( src, event )
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  function interface( src, event ) %#ok<INUSL>
     % Deal with the mouse moving around
-    if isempty(event)
-      point = get( h(3), 'CurrentPoint' );
-      x = round( point( 1, 1:2 ) );
-      if any(x<=0) || any(x>size(S)); return; end
+    point = get( h(3), 'CurrentPoint' );
+    x = round( point( 1, 1:2 ) );
+    if any(x<=0) || any(x>size(S)); return; end
 
-      % Deal with the markers
-      set( marker1, 'XData', x(1), 'YData', 1 );
-      set( marker2, 'XData', 1, 'YData', x(2) );
-      % Deal with the 3D object
-      for i=1:2
-        updateCloud(struct('hPoint',hPoint(i),'hCam',[],'nCamera',-1,...
-          'conn',conn,'i',x(i),'A',anim.A2,'cam',[]));
-      end
-    else
+    % Deal with the markers
+    set( marker1, 'XData', x(1), 'YData', 1 );
+    set( marker2, 'XData', 1, 'YData', x(2) );
+
+    if ~isempty(event)
       % Deal with a pressed key to change the view or quit the animation
       diffView=[0 0];
       switch event.Key
@@ -87,8 +95,27 @@ axes(h(3));
           diffView = [ 0 -10];
         case 'downarrow',
           diffView = [ 0 10 ];
+        case 'd',
+          if size(A,1)==2;
+            A=anim.A3; nCam=nCamIni; set(gcf,'Color',0.8*[1 1 1]);
+            for j=1:2;
+              axes(h(j)); axis on; axis(boundTot{2});
+              set(hCam{j}(:),'Visible','on'); view(viewAng{j});
+            end
+          else A=anim.A2; nCam=-1; bound=boundTot{1};
+            set(gcf,'Color',[1 1 1]);
+            for j=1:2;
+              axes(h(j)); axis off; axis(boundTot{1}); view(0,90);
+              set(hCam{j}(:),'Visible','off');
+            end
+          end
       end
-      for i=1:2; set( h(i), 'View', get( h(i), 'View' ) + diffView ); end
+      for j=1:2; set( h(j), 'View', get( h(j), 'View' ) + diffView ); end
+    end
+    % Deal with the 3D object
+    for j=1:2
+      hCam{j}=updateCloud(struct('hPoint',hPoint{j},'hCam',hCam{j},...
+        'nCam',nCam,'conn',conn,'i',x(j),'A',A,'t',anim.t,'R',anim.R));
     end
   end
 end

@@ -24,11 +24,11 @@
 
 function hCam=updateCloud( prm )
 
-dfs = {'hPoint','REQ','hCam',[],'nCamera',0,'conn',[],'i',1,'A','REQ',...
-  'cam',[]};
+dfs = {'hPoint','REQ','hCam',[],'nCam',0,'conn',[],'i',1,'A','REQ',...
+  't',[],'R',[]};
 prm = getPrmDflt( prm, dfs );
-hPoint=prm.hPoint; hCam=prm.hCam; nCamera=prm.nCamera; conn=prm.conn;
-i=prm.i; A=prm.A; cam=prm.cam;
+hPoint=prm.hPoint; hCam=prm.hCam; nCam=prm.nCam; conn=prm.conn;
+i=prm.i; A=prm.A; t=prm.t; R=prm.R;
 
 nDim=size(A,1);
 
@@ -47,19 +47,41 @@ if ~isempty(conn)
   end
 else
   if nDim==3
-    set(hPoint,'XData',A(1,:,i),'YData',A(2,:,i),'ZData',A(3,:,i));
-  else set(hPoint,'XData',A(1,:,i),'YData',A(2,:,i)); end
+    set(hPoint(1),'XData',A(1,:,i),'YData',A(2,:,i),'ZData',A(3,:,i));
+    set(hPoint(2),'XData',A(1,1,i),'YData',A(2,1,i),'ZData',A(3,1,i));
+  else
+    set(hPoint(1),'XData',A(1,:,i),'YData',A(2,:,i));
+    set(hPoint(2),'XData',A(1,1,i),'YData',A(2,1,i));
+  end
 end
 
 % Update the cameras
-if nCamera>=0
-  inter=[i-nCamera:i-1,i+1:i+nCamera];
-  inter((inter<1) | (inter>size(A,3)))=[];
-  delete(hCam);
-  hCam=plot3(cam(1,i),cam(2,i),cam(3,i),'Color','r',...
-    'Marker','s','MarkerFaceColor','r','LineStyle','none');
-  if nCamera>=1
-    hCam(2)=plot3(cam(1,inter),cam(2,inter),cam(3,inter),'Color','b',...
-      'Marker','s','LineStyle','none');
+if nCam>=0
+  XX=getCoord(t(:,i),R(:,:,i),1);
+  for j=1:8
+    set(hCam(1,j),'XData',XX{1}(:,j),'YData',XX{2}(:,j),'ZData',...
+      XX{3}(:,j));
   end
+  m=2;
+  for l=[i-nCam:i-1,i+1:i+nCam]
+    if l<1 || l>size(t,2); continue; end
+    for j=1:8
+      XX=getCoord(t(:,l),R(:,:,l),0.5);
+      set(hCam(m,j),'XData',XX{1}(:,j),'YData',XX{2}(:,j),'ZData',...
+        XX{3}(:,j));
+    end
+    m=m+1;
+  end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function XX=getCoord(t,R,scale)
+
+X=[-1 -1 0; 1 -1 0; 1 1 0; -1 1 0; 0 0 2]'*scale;
+X(3,:)=X(3,:)+5; X=R'*(X-repmat(t,[1 5]));
+
+XX=cell(1,3);
+for k=1:3
+  XX{k}=[X(k,1:2); X(k,2:3); X(k,3:4); X(k,[4 1]); X(k,[1 5]); ...
+    X(k,[2 5]); X(k,[3 5]); X(k,[4 5])]';
 end

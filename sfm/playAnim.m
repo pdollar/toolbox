@@ -25,15 +25,16 @@
 function playAnim( anim, prm )
 
 if nargin<2 || isempty(prm); prm=struct(); end
-dfs = {'nCamera',-1,'fps',100, 'loop',1, 'N',[]};
+dfs = {'nCam',-1,'fps',20, 'loop',1, 'N',[],'is3D',true};
 prm = getPrmDflt( prm, dfs );
-nCamera=prm.nCamera; fps=prm.fps; loop=prm.loop; N=prm.N;
+nCam=prm.nCam; fps=prm.fps; loop=prm.loop; N=prm.N; is3D=prm.is3D;
 
-A=anim.A3; cam=anim.cam;
+if is3D; A=anim.A3; else A=anim.A2; nCam=-1; end
+cam=anim.cam;
 siz=size(A); nframes=siz(3); nDim=siz(1);
 
 % Determine the boundaries of the data
-if nCamera<0; bound=minmax(reshape(A,nDim,[]));
+if nCam<0; bound=minmax(reshape(A,nDim,[]));
 else bound=minmax([reshape(A,nDim,[]), cam]);end
 maxB=max(bound(:,2)-bound(:,1))/2;
 bound=mean(bound,2); bound=[bound-maxB bound+maxB]; % make axes equal
@@ -45,8 +46,8 @@ set( gcf, 'KeyPressFcn', { @interface } );
 doReturn=0; doPause=0;
 
 clf;
-[hPoint, hCam]=initializeCloud( struct('cam',anim.cam,'nCamera',nCamera,...
-  'c',[0.4,0.4,1],'N',N,'A',anim.A3,'bound',bound) );
+[hPoint, hCam]=initializeCloud( struct('nCam',nCam,...
+  'c',[0.4,0.4,1],'N',N,'A',A,'bound',bound,'t',anim.t,'R',anim.R) );
 
 % play the animation several times
 for nplayed = 1 : abs(loop)
@@ -61,12 +62,10 @@ for nplayed = 1 : abs(loop)
     tic; try geth=get(h); catch return; end %#ok<NASGU>
     if doReturn; return; end
 
-    hCam=updateCloud( struct('hPoint',hPoint,'hCam',hCam,'nCamera',...
-      nCamera, 'i',i,'A',anim.A3,'cam',cam));
+    hCam=updateCloud( struct('hPoint',hPoint,'hCam',hCam,'nCam',...
+      nCam, 'i',i,'A',A,'t',anim.t,'R',anim.R));
 
-    while doPause
-      pause(0.1);
-    end
+    while doPause; pause(0.1); end
     
     % Display the image
     title(sprintf('frame %d of %d',i,nframes));
