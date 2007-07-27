@@ -23,7 +23,13 @@
 %  u       - axis of rotation
 %  theta   - angle of rotation (radians)
 %
-% OUTPUTS - 1,4,5
+% INPUTS - 6) creates a 3x3 rotation matrix from 3 angles (around fixed
+% axes)
+%  th1     - angle with respect to X axis
+%  th2     - angle with respect to Y axis
+%  th3     - angle with respect to Z axis
+%  
+% OUTPUTS - 1,4,5,6
 %  R       - 3x3 rotation matrix
 %
 % OUTPUTS - 2
@@ -50,6 +56,9 @@
 %
 % EXAMPLE - 5
 %  R3 = rotationMatrix( [0 0 1], pi/4 )
+%
+% EXAMPLE - 5
+%  R3 = rotationMatrix( pi/4,pi/4,0 )
 %
 % See also
 
@@ -90,7 +99,7 @@ if all(size(varargin{1})==[3 3]) && nargout==2
 end
 
 %%% Returns the matrix: R=[cos(t) -sin(t); sin(t) cos(t)].
-if all(size(varargin{1})==[1 1])
+if all(size(varargin{1})==[1 1])  && nargin==1
   theta=varargin{1};
   varargout{1}=[cos(theta) -sin(theta); sin(theta) cos(theta)];
   return
@@ -107,8 +116,16 @@ if all(sort(size(varargin{1}))==[1 3])
   end
   u =  u / norm(u);
   U = [ 0 -u(3) u(2) ; u(3) 0 -u(1); -u(2) u(1) 0 ];
-  varargout{1}=eye(3)+U  *sin(theta)+U^2*(1-cos(theta));
+  varargout{1}=eye(3)+U*sin(theta)+U^2*(1-cos(theta));
   return
+end
+
+%%% creates a 3x3 rotation matrix from 3 angles (around fixed axes)
+if nargin==3
+   M = makehgtform('xrotate',varargin{1},'yrotate',varargin{2},...
+     'zrotate',varargin{3});
+   varargout{1}=M(1:3,1:3);
+   return
 end
 
 error('Input format not supported');
