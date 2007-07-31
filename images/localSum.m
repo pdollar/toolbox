@@ -10,7 +10,7 @@
 %
 % INPUTS
 %  I       - matrix to compute sum over
-%  dims    - size of volume to compute sum over
+%  dims    - size of volume to compute sum over, can be scalar
 %  shape   - ['full'] 'valid', 'full', 'same', or 'block'
 %
 % OUTPUTS

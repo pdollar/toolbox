@@ -6,7 +6,7 @@
 %
 % USAGE
 %  [Vx,Vy,reliab]=optFlowLk( I1, I2, winN, ...
-%                                [winSig], [sigma], [thr], [show] )
+%    [winSig], [sigma], [thr], [show] )
 %
 % INPUTS
 %  I1, I2  - input images to calculate flow between
@@ -80,11 +80,10 @@ I2 = gaussSmooth(I2,sigma,'same');
 [Gx,Gy]=gradient(I1);
 Gxx=Gx.^2;  Gxy=Gx.*Gy;   Gyy=Gy.^2;
 if( isempty(winSig) )
-  winMask = ones(2*winN+1);
-  winMask = winMask / sum(winMask(:));
-  Axx=conv2(Gxx,winMask,'same');
-  Axy=conv2(Gxy,winMask,'same');
-  Ayy=conv2(Gyy,winMask,'same');
+  maskWidth = 2*winN+1;  maskArea = maskWidth^2;
+  Axx=localSum(Gxx,maskWidth,'same') / maskArea;
+  Axy=localSum(Gxy,maskWidth,'same') / maskArea;
+  Ayy=localSum(Gyy,maskWidth,'same') / maskArea;  
 else
   winN = ceil(winSig);
   Axx=gaussSmooth(Gxx,winSig,'same',2);
@@ -100,8 +99,8 @@ V1=0.5*sqrt(trA.^2-4*detA);
 % Compute inner product of gradient with time derivative
 It=I2-I1;    IxIt=-Gx.*It;   IyIt=-Gy.*It;
 if( isempty(winSig) )
-  ATbx=conv2(IxIt,winMask,'same');
-  ATby=conv2(IyIt,winMask,'same');
+  ATbx=localSum(IxIt,maskWidth,'same') / maskArea;
+  ATby=localSum(IyIt,maskWidth,'same') / maskArea;      
 else
   ATbx=gaussSmooth(IxIt,winSig,'same',2);
   ATby=gaussSmooth(IyIt,winSig,'same',2);

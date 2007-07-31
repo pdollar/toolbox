@@ -20,7 +20,7 @@
 %
 % INPUTS
 %  I       - matrix to compute fun over
-%  dims    - size of volume to compute fun over
+%  dims    - size of volume to compute fun over, can be scalar
 %  shape   - 'valid', 'full', 'same' or 'block'
 %  fun     - nonlinear filter
 %  params  - optional parameters for nonlinear filter
