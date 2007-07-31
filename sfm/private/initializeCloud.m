@@ -24,20 +24,17 @@
 
 function [hPoint, hCam]=initializeCloud( prm )
 
-dfs = {'t',[],'R',[],'nCam',-1,'c',[0 0 1],'N',[],'i',1,'A','REQ',...
+dfs = {'t',[],'R',[],'nCam',-1,'c',[0 0 1],'conn',[],'i',1,'A','REQ',...
   'bound',[]};
 prm = getPrmDflt( prm, dfs );
-t=prm.t; R=prm.R; nCam=prm.nCam; c=prm.c; N=prm.N; i=prm.i;
+t=prm.t; R=prm.R; nCam=prm.nCam; c=prm.c; conn=prm.conn; i=prm.i;
 A=prm.A; bound=prm.bound;
 
 nDim=size(A,1);
 
 % Initialize the point cloud
-if ~isempty(N)
-  % Define some connectivities
-  conn = cell(1,nPoint); coord=cell(1,3);
-  for j = 1 : nPoint; conn{j}(:,2) = N{j}'; conn{j}(:,1) = i; end
-  conn = cell2mat(conn');
+if ~isempty(conn)
+  coord=cell(1,3);
   for j=1:nDim; coord{j}=[A(j,conn(:,1),i),A(j,conn(:,2),i)]'; end
 
   if nDim==3; hPoint=line(coord{1},coord{2},coord{3});
