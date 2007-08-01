@@ -1,7 +1,9 @@
 function [X,Pp]=computeSMFromx(x,xp,isProj,method)
 
 if nargin<4; method=0; end
-if any(size(x)~=size(xp)); error('x1 and x2 have different size'); end
+if ~isempty(xp) && any(size(x)~=size(xp))
+  error('x1 and x2 have different size');
+end
 if size(x,1)>3; x=x'; xp=xp'; end
 if size(x,1)==2; x(3,:)=1; xp(3,:)=1; end
 
@@ -193,7 +195,10 @@ switch method
 
       m=size(x,3); n=size(x,2);
       if m>1
-        W=reshape(x,2*m,n);
+        W=zeros(2*m,n);
+        for i=1:m
+          temp=normalizePoint(x(:,:,i),3); W(2*i-1:2*i,:)=temp(1:2,:);
+        end
       else
         x=normalizePoint(x,3); xp=normalizePoint(xp,3);
         W=[x(1:2,:);xp(1:2,:)]; m=2;
@@ -211,7 +216,9 @@ switch method
         Pp(2*i-1:2*i,4)=ti(2*i+1:2*i+2)-M(2*i+1:2*i+2,:)*[ti(1:2);0];
       end
       Pp=permute(reshape(Pp',4,3,[]),[2,1,3]);
-
+      Pp(3,4,end+1)=1; Pp(:,:,2:end)=Pp(:,:,1:end-1); Pp(:,:,1)=eye(3,4);
+      Pp(3,3:4,1)=[0 1];
+      
       X=H*[V(:,1),V(:,2),V(:,3)]';
       X(1,:)=X(1,:)+ti(1); X(2,:)=X(2,:)+ti(2);
       X(4,:)=1;
