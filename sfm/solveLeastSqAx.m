@@ -11,28 +11,28 @@
 %  x = solveLeastSqAx(A)
 %  [x,xHat] = solveLeastSqAx(A,G,method)
 %
-% INPUTS 1
-%  A      - constraint matrix, ||Ax|| to be minimized with ||x||=1
+% INPUTS 1 - Find x that minimizes ||Ax|| subject to ||x||=1
+%  A       - constraint matrix, ||Ax|| to be minimized with ||x||=1
 %
 % INPUTS 2
 %
 % INPUTS 3 - Find x that minimizes ||Ax|| subject to ||x||=1 and x=G*xHat,
 %            where G has rank r
-%  A      - constraint matrix
-%  G      - condition matrix
-%  method - method=2
+%  A       - constraint matrix
+%  G       - condition matrix
+%  method  - method=2
 %
 % INPUTS 4 - Find x that minimizes ||Ax|| subject to ||Cx||=1
-%  A      - constraint matrix
-%  C      - condition matrix
-%  method - method=3
+%  A       - constraint matrix
+%  C       - condition matrix
+%  method  - method=3
 %
 % OUTPUTS 1,2,4
-%   x     - solution
+%  x      - solution
 %
 % OUTPUTS 3
-%   x     - solution
-%   xHat  - vector such that x = G*xHat
+%  x      - solution
+%  xHat   - vector such that x = G*xHat
 %
 % EXAMPLE
 %

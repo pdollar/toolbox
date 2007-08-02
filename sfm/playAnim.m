@@ -1,16 +1,20 @@
 % Display a point cloud animation
 %
 % USAGE
-%  playAnimation( A, [fps], [loop], [N] )
+%  playAnimation( A, prm )
 %
 % INPUTS
-%  I       - 3xNxT or 2xNxT array (N=num points, T=num frames)
-%  fps     - [100] maximum number of frames to display per second
-%            use fps==0 to introduce no pause and have the movie play as
-%            fast as possible
-%  loop    - [0] number of time to loop video (may be inf),
-%            if neg plays video forward then backward then forward etc.
-%  N       - [] cell array containing the connectivity neighbors
+%  anim    - animation object
+%  prm     - parameters for the animation
+%   .fps    - [100] maximum number of frames to display per second
+%             use fps==0 to introduce no pause and have the movie play as
+%             fast as possible
+%   .loop   - [0] number of time to loop video (may be inf),
+%             if neg plays video forward then backward then forward etc.
+%   .N      - [] cell array containing the connectivity neighbors
+%   .nCam   - [-1] number of cameras to show before and after the current
+%             one (-1 => not even the current one is displayed)
+%   .is3D   - [true] displays the 3D data of the anim
 %
 % OUTPUTS
 %

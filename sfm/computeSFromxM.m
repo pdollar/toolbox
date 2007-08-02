@@ -19,7 +19,7 @@ switch method
       [ U, S, V ]=svd(A,0);
       X( :, i )=V( :, 4 );
     end
-    X(1:3,:)=X(1:3,:)./repmat(X(4,:),[3 1]); X(4,:)=1;
+    X=normalizePoint(X,4);
     
   case Inf
     % Linear triangulation

@@ -26,17 +26,18 @@ switch method
       [U,S,V]=svd(F,0); F=U*diag([S(1,1) S(2,2) 0])*V';
 
       F=Tp'*F*T;
+          
+      Pp = convertPF([],F);
+      X=computeSFromxM(x,xp,eye(3,4),Pp);
+      return
     else
       % Linear Algorithm
       % Reference: HZ2, p348
-
-      error(['Not implemented because there is no point :) ' ...
-        'The Gold Standard is as fast']);
+      [X,Pp]=computeSMFromx(x,xp,isProj,Inf);
+      warning(['Not implemented because there is no point :) ' ...
+        'The Gold Standard is as fast. Launching it now']); %#ok<WNTAG>
+      return
     end
-
-    Pp = convertPF([],F);
-    X=computeSFromxM(x,xp,eye(3,4),Pp);
-    return
   case Inf
     % Gold Standard algorithm
     if isProj
@@ -173,55 +174,20 @@ switch method
       Pp = reshape( Pb( 1 : 12 ), [ 4 3 ] )';
       X = X3D./X3D( [4;4;4;4], : );
     else
-      if 0
-        % Affine camera matrix
-        % Reference: HZ2, p351, Algorithm 14.1
+      % Gold Standard for Affine camera matrix
+      % Reference: HZ2, p351, Algorithm 14.1
 
-        A=[xp(1:2,:)./xp([3 3],:);x(1:2,:)./x([3 3],:)]';
-        Xbar=mean(A,1);
-        A=A-repmat(Xbar,[ n 1 ]);
+      A=[xp(1:2,:)./xp([3 3],:);x(1:2,:)./x([3 3],:)]';
+      Xbar=mean(A,1);
+      A=A-repmat(Xbar,[ n 1 ]);
 
-        [U,S,V]=svd(A);
+      [U,S,V]=svd(A);
 
-        F=zeros(3,3); F(1,3)=V(1,end); F(2,3)=V(2,end); F(3,1)=V(3,end);
-        F(3,2)=V(4,end); F(3,3)=-V(:,end)'*Xbar';
-        Pp = convertPF([],F,false);
-        P=eye(3,4); P(3,3:4)=[0 1];
-        X=computeSFromxM(x,xp,P,Pp); return
-      end
-
-      % Affine camera matrix, MLE estimation (Tomasi Kanade)
-      % Reference: HZ2, p437, Algorithm 18.1
-
-      m=size(x,3); n=size(x,2);
-      if m>1
-        W=zeros(2*m,n);
-        for i=1:m
-          temp=normalizePoint(x(:,:,i),3); W(2*i-1:2*i,:)=temp(1:2,:);
-        end
-      else
-        x=normalizePoint(x,3); xp=normalizePoint(xp,3);
-        W=[x(1:2,:);xp(1:2,:)]; m=2;
-      end
-      ti=mean(W,2);
-      W=W-ti(:,ones(1,n)); [U,S,V]=svd(W);
-      M=[S(1,1)*U(:,1),S(2,2)*U(:,2),S(3,3)*U(:,3)];
-      H=[M(1:2,:);cross(M(1,:),M(2,:))]; %Get the first matrix to be Id
-      M=M*inv(H);
-
-      Pp=zeros(3*(m-1),4);
-      Pp(1:3:end,1:3)=M(3:2:end,:); Pp(2:3:end,1:3)=M(4:2:end,:);
-      Pp(3:3:end,4)=1;
-      for i=1:m-1
-        Pp(2*i-1:2*i,4)=ti(2*i+1:2*i+2)-M(2*i+1:2*i+2,:)*[ti(1:2);0];
-      end
-      Pp=permute(reshape(Pp',4,3,[]),[2,1,3]);
-      Pp(3,4,end+1)=1; Pp(:,:,2:end)=Pp(:,:,1:end-1); Pp(:,:,1)=eye(3,4);
-      Pp(3,3:4,1)=[0 1];
-      
-      X=H*[V(:,1),V(:,2),V(:,3)]';
-      X(1,:)=X(1,:)+ti(1); X(2,:)=X(2,:)+ti(2);
-      X(4,:)=1;
+      F=zeros(3,3); F(1,3)=V(1,end); F(2,3)=V(2,end); F(3,1)=V(3,end);
+      F(3,2)=V(4,end); F(3,3)=-V(:,end)'*Xbar';
+      Pp = convertPF([],F,false);
+      P=eye(3,4); P(3,3:4)=[0 1];
+      X=computeSFromxM(x,xp,P,Pp); return
     end
 end
 

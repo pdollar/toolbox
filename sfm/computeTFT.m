@@ -3,8 +3,8 @@
 % Several methods are implemented
 %
 % USAGE
-%  [T, TNorm, A] = computeTFT(x,xp,xpp,method)
-%  [T, e2, e3] = computeTFT(x,xp,xpp,method)
+%  [T, TNorm, A] = computeTFT(x,xp,xpp,isProj,method)
+%  [T, e2, e3] = computeTFT(x,xp,xpp,isProj,method)
 %
 % INPUTS
 %  x,xp,xpp  - matching 2D projections (2xn or 3xn)

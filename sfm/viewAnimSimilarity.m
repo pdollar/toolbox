@@ -1,7 +1,7 @@
 % View the similarities within an anim
 %
 % USAGE
-%  viewAnimSimilarity( A, S, [N] )
+%  viewAnimSimilarity( A, prm )
 %
 % INPUTS
 %  anim     - anim object
@@ -16,7 +16,7 @@
 %
 % EXAMPLE
 %
-% See also
+% See also COMPUTEANIMSIMILARITY
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -74,7 +74,7 @@ end
     % Deal with the mouse moving around
     point = get( h(3), 'CurrentPoint' );
     x = round( point( 1, 1:2 ) );
-    if any(x<=0) || any(x>size(S)); return; end
+    if any(x<=0) || any(x>[size(S,1) size(S,2)]); return; end
 
     % Deal with the markers
     set( marker1, 'XData', x(1), 'YData', 1 );
