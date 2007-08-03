@@ -35,15 +35,18 @@ else    % F has form 14.1, HZ2, p345 :  [ 0 0 a; 0 0 b; c d e ]
     return
   else
     % Reference: HZ2, p348, table 14.1
-    M=zeros(3,4); M(3,4)=1;
-    M(1,3)=-F(2,3);
-    M(2,3)=F(1,3);
-    M(1,1)=-(F(3,1)/M(1,3)*M(2,3)/M(1,3)-1)/(1+(M(2,3)/M(1,3))^2);
-    M(2,1)=(F(3,1)+M(1,1)*M(2,3))/M(1,3);
-
-    M(1,2)=-((F(3,2)/M(1,3)-1)*M(2,3)/M(1,3))/(1+(M(2,3)/M(1,3))^2);
-    M(2,2)=(F(3,2)+M(1,2)*M(2,3))/M(1,3);
-    M(1,4)=1; M(2,4)=(F(3,3)+M(2,3)*M(1,4))/M(1,3);
+    % As there is an ambiguity, impose the top left to be from a matrix
+    % Sedumi and GloptiPoly must be installed and in the path !    
+    P=defipoly({['mini (' num2str(F(1,3)) '-m23)^2+(' num2str(F(2,3)) ...
+      ' +m13)^2+(' num2str(F(3,1)) '-m13*m21+m11*m23)^2+(' ...
+      num2str(F(3,2)) '-m13*m22+m12*m23)^2+(' num2str(F(3,3)) ...
+      '-m13*t2+m23*t1)^2'],'m11^2+m12^2+m13^2 == 1',...
+      'm21^2+m22^2+m23^2 ==1','m11*m21+m12*m22+m13*m23 == 0'}, ...
+      'm11,m12,m13,t1,m21,m22,m23,t2' );
+    out=gloptipoly(P);
+    
+    M=zeros(3,4);
+    M(1,:)=out.sol{1}(1:4); M(2,:)=out.sol{1}(5:8); M(3,4)=1;
     return
   end
 end
