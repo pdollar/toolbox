@@ -29,8 +29,19 @@ prm = getPrmDflt( prm, dfs );
 nCam=prm.nCam; N=prm.N; S=prm.S;
 
 % Determine the boundaries of the data
-boundTot{1}=minmax(reshape(anim.A2,2,[]));
-boundTot{2}=minmax([reshape(anim.A3,3,[]), anim.cam]);
+can2D=isfield(anim,'A2'); can3D=isfield(anim,'A3');
+canCam=isfield(anim,'cam');
+if can2D; boundTot{1}=minmax(reshape(anim.A2,2,[]));
+else boundTot{1}=[0 0];
+end
+if can3D
+  if canCam; boundTot{2}=minmax([reshape(anim.A3,3,[]), anim.cam]);
+  else boundTot{2}=minmax(reshape(anim.A3,3,[]));
+  end
+else boundTot{2}=[0 0];
+end
+if ~canCam; anim.t=[]; anim.R=[]; nCam=-1; end
+
 for i=1:2
   maxB=max(boundTot{i}(:,2)-boundTot{i}(:,1))/2;
   % make axes equal
@@ -75,7 +86,7 @@ end
     point = get( h(3), 'CurrentPoint' );
     x = round( point( 1, 1:2 ) );
     if any(x<=0) || any(x>[size(S,1) size(S,2)]); return; end
-
+    
     % Deal with the markers
     set( marker1, 'XData', x(1), 'YData', 1 );
     set( marker2, 'XData', 1, 'YData', x(2) );

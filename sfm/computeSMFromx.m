@@ -1,6 +1,7 @@
-function [X,Pp]=computeSMFromx(x,xp,isProj,method)
+function [X,Pp,errReproj]=computeSMFromx(x,xp,isProj,method,onlyErrorFlag)
 
 if nargin<4; method=0; end
+if nargin<5 || isempty(onlyErrorFlag); onlyErrorFlag=0; end
 if ~isempty(xp) && any(size(x)~=size(xp))
   error('x1 and x2 have different size');
 end
@@ -26,16 +27,15 @@ switch method
       [U,S,V]=svd(F,0); F=U*diag([S(1,1) S(2,2) 0])*V';
 
       F=Tp'*F*T;
-          
+      P=eye(3,4); 
       Pp = convertPF([],F);
       X=computeSFromxM(x,xp,eye(3,4),Pp);
-      return
     else
       % Linear Algorithm
       % Reference: HZ2, p348
-      [X,Pp]=computeSMFromx(x,xp,isProj,Inf);
       warning(['Not implemented because there is no point :) ' ...
         'The Gold Standard is as fast. Launching it now']); %#ok<WNTAG>
+      [X,Pp,errReproj]=computeSMFromx(x,xp,isProj,Inf);
       return
     end
   case Inf
@@ -44,7 +44,7 @@ switch method
       % Reference: HZ2, p285, Algorithm 11.3
       % Reference: HZ2, p609, Sparse LM
 
-      [X,Pp]=computeSMFromx(x,xp,0,isProj);
+      [X,Pp]=computeSMFromx(x,xp,true,0);
 
       % Initialize some variables
       lambda = 0.01;
@@ -178,19 +178,29 @@ switch method
       % Reference: HZ2, p351, Algorithm 14.1
 
       A=[xp(1:2,:)./xp([3 3],:);x(1:2,:)./x([3 3],:)]';
-      Xbar=mean(A,1);
-      A=A-repmat(Xbar,[ n 1 ]);
+      Xbar=mean(A,1); A=A-Xbar(ones(n,1),:);
 
-      [U,S,V]=svd(A);
+      [U,S,V]=svd(A); N=V(:,end);
 
-      F=zeros(3,3); F(1,3)=V(1,end); F(2,3)=V(2,end); F(3,1)=V(3,end);
-      F(3,2)=V(4,end); F(3,3)=-V(:,end)'*Xbar';
-      Pp = convertPF([],F,false);
-      P=eye(3,4); P(3,3:4)=[0 1];
-      X=computeSFromxM(x,xp,P,Pp); return
+      if onlyErrorFlag
+        Pp=[]; 
+        temp=(A*N).^2; X=max(temp)/norm(N)^2;
+        errReproj=sum(temp)/norm(N)^2;
+        return
+      else
+        F=zeros(3,3); F(1:2,3)=N(1:2); F(3,1:2)=N(3:4); F(3,3)=-N'*Xbar';
+F
+        Pp = convertPF([],F,false); P=eye(3,4); P(3,3:4)=[0 1];
+        X=computeSFromxM(x,xp,P,Pp);
+      end
     end
 end
 
+% Compute the reprojection error
+if nargout>=3
+  errReproj=norm(normalizePoint(P*X,3)-normalizePoint(x,3),'fro')+...
+    norm(normalizePoint(Pp*X,3)-normalizePoint(xp,3),'fro');
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Compute the reconstruction error for each point

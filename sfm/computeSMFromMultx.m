@@ -1,9 +1,37 @@
-% x is 2xNxT or 3xNxT
+% Computes SFM from multiple views on a rigid object
+%
+% isProj==false
+%  method 0 is Tomasi-Kanade without orthonormality constraints
+%  method Inf is Tomasi-Kanade with orthonormality constraints
+%
+% USAGE
+%  [X,Pp,WFinal,errReproj]=computeSMFromMultx(x,isProj,method)
+%
+% INPUTS
+%  x            - 2xNxT or 3xNxT coordinate matrix
+%  isProj       - [false] flag saying if the geometry is projective
+%  method       - [Inf] method to be used
+%
+% OUTPUTS
+%  X            - 3xN 3Dcoordinates of the object
+%  Pp           - 3x4xT different projection matrices
+%  WFinal       - only useful internally
+%  errReprojR   - final reprojection error
+%
+% EXAMPLE
+%
+% See also
 
-function [X,Pp,WFinal,errReproj]=computeSMFromMultx(x,isProj,method)
+% Piotr's Image&Video Toolbox      Version NEW
+% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Please email me if you find bugs, or have suggestions or questions!
 
-if nargin<4; method=0; end
-f=size(x,3); n=size(x,2); 
+function [X,Pp,errReproj,WFinal]=computeSMFromMultx(x,isProj,method)
+
+if nargin<2 || isempty(isProj); isProj=false; end
+if nargin<3; method=Inf; end
+
+f=size(x,3); n=size(x,2); errReproj=Inf;
 
 switch method
   case 0
@@ -24,37 +52,44 @@ switch method
       M=M*inv(H);
 
       Pp=zeros(3*f,4);
-      Pp(4:3:end,1:3)=M(3:2:end,:); Pp(5:3:end,1:3)=M(4:2:end,:);
+      Pp(1:3:end,1:3)=M(1:2:end,:); Pp(2:3:end,1:3)=M(2:2:end,:);
       Pp(3:3:end,4)=1;
       for i=1:f
-        Pp(2*i-1:2*i,4)=ti(2*i-1:2*i)-M(2*i-1:2*i,:)*[ti(1:2);0];
+        Pp(3*i-2:3*i-1,4)=ti(2*i-1:2*i)-M(2*i-1:2*i,:)*[ti(1:2);0];
       end
       Pp=permute(reshape(Pp',4,3,[]),[2,1,3]);
 
       X=H*[V(:,1),V(:,2),V(:,3)]';
 
-      X(1,:)=X(1,:)+ti(1); X(2,:)=X(2,:)+ti(2); X(4,:)=1;
+      X(1,:)=X(1,:)+ti(1); X(2,:)=X(2,:)+ti(2);
     end
   case Inf
     if ~isProj
       % Tomasi Kanade with the metric constraint
-      [X,Pp,WFinal]=computeSMFromMultx(x,isProj,0);
-      A=cell(1,3*f); rowR=floor(1:1.5:3*f);
-      for i=1:f; A{i}=sparse(kron(Pp(3*i-2,1:3),Pp(3*i-1,1:3))); end
-      j=f; for i=rowR; j=j+1; A{j}=sparse(kron(Pp(i,1:3),Pp(i,1:3))); end
-      B=ones(3*f,1); B(1:f)=0;
-      QQt=reshape(blkdiag(A{:})\B,3,3);
-      [Q,p]=chol(QQt);
+      [X,Pp,disc,WFinal]=computeSMFromMultx(x,isProj,0);
+      A=zeros(3*f,9);
+      for i=1:f
+        A(i,:)=kron(Pp(1,1:3,i),Pp(2,1:3,i));
+        A(i+f,:)=kron(Pp(1,1:3,i),Pp(1,1:3,i));
+        A(i+2*f,:)=kron(Pp(2,1:3,i),Pp(2,1:3,i));
+      end
+      B=[zeros(f,1); ones(2*f,1)];
+      QQt=reshape(A\B,3,3); [Q,p]=chol(QQt);
       if p>0
         warning('Cannot impose the metric constraint'); return; %#ok<WNTAG>
       end
-      Q=Q'; Q=Q*rotatioMatrix(Pp(1:2,1:3)*Q)'; %Set the first matrix to Id
-      Pp(rowR,1:3)=Pp(rowR,1:3)*Q; X(1:3,:)=inv(Q)*X(1:3,:);
+      Q=Q'; Q=Q*rotationMatrix(Pp(1:2,1:3)*Q)'; %Set the first matrix to Id
+      PpR=reshape(permute(Pp(1:2,1:3,:),[2 1 3]),3,[])'; PpR=PpR*Q;
+      for i=1:f
+        temp=rotationMatrix(rotationMatrix(PpR(2*i-1:2*i,:)));
+        Pp(1:2,1:3,i)=temp(1:2,:);
+      end
+      X=inv(Q)*X;
     end
 end
 
 % Compute the reprojection error
 if nargout>=3
   PpTemp=reshape(permute(Pp(1:2,:,:),[2 1 3]),4,[])';
-  temp=PpTemp*X; errReproj=norm(temp-WFinal,'fro');
+  temp=PpTemp*[X;ones(1,n)]; errReproj=norm(temp-WFinal,'fro');
 end

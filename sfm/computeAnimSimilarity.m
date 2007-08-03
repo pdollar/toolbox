@@ -24,31 +24,17 @@
 
 function [S, SMax] = computeAnimSimilarity( A )
 
-if( iscell(A) ); error('cell arrays not supported.'); end;
-if( ~ismember(ndims(A),[2 3]) ); error('unsupported dimension of A'); end
-
-siz=size(A); nFrames=siz(3); nPoint=siz(2);
-if size(A,1)==3; A=A(1:2,:,:)./A([3 3],:,:); end
+siz=size(A); nFrame=siz(3);
 
 % Compute the similarities
 if A.isProj
-  S=zeros(nFrames,nFrames); SMax=S;
-  for i=1:nFrames
-    XBar=mean(A(:,:,i),2); A(:,:,i)=A(:,:,i)-XBar(:,ones(1,nPoint));
-  end
+  S=zeros(nFrame,nFrame); SMax=S;
   ticId = ticStatus('Similarities Computed');
   for i=1:nFrames-1
     for j=i+1:nFrames
       % Alg 14.1 p.351 from HZ2
-      a=[A(:,:,i); A(:,:,j)]';
-      [disc disc V] = svd(a,0);
-
-      N=V(:,4);
-      if nargout==1; S(i,j)=(norm(a*N,'fro')/norm(N))^2;
-      else
-        temp=a*N; temp=sum(temp.^2,2); SMax(i,j)=max(temp)/norm(N)^2;
-        S(i,j)=sum(temp)/norm(N)^2;
-      end
+     [SMax(i,j),disc,S(i,j)]=computeSMFromx(anim.A2(:,:,i),...
+       anim.A2(:,:,j),isProj,method,true);
     end
     S(i+1:end,i)=S(i,i+1:end); SMax(i+1:end,i)=SMax(i,i+1:end);
     temp=nFrames*(nFrames-1)/2;

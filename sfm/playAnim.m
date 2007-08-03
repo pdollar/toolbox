@@ -34,10 +34,16 @@ prm = getPrmDflt( prm, dfs );
 nCam=prm.nCam; fps=prm.fps; loop=prm.loop; N=prm.N;
 
 % Determine the boundaries of the data
-boundTot{1}=minmax(reshape(anim.A2,2,[]));
-boundTot{2}=minmax([reshape(anim.A3,3,[]), anim.cam]);
-minmax([anim.cam])
-boundTot{2}
+can2D=isfield(anim,'A2'); can3D=isfield(anim,'A3');
+canCam=isfield(anim,'cam');
+boundTot{1}=[0 0]; boundTot{2}=[0 0];
+if can2D; boundTot{1}=minmax(reshape(anim.A2,2,[])); end
+if can3D
+  boundTot{2}=minmax(reshape(anim.A3,3,[]));
+  if canCam; boundTot{2}=minmax([boundTot{2}, anim.cam]); end
+end
+if ~canCam; anim.t=[]; anim.R=[]; nCam=-1; end
+
 for i=1:2
   maxB=max(boundTot{i}(:,2)-boundTot{i}(:,1))/2;
   % make axes equal
@@ -104,11 +110,13 @@ end
         case 'q',
           doReturn=1;
         case 'd',
-          if size(A,1)==2;
+          if size(A,1)==2 && can3D;
             A=anim.A3; set(gcf,'Color',0.8*[1 1 1]); axis(boundTot{2});
             set(hCam(:),'Visible','on'); view(viewAng);
-          else A=anim.A2; set(gcf,'Color',[1 1 1]);
-            axis(boundTot{1}); set(hCam(:),'Visible','off'); view(0,90);
+          else
+            if can2D A=anim.A2; set(gcf,'Color',[1 1 1]);
+              axis(boundTot{1}); set(hCam(:),'Visible','off'); view(0,90);
+            end
           end
       end
       if size(A,1)==3
