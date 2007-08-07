@@ -84,8 +84,7 @@ X = X - murep;
 X = reshape(X, d, [] );
 
 % Find Yk, the first k coefficients of X in the new basis
-k = min( r, k );
-Uk = U(:,1:k);
+if( r<=k ); Uk=U; else Uk=U(:,1:k); end;
 Yk = Uk' * X;
 
 % calculate Xhat - the approx of X using the first k princ components

@@ -1,4 +1,4 @@
-% More comprehensive version of isfield.
+% Similar to isfield but also test whether fields are intitialized.
 %
 % A more comprehensive test of what fields are present [and optionally
 % initialized] in a stuct S.  fs is either a single field name or a cell
@@ -23,39 +23,24 @@
 %
 % See also ISFIELD
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
 function tf = isfield2( S, fs, isinit )
 
-if( nargin<3 ); isinit=0;  end
+tf = all( isfield(S,fs) );
+if( ~tf || nargin<3 || ~isinit ); return; end
 
-if ~isa(S,'struct')
-  tf = false; return;
-end
-
-% check if fs is a cell array, if not make it so
+% now optionally check if fields are initialized
 if( iscell(fs) )
-  nfs = length(fs);
+  for i=1:length(fs)
+    for j=1:numel(S)
+      if( isempty(S(j).(fs{i})) ); tf=false; return; end;
+    end;
+  end;
 else
-  nfs=1; fs={fs};
-end;
-
-% see if every one of fs is a fieldname
-Sfs = fieldnames(S);
-tf = true;
-for i=1:nfs
-  tf = tf & any(strcmp(Sfs,fs{i}));
-  if( ~tf ); return; end
-end;
-
-% now optionally check if fields are isinitialized
-if( ~isinit || ~tf ); return; end
-nS = numel(S);
-for i=1:nfs
-  for j=1:nS
-    tf = tf & ~isempty( S(j).(fs{i}) );
-    if( ~tf ); return; end
-  end
+  for j=1:numel(S)
+    if( isempty(S(j).(fs)) ); tf=false; return; end;
+  end;
 end
