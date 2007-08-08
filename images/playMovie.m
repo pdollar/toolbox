@@ -79,8 +79,10 @@ if ~iscell(I);
 else
   cLim=[Inf -Inf]; nframes=0;
   for i=1:length(I)
-    nframes=max(nframes,size(I{i},4));
-    cLim = [min(min(I{i}(:)),cLim(1)) max(max(I{i}(:)),cLim(2))];
+    Ii = I{i};
+    if( prm.hasChn ); nframesi=size(Ii,4); else nframesi=size(Ii,3); end
+    nframes=max(nframes,nframesi);
+    cLim = [min(min(Ii(:)),cLim(1)) max(max(Ii(:)),cLim(2))];
   end
 end
 prm.cLim=cLim;
