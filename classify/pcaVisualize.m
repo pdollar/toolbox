@@ -32,21 +32,22 @@
 
 function varargout=pcaVisualize( U, mu, vars, X, index, ks, fname, show )
 
-siz = size(X); nd = ndims(X);  [N,r]  = size(U);
-if(N==prod(siz) && ~(nd==2 && siz(2)==1)); siz=[siz, 1]; nd=nd+1; end
-fsiz = siz(1:end-1); d = prod(fsiz);
-inds = {':'}; inds = inds(:,ones(1,nd-1));
+% sizes / dimensions
+siz = size(X);  nd = ndims(X);  [D,r] = size(U);
+if(D==prod(siz) && ~(nd==2 && siz(2)==1)); siz=[siz, 1]; nd=nd+1; end
+n = siz(end);  siz1 = siz(1:end-1);  
 
-if( d~=N ); error('incorrect size for X or U'); end
-if( nargin<5 || isempty(index) ); index = 1+randint(1,1,siz(end)); end
-if( index>siz(end) ); error(['index >' num2str(siz(end))]); end
-
+% some error checking
+if(prod(siz(1:end-1))~=D); error('incorrect size for X or U'); end
+if( nargin<5 || isempty(index) ); index = 1+randint(1,1,n); end
+if( index>n ); error(['index >' num2str(n)]); end
 if( nargin<6 || isempty(ks) ); maxp=floor(log2(r)); ks=2.^(0:maxp); end
 if( nargin<7 || isempty(fname)); fname = []; end
 if( nargin<8 || isempty(show)); show = 1; end
 
 %%% create xhats image of PCA reconstruction
 ks = ks( ks<=r );
+inds = {':'}; inds = inds(:,ones(1,nd-1));
 x = double( X(inds{:},index) );
 xhats = x;  diffs = []; errors = zeros(1,length(ks));
 for k=1:length(ks)
@@ -62,14 +63,14 @@ residuals = [1; residuals(1:max(ks))];
 
 %%% show decay image
 figure(show); clf;
-plot(  0:max(ks), residuals, 'r- .',  ks, errors, 'g- .' );
+plot( 0:max(ks), residuals, 'r- .',  ks, errors, 'g- .' );
 hold('on'); line( [0,max(ks)], [.1,.1] ); hold('off');
 title('error of approximation vs number of eigenbases used');
 legend('residuals','errors - actual');
 
 %%% reshape U to have first dimensions same as x
 k = min(100,r);  st=0;
-Uim = reshape( U(:,1+st:k+st), [ fsiz k ]  );
+Uim = reshape( U(:,1+st:k+st), [ siz1 k ]  );
 
 %%% visualization
 labels=cell(1,length(ks));

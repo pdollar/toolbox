@@ -36,8 +36,8 @@ function Xr = pcaRandVec( U, mu, vars, k, n, hypershpere, show )
 if( nargin<6 || isempty(hypershpere) ); hypershpere=0; end
 if( nargin<7 || isempty(show) ); show=0; end
 
-siz = size(mu);   nd = ndims(mu);
-sizX = [siz, n];  d = prod(siz);
+siz1 = size(mu);   nd = ndims(mu);
+sizX = [siz1, n];  D = prod(siz1);
 
 % generate random vectors inside of subspace.
 C = diag( vars(1:k).^-1 );
@@ -47,30 +47,29 @@ Xr = Uk * Yr;
 
 if(hypershpere)
   % The final point must lie on hypershpere.  Need to scale each element xr
-  % of Xr so that after adding it to mu the resulting vector has length d.
-  % So need to find k>0 such that (k*xr + mu) has length d.  To find k
-  % simply solve the quadratic equation induced by ||(k*xr + mu)||=d,
+  % of Xr so that after adding it to mu the resulting vector has length D.
+  % So need to find k>0 such that (k*xr + mu) has length D.  To find k
+  % simply solve the quadratic equation induced by ||(k*xr + mu)||=D,
   % choosing the root such that k>0.  Note that the mean of resulting
   % vector will not necessarily be 0, but the variance will pretty much be
   % 1! Regardless, renomralize at the end.
-  muv = mu(:);  magmu = dot(muv,muv);
+  muv = mu(:);  muMag = dot(muv,muv);
   for i=1:n
     xr = Xr(:,i);
-    rs = roots( [dot(xr,xr), 2 * dot(xr,muv), magmu-d] );
+    rs = roots( [dot(xr,xr), 2 * dot(xr,muv), muMag-D] );
     Xr(:,i) = muv + max(rs)*xr;
   end
-
   Xr = reshape( Xr, sizX );
   Xr = fevalArrays( Xr, @imNormalize );
 else
   % simply add the mean to reshaped Xr
   Xr = reshape( Xr, sizX );
-  murep = repmat(mu, [ones(1,nd), n ] );
-  Xr = Xr + murep;
+  muRep = repmat(mu, [ones(1,nd), n ] );
+  Xr = Xr + muRep;
 end
 
 % optionaly show resulting vectors
-if(show && nd==2); figure(show); montage2(Xr); end
+if(show && (nd==2 || nd==3)); figure(show); montage2(Xr); end
 
 
 

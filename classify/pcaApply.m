@@ -1,7 +1,7 @@
 % Companion function to pca.
 %
 % Use pca.m to retrieve the principal components U and the mean mu from a
-% set of vectors x, then use y pcaApply to get the first k coefficients of
+% set of vectors x, then use pcaApply to get the first k coefficients of
 % x in the space spanned by the columns of U. See pca for general usage.
 %
 % If x is large, pcaApply first splits and processes x in parts. This
@@ -35,30 +35,29 @@
 function varargout = pcaApply( X, U, mu, k )
 
 % sizes / dimensions
-siz = size(X);  nd = ndims(X);  [d,r] = size(U);
-if(d==prod(siz) && ~(nd==2 && siz(2)==1)); siz=[siz, 1]; nd=nd+1; end
-inds = {':'}; inds = inds(:,ones(1,nd-1));
+siz = size(X);  nd = ndims(X);  [D,r] = size(U);
+if(D==prod(siz) && ~(nd==2 && siz(2)==1)); siz=[siz, 1]; nd=nd+1; end
+n = siz(end); 
 
 % some error checking
-if(prod(siz(1:end-1))~=d); error('incorrect size for X or U'); end
+if(prod(siz(1:end-1))~=D); error('incorrect size for X or U'); end
 if(isa(X,'uint8')); X = double(X); end
-if( k>r )
-  warning(['Only ' int2str(r) '<k comp. available.']); k=r; %#ok<WNTAG>
-end
+if(k>r); warning(['k set to ' int2str(r)]); k=r; end; %#ok<WNTAG>
 
 % If X is small simply call pcaApply1 once.
 % OW break up X and call pcaApply1 multiple times and recombine.
-maxwidth = ceil( (10^7) / d );
-if( maxwidth > siz(end) )
+maxWidth = ceil( (10^7) / D );
+if( maxWidth > n )
   varargout = cell(1,nargout);
   [varargout{:}] = pcaApply1( X, U, mu, k );
 
 else
-  Yk = zeros( k, siz(end) );  Xhat = zeros( siz );
+  inds = {':'}; inds = inds(:,ones(1,nd-1));
+  Yk = zeros( k, n );  Xhat = zeros( siz );
   avsq = 0;  avsqOrig = 0;  last = 0;
   if( nargout==3 ); out=cell(1,4); else out=cell(1,nargout); end;
-  while(last < siz(end))
-    first=last+1;  last=min(first+maxwidth-1,siz(end));
+  while(last < n)
+    first=last+1;  last=min(first+maxWidth-1,n);
     Xi = X(inds{:}, first:last);
     [out{:}] = pcaApply1( Xi, U, mu, k );
     Yk(:,first:last) = out{1};
@@ -73,15 +72,15 @@ end
 function [ Yk, Xhat, avsq, avsqOrig ] = pcaApply1( X, U, mu, k )
 
 % sizes / dimensions
-siz = size(X);  nd = ndims(X);  [d,r] = size(U);
-if(d==prod(siz) && ~(nd==2 && siz(2)==1)); siz=[siz, 1]; nd=nd+1; end
-inds = {':'}; inds = inds(:,ones(1,nd-1));
+siz = size(X);  nd = ndims(X);  [D,r] = size(U);
+if(D==prod(siz) && ~(nd==2 && siz(2)==1)); siz=[siz, 1]; nd=nd+1; end
+n = siz(end);
 
 % subtract mean, then flatten X
 Xorig = X;
-murep = mu( inds{:}, ones(1,siz(end)));
-X = X - murep;
-X = reshape(X, d, [] );
+muRep = repmat(mu, [ones(1,nd-1), n ] );
+X = X - muRep;
+X = reshape( X, D, n );
 
 % Find Yk, the first k coefficients of X in the new basis
 if( r<=k ); Uk=U; else Uk=U(:,1:k); end;
@@ -91,7 +90,7 @@ Yk = Uk' * X;
 if( nargout>1 )
   Xhat = Uk * Yk;
   Xhat = reshape( Xhat, siz );
-  Xhat = Xhat + murep;
+  Xhat = Xhat + muRep;
 end
 
 % caclulate average value of (Xhat-Xorig).^2 compared to average value
