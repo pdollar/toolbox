@@ -59,6 +59,7 @@ function [ IDX, C, sumd ] = kmeans2( X, k, prm )
 dfs = {'nTrial',1, 'maxIter',100, 'display',0, 'rndSeed',[],...
        'outFrac',0, 'minCl',1, 'metric',[] };
 if(isempty(k)); dfs={dfs{:} 'k', 'REQ'}; end;
+if nargin<3 || isempty(prm); prm=struct(); end
 prm = getPrmDflt( prm, dfs );
 nTrial  =prm.nTrial;    maxIter =prm.maxIter;  display =prm.display;
 rndSeed =prm.rndSeed;   outFrac =prm.outFrac;  minCl   =prm.minCl;
