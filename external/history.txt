@@ -1,6 +1,8 @@
 Version 2.0 (06-July-07)
+ -major overhaul that included renaming / merging many functions
+ -NOT backward compatible
  -standardizing naming conventions (no more under_scores)
- -remove:
+ -removed:
   -montages2 (see montages)
   -rotation_matrix2D,rotation_matrix3D,recover_rotation3D (see rotationMatrix)
   -localsum, localsum_block (see localSum)
@@ -43,3 +45,9 @@ Version 1.02  (29-Nov-05)
  -principal is misspelled in the PCA-related functions.
  -fixed clustermontages (header was stripped)
  -updated overview (add to path, recompile, description)
+
+ Version 1.01  (11-Oct-05)
+  -minor changes?
+ 
+ Version 1.00  (02-Oct-05)
+  -initial version

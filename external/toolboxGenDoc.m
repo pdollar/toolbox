@@ -1,5 +1,7 @@
 % Generate documentation, must run from dir toolbox.
 %
+% Requires external/m2html to be in path.
+%
 % Prior to running, update a few things in the overview.html file in:
 %   toolbox/external/m2html/templates/frame-piotr/overview.html
 %   1) The version / date
@@ -23,7 +25,7 @@
 %
 % See also
 
-% Piotr's Image&Video Toolbox      Version 1.5
+% Piotr's Image&Video Toolbox      Version 2.0
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
