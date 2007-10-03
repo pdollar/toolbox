@@ -16,8 +16,8 @@
 %  ytest = rbfWeight * features(Xtest)
 % The code below achieves all three steps:
 %  rbfBasis  = rbfComputeBasis( Xtrain, k, cluster, scale, show );
-%  rbfWeight = rbfComputeFeatures(Xtrain,rbfBasis) \ ytrain;
-%  ytest     = rbfComputeFeatures(Xtest,rbfBasis) * rbfWeight;
+%  rbfWeight = rbfComputeFtrs(Xtrain,rbfBasis) \ ytrain;
+%  ytest     = rbfComputeFtrs(Xtest,rbfBasis) * rbfWeight;
 %
 % For an in depth discussion of rbf networks see:
 %  Christopher M. Bishop. "Neural Networks for Pattern Recognition"
@@ -45,7 +45,7 @@
 %
 % EXAMPLE
 %
-% See also RBFDEMO, RBFCOMPUTEFEATURES
+% See also RBFDEMO, RBFCOMPUTEFTRS
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu

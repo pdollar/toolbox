@@ -22,7 +22,7 @@
 %  rbfDemo( 1, .2, 2, 50, 0, 3 );
 %  rbfDemo( 2, .2, 5, 50, 0, 5 );
 %
-% See also RBFCOMPUTEBASIS, RBFCOMPUTEFEATURES
+% See also RBFCOMPUTEBASIS, RBFCOMPUTEFTRS
 
 % Piotr's Image&Video Toolbox      Version NEW
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
@@ -38,9 +38,9 @@ end;
 
 %%% trn/apply rbfs
 rbfBasis = rbfComputeBasis( Xtrn, k, cluster, scale, show );
-rbfWeight = rbfComputeFeatures(Xtrn,rbfBasis) \ ytrn;
-yTrnRes = rbfComputeFeatures(Xtrn,rbfBasis) * rbfWeight;
-yTstRes = rbfComputeFeatures(Xtst,rbfBasis) * rbfWeight;
+rbfWeight = rbfComputeFtrs(Xtrn,rbfBasis) \ ytrn;
+yTrnRes = rbfComputeFtrs(Xtrn,rbfBasis) * rbfWeight;
+yTstRes = rbfComputeFtrs(Xtst,rbfBasis) * rbfWeight;
 
 %%% get relative errors
 fracErrorTrn = sum((ytrn-yTrnRes).^2) / sum(ytrn.^2);
@@ -55,14 +55,14 @@ display(rbfBasis);
 minX = min([Xtrn; Xtst],[],1);  maxX = max([Xtrn; Xtst],[],1);
 if( size(Xtrn,2)==1 )
   xs = linspace( minX, maxX, 1000 )';
-  ys = rbfComputeFeatures(xs,rbfBasis) * rbfWeight;
+  ys = rbfComputeFtrs(xs,rbfBasis) * rbfWeight;
   figure(show+1); clf; hold on;  plot( xs, ys );
   plot( Xtrn, ytrn, '.b' );  plot( Xtst, ytst, '.r' );
 elseif( size(Xtrn,2)==2 )
   xs1 = linspace(minX(1),maxX(1),25);
   xs2 = linspace(minX(2),maxX(2),25);
   [xs1,xs2] = ndgrid( xs1, xs2 );
-  ys = rbfComputeFeatures([xs1(:) xs2(:)],rbfBasis) * rbfWeight;
+  ys = rbfComputeFtrs([xs1(:) xs2(:)],rbfBasis) * rbfWeight;
   figure(show+1); clf; surf( xs1, xs2, reshape(ys,size(xs1)) ); hold on; 
   plot3( Xtrn(:,1), Xtrn(:,2), ytrn, '.b' );
   plot3( Xtst(:,1), Xtst(:,2), ytst, '.r' );

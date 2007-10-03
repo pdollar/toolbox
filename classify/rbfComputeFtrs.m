@@ -3,7 +3,7 @@
 % See rbfComputeBasis for discussion of rbfs and general usage.
 %
 % USAGE
-%  Xrbf = rbfComputeFeatures( X, rbfBasis )
+%  Xrbf = rbfComputeFtrs( X, rbfBasis )
 %
 % INPUTS
 %  X         - [N x d] N points of d dimensions each
@@ -20,7 +20,7 @@
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 
-function Xrbf = rbfComputeFeatures( X, rbfBasis )
+function Xrbf = rbfComputeFtrs( X, rbfBasis )
 
 N = size(X,1);
 k = rbfBasis.k;
