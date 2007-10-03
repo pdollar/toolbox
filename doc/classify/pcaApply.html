@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of pcaApply</title>
+  <meta name="keywords" content="pcaApply">
+  <meta name="description" content="Companion function to pca.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html classify -->
+<h1>pcaApply
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Companion function to pca.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function varargout = pcaApply( X, U, mu, k ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Companion function to pca.
+
+ Use pca.m to retrieve the principal components U and the mean mu from a
+ set of vectors x, then use pcaApply to get the first k coefficients of
+ x in the space spanned by the columns of U. See pca for general usage.
+
+ If x is large, pcaApply first splits and processes x in parts. This
+ allows pcaApply to work even for very large arrays.
+
+ This may prove useful:
+  siz=size(X);  k=100;  Uim=reshape(U(:,1:k),[siz(1:end-1) k ]);
+
+ USAGE
+  [ Yk, Xhat, avsq ] = pcaApply( X, U, mu, k )
+
+ INPUTS
+  X           - data for which to get PCA coefficients
+  U           - returned by pca.m
+  mu          - returned by pca.m
+  k           - number of principal coordinates to approximate X with
+
+ OUTPUTS
+  Yk          - first k coordinates of X in column space of U
+  Xhat        - approximation of X corresponding to Yk
+  avsq        - measure of squared error normalized to fall between [0,1]
+
+ EXAMPLE
+
+ See also <a href="pca.html" class="code" title="function [ U, mu, vars ] = pca( X )">PCA</a>, <a href="pcaVisualize.html" class="code" title="function varargout=pcaVisualize( U, mu, vars, X, index, ks, fname, show )">PCAVISUALIZE</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="nfoldxval.html" class="code" title="function CM=nfoldxval( data, IDX, clfInit, clfparams,types, ignoreT, fname, show )">nfoldxval</a>	Runs n-fold cross validation on data with a given classifier.</li><li><a href="pcaVisualize.html" class="code" title="function varargout=pcaVisualize( U, mu, vars, X, index, ks, fname, show )">pcaVisualize</a>	Visualization of quality of approximation of X given principal comp.</li><li><a href="visualizeData.html" class="code" title="function visualizeData( X, k, IDX, types, C )">visualizeData</a>	Project high dim. data unto principal components (PCA) for visualization.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-Oct-2007 13:09:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

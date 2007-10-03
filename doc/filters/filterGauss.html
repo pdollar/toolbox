@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of filterGauss</title>
+  <meta name="keywords" content="filterGauss">
+  <meta name="description" content="n-dimensional Gaussian filter.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html filters -->
+<h1>filterGauss
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>n-dimensional Gaussian filter.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function G = filterGauss( dims, mu, C, show ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> n-dimensional Gaussian filter.
+
+ Creates an image of a Gaussian with arbitrary covariance matrix. The
+ dimensionality and size of the filter is determined by dims (eg dims=[10
+ 10] creates a 2D filter of size 10x10). If mu==[], it is calculated to be
+ the center of the n-dim image.  C can be a full nxn covariance matrix, or
+ an nx1 vector of variance.  In the latter case C is calculated as
+ C=diag(C). If C=[]; then C=(dims/6).^2, ie it is transformed into a
+ vector of variances such that along each dimension the variance is equal
+ to (siz/6)^2.
+
+ USAGE
+  G = filterGauss( dims, [mu], [C], [show] )
+
+ INPUTS
+  dims    - n element vector of dimensions of final Gaussian
+  mu      - [] n element vector specifying the mean
+  C       - [] nxn cov matrix, nx1 set of vars, or variance
+  show    - [0] figure to use for optional display
+
+ OUTPUTS
+  G       - image of the created Gaussian
+
+ EXAMPLE
+  g = filterGauss( 21, [], 4, 1); %1D
+  sig=3; G = filterGauss( 4*[sig sig] + 1, [], [sig sig].^2, 2 ); %2D
+  R = rotationMatrix( [1,1,0], pi/4 );
+  C = R'*[10^2 0 0; 0 5^2 0; 0 0 16^2]*R;
+  G3 = filterGauss( [51,51,51], [], C, 3 ); %3D
+
+ See also NORMPDF2</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="filterVisualize.html" class="code" title="function filterVisualize( f, show, arg )">filterVisualize</a>	Used to visualize a 1D/2D/3D filter.</li><li><a href="../matlab/normpdf2.html" class="code" title="function ps = normpdf2( xs, m, C )">normpdf2</a>	Normal prob. density function (pdf) with arbitrary covariance matrix.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="filterDog2d.html" class="code" title="function G = filterDog2d( r, var, order, show )">filterDog2d</a>	Difference of Gaussian (Dog) Filter.</li><li><a href="filterDoog.html" class="code" title="function dG = filterDoog( dims, sigmas, nderivs, show )">filterDoog</a>	n-dim difference of offset Gaussian DooG filter (Gaussian derivative).</li><li><a href="../images/gaussSmooth.html" class="code" title="function [L,filters] = gaussSmooth( I, sigmas, shape, radius )">gaussSmooth</a>	Applies Gaussian smoothing to a (multidimensional) image.</li><li><a href="../images/imMlGauss.html" class="code" title="function varargout = imMlGauss( G, symmFlag, show )">imMlGauss</a>	Calculates max likelihood params of Gaussian that gave rise to image G.</li><li><a href="../images/maskGaussians.html" class="code" title="function [masks,keepLocs] = maskGaussians( siz, M, width, offset, show )">maskGaussians</a>	Divides a volume into softly overlapping gaussian windows.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-Oct-2007 13:09:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

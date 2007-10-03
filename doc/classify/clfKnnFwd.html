@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of clfKnnFwd</title>
+  <meta name="keywords" content="clfKnnFwd">
+  <meta name="description" content="Apply a k-nearest neighbor classifier to X.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html classify -->
+<h1>clfKnnFwd
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Apply a k-nearest neighbor classifier to X.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function Y = clfKnnFwd( clf, X ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Apply a k-nearest neighbor classifier to X.
+
+ USAGE
+  Y = clfKnnFwd( clf, X )
+
+ INPUTS
+  clf     - trained model
+  X       - nxp data array
+
+ OUTPUTS
+  Y       - nx1 vector of labels predicted according to the clf
+
+ EXAMPLE
+
+ See also <a href="clfKnn.html" class="code" title="function clf = clfKnn( p, k, metric )">CLFKNN</a>, <a href="clfKnnTrain.html" class="code" title="function clf = clfKnnTrain( clf, X, Y )">CLFKNNTRAIN</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="clfKnnDist.html" class="code" title="function IDXpred = clfKnnDist( D, IDX, k )">clfKnnDist</a>	k-nearest neighbor classifier based on a distance matrix D.</li><li><a href="pdist2.html" class="code" title="function D = pdist2( X, Y, metric )">pdist2</a>	Calculates the distance between sets of vectors.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="clfKnn.html" class="code" title="function clf = clfKnn( p, k, metric )">clfKnn</a>	Create a k nearest neighbor classifier.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-Oct-2007 13:09:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of assignToBins</title>
+  <meta name="keywords" content="assignToBins">
+  <meta name="description" content="Quantizes A according to values in edges.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>assignToBins
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Quantizes A according to values in edges.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function B = assignToBins( A, edges ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Quantizes A according to values in edges.
+
+ assignToBins replaces each value in A with a value between [0,nBins] where
+ nBins=length(edges)-1.  edges must be a vector of monotonically
+ increasing values.  Each element v in A gets converted to a discrete
+ value q such that edges(q)&lt;=v&lt; edges(q+1). If v==edges(end) then q=nBins.
+ If v does not fall into any bin, then q=0. See histc2 for more details
+ about edges.  For even spaced edges can get away with rounding A
+ appropriately, see example below.
+
+ USAGE
+  B = assignToBins( A, edges )
+
+ INPUTS
+  A      - numeric array of arbitrary dimension
+  edges  - quantization bounds, see histc2
+
+ OUTPUTS
+  B      - size(A) array of quantization levels, ints between [0,nBins]
+
+ EXAMPLE
+  A = rand(5,5);
+  B1 = assignToBins(A,[0:.1:1]);
+  B2 = ceil(A*10); B1-B2
+
+ See also <a href="histc2.html" class="code" title="function h = histc2( A, edges, wtMask )">HISTC2</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="histcImWin.html" class="code" title="function H = histcImWin( I, edges, wtMask, shape )">histcImWin</a>	Calculates local histograms at every point in an image I.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-Oct-2007 13:09:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

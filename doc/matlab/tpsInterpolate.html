@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of tpsInterpolate</title>
+  <meta name="keywords" content="tpsInterpolate">
+  <meta name="description" content="Apply warp (obtained by tpsGetWarp) to a set of new points.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>tpsInterpolate
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Apply warp (obtained by tpsGetWarp) to a set of new points.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [xsR,ysR] = tpsInterpolate( warp, xs, ys, show ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Apply warp (obtained by tpsGetWarp) to a set of new points.
+
+ USAGE
+  [xsR,ysR] = tpsInterpolate( warp, xs, ys, [show] )
+
+ INPUTS
+  warp     - [see tpsGetWarp] bookstein warping parameters
+  xs, ys   - points to apply warp to
+  show     - [1] will display results in figure(show)
+
+ OUTPUTS
+  xsR, ysR - result of warp applied to xs, ys
+
+ EXAMPLE
+
+ See also <a href="tpsGetWarp.html" class="code" title="function [warp,L,LnInv,bendE] = tpsGetWarp( lambda, xsS, ysS, xsD, ysD )">TPSGETWARP</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="tpsInterpolateIm.html" class="code" title="function [IR,boundX,boundY] = tpsInterpolateIm( Isrc, warp, holeVal )">tpsInterpolateIm</a>	Interpolate Isrc according to the warp from Isrc->Idst.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-Oct-2007 13:09:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

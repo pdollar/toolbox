@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of imShrink</title>
+  <meta name="keywords" content="imShrink">
+  <meta name="description" content="Used to shrink a multidimensional array I by integer amount.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>imShrink
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Used to shrink a multidimensional array I by integer amount.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function I = imShrink( I, ratios ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Used to shrink a multidimensional array I by integer amount.
+
+ ratios specifies the block dimensions.  For example, ratios=[2 3 4]
+ shrinks a 3 dimensional array I by a factor of 2 along the first
+ dimension, 3 along the secong and 4 along the third.  ratios must be
+ strictly positive integers.  A value of 1 means no shrinking is done
+ along a given dimension.
+
+ Can handle very large arrays in a memory efficient manner. All the work
+ is done by localSum with the 'block' shape flag.
+
+ USAGE
+  I = imShrink( I, ratios )
+
+ INPUTS
+  I       - k dimensional input array
+  ratios  - k element int vector of shrinking factors
+
+ OUTPUTS
+  I       - shrunk version of input
+
+ EXAMPLE
+  load trees; I=ind2gray(X,map);
+  I2 = imShrink( I, [2 2] );
+  figure(1); im(I); figure(2); im(I2);
+
+ See also IMRESIZE, <a href="localSum.html" class="code" title="function I = localSum( I, dims, shape )">LOCALSUM</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="imShrink.html" class="code" title="function I = imShrink( I, ratios )">imShrink</a>	Used to shrink a multidimensional array I by integer amount.</li><li><a href="localSum.html" class="code" title="function I = localSum( I, dims, shape )">localSum</a>	Fast routine for box filtering.</li><li><a href="../matlab/arrayCrop.html" class="code" title="function I = arrayCrop( I, strLocs, endLocs, padEl )">arrayCrop</a>	Used to crop a rectangular region from an n dimensional array.</li><li><a href="../matlab/checkNumArgs.html" class="code" title="function [ x, er ] = checkNumArgs( x, siz, intFlag, signFlag )">checkNumArgs</a>	Helper utility for checking numeric vector arguments.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="imShrink.html" class="code" title="function I = imShrink( I, ratios )">imShrink</a>	Used to shrink a multidimensional array I by integer amount.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-Oct-2007 13:09:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

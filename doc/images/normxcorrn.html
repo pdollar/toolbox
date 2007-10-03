@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of normxcorrn</title>
+  <meta name="keywords" content="normxcorrn">
+  <meta name="description" content="Normalized n-dimensional cross-correlation.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>normxcorrn
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Normalized n-dimensional cross-correlation.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function C = normxcorrn( T, A, shape, Tm ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Normalized n-dimensional cross-correlation.
+
+ For 2 dimensional inputs this function is exactly the same as normxcorr2,
+ but also works in higher dimensions.   For more information see help on
+ normxcorr2.m.  Also see Forsyth &amp; Ponce 11.3.1 (p241).
+
+ Also, it can take an additional argument that specifies a figure ground
+ mask for the T.  That is Tm must be of the same dimensions as T, with
+ each entry being 0 or 1, where zero specifies regions to ignore (the
+ ground) and 1 specifies interesting regions (the figure).  Essentially Tm
+ specifies regions in T that are interesting and should be taken into
+ account when doing normalized cross correlation. This allows for
+ templates of arbitrary shape, and not just squares. Note: with a mask,
+ this function is approximately 3 times slower because it cannot use the
+ trick of precomputing running sums.
+
+ USAGE
+  C = normxcorrn( T, A, [shape], [Tm] )
+
+ INPUTS
+  T           - template to correlate to each window in A
+  A           - matrix to correlate T to
+  shape       - ['full'] 'valid', 'full', or 'same', see convnFast help
+  Tm          - [] figure/ground mask for the template
+
+ OUTPUTS
+  C           - correlation matrix
+
+ EXAMPLE
+  T=gaussSmooth(rand(20),2); A=repmat(T,[3 3]);  Tm=ones(size(T));
+  C1=normxcorrn(T,A);  C2=normxcorr2(T,A);  C3=normxcorrn(T,A,[],Tm);
+  figure(1); im(C1);  figure(2); im(C2);  figure(3); im(C3);
+  figure(4); im(abs(C1-C2));  figure(5); im(abs(C2-C3));
+
+ See also <a href="xeucn.html" class="code" title="function C = xeucn( A, T, shape )">XEUCN</a>, <a href="xcorrn.html" class="code" title="function C = xcorrn( A, T, shape )">XCORRN</a>, <a href="convnFast.html" class="code" title="function C = convnFast( A, B, shape )">CONVNFAST</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="convnFast.html" class="code" title="function C = convnFast( A, B, shape )">convnFast</a>	Fast convolution, replacement for both conv2 and convn.</li><li><a href="localSum.html" class="code" title="function I = localSum( I, dims, shape )">localSum</a>	Fast routine for box filtering.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-Oct-2007 13:09:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

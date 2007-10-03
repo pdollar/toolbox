@@ -1,0 +1,53 @@
+Version 2.0 (06-July-07)
+ -major overhaul that included renaming / merging many functions
+ -NOT backward compatible
+ -standardizing naming conventions (no more under_scores)
+ -removed:
+  -montages2 (see montages)
+  -rotation_matrix2D,rotation_matrix3D,recover_rotation3D (see rotationMatrix)
+  -localsum, localsum_block (see localSum)
+  -normxcorrn_fg (see normxcorrn)
+  -imsubs_resize (not useful/general)
+ -filters merged lots of 1d/nd functions (visalizeFilters, FbMake, filterGauss)
+ -removed randperm2 (see randsample in the matlab statistics toolbox)
+ -merged pca_apply and pca_apply_large
+ -removed mode2.m (now apparently part of matlab)
+ -merged all the dist_*.m -> into pdist2.m
+ -merged imwrite2split into imwrite2
+ -merged nlfilt_sep and nlfiltblock_sep into nlfiltersep
+ -merged 1d/nd histogram function, cleaned up commenting
+ -merged makemovie, makemovies, makemovieset, makemovisets, playmovie into playMovie
+ -merged filmstrip, filmstrips into filmStrip
+
+Version 1.5 (05-Jul-07)
+ -major documentation change
+ -formatting of code
+ -general code cleanup
+ -fixed display bug in kmeans2
+ -changed behavior of gauss_smooth if extra sigmas specified
+ -tweaked playmovies
+
+Version 1.03  (03-May-06)
+ -this file is now a standard part of the documentation
+ -thanks to everyone who gave me comments and helped make this toolbox more useful!
+ -added imtranslate.m
+ -playmovie/playmovies backward/forward playback
+ -comment nonmaxsupr < vs <=
+ -compile problems 'toolbox_compile'
+ -tweaked feval_images / imwrite2 to make more resilient
+ -added to imnormalize
+ -added scales to jitterimage
+ -added imwrite2split (useful extension to imwrite2 for writing/reading from mul dirs)
+ -lots of other minor fixes that I should have recorded...
+
+Version 1.02  (29-Nov-05)
+ -filmstrip/filstrips
+ -principal is misspelled in the PCA-related functions.
+ -fixed clustermontages (header was stripped)
+ -updated overview (add to path, recompile, description)
+
+ Version 1.01  (11-Oct-05)
+  -minor changes?
+ 
+ Version 1.00  (02-Oct-05)
+  -initial version

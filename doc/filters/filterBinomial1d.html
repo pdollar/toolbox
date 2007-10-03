@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of filterBinomial1d</title>
+  <meta name="keywords" content="filterBinomial1d">
+  <meta name="description" content="1D binomial filter (approximation to Gaussian filter)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html filters -->
+<h1>filterBinomial1d
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>1D binomial filter (approximation to Gaussian filter)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function f = filterBinomial1d( r, show ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> 1D binomial filter (approximation to Gaussian filter)
+
+ Creates a binomial filter of size 2*r+1 x 1.  This can be used to
+ approximate the Gaussian distribution with sigma=sqrt((2*r+1)/4). For
+ large r, should give same output as:
+  g = fspecial( 'Gaussian', [2*r+1,1],sqrt((2*r+1)/4) );
+ Given sigma, use r ~= 2*sigma^2.
+
+ Use F = f*f' to get the equivalent 2d filter.
+
+ USAGE
+  f = filterBinomial1d( r, [show] )
+
+ INPUTS
+  r       - mask will have length 2r+1 and var=(2*r+1)/4
+  show    - [0] figure to use for optional display
+
+ OUTPUTS
+  f       - 1D binomial filter
+
+ EXAMPLE
+  r = 10;
+  fbinom = filterBinomial1d( r, 1 );
+  fgauss = filterGauss( 2*r+1, [], (2*r+1)/4, 2);
+
+ See also <a href="filterGauss.html" class="code" title="function G = filterGauss( dims, mu, C, show )">FILTERGAUSS</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="filterVisualize.html" class="code" title="function filterVisualize( f, show, arg )">filterVisualize</a>	Used to visualize a 1D/2D/3D filter.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="FbReconstruct2d.html" class="code" title="function I2 = FbReconstruct2d( I, FB, patch )">FbReconstruct2d</a>	Use to see how much image information is preserved in filter outputs.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-Oct-2007 13:09:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

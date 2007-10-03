@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of kmeans2</title>
+  <meta name="keywords" content="kmeans2">
+  <meta name="description" content="Fast version of kmeans clustering.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html classify -->
+<h1>kmeans2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Fast version of kmeans clustering.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ IDX, C, sumd ] = kmeans2( X, k, prm ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Fast version of kmeans clustering.
+
+ Cluster the N x p matrix X into k clusters using the kmeans algorithm. It
+ returns the cluster memberships for each data point in the N x 1 vector
+ IDX and the K x p matrix of cluster means in C.
+
+ This function is in some ways it is less general then Matlab's kmeans.m
+ (for example only uses euclidian distance), but it has some options that
+ the Matlab version does not (for example, it has a notion of outliers and
+ min-cluster size).  It is also many times faster than matlab's kmeans.
+ General kmeans help can be found in help for the matlab implementation of
+ kmeans. Note that the although the names and conventions for this
+ algorithm are taken from Matlab's implementation, there are slight
+ alterations (for example, IDX==-1 is used to indicate outliers).
+
+ IDX is a n-by-1 vector used to indicated cluster membership.  Let X be a
+ set of n points.  Then the ID of X - or IDX is a column vector of length
+ n, where each element is an integer indicating the cluster membership of
+ the corresponding element in X.  IDX(i)=c indicates that the ith point in
+ X belongs to cluster c. Cluster labels range from 1 to k, and thus
+ k=max(IDX) is typically the number of clusters IDX divides X into. The
+ cluster label &quot;-1&quot; is reserved for outliers. IDX(i)==-1 indicates that
+ the given point does not belong to any of the discovered clusters. Note
+ that matlab's version of kmeans does not have outliers.
+
+ USAGE
+  [ IDX, C, sumd ] = kmeans2( X, k, [prm] )
+
+ INPUTS
+  X       - [n x p] matrix of n p-dim vectors.
+  k       - maximum nuber of clusters (actual number may be smaller)
+  prm     - parameters struct (all are optional)
+   .k         - [] alternate way of specifying k (if not given above)
+   .nTrial    - [1] number random restarts
+   .maxIter   - [100] max number of iterations
+   .display   - [0] Whether or not to display algorithm status
+   .rndSeed   - [] random seed for kmeans; useful for replicability
+   .outFrac   - [0] max frac points that can be treated as outliers
+   .minCl     - [1] min cluster size (smaller clusters get eliminated)
+   .metric    - [] metric for pdist2
+
+ OUTPUTS
+  IDX    - [n x 1] cluster membership (see above)
+  C      - [k x p] matrix of centroid locations C(j,:) = mean(X(IDX==j,:))
+  sumd   - [1 x k] sumd(j) is sum of distances from X(IDX==j,:) to C(j,:)
+           sum(sumd) is a typical measure of the quality of a clustering
+
+ EXAMPLE
+
+ See also <a href="demoCluster.html" class="code" title="">DEMOCLUSTER</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="pdist2.html" class="code" title="function D = pdist2( X, Y, metric )">pdist2</a>	Calculates the distance between sets of vectors.</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function prm = getPrmDflt( prm, dfs )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li><li><a href="../matlab/int2str2.html" class="code" title="function nstr = int2str2( n, nDigits )">int2str2</a>	Convert integer to string of given length; improved version of int2str.</li><li><a href="../matlab/randint2.html" class="code" title="function R = randint2( m, n, range )">randint2</a>	Faster but restricted version of randint.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="demoCluster.html" class="code" title="">demoCluster</a>	Clustering demo.</li><li><a href="rbfComputeBasis.html" class="code" title="function rbfBasis = rbfComputeBasis( X, k, cluster, scale, show )">rbfComputeBasis</a>	Get locations and sizes of radial basis functions for use in rbf network.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-Oct-2007 13:09:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

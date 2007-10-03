@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of FbVisualize</title>
+  <meta name="keywords" content="FbVisualize">
+  <meta name="description" content="Used to visualize a series of 1D/2D/3D filters.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html filters -->
+<h1>FbVisualize
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Used to visualize a series of 1D/2D/3D filters.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function FbVisualize( FB, show ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Used to visualize a series of 1D/2D/3D filters. 
+
+ For 1D and 2D filterabnks also shows the Fourier spectra of the filters.
+
+ USAGE
+  FbVisualize( FB, [show] )
+
+ INPUTS
+  FB      - filter bank to visualize (either 2D, 3D, or 4D array)
+  show    - [1] figure to use for display
+
+ OUTPUTS
+
+ EXAMPLE
+  FB=FbMake(1,1,0);  FbVisualize( FB, 1 );  %1D
+  load FbDoG.mat;    FbVisualize( FB, 2 );  %2D
+  FB=FbMake(3,1,0);  FbVisualize( FB, 3 );  %3D
+
+ See also <a href="FbApply2d.html" class="code" title="function FR = FbApply2d( I, FB, shape, show )">FBAPPLY2D</a>, <a href="filterVisualize.html" class="code" title="function filterVisualize( f, show, arg )">FILTERVISUALIZE</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="filterVisualize.html" class="code" title="function filterVisualize( f, show, arg )">filterVisualize</a>	Used to visualize a 1D/2D/3D filter.</li><li><a href="../images/im.html" class="code" title="function im( I, range, extraInf )">im</a>	Function for displaying grayscale images.</li><li><a href="../images/montage2.html" class="code" title="function varargout = montage2( IS, prm )">montage2</a>	Used to display collections of images and videos.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="FbMake.html" class="code" title="function FB = FbMake( dim, flag, show )">FbMake</a>	Various 1D/2D/3D filterbanks (hardcoded).</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-Oct-2007 13:09:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

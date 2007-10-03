@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of FbApply2d</title>
+  <meta name="keywords" content="FbApply2d">
+  <meta name="description" content="Applies each of the filters in the filterbank FB to the image I.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html filters -->
+<h1>FbApply2d
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Applies each of the filters in the filterbank FB to the image I.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function FR = FbApply2d( I, FB, shape, show ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Applies each of the filters in the filterbank FB to the image I.
+
+ To apply to a stack of images:
+  IFS = fevalArrays( images, @FbApply2d, FB, 'valid' );
+
+ USAGE
+  FR = FbApply2d( I, FB, [shape], [show] )
+
+ INPUTS
+  I       - 2D input array
+  FB      - filterbank - MxNxK set of K filters each of size MxN
+  shape   - ['full'] option for conv2 'full', 'same', 'valid'
+  show    - [0] first figure to use for optional display
+
+ OUTPUTS
+  FR      - 3D set of filtered images
+
+ EXAMPLE
+  load trees;  X=imresize(X,.5);  load FbDoG.mat;
+  FR = FbApply2d( X, FB, 'same', 1 );
+
+ See also CONV2, <a href="FbMake.html" class="code" title="function FB = FbMake( dim, flag, show )">FBMAKE</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../images/im.html" class="code" title="function im( I, range, extraInf )">im</a>	Function for displaying grayscale images.</li><li><a href="../images/montage2.html" class="code" title="function varargout = montage2( IS, prm )">montage2</a>	Used to display collections of images and videos.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="FbReconstruct2d.html" class="code" title="function I2 = FbReconstruct2d( I, FB, patch )">FbReconstruct2d</a>	Use to see how much image information is preserved in filter outputs.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-Oct-2007 13:09:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

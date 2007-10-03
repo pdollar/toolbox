@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of filmStrip</title>
+  <meta name="keywords" content="filmStrip">
+  <meta name="description" content="Used to display R stacks of T images as a &quot;filmstrip&quot;.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>filmStrip
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Used to display R stacks of T images as a &quot;filmstrip&quot;.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function F = filmStrip( I, overlap, delta, border ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Used to display R stacks of T images as a &quot;filmstrip&quot;.
+
+ See examples below to see what is meant by &quot;filmstrip&quot;.
+
+ USAGE
+  F = filmStrip( I, overlap, delta, border )
+
+ INPUTS
+  I          - MxNxTxR or MxNx1xTxR or MxNx3xTxR array
+               (of bw or color images). R can equal 1.
+  overlap    - amount of overlap between successive frames
+  delta      - amount to shift each successive frame upward
+  border     - width of black border around each frame
+
+ OUTPUTS
+  F       - filmstrip
+
+ EXAMPLE - one filmstrip
+  load images;
+  F1 = filmStrip( video(:,:,1:15), 10, 2, 5 );   figure(1); im(F1); % one
+  F2 = filmStrip( videos(:,:,:,1:10), 5, 2, 3 ); figure(2); im(F2); % many
+
+ See also <a href="montage2.html" class="code" title="function varargout = montage2( IS, prm )">MONTAGE2</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-Oct-2007 13:09:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

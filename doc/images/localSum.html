@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of localSum</title>
+  <meta name="keywords" content="localSum">
+  <meta name="description" content="Fast routine for box filtering.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>localSum
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Fast routine for box filtering.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function I = localSum( I, dims, shape ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Fast routine for box filtering.
+
+ Same effect as calling 'C=convn( I, ones(dims), shape)', except more
+ efficient. Computes local sums by using running sums. To get sum in
+ non-overlapping windows, use shape='block'. Equivalent to doing localSum,
+ and then subsampling (except more efficient).
+
+ USAGE
+  I = localSum( I, dims, shape )
+
+ INPUTS
+  I       - matrix to compute sum over
+  dims    - size of volume to compute sum over, can be scalar
+  shape   - ['full'] 'valid', 'full', 'same', or 'block'
+
+ OUTPUTS
+  C       - matrix of sums
+
+ EXAMPLE - 1
+  A = rand(20); dim=11; shape='valid';
+  B = localSum(A,dim,shape);
+  C = conv2(A,ones(dim),shape);
+  diff=B-C; sum(abs(diff(:)))
+
+ EXAMPLE - 2
+  load trees; I=ind2gray(X,map);
+  I2 = localSum( I, 5, 'block' );
+  figure(1); im(I); figure(2); im(I2);
+
+ See also <a href="imShrink.html" class="code" title="function I = imShrink( I, ratios )">IMSHRINK</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../images/private/nlfiltersep.html" class="code" title="function I = nlfiltersep( I, dims, shape, fun, varargin )">nlfiltersep</a>	Efficient multidimensional nonlinear but seperable filtering operation.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="imShrink.html" class="code" title="function I = imShrink( I, ratios )">imShrink</a>	Used to shrink a multidimensional array I by integer amount.</li><li><a href="maskCircle.html" class="code" title="function mask = maskCircle( angleStart, angleSiz, r, nSamples )">maskCircle</a>	Creates an image of a 'pie slice' of a circle.</li><li><a href="modefilt1.html" class="code" title="function y = modefilt1( x, s )">modefilt1</a>	One-dimensional mode filtering.</li><li><a href="normxcorrn.html" class="code" title="function C = normxcorrn( T, A, shape, Tm )">normxcorrn</a>	Normalized n-dimensional cross-correlation.</li><li><a href="optFlowCorr.html" class="code" title="function [Vx,Vy,reliab] = optFlowCorr( I1, I2, patchR, searchR,sigma, thr, show )">optFlowCorr</a>	Calculate optical flow using cross-correlation.</li><li><a href="optFlowLk.html" class="code" title="function [Vx,Vy,reliab]=optFlowLk( I1, I2, winN,winSig, sigma, thr, show )">optFlowLk</a>	Calculate optical flow using Lucas & Kanade.  Fast, parallel code.</li><li><a href="xeucn.html" class="code" title="function C = xeucn( A, T, shape )">xeucn</a>	n-dimensional euclidean distance between each window in A and template T.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-Oct-2007 13:09:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

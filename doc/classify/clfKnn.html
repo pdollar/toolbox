@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of clfKnn</title>
+  <meta name="keywords" content="clfKnn">
+  <meta name="description" content="Create a k nearest neighbor classifier.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html classify -->
+<h1>clfKnn
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Create a k nearest neighbor classifier.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function clf = clfKnn( p, k, metric ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Create a k nearest neighbor classifier.
+
+ USAGE
+  clf = clfKnn( p, k, metric )
+
+ INPUTS
+  p       - data dimension
+  k       - number of nearest neighbors to look at
+  metric  - [] distance function, squared euclidean by default
+
+ OUTPUTS
+  clf     - model ready to be trained
+
+ EXAMPLE
+
+ See also <a href="nfoldxval.html" class="code" title="function CM=nfoldxval( data, IDX, clfInit, clfparams,types, ignoreT, fname, show )">NFOLDXVAL</a>, <a href="clfKnnTrain.html" class="code" title="function clf = clfKnnTrain( clf, X, Y )">CLFKNNTRAIN</a>, <a href="clfKnnFwd.html" class="code" title="function Y = clfKnnFwd( clf, X )">CLFKNNFWD</a>, <a href="clfKnnDist.html" class="code" title="function IDXpred = clfKnnDist( D, IDX, k )">CLFKNNDIST</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="clfKnnFwd.html" class="code" title="function Y = clfKnnFwd( clf, X )">clfKnnFwd</a>	Apply a k-nearest neighbor classifier to X.</li><li><a href="clfKnnTrain.html" class="code" title="function clf = clfKnnTrain( clf, X, Y )">clfKnnTrain</a>	Train a k nearest neighbor classifier (memorization).</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="demoClassify.html" class="code" title="function demoClassify">demoClassify</a>	DEMOCLASSIFY A demo used to test and demonstrate the usage of classifiers (clf*)</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-Oct-2007 13:09:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

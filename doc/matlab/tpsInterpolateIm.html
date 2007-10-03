@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of tpsInterpolateIm</title>
+  <meta name="keywords" content="tpsInterpolateIm">
+  <meta name="description" content="Interpolate Isrc according to the warp from Isrc-&gt;Idst.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>tpsInterpolateIm
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Interpolate Isrc according to the warp from Isrc-&gt;Idst.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [IR,boundX,boundY] = tpsInterpolateIm( Isrc, warp, holeVal ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Interpolate Isrc according to the warp from Isrc-&gt;Idst.
+
+ Use tpsGetWarp to obtain the warp.
+
+ USAGE
+  IR = tpsInterpolateIm( Isrc, warp, [holeVal] )
+
+ INPUTS
+  Isrc        - image to interpolate
+  warp        - [see tpsGetWarp] bookstein warping parameters
+  holeVal     - [0] Value of the empty warps
+
+ OUTPUTS
+  IR          - warped image
+
+ EXAMPLE
+  xsS=[0 0 1 1 2 2]; ysS=[0 2 0 2 0 2]; ysD=[0 2 .5 1.5 0 2];
+  warp = tpsGetWarp(0,xsS*100,ysS*100,xsS*100,ysD*100);
+  load clown; I=padarray(X,[1 1],0,'both'); clear X caption map;
+  IR = tpsInterpolateIm( I, warp );
+  figure(1); clf; im(I); figure(2); clf; im(IR);
+
+ See also <a href="tpsGetWarp.html" class="code" title="function [warp,L,LnInv,bendE] = tpsGetWarp( lambda, xsS, ysS, xsD, ysD )">TPSGETWARP</a>, TEXTUREMAP</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../images/textureMap.html" class="code" title="function [IR,boundX,boundY] = textureMap(I, rowDst, colDst, bbox, holeVal)">textureMap</a>	Maps texture in I according to rowDst and colDst.</li><li><a href="tpsInterpolate.html" class="code" title="function [xsR,ysR] = tpsInterpolate( warp, xs, ys, show )">tpsInterpolate</a>	Apply warp (obtained by tpsGetWarp) to a set of new points.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-Oct-2007 13:09:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

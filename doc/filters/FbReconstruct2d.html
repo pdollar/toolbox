@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of FbReconstruct2d</title>
+  <meta name="keywords" content="FbReconstruct2d">
+  <meta name="description" content="Use to see how much image information is preserved in filter outputs.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html filters -->
+<h1>FbReconstruct2d
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Use to see how much image information is preserved in filter outputs.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function I2 = FbReconstruct2d( I, FB, patch ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Use to see how much image information is preserved in filter outputs.
+
+ Reconstructs the orginal image from filter outputs (approximately). The
+ filter output for a patch is given by IFR=F*P where F is the set of
+ filters in matrix form, P is the patch and IFR is the filter responses at
+ the center of the patch.  We want to recover P from IFR and F, this is
+ underconstrained but a solution can be found using least squared.  Note
+ that each recovered P will be 0 mean if no mean information is captured
+ by the filter outputs.  Can apply to a single patch (interatctively
+ specified), or the entire image (by keeping the central pixel from each
+ patch).
+
+ USAGE
+  I2 = FbReconstruct2d( I, FB, patch )
+
+ INPUTS
+  I      - original image
+  FB     - FB to apply and do reconstruction with
+  patch  - reconstruct just patch or entire image
+
+ OUTPUTS
+  I2     - reconstructed image / patch
+
+ EXAMPLE
+  load trees; X=imresize(X,.5); load FbDoG.mat;
+  I2 = FbReconstruct2d( X, FB, 0 );
+
+ See also <a href="FbApply2d.html" class="code" title="function FR = FbApply2d( I, FB, shape, show )">FBAPPLY2D</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="FbApply2d.html" class="code" title="function FR = FbApply2d( I, FB, shape, show )">FbApply2d</a>	Applies each of the filters in the filterbank FB to the image I.</li><li><a href="filterBinomial1d.html" class="code" title="function f = filterBinomial1d( r, show )">filterBinomial1d</a>	1D binomial filter (approximation to Gaussian filter)</li><li><a href="../images/im.html" class="code" title="function im( I, range, extraInf )">im</a>	Function for displaying grayscale images.</li><li><a href="../images/montage2.html" class="code" title="function varargout = montage2( IS, prm )">montage2</a>	Used to display collections of images and videos.</li><li><a href="../matlab/arrayToDims.html" class="code" title="function IC = arrayToDims( I, dims, padEl )">arrayToDims</a>	Pads or crops I appropriately so that size(IC)==dims.</li><li><a href="../matlab/c.html" class="code" title="">c</a>	clc - clear command window.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Wed 03-Oct-2007 13:09:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>
