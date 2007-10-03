@@ -1,4 +1,4 @@
-Version 2.0 (06-July-07)
+Version 2.0 (30-Sept-07)
  -major overhaul that included renaming / merging many functions
  -NOT backward compatible
  -standardizing naming conventions (no more under_scores)
@@ -19,7 +19,7 @@ Version 2.0 (06-July-07)
  -merged makemovie, makemovies, makemovieset, makemovisets, playmovie into playMovie
  -merged filmstrip, filmstrips into filmStrip
 
-Version 1.5 (05-Jul-07)
+Version 1.5 (06-Jul-07)
  -major documentation change
  -formatting of code
  -general code cleanup
