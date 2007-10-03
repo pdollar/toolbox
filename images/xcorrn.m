@@ -26,7 +26,7 @@
 %
 % See also XCORR2, NORMXCORRN, XEUCN, CONVNFAST
 
-% Piotr's Image&Video Toolbox      Version NEW
+% Piotr's Image&Video Toolbox      Version 2.0
 % Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
 % Please email me if you find bugs, or have suggestions or questions!
 

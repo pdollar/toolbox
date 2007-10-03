@@ -19,15 +19,14 @@
 
 function toolboxUpdateHeader
 
-headerL1def = '%% Piotr''s Image&Video Toolbox      Version 1.6\n';
+headerL1def = '%% Piotr''s Image&Video Toolbox      Version 2.0\n';
 header=[...
   '%% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu\n' ...
   '%% Please email me if you find bugs, or have suggestions or questions!\n\n'];
 
 % must start in /toolbox base directory  - cd( 'c:/code/toolbox' );
-%dirs={ 'classify', 'classify/private', 'filters', 'images', ...
-%      'images/private', 'matlab', 'external' };
-dirs = {'classify'};
+dirs={ 'classify', 'classify/private', 'filters', 'images', ...
+     'images/private', 'matlab', 'external' };
 
 % update the headers
 for i=1:length(dirs)
