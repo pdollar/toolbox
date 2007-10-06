@@ -34,8 +34,9 @@
 % See also FILTERGAUSS, FBVISUALIZE
 
 % Piotr's Image&Video Toolbox      Version 2.0
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
+% Liscensed under the Lesser GPL [see external/lgpl.txt]
 
 function filterVisualize( f, show, arg )
 

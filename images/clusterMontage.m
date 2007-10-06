@@ -38,8 +38,9 @@
 % See also KMEANS2, MONTAGE2, PLAYMOVIE, CELL2ARRAY
 
 % Piotr's Image&Video Toolbox      Version 2.0
-% Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu
+% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
+% Liscensed under the Lesser GPL [see external/lgpl.txt]
 
 function IC = clusterMontage( I, IDX, nElem, pad )
 

@@ -1,3 +1,8 @@
+Version 2.01 (10-Oct-07)
+ -added copyright notice to each file
+ -added LGPL licence information (see gpl.txt and lgpl.txt)
+ -moved savefig/matrix2latex from /external to /external/other
+
 Version 2.0 (30-Sept-07)
  -major overhaul that included renaming / merging many functions
  -NOT backward compatible
