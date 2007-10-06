@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of int2str2</title>
+  <meta name="keywords" content="int2str2">
+  <meta name="description" content="Convert integer to string of given length; improved version of int2str.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>int2str2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Convert integer to string of given length; improved version of int2str.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function nstr = int2str2( n, nDigits ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Convert integer to string of given length; improved version of int2str.
+
+ Pads string with zeros on the left.  For integers similar to
+  sprintf( '%03i', n ); %for nDigits=3
+ If input n is an array, output is a cell array of strings of the same
+ dimension as n.  Works also for non integers (pads to given length).
+
+ USAGE
+  nstr = int2str2( n, [nDigits] )
+
+ INPUTS
+  n        - integer to convert to string
+  nDigits  - [0] minimum number of digits to use
+
+ OUTPUTS
+  nstr     - string repr. of n (or cell array of strings if n is array)
+
+ EXAMPLE
+  s = int2str2( 3, 3 ) % s='003'
+
+ See also INT2STR</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../classify/clfDecTreeTrain.html" class="code" title="function clf = clfDecTreeTrain( clf, X, Y )">clfDecTreeTrain</a>	Train a decision tree classifier.</li><li><a href="../classify/confMatrixShow.html" class="code" title="function confMatrixShow( CM, types, pvPairs, nDigits )">confMatrixShow</a>	Used to display a confusion matrix.</li><li><a href="../classify/kmeans2.html" class="code" title="function [ IDX, C, sumd ] = kmeans2( X, k, prm )">kmeans2</a>	Fast version of kmeans clustering.</li><li><a href="../classify/nfoldxval.html" class="code" title="function CM=nfoldxval( data, IDX, clfInit, clfparams,types, ignoreT, fname, show )">nfoldxval</a>	Runs n-fold cross validation on data with a given classifier.</li><li><a href="../images/imwrite2.html" class="code" title="function I = imwrite2( I, mulFlag, imagei, path,name, ext, nDigits, nSplits, spliti, varargin )">imwrite2</a>	Similar to imwrite, except follows a strict naming convention.</li><li><a href="fevalImages.html" class="code" title="function X = fevalImages( fHandle, prms, srcDir, name, ext,nStr, nEnd, nDigits )">fevalImages</a>	Used to apply the same operation to all images in given directory.</li><li><a href="simpleCache.html" class="code" title="function varargout = simpleCache( op, cache, varargin )">simpleCache</a>	A simple cache that can be used to store results of computations.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Fri 05-Oct-2007 19:10:11 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

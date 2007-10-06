@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of simpleCache</title>
+  <meta name="keywords" content="simpleCache">
+  <meta name="description" content="A simple cache that can be used to store results of computations.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>simpleCache
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>A simple cache that can be used to store results of computations.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function varargout = simpleCache( op, cache, varargin ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> A simple cache that can be used to store results of computations.
+
+ Can save and retrieve arbitrary values using a vector (includnig char
+ vectors) as a key. Especially useful if a function must perform heavy
+ computation but is often called with the same inputs (for which it will
+ give the same outputs).  Note that the current implementation does a
+ linear search for the key (a more refined implementation would use a hash
+ table), so it is not meant for large scale usage.
+
+ To use inside a function, make the cache persistent:
+  persistent cache; if( isempty(cache) ) cache=simpleCache('init'); end;
+ The following line, when placed inside a function, means the cache will
+ stay in memory until the matlab environment changes.  For an example
+ usage see maskGaussians.
+
+ USAGE - 'init': initialize a cache object
+  cache = simpleCache('init');
+
+ USAGE - 'put': put something in cache.  key must be a numeric vector
+  cache = simpleCache( 'put', cache, key, val );
+
+ USAGE - 'get': retrieve from cache.  found==1 if obj was found
+  [found,val] = simpleCache( 'get', cache, key );
+
+ USAGE - 'remove': free key
+  [cache,found] = simpleCache( 'remove', cache, key );
+
+ INPUTS
+  op         - 'init', 'put', 'get', 'remove'
+  cache      - the cache object being operated on
+  varargin   - see USAGE above
+
+ OUTPUTS
+  varargout  - see USAGE above
+
+ EXAMPLE
+  cache = simpleCache('init');
+  hellokey=rand(1,3); worldkey=rand(1,11);
+  cache = simpleCache( 'put', cache, hellokey, 'hello' );
+  cache = simpleCache( 'put', cache, worldkey, 'world' );
+  [f,v]=simpleCache( 'get', cache, hellokey ); disp(v);
+  [f,v]=simpleCache( 'get', cache, worldkey ); disp(v);
+
+ See also PERSISTENT, MASKGAUSSIANS</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="int2str2.html" class="code" title="function nstr = int2str2( n, nDigits )">int2str2</a>	Convert integer to string of given length; improved version of int2str.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../images/maskGaussians.html" class="code" title="function [masks,keepLocs] = maskGaussians( siz, M, width, offset, show )">maskGaussians</a>	Divides a volume into softly overlapping gaussian windows.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Fri 05-Oct-2007 19:10:11 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

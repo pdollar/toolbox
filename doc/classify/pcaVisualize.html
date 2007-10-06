@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of pcaVisualize</title>
+  <meta name="keywords" content="pcaVisualize">
+  <meta name="description" content="Visualization of quality of approximation of X given principal comp.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html classify -->
+<h1>pcaVisualize
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Visualization of quality of approximation of X given principal comp.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function varargout=pcaVisualize( U, mu, vars, X, index, ks, fname, show ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Visualization of quality of approximation of X given principal comp.
+
+ X can either represent a single element (a single image or video), or a
+ set of elements. In the latter case, index controls which element of X to
+ apply visualization to, if unspecified it is chosen randomly.
+
+ USAGE
+  varargout=pcaVisualize(U, mu, vars, X, [index], [ks], [fname], [show])
+
+ INPUTS
+  U           - returned by pca.m
+  mu          - returned by pca.m
+  vars        - returned by pca.m
+  X           - Set of images or videos, or a single image or video
+  index       - [] controls which element of X to aplply visualization to
+  ks          - [] ks values of k for pcaApply (ex. ks=[1 4 8 16])
+  fname       - [] if specified outputs avis
+  show        - [1] will display in figure(show) and figure(show+1)
+
+ OUTPUTS
+  M           - [only if X is a movie] movie of xhats (see pcaapply)
+  MDiff       - [only if X is a movie] movie of difference images
+  MU          - [only if X is a movie] movie of eigenmovies
+
+ EXAMPLE
+
+ See also <a href="pca.html" class="code" title="function [ U, mu, vars ] = pca( X )">PCA</a>, <a href="pcaApply.html" class="code" title="function varargout = pcaApply( X, U, mu, k )">PCAAPPLY</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="pcaApply.html" class="code" title="function varargout = pcaApply( X, U, mu, k )">pcaApply</a>	Companion function to pca.</li><li><a href="../images/im.html" class="code" title="function im( I, range, extraInf )">im</a>	Function for displaying grayscale images.</li><li><a href="../images/montage2.html" class="code" title="function varargout = montage2( IS, prm )">montage2</a>	Used to display collections of images and videos.</li><li><a href="../images/playMovie.html" class="code" title="function M = playMovie( I, fps, loop, prm )">playMovie</a>	Shows/makes an/several movie(s) from an image sequence.</li><li><a href="../matlab/figureResized.html" class="code" title="function varargout = figureResized( screenratio, varargin )">figureResized</a>	Creates a figures that takes up certain area of screen.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Fri 05-Oct-2007 19:10:11 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

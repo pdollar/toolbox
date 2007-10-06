@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of getPrmDflt</title>
+  <meta name="keywords" content="getPrmDflt">
+  <meta name="description" content="Helper to set default values (if not already set) of parameter struct.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>getPrmDflt
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Helper to set default values (if not already set) of parameter struct.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function prm = getPrmDflt( prm, dfs ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Helper to set default values (if not already set) of parameter struct.
+
+ Takes a struct prm and a list of 'name'/default pairs, and for each
+ 'name' for which prm has no value (prm.(name) is not a field)
+ getPrmDflt assigns the given default value. If default value for
+ variable 'name' is 'REQ', and prm.name is not a field, an error is
+ thrown. See example below for usage details.
+
+ USAGE
+  prm = getPrmDflt( prm, dfs )
+
+ INPUTS
+  prm    - parameters struct
+  dfs    - cell of form {name1,default1,name2,default2,...}
+
+ OUTPUTS
+  prm    - updated parameters struct
+
+ EXAMPLE
+  dfs = { 'x','REQ', 'y',0, 'z',[], 'eps',1e-3 };
+  prm.x = 1;  prm = getPrmDflt( prm, dfs )
+
+ See also</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../classify/kmeans2.html" class="code" title="function [ IDX, C, sumd ] = kmeans2( X, k, prm )">kmeans2</a>	Fast version of kmeans clustering.</li><li><a href="../images/makeGif.html" class="code" title="function makeGif( M, fileName, prm )">makeGif</a>	Writes a matlab movie to an animated GIF.</li><li><a href="../images/montage2.html" class="code" title="function varargout = montage2( IS, prm )">montage2</a>	Used to display collections of images and videos.</li><li><a href="../images/playMovie.html" class="code" title="function M = playMovie( I, fps, loop, prm )">playMovie</a>	Shows/makes an/several movie(s) from an image sequence.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Fri 05-Oct-2007 19:10:11 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

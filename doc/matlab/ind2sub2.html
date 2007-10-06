@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ind2sub2</title>
+  <meta name="keywords" content="ind2sub2">
+  <meta name="description" content="Improved version of ind2sub.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>ind2sub2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Improved version of ind2sub.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function sub = ind2sub2( siz, ind ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Improved version of ind2sub.
+
+ Almost the same as ind2sub, except always returns only a single output
+ that contains all the index locations.  Also handles multiple linear
+ indicies at the same time. See help for ind2sub for more info.
+
+ USAGE
+  sub = ind2sub2( siz, ind )
+
+ INPUTS
+  siz     - size of array into which ind is an index
+  ind     - linear index (or vector of indicies) into given array
+
+ OUTPUTS
+  sub     - sub(i,:) is the ith set of subscripts into the array.
+
+ EXAMPLE
+  sub = ind2sub2( [10,10], 20 )         % 10 2
+  sub = ind2sub2( [10,10], [20 19] )    % 10 2; 9 2
+
+ See also IND2SUB, <a href="sub2ind2.html" class="code" title="function ind = sub2ind2( siz, sub )">SUB2IND2</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../images/convnFast.html" class="code" title="function C = convnFast( A, B, shape )">convnFast</a>	Fast convolution, replacement for both conv2 and convn.</li><li><a href="../images/maskGaussians.html" class="code" title="function [masks,keepLocs] = maskGaussians( siz, M, width, offset, show )">maskGaussians</a>	Divides a volume into softly overlapping gaussian windows.</li><li><a href="../images/nonMaxSupr.html" class="code" title="function [subs,vals] = nonMaxSupr( I, radii, thresh, maxn )">nonMaxSupr</a>	Applies nonmaximal suppression on an image of arbitrary dimension.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Fri 05-Oct-2007 19:10:11 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

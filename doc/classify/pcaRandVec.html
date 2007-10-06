@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of pcaRandVec</title>
+  <meta name="keywords" content="pcaRandVec">
+  <meta name="description" content="Generate random vectors in PCA subspace.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html classify -->
+<h1>pcaRandVec
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Generate random vectors in PCA subspace.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function Xr = pcaRandVec( U, mu, vars, k, n, hypershpere, show ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Generate random vectors in PCA subspace.
+
+ Used to generate random vectors from the subspace spanned by the first k
+ principal components.  The points generated come from the gaussian
+ distribution from within the subspace. Can optionally generate points on
+ the subspace that are also on a hypershpere centered on the origin.  This
+ may be useful if the original data points were all from a hypershpere --
+ for example they were normalized via imNormalize.  Set the optional
+ hypershpere flag to 1 to generate points only on the hypersphere.
+
+ USAGE
+  Xr = pcaRandVec( U, mu, vars, k, n, [hypershpere], [show] )
+
+ INPUTS
+  U           - returned by pca.m
+  mu          - returned by pca.m
+  vars        - returned by pca.m
+  k           - number of principal coordinates to use
+  n           - number of points to generate
+  hypershpere - [0] generate points on hypersphere (see above)
+  show        - [1] figure to use for display (no display if == 0)
+
+ OUTPUTS
+  Xr          - resulting randomly generated vectors
+
+ EXAMPLE
+
+ See also <a href="pca.html" class="code" title="function [ U, mu, vars ] = pca( X )">PCA</a> IMNORMALIZE</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../images/imNormalize.html" class="code" title="function X = imNormalize( X, flag )">imNormalize</a>	Various ways to normalize a (multidimensional) image.</li><li><a href="../images/montage2.html" class="code" title="function varargout = montage2( IS, prm )">montage2</a>	Used to display collections of images and videos.</li><li><a href="../matlab/fevalArrays.html" class="code" title="function B = fevalArrays( A, fHandle, varargin )">fevalArrays</a>	Used to apply the same operation to a stack of array elements.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Fri 05-Oct-2007 19:10:11 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

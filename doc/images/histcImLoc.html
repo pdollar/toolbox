@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of histcImLoc</title>
+  <meta name="keywords" content="histcImLoc">
+  <meta name="description" content="Creates a series of locally position dependent histograms.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>histcImLoc
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Creates a series of locally position dependent histograms.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function h = histcImLoc( I, edges, parMask, wtMask, multCh ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Creates a series of locally position dependent histograms.
+
+ Inspired by David Lowe's SIFT descriptor.  Takes I, divides it into a
+ number of regions, and creates a histogram for each region. I is divided
+ into approximately equally sized hyper-rectangular regions so that
+ together these hyper-rectangles cover I.  The hyper-rectangles are
+ actually 'soft', in that each region is actually defined by a gaussian
+ mask, for details see maskGaussians. parMask, parameters to
+ maskGaussians, controls details about how the masks are created.
+ Optionally, each value in I may have associated weight given by wtMask,
+ which should have the same exact dimensions as each channel of I.
+
+ If multCh is set to true, then:
+  I is an [M1xM2x...xMkxnd] array of nd channels
+ otherwise
+  I is an [M1xM2x...xMk] array of 1 channel
+ If nd==1, histcImLoc creates a 1D histogram using histc2.  More
+ generally, histcImLoc creates an nd dimensional histogram (again using
+ hist2c).  histcImLoc creates nMasks (number of masks) histgorams, each
+ which have dimension nBins^nd.  So if nd==1 the output of this function
+ is [nBins x nMasks], and for example if nd==2 the output is [nBins x
+ nBins x nMasks].  If nd is large computing the histograms is time
+ consuming.
+
+ USAGE
+  h = histcImLoc( I, edges, parMask, [wtMask], [multCh] )
+
+ INPUTS
+  I           - M1xM2x...xMkxnd array, (nd channels each of M1xM2x...xMk)
+  edges       - quantization bounds, see histc2
+  parMask     - cell of parameters to maskGaussians
+  wtMask      - [] M1xM2x...xMk numeric array of weights
+  multCh      - [0] if 1 last dimension of I is number of channels
+
+ OUTPUTS
+  h           - nd-histograms [nBins^nd x nMasks]
+
+ EXAMPLE - multCh==0
+  I = filterGauss([100 100],[],[],0);
+  h = histcImLoc(I,10,{2,.6,.1,1},[],0);
+  figure(1); im(h)
+
+ EXAMPLE - multCh==1
+  I = filterGauss([100 100],[],[],0);
+  h1 = histcImLoc( cat(3,I,I), 10, {2,.6,.1,0},[],1);
+  h2 = histcImLoc( cat(3,I,randn(size(I))),10,{2,.6,.1,0},[],1);
+  figure(1); montage2(h1); figure(2); montage2(h2);
+
+ See also <a href="histc2.html" class="code" title="function h = histc2( A, edges, wtMask )">HISTC2</a>, <a href="maskGaussians.html" class="code" title="function [masks,keepLocs] = maskGaussians( siz, M, width, offset, show )">MASKGAUSSIANS</a>, <a href="assignToBins.html" class="code" title="function B = assignToBins( A, edges )">ASSIGNTOBINS</a>, <a href="histcImWin.html" class="code" title="function H = histcImWin( I, edges, wtMask, shape )">HISTCIMWIN</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gaussSmooth.html" class="code" title="function [L,filters] = gaussSmooth( I, sigmas, shape, radius )">gaussSmooth</a>	Applies Gaussian smoothing to a (multidimensional) image.</li><li><a href="histc2.html" class="code" title="function h = histc2( A, edges, wtMask )">histc2</a>	Multidimensional histogram count with weighted values.</li><li><a href="maskGaussians.html" class="code" title="function [masks,keepLocs] = maskGaussians( siz, M, width, offset, show )">maskGaussians</a>	Divides a volume into softly overlapping gaussian windows.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Fri 05-Oct-2007 19:10:11 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

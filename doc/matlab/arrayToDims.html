@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of arrayToDims</title>
+  <meta name="keywords" content="arrayToDims">
+  <meta name="description" content="Pads or crops I appropriately so that size(IC)==dims.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>arrayToDims
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Pads or crops I appropriately so that size(IC)==dims.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function IC = arrayToDims( I, dims, padEl ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Pads or crops I appropriately so that size(IC)==dims.
+
+ For each dimension d, if size(I,d) is larger then dims(d) then
+ symmetrically crops along d (if cropping amount is odd crops one more
+ unit from the start of the dimension).  If size(I,d) is smaller then
+ dims(d) then symmetrically pads along d with padEl (if padding amount is
+ even then pads one more unit along the start of the dimension).
+
+ USAGE
+  IC = arrayToDims( I, dims, [padEl] )
+
+ INPUTS
+  I         - n dim array to crop window from (for arrays can only crop)
+  dims      - dimensions to make I
+  padEl     - [0] element with which to pad
+
+ OUTPUTS
+  IC        - cropped array
+
+ EXAMPLE
+  I=randn(10); delta=1; IC=arrayToDims(I,size(I)-2*delta);
+
+ See also <a href="arrayCrop.html" class="code" title="function I = arrayCrop( I, strLocs, endLocs, padEl )">ARRAYCROP</a>, PADARRAY</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="arrayCrop.html" class="code" title="function I = arrayCrop( I, strLocs, endLocs, padEl )">arrayCrop</a>	Used to crop a rectangular region from an n dimensional array.</li><li><a href="checkNumArgs.html" class="code" title="function [ x, er ] = checkNumArgs( x, siz, intFlag, signFlag )">checkNumArgs</a>	Helper utility for checking numeric vector arguments.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../filters/FbCrop.html" class="code" title="function FBC = FbCrop( FB, delta )">FbCrop</a>	Crop a 2D filterbank (adjusting filter norms).</li><li><a href="../filters/FbReconstruct2d.html" class="code" title="function I2 = FbReconstruct2d( I, FB, patch )">FbReconstruct2d</a>	Use to see how much image information is preserved in filter outputs.</li><li><a href="../images/convnFast.html" class="code" title="function C = convnFast( A, B, shape )">convnFast</a>	Fast convolution, replacement for both conv2 and convn.</li><li><a href="../images/imtransform2.html" class="code" title="function IR = imtransform2( I, varargin )">imtransform2</a>	Applies a general/special homography on an image I</li><li><a href="../images/jitterImage.html" class="code" title="function IJ = jitterImage( I, nphis, maxphi, ntrans, maxtrans,jsiz, reflFlag, scales )">jitterImage</a>	Creates multiple, slightly jittered versions of an image.</li><li><a href="../images/optFlowCorr.html" class="code" title="function [Vx,Vy,reliab] = optFlowCorr( I1, I2, patchR, searchR,sigma, thr, show )">optFlowCorr</a>	Calculate optical flow using cross-correlation.</li><li><a href="cell2array.html" class="code" title="function Y = cell2array( X, padEl )">cell2array</a>	Flattens a cell array of regular arrays into a regular array.</li></ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Fri 05-Oct-2007 19:10:11 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

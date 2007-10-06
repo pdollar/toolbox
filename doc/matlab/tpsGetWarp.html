@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of tpsGetWarp</title>
+  <meta name="keywords" content="tpsGetWarp">
+  <meta name="description" content="Given two sets of corresponding points, calculates warp between them.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>tpsGetWarp
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Given two sets of corresponding points, calculates warp between them.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [warp,L,LnInv,bendE] = tpsGetWarp( lambda, xsS, ysS, xsD, ysD ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Given two sets of corresponding points, calculates warp between them.
+
+ Uses booksteins PAMI89 method.  Can then apply warp to a new set of
+ points (tpsInterpolate), or even an image (tpsInterpolateIm).
+  &quot;Principal Warps: Thin-Plate Splines and the Decomposition of
+  Deformations&quot;.  Bookstein.  PAMI 1989.
+
+ USAGE
+  [warp,L,LnInv,bendE] = tpsGetWarp( lambda, xsS, ysS, xsD, ysD )
+
+ INPUTS
+  lambda      - rigidity of warp (inf means warp becomes affine)
+  xsS, ysS    - [1xn] correspondence points from source image
+  xsD, ysD    - [1xn] correspondence points from destination image
+
+ OUTPUTS
+  warp        - bookstein warping parameters
+  L, LnInv    - see bookstein
+  bendE       - bending energy
+
+ EXAMPLE - 1
+  xsS=[0 -1 0 1];  ysS=[1 0 -1 0];  xsD=xsS;  ysD=[3/4 1/4 -5/4 1/4];
+  warp = tpsGetWarp( 0, xsS, ysS, xsD, ysD );
+  [gxs, gys] = meshgrid(-1.25:.25:1.25,-1.25:.25:1.25);
+  tpsInterpolate( warp, gxs, gys, 1 );
+
+ EXAMPLE - 2
+  xsS = [3.6929 6.5827 6.7756 4.8189 5.6969];
+  ysS = [10.3819 8.8386 12.0866 11.2047 10.0748];
+  xsD = [3.9724 6.6969 6.5394 5.4016 5.7756];
+  ysD = [6.5354 4.1181 7.2362 6.4528 5.1142];
+  warp = tpsGetWarp( 0, xsS, ysS, xsD, ysD );
+  [gxs, gys] = meshgrid(3.5:.25:7, 8.5:.25: 12.5);
+  tpsInterpolate( warp, gxs, gys, 1 );
+
+ See also <a href="tpsInterpolate.html" class="code" title="function [xsR,ysR] = tpsInterpolate( warp, xs, ys, show )">TPSINTERPOLATE</a>, <a href="tpsInterpolateIm.html" class="code" title="function [IR,boundX,boundY] = tpsInterpolateIm( Isrc, warp, holeVal )">TPSINTERPOLATEIM</a>, <a href="tpsRandom.html" class="code" title="function w = tpsRandom( LnInv, bendE )">TPSRANDOM</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Fri 05-Oct-2007 19:10:11 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>
