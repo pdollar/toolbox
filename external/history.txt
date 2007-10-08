@@ -1,3 +1,6 @@
+Version NEW
+ -made im.m compatible with Matlab2007b
+
 Version 2.01 (10-Oct-07)
  -added copyright notice to each file
  -added LGPL licence information (see gpl.txt and lgpl.txt)
