@@ -11,9 +11,6 @@
 %  range    - [] minval/maxval for imagesc
 %  extraInf - [1] if 1 then a colorbar is shown as well as impixelinfo
 %
-% OUTPUTS
-%  X        - X after normalization.
-%
 % EXAMPLE
 %  load clown; im( X )
 %
