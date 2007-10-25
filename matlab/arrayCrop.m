@@ -20,7 +20,7 @@
 %
 % See also PADARRAY, ARRAYTODIMS
 
-% Piotr's Image&Video Toolbox      Version 2.0
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Liscensed under the Lesser GPL [see external/lgpl.txt]
@@ -29,17 +29,16 @@ function I = arrayCrop( I, strLocs, endLocs, padEl )
 
 if( nargin<4 || isempty(padEl)); padEl=0; end
 nd = ndims(I);  siz = size(I);
-[strLocs,er] = checkNumArgs( strLocs, size(siz), 0, 0 ); error(er);
-[endLocs,er] = checkNumArgs( endLocs, size(siz), 0, 0 ); error(er);
+[strLocs,er] = checkNumArgs(strLocs,size(siz),0,0); error(er);
+[endLocs,er] = checkNumArgs(endLocs,size(siz),0,0); error(er);
 if( any(strLocs>endLocs)); error('strLocs must be <= endLocs'); end
-padEl = feval( class(I), padEl );
 
 % crop a real rect [accelerate implementation if nd==2 or nd==3]
 strL1 = max(strLocs,1);  endL1 = min(endLocs, siz);
 if( nd==2 )
   I = I( strL1(1):endL1(1), strL1(2):endL1(2) );
 elseif( nd==3 )
-  I = I(strL1(1):endL1(1), strL1(2):endL1(2), strL1(3):endL1(3) );
+  I = I( strL1(1):endL1(1), strL1(2):endL1(2), strL1(3):endL1(3) );
 else
   extract = cell( nd, 1 );
   for d=1:nd; extract{d} = strL1(d):endL1(d); end
@@ -47,14 +46,12 @@ else
 end
 
 % then pad as appropriate (essentially inlined padarray)
-padPre = 1 - min( strLocs, 1 );
-padPost = max( endLocs, siz ) - siz;
-if (any(padPre~=0) || any(padPost~=0))
-  idx = cell(1,nd); sizPadded = zeros(1,nd); siz = size(I);
-  for d=1:nd
-    idx{d} = (1:siz(d)) + padPre(d);
-    sizPadded(d) = siz(d) + padPre(d) + padPost(d);
-  end
+if( any(strLocs<1) || any(endLocs>siz) )
+  padEl = feval( class(I), padEl );
+  padPre = 1 - min( strLocs, 1 );
+  sizPadded = endLocs-strLocs+1;
+  idx=cell(1,nd);
+  for d=1:nd; idx{d}=(1:size(I,d))+padPre(d); end
   Ib = repmat( padEl, sizPadded );
-  Ib(idx{:}) = I;  I = Ib;
+  Ib(idx{:})=I; I=Ib;
 end

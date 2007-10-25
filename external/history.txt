@@ -1,6 +1,7 @@
 Version NEW
  -made im.m compatible with Matlab2007b
  -in doc changed toolbox_compile to toolboxCompile
+ -minor optimization / bug fix in arrayCrop
 
 Version 2.01 (10-Oct-07)
  -added copyright notice to each file
