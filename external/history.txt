@@ -1,8 +1,8 @@
 Version 2.02 (31-Oct-07)
- -made im.m compatible with Matlab2007b
+ -made images/im.m compatible with Matlab2007b
  -in doc changed toolbox_compile to toolboxCompile
- -minor optimization / bug fix in arrayCrop
- -minor bugs/cleanup of imtransform2 
+ -minor optimization / bug fix in matlab/arrayCrop
+ -minor bugs/cleanup of images/imtransform2 
  -added images/imrectLite
 
 Version 2.01 (10-Oct-07)
