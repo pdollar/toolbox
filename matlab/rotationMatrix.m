@@ -6,6 +6,8 @@
 %  R = rotationMatrix( theta )
 %  R = rotationMatrix( u )
 %  R = rotationMatrix( u, theta )
+%  R = rotationMatrix( th1, th2, th3 )
+%  R = rotationMatrix( R2 )
 %
 % INPUTS 1 - Finds the closest matrix to a given matrix M
 %  M       - 3x3 matrix
@@ -23,7 +25,7 @@
 %  u       - axis of rotation
 %  theta   - angle of rotation (radians)
 %
-% INPUTS 6 - Creates a 3x3 rotation matrix from 3 angles (around fixed 
+% INPUTS 6 - Creates a 3x3 rotation matrix from 3 angles (around fixed
 %            axes)
 %  th1     - angle with respect to X axis
 %  th2     - angle with respect to Y axis
@@ -31,7 +33,7 @@
 %
 % INPUTS 7 - Creates the full 3x3 rotation matrix from its first 2 rows
 %  R       - 2x3 first two rows of the rotation matrix
-%  
+%
 % OUTPUTS 1,4,5,6,7
 %  R       - 3x3 rotation matrix
 %
@@ -69,7 +71,7 @@
 %
 % See also
 
-% Piotr's Image&Video Toolbox      Version 2.0
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Liscensed under the Lesser GPL [see external/lgpl.txt]
@@ -130,10 +132,10 @@ end
 
 %%% creates a 3x3 rotation matrix from 3 angles (around fixed axes)
 if nargin==3
-   M = makehgtform('xrotate',varargin{1},'yrotate',varargin{2},...
-     'zrotate',varargin{3});
-   varargout{1}=M(1:3,1:3);
-   return
+  M = makehgtform('xrotate',varargin{1},'yrotate',varargin{2},...
+    'zrotate',varargin{3});
+  varargout{1}=M(1:3,1:3);
+  return
 end
 
 %%% creates the full 3x3 rotation matrix from its first 2 rows
