@@ -26,13 +26,14 @@
 <div class="fragment"><pre class="comment"> Applies a general/special homography on an image I
 
  Takes the center of the image as the origin, not the top left corner.
- Also, the coordinate system is row/ column format, so H must be also.
+ Also, the coordinate system is row/column format, so H must be also.
 
  The bounding box of the image is set by the BBOX argument, a string that
  can be 'loose' (default) or 'crop'. When BBOX is 'loose', IR includes the
  whole transformed image, which generally is larger than I. When BBOX is
  'crop' IR is cropped to include only the central portion of the
- transformed image and is the same size as I.  Preserves I's type.
+ transformed image and is the same size as I. The 'loose' flag is
+ currently inexact (because of some padding/cropping). Preserves I's type.
 
  USAGE
   IR = imtransform2( I, H, [method], [bbox], [show] )      % general hom
@@ -89,6 +90,6 @@ This function is called by:
 
 
 
-<hr><address>Generated on Fri 05-Oct-2007 19:10:11 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+<hr><address>Generated on Wed 31-Oct-2007 13:15:59 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
 </body>
 </html>

@@ -31,6 +31,8 @@
   R = rotationMatrix( theta )
   R = rotationMatrix( u )
   R = rotationMatrix( u, theta )
+  R = rotationMatrix( th1, th2, th3 )
+  R = rotationMatrix( R2 )
 
  INPUTS 1 - Finds the closest matrix to a given matrix M
   M       - 3x3 matrix
@@ -48,7 +50,7 @@
   u       - axis of rotation
   theta   - angle of rotation (radians)
 
- INPUTS 6 - Creates a 3x3 rotation matrix from 3 angles (around fixed 
+ INPUTS 6 - Creates a 3x3 rotation matrix from 3 angles (around fixed
             axes)
   th1     - angle with respect to X axis
   th2     - angle with respect to Y axis
@@ -56,7 +58,7 @@
 
  INPUTS 7 - Creates the full 3x3 rotation matrix from its first 2 rows
   R       - 2x3 first two rows of the rotation matrix
-  
+
  OUTPUTS 1,4,5,6,7
   R       - 3x3 rotation matrix
 
@@ -106,6 +108,6 @@ This function is called by:
 
 
 
-<hr><address>Generated on Fri 05-Oct-2007 19:10:11 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+<hr><address>Generated on Wed 31-Oct-2007 13:15:59 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
 </body>
 </html>
