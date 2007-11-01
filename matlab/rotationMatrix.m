@@ -9,7 +9,7 @@
 %  R = rotationMatrix( th1, th2, th3 )
 %  R = rotationMatrix( R2 )
 %
-% INPUTS 1 - Finds the closest matrix to a given matrix M
+% INPUTS 1 - Finds the closest rotation matrix to a given matrix M
 %  M       - 3x3 matrix
 %
 % INPUTS 2 - Extract the axis and the angle of a 3x3 rotation matrix
