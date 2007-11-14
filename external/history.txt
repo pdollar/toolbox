@@ -1,5 +1,6 @@
 Version NEW
  -optimized images/imtransform2
+ -minor tweak to images/imrectLite
 
 Version 2.02 (31-Oct-07)
  -made images/im.m compatible with Matlab2007b

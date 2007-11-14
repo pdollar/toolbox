@@ -39,12 +39,12 @@
 %  rectProp = {'EdgeColor','g','LineWidth',4,'Curvature',[.1 .1]};
 %  lims = [get(gca,'xLim'); get(gca,'yLim')];
 %  [h,api] = imrectLite( gca, [], lims, [],  rectProp{:} );
-%  api.setPosChnCb( @(pos) disp(['        ' int2str(pos)]) );
-%  api.setPosSetCb( @(pos) disp(['FINAL = ' int2str(pos)]) );
+%  api.setPosChnCb( @(pos) disp(['        ' num2str(pos)]) );
+%  api.setPosSetCb( @(pos) disp(['FINAL = ' num2str(pos)]) );
 %
 % See also IMRECT, RECTANGLE, PATCH
 
-% Piotr's Image&Video Toolbox      Version 2.02
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Liscensed under the Lesser GPL [see external/lgpl.txt]
@@ -58,6 +58,7 @@ if( nargin<3 ); lims=[]; end
 if( nargin<4 || isempty(ar) ); ar=0; end
 [posChnCb,posSetCb]=deal([]);
 posLock=false;  sizLock=false;
+minSiz=1;
 
 % get figure and axes handles
 hAx = ancestor(hParent,'axes'); assert(~isempty(hAx));
@@ -103,12 +104,10 @@ api = struct('hRect',hRect, 'getPos',@getPos, 'setPos',@setPos, ...
   function pos = constrainPos( pos, anchor, pos0 )
     % constrain position to fall within lims
     if( ~isempty(lims) )
-      minSiz = 1;
-      posStr=pos(1:2);  posEnd=pos(1:2)+pos(3:4)-1;
-      posMin = lims(1:2);  posMax=lims(3:4);
-      posStr = min( max(posStr,posMin), posMax-minSiz );
-      posEnd = max( min(posEnd,posMax-1), posMin+minSiz-1 );
-      pos = [posStr posEnd-posStr+1];
+      posStr=pos(1:2);  posEnd=pos(1:2)+pos(3:4);
+      posStr = min( max(posStr,lims(1:2)), lims(3:4)-minSiz );
+      posEnd = max( min(posEnd,lims(3:4)), posStr+minSiz );
+      pos = [posStr posEnd-posStr];
     end
 
     % now constrain for aspect ratio
@@ -157,9 +156,9 @@ api = struct('hRect',hRect, 'getPos',@getPos, 'setPos',@setPos, ...
     for i=1:2
       if( anchor(i)==0 )
         pos(i)=pos0(i); pos(i+2)=pos0(i+2);
-      else
+      else        
         pos(i) = anchor(i);
-        pos(i+2) = max(.01,abs(sgnSiz(i)));
+        pos(i+2) = max(minSiz,abs(sgnSiz(i)));
         if(sgnSiz(i)<0); pos(i)=pos(i)-pos(i+2); end;
       end
     end
@@ -257,17 +256,6 @@ api = struct('hRect',hRect, 'getPos',@getPos, 'setPos',@setPos, ...
       pos = computePos( anchor, pos0, del );
       pos = setPos( pos, anchor, pos0 );
     end
-
-    %%% can display size/pos while resizing/dragging
-    % hText = -1; %global
-    % if(ishandle(hText)); delete(hText); hText=-1; end
-    % if(flag==1); info=pos(1:2); else info=pos(3:4); end
-    % pr = max(ceil(log10(info)),2);
-    % posStr = [num2str(info(1),pr(1)) ', ' num2str(info(2),pr(2))];
-    % hText=text(pos(1),pos(2),posStr,'VerticalAlignment','bottom');
-    % set(hText,'BackgroundColor',[.9 .9 .9],'FontSize',7);
-    %if(ishandle(hText)); delete(hText); hText=-1; end %stopDrag
-
     drawnow
     if(~isempty(posChnCb)); posChnCb(pos); end;
   end
