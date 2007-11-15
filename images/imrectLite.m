@@ -187,7 +187,7 @@ api = struct('hRect',hRect, 'getPos',@getPos, 'setPos',@setPos, ...
     d = sizInner/cms;
   end
 
-  function [anchor,cursor] = getAnchor( pnt, pos )    
+  function [anchor,cursor] = getAnchor( pnt, pos )
     t = axisUnitsPerCentimeter()*.15;
     posE = pos(1:2)+pos(3:4);
     side=[0 0]; anchor=[0 0];
@@ -238,7 +238,7 @@ api = struct('hRect',hRect, 'getPos',@getPos, 'setPos',@setPos, ...
       set(hRect,'Visible','on');
       cursor='botr'; flag=0;
     elseif( flag==0 )
-      % resize (or possibly drag) rectangle 
+      % resize (or possibly drag) rectangle
       pos0 = getPos();  pnt = getCurPnt();
       [anchor,cursor] = getAnchor(pnt,pos0);
       if( all(anchor==0) );
