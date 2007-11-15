@@ -89,10 +89,12 @@ api = struct('hRect',hRect, 'getPos',@getPos, 'setPos',@setPos, ...
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   function pos = getPos()
+    if(isempty(hRect) || isempty(hPatch)); pos=[]; return; end;
     pos = get(hRect,'Position');
   end
 
   function pos = setPos( pos, varargin )
+    if(isempty(hRect) || isempty(hPatch)); return; end;
     pos = constrainPos( pos, varargin{:} );
     xs = pos([1 1 1 1]); xs(2:3)=xs(2:3)+pos(3);
     ys = pos([2 2 2 2]); ys(3:4)=ys(3:4)+pos(4);
@@ -156,7 +158,7 @@ api = struct('hRect',hRect, 'getPos',@getPos, 'setPos',@setPos, ...
     for i=1:2
       if( anchor(i)==0 )
         pos(i)=pos0(i); pos(i+2)=pos0(i+2);
-      else        
+      else
         pos(i) = anchor(i);
         pos(i+2) = max(minSiz,abs(sgnSiz(i)));
         if(sgnSiz(i)<0); pos(i)=pos(i)-pos(i+2); end;
@@ -217,6 +219,7 @@ api = struct('hRect',hRect, 'getPos',@getPos, 'setPos',@setPos, ...
   end
 
   function btnDwn( h, evnt, flag )
+    if(isempty(hRect) || isempty(hPatch)); return; end;
     if( posLock ); return; end;
     if( sizLock ); flag=1; end;
     if( flag==-1 )
@@ -247,6 +250,7 @@ api = struct('hRect',hRect, 'getPos',@getPos, 'setPos',@setPos, ...
   end
 
   function drag( h, evnt, flag, anchor, pos0 ) %#ok<INUSL>
+    if(isempty(hRect) || isempty(hPatch)); return; end;
     pnt = getCurPnt();
     del = pnt-anchor;
     if( flag==1 )
@@ -268,7 +272,9 @@ api = struct('hRect',hRect, 'getPos',@getPos, 'setPos',@setPos, ...
   end
 
   function deleteFcn( h, evnt ) %#ok<INUSD>
-    if(ishandle(hPatch)); delete(hPatch); end;
+    [posChnCb,posSetCb,]=deal([]);
+    if(~isempty(hPatch) && ishandle(hPatch)); delete(hPatch); end;
+    [hRect,hPatch]=deal([]);
   end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -295,6 +301,7 @@ api = struct('hRect',hRect, 'getPos',@getPos, 'setPos',@setPos, ...
   end
 
   function uistack1( varargin )
+    if(isempty(hRect) || isempty(hPatch)); return; end;
     uistack( [hRect hPatch], varargin{:} );
   end
 
