@@ -70,7 +70,7 @@ if(isempty(pos)); vis='off'; else vis='on'; end
 hPatch = patch('FaceColor','None','EdgeColor','none');
 hRect = rectangle(varargin{:},'Visible',vis,'DeleteFcn',@deleteFcn);
 set(hRect,'ButtonDownFcn',{@btnDwn,0});
-set(hPatch,'ButtonDownFcn',{@btnDwn,1});
+set(hPatch,'ButtonDownFcn',{@btnDwn,0});
 
 % set / get position
 if( isempty(pos) )
@@ -187,24 +187,32 @@ api = struct('hRect',hRect, 'getPos',@getPos, 'setPos',@setPos, ...
     d = sizInner/cms;
   end
 
-  function [anchor,cursor] = getAnchor( pnt, pos )
-    t = axisUnitsPerCentimeter() * .2;
+  function [anchor,cursor] = getAnchor( pnt, pos )    
+    t = axisUnitsPerCentimeter()*.15;
+    posE = pos(1:2)+pos(3:4);
     side=[0 0]; anchor=[0 0];
-    posEnd = pos(1:2)+pos(3:4);
-    dStr = abs(pnt-pos(1:2));
-    dEnd = abs(pnt-posEnd);
-    if( any(pnt<pos(1:2)) || any(pnt>posEnd) )
-      t = max( t, min([dStr dEnd])*1.1 );
-    end
     for i=1:2
-      if( dStr(i)<t && dStr(i)<dEnd(i) )
-        side(i) = -1;
-        anchor(i) = posEnd(i);
-      elseif( dEnd(i) < t )
-        side(i) = 1;
+      % figure out which side we're on
+      if( pnt(i)<pos(i) )
+        side(i) = -1; % outside of left/top
+      elseif(pnt(i)>posE(i))
+        side(i) = 1; % outside of right/bot
+      else
+        ti = min(t,pos(2+i)/4);
+        if( pnt(i)-pos(i)<ti )
+          side(i) = -1; % inside near left/top
+        elseif( posE(i)-pnt(i)< ti )
+          side(i) = 1; % inside near right/bot
+        end
+      end
+      % anchor is opposite of side clicked
+      if(side(i)==-1)
+        anchor(i) = posE(i);
+      elseif(side(i)==1)
         anchor(i) = pos(i);
       end
     end
+    % pick cursor accordingly
     switch(side(1)+side(2)*10)
       case -11; cursor='topl';
       case -10; cursor='top';
@@ -230,7 +238,7 @@ api = struct('hRect',hRect, 'getPos',@getPos, 'setPos',@setPos, ...
       set(hRect,'Visible','on');
       cursor='botr'; flag=0;
     elseif( flag==0 )
-      % resize rectangle
+      % resize (or possibly drag) rectangle 
       pos0 = getPos();  pnt = getCurPnt();
       [anchor,cursor] = getAnchor(pnt,pos0);
       if( all(anchor==0) );
