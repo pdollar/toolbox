@@ -62,7 +62,10 @@ function savefig(fname, varargin)
 % Version 1.5, 2006-07-27:
 % - Fixed a bug when calling with a figure handle argument. 
 % Version 1.6, 2006-07-28:
-% - Added a crop options, see above. 
+% - Added a crop option, see above. 
+% Version 1.7, 2007-03-31:
+% - Fixed bug: calling print with invalid renderer value '-none'. 
+% - Removed GhostScript argument '-dUseCIEColor' as it sometimes discoloured things.
 % 
 % TO DO: (Need Ghostscript support for these, so don't expect anything soon...)
 % - svg output.
@@ -93,7 +96,7 @@ function savefig(fname, varargin)
 	gs=		[gs		' -q -dNOPAUSE -dBATCH -dEPSCrop'];					% Essential.
 
 	gs=		[gs		' -dDOINTERPOLATE -dUseFlateCompression=true'];		% Useful stuff.
-	gs=		[gs		' -dUseCIEColor -dAutoRotatePages=/None'];			% Probably good.
+	gs=		[gs		' -dAutoRotatePages=/None'];						% Probably good.
 	gs=		[gs		' -dHaveTrueTypes'];								% More probably good.
 	cmdEnd=			' -sDEVICE=%s -sOutputFile="%s" ';					% Essential.
 	epsCmd=			'';
@@ -177,7 +180,8 @@ function savefig(fname, varargin)
 	
 	% Output eps from Matlab.
 	renderer=	['-' lower(get(gcf, 'Renderer'))];						% Use same as in figure.
-	print(fighandle, deps{:}, '-noui', res, [fname '-temp']);	% Output the eps.
+	if(strcmpi(renderer, '-none')), renderer=	'-painters';	end		% We need a valid renderer.
+	print(fighandle, deps{:}, '-noui', renderer, res, [fname '-temp']);	% Output the eps.
 	
 	% Convert to other formats.
 	for n= 1:length(types)												% Output them.
