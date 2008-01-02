@@ -117,7 +117,6 @@ static void meanshift(double data[], int p, int n, double radius, double rate,
 {
     /* VARIABLE DECLARATIONS */
     float radius2;      /* radius*radius */
-    float b;            /* fraction to shift by */
     int itercount;      /* number of iterations */
     double *mean;       /* mean vector */
     int npoints;        /* number of points used to calc mean vector */
@@ -176,9 +175,10 @@ static void meanshift(double data[], int p, int n, double radius, double rate,
         /* update means, after seeing if there was any change. */
         delta = 0;
         for (i = 0; i < n; i++) {
-            if( deltas[i] && dist( means_next+i*p, means_current+i*p, p )>0.001 ) {
-                delta=1; deltas[i]=1;
-            }
+            if( deltas[i] && dist( means_next+i*p, means_current+i*p, p )>0.001 )
+                delta=1;
+            else
+                deltas[i]=0;
         }
         means_current = (double*) memcpy (means_current, means_next, p * n * sizeof (double));
         
