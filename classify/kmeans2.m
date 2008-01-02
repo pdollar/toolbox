@@ -4,8 +4,8 @@
 % returns the cluster memberships for each data point in the N x 1 vector
 % IDX and the K x p matrix of cluster means in C.
 %
-% This function is in some ways it is less general then Matlab's kmeans.m
-% (for example only uses euclidian distance), but it has some options that
+% This function is in some ways less general than Matlab's kmeans.m (for 
+% example it only uses euclidian distance), but it has some options that
 % the Matlab version does not (for example, it has a notion of outliers and
 % min-cluster size).  It is also many times faster than matlab's kmeans.
 % General kmeans help can be found in help for the matlab implementation of

@@ -8,9 +8,10 @@
 %
 % USAGE
 %  prm = getPrmDflt( prm, dfs )
+%  [ param1 param2 ] = getPrmDflt({'param1' param1 'param2' param2},dfs)
 %
 % INPUTS
-%  prm    - parameters struct
+%  prm    - parameters struct or cell (in the form described below)
 %  dfs    - cell of form {name1,default1,name2,default2,...}
 %
 % OUTPUTS
@@ -27,8 +28,9 @@
 % Please email me if you find bugs, or have suggestions or questions!
 % Liscensed under the Lesser GPL [see external/lgpl.txt]
 
-function prm = getPrmDflt( prm, dfs )
+function varargout = getPrmDflt( prm, dfs )
 
+if (iscell(prm)); prm = cell2struct( prm(2:2:end), prm(1:2:end), 2 ); end
 if(~isstruct(prm)); error('prm must be a struct'); end
 if(mod(length(dfs),2)~=0); error('incorrect num dfs'); end
 
@@ -40,4 +42,9 @@ for i=1:2:length(dfs)
       prm.(dfs{i})=dfs{i+1};
     end
   end
+end
+if nargout==1; varargout(1)={prm}; return; end
+varargout=cell(1,nargout);
+for i=1:2:length(dfs)
+  varargout((i+1)/2)={prm.(dfs{i})};
 end
