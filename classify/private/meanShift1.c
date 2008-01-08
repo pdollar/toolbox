@@ -151,8 +151,8 @@ static void meanshift(double data[], int p, int n, double radius, double rate,
 
 
     /* MAIN LOOP */
-    mexPrintf("Progress: 0.000000"); 
-    mexEvalString("pause(.001);");  fflush(stdout);  
+    mexPrintf("Progress: 0.000000");
+    mexEvalString("pause(.001);");  fflush(stdout);
     itercount = 0;  
     while ((itercount < maxiter) && delta) {
        
@@ -207,8 +207,8 @@ static void meanshift(double data[], int p, int n, double radius, double rate,
                         consolidated[j] = 1;
                     }
             }
-        nclusterlabels++;
-    }
+        	nclusterlabels++;
+    	}
     means_final = (double*) memcpy (means_final, means_current, p * n * sizeof (double));
     nclusterlabels = nclusterlabels-1;
 
