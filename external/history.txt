@@ -1,5 +1,6 @@
 Version NEW
  -optimized images/imtransform2
+ -optimized getPrmDflt. New way of using it too.
  -minor tweak to images/imrectLite
 
 Version 2.02 (31-Oct-07)

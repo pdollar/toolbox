@@ -30,21 +30,52 @@
 
 function varargout = getPrmDflt( prm, dfs )
 
-if (iscell(prm)); prm = cell2struct( prm(2:2:end), prm(1:2:end), 2 ); end
-if(~isstruct(prm)); error('prm must be a struct'); end
-if(mod(length(dfs),2)~=0); error('incorrect num dfs'); end
+if(mod(length(dfs),2)~=0); error('odd number of default parameters'); end
 
-for i=1:2:length(dfs)
-  if( ~isfield(prm,dfs{i}) || isempty(prm.(dfs{i})) )
-    if(strcmp('REQ',dfs{i+1}))
-      error(['Required field ''' dfs{i} ''' not specified.'] );
+if (iscell(prm)) && (nargout~=1)
+  if(mod(length(prm),2)~=0); error('odd number of parameters'); end
+
+  varargout=dfs(2:2:end);
+
+  for i=1:2:length(dfs)
+    j = 0;
+    for k=1:2:length(prm)
+      if strcmp( dfs{i}, prm{k} )
+        j=k; break;
+      end
+    end
+    
+    if j==0
+      if strcmp('REQ',dfs{i+1})
+        error(['Required field ''' dfs{i} ''' not specified.'] );
+      end
     else
-      prm.(dfs{i})=dfs{i+1};
+      varargout{(i+1)*0.5} = prm{j+1};
     end
   end
-end
-if nargout==1; varargout(1)={prm}; return; end
-varargout=cell(1,nargout);
-for i=1:2:length(dfs)
-  varargout((i+1)/2)={prm.(dfs{i})};
+else
+  if (iscell(prm)); prm = cell2struct( prm(2:2:end), prm(1:2:end), 2 ); end
+  if(~isstruct(prm)); error('prm must be a struct'); end
+
+  toDo = isfield( prm, dfs(1:2:end) );
+  for i=find(~toDo)
+    if(strcmp('REQ',dfs{2*i}))
+      error(['Required field ''' dfs{i} ''' not specified.'] );
+    else
+      prm.(dfs{2*i-1})=dfs{2*i};
+    end
+  end
+
+  if nargout==1
+    varargout(1) = {prm};
+  else
+    try
+      varargout = struct2cell( ordedrfields( prm, dfs ) );
+    catch
+      varargout=cell(1,nargout);
+      for i=1:2:length(dfs)
+        varargout((i+1)/2)={prm.(dfs{i})};
+      end
+    end
+  end
 end

@@ -1,4 +1,4 @@
-% Similar to isfield but also test whether fields are intitialized.
+% Similar to isfield but also test whether fields are initialized.
 %
 % A more comprehensive test of what fields are present [and optionally
 % initialized] in a stuct S.  fs is either a single field name or a cell

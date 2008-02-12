@@ -6,13 +6,6 @@
 %   toolbox/external/m2html/templates/frame-piotr/overview.html
 %   1) The version / date
 %   2) Link to rar/zip file
-%
-% After running, remove links to Subsequent directories (*/private and
-% */.svn from):
-%  doc/classify/menu.html
-%  doc/iamges/menu.html
-%  doc/filters/menu.html
-%  doc/matlab/menu.html
 % 
 % USAGE
 %  toolboxGenDoc
@@ -41,3 +34,21 @@ copyfile('external\m2html\templates\menu-for-frame-piotr.html','doc/menu.html')
 
 % copy history file
 copyfile('external\history.txt','doc/history.txt')
+
+% remove links to .svn and private in the menu.html files
+d = { './doc' };
+
+while ~isempty(d)
+  dTmp = dir(d{1});
+  for i = 1 : length(dTmp)
+    name = dTmp(i).name;
+    if strcmp( name,'.') || strcmp( name,'..'); continue; end
+    if dTmp(i).isdir; d{end+1} = [ d{1} '/' name ]; continue; end
+    if ~strcmp( name,'menu.html'); continue; end
+    fid = fopen( [ d{1} '/' name ], 'r' ); c = fread(fid, '*char')'; fclose( fid );
+    c = regexprep( c, '<li>([^<]*[<]?[^<]*)\.svn([^<]*[<]?[^<]*)</li>', '');
+    c = regexprep( c, '<li>([^<]*[<]?[^<]*)private([^<]*[<]?[^<]*)</li>', '');
+    fid = fopen( [ d{1} '/' name ], 'w' ); fwrite( fid, c ); fclose( fid );
+  end
+  d(1) = [];
+end
