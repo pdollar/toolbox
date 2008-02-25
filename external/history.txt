@@ -1,7 +1,10 @@
-Version NEW
+Version 2.03 (25-Feb-08)
+ -optimized getPrmDflt. New cleaner way of using it too.
  -optimized images/imtransform2
- -optimized getPrmDflt. New way of using it too.
- -minor tweak to images/imrectLite
+ -minor performance tweak for meanShift1.c
+ -minor tweaks to images/imrectLite
+ -minor tweak to doc index.html file to remove scrollbars if unnecessary
+ -typos fixes in documentation, learned to spell "license"
 
 Version 2.02 (31-Oct-07)
  -made images/im.m compatible with Matlab2007b

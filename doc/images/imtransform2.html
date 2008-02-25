@@ -59,10 +59,16 @@
  OUTPUTS
   IR      - transformed image
 
- EXAMPLE - general homography
+ EXAMPLE - general homography (rotation + translation)
   load trees; I=X;
   R = rotationMatrix( pi/4 ); T = [1; 3]; H = [R T; 0 0 1];
   IR = imtransform2( I, H, [], 'crop', 1 );
+
+ EXAMPLE - general homography (out of plane rotation)
+  load trees; I=X;
+  R = rotationMatrix( [0 1 0], pi/4 );  z=500;
+  H = R; H(1:2,:)=H(1:2,:)*z; H(:,3)=H(:,3)*z;
+  IR = imtransform2(I,H,'nearest','loose',1);
 
  EXAMPLE - rotation
   load trees;
@@ -74,7 +80,7 @@
  EXAMPLE - translation
   load trees;
   XT = imtransform2(X,0,1.5,'bicubic','crop');
-  figure(1); clf; im(X,[0 255]); figure(2); clf; im(XT,[0 255]);
+  figure(1); clf; im(X,[0 128]); figure(2); clf; im(XT,[0 128]);
 
  See also <a href="textureMap.html" class="code" title="function [IR,boundX,boundY] = textureMap(I, rowDst, colDst, bbox, holeVal)">TEXTUREMAP</a>, INTERP2</pre></div>
 
@@ -90,6 +96,6 @@ This function is called by:
 
 
 
-<hr><address>Generated on Wed 31-Oct-2007 13:15:59 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+<hr><address>Generated on Mon 25-Feb-2008 14:38:40 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
 </body>
 </html>

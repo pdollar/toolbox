@@ -20,7 +20,7 @@
 <div class="box"><strong>Helper to set default values (if not already set) of parameter struct.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function prm = getPrmDflt( prm, dfs ) </strong></div>
+<div class="box"><strong>function varargout = getPrmDflt( prm, dfs ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment"> Helper to set default values (if not already set) of parameter struct.
@@ -33,9 +33,10 @@
 
  USAGE
   prm = getPrmDflt( prm, dfs )
+  [ param1 param2 ] = getPrmDflt({'param1' param1 'param2' param2},dfs)
 
  INPUTS
-  prm    - parameters struct
+  prm    - parameters struct or cell (in the form described below)
   dfs    - cell of form {name1,default1,name2,default2,...}
 
  OUTPUTS
@@ -59,6 +60,6 @@ This function is called by:
 
 
 
-<hr><address>Generated on Wed 31-Oct-2007 13:15:59 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+<hr><address>Generated on Mon 25-Feb-2008 14:38:40 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
 </body>
 </html>
