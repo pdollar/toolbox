@@ -46,6 +46,7 @@
 %   imwrite2       - Similar to imwrite, except follows a strict naming convention.
 %   jitterImage    - Creates multiple, slightly jittered versions of an image.
 %   jitterVideo    - Creates multiple, slightly jittered versions of a video.
+%   kernelTracker  - Kernel Tracker from Comaniciu, Ramesh and Meer PAMI 2003.
 %   localSum       - Fast routine for box filtering.
 %   maskCircle     - Creates an image of a 'pie slice' of a circle.
 %   maskEllipse    - Creates a binary image of an ellipse.
