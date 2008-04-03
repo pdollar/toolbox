@@ -87,7 +87,7 @@
 %
 % See also
 
-% Piotr's Image&Video Toolbox      Version 2.02
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -103,9 +103,24 @@ end
 
 %%% Takes a rotation matrix and extracts the rotation angle and axis.
 if all(size(varargin{1})==[3 3]) && nargout==2
-  r = vrrotmat2vec(varargin{1});
-  varargout{1} = r(1:3)';
-  varargout{2} = r(4);
+  R=varargin{1};
+  % find location of eigenvector with eigen value other than 1
+  % eigenvalue has form cos(theta) +- i sin(theta)
+  [v,d]=eig( R );
+  [dr, disc] = find( imag(d)==0 & real(d)~=0 );  %#ok<NASGU>
+  u = v(:,dr);
+  varargout{1}=u;
+  if (dr==1)
+    theta = acos(real( d(2,2) ));
+  else
+    theta = acos(real( d(1,1) ));
+  end
+
+  %now resolve sign ambiguity
+  epsilon = ones(3)*.000001;
+  dif = R-rotationMatrix(u,theta);
+  if( any(any(dif<-epsilon)) || any(any(dif>epsilon))); theta = -theta; end
+  varargout{2}=theta;
   return
 end
 
@@ -120,7 +135,8 @@ end
 if all(sort(size(varargin{1}))==[1 3])
   if size(varargin{1},1) == 3; varargin{1}=varargin{1}'; end
   if nargin==1; th=norm(varargin{1}); else th=varargin{2}; end
-  varargout{1} = makehgtform('axisrotate',varargin{1},th);
+  tmp = makehgtform('axisrotate',varargin{1},th);
+  varargout{1} = tmp(1:3,1:3);
   return
 end
 
