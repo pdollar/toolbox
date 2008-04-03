@@ -35,6 +35,7 @@
 %   int2str2          - Convert integer to string of given length; improved version of int2str.
 %   normpdf2          - Normal prob. density function (pdf) with arbitrary covariance matrix.
 %   num2strs          - Applies num2str to each element of an array X.
+%   plotRoc           - Function for display of rocs (receiver operator characteristic curves).
 %   randint2          - Faster but restricted version of randint.
 %   rotationMatrix    - Performs different operations dealing with a rotation matrix
 %   simpleCache       - A simple cache that can be used to store results of computations.
