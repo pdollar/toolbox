@@ -1,3 +1,8 @@
+Version NEW
+ -added kernelTracker.m (and helper funciton) to /images
+ -added plotRoc.m to /matlab
+ -minor update to RotationMatrix
+
 Version 2.03 (25-Feb-08)
  -optimized getPrmDflt. New cleaner way of using it too.
  -optimized images/imtransform2
