@@ -4,7 +4,9 @@
 % look for rocs. The input D should have n rows, each of which is of the
 % form [false-positive rate true-positive rate]. D is generated, for
 % example, by scanning a detection threshold over n values from 0 (so first
-% entry in D is [1 1]) to 1 (so last entry is [0 0]).
+% entry in D is [1 1]) to 1 (so last entry is [0 0]). Alternatively D can
+% be a cell vector of rocs, in which case an average ROC will be shown with
+% error bars.
 %
 % USAGE
 %  h = plotRoc( D, prm )
@@ -50,18 +52,23 @@ lims=prm.lims; logx=prm.logx; logy=prm.logy;
 if( isempty(lims) ); lims=[logx*1e-5 1 logy*1e-5 1]; end
 
 % flip to plot miss rate, optionally 'nicefy' roc
-D(:,2)=max(eps,1-D(:,2))+.001;
-if(prm.smooth); D=smoothRoc( D ); end;
+if(~iscell(D)), D={D}; end; nD=length(D);
+for j=1:nD, D{j}(:,2)=max(eps,1-D{j}(:,2))+.001; end
+if(prm.smooth); for j=1:nD, D{j}=smoothRoc(D{j}); end; end;
 
-% separately plot: (1) h for legend only, (2) curves, (3) a few markers
+% plot: (1) h for legend only, (2) roc curves, (3) markers, (4) error bars
 hold on; axis(lims);
 prmMrkr = {'MarkerSize',prm.mrkrSiz,'MarkerFaceColor',color};
-prmPlot = {'Color',color, 'LineWidth',prm.lineWd };
-h = plot( 2, 0, [prm.lineSt marker], prmMrkr{:}, prmPlot{:} );
-plot( D(:,1), D(:,2), prm.lineSt, prmPlot{:} );
+prmClr={'Color',color}; prmPlot = {prmClr{:},'LineWidth',prm.lineWd };
+h = plot( 2, 0, [prm.lineSt marker], prmMrkr{:}, prmPlot{:} ); %(1)
+if(nD==1), D1=D{j}; else D1=mean(quantizeRoc(D,100,logx,lims),3); end
+plot( D1(:,1), D1(:,2), prm.lineSt, prmPlot{:} ); %(2)
+DQ = quantizeRoc( D, prm.nMarker, logx, lims ); DQm=mean(DQ,3);
 if(~isempty(marker))
-  DQ = quantizeRocData( D, prm.nMarker, logx, lims );
-  plot( DQ(:,1), DQ(:,2), marker,'Color',color,prmMrkr{:} );
+  plot(DQm(:,1),DQm(:,2),marker,prmClr{:},prmMrkr{:} ); %(3)
+end
+if(nD>1), DQs=std(squeeze(DQ(:,2,:)),0,2);
+  errorbar(DQm(:,1),DQm(:,2),DQs,'.',prmClr{:}); %(4)
 end
 
 % set log axes
@@ -80,7 +87,13 @@ end
 
 end
 
-function DQ = quantizeRocData( D, nPnts, logx, lims )
+function DQ = quantizeRoc( D, nPnts, logx, lims )
+if(iscell(D))
+  nD=length(D); DQ=zeros(nPnts,2,nD);
+  for j=1:nD, DQ(:,:,j)=quantizeRoc(D{j},nPnts,logx,lims); end
+  return;
+end
+
 if( logx==1 )
   locs = logspace(log10(lims(1)),log10(lims(2)),nPnts);
 else
@@ -88,7 +101,7 @@ else
 end
 DQ = [locs' ones(length(locs),1)];
 
-loc=1;
+loc=1; D=[1 0; D; 0 1]; D=max(0,min(D,1));
 for i=length(locs):-1:1
   fpCur = DQ(i,1);
   while( loc<size(D,1) && D(loc,1)>=fpCur )
