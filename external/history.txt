@@ -1,6 +1,7 @@
 Version NEW
  -added kernelTracker.m (and helper funciton) to /images
  -added plotRoc.m to /matlab
+ -added dirSynch.m to /matlab
  -minor update to RotationMatrix
 
 Version 2.03 (25-Feb-08)
