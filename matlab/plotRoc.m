@@ -42,28 +42,28 @@
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
-function h = plotRoc( D, prm )
+function h = plotRoc( D, varargin )
 
 % get params
-dfs = {'color','g', 'lineSt','-', 'lineWd',4, 'logx',0, 'logy',0, ...
-  'marker','', 'mrkrSiz',12, 'nMarker',5, 'lims',[], 'smooth',0 };
-prm=getPrmDflt(prm, dfs); color=prm.color; marker=prm.marker;
-lims=prm.lims; logx=prm.logx; logy=prm.logy;
+[ color lineSt lineWd logx logy marker mrkrSiz nMarker lims smooth  ] = ...
+  getPrmDflt( varargin, {'color' 'g' 'lineSt' '-' 'lineWd' 4 'logx' 0 ...
+  'logy' 0 'marker' '' 'mrkrSiz' 12 'nMarker' 5 'lims' []  'smooth' 0 } );
+
 if( isempty(lims) ); lims=[logx*1e-5 1 logy*1e-5 1]; end
 
 % flip to plot miss rate, optionally 'nicefy' roc
 if(~iscell(D)), D={D}; end; nD=length(D);
 for j=1:nD, D{j}(:,2)=max(eps,1-D{j}(:,2))+.001; end
-if(prm.smooth); for j=1:nD, D{j}=smoothRoc(D{j}); end; end;
+if(smooth); for j=1:nD, D{j}=smoothRoc(D{j}); end; end
 
 % plot: (1) h for legend only, (2) roc curves, (3) markers, (4) error bars
 hold on; axis(lims);
-prmMrkr = {'MarkerSize',prm.mrkrSiz,'MarkerFaceColor',color};
-prmClr={'Color',color}; prmPlot = {prmClr{:},'LineWidth',prm.lineWd };
-h = plot( 2, 0, [prm.lineSt marker], prmMrkr{:}, prmPlot{:} ); %(1)
+prmMrkr = {'MarkerSize',mrkrSiz,'MarkerFaceColor',color};
+prmClr={'Color',color}; prmPlot = {prmClr{:},'LineWidth',lineWd };
+h = plot( 2, 0, [lineSt marker], prmMrkr{:}, prmPlot{:} ); %(1)
 if(nD==1), D1=D{j}; else D1=mean(quantizeRoc(D,100,logx,lims),3); end
-plot( D1(:,1), D1(:,2), prm.lineSt, prmPlot{:} ); %(2)
-DQ = quantizeRoc( D, prm.nMarker, logx, lims ); DQm=mean(DQ,3);
+plot( D1(:,1), D1(:,2), lineSt, prmPlot{:} ); %(2)
+DQ = quantizeRoc( D, nMarker, logx, lims ); DQm=mean(DQ,3);
 if(~isempty(marker))
   plot(DQm(:,1),DQm(:,2),marker,prmClr{:},prmMrkr{:} ); %(3)
 end
