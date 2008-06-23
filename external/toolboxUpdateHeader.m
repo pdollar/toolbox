@@ -66,9 +66,10 @@ function moveComment( fName ) %#ok<DEFNU>
 lines=readFile(fName); n=length(lines);
 
 % check first non-comment lines is "function ..." if not, we're done
+for i=1:n; L=lines{i}; if(~isempty(L)&&L(1)~='%'), break; end; end
 if(i==n || ~strcmp(lines{i}(1:8),'function')),
   warning([fName ' not a function']); return; %#ok<WNTAG>
-end;
+end; if(i==1), return; end;
 
 % Move main comment to appear after "function ..."
 if(~isempty(lines{i+1})), start=i+1; else start=i+2; end;
