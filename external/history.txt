@@ -2,7 +2,7 @@ Version NEW
  -added kernelTracker.m (and helper funciton) to /images
  -added plotRoc.m to /matlab
  -added dirSynch.m to /matlab
- -made matlab/getPrmDef.m more flexible
+ -made matlab/getPrmDflt.m more flexible
  -minor update to RotationMatrix
 
 Version 2.03 (25-Feb-08)
