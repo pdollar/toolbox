@@ -72,6 +72,7 @@ if(i==n || ~strcmp(lines{i}(1:8),'function')),
 end; if(i==1), return; end;
 
 % Move main comment to appear after "function ..."
+% This FAILS if func spans multiple lines (use mlint to find failures)!!!
 if(~isempty(lines{i+1})), start=i+1; else start=i+2; end;
 lines={lines{i} lines{[1:i-1 start:end]}}; lines=lines';
 writeFile( fName, lines );
