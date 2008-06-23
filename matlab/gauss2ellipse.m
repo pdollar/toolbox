@@ -1,3 +1,4 @@
+function [cRow, cCol, ra, rb, phi] = gauss2ellipse( mu, C, rad )
 % Creates an ellipse representing the 2D Gaussian distribution.
 %
 % Creates an ellipse representing the 2D Gaussian distribution with mean mu
@@ -23,13 +24,11 @@
 %  plotEllipse( cRow, cCol, ra, rb, phi );
 %
 % See also PLOTELLIPSE, PLOTGAUSSELLIPSES, MASKELLIPSE
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function [cRow, cCol, ra, rb, phi] = gauss2ellipse( mu, C, rad )
 
 if (nargin<3 || isempty(rad) ); rad=2; end;
 

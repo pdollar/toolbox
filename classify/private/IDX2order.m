@@ -1,3 +1,4 @@
+function order = IDX2order( IDX )
 % Converts class labels into an ordering.
 %
 % Creates an ordering order such that IDX(order)=[1 1...1 2...2 ... k...k].
@@ -18,13 +19,11 @@
 %  order = IDX2order( [1 1 3 1 2 2] )  % should be: [1 2 4 5 6 3]
 %
 % See also DISTMATRIXSHOW
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function order = IDX2order( IDX )
 
 k = max(IDX);  n = length(IDX);
 order = zeros(1,n);  count = 0;

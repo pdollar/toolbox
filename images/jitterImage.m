@@ -1,3 +1,5 @@
+function IJ = jitterImage( I, nphis, maxphi, ntrans, maxtrans, ...
+  jsiz, reflFlag, scales )
 % Creates multiple, slightly jittered versions of an image.
 %
 % Takes an image I, and generates a number of images that are copies of the
@@ -57,14 +59,11 @@
 %  montage2(IJ)
 %
 % See also JITTERVIDEO
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function IJ = jitterImage( I, nphis, maxphi, ntrans, maxtrans, ...
-                            jsiz, reflFlag, scales )
 
 % NOTE: CODE HAS BECOME REALLY MESSY :-(
 
@@ -103,7 +102,7 @@ if( nphis>1 ); needSiz = sqrt(2)*needSiz+1; end
 if( size(scales,1)>1 ) % size needed for scaling
   needSiz = [needSiz(1)*max(scales(:,1)) needSiz(2)*max(scales(:,2))];
 end
-needSiz = ceil(needSiz); 
+needSiz = ceil(needSiz);
 if( ndims(I)==3 ); needSiz = [needSiz siz(3)]; end
 deltasGrow = ceil( max( (needSiz - size(I))/2, 0 ) );
 if( any(deltasGrow>0) )
@@ -124,9 +123,8 @@ else
   error('Only defined for 2 or 3 dimensional I');
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% this function does the work for SCALE
 function IJ = jitterImage1( I, jsiz, phis, trans, scales, reflFlag )
+% this function does the work for SCALE
 method = 'linear';
 nscales = size(scales,1);
 if( nscales==1 ) % if just 1 scaling
@@ -151,9 +149,9 @@ end
 % add reflection if reflFlag
 if( reflFlag ); IJ = cat( 3, IJ, flipdim( IJ, 2 ) ); end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% this function does the work for ROT/TRANS
 function IJ = jitterImage2( I, jsiz, phis, trans )
+% this function does the work for ROT/TRANS
+
 method = 'linear';
 ntrans = size(trans,2); nphis = length(phis); nops = ntrans*nphis;
 siz = size(I);   deltas = (siz - jsiz)/2;

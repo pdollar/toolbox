@@ -1,3 +1,4 @@
+function [allRct, allSim, allIc] = kernelTracker( I, prm )
 % Kernel Tracker from Comaniciu, Ramesh and Meer PAMI 2003.
 %
 % Implements the algorithm described in "Kernel-Based Object Tracking" by
@@ -51,13 +52,11 @@
 %  figure(3); clf; montage2(allIc,struct('hasChn',true));
 %
 % See also
-
-% Piotr's Image&Video Toolbox      Version NEW
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+%
+% Piotr's Image&Video Toolbox      Version 2.04
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function [allRct, allSim, allIc] = kernelTracker( I, prm )
 
 %%% get parameters (set defaults)
 if( nargin<1 ); I=[]; end;
@@ -160,8 +159,6 @@ end
 
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 function [p,pos,Ic,sim] = kernelTracker1( I, q, pos, kernel, nBit )
 
 mRows=size(I,1); nCols=size(I,2);
@@ -192,8 +189,6 @@ end
 locs=p>0; sim=sum( sqrt(q(locs).*p(locs)) );
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 function kernel = buildKernel( wd, ht )
 wd = round(wd/2)*2;  xs = linspace(-1,1,wd);
 ht = round(ht/2)*2;  ys = linspace(-1,1,ht);
@@ -203,22 +198,16 @@ K = 2/pi * (1-xMag);  sumK=sum(K);
 kernel = struct( 'K',K, 'sumK',sumK, 'xs',xs, 'ys',ys, 'wd',wd, 'ht',ht );
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 function p = buildHist( Qc, kernel, nBit )
 p = ktHistcRgb_c( Qc, kernel.K, nBit ) / kernel.sumK;
 if(0); p=gaussSmooth(p,.5,'same',2); p=p*(1/sum(p(:))); end;
 end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function [Ic,Qc] = cropWindow( I, nBit, pos, wd, ht )
 row = pos(2)-ht/2;  col = pos(1)-wd/2;
 Ic = I(row:row+ht-1,col:col+wd-1,:);
 if(nargout==2); Qc=bitshift(reshape(Ic,[],3),nBit-8); end;
 end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function I = toyData( n, sigma )
 I1 = imresize(imread('peppers.png'),[256 256],'bilinear');
@@ -230,8 +219,6 @@ for i=1:n
 end;
 I=I((1:256)+128,(1:256)+128,:,:);
 end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % % debugging code
 % if( debug )

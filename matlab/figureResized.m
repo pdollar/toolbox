@@ -1,3 +1,4 @@
+function varargout = figureResized( screenratio, varargin )
 % Creates a figures that takes up certain area of screen.
 %
 % Almost same as figure, except get to specify what fraction of available
@@ -17,13 +18,11 @@
 %  figureResized( .75 )
 %
 % See also FIGURE
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function varargout = figureResized( screenratio, varargin )
 
 if( nargin<1 ); screenratio=.3; end
 if( screenratio>1 ); error('screenratio must be <= 1'); end

@@ -1,3 +1,4 @@
+function F = filmStrip( I, overlap, delta, border )
 % Used to display R stacks of T images as a "filmstrip".
 %
 % See examples below to see what is meant by "filmstrip".
@@ -21,13 +22,11 @@
 %  F2 = filmStrip( videos(:,:,:,1:10), 5, 2, 3 ); figure(2); im(F2); % many
 %
 % See also MONTAGE2
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function F = filmStrip( I, overlap, delta, border )
 
 % convert I to be of type double, and have dimensions MxNxCxTxR
 I = double(I); I = I/max(I(:)); sizI = size(I);
@@ -54,7 +53,7 @@ for i=1:nStrip
 
   % merge with the previous film strips
   if( i==1 ); F = -ones( sizF );  row2=1;  end
-  Fc = F( row2:(row2+mRowsF1-1), : ); 
+  Fc = F( row2:(row2+mRowsF1-1), : );
   locs=(Fc<0);  Fc(locs) = Fi(locs);
   F( row2:(row2+mRowsF1-1), :  ) = Fc;
   row2 = row2 + mRowsF1 - ((nFrame-1-2)*delta);

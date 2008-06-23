@@ -1,3 +1,4 @@
+function X = imNormalize( X, flag )
 % Various ways to normalize a (multidimensional) image.
 %
 % X may have arbitrary dimension (ie an image or video, etc).  X is treated
@@ -27,13 +28,11 @@
 %  [mean(I(:)), std(I(:)), mean(N(:)), std(N(:))]
 %
 % See also FEVALARRAYS
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function X = imNormalize( X, flag )
 
 if (isa(X,'uint8')); X = double(X); end
 if (nargin<2 || isempty(flag)); flag=1; end

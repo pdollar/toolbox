@@ -1,3 +1,4 @@
+function w = tpsRandom( LnInv, bendE )
 % Obtain a random warp with the same bending energy as the original.
 %
 % USAGE
@@ -13,13 +14,11 @@
 % EXAMPLE
 %
 % See also TPSGETWARP
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function w = tpsRandom( LnInv, bendE )
 
 n = size(LnInv,1);
 u = rand(n-3,1) - .5;

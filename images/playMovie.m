@@ -1,3 +1,4 @@
+function M = playMovie( I, fps, loop, prm )
 % Shows/makes an/several movie(s) from an image sequence.
 %
 % To play a matlab movie file, as an alternative to movie, use:
@@ -54,13 +55,11 @@
 %  clf; M = playMovie( ICcell, [], 5, struct('showLines',0) );
 %
 % See also MONTAGE2, MOVIETOIMAGES, MOVIE
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function M = playMovie( I, fps, loop, prm )
 
 if( nargin<2 || isempty(fps)); fps = 100; end
 if( nargin<3 || isempty(loop)); loop = 1; end
@@ -113,7 +112,6 @@ for nplayed = 1 : abs(loop)
 end
 if nargout>0; close(h); end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   function siz=sizeWithouti(I)
     siz=size(I); if( prm.hasChn ); siz(4)=[]; else siz(3)=[];end
   end

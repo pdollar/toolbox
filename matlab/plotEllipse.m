@@ -1,3 +1,4 @@
+function h = plotEllipse( cRow, cCol, ra, rb, phi, color, nPnts )
 % Adds an ellipse to the current plot.
 %
 % USAGE
@@ -19,13 +20,11 @@
 %  plotEllipse( 3, 2, 1, 5, pi/6, 'g');
 %
 % See also PLOTGAUSSELLIPSES
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function h = plotEllipse( cRow, cCol, ra, rb, phi, color, nPnts )
 
 error(nargchk( 5, 7, nargin ));
 if( nargin<6 || isempty(color) ); color = 'b'; end

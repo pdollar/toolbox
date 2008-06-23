@@ -1,3 +1,4 @@
+function id = ticStatus( msg, updateFreq, updateMinT, erasePrev )
 % Used to display the progress of a long process.
 %
 % Essentially, use 'ticId = ticStatus' to start a new progress
@@ -56,13 +57,11 @@
 %  for i=1:100; pause(.1); tocStatus( ticId, i/100 ); end
 %
 % See also TOCSTATUS, TIC, TOC
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function id = ticStatus( msg, updateFreq, updateMinT, erasePrev )
 
 global TT_STATUS TT_FREE_IDS
 

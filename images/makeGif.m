@@ -1,3 +1,4 @@
+function makeGif( M, fileName, prm )
 % Writes a matlab movie to an animated GIF.
 %
 % USAGE
@@ -20,13 +21,11 @@
 %  makeGif( M, 'mouse.gif', struct('scale',0.5) );
 %
 % See also PLAYMOVIE, MONTAGE2
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function makeGif( M, fileName, prm )
 
 dfs = {'fps',30, 'nColor',256, 'scale',1, 'loop', 0};
 prm = getPrmDflt( prm, dfs );

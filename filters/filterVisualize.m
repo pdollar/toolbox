@@ -1,3 +1,4 @@
+function filterVisualize( f, show, arg )
 % Used to visualize a 1D/2D/3D filter.
 %
 % For 1d filters:
@@ -32,13 +33,11 @@
 %  f=filterDoog([51 51 99],[3 3 5],[1 2 3],0); filterVisualize(f,4,.1); %3d
 %
 % See also FILTERGAUSS, FBVISUALIZE
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function filterVisualize( f, show, arg )
 
 if( nargin<2 || isempty(show) ); show=1; end;
 if( nargin<3 || isempty(arg) ); arg=[]; end;

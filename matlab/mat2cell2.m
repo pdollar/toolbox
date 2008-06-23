@@ -1,3 +1,4 @@
+function C = mat2cell2( X, parts )
 % Break matrix up into a cell array of same sized matrices.
 %
 % Useful wrapper for matlab function mat2cell.  Instead of specifying
@@ -25,13 +26,11 @@
 %  A=rand(6,10); B = mat2cell2(A,[3 3]),
 %
 % See also MAT2CELL, CELL2ARRAY, CELL2MAT
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function C = mat2cell2( X, parts )
 
 siz = size(X); nd = ndims(X);
 [parts,er] = checkNumArgs( parts, size(siz), 0, 2 ); error(er);

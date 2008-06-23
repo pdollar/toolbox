@@ -1,3 +1,4 @@
+function I2 = FbReconstruct2d( I, FB, patch )
 % Use to see how much image information is preserved in filter outputs.
 %
 % Reconstructs the orginal image from filter outputs (approximately). The
@@ -26,13 +27,11 @@
 %  I2 = FbReconstruct2d( X, FB, 0 );
 %
 % See also FBAPPLY2D
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function I2 = FbReconstruct2d( I, FB, patch )
 
 FBmrows = size(FB,1); FBncols = size(FB,2);
 FBrowRad = (FBmrows-1)/2;  FBcolRad = (FBncols-1)/2;

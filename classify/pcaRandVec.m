@@ -1,3 +1,4 @@
+function Xr = pcaRandVec( U, mu, vars, k, n, hypershpere, show )
 % Generate random vectors in PCA subspace.
 %
 % Used to generate random vectors from the subspace spanned by the first k
@@ -26,13 +27,11 @@
 % EXAMPLE
 %
 % See also PCA IMNORMALIZE
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function Xr = pcaRandVec( U, mu, vars, k, n, hypershpere, show )
 
 if( nargin<6 || isempty(hypershpere) ); hypershpere=0; end
 if( nargin<7 || isempty(show) ); show=0; end

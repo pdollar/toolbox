@@ -1,3 +1,4 @@
+function I = movieToImages( M )
 % Creates a stack of images from a matlab movie M.
 %
 % Repeatedly calls frame2im. Useful for playback with playMovie.
@@ -17,18 +18,14 @@
 %  I = movieToImages(M); playMovie(I);
 %
 % See also PLAYMOVIE
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
-function I = movieToImages( M )
-
 I = fevalArrays( M, @frame2Ii );
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function I = frame2Ii( F )
 
 [I,map] = frame2im( F );

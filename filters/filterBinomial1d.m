@@ -1,3 +1,4 @@
+function f = filterBinomial1d( r, show )
 % 1D binomial filter (approximation to Gaussian filter)
 %
 % Creates a binomial filter of size 2*r+1 x 1.  This can be used to
@@ -24,13 +25,11 @@
 %  fgauss = filterGauss( 2*r+1, [], (2*r+1)/4, 2);
 %
 % See also FILTERGAUSS
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function f = filterBinomial1d( r, show )
 
 if( nargin<2 ); show=0; end;
 if( mod(r,1)~=0 ); error( 'r must be an integer'); end;

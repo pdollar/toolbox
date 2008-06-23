@@ -1,3 +1,4 @@
+function varargout = getPrmDflt( prm, dfs )
 % Helper to set default values (if not already set) of parameter struct.
 %
 % Takes input parameters and a list of 'name'/default pairs, and for each
@@ -30,13 +31,11 @@
 %  [ x y z eps ] = getPrmDflt( {'x',2,'y',1}, dfs )
 %
 % See also
-
-% Piotr's Image&Video Toolbox      Version NEW
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+%
+% Piotr's Image&Video Toolbox      Version 2.04
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function varargout = getPrmDflt( prm, dfs )
 
 if (mod(length(dfs),2)~=0); error('odd number of default parameters'); end
 

@@ -1,3 +1,4 @@
+function [masks,keepLocs] = maskGaussians( siz, M, width, offset, show )
 % Divides a volume into softly overlapping gaussian windows.
 %
 % Return M^nd masks each of size siz.  Each mask represents a symmetric
@@ -44,13 +45,11 @@
 %  masks = maskGaussians( [35 35 35], [2 2 4], .6, .1, 1 ); %3D
 %
 % See also HISTCIMLOC, MASKCIRCLE
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function [masks,keepLocs] = maskGaussians( siz, M, width, offset, show )
 
 nd = length(siz);
 if( nargin<3 || isempty(width)); width = .6; end;    

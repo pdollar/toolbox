@@ -1,3 +1,4 @@
+function [Vx,Vy] = optFlowHorn( I1, I2, sigma, show )
 % Calculate optical flow using Horn & Schunck.
 %
 % USAGE
@@ -14,13 +15,11 @@
 % EXAMPLE
 %
 % See also OPTFLOWCORR, OPTFLOWLK
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function [Vx,Vy] = optFlowHorn( I1, I2, sigma, show )
 
 if (nargin < 3); sigma=1; end;
 if (nargin < 4); show=0; end;
@@ -73,14 +72,12 @@ if( show )
   hold('on'); quiver( Vx, Vy, 0,'-b' ); hold('off');
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function I=clamp(I)
 I(1,:)=0;
 I(end,:)=0;
 I(:,1)=0;
 I(:,end)=0;
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [s1,s2,s3,s4,s5]=shifted(I)
 [N1,N2]=size(I);
 

@@ -1,3 +1,4 @@
+function ps = normpdf2( xs, m, C )
 % Normal prob. density function (pdf) with arbitrary covariance matrix.
 %
 % Evaluate the multi-variate density with mean vector m and covariance
@@ -20,13 +21,11 @@
 %  ps = normpdf2( randn(10,2), [0 0], eye(2) )
 %
 % See also NORMPDF
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function ps = normpdf2( xs, m, C )
 
 % get dimensions of data
 d=length(m);

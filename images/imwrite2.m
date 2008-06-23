@@ -1,3 +1,5 @@
+function I = imwrite2( I, mulFlag, imagei, path, ...
+  name, ext, nDigits, nSplits, spliti, varargin )
 % Similar to imwrite, except follows a strict naming convention.
 %
 % Wrapper for imwrite that writes file to the filename:
@@ -44,21 +46,18 @@
 %  imwrite2( I, 1, 0, 'rats/', 'rats', 'png', 5 );          % write 5
 %  I2 = imwrite2( [], 1, 0, 'rats/', 'rats', 'png', 5 );    % read 5
 %  I3 = fevalImages(@(x) x,{},'rats/','rats','png',0,4,5);  % read 5
-%  
+%
 % EXAMPLE - multiple splits
 %  load images; I=images(:,:,1:10); clear IDXi IDXv t video videos images;
 %  imwrite2( I, 1, 0, 'rats', 'rats', 'png', 5, 2, 0 );      % write 10
 %  I2=imwrite2( [], 1, 0, 'rats', 'rats', 'png', 5, 2, 0 );  % read 10
 %
 % See also FEVALIMAGES, FEVALARRAYS
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function I = imwrite2( I, mulFlag, imagei, path, ...
-  name, ext, nDigits, nSplits, spliti, varargin )
 
 if( nargin<5 || isempty(name) );    name='I'; end;
 if( nargin<6 || isempty(ext) );     ext='png'; end;
@@ -75,7 +74,7 @@ if( nSplits>1 )
     pathS = [path int2str2(s-1+spliti,2)];
     if( n>0 ) % write
       nPerDir = ceil( n / nSplits );
-      ISplit = I(:,:,1:min(end,nPerDir));      
+      ISplit = I(:,:,1:min(end,nPerDir));
       imwrite2( ISplit, nPerDir>1, 0, pathS, write2inp{:} );
       if( s~=nSplits ); I = I(:,:,(nPerDir+1):end); end
     else % read
@@ -118,10 +117,8 @@ else
   end;
 end
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% helper for writing multiple images (passed to fevalArrays)
 function varargout = imwrite2m( I, type, varargin )
+% helper for writing multiple images (passed to fevalArrays)
 
 persistent imagei path name ext nDigits params
 switch type
@@ -138,10 +135,8 @@ switch type
     varargout = {[]};
 end
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% helper for writing a single image
 function imwrite2s( I, imagei, path, name, ext, nDigits, params )
+% helper for writing a single image
 
 fullname = [path name int2str2(imagei,nDigits) '.' ext];
 imwrite( I, fullname, params{:} );

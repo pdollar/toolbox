@@ -1,3 +1,4 @@
+function [warp,L,LnInv,bendE] = tpsGetWarp( lambda, xsS, ysS, xsD, ysD )
 % Given two sets of corresponding points, calculates warp between them.
 %
 % Uses booksteins PAMI89 method.  Can then apply warp to a new set of
@@ -34,13 +35,11 @@
 %  tpsInterpolate( warp, gxs, gys, 1 );
 %
 % See also TPSINTERPOLATE, TPSINTERPOLATEIM, TPSRANDOM
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function [warp,L,LnInv,bendE] = tpsGetWarp( lambda, xsS, ysS, xsD, ysD )
 
 dim = size( xsS );
 if( all(size(xsS)~=dim) || all(size(ysS)~=dim) || all(size(xsD)~=dim))

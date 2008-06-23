@@ -1,3 +1,4 @@
+function C = xcorrn( A, T, shape )
 % n-dimensional cross-correlation.  Generalized version of xcorr2.
 %
 % For 2 dimensional inputs this function is exactly the same as xcorr2,
@@ -25,13 +26,11 @@
 %  figure(1); im(C1);  figure(2); im(C2);  figure(3); im(C3);
 %
 % See also XCORR2, NORMXCORRN, XEUCN, CONVNFAST
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function C = xcorrn( A, T, shape )
 
 if( nargin<3 || isempty(shape)); shape='full'; end
 nd = ndims(A);

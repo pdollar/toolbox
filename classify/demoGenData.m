@@ -1,3 +1,4 @@
+function [X,IDX,T,IDT] = demoGenData(n,m,k,d,c,e,f)
 % Generate data drawn form a mixture of Gaussians.
 %
 % Adapted from code by [Nikos Vlassis, 2000].
@@ -27,13 +28,11 @@
 %  figure(2); clf; visualizeData( T, 2, IDT ); title('test');
 %
 % See also VISUALIZEDATA, DEMOCLUSTER, DEMOCLASSIFY
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function [X,IDX,T,IDT] = demoGenData(n,m,k,d,c,e,f)
 
 if( nargin<7 ); f=0; end;
 if (f<0 || f>=1 ); error('illegal value for f'); end

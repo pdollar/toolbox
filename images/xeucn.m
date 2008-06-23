@@ -1,7 +1,8 @@
+function C = xeucn( A, T, shape )
 % n-dimensional euclidean distance between each window in A and template T.
 %
-% Similar to normxcorrn, except at each point (i,j) calculates the 
-% euclidean distance between the T and the window in A surrounding the 
+% Similar to normxcorrn, except at each point (i,j) calculates the
+% euclidean distance between the T and the window in A surrounding the
 % point, storing the result in C(i,j).
 %
 % USAGE
@@ -17,17 +18,15 @@
 %
 % EXAMPLE
 %  T=gaussSmooth(rand(20),2); A=repmat(T,[3 3]);
-%  C1=normxcorrn(T,A);  C2=xcorrn(A,T);  C3=xeucn(A,T); 
+%  C1=normxcorrn(T,A);  C2=xcorrn(A,T);  C3=xeucn(A,T);
 %  figure(1); im(C1);  figure(2); im(C2);  figure(3); im(-C3);
 %
 % See also XCORRN, CONVNFAST
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function C = xeucn( A, T, shape )
 
 if( nargin<3 || isempty(shape)); shape='full'; end
 nd = ndims(T);

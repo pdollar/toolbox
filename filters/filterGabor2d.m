@@ -1,3 +1,4 @@
+function [Feven,Fodd] = filterGabor2d( r, sig, lam, theta, omega, show )
 % Creates an even/odd pair of 2D Gabor filters.
 %
 % Creates a pair of Gabor filters (one odd one even) at the specified
@@ -25,13 +26,11 @@
 %  [Feven,Fodd] = filterGabor2d(25,4,2,0,2,3);
 %
 % See also FILTERGABOR1D, FILTERGAUSS
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function [Feven,Fodd] = filterGabor2d( r, sig, lam, theta, omega, show )
 
 if( nargin<5 || isempty(omega) ); omega=1; end
 if( nargin<6 || isempty(show) ); show=0; end

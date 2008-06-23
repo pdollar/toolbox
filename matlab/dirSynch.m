@@ -1,3 +1,4 @@
+function dirSynch( root1, root2, showOnly, flag, ignDate )
 % Synchronize two directory trees (or show differences between them).
 %
 % If a file or directory 'name' is found in both tree1 and tree2:
@@ -35,13 +36,12 @@
 % EXAMPLE
 %
 % See also
-
-% Piotr's Image&Video Toolbox      Version NEW
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+%
+% Piotr's Image&Video Toolbox      Version 2.04
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
-function dirSynch( root1, root2, showOnly, flag, ignDate )
 if(nargin<3 || isempty(showOnly)), showOnly=1; end;
 if(nargin<4 || isempty(flag)), flag=0; end;
 if(nargin<5 || isempty(ignDate)), ignDate=0; end;

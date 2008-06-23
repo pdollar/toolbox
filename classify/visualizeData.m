@@ -1,3 +1,4 @@
+function visualizeData( X, k, IDX, types, C )
 % Project high dim. data unto principal components (PCA) for visualization.
 %
 % Optionally IDX can be specified to indicate different classes for the
@@ -24,13 +25,11 @@
 %  visualizeData( X, 2, IDX, {'type1','type2' }, C);
 %
 % See also KMEANS2, DEMOCLUSTER
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function visualizeData( X, k, IDX, types, C )
 
 if( nargin<3 || isempty(IDX) ); IDX=[]; end
 if( nargin<4 || isempty(types) ); types=[]; end

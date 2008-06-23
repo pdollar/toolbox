@@ -1,3 +1,4 @@
+function sub = ind2sub2( siz, ind )
 % Improved version of ind2sub.
 %
 % Almost the same as ind2sub, except always returns only a single output
@@ -19,13 +20,11 @@
 %  sub = ind2sub2( [10,10], [20 19] )    % 10 2; 9 2
 %
 % See also IND2SUB, SUB2IND2
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function sub = ind2sub2( siz, ind )
 
 if( any(ind>prod(siz)) ); error('index out of range'); end
 

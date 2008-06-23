@@ -1,10 +1,11 @@
+function [ IDX, C, sumd ] = kmeans2( X, k, prm )
 % Fast version of kmeans clustering.
 %
 % Cluster the N x p matrix X into k clusters using the kmeans algorithm. It
 % returns the cluster memberships for each data point in the N x 1 vector
 % IDX and the K x p matrix of cluster means in C.
 %
-% This function is in some ways less general than Matlab's kmeans.m (for 
+% This function is in some ways less general than Matlab's kmeans.m (for
 % example it only uses euclidian distance), but it has some options that
 % the Matlab version does not (for example, it has a notion of outliers and
 % min-cluster size).  It is also many times faster than matlab's kmeans.
@@ -48,23 +49,21 @@
 % EXAMPLE
 %
 % See also DEMOCLUSTER
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
-function [ IDX, C, sumd ] = kmeans2( X, k, prm )
-
 %%% get input args
 dfs = {'nTrial',1, 'maxIter',100, 'display',0, 'rndSeed',[],...
-       'outFrac',0, 'minCl',1, 'metric',[] };
+  'outFrac',0, 'minCl',1, 'metric',[] };
 if(isempty(k)); dfs={dfs{:} 'k', 'REQ'}; end;
 if nargin<3 || isempty(prm); prm=struct(); end
 prm = getPrmDflt( prm, dfs );
 nTrial  =prm.nTrial;    maxIter =prm.maxIter;  display =prm.display;
 rndSeed =prm.rndSeed;   outFrac =prm.outFrac;  minCl   =prm.minCl;
-metric  =prm.metric;    
+metric  =prm.metric;
 if(isempty(k)); k=prm.k; end;
 
 % error checking
@@ -103,10 +102,8 @@ cnts = zeros(1,k); for i=1:k; cnts(i) = sum( IDX==i ); end
 [ids,order] = sort( -cnts );  C = C(order,:);  sumd = sumd(order);
 IDX2 = IDX;  for i=1:k; IDX2(IDX==order(i))=i; end; IDX = IDX2;
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [ IDX, C, sumd, nIter ] = kmeans2main( X, k, nOutl, ...
-                                        minCl, maxIter, display, metric )
+  minCl, maxIter, display, metric )
 
 % initialize cluster centers to be k random X points
 [N p] = size(X);  k = min(k,N);

@@ -1,3 +1,4 @@
+function imLabel( labels, position, S, pvPairs )
 % Improved method for labeling figure axes.
 %
 % USAGE
@@ -17,13 +18,11 @@
 %  imLabel( {'col1','col2','col3'}, 'bottom', -25, {'FontSize',20} );
 %
 % See also MONTAGE2, TEXT2, TEXT
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function imLabel( labels, position, S, pvPairs )
 
 if( nargin<3 || isempty(S) ); S=0; end
 if( nargin<4 || isempty(pvPairs) ); pvPairs={}; end

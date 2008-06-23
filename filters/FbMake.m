@@ -1,3 +1,4 @@
+function FB = FbMake( dim, flag, show )
 % Various 1D/2D/3D filterbanks (hardcoded).
 %
 % USAGE
@@ -25,13 +26,11 @@
 %  FB = FbMake( 2, 1, 1 ); 
 %
 % See also FBAPPLY2D
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function FB = FbMake( dim, flag, show )
 
 if( nargin<3 || isempty(show) ); show=0; end
 
@@ -50,13 +49,8 @@ end
 % display
 FbVisualize( FB, show );
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function FB = FbMake1D( flag )
 switch flag
   case 1  %%% gabor filter bank for spatiotemporal stuff
@@ -68,8 +62,6 @@ switch flag
     error('none created.');
 end
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function FB = FbMakegabor1D( r, sigmas, omegas )
 for i=1:length(omegas)
   [feven,fodd]=filterGabor1d(r,sigmas(i),omegas(i));
@@ -77,8 +69,6 @@ for i=1:length(omegas)
   FB(i*2-1,:)=feven; FB(i*2,:)=fodd;
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function FB = FbMake2D( flag )
@@ -147,10 +137,8 @@ switch flag
     error('none created.');
 end
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% multi-scale even/odd gabor filters. Adapted from code by Serge Belongie.
 function FB = FbMakegabor( r, nOrient, nScales, lambda, sigma )
+% multi-scale even/odd gabor filters. Adapted from code by Serge Belongie.
 cnt=1;
 for m=1:nScales
   for n=1:nOrient
@@ -160,9 +148,8 @@ for m=1:nScales
   end
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Adds symmetric DooG filters.  These are similar to gabor filters.
 function FB = FbMakeDooGSym( r, nOrient, sigs )
+% Adds symmetric DooG filters.  These are similar to gabor filters.
 cnt=1; dims=[2*r+1 2*r+1];
 for s=1:length(sigs)
   Fodd = -filterDoog( dims, [sigs(s) sigs(s)], [1 0], 0 );
@@ -175,10 +162,9 @@ for s=1:length(sigs)
   end
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function FB = FbMakeDooG( r, nOrient, nScales, lambda, sigma )
 % 1st/2nd order DooG filters.  Similar to Gabor filterbank.
 % Defaults: nOrient=6, nScales=3, lambda=5, sigma=.5,
-function FB = FbMakeDooG( r, nOrient, nScales, lambda, sigma )
 cnt=1; dims=[2*r+1 2*r+1];
 for m=1:nScales
   sigma = sigma * m^.7;
@@ -192,21 +178,16 @@ for m=1:nScales
   end
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% adds a serires of difference of Gaussian filters.
 function FB = FbMakeDOG( r, sigmaStr, sigmaEnd, n )
+% adds a serires of difference of Gaussian filters.
 sigs = sigmaStr:(sigmaEnd-sigmaStr)/(n-1):sigmaEnd;
 for s=1:length(sigs)
   FB(:,:,s) = filterDog2d(r,sigs(s),2);
   if( s==1 ); FB=repmat(FB,[1 1 length(sigs)]); end
 end
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function FB = FbMake3d( flag )
 
 switch flag

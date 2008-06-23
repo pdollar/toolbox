@@ -1,3 +1,4 @@
+function Y = clfKnnFwd( clf, X )
 % Apply a k-nearest neighbor classifier to X.
 %
 % USAGE
@@ -13,13 +14,11 @@
 % EXAMPLE
 %
 % See also CLFKNN, CLFKNNTRAIN
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function Y = clfKnnFwd( clf, X )
 
 if( ~strcmp(clf.type,'knn')); error( ['incorrect type: ' clf.type] ); end
 if( size(X,2)~= clf.p ); error( 'Incorrect data dimension' ); end

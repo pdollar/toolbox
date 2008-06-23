@@ -1,3 +1,4 @@
+function varargout = montage2( IS, prm )
 % Used to display collections of images and videos.
 %
 % Improved version of montage, with more control over display.
@@ -53,13 +54,11 @@
 %  figure(1); clf; montage2( videos(:,:,:,1:10), prm );
 %
 % See also MONTAGE, PLAYMOVIE, FILMSTRIP
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function varargout = montage2( IS, prm )
 
 if( nargin<2 ); prm=struct(); end
 varargout = cell(1,nargout);
@@ -86,7 +85,7 @@ end
 if( ~iscell(IS) && size(IS,5)==1 ) %%% special case call subMontage once
   [varargout{:}] = subMontage(IS,prm);
   title(inputname(1));
-  
+
 elseif( perRow ) %%% display each montage in row format
   if(iscell(IS)); error('montage2: IS cannot be a cell if perRow'); end;
   siz = size(IS);
@@ -122,10 +121,8 @@ else %%% display each montage using subMontage
   if( extraInfo ); impixelinfo; end;
 end
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% this function is a generalized version of Matlab's montage.m
 function varargout = subMontage( IS, prm )
+% this function is a generalized version of Matlab's montage.m
 
 % get parameters (set defaults)
 dfs = {'showLines',1, 'extraInfo',0, 'cLim',[], 'mm',[], 'nn',[], ...

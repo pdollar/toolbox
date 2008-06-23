@@ -1,3 +1,4 @@
+function varargout = imMlGauss( G, symmFlag, show )
 % Calculates max likelihood params of Gaussian that gave rise to image G.
 %
 % Suppose G contains an image of a gaussian distribution.  One way to
@@ -49,13 +50,11 @@
 %  [mu,C,GR,logl] = imMlGauss( G, 0, 1 );
 %
 % See also GAUSS2ELLIPSE, PLOTGAUSSELLIPSES, MASKELLIPSE
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function varargout = imMlGauss( G, symmFlag, show )
 
 if( nargin<2 || isempty(symmFlag) ); symmFlag=0; end;
 if( nargin<3 || isempty(show) ); show=0; end;
@@ -70,8 +69,6 @@ else
   error( 'Unsupported dimension for G.  G must be 2D or 3D.' );
 end
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [mu,C,GR,logl] = imMlGauss2D( G, symmFlag, show )
 
 % to be used throughout calculations
@@ -115,8 +112,6 @@ if (show)
   hold('on'); plotGaussEllipses( mu, C, 2 ); hold('off');
 end
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [mu,C,GR,logl] = imMlGauss3D( G, symmFlag, show )
 
 % to be used throughout calculations

@@ -1,3 +1,4 @@
+function IR = imtransform2( I, varargin )
 % Applies a general/special homography on an image I
 %
 % Takes the center of the image as the origin, not the top left corner.
@@ -58,13 +59,11 @@
 %  figure(1); clf; im(X,[0 128]); figure(2); clf; im(XT,[0 128]);
 %
 % See also TEXTUREMAP, INTERP2
-
+%
 % Piotr's Image&Video Toolbox      Version 2.03
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function IR = imtransform2( I, varargin )
 
 % parse inputs and switch between cases
 if( nargin>1 && isscalar(varargin{1}) && ...
@@ -83,8 +82,6 @@ else % presumably a general homography
   IR = imtransform2main( I, varargin{:} );
 end
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function IR = imtransform2main( I, H, method, bbox, show )
 
 % check inputs
@@ -95,7 +92,7 @@ if( ndims(I)~=2 ); error('I must a MxN array'); end
 if( any(size(H)~=[3 3])); error('H must be 3x3'); end
 if( rank(H)~=3); error('H must be full rank.'); end
 if( ~any(strcmp(bbox,{'loose','crop'})));
- error(['illegal value for bbox: ' bbox]); 
+  error(['illegal value for bbox: ' bbox]);
 end
 
 % set origin to be center of image
@@ -129,7 +126,7 @@ if( strcmp(method,'nearest') )
   cols=floor(cols+.5); cols=min( max(cols,1), sizI(2) );
   locs = rows+(cols-1)*sizI(1);
   IR = I( locs );
-else  
+else
   IR = interp2( I, cols, rows, method );
   IR(isnan(IR)) = 0;
 end

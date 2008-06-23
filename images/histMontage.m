@@ -1,3 +1,4 @@
+function histMontage( HS, mm, nn )
 % Used to display multiple 1D histograms.
 %
 % USAGE
@@ -14,13 +15,11 @@
 %  h = histc2( randn(2000,1), 20 )'; clf; histMontage([h; h]);
 %
 % See also HISTC, HISTC2
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function histMontage( HS, mm, nn )
 
 [nhist, nbins] = size(HS);
 if( nhist>100 || nhist*nbins>10000 )

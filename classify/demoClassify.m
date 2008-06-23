@@ -1,3 +1,4 @@
+function demoClassify
 %DEMOCLASSIFY A demo used to test and demonstrate the usage of classifiers (clf*)
 %
 % To change the demo parameters alter this function. Note that the
@@ -15,13 +16,11 @@
 %  demoClassify
 %
 % See also CLFKNN, CLFLDA, CLFSVM, CLFECOC, CLFDECTREE, VISUALIZEDATA
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function demoClassify
 
 %%% generate data
 nClasses = 4;  d = 3;  nTrn=250;  nTst=150;  show = 1;

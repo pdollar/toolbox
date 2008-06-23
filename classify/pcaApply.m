@@ -1,3 +1,4 @@
+function varargout = pcaApply( X, U, mu, k )
 % Companion function to pca.
 %
 % Use pca.m to retrieve the principal components U and the mean mu from a
@@ -27,18 +28,16 @@
 % EXAMPLE
 %
 % See also PCA, PCAVISUALIZE
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function varargout = pcaApply( X, U, mu, k )
 
 % sizes / dimensions
 siz = size(X);  nd = ndims(X);  [D,r] = size(U);
 if(D==prod(siz) && ~(nd==2 && siz(2)==1)); siz=[siz, 1]; nd=nd+1; end
-n = siz(end); 
+n = siz(end);
 
 % some error checking
 if(prod(siz(1:end-1))~=D); error('incorrect size for X or U'); end
@@ -68,8 +67,6 @@ else
   varargout = {Yk, Xhat, avsq/avsqOrig};
 end
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [ Yk, Xhat, avsq, avsqOrig ] = pcaApply1( X, U, mu, k )
 
 % sizes / dimensions

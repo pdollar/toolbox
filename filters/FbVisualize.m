@@ -1,3 +1,4 @@
+function FbVisualize( FB, show )
 % Used to visualize a series of 1D/2D/3D filters. 
 %
 % For 1D and 2D filterabnks also shows the Fourier spectra of the filters.
@@ -17,13 +18,11 @@
 %  FB=FbMake(3,1,0);  FbVisualize( FB, 3 );  %3D
 %
 % See also FBAPPLY2D, FILTERVISUALIZE
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function FbVisualize( FB, show )
 
 if( nargin<2 || isempty(show) ); show=1; end
 if( show<=0); return; end;

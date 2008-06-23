@@ -1,3 +1,4 @@
+function [ x, er ] = checkNumArgs( x, siz, intFlag, signFlag )
 % Helper utility for checking numeric vector arguments.
 %
 % Runs a number of tests on the numeric array x.  Tests to see if x has all
@@ -36,13 +37,11 @@
 %  a=1; [a, er]=checkNumArgs( a, [1 3], 2, 0 ); a, error(er)
 %
 % See also NARGCHK
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function [ x, er ] = checkNumArgs( x, siz, intFlag, signFlag )
 
 xname = inputname(1); er='';
 if( isempty(siz) ); siz = size(x); end;
@@ -104,7 +103,6 @@ switch signFlag
     end
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function er = createErrMsg( xname, x, er )
 if(numel(x)<10)
   er = ['Numeric input argument ' xname '=[' num2str(x) '] ' er '.'];

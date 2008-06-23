@@ -1,3 +1,4 @@
+function h = plotRoc( D, varargin )
 % Function for display of rocs (receiver operator characteristic curves).
 %
 % Displays nice clearly visible curves. Consistent usage ensures uniform
@@ -36,13 +37,11 @@
 %  legend( hs, {'roc1','roc2'} ); xlabel('fp'); ylabel('fn');
 %
 % See also
-
-% Piotr's Image&Video Toolbox      Version NEW
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+%
+% Piotr's Image&Video Toolbox      Version 2.04
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function h = plotRoc( D, varargin )
 
 % get params
 [ color lineSt lineWd logx logy marker mrkrSiz nMarker lims smooth  ] = ...

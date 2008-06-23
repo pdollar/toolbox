@@ -1,3 +1,5 @@
+function [Vx,Vy,reliab] = optFlowCorr( I1, I2, patchR, searchR, ...
+  sigma, thr, show )
 % Calculate optical flow using cross-correlation.
 %
 % Calculate optical flow using correlation, followed by lucas & kanade on
@@ -33,14 +35,11 @@
 % EXAMPLE
 %
 % See also OPTFLOWHORN, OPTFLOWLK
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function [Vx,Vy,reliab] = optFlowCorr( I1, I2, patchR, searchR, ...
-  sigma, thr, show )
 
 if( nargin<5 || isempty(sigma)); sigma=1; end;
 if( nargin<6 || isempty(thr)); thr=0.001; end;
@@ -140,14 +139,11 @@ if( show )
   hold('on'); quiver( Vx, Vy, 0,'-b' ); hold('off');
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function C = xeuc2Sm( B, I, shape )
 % since the convolutions are so small just call conv2 everywhere
 % see xeucn.m for more general version
-function C = xeuc2Sm( B, I, shape )
 sizB = size(B);
 B = rot90( B,2 );
 Imag = localSum( I.*I, sizB, shape );
 Bmag = B.^2;  Bmag = sum( Bmag(:) );
 C = Imag + Bmag - 2 * conv2(I,B,shape);
-
-

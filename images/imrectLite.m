@@ -1,3 +1,4 @@
+function [hRect,api] = imrectLite( hParent, pos, lims, ar, varargin )
 % A 'lite' version of imrect (fast, bugfree, simple).
 %
 % There are significant problems using imrect in a larger GUI, mostly
@@ -43,13 +44,11 @@
 %  api.setPosSetCb( @(pos) disp(['FINAL = ' num2str(pos)]) );
 %
 % See also IMRECT, RECTANGLE, PATCH
-
+%
 % Piotr's Image&Video Toolbox      Version 2.03
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function [hRect,api] = imrectLite( hParent, pos, lims, ar, varargin )
 
 % default arguments / globals
 if( nargin<1 || isempty(hParent) ); hParent=gca; end

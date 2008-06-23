@@ -1,3 +1,4 @@
+function hs = plotGaussEllipses( mus, Cs, rad )
 % Plots 2D ellipses derived from 2D Gaussians specified by mus & Cs.
 %
 % USAGE
@@ -15,13 +16,11 @@
 %  plotGaussEllipses( [ 10 10; 10 10 ], cat(3,eye(2),eye(2)*2) );
 %
 % See also PLOTELLIPSE, GAUSS2ELLIPSE
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function hs = plotGaussEllipses( mus, Cs, rad )
 
 if (nargin<3 || isempty(rad) ); rad=2; end
 colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']; nc = length(colors);

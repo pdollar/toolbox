@@ -1,3 +1,4 @@
+function I = nlfiltersep( I, dims, shape, fun, varargin )
 % Efficient multidimensional nonlinear but seperable filtering operation.
 %
 % The concept of a nonlinear seperable filter is not very common, but
@@ -35,13 +36,11 @@
 %  figure(1); im(I); figure(2); im(Cs); figure(3); im(Cm);
 %
 % See also NLFILTER
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function I = nlfiltersep( I, dims, shape, fun, varargin )
 
 params = varargin;   nd = ndims(I);  siz = size(I);
 [dims,er] = checkNumArgs( dims, size(siz), 0, 1 ); error(er);

@@ -1,3 +1,4 @@
+function IC = arrayToDims( I, dims, padEl )
 % Pads or crops I appropriately so that size(IC)==dims.
 %
 % For each dimension d, if size(I,d) is larger then dims(d) then
@@ -21,13 +22,11 @@
 %  I=randn(10); delta=1; IC=arrayToDims(I,size(I)-2*delta);
 %
 % See also ARRAYCROP, PADARRAY
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function IC = arrayToDims( I, dims, padEl )
 
 if( nargin<3 || isempty(padEl)); padEl=0; end
 nd = ndims(I);  siz = size(I);

@@ -1,3 +1,4 @@
+function Y = cell2array( X, padEl )
 % Flattens a cell array of regular arrays into a regular array.
 %
 % Each element of X must be a regular array, and must have the same number
@@ -23,13 +24,11 @@
 %  for i=1:10; X{i}=rand(30); end; Y = cell2array(X);
 %
 % See also MAT2CELL2, CELL2MAT
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function Y = cell2array( X, padEl )
 
 if(~iscell(X)); error('X must be a cell array'); end
 if(iscell(X{1})); error('X must contain regular arrays'); end

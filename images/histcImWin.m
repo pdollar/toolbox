@@ -1,3 +1,4 @@
+function H = histcImWin( I, edges, wtMask, shape )
 % Calculates local histograms at every point in an image I.
 %
 % H(i,j,...,k,:) will contain the histogram at location (i,j,...,k), as
@@ -26,13 +27,11 @@
 %  H2 = histcImWin(L, 15, {f2,f2'}, 'same');  figure(3); montage2(H2);
 %
 % See also ASSIGNTOBINS, HISTC2, CONVNFAST, HISTCIMLOC
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function H = histcImWin( I, edges, wtMask, shape )
 
 if( nargin<4 || isempty(shape) ); shape = 'full';  end;
 if( ~iscell(wtMask) ); wtMask={wtMask}; end;

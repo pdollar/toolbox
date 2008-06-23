@@ -1,3 +1,4 @@
+function tf = isfield2( S, fs, isinit )
 % Similar to isfield but also test whether fields are initialized.
 %
 % A more comprehensive test of what fields are present [and optionally
@@ -22,13 +23,11 @@
 %  isfield2( struct('a',1,'b',2), {'a','b'}, 1 )
 %
 % See also ISFIELD
-
-% Piotr's Image&Video Toolbox      Version NEW
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+%
+% Piotr's Image&Video Toolbox      Version 2.04
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function tf = isfield2( S, fs, isinit )
 
 tf = all( isfield(S,fs) );
 if( ~tf || nargin<3 || ~isinit ); return; end

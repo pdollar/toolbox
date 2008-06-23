@@ -1,3 +1,4 @@
+function [xsR,ysR] = tpsInterpolate( warp, xs, ys, show )
 % Apply warp (obtained by tpsGetWarp) to a set of new points.
 %
 % USAGE
@@ -14,13 +15,11 @@
 % EXAMPLE
 %
 % See also TPSGETWARP
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function [xsR,ysR] = tpsInterpolate( warp, xs, ys, show )
 
 if( nargin<4 || isempty(show)); show = 1; end
 
@@ -42,11 +41,8 @@ if( show )
   hold('on');  plot( xsD, ysD, '+' );  hold('off');
 end
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% find f(x,y) for xs and ys given W and original points
 function zs = f( w, aff, xsS, ysS, xs, ys )
-
+% find f(x,y) for xs and ys given W and original points
 n = size(w,1);   ns = size(xs,2);
 delXs = xs'*ones(1,n) - ones(ns,1)*xsS;
 delYs = ys'*ones(1,n) - ones(ns,1)*ysS;

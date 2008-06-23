@@ -1,3 +1,4 @@
+function h = histcImLoc( I, edges, parMask, wtMask, multCh )
 % Creates a series of locally position dependent histograms.
 %
 % Inspired by David Lowe's SIFT descriptor.  Takes I, divides it into a
@@ -47,13 +48,11 @@
 %  figure(1); montage2(h1); figure(2); montage2(h2);
 %
 % See also HISTC2, MASKGAUSSIANS, ASSIGNTOBINS, HISTCIMWIN
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function h = histcImLoc( I, edges, parMask, wtMask, multCh )
 
 if( nargin<4 ); wtMask=[]; end;
 if( nargin<5 ); multCh=0; end;

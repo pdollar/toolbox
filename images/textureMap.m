@@ -1,3 +1,4 @@
+function [IR,boundX,boundY] = textureMap(I, rowDst, colDst, bbox, holeVal)
 % Maps texture in I according to rowDst and colDst.
 %
 % I has (nrows*ncols) coordinates.  Each coordinate has an associated
@@ -38,13 +39,11 @@
 % EXAMPLE
 %
 % See also IMTRANSFORM2
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function [IR,boundX,boundY] = textureMap(I, rowDst, colDst, bbox, holeVal)
 
 if(isa( I, 'uint8' )); I = double(I); end
 if( nargin<4 || isempty(bbox)); bbox='loose'; end

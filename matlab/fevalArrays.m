@@ -1,3 +1,4 @@
+function B = fevalArrays( A, fHandle, varargin )
 % Used to apply the same operation to a stack of array elements.
 %
 % The only constraint on the function specified in fHandle is that given
@@ -38,13 +39,11 @@
 %
 % See also FEVALIMAGES, FEVALMATS, ARRAYFUN
 % IMWRITE2, PERSISTENT, TICSTATUS, 
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function B = fevalArrays( A, fHandle, varargin )
 
 nd = ndims(A);  siz = size(A);  n = siz(end);
 indsA = {':'}; indsA = indsA(ones(nd-1,1));

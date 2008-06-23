@@ -1,3 +1,4 @@
+function rbfDemo( dataType, noiseSig, scale, k, cluster, show )
 % Demonstration of rbf networks for regression.
 %
 % See rbfComputeBasis for discussion of rbfs.
@@ -23,13 +24,11 @@
 %  rbfDemo( 2, .2, 5, 50, 0, 5 );
 %
 % See also RBFCOMPUTEBASIS, RBFCOMPUTEFTRS
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function rbfDemo( dataType, noiseSig, scale, k, cluster, show )
 
 %%% generate trn/tst data
 if( 1 )
@@ -64,13 +63,12 @@ elseif( size(Xtrn,2)==2 )
   xs2 = linspace(minX(2),maxX(2),25);
   [xs1,xs2] = ndgrid( xs1, xs2 );
   ys = rbfComputeFtrs([xs1(:) xs2(:)],rbfBasis) * rbfWeight;
-  figure(show+1); clf; surf( xs1, xs2, reshape(ys,size(xs1)) ); hold on; 
+  figure(show+1); clf; surf( xs1, xs2, reshape(ys,size(xs1)) ); hold on;
   plot3( Xtrn(:,1), Xtrn(:,2), ytrn, '.b' );
   plot3( Xtst(:,1), Xtst(:,2), ytst, '.r' );
 end
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function [X,y] = rbfToyData( N, noiseSig, dataType )
 % Toy data for rbfDemo.
 %
 % USAGE
@@ -86,7 +84,6 @@ end
 % OUTPUTS
 %  X          - [N x d] N points of d dimensions each
 %  y          - [1 x N] value at example i
-function [X,y] = rbfToyData( N, noiseSig, dataType )
 
 %%% generate data
 if( dataType==0 )

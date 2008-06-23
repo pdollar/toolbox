@@ -1,3 +1,4 @@
+function C = convnFast( A, B, shape )
 % Fast convolution, replacement for both conv2 and convn.
 %
 % See conv2 or convn for more information on convolution in general.
@@ -40,13 +41,11 @@
 % EXAMPLE
 %
 % See also CONV2, CONVN
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function C = convnFast( A, B, shape )
 
 if( nargin<3 || isempty(shape)); shape='full'; end
 if(isempty(strmatch(shape, char({'same', 'valid', 'full', 'smooth'}))))
@@ -128,9 +127,9 @@ end;
 if( ~smoothFlag ); return; end;
 C = convnBound( A, B, C, sizA, sizB );
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% calculate boundary values for C in spatial domain
 function C = convnBound( A, B, C, sizA, sizB )
+% calculate boundary values for C in spatial domain
+
 nd = length(sizA);
 radii = (sizB-1)/2;
 
@@ -187,9 +186,9 @@ else % general case [slow]
 end
 C( Dind ) = vs * sum(B(:));
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Convolution as multiplication in the frequency domain
 function C = convnFreq( A, B, sizA, sizB, shape )
+% Convolution as multiplication in the frequency domain
+
 siz = sizA + sizB - 1;
 
 % calculate correlation in frequency domain
@@ -209,12 +208,12 @@ elseif(~strcmp(shape,'full'))
   error('unknown shape');
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function K = timeConv() %#ok<DEFNU>
 % Function used to calculate constants for prediction of convolution in the
 % frequency and spatial domains.  Method taken from normxcorr2.m
 % May need to reset K's if placing this on a new machine, however, their
 % ratio should be about the same..
-function K = timeConv() %#ok<DEFNU>
+
 mintime = 4;
 
 switch 3

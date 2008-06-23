@@ -1,3 +1,4 @@
+function I = imShrink( I, ratios )
 % Used to shrink a multidimensional array I by integer amount.
 %
 % ratios specifies the block dimensions.  For example, ratios=[2 3 4]
@@ -25,13 +26,11 @@
 %  figure(1); im(I); figure(2); im(I2);
 %
 % See also IMRESIZE, LOCALSUM
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function I = imShrink( I, ratios )
 
 if( all(ratios==1) ); return; end
 siz = size(I);  nd = ndims(I);
@@ -62,8 +61,6 @@ I = localSum( I, ratios, 'block' );
 I = I * (1/prod( ratios ));
 I = feval( classname, I );
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % SLOW / BROKEN - gaussian version of above gauss controls whether the
 % smoothing is done by a gaussian or averaging window.  Using an averaging
 % window (gauss==0) is equivalent to dividing the array into
@@ -82,7 +79,7 @@ I = feval( classname, I );
 %   sigmas = ratios/2 / 1.6; sigmas(ratios==1)=0; %is this ideal sigmas?
 %   I = gaussSmooth( I, sigmas, 'full' );
 %   I = arrayToDims( I, siz-ratios+1 );
-% 
+%
 %   % now subsample smoothed I
 %   sizsum = size(I);
 %   extract={}; for d=1:nd extract{d}=1:ratios(d):sizsum(d); end;

@@ -1,3 +1,4 @@
+function [X,keeplocs] = subsampleMatrix( X, maxMegs )
 % Samples elements of X so result uses at most maxMegs megabytes of memory.
 %
 % If X is m+1 dimensional, say of size [d1 x d2 x...x dm x n], each [d1 x
@@ -34,13 +35,11 @@
 %  Xsam = subsampleMatrix( X, 1 );
 %
 % See Also
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function [X,keeplocs] = subsampleMatrix( X, maxMegs )
 
 siz = size( X );  nd = ndims(X);
 inds={':'};  inds=inds(:,ones(1,nd-1));

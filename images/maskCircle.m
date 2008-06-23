@@ -1,3 +1,4 @@
+function mask = maskCircle( angleStart, angleSiz, r, nSamples )
 % Creates an image of a 'pie slice' of a circle.
 %
 % Creates a 2D array of size (2rx2r) with values between 0 and 1.
@@ -32,13 +33,11 @@
 %  figure(3); im(mask1+mask2);
 %
 % See also MASKELLIPSE, MASKSPHERE
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function mask = maskCircle( angleStart, angleSiz, r, nSamples )
 
 if( nargin<4 || isempty(nSamples) ); nSamples = 1; end
 

@@ -1,3 +1,4 @@
+function varargout=rotationMatrix(varargin)
 % Performs different operations dealing with a rotation matrix
 %
 % USAGE
@@ -86,13 +87,11 @@
 %  [th1 th2 th3]=rotationMatrix(rotationMatrix(1,2,3))
 %
 % See also
-
-% Piotr's Image&Video Toolbox      Version NEW
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+%
+% Piotr's Image&Video Toolbox      Version 2.04
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function varargout=rotationMatrix(varargin)
 
 %%% Find the closest orthonormal matrix
 if all(size(varargin{1})==[3 3]) && nargout<=1

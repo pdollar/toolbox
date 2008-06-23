@@ -1,3 +1,4 @@
+function dG = filterDoog( dims, sigmas, nderivs, show )
 % n-dim difference of offset Gaussian DooG filter (Gaussian derivative).
 %
 % Creates a nd derivative of Gaussian kernel.  For all but d==1 use
@@ -22,13 +23,11 @@
 %  dG3 = filterDoog( [101 101 101], [4,4,10], [1,1,0], 3 ); %3D
 %
 % See also FILTERGAUSS, NORMPDF2, FILTERDOG2D, FILTERGABOR2D
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function dG = filterDoog( dims, sigmas, nderivs, show )
 
 nd = length( dims );
 if( nargin<4 || isempty(show) ); show=0; end;

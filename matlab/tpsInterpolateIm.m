@@ -1,3 +1,4 @@
+function [IR,boundX,boundY] = tpsInterpolateIm( Isrc, warp, holeVal )
 % Interpolate Isrc according to the warp from Isrc->Idst.
 %
 % Use tpsGetWarp to obtain the warp.
@@ -21,13 +22,11 @@
 %  figure(1); clf; im(I); figure(2); clf; im(IR);
 %
 % See also TPSGETWARP, TEXTUREMAP
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function [IR,boundX,boundY] = tpsInterpolateIm( Isrc, warp, holeVal )
 
 if( nargin<3 || isempty(holeVal) ); holeVal=0; end
 

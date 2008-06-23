@@ -1,3 +1,4 @@
+function CM = confMatrix( IDXtrue, IDXpred, ntypes )
 % Generates a confusion matrix according to true and predicted data labels.
 %
 % CM(i,j) denotes the number of elements of class i that were given label
@@ -26,13 +27,11 @@
 %  confMatrixShow( CM, {'class-A','class-B'}, {'FontSize',20} )
 %
 % See also CONFMATRIXSHOW
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function CM = confMatrix( IDXtrue, IDXpred, ntypes )
 
 IDXtrue=IDXtrue(:); IDXpred=IDXpred(:);
 

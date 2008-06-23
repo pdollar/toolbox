@@ -1,3 +1,5 @@
+function [Vx,Vy,reliab]=optFlowLk( I1, I2, winN, ...
+  winSig, sigma, thr, show )
 % Calculate optical flow using Lucas & Kanade.  Fast, parallel code.
 %
 % Note that the window of integration can either be a hard square window of
@@ -34,14 +36,11 @@
 %  [Vx,Vy] = optFlowHorn( I5A, I5B, 2, 3 );
 %
 % See also OPTFLOWHORN, OPTFLOWCORR
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function [Vx,Vy,reliab]=optFlowLk( I1, I2, winN, ...
-  winSig, sigma, thr, show )
 
 if( nargin<4 || isempty(winSig));  winSig=[]; end
 if( nargin<5 || isempty(sigma)); sigma=1; end
@@ -84,7 +83,7 @@ if( isempty(winSig) )
   maskWidth = 2*winN+1;  maskArea = maskWidth^2;
   Axx=localSum(Gxx,maskWidth,'same') / maskArea;
   Axy=localSum(Gxy,maskWidth,'same') / maskArea;
-  Ayy=localSum(Gyy,maskWidth,'same') / maskArea;  
+  Ayy=localSum(Gyy,maskWidth,'same') / maskArea;
 else
   winN = ceil(winSig);
   Axx=gaussSmooth(Gxx,winSig,'same',2);
@@ -101,7 +100,7 @@ V1=0.5*sqrt(trA.^2-4*detA);
 It=I2-I1;    IxIt=-Gx.*It;   IyIt=-Gy.*It;
 if( isempty(winSig) )
   ATbx=localSum(IxIt,maskWidth,'same') / maskArea;
-  ATby=localSum(IyIt,maskWidth,'same') / maskArea;      
+  ATby=localSum(IyIt,maskWidth,'same') / maskArea;
 else
   ATbx=gaussSmooth(IxIt,winSig,'same',2);
   ATby=gaussSmooth(IyIt,winSig,'same',2);

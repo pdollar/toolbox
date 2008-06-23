@@ -1,3 +1,4 @@
+function clf = clfEcoc(p,clfInit,clfparams,nclasses,use01targets)
 % Wrapper for ecoc that makes ecoc compatible with nfoldxval.
 %
 % Requires the SVM toolbox by Anton Schwaighofer.
@@ -18,13 +19,11 @@
 % EXAMPLE
 %
 % See also ECOC, NFOLDXVAL, CLFECOCCODE
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function clf = clfEcoc(p,clfInit,clfparams,nclasses,use01targets)
 
 if( nclasses<3 || nclasses>7 )
   error( 'currently only works if 3<=nclasses<=7'); end;
@@ -42,8 +41,6 @@ clf.templearner = feval( clfInit, p, clfparams{:} );
 clf.funTrain = @clfEcocTrain;
 clf.funFwd = @ecocfwd;
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function clf = clfEcocTrain( clf, varargin )
 
 clf = ecoctrain( clf, clf.templearner, varargin{:} );

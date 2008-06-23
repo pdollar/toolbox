@@ -1,3 +1,4 @@
+function varargout = simpleCache( op, cache, varargin )
 % A simple cache that can be used to store results of computations.
 %
 % Can save and retrieve arbitrary values using a vector (includnig char
@@ -42,13 +43,11 @@
 %  [f,v]=simpleCache( 'get', cache, worldkey ); disp(v);
 %
 % See also PERSISTENT, MASKGAUSSIANS
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function varargout = simpleCache( op, cache, varargin )
 
 if( strcmp(op,'init') ) %%% init a cache
   error(nargchk(1, 2, nargin));
@@ -89,9 +88,8 @@ else %%% unknown op
   error( ['Unknown cache operation: ' op] );
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% double cache size
 function cache = cachegrow( cache )
+% double cache size
 cacheSiz = length( cache.keyns );
 if( cacheSiz>64 ) % warn if getting big
   warning(['doubling cache size to: ' int2str2(cacheSiz*2)]);%#ok<WNTAG>
@@ -101,9 +99,8 @@ cache.keyns = [cache.keyns -ones(1,cacheSiz)];
 cache.keys  = [cache.keys cell(1,cacheSiz)];
 cache.vals  = [cache.vals cell(1,cacheSiz)];
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% put something into the cache
 function cache = cacheput( cache, key, val )
+% put something into the cache
 
 % get location to place
 ind = cacheget( cache, key ); % see if already in cache
@@ -120,9 +117,8 @@ cache.keyns(ind) = length(key);
 cache.keys{ind} = key;
 cache.vals{ind} = val;
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% get cache element, or fail
 function [ind,val] = cacheget( cache, key )
+% get cache element, or fail
 
 cacheSiz = length( cache.keyns );
 keyn = length( key );
@@ -135,9 +131,8 @@ for i=1:cacheSiz
 end
 ind=-1; val=-1;
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% get cache element, or fail
 function [cache,found] = cacheremove( cache, key )
+% get cache element, or fail
 
 ind = cacheget( cache, key );
 found = ind>0;

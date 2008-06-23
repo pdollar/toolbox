@@ -1,3 +1,4 @@
+function y = modefilt1( x, s )
 % One-dimensional mode filtering.
 %
 % Applies an order 2*r+1 one-dimensional mode filter to vector x.  That is
@@ -23,13 +24,11 @@
 %  [x; ymedian; ymode]
 %
 % See also MEDFILT1
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function y = modefilt1( x, s )
 
 [b,dis,inds] = unique(x(:)');
 m = length(b); n = length(x);

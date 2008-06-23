@@ -1,3 +1,4 @@
+function I = subsToArray( subs, vals, siz, fillVal )
 % Converts subs/vals image representation to array representation.
 %
 % Constructs array from subs/vals representation.  Similar to Matlab's
@@ -19,13 +20,11 @@
 % EXAMPLE
 %
 % See also SUB2IND2, SPARSE
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function I = subsToArray( subs, vals, siz, fillVal )
 
 if( nargin<4 || isempty(fillVal) ); fillVal=0; end
 

@@ -1,3 +1,4 @@
+function FBC = FbCrop( FB, delta )
 % Crop a 2D filterbank (adjusting filter norms).
 %
 % Takes a filter bank and crops it by cropping off delta pixels from each
@@ -20,13 +21,11 @@
 %  figure(2); montage2(FBC,struct('extraInfo',1));
 %
 % See also FBAPPLY2D
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function FBC = FbCrop( FB, delta )
 
 nd = ndims(FB);
 if( nd~=2 && nd~=3 ); error('I must an MxNxK array'); end

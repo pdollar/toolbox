@@ -1,3 +1,4 @@
+function IC = clusterMontage( I, IDX, nElem, pad )
 % Used for visualization of clusters of images and videos.
 %
 % Organizes the matrix I, which is either MxNxR for images or MxNxTxR for
@@ -36,13 +37,11 @@
 %  figure(1); playMovie( IC )
 %
 % See also KMEANS2, MONTAGE2, PLAYMOVIE, CELL2ARRAY
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function IC = clusterMontage( I, IDX, nElem, pad )
 
 if( nargin<4 || isempty(pad) ); pad=1; end
 

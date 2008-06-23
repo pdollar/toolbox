@@ -1,3 +1,4 @@
+function G = filterDog2d( r, var, order, show )
 % Difference of Gaussian (Dog) Filter.
 %
 % Adapted from code by Serge Belongie.  Takes a "Difference of Gaussian" -
@@ -22,13 +23,11 @@
 %  G = filterDog2d( 40, 40, 2, 3 ); %order=2
 %
 % See also FILTERDOOG, FILTERGAUSS
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function G = filterDog2d( r, var, order, show )
 
 if( nargin<4 || isempty(show) ); show=0; end
 

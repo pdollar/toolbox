@@ -1,3 +1,4 @@
+function D = pdist2( X, Y, metric )
 % Calculates the distance between sets of vectors.
 %
 % Let X be an m-by-p matrix representing m points in p-dimensional space
@@ -49,13 +50,11 @@
 %  distMatrixShow( D, IDX );
 %
 % See also PDIST, DISTMATRIXSHOW
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function D = pdist2( X, Y, metric )
 
 if( nargin<3 || isempty(metric) ); metric=0; end;
 
@@ -64,7 +63,7 @@ switch metric
     D = distEucSq( X, Y );
   case 'euclidean'
     D = sqrt(distEucSq( X, Y ));
-  case 'L1'    
+  case 'L1'
     D = distL1( X, Y );
   case 'cosine'
     D = distCosine( X, Y );
@@ -76,8 +75,6 @@ switch metric
     error(['pdist2 - unknown metric: ' metric]);
 end
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function D = distL1( X, Y )
 
 m = size(X,1);  n = size(Y,1);
@@ -87,7 +84,6 @@ for i=1:n
   D(:,i) = sum( abs( X-yi),2 );
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function D = distCosine( X, Y )
 
 if( ~isa(X,'double') || ~isa(Y,'double'))
@@ -98,7 +94,6 @@ XX = sqrt(sum(X.*X,2)); X = X ./ XX(:,ones(1,p));
 YY = sqrt(sum(Y.*Y,2)); Y = Y ./ YY(:,ones(1,p));
 D = 1 - X*Y';
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function D = distEmd( X, Y )
 
 Xcdf = cumsum(X,2);
@@ -112,8 +107,6 @@ for i=1:n
   D(:,i) = sum(abs(Xcdf - ycdfRep),2);
 end
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function D = distChiSq( X, Y )
 
 %%% supposedly it's possible to implement this without a loop!
@@ -126,8 +119,6 @@ for i=1:n
 end
 D = D/2;
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function D = distEucSq( X, Y )
 
 if( ~isa(X,'double') || ~isa(Y,'double'))
@@ -138,9 +129,6 @@ XX = sum(X.*X,2);
 YY = sum(Yt.*Yt,1);
 D = XX(:,ones(1,n)) + YY(ones(1,m),:) - 2*X*Yt;
 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % function D = distEucSq( X, Y )
 %%%% code from Charles Elkan with variables renamed
 % m = size(X,1); n = size(Y,1);

@@ -1,3 +1,4 @@
+function rbfBasis = rbfComputeBasis( X, k, cluster, scale, show )
 % Get locations and sizes of radial basis functions for use in rbf network.
 %
 % Radial basis function are a simple, fast method for universal function
@@ -46,13 +47,11 @@
 % EXAMPLE
 %
 % See also RBFDEMO, RBFCOMPUTEFTRS
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function rbfBasis = rbfComputeBasis( X, k, cluster, scale, show )
 
 if( nargin<2 || isempty(k)); error('k not specified'); end
 if( nargin<3 || isempty(cluster)); cluster=1;  end

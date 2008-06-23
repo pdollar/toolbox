@@ -1,3 +1,4 @@
+function mask = maskEllipse( mrows, ncols, varargin )
 % Creates a binary image of an ellipse.
 %
 % Creats a binary image of size (mrows x ncols), with all pixels off except
@@ -7,7 +8,7 @@
 % ellipse parameters is in terms of the parameters of a 2d gaussian.  For
 % more information on how a gaussian relates to an ellipse see
 % gauss2ellipse.
-% 
+%
 % USAGE
 %  mask = maskEllipse( mrows, ncols, crow, ccol, ra, rb, phi )
 %  mask = maskEllipse( mrows, ncols, mu, C, [rad] )
@@ -36,13 +37,11 @@
 %  figure(1); im(mask); [mu,C] = imMlGauss( mask, 0, 2 );
 %
 % See also PLOTELLIPSE, GAUSS2ELLIPSE, MASKCIRCLE, MASKGAUSSIANS, IMMLGAUSS
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function mask = maskEllipse( mrows, ncols, varargin )
 
 if( nargin==7 )
   [crow, ccol, ra, rb, phi] = deal( varargin{:} );
@@ -61,6 +60,6 @@ end;
 
 % create binary mask
 locs = double( locs(1:n,:) );
-inds = locs(:,1) + (mrows)*(locs(:,2)-1); 
+inds = locs(:,1) + (mrows)*(locs(:,2)-1);
 mask = zeros( mrows, ncols );
 mask( inds ) = 1;

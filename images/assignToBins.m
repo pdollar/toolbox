@@ -1,3 +1,4 @@
+function B = assignToBins( A, edges )
 % Quantizes A according to values in edges.
 %
 % assignToBins replaces each value in A with a value between [0,nBins] where
@@ -24,13 +25,11 @@
 %  B2 = ceil(A*10); B1-B2
 %
 % See also HISTC2
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function B = assignToBins( A, edges )
 
 if(~isa(A,'double')); A = double(A); end;
 

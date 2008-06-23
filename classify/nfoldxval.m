@@ -1,3 +1,5 @@
+function CM=nfoldxval( data, IDX, clfInit, clfparams, ...
+  types, ignoreT, fname, show )
 % Runs n-fold cross validation on data with a given classifier.
 %
 % Given n separate labeled data sets, trains classifier using n-1 data
@@ -57,14 +59,11 @@
 %  nfoldxval( data, IDX, @clfEcoc,clfparams,[],[],[],6 );    % ECOC
 %
 % See also CLFKNN, CLFLDA, CLFSVM, CLFECOC, CLFDECTREE, DEMOCLASSIFY
-
+%
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-function CM=nfoldxval( data, IDX, clfInit, clfparams, ...
-                                 types, ignoreT, fname, show )
 
 if( nargin<5 || isempty(types) ); types=[]; end
 if( nargin<6 || isempty(ignoreT) ); ignoreT=[]; end
