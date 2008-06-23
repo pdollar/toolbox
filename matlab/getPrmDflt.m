@@ -1,30 +1,33 @@
 % Helper to set default values (if not already set) of parameter struct.
 %
-% Takes a struct prm and a list of 'name'/default pairs, and for each
-% 'name' for which prm has no value (prm.(name) is not a field)
-% getPrmDflt assigns the given default value. If default value for
-% variable 'name' is 'REQ', and prm.name is not a field, an error is
-% thrown. See example below for usage details.
+% Takes input parameters and a list of 'name'/default pairs, and for each
+% 'name' for which prm has no value (prm.(name) is not a field or 'name'
+% does not appear in prm list), getPrmDflt assigns the given default
+% value. If default value for variable 'name' is 'REQ', and value for
+% 'name' is not given, an error is thrown. See below for usage details.
 %
-% USAGE
+% USAGE (nargout==1)
 %  prm = getPrmDflt( prm, dfs )
-%  [ param1 param2 ] = getPrmDflt({'param1' param1 'param2' param2},dfs)
+%
+% USAGE (nargout>1)
+%  [ param1 ... paramN ] = getPrmDflt( prm, dfs )
 %
 % INPUTS
-%  prm    - parameters struct, {parameter struct} (typically varargin)
-%           or cell in the form:
-%           {'name1',default1,'name2',default2,...}
-%  dfs    - same format as above for prm
+%  prm    - parameter struct or cell of form {'name1' v1 'name2' v2 ...}
+%  dfs    - cell of form {'name1' def1 'name2' def2 ...}
 %
-% OUTPUTS
-%  prm    - updated parameters struct
+% OUTPUTS (nargout==1)
+%  prm    - parameter struct with fields 'name1' through 'nameN' assigned
+%
+% OUTPUTS (nargout>1)
+%  param1 - value assigned to parameter with 'name1'
+%   ...
+%  paramN - value assigned to parameter with 'nameN'
 %
 % EXAMPLE
 %  dfs = { 'x','REQ', 'y',0, 'z',[], 'eps',1e-3 };
-%  prm.x = 1;  prm = getPrmDflt( prm, dfs )
-%
-%  dfs = { 'x','REQ', 'y',0, 'z',[], 'eps',1e-3 };
-%  prm.x = 1;  [ x y z eps ] = getPrmDflt( prm, dfs )
+%  prm = getPrmDflt( struct('x',1,'y',1), dfs )
+%  [ x y z eps ] = getPrmDflt( {'x',2,'y',1}, dfs )
 %
 % See also
 
