@@ -1,3 +1,4 @@
+function toolboxUpdateHeader
 % Update the headers of all the files.
 %
 % Must start in /toolbox base directory
@@ -12,101 +13,82 @@
 % EXAMPLE
 %
 % See also
-
-% Piotr's Image&Video Toolbox      Version 2.03
-% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]
+%
+% Piotr's Image&Video Toolbox      Version 2.04
+% Copyright (C) 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
-function toolboxUpdateHeader
-
-headerL1def = '%% Piotr''s Image&Video Toolbox      Version 2.03\n';
-header=[...
-  '%% Copyright (C) 2007 Piotr Dollar.  [pdollar-at-caltech.edu]\n' ...
-  '%% Please email me if you find bugs, or have suggestions or questions!\n' ...
-  '%% Licensed under the Lesser GPL [see external/lgpl.txt]\n\n'];
+header={
+  '% Piotr''s Image&Video Toolbox      Version 2.04'; ...
+  '% Copyright (C) 2008 Piotr Dollar.  [pdollar-at-caltech.edu]'; ...
+  '% Please email me if you find bugs, or have suggestions or questions!'; ...
+  '% Licensed under the Lesser GPL [see external/lgpl.txt]'};
 
 % must start in /toolbox base directory  - cd( 'c:/code/toolbox' );
 dirs={ 'classify', 'classify/private', 'filters', 'images', ...
-     'images/private', 'matlab', 'external' };
+  'images/private', 'matlab', 'external' };
 
 % update the headers
 for i=1:length(dirs)
-  mfiles = dir([ dirs{i}, '/*.m' ])
+  mFiles = dir([ dirs{i}, '/*.m' ]);
   disp( ['--------------------------------->' dirs{i}] );
-  for j=1:length(mfiles);
-    fname = [dirs{i} '/' mfiles(j).name];
-    disp( fname );
-    [success,headerL1] = removeHeader(fname);
-    if(success); 
-      if(any(strfind(headerL1,'NEW'))); headerL1=headerL1def; end;
-      insertHeader( fname, headerL1, header );
-    else
-      warning( ['skipping ' fname] ); %#ok<WNTAG>
-    end;
+  for j=1:length(mFiles);
+    fName = [dirs{i} '/' mFiles(j).name]; disp( fName );
+    toolboxUpdateHeader1( fName, header );
   end
 end
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Removes toolbox data after main comment in an .m file.
-%  ~ischar(fileLn{ind})          % true if fgetl returns eof (-1)
-%  isempty(strtrim(fileLn{ind})) % true if line is all whitespace
-function [success, headerL1] = removeHeader( fname )
-
-fid = fopen( fname, 'rt' );
-fileLn = cell(10000,1);  ind=0;
-success=1;  headerL1=[];
-
-% Read first part of the comments - up to and including first empty line
-while( 1 )
-  ind=ind+1;  fileLn{ind} = fgetl(fid);
-  if( ~ischar(fileLn{ind}) || isempty(strtrim(fileLn{ind}))); break; end
-end
-if( fileLn{ind}==-1 ); ind=ind-1; end;
-
-% Skip the second part of the comments
-frst = true;
-while( 1 )
-  fileLnTmp = fgetl(fid);
-  if( ~ischar(fileLnTmp) || isempty(strtrim(fileLnTmp))); break; end
-  if( frst && ~any(strfind(fileLnTmp,'Piotr')) ); success=0; return; end;
-  if( frst ); headerL1=['%' fileLnTmp '\n']; frst=0; end;
 end
 
-% Read the rest
-while( 1 )
-  ind=ind+1;  fileLn{ind} = fgetl(fid);
-  if( ~ischar(fileLn{ind})); ind=ind-1; break; end
+function toolboxUpdateHeader1( fName, header )
+lines=readFile(fName); n=length(lines);
+
+% find first part of first lines of header in file
+loc = strfind(lines,header{1}(1:30));
+for i=1:n, if(~isempty(loc{i})), break; end; end; loc=i;
+
+% if not found nothing to do, ow assert nHeader lines exist
+nHeader = length(header);
+if(loc>n-nHeader+1), warning([fName ' no header']); return; end %#ok<WNTAG>
+for i=1:nHeader; assert( strfind(lines{loc+i-1},header{i}(1:10))>0 ); end
+
+% check if first lines changed, if so update; optionally update rest
+if(any(strfind(lines{loc},'NEW'))); lines{loc}=header{1}; end;
+if(1), for i=2:nHeader; lines{loc+i-1}=header{i}; end; end
+assert(isempty(lines{loc-1}) || strcmp(lines{loc-1},'%'));
+if(1), lines{loc-1} = '%'; end
+writeFile( fName, lines );
+
 end
 
-% Write the file
-fclose(fid); fid = fopen( fname, 'wt' );
-for i=1:ind; fprintf( fid, '%s\n', fileLn{i} ); end
+function moveComment( fName ) %#ok<DEFNU>
+lines=readFile(fName); n=length(lines);
+
+% check first non-comment lines is "function ..." if not, we're done
+if(i==n || ~strcmp(lines{i}(1:8),'function')),
+  warning([fName ' not a function']); return; %#ok<WNTAG>
+end;
+
+% Move main comment to appear after "function ..."
+if(~isempty(lines{i+1})), start=i+1; else start=i+2; end;
+lines={lines{i} lines{[1:i-1 start:end]}}; lines=lines';
+writeFile( fName, lines );
+
+end
+
+function lines = readFile( fName )
+fid = fopen( fName, 'rt' ); assert(fid~=-1);
+lines=cell(10000,1); n=0;
+while( 1 )
+  n=n+1; lines{n}=fgetl(fid);
+  if( ~ischar(lines{n}) ), break; end
+end
+fclose(fid); n=n-1; lines=lines(1:n);
+end
+
+function writeFile( fName, lines )
+fid = fopen( fName, 'wt' );
+for i=1:length(lines); fprintf( fid, '%s\n', lines{i} ); end
 fclose(fid);
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Inserts toolbox data after main comment in an .m file.
-% Does not affect files with no body (such as Contents.m)
-function insertHeader( fname, headerL1, header )
-
-fidIn = fopen( fname, 'rt' );
-fidOut = fopen( [fname '2'] , 'wt' );
-
-firstComment = true;
-while( 1 )
-  tline = fgetl(fidIn);
-  if( ~ischar(tline) ); break; end;
-  fprintf( fidOut, '%s\n', tline );
-  if( isempty(strtrim(tline)) && firstComment )
-    firstComment = false;    
-    fprintf( fidOut, headerL1 );
-    fprintf( fidOut, header );
-  end
 end
-
-fclose(fidIn); fclose(fidOut);
-movefile( [fname '2'], fname, 'f' );
-
-
