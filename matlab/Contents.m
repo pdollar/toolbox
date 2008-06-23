@@ -32,7 +32,7 @@
 %   gauss2ellipse     - Creates an ellipse representing the 2D Gaussian distribution.
 %   getPrmDflt        - Helper to set default values (if not already set) of parameter struct.
 %   ind2sub2          - Improved version of ind2sub.
-%   isfield2          - Similar to isfield but also test whether fields are intitialized.
+%   isfield2          - Similar to isfield but also test whether fields are initialized.
 %   int2str2          - Convert integer to string of given length; improved version of int2str.
 %   normpdf2          - Normal prob. density function (pdf) with arbitrary covariance matrix.
 %   num2strs          - Applies num2str to each element of an array X.

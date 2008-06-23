@@ -1,8 +1,8 @@
-%ISFIELD2 Similar to isfield but also test whether fields are intitialized.
+% Similar to isfield but also test whether fields are initialized.
 %
 % A more comprehensive test of what fields are present [and optionally
 % initialized] in a stuct S.  fs is either a single field name or a cell
-% array of field name.  The presence of all fields in fs are tested for in
+% array of field names.  The presence of all fields in fs are tested for in
 % S, tf is true iif all fs are present. Additionally, if isinit==1, then tf
 % is true iff every field fs of every element of S is nonempty (test done
 % using isempty).
