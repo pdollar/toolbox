@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of dirSynch</title>
+  <meta name="keywords" content="dirSynch">
+  <meta name="description" content="Synchronize two directory trees (or show differences between them).">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>dirSynch
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Synchronize two directory trees (or show differences between them).</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function dirSynch( root1, root2, showOnly, flag, ignDate ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Synchronize two directory trees (or show differences between them).
+
+ If a file or directory 'name' is found in both tree1 and tree2:
+  1) if 'name' is a file in both the pair is considered the same if they
+     have identical size and identical datestamp (or if ignDate=1).
+  2) if 'name' is a directory in both the dirs are searched recursively.
+  3) if 'name' is a dir in root1 and a file in root2 (or vice-versa)
+     synchronization cannot proceed (an error is thrown).
+ If 'name' is found only in root1 or root2 it's a difference between them.
+
+ The parameter flag controls how synchronization occurs:
+  flag==0: neither tree1 nor tree2 has preference (newer file is kept)
+  flag==1: tree2 is altered to reflect tree1 (tree1 is unchanged)
+  flag==2: tree1 is altered to reflect tree2 (tree2 is unchanged)
+ Run with showOnly=1 and different values of flag to see its effect.
+
+ By default showOnly==1. If showOnly, displays a list of actions that need
+ to be performed in order to synchronize the two directory trees, but does
+ not actually perform the actions. It is highly recommended to run
+ dirSynch first with showOnly=1 before running it with showOnly=0.
+
+ USAGE
+  dirSynch( root1, root2, [showOnly], [flag], [ignDate] )
+
+ INPUTS
+  root1    - root directory of tree1
+  root2    - root directory of tree2
+  showOnly - [1] show but do NOT perform actions
+  flag     - [0] 0: synchronize; 1: set root2=root1; 2: set root1==root2
+  ignDate  - [0] if true considers two files same even if have diff dates
+
+ OUTPUTS
+  dirSynch( 'c:\toolbox', 'c:\toolbox-old', 1 )
+
+ EXAMPLE
+
+ See also
+
+ Piotr's Image&amp;Video Toolbox      Version 2.04
+ Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Please email me if you find bugs, or have suggestions or questions!
+ Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ticStatus.html" class="code" title="function id = ticStatus( msg, updateFreq, updateMinT, erasePrev )">ticStatus</a>	Used to display the progress of a long process.</li><li><a href="tocStatus.html" class="code" title="function tocStatus( id, fracDone )">tocStatus</a>	Used to display the progress of a long process.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Mon 23-Jun-2008 15:55:39 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

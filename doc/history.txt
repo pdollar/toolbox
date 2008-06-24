@@ -1,3 +1,10 @@
+Version 2.04 (23-June-08)
+ -added kernelTracker.m (and helper funciton) to /images
+ -added /matlab/plotRoc.m and /matlab/dirSynch.m
+ -made /matlab/getPrmDflt.m more flexible
+ -minor update to /matlab/RotationMatrix.m
+ -moved main comment after "function ..." line for nicer Matlab code collapsing
+
 Version 2.03 (25-Feb-08)
  -optimized getPrmDflt. New cleaner way of using it too.
  -optimized images/imtransform2

@@ -1,0 +1,99 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of kernelTracker</title>
+  <meta name="keywords" content="kernelTracker">
+  <meta name="description" content="Kernel Tracker from Comaniciu, Ramesh and Meer PAMI 2003.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>kernelTracker
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Kernel Tracker from Comaniciu, Ramesh and Meer PAMI 2003.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [allRct, allSim, allIc] = kernelTracker( I, prm ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Kernel Tracker from Comaniciu, Ramesh and Meer PAMI 2003.
+
+ Implements the algorithm described in &quot;Kernel-Based Object Tracking&quot; by
+ Dorin Comaniciu, Visvanathan Ramesh and Peter Meer, PAMI 25, 564-577,
+ 2003.  This is a fast tracking algorithm that utilizes a histogram
+ representation of an object (in this implementation we use color
+ histograms, as in the original work).  The idea is given a histogram q in
+ frame t, find histogram p in frame t+1 that is most similar to q. It
+ turns out that this can be formulated as a mean shift problem. Here, the
+ kernel is fixed to the Epanechnikov kernel.
+
+ This implementation uses mex files to optimize speed, it is significantly
+ faster than  real time for a single object on a 2GHz standard laptop (as
+ of 2007).
+
+ If I==[], toy data is created.  If rctS==0, the user is queried to
+ specify the first rectangle.  rctE, denoting the object location in the
+ last frame, can optionally be specified.  If rctE is given, the model
+ histogram at fraction r of the video is (1-r)*histS+r*histE where histS
+ and histE are the model histograms from the first and last frame.  If
+ rctE==0 rectangle in final frame is queried, if rectE==-1 it is not used.
+
+ Let T denote the length of the video. Returned values are of length t,
+ where t==T if the object was tracked through the whole sequence (ie sim
+ does not fall below simThr), otherwise t&lt;=T is equal to the last frame in
+ which obj was found.  You can test if the object was tracked using:
+   success = (size(allRct,1)==size(I,4));
+
+ USAGE
+  [allRct, allIc, allSim] = kernelTracker( [I], [prm] )
+
+ INPUTS
+  I            - MxNx3xT input video
+  [prm]
+   .rctS       - [0] rectangle denoting initial object location
+   .rctE       - [-1] rectangle denoting final object location
+   .dispFlag   - [1] show interactive display
+   .scaleSrch  - [1] if true search over scale
+   .nBit       - [4] n=2^nBit, color histograms are [n x n x n]
+   .simThr     - [.7] sim thr for when obj is considered lost
+   .scaleDel   - [.9] multiplicative diff between consecutive scales
+
+ OUTPUTS
+  allRct       - [t x 4] array of t locations [x,y,wd,ht]
+  allSim       - [1 x t] array of similarity measures during tracking
+  allIc        - [1 x t] cell array of cropped windows containing obj
+
+ EXAMPLE
+  [allRct,allSim,allIc] = kernelTracker();
+  figure(2); clf; plot(allRct);
+  figure(3); clf; montage2(allIc,struct('hasChn',true));
+
+ See also
+
+ Piotr's Image&amp;Video Toolbox      Version 2.04
+ Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Please email me if you find bugs, or have suggestions or questions!
+ Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="gaussSmooth.html" class="code" title="function [L,filters] = gaussSmooth( I, sigmas, shape, radius )">gaussSmooth</a>	Applies Gaussian smoothing to a (multidimensional) image.</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Mon 23-Jun-2008 15:55:39 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

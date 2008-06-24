@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of plotRoc</title>
+  <meta name="keywords" content="plotRoc">
+  <meta name="description" content="Function for display of rocs (receiver operator characteristic curves).">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html matlab -->
+<h1>plotRoc
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Function for display of rocs (receiver operator characteristic curves).</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function h = plotRoc( D, varargin ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Function for display of rocs (receiver operator characteristic curves).
+
+ Displays nice clearly visible curves. Consistent usage ensures uniform
+ look for rocs. The input D should have n rows, each of which is of the
+ form [false-positive rate true-positive rate]. D is generated, for
+ example, by scanning a detection threshold over n values from 0 (so first
+ entry in D is [1 1]) to 1 (so last entry is [0 0]). Alternatively D can
+ be a cell vector of rocs, in which case an average ROC will be shown with
+ error bars.
+
+ USAGE
+  h = plotRoc( D, prm )
+
+ INPUTS
+  D    - [nx2] n data points along roc (falsePos/truePos)
+  prm  - [] param struct
+   .color    ['g'] color for curve
+   .lineSt   ['-'] linestyle (see LineSpec)
+   .lineWd   [4] curve width
+   .logx     [0] use logarithmic scale for x-axis
+   .logy     [0] use logarithmic scale for y-axis
+   .marker   [''] marker type (see LineSpec)
+   .mrkrSiz  [12] marker size
+   .nMarker  [5] number of markers (regularly spaced) to display
+   .lims     [0 1 0 1] axes limits
+   .smooth   [0] if T compute lower envelop of roc to smooth staircase
+
+ OUTPUTS
+  h    - plot handle for use in legend only
+
+ EXAMPLE
+  k=2; x=0:.0001:1; data1 = [1-x; (1-x.^k).^(1/k)]';
+  k=3; x=0:.0001:1; data2 = [1-x; (1-x.^k).^(1/k)]';
+  hs(1)=plotRoc(data1,struct('color','g','marker','s'));
+  hs(2)=plotRoc(data2,struct('color','b','lineSt','--'));
+  legend( hs, {'roc1','roc2'} ); xlabel('fp'); ylabel('fn');
+
+ See also
+
+ Piotr's Image&amp;Video Toolbox      Version 2.04
+ Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Please email me if you find bugs, or have suggestions or questions!
+ Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<hr><address>Generated on Mon 23-Jun-2008 15:55:39 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

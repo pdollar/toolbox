@@ -25,8 +25,8 @@
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment"> n-dimensional euclidean distance between each window in A and template T.
 
- Similar to normxcorrn, except at each point (i,j) calculates the 
- euclidean distance between the T and the window in A surrounding the 
+ Similar to normxcorrn, except at each point (i,j) calculates the
+ euclidean distance between the T and the window in A surrounding the
  point, storing the result in C(i,j).
 
  USAGE
@@ -42,10 +42,15 @@
 
  EXAMPLE
   T=gaussSmooth(rand(20),2); A=repmat(T,[3 3]);
-  C1=normxcorrn(T,A);  C2=xcorrn(A,T);  C3=xeucn(A,T); 
+  C1=normxcorrn(T,A);  C2=xcorrn(A,T);  C3=xeucn(A,T);
   figure(1); im(C1);  figure(2); im(C2);  figure(3); im(-C3);
 
- See also <a href="xcorrn.html" class="code" title="function C = xcorrn( A, T, shape )">XCORRN</a>, <a href="convnFast.html" class="code" title="function C = convnFast( A, B, shape )">CONVNFAST</a></pre></div>
+ See also <a href="xcorrn.html" class="code" title="function C = xcorrn( A, T, shape )">XCORRN</a>, <a href="convnFast.html" class="code" title="function C = convnFast( A, B, shape )">CONVNFAST</a>
+
+ Piotr's Image&amp;Video Toolbox      Version 2.0
+ Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Please email me if you find bugs, or have suggestions or questions!
+ Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
@@ -59,6 +64,6 @@ This function is called by:
 
 
 
-<hr><address>Generated on Mon 25-Feb-2008 14:38:40 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+<hr><address>Generated on Mon 23-Jun-2008 15:55:39 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
 </body>
 </html>
