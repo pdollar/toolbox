@@ -1,4 +1,4 @@
-Version 2.04 (23-June-08)
+Version 2.10 (24-June-08)
  -added kernelTracker.m (and helper funciton) to /images
  -added /matlab/plotRoc.m and /matlab/dirSynch.m
  -made /matlab/getPrmDflt.m more flexible

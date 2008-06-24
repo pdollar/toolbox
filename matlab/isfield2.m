@@ -24,7 +24,7 @@ function tf = isfield2( S, fs, isinit )
 %
 % See also ISFIELD
 %
-% Piotr's Image&Video Toolbox      Version 2.04
+% Piotr's Image&Video Toolbox      Version 2.10
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
