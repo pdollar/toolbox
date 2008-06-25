@@ -6,6 +6,14 @@
 // See header file for free usage information.
 //***************************************************************************
 
+//***************************************************************************
+// This version has been modified from its original
+//  - to be compilable on GNU/Linux by removing the conio.h dependency.
+//  - to send back the array of previous nodes on the shortest paths
+//  - changed iostream.h to <iostream> and added using namespace std; 
+// Changes by Vincent Rabaud and Piotr Dollar 2008
+//***************************************************************************
+ 
 #include <math.h>
 #include "mex.h"
 
@@ -62,8 +70,9 @@ extern void _main();
 //***************************************************************************
 
 #include <stdlib.h>
-#include <iostream.h>
+#include <iostream>
 #include <stdio.h>
+using namespace std;
 
 #include "fibheap.h"
 
