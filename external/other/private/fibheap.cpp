@@ -11,6 +11,7 @@
 //  - to be compilable on GNU/Linux by removing the conio.h dependency.
 //  - to send back the array of previous nodes on the shortest paths
 //  - changed iostream.h to <iostream> and added using namespace std; 
+//  - removed duplicate includes
 // Changes by Vincent Rabaud and Piotr Dollar 2008
 //***************************************************************************
  
@@ -19,9 +20,15 @@
 
 extern void _main();
 
+#include <stdlib.h>
+#include <iostream>
+#include <stdio.h>
+#include <conio.h>
 #include <ctype.h>
 #include <memory.h>
 #include <time.h>
+using namespace std;
+#include "fibheap.h"
 
 #define _FIBHEAP_CPP
 
@@ -69,12 +76,7 @@ extern void _main();
 //         if non-zero X returned, then return X>0?1:0
 //***************************************************************************
 
-#include <stdlib.h>
-#include <iostream>
-#include <stdio.h>
-using namespace std;
 
-#include "fibheap.h"
 
 bool isSparse;
 
