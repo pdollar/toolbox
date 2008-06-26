@@ -17,3 +17,7 @@ sum(D1-D3)
 %%%
 % [D1;D3]
 % [P1]
+
+
+%[D5,P5]=dijkstra(G,5); [D6,P6]=dijkstra(G,6); 
+%[D56,P56]=dijkstra( G, 5:6 ); [D5;D6]-D56, [P5;P6]-P56,

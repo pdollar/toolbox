@@ -28,6 +28,7 @@
 %
 % Miscellaneous:
 %   checkNumArgs      - Helper utility for checking numeric vector arguments.
+%   dijkstra          - Runs Dijkstra's shortest path algorithm on a distance matrix.
 %   dirSynch          - Synchronize two directory trees (or show differences between them).
 %   gauss2ellipse     - Creates an ellipse representing the 2D Gaussian distribution.
 %   getPrmDflt        - Helper to set default values (if not already set) of parameter struct.
