@@ -42,7 +42,7 @@ while ~isempty(d)
   for i = 1 : length(dTmp)
     name = dTmp(i).name;
     if strcmp( name,'.') || strcmp( name,'..'); continue; end
-    if dTmp(i).isdir; d{end+1} = [ d{1} '/' name ]; continue; end
+    if dTmp(i).isdir; d{end+1} = [ d{1} '/' name ]; continue; end %#ok<AGROW>
     if ~strcmp( name,'menu.html'); continue; end
     fid = fopen( [ d{1} '/' name ], 'r' ); c = fread(fid, '*char')'; fclose( fid );
     c = regexprep( c, '<li>([^<]*[<]?[^<]*)\.svn([^<]*[<]?[^<]*)</li>', '');
