@@ -8,11 +8,11 @@
 
 //***************************************************************************
 // This version has been modified from its original
+//  - to be compilable on GNU/Linux by removing the conio.h dependency.
+//  - to send back the array of previous nodes on the shortest paths
 //  - changed iostream.h to <iostream> and added using namespace std; 
 //  - removed duplicate includes
 // Changes by Vincent Rabaud and Piotr Dollar 2008
-//
-//
 //***************************************************************************
 
 #include <math.h>
@@ -459,17 +459,11 @@ void FibHeap::Print(FibHeapNode *Tree, FibHeapNode *theParent) {
       mexPrintf( "(Right is NULL)" );
     else if (Temp->Right->Left != Temp)
       mexPrintf( "(Error in left link left) ->" );
-    else
+    else 
       mexPrintf( " <-> " );
 
     Temp = Temp->Right;
 
-    if (kbhit() && getch() == 27)
-    {
-      cout << "Hit a key to resume or ESC to break\n";
-      if (getch() == 27)
-        break;
-    }
   } while (Temp != NULL && Temp != Tree);
   mexPrintf( "\n" );
 
@@ -480,7 +474,7 @@ void FibHeap::Print(FibHeapNode *Tree, FibHeapNode *theParent) {
     mexPrintf( ": " );
     if (Temp->Child == NULL)
       mexPrintf( "NONE\n" );
-    else 
+    else
       Print(Temp->Child, Temp);
     Temp = Temp->Right;
   } while (Temp!=NULL && Temp != Tree);
@@ -746,7 +740,7 @@ int IntCmp(const void *pA, const void *pB) {
   return 1;
 }
 
-void dodijk_sparse( long int N, long int S, double *D, double *sr, int *irs, int *jcs, HeapNode *A, FibHeap *theHeap  ) {
+void dodijk_sparse( long int N, long int S, double *D, double *P, double *sr, int *irs, int *jcs, HeapNode *A, FibHeap  *theHeap  ) {
   int      finished;
   long int i,startind,endind,whichneighbor,ndone,closest;
   double   closestD,arclength;
@@ -790,7 +784,7 @@ void dodijk_sparse( long int N, long int S, double *D, double *sr, int *irs, int
     closest  = Min->GetIndexValue();
     closestD = Min->GetKeyValue();
 
-    if ((closest<0) || (closest>=N)) 
+    if ((closest<0) || (closest>=N))
       mexErrMsgTxt( "Minimum Index out of bound..." );
 
     //theHeap->Print();
@@ -817,6 +811,7 @@ void dodijk_sparse( long int N, long int S, double *D, double *sr, int *irs, int
 
           if ( olddist > ( closestD + arclength )) {
             D[ whichneighbor ] = closestD + arclength;
+            P[ whichneighbor ] = closest + 1;    // +1 because Matlab indexes from 1 and not 0
 
             Temp = A[ whichneighbor ];
             Temp.SetKeyValue( closestD + arclength );
@@ -840,8 +835,8 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
 
   if (nrhs != 2)
     mexErrMsgTxt( "Only 2 input arguments allowed." );
-  if (nlhs != 1)
-    mexErrMsgTxt( "Only 1 output argument allowed." );  
+  if (nlhs > 2)
+    mexErrMsgTxt( "Only 2 output argument allowed." );
 
   M = mxGetM( prhs[0] );
   N = mxGetN( prhs[0] );
@@ -852,13 +847,17 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
   MS = mxGetM( prhs[1] );
   NS = mxGetN( prhs[1] );
 
-  if ((MS==0) || (NS==0) || ((MS>1) && (NS>1))) 
+  if ((MS==0) || (NS==0) || ((MS>1) && (NS>1)))
     mexErrMsgTxt( "Source nodes are specified in one dimensional matrix only" );
   if (NS>MS) MS=NS;
 
   plhs[0] = mxCreateDoubleMatrix( MS,M, mxREAL);
   D = mxGetPr(plhs[0]);
   Dsmall = (double *) mxCalloc( M , sizeof( double ));
+
+  plhs[1] = mxCreateDoubleMatrix( MS,M, mxREAL);
+  P = mxGetPr(plhs[1]);
+  Psmall = (double *) mxCalloc( M , sizeof( double ));
 
   if(mxIsSparse( prhs[ 0 ] ) == 1) {
     /* dealing with sparse array */
@@ -879,11 +878,12 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
 
       if ((S < 0) || (S > M-1)) mexErrMsgTxt( "Source node(s) out of bound" );
 
-      // run the dijkstra code
+      // run the dijkstra code 
       //mexPrintf( "Working on i=%d\n" , i );
-      dodijk_sparse( N,S,Dsmall,sr,irs,jcs,A,theHeap );
+      dodijk_sparse( N,S,Dsmall,Psmall,sr,irs,jcs,A,theHeap );
       for (j=0; j<M; j++) {
         *( D + j*MS + i ) = *( Dsmall + j );
+        *( P + j*MS + i ) = *( Psmall + j );
         //mexPrintf( "Distance i=%d to j=%d =%f\n" , S+1 , j , *( Dsmall + j ) );
       }
       delete theHeap;

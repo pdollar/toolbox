@@ -771,7 +771,7 @@ void dodijk( long int N, long int S, double *D, double *P, double *sr, int *irs,
   theHeap->ExtractMin();
 
   /*theHeap->Print();
-  for (i=0; i<M; i++)
+  for (i=0; i<N; i++)
   {
   closest = A[ i ].GetIndexValue();
   closestD = A[ i ].GetKeyValue();
@@ -871,10 +871,10 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
 
   plhs[0] = mxCreateDoubleMatrix( MS,M, mxREAL);
   D = mxGetPr(plhs[0]);
+  Dsmall = (double *) mxCalloc( M , sizeof( double ));
+
   plhs[1] = mxCreateDoubleMatrix( MS,M, mxREAL);
   P = mxGetPr(plhs[1]);
-
-  Dsmall = (double *) mxCalloc( M , sizeof( double ));
   Psmall = (double *) mxCalloc( M , sizeof( double ));
 
   /* dealing with sparse array */
