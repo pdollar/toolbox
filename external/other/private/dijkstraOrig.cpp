@@ -746,107 +746,93 @@ int IntCmp(const void *pA, const void *pB) {
   return 1;
 }
 
-void dodijk_sparse(
-                   long int M,
-                   long int N,
-                   long int S,
-                   double   *D,
-                   double   *sr,
-                   int      *irs,
-                   int      *jcs,
-                   HeapNode *A,
-                   FibHeap  *theHeap  ) {
-                     int      finished;
-                     long int i,startind,endind,whichneighbor,ndone,index,switchwith,closest,closesti;
-                     long int *INDICES;
-                     double   closestD,arclength;
-                     double   INF,SMALL,olddist;
-                     HeapNode *Min;
-                     HeapNode Temp;
+void dodijk_sparse( long int M, long int N, long int S, double *D, double *sr, int *irs, int *jcs, HeapNode *A, FibHeap *theHeap  ) {
+  int      finished;
+  long int i,startind,endind,whichneighbor,ndone,index,switchwith,closest,closesti;
+  long int *INDICES;
+  double   closestD,arclength;
+  double   INF,SMALL,olddist;
+  HeapNode *Min;
+  HeapNode Temp;
 
-                     INF   = mxGetInf();
-                     SMALL = mxGetEps();
+  INF   = mxGetInf();
+  SMALL = mxGetEps();
 
-                     /* initialize */
-                     for (i=0; i<M; i++) {
-                       if (i!=S) A[ i ] = (double) INF; else A[ i ] = (double) SMALL;
-                       if (i!=S) D[ i ] = (double) INF; else D[ i ] = (double) SMALL;
-                       theHeap->Insert( &A[i] );
-                       A[ i ].SetIndexValue( (long int) i );
-                     }
+  /* initialize */
+  for (i=0; i<M; i++) {
+    if (i!=S) A[ i ] = (double) INF; else A[ i ] = (double) SMALL;
+    if (i!=S) D[ i ] = (double) INF; else D[ i ] = (double) SMALL;
+    theHeap->Insert( &A[i] );
+    A[ i ].SetIndexValue( (long int) i );
+  }
 
 
-                     // Insert 0 then extract it.  This will cause the
-                     // Fibonacci heap to get balanced.
+  // Insert 0 then extract it.  This will cause the
+  // Fibonacci heap to get balanced.
 
-                     theHeap->Insert(&Temp);
-                     theHeap->ExtractMin();
+  theHeap->Insert(&Temp);
+  theHeap->ExtractMin();
 
-                     /*theHeap->Print();
-                     for (i=0; i<M; i++)
-                     {
-                     closest = A[ i ].GetIndexValue();
-                     closestD = A[ i ].GetKeyValue();
-                     mexPrintf( "Index at i=%d =%d  value=%f\n" , i , closest , closestD );
-                     }*/
+  /*theHeap->Print();
+  for (i=0; i<M; i++)
+  {
+  closest = A[ i ].GetIndexValue();
+  closestD = A[ i ].GetKeyValue();
+  mexPrintf( "Index at i=%d =%d  value=%f\n" , i , closest , closestD );
+  }*/
 
-                     /* loop over nonreached nodes */
-                     finished = 0;
-                     ndone    = 0;
-                     while ((finished==0) && (ndone < M)) {
-                       //if ((ndone % 100) == 0) mexPrintf( "Done with node %d\n" , ndone );
+  /* loop over nonreached nodes */
+  finished = 0;
+  ndone    = 0;
+  while ((finished==0) && (ndone < M)) {
+    //if ((ndone % 100) == 0) mexPrintf( "Done with node %d\n" , ndone );
 
-                       Min = (HeapNode *) theHeap->ExtractMin();
-                       closest  = Min->GetIndexValue();
-                       closestD = Min->GetKeyValue();
+    Min = (HeapNode *) theHeap->ExtractMin();
+    closest  = Min->GetIndexValue();
+    closestD = Min->GetKeyValue();
 
-                       if ((closest<0) || (closest>=M)) mexErrMsgTxt( "Minimum Index out of bound..." );
+    if ((closest<0) || (closest>=M)) mexErrMsgTxt( "Minimum Index out of bound..." );
 
-                       //theHeap->Print();
-                       //mexPrintf( "EXTRACTED MINIMUM  NDone=%d S=%d closest=%d closestD=%f\n" , ndone , S , closest , closestD );
-                       //mexErrMsgTxt( "Exiting..." );
+    //theHeap->Print();
+    //mexPrintf( "EXTRACTED MINIMUM  NDone=%d S=%d closest=%d closestD=%f\n" , ndone , S , closest , closestD );
+    //mexErrMsgTxt( "Exiting..." );
 
-                       D[ closest ] = closestD;
+    D[ closest ] = closestD;
 
-                       if (closestD == INF) finished=1; else {
-                         /* add the closest to the determined list */
-                         ndone++;
+    if (closestD == INF) finished=1; else {
+      /* add the closest to the determined list */
+      ndone++;
 
-                         /* relax all nodes adjacent to closest */
-                         startind = jcs[ closest   ];
-                         endind   = jcs[ closest+1 ] - 1;
+      /* relax all nodes adjacent to closest */
+      startind = jcs[ closest   ];
+      endind   = jcs[ closest+1 ] - 1;
 
-                         if (startind!=endind+1)
-                           for (i=startind; i<=endind; i++) {
-                             whichneighbor = irs[ i ];
-                             arclength = sr[ i ];
-                             olddist   = D[ whichneighbor ];
+      if (startind!=endind+1)
+        for (i=startind; i<=endind; i++) {
+          whichneighbor = irs[ i ];
+          arclength = sr[ i ];
+          olddist   = D[ whichneighbor ];
 
-                             //mexPrintf( "INSPECT NEIGHBOR #%d  olddist=%f newdist=%f\n" , whichneighbor , olddist , closestD+arclength );
+          //mexPrintf( "INSPECT NEIGHBOR #%d  olddist=%f newdist=%f\n" , whichneighbor , olddist , closestD+arclength );
 
-                             if ( olddist > ( closestD + arclength )) {
-                               D[ whichneighbor ] = closestD + arclength;
+          if ( olddist > ( closestD + arclength )) {
+            D[ whichneighbor ] = closestD + arclength;
 
-                               Temp = A[ whichneighbor ];
-                               Temp.SetKeyValue( closestD + arclength );
-                               theHeap->DecreaseKey( &A[ whichneighbor ], Temp );
+            Temp = A[ whichneighbor ];
+            Temp.SetKeyValue( closestD + arclength );
+            theHeap->DecreaseKey( &A[ whichneighbor ], Temp );
 
-                               //mexPrintf( "UPDATING NODE #%d  olddist=%f newdist=%f\n" , whichneighbor , olddist , closestD+arclength );
-                             }
-                           }
+            //mexPrintf( "UPDATING NODE #%d  olddist=%f newdist=%f\n" , whichneighbor , olddist , closestD+arclength );
+          }
+        }
 
-                       }
+    }
 
-                     }
+  }
 }
 
 
-void mexFunction(
-                 int          nlhs,
-                 mxArray      *plhs[],
-                 int          nrhs,
-                 const mxArray *prhs[]
-) {
+void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
   double    *sr,*D,*P,*SS,*Dsmall,*Psmall;
   int       *irs,*jcs;
   long int  M,N,S,MS,NS,i,j,in;
