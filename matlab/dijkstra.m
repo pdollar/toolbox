@@ -16,7 +16,7 @@
 %
 % INPUT
 %   G   - nxn distance matrix
-%   S   - [] 1xp array of source indices i (defaults to 1:n)
+%   S   - 1xp array of source indices i
 %
 % OUPUT
 %   D   - pxn - shortest path lengths from S(i) to j
@@ -32,18 +32,3 @@
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
-% function [D P] = dijkstra( G, S )
-% 
-% % parameters
-% n=size(G,1); assert(size(G,2)==n);
-% if(nargin<2 || isempty(S)), S=1:n; end
-% 
-% % convert G to suitable format
-% assert(issparse(G));
-% G=0.5*(G+G');
-% 
-% % run c code
-% if(nargout<2), D=fibheap( G, S ); else [D,P] = fibheap( G, S ); end
-% 
-% end

@@ -84,7 +84,7 @@ void dijkstra1( long int n, long int s, double *D1, double *P1, double *Gpr, int
   for (i=0; i<n; i++) {
     if (i!=s) A[ i ] = (double) INF; else A[ i ] = (double) SMALL;
     if (i!=s) D1[ i ] = (double) INF; else D1[ i ] = (double) SMALL;
-    if (P1!=NULL) P1[ i ] = -1;
+    P1[ i ] = -1;
     heap->Insert( &A[i] );
     A[ i ].SetIndexValue( (long int) i );
   }
@@ -113,7 +113,7 @@ void dijkstra1( long int n, long int s, double *D1, double *P1, double *Gpr, int
           oldDist = D1[ whichNeigh ];
           if ( oldDist > ( closestD + arcLength )) {
             D1[ whichNeigh ] = closestD + arcLength;
-            if(P1!=NULL) P1[ whichNeigh ] = closest + 1;
+            P1[ whichNeigh ] = closest + 1;
             hnTmp = A[ whichNeigh ];
             hnTmp.SetKeyValue( closestD + arcLength );
             heap->DecreaseKey( &A[ whichNeigh ], hnTmp );
@@ -134,7 +134,7 @@ void dijkstra( long int n, long int nSrc, double *sources, double *D, double *P,
 
   // allocate memory for single source results (automatically recycled)
   double *D1 = (double *) mxCalloc( n , sizeof( double ));
-  double *P1 = (P==NULL) ? NULL : (double *) mxCalloc( n , sizeof( double ));
+  double *P1 = (double *) mxCalloc( n , sizeof( double ));
 
   // loop over sources
   long int s,i,j;
@@ -148,7 +148,7 @@ void dijkstra( long int n, long int nSrc, double *sources, double *D, double *P,
     // store results
     for( j=0; j<n; j++ ) {
       *( D + j*nSrc + i ) = *( D1 + j );
-      if(P!=NULL) *( P + j*nSrc + i ) = *( P1 + j );
+      *( P + j*nSrc + i ) = *( P1 + j );
     }    
   }
 }
@@ -170,9 +170,9 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
 
   // create outputs arrays D and P
   plhs[0] = mxCreateDoubleMatrix( nSrc, n, mxREAL );
-  D = mxGetPr(plhs[0]);
-  plhs[1] = (nlhs<2) ? NULL : mxCreateDoubleMatrix( nSrc, n, mxREAL );
-  P = (nlhs<2) ? NULL : mxGetPr(plhs[1]) ;
+  plhs[1] = mxCreateDoubleMatrix( nSrc, n, mxREAL );
+  D = mxGetPr(plhs[0]);  
+  P = mxGetPr(plhs[1]) ;
 
   // run dijkstras to fill D and P
   dijkstra( n, nSrc, sources, D, P, prhs[0] );
