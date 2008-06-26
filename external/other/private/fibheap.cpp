@@ -853,14 +853,13 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
 
   if (nrhs != 2)
     mexErrMsgTxt( "Only 2 input arguments allowed." );
-  else if (nlhs > 2)
+  if (nlhs > 2)
     mexErrMsgTxt( "Only 2 output argument allowed." );
 
   M = mxGetM( prhs[0] );
   N = mxGetN( prhs[0] );
 
-  if (M != N)
-    mexErrMsgTxt( "Input matrix needs to be square." );
+  if (M != N) mexErrMsgTxt( "Input matrix needs to be square." );
 
   SS = mxGetPr(prhs[1]);
   MS = mxGetM( prhs[1] );
@@ -868,8 +867,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
 
   if ((MS==0) || (NS==0) || ((MS>1) && (NS>1)))
     mexErrMsgTxt( "Source nodes are specified in one dimensional matrix only" );
-  if (NS>MS)
-    MS=NS;
+  if (NS>MS) MS=NS;
 
   plhs[0] = mxCreateDoubleMatrix( MS,M, mxREAL);
   D = mxGetPr(plhs[0]);
@@ -878,7 +876,6 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
 
   Dsmall = (double *) mxCalloc( M , sizeof( double ));
   Psmall = (double *) mxCalloc( M , sizeof( double ));
-
 
   /* dealing with sparse array */
   isSparse = (mxIsSparse( prhs[ 0 ] ) == 1);
@@ -889,7 +886,6 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
   sr      = mxGetPr(prhs[0]);
 
   // Setup for the Fibonacci heap
-
   for (i=0; i<MS; i++) {
     if ((theHeap = new FibHeap) == NULL || (A = new HeapNode[M+1]) == NULL ) {
       mexErrMsgTxt( "Memory allocation failed-- ABORTING.\n" );
@@ -900,27 +896,16 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
     S = (long int) *( SS + i );
     S--;
 
-    if ((S < 0) || (S > M-1))
-      mexErrMsgTxt( "Source node(s) out of bound" );
+    if ((S < 0) || (S > M-1)) mexErrMsgTxt( "Source node(s) out of bound" );
 
-    /* -------------------------------------------------------------------------------------------------
-    run the dijkstra code 
-    ------------------------------------------------------------------------------------------------- */
-
+    // run the dijkstra code 
     //mexPrintf( "Working on i=%d\n" , i );
     dodijk( N,S,Dsmall,Psmall,sr,irs,jcs,A,theHeap );
-
     for (j=0; j<M; j++) {
       *( D + j*MS + i ) = *( Dsmall + j );
       *( P + j*MS + i ) = *( Psmall + j );
-
       //mexPrintf( "Distance i=%d to j=%d =%f\n" , S+1 , j , *( Dsmall + j ) );
     }
-
-    /* -------------------------------------------------------------------------------------------------
-    end of the dijkstra code 
-    ------------------------------------------------------------------------------------------------- */
-
     delete theHeap;
     delete[] A;
   }

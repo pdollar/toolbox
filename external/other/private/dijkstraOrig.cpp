@@ -840,11 +840,10 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
   HeapNode *A = NULL;
   FibHeap  *theHeap = NULL;
 
-  if (nrhs != 2) {
+  if (nrhs != 2)
     mexErrMsgTxt( "Only 2 input arguments allowed." );
-  } else if (nlhs != 1) {
-    mexErrMsgTxt( "Only 1 output argument allowed." );
-  }
+  if (nlhs != 1)
+    mexErrMsgTxt( "Only 1 output argument allowed." );  
 
   M = mxGetM( prhs[0] );
   N = mxGetN( prhs[0] );
@@ -855,7 +854,8 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
   MS = mxGetM( prhs[1] );
   NS = mxGetN( prhs[1] );
 
-  if ((MS==0) || (NS==0) || ((MS>1) && (NS>1))) mexErrMsgTxt( "Source nodes are specified in one dimensional matrix only" );
+  if ((MS==0) || (NS==0) || ((MS>1) && (NS>1))) 
+    mexErrMsgTxt( "Source nodes are specified in one dimensional matrix only" );
   if (NS>MS) MS=NS;
 
   plhs[0] = mxCreateDoubleMatrix( MS,M, mxREAL);
@@ -863,16 +863,13 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
 
   Dsmall = (double *) mxCalloc( M , sizeof( double ));
 
-  if (mxIsSparse( prhs[ 0 ] ) == 1) {
+  if(mxIsSparse( prhs[ 0 ] ) == 1) {
     /* dealing with sparse array */
     sr      = mxGetPr(prhs[0]);
     irs     = mxGetIr(prhs[0]);
     jcs     = mxGetJc(prhs[0]);
 
     // Setup for the Fibonacci heap
-
-
-
     for (i=0; i<MS; i++) {
       if ((theHeap = new FibHeap) == NULL || (A = new HeapNode[M+1]) == NULL ) {
         mexErrMsgTxt( "Memory allocation failed-- ABORTING.\n" );
@@ -885,31 +882,15 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
 
       if ((S < 0) || (S > M-1)) mexErrMsgTxt( "Source node(s) out of bound" );
 
-      /* -------------------------------------------------------------------------------------------------
-      run the dijkstra code
-      ------------------------------------------------------------------------------------------------- */
-
+      // run the dijkstra code
       //mexPrintf( "Working on i=%d\n" , i );
-
       dodijk_sparse( M,N,S,Dsmall,sr,irs,jcs,A,theHeap );
-
       for (j=0; j<M; j++) {
         *( D + j*MS + i ) = *( Dsmall + j );
         //mexPrintf( "Distance i=%d to j=%d =%f\n" , S+1 , j , *( Dsmall + j ) );
       }
-
-
-
-      /* -------------------------------------------------------------------------------------------------
-      end of the dijkstra code
-      ------------------------------------------------------------------------------------------------- */
-
       delete theHeap;
       delete[] A;
     }
-
-
-
   } else mexErrMsgTxt( "Function not implemented for full arrays" );
-
 }
