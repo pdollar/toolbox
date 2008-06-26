@@ -3,6 +3,12 @@
 // 
 // Based on ISOMAP code which can be found at http://isomap.stanford.edu/.
 // See accompanying m file (dijkstra.m) for usage.
+//
+// Piotr's Image&Video Toolbox      Version 2.10
+// Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+// Please email me if you find bugs, or have suggestions or questions!
+// Licensed under the Lesser GPL [see external/lgpl.txt]
+//
 //***************************************************************************
 
 #include "mex.h"
@@ -62,7 +68,7 @@ int  HeapNode::operator <(FibHeapNode& RHS) {
 // main
 //===========================================================================
 
-void dijkstra1( long int n, long int S, double *D1, double *P1, double *Gpr, int *Gir, int *Gjc) {
+void dijkstra1( long int n, long int s, double *D1, double *P1, double *Gpr, int *Gir, int *Gjc) {
   int      finished;
   long int i,startInd,endInd,whichNeigh,nDone,closest;
   double   closestD,arcLength,INF,SMALL,oldDist;
@@ -76,8 +82,8 @@ void dijkstra1( long int n, long int S, double *D1, double *P1, double *Gpr, int
 
   // initialize
   for (i=0; i<n; i++) {
-    if (i!=S) A[ i ] = (double) INF; else A[ i ] = (double) SMALL;
-    if (i!=S) D1[ i ] = (double) INF; else D1[ i ] = (double) SMALL;
+    if (i!=s) A[ i ] = (double) INF; else A[ i ] = (double) SMALL;
+    if (i!=s) D1[ i ] = (double) INF; else D1[ i ] = (double) SMALL;
     if (P1!=NULL) P1[ i ] = -1;
     heap->Insert( &A[i] );
     A[ i ].SetIndexValue( (long int) i );
@@ -122,23 +128,22 @@ void dijkstra1( long int n, long int S, double *D1, double *P1, double *Gpr, int
 
 void dijkstra( long int n, long int nSrc, double *sources, double *D, double *P, const mxArray *G ) {
   // dealing with sparse array
-  double *Gpr; int *Gir,*Gjc;
-  Gpr = mxGetPr(G);
-  Gir = mxGetIr(G);
-  Gjc = mxGetJc(G);
+  double *Gpr = mxGetPr(G);
+  int *Gir = mxGetIr(G);
+  int *Gjc = mxGetJc(G);
 
   // allocate memory for single source results (automatically recycled)
   double *D1 = (double *) mxCalloc( n , sizeof( double ));
   double *P1 = (P==NULL) ? NULL : (double *) mxCalloc( n , sizeof( double ));
 
   // loop over sources
-  long int S,i,j;
+  long int s,i,j;
   for( i=0; i<nSrc; i++ ) {
 
-    // run the dijkstra code for single source (0 indexed)
-    S = (long int) *( sources + i ); S--;
-    if ((S < 0) || (S > n-1)) mexErrMsgTxt( "Source node(s) out of bound" );
-    dijkstra1( n,S,D1,P1,Gpr,Gir,Gjc );
+    // run the dijkstra1 code for single source (0 indexed)
+    s = (long int) *( sources + i ) - 1;
+    if (s<0 || s > n-1) mexErrMsgTxt( "Source node(s) out of bound" );
+    dijkstra1( n,s,D1,P1,Gpr,Gir,Gjc );
 
     // store results
     for( j=0; j<n; j++ ) {
@@ -156,17 +161,17 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
   if (nrhs != 2) mexErrMsgTxt( "Only 2 input arguments allowed." );
   if (nlhs > 2) mexErrMsgTxt( "Only 2 output argument allowed." );
   n = mxGetN( prhs[0] );
-  if (mxGetM( prhs[0] ) != n) mexErrMsgTxt( "Input matrix needs to be square." );
+  if (mxGetM( prhs[0] ) != n) mexErrMsgTxt( "Input matrix G needs to be square." );
   sources = mxGetPr(prhs[1]); mSrc = mxGetM(prhs[1]); nSrc=mxGetN(prhs[1]);
   if ((mSrc==0) || (nSrc==0) || ((mSrc>1) && (nSrc>1)))
-    mexErrMsgTxt( "Source nodes are specified in one dimensional matrix only" );
+    mexErrMsgTxt( "Source nodes are specified in vector only" );
   if(mSrc>nSrc) nSrc=mSrc;
   if(mxIsSparse(prhs[0])==0) mexErrMsgTxt( "Distance Matrix must be sparse" );
 
-  // create outputs and temp variables
-  plhs[0] = mxCreateDoubleMatrix( nSrc,n, mxREAL);
+  // create outputs arrays D and P
+  plhs[0] = mxCreateDoubleMatrix( nSrc, n, mxREAL );
   D = mxGetPr(plhs[0]);
-  plhs[1] = (nlhs<2) ? NULL : mxCreateDoubleMatrix( nSrc,n, mxREAL);
+  plhs[1] = (nlhs<2) ? NULL : mxCreateDoubleMatrix( nSrc, n, mxREAL );
   P = (nlhs<2) ? NULL : mxGetPr(plhs[1]) ;
 
   // run dijkstras to fill D and P
