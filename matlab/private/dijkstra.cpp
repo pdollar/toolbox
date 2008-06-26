@@ -145,60 +145,64 @@ void dijkstra1( long int N, long int S, double *D1, double *P1, double *G, int *
 //}
 
 void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
-  double    *sr,*D,*P,*SS,*Dsmall,*Psmall;
-  int       *irs,*jcs;
-  long int  N,S,MS,NS,i,j;
-  HeapNode *A = NULL;
-  FibHeap  *heap = NULL;
+  double    *G,*D,*P,*SS;
+  int       *Gir,*Gjc;
+  long int  N,MS,NS;
 
-
+  // get / check inputs
   if (nrhs != 2) mexErrMsgTxt( "Only 2 input arguments allowed." );
   if (nlhs > 2) mexErrMsgTxt( "Only 2 output argument allowed." );
   N = mxGetN( prhs[0] );
   if (mxGetM( prhs[0] ) != N) mexErrMsgTxt( "Input matrix needs to be square." );
-
   SS = mxGetPr(prhs[1]); MS = mxGetM(prhs[1]); NS=mxGetN(prhs[1]);
   if ((MS==0) || (NS==0) || ((MS>1) && (NS>1)))
     mexErrMsgTxt( "Source nodes are specified in one dimensional matrix only" );
   if (MS>NS) NS=MS;
+  if(mxIsSparse(prhs[ 0 ])==0)
+    mexErrMsgTxt( "Function not implemented for full arrays" );
 
+  // create outputs and temp variables
   plhs[0] = mxCreateDoubleMatrix( NS,N, mxREAL);
   D = mxGetPr(plhs[0]);
-  Dsmall = (double *) mxCalloc( N , sizeof( double ));
-
   plhs[1] = (nlhs<2) ? NULL : mxCreateDoubleMatrix( NS,N, mxREAL);
   P = (nlhs<2) ? NULL : mxGetPr(plhs[1]) ;
-  Psmall = (nlhs<2) ? NULL : (double *) mxCalloc( N , sizeof( double ));
 
-  if(mxIsSparse( prhs[ 0 ] ) == 1) {
-    /* dealing with sparse array */
-    sr      = mxGetPr(prhs[0]);
-    irs     = mxGetIr(prhs[0]);
-    jcs     = mxGetJc(prhs[0]);
+  // dealing with sparse array 
+  G      = mxGetPr(prhs[0]);
+  Gir     = mxGetIr(prhs[0]);
+  Gjc     = mxGetJc(prhs[0]);
 
-    // Setup for the Fibonacci heap
-    for (i=0; i<NS; i++) {
-      if ((heap = new FibHeap) == NULL || (A = new HeapNode[N+1]) == NULL ) {
-        mexErrMsgTxt( "Memory allocation failed-- ABORTING.\n" );
-      }
+  // run dijkstra
+  //dijkstra( N, NS, SS, D, P, G, Gir, Gjc );
 
-      heap->ClearHeapOwnership();
+  // setup for dijkstra
+  double   *D1,*P1;
+  HeapNode *A = NULL;
+  FibHeap  *heap = NULL;
+  long int S,i,j;
+  D1 = (double *) mxCalloc( N , sizeof( double ));
+  P1 = (P==NULL) ? NULL : (double *) mxCalloc( N , sizeof( double ));
 
-      S = (long int) *( SS + i );
-      S--;
+  for (i=0; i<NS; i++) {
+    // setup heap
+    if ((heap = new FibHeap) == NULL || (A = new HeapNode[N+1]) == NULL )
+      mexErrMsgTxt( "Memory allocation failed-- ABORTING.\n" );
+    heap->ClearHeapOwnership();
 
-      if ((S < 0) || (S > N-1)) mexErrMsgTxt( "Source node(s) out of bound" );
+    // get source node (0 indexed)
+    S = (long int) *( SS + i ); S--;
+    if ((S < 0) || (S > N-1)) mexErrMsgTxt( "Source node(s) out of bound" );
 
-      // run the dijkstra code 
-      //mexPrintf( "Working on i=%d\n" , i );
-      dijkstra1( N,S,Dsmall,Psmall,sr,irs,jcs,A,heap );
-      for (j=0; j<N; j++) {
-        *( D + j*NS + i ) = *( Dsmall + j );
-        if(nlhs==2) *( P + j*NS + i ) = *( Psmall + j );
-        //mexPrintf( "Distance i=%d to j=%d =%f\n" , S+1 , j , *( Dsmall + j ) );
-      }
-      delete heap;
-      delete[] A;
+    // run the dijkstra code for single source
+    dijkstra1( N,S,D1,P1,G,Gir,Gjc,A,heap );
+
+    // store results
+    for (j=0; j<N; j++) {
+      *( D + j*NS + i ) = *( D1 + j );
+      if(P!=NULL) *( P + j*NS + i ) = *( P1 + j );
     }
-  } else mexErrMsgTxt( "Function not implemented for full arrays" );
+
+    // cleanup
+    delete heap; delete[] A;
+  }
 }
