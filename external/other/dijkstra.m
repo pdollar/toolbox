@@ -30,7 +30,16 @@
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 function [D P] = dijkstra( G, S )
-% n=size(G,1); assert(size(G,2)==n);
-% if(nargin<2 || isempty(S)), S=1:n; end
+
+% parameters
+n=size(G,1); assert(size(G,2)==n);
+if(nargin<2 || isempty(S)), S=1:n; end
+if(~issparse(G)), G=sparse(G); end;
 G=0.5*(G+G');
-[ D P ] = fibheap( G, S );
+
+% run c code
+if(nargout<2)
+  D = fibheap1( G, S );
+else
+  [ D P ] = fibheap1( G, S );
+end

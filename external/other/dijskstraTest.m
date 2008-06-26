@@ -1,16 +1,19 @@
-n=10; G=sparse(n,n); for i=1:n-1; G(i,i+1)=1; end; G=G+G';
+n=100; G=sparse(n,n); for i=1:n-1; G(i,i+1)=1; end; G=G+G';
 % G=full(G); % causes problem for CURRENT
+nTrial=100;
 
 %%% CURRENT version: does not work
-tic, [D1 P1] = dijkstra( G, 6 ); toc
+tic, for i=1:nTrial; D1 = dijkstra( G, 6 ); end; toc
+%tic, for i=1:nTrial; [D1] = fibheap1( G, 6 ); end; toc
 
 %%% OLD version (w missing source): works well, fast
-tic, [D2 P2] = dijkstraOld( G, 6 ); toc
-D2=D2'; P2=P2';
+% tic, [D2 P2] = dijkstraOld( G, 6 ); toc
+% D2=D2'; P2=P2';
 
 %%% ORIG version: from isomap
-tic, D3 = dijkstraOrig( G, 6 ); toc
+tic, for i=1:nTrial; D3 = dijkstraOrig( G, 6 ); end; toc
 
+sum(D1-D3)
 %%%
-[D1;D2;D3]
-[P1;P2]
+% [D1;D3]
+% [P1]

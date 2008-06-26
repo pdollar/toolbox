@@ -811,7 +811,7 @@ void dodijk_sparse( long int N, long int S, double *D, double *P, double *sr, in
 
           if ( olddist > ( closestD + arclength )) {
             D[ whichneighbor ] = closestD + arclength;
-            P[ whichneighbor ] = closest + 1;    // +1 because Matlab indexes from 1 and not 0
+            if(P!=NULL) P[ whichneighbor ] = closest + 1;    // +1 because Matlab indexes from 1 and not 0
 
             Temp = A[ whichneighbor ];
             Temp.SetKeyValue( closestD + arclength );
@@ -856,8 +856,8 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
   Dsmall = (double *) mxCalloc( M , sizeof( double ));
 
   plhs[1] = mxCreateDoubleMatrix( MS,M, mxREAL);
-  P = mxGetPr(plhs[1]);
-  Psmall = (double *) mxCalloc( M , sizeof( double ));
+  P = (nlhs<2) ? NULL : mxGetPr(plhs[1]) ;
+  Psmall = (nlhs<2) ? NULL : (double *) mxCalloc( M , sizeof( double ));
 
   if(mxIsSparse( prhs[ 0 ] ) == 1) {
     /* dealing with sparse array */
@@ -883,7 +883,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
       dodijk_sparse( N,S,Dsmall,Psmall,sr,irs,jcs,A,theHeap );
       for (j=0; j<M; j++) {
         *( D + j*MS + i ) = *( Dsmall + j );
-        *( P + j*MS + i ) = *( Psmall + j );
+        if(nlhs==2) *( P + j*MS + i ) = *( Psmall + j );
         //mexPrintf( "Distance i=%d to j=%d =%f\n" , S+1 , j , *( Dsmall + j ) );
       }
       delete theHeap;
