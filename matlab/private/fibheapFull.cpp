@@ -4,15 +4,12 @@
 // Test program for the F-heap implementation.
 // Copyright (c) 1996 by John Boyer.
 // See header file for free usage information.
-//***************************************************************************
-
-//***************************************************************************
-// This version has been modified from its original
+//
+// This version has been updated by V. Rabaud and P. Dollar in 2008:
 //  - to be compilable on GNU/Linux by removing the conio.h dependency.
 //  - to send back the array of previous nodes on the shortest paths
 //  - changed iostream.h to <iostream> and added using namespace std; 
-//  - removed duplicate includes
-// Changes by Vincent Rabaud and Piotr Dollar 2008
+//  - removed duplicate includes, cleaned up some, changed formatting
 //***************************************************************************
 
 #include <math.h>
@@ -23,7 +20,7 @@ extern void _main();
 #include <stdlib.h>
 #include <iostream>
 #include <stdio.h>
-#include <conio.h>
+//#include <conio.h>
 #include <ctype.h>
 #include <memory.h>
 #include <time.h>
@@ -734,16 +731,6 @@ int  HeapNode::operator <(FibHeapNode& RHS) {
   return N < ((HeapNode&) RHS).N ? 1 : 0;
 };
 
-int IntCmp(const void *pA, const void *pB) {
-  int A, B;
-
-  A = *((const int *) pA);
-  B = *((const int *) pB);
-  if (A < B) return -1;
-  if (A == B) return 0;
-  return 1;
-}
-
 void dodijk( long int N, long int S, double *D, double *P, double *sr, int *irs, int *jcs, HeapNode *A, FibHeap  *theHeap  ) {
   int      finished;
   long int i,startind,endind,whichneighbor,ndone,closest;
@@ -759,6 +746,7 @@ void dodijk( long int N, long int S, double *D, double *P, double *sr, int *irs,
   for (i=0; i<N; i++) {
     if (i!=S) A[ i ] = (double) INF; else A[ i ] = (double) SMALL;
     if (i!=S) D[ i ] = (double) INF; else D[ i ] = (double) SMALL;
+    if (P!=NULL) P[ i ] = -1;
     theHeap->Insert( &A[i] );
     A[ i ].SetIndexValue( (long int) i );
   }
@@ -828,7 +816,7 @@ void dodijk( long int N, long int S, double *D, double *P, double *sr, int *irs,
 
           if ( olddist > ( closestD + arclength )) {
             D[ whichneighbor ] = closestD + arclength;
-            P[ whichneighbor ] = closest + 1;    // +1 because Matlab indexes from 1 and not 0
+            if(P!=NULL) P[ whichneighbor ] = closest + 1;    // +1 because Matlab indexes from 1 and not 0
 
             Temp = A[ whichneighbor ];
             Temp.SetKeyValue( closestD + arclength );
@@ -837,11 +825,10 @@ void dodijk( long int N, long int S, double *D, double *P, double *sr, int *irs,
             //mexPrintf( "UPDATING NODE #%d  olddist=%f newdist=%f\n" , whichneighbor , olddist , closestD+arclength );
           }
         }
-
     }
-
   }
 }
+
 
 void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
   double    *sr,*D,*P,*SS,*Dsmall,*Psmall;
@@ -873,9 +860,9 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
   D = mxGetPr(plhs[0]);
   Dsmall = (double *) mxCalloc( M , sizeof( double ));
 
-  plhs[1] = mxCreateDoubleMatrix( MS,M, mxREAL);
-  P = mxGetPr(plhs[1]);
-  Psmall = (double *) mxCalloc( M , sizeof( double ));
+  plhs[1] = (nlhs<2) ? NULL : mxCreateDoubleMatrix( MS,M, mxREAL);
+  P = (nlhs<2) ? NULL : mxGetPr(plhs[1]) ;
+  Psmall = (nlhs<2) ? NULL : (double *) mxCalloc( M , sizeof( double ));
 
   /* dealing with sparse array */
   isSparse = (mxIsSparse( prhs[ 0 ] ) == 1);
@@ -903,7 +890,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
     dodijk( N,S,Dsmall,Psmall,sr,irs,jcs,A,theHeap );
     for (j=0; j<M; j++) {
       *( D + j*MS + i ) = *( Dsmall + j );
-      *( P + j*MS + i ) = *( Psmall + j );
+        if(nlhs==2) *( P + j*MS + i ) = *( Psmall + j );
       //mexPrintf( "Distance i=%d to j=%d =%f\n" , S+1 , j , *( Dsmall + j ) );
     }
     delete theHeap;

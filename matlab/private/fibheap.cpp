@@ -489,7 +489,6 @@ void FibHeap::Print(FibHeapNode *Tree, FibHeapNode *theParent) {
 
 void FibHeap::_Exchange(FibHeapNode*& N1, FibHeapNode*& N2) {
   FibHeapNode *Temp;
-
   Temp = N1;
   N1 = N2;
   N2 = Temp;
@@ -673,28 +672,24 @@ void FibHeap::_CascadingCut(FibHeapNode *y) {
   }
 }
 
-
+//===========================================================================
+// class HeapNode
+//===========================================================================
 class HeapNode : public FibHeapNode {
   double   N;
   long int IndexV;
 
 public:
-
   HeapNode() : FibHeapNode() { N = 0; };
-
   virtual void operator =(FibHeapNode& RHS);
   virtual int  operator ==(FibHeapNode& RHS);
   virtual int  operator <(FibHeapNode& RHS);
-
   virtual void operator =(double NewKeyVal );
   virtual void Print();
-
-  double GetKeyValue() { return N; };       /* !!!! */
+  double GetKeyValue() { return N; };
   void SetKeyValue(double n) { N = n; };
-
   long int GetIndexValue() { return IndexV; };
   void SetIndexValue( long int v) { IndexV = v; };
-
 };
 
 void HeapNode::Print() {
@@ -726,16 +721,9 @@ int  HeapNode::operator <(FibHeapNode& RHS) {
 
   return N < ((HeapNode&) RHS).N ? 1 : 0;
 };
-
-int IntCmp(const void *pA, const void *pB) {
-  int A, B;
-
-  A = *((const int *) pA);
-  B = *((const int *) pB);
-  if (A < B) return -1;
-  if (A == B) return 0;
-  return 1;
-}
+//===========================================================================
+// main
+//===========================================================================
 
 void dodijk_sparse( long int N, long int S, double *D, double *P, double *sr, int *irs, int *jcs, HeapNode *A, FibHeap  *theHeap  ) {
   int      finished;
