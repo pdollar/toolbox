@@ -2,9 +2,9 @@
                 "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
 <head>
-  <title>Description of cc</title>
-  <meta name="keywords" content="cc">
-  <meta name="description" content="close all, clc">
+  <title>Description of dijkstra</title>
+  <meta name="keywords" content="dijkstra">
+  <meta name="description" content="Runs Dijkstra's shortest path algorithm on a distance matrix.">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -13,30 +13,48 @@
 <body>
 <a name="_top"></a>
 <!-- menu.html matlab -->
-<h1>cc
+<h1>dijkstra
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>close all, clc</strong></div>
+<div class="box"><strong>Runs Dijkstra's shortest path algorithm on a distance matrix.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>This is a script file. </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> close all, clc
+<div class="fragment"><pre class="comment"> Runs Dijkstra's shortest path algorithm on a distance matrix.
+
+ Runs Dijkstra's on the given SPARSE nxn distance matrix G, where missing
+ values mean no edge (infinite distance). Uses a Finonacci heap resulting
+ in fast computation. Finds the shortest path distance from every point
+ S(i) in the 1xp source vector S to every other point j, resulting in a
+ pxn distance matrix D. P(i,j) contains the second to last node on the
+ path from S(i) to j. If point j is not reachable from point S(i) then
+ D(i,j)=inf and P(i,j)=-1.
+
+ Note: requires c++ compiler (to compile dijkstra.cpp). mex command is:
+  mex fibheap.cpp dijkstra.cpp -output dijkstra
+ which must be run from /private. To set c++ compiler run 'mex -setup'.
 
  USAGE
-  cc
+   [D P] = dijkstra( G, [S] )
 
- INPUTS
+ INPUT
+   G   - sparse nxn distance matrix
+   S   - 1xp array of source indices i
 
- OUTPUTS
+ OUPUT
+   D   - pxn - shortest path lengths from S(i) to j
+   P   - pxn - indicies of second to last node on path from S(i) to j
 
  EXAMPLE
+  n=11; G=sparse(n,n); for i=1:n-1; G(i,i+1)=1; end; G=G+G';
+  [D P] = dijkstra( G, 5 ), % D=[5:-1 0 1:5]; P=[2:6 -1 6:10];
 
- See also <a href="c.html" class="code" title="">C</a>, <a href="ccc.html" class="code" title="">CCC</a>
+ See also
 
- Piotr's Image&amp;Video Toolbox      Version 1.5
+ Piotr's Image&amp;Video Toolbox      Version 2.10
  Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>

@@ -1,9 +1,11 @@
-Version 2.10 (24-June-08)
+Version 2.10 (26-June-08)
  -added kernelTracker.m (and helper funciton) to /images
  -added /matlab/plotRoc.m and /matlab/dirSynch.m
+ -added matlab/dijkstras.m (and accompanying cpp files in /private)
  -made /matlab/getPrmDflt.m more flexible
  -minor update to /matlab/RotationMatrix.m
  -moved main comment after "function ..." line for nicer Matlab code collapsing
+ -updated compile script
 
 Version 2.03 (25-Feb-08)
  -optimized getPrmDflt. New cleaner way of using it too.

@@ -4,8 +4,9 @@
 % values mean no edge (infinite distance). Uses a Finonacci heap resulting
 % in fast computation. Finds the shortest path distance from every point
 % S(i) in the 1xp source vector S to every other point j, resulting in a
-% pxn distance matrix D. If point j is not reachable from point S(i) then
-% D(i,j)=inf and P(i,j)=0. 
+% pxn distance matrix D. P(i,j) contains the second to last node on the
+% path from S(i) to j. If point j is not reachable from point S(i) then
+% D(i,j)=inf and P(i,j)=-1.
 %
 % Note: requires c++ compiler (to compile dijkstra.cpp). mex command is:
 %  mex fibheap.cpp dijkstra.cpp -output dijkstra
@@ -15,7 +16,7 @@
 %   [D P] = dijkstra( G, [S] )
 %
 % INPUT
-%   G   - nxn distance matrix
+%   G   - sparse nxn distance matrix
 %   S   - 1xp array of source indices i
 %
 % OUPUT
