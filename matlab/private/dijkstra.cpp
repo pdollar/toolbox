@@ -2,6 +2,7 @@
 // DIJKSTRA.CPP
 // 
 // Based on ISOMAP code which can be found at http://isomap.stanford.edu/.
+// See accompanying m file (dijkstra.m) for usage.
 //***************************************************************************
 
 #include "mex.h"
@@ -61,15 +62,20 @@ int  HeapNode::operator <(FibHeapNode& RHS) {
 // main
 //===========================================================================
 
-void dijkstra1( long int N, long int S, double *D1, double *P1, double *G, int *Gir, int *Gjc, HeapNode *A, FibHeap *heap ) {
+void dijkstra1( long int n, long int S, double *D1, double *P1, double *Gpr, int *Gir, int *Gjc) {
   int      finished;
   long int i,startInd,endInd,whichNeigh,nDone,closest;
   double   closestD,arcLength,INF,SMALL,oldDist;
-  HeapNode *hnMin, hnTmp;
+  HeapNode *A, *hnMin, hnTmp; FibHeap *heap;
   INF=mxGetInf(); SMALL=mxGetEps();
 
+  // setup heap
+  if ((heap = new FibHeap) == NULL || (A = new HeapNode[n+1]) == NULL )
+    mexErrMsgTxt( "Memory allocation failed-- ABORTING.\n" );
+  heap->ClearHeapOwnership();
+
   // initialize
-  for (i=0; i<N; i++) {
+  for (i=0; i<n; i++) {
     if (i!=S) A[ i ] = (double) INF; else A[ i ] = (double) SMALL;
     if (i!=S) D1[ i ] = (double) INF; else D1[ i ] = (double) SMALL;
     if (P1!=NULL) P1[ i ] = -1;
@@ -82,11 +88,11 @@ void dijkstra1( long int N, long int S, double *D1, double *P1, double *G, int *
 
   // loop over nonreached nodes
   finished = nDone = 0;
-  while ((finished==0) && (nDone < N)) {
+  while ((finished==0) && (nDone < n)) {
     hnMin = (HeapNode *) heap->ExtractMin();
     closest  = hnMin->GetIndexValue();
     closestD = hnMin->GetKeyValue();
-    if ((closest<0) || (closest>=N))
+    if ((closest<0) || (closest>=n))
       mexErrMsgTxt( "Minimum Index out of bound..." );
     D1[ closest ] = closestD;
     if (closestD == INF) finished=1; else {
@@ -97,7 +103,7 @@ void dijkstra1( long int N, long int S, double *D1, double *P1, double *G, int *
       if( startInd!=endInd+1 )
         for( i=startInd; i<=endInd; i++ ) {
           whichNeigh = Gir[ i ];
-          arcLength = G[ i ];
+          arcLength = Gpr[ i ];
           oldDist = D1[ whichNeigh ];
           if ( oldDist > ( closestD + arcLength )) {
             D1[ whichNeigh ] = closestD + arcLength;
@@ -109,72 +115,60 @@ void dijkstra1( long int N, long int S, double *D1, double *P1, double *G, int *
         }
     }
   }
-}
-
-void dijkstra( long int N, long int NS, double *SS, double *D, double *P, double *G, int *Gir, int *Gjc ) {
-  // variables
-  double   *D1,*P1;
-  HeapNode *A = NULL;
-  FibHeap  *heap = NULL;
-  long int S,i,j;
-
-  // allocate memory
-  D1 = (double *) mxCalloc( N , sizeof( double ));
-  P1 = (P==NULL) ? NULL : (double *) mxCalloc( N , sizeof( double ));
-
-  // loop over sources
-  for( i=0; i<NS; i++ ) {
-    // setup heap
-    if ((heap = new FibHeap) == NULL || (A = new HeapNode[N+1]) == NULL )
-      mexErrMsgTxt( "Memory allocation failed-- ABORTING.\n" );
-    heap->ClearHeapOwnership();
-
-    // get source node (0 indexed)
-    S = (long int) *( SS + i ); S--;
-    if ((S < 0) || (S > N-1)) mexErrMsgTxt( "Source node(s) out of bound" );
-
-    // run the dijkstra code for single source
-    dijkstra1( N,S,D1,P1,G,Gir,Gjc,A,heap );
-
-    // store results
-    for( j=0; j<N; j++ ) {
-      *( D + j*NS + i ) = *( D1 + j );
-      if(P!=NULL) *( P + j*NS + i ) = *( P1 + j );
-    }
-    delete heap; delete[] A;
-  }
 
   // cleanup
+  delete heap; delete[] A;
+}
+
+void dijkstra( long int n, long int nSrc, double *sources, double *D, double *P, const mxArray *G ) {
+  // dealing with sparse array
+  double *Gpr; int *Gir,*Gjc;
+  Gpr = mxGetPr(G);
+  Gir = mxGetIr(G);
+  Gjc = mxGetJc(G);
+
+  // allocate memory for single source results (automatically recycled)
+  double *D1 = (double *) mxCalloc( n , sizeof( double ));
+  double *P1 = (P==NULL) ? NULL : (double *) mxCalloc( n , sizeof( double ));
+
+  // loop over sources
+  long int S,i,j;
+  for( i=0; i<nSrc; i++ ) {
+
+    // run the dijkstra code for single source (0 indexed)
+    S = (long int) *( sources + i ); S--;
+    if ((S < 0) || (S > n-1)) mexErrMsgTxt( "Source node(s) out of bound" );
+    dijkstra1( n,S,D1,P1,Gpr,Gir,Gjc );
+
+    // store results
+    for( j=0; j<n; j++ ) {
+      *( D + j*nSrc + i ) = *( D1 + j );
+      if(P!=NULL) *( P + j*nSrc + i ) = *( P1 + j );
+    }    
+  }
 }
 
 void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
-  double    *G,*D,*P,*SS;
-  int       *Gir,*Gjc;
-  long int  N,MS,NS;
+  double    *D,*P,*sources;  
+  long int  n,mSrc,nSrc;
 
   // get / check inputs
   if (nrhs != 2) mexErrMsgTxt( "Only 2 input arguments allowed." );
   if (nlhs > 2) mexErrMsgTxt( "Only 2 output argument allowed." );
-  N = mxGetN( prhs[0] );
-  if (mxGetM( prhs[0] ) != N) mexErrMsgTxt( "Input matrix needs to be square." );
-  SS = mxGetPr(prhs[1]); MS = mxGetM(prhs[1]); NS=mxGetN(prhs[1]);
-  if ((MS==0) || (NS==0) || ((MS>1) && (NS>1)))
+  n = mxGetN( prhs[0] );
+  if (mxGetM( prhs[0] ) != n) mexErrMsgTxt( "Input matrix needs to be square." );
+  sources = mxGetPr(prhs[1]); mSrc = mxGetM(prhs[1]); nSrc=mxGetN(prhs[1]);
+  if ((mSrc==0) || (nSrc==0) || ((mSrc>1) && (nSrc>1)))
     mexErrMsgTxt( "Source nodes are specified in one dimensional matrix only" );
-  if (MS>NS) NS=MS;
-  if(mxIsSparse(prhs[ 0 ])==0)
-    mexErrMsgTxt( "Function not implemented for full arrays" );
+  if(mSrc>nSrc) nSrc=mSrc;
+  if(mxIsSparse(prhs[0])==0) mexErrMsgTxt( "Distance Matrix must be sparse" );
 
   // create outputs and temp variables
-  plhs[0] = mxCreateDoubleMatrix( NS,N, mxREAL);
+  plhs[0] = mxCreateDoubleMatrix( nSrc,n, mxREAL);
   D = mxGetPr(plhs[0]);
-  plhs[1] = (nlhs<2) ? NULL : mxCreateDoubleMatrix( NS,N, mxREAL);
+  plhs[1] = (nlhs<2) ? NULL : mxCreateDoubleMatrix( nSrc,n, mxREAL);
   P = (nlhs<2) ? NULL : mxGetPr(plhs[1]) ;
 
-  // dealing with sparse array 
-  G      = mxGetPr(prhs[0]);
-  Gir     = mxGetIr(prhs[0]);
-  Gjc     = mxGetJc(prhs[0]);
-
-  // run dijkstra
-  dijkstra( N, NS, SS, D, P, G, Gir, Gjc );
+  // run dijkstras to fill D and P
+  dijkstra( n, nSrc, sources, D, P, prhs[0] );
 }
