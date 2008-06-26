@@ -24,7 +24,7 @@
 %
 % EXAMPLE
 %  n=11; G=sparse(n,n); for i=1:n-1; G(i,i+1)=1; end; G=G+G';
-%  [D P] = dijkstra( G, 5 ); % D=[5:-1 0 1:5]; P=[2:6 -1 6:10];
+%  [D P] = dijkstra( G, 5 ), % D=[5:-1 0 1:5]; P=[2:6 -1 6:10];
 %
 % See also
 %
