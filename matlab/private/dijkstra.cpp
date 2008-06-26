@@ -1,31 +1,17 @@
 //***************************************************************************
-// FIBTEST.CPP
-//
-// Test program for the F-heap implementation.
-// Copyright (c) 1996 by John Boyer.
-// See header file for free usage information.
-//
-// This version has been updated by V. Rabaud and P. Dollar in 2008:
-//  - to be compilable on GNU/Linux by removing the conio.h dependency.
-//  - to send back the array of previous nodes on the shortest paths
-//  - changed iostream.h to <iostream> and added using namespace std; 
-//  - removed duplicate includes, cleaned up some, changed formatting
+// DIJKSTRA.CPP
+// 
+// Based on ISOMAP code which can be found at http://isomap.stanford.edu/.
 //***************************************************************************
 
-#include <math.h>
 #include "mex.h"
 #include "fibheap.h"
-
-#define _FIBHEAPTEST_CPP
-
-//***************************************************************************
-// This Fibonacci heap implementation is Copyright (c) 1996 by John Boyer.
-// See the header file for free usage information.
-//***************************************************************************
+#define DIJKSTRA_CPP
 
 //===========================================================================
 // class HeapNode
 //===========================================================================
+
 class HeapNode : public FibHeapNode {
   double   N;
   long int IndexV;
@@ -49,9 +35,9 @@ void HeapNode::Print() {
 }
 
 void HeapNode::operator =(double NewKeyVal) {
-  HeapNode Temp;
-  Temp.N = N = NewKeyVal;
-  FHN_Assign(Temp);
+  HeapNode Tmp;
+  Tmp.N = N = NewKeyVal;
+  FHN_Assign(Tmp);
 }
 
 void HeapNode::operator =(FibHeapNode& RHS) {
@@ -66,10 +52,8 @@ int  HeapNode::operator ==(FibHeapNode& RHS) {
 
 int  HeapNode::operator <(FibHeapNode& RHS) {
   int X;
-
   if ((X=FHN_Cmp(RHS)) != 0)
     return X < 0 ? 1 : 0;
-
   return N < ((HeapNode&) RHS).N ? 1 : 0;
 };
 
@@ -77,125 +61,114 @@ int  HeapNode::operator <(FibHeapNode& RHS) {
 // main
 //===========================================================================
 
-void dodijk_sparse( long int N, long int S, double *D, double *P, double *sr, int *irs, int *jcs, HeapNode *A, FibHeap  *theHeap  ) {
+void dijkstra1( long int N, long int S, double *D1, double *P1, double *G, int *Gir, int *Gjc, HeapNode *A, FibHeap *heap ) {
   int      finished;
-  long int i,startind,endind,whichneighbor,ndone,closest;
-  double   closestD,arclength;
-  double   INF,SMALL,olddist;
-  HeapNode *Min;
-  HeapNode Temp;
+  long int i,startInd,endInd,whichNeigh,nDone,closest;
+  double   closestD,arcLength,INF,SMALL,oldDist;
+  HeapNode *hnMin, hnTmp;
+  INF=mxGetInf(); SMALL=mxGetEps();
 
-  INF   = mxGetInf();
-  SMALL = mxGetEps();
-
-  /* initialize */
+  // initialize
   for (i=0; i<N; i++) {
     if (i!=S) A[ i ] = (double) INF; else A[ i ] = (double) SMALL;
-    if (i!=S) D[ i ] = (double) INF; else D[ i ] = (double) SMALL;
-    if (P!=NULL) P[ i ] = -1;
-    theHeap->Insert( &A[i] );
+    if (i!=S) D1[ i ] = (double) INF; else D1[ i ] = (double) SMALL;
+    if (P1!=NULL) P1[ i ] = -1;
+    heap->Insert( &A[i] );
     A[ i ].SetIndexValue( (long int) i );
   }
 
+  // Insert 0 then extract it, which will balance heap
+  heap->Insert(&hnTmp); heap->ExtractMin();
 
-  // Insert 0 then extract it.  This will cause the
-  // Fibonacci heap to get balanced.
-
-  theHeap->Insert(&Temp);
-  theHeap->ExtractMin();
-
-  /*theHeap->Print();
-  for (i=0; i<N; i++)
-  {
-  closest = A[ i ].GetIndexValue();
-  closestD = A[ i ].GetKeyValue();
-  mexPrintf( "Index at i=%d =%d  value=%f\n" , i , closest , closestD );
-  }*/
-
-  /* loop over nonreached nodes */
-  finished = 0;
-  ndone    = 0;
-  while ((finished==0) && (ndone < N)) {
-    //if ((ndone % 100) == 0) mexPrintf( "Done with node %d\n" , ndone );
-
-    Min = (HeapNode *) theHeap->ExtractMin();
-    closest  = Min->GetIndexValue();
-    closestD = Min->GetKeyValue();
-
+  // loop over nonreached nodes
+  finished = nDone = 0;
+  while ((finished==0) && (nDone < N)) {
+    hnMin = (HeapNode *) heap->ExtractMin();
+    closest  = hnMin->GetIndexValue();
+    closestD = hnMin->GetKeyValue();
     if ((closest<0) || (closest>=N))
       mexErrMsgTxt( "Minimum Index out of bound..." );
-
-    //theHeap->Print();
-    //mexPrintf( "EXTRACTED MINIMUM  NDone=%d S=%d closest=%d closestD=%f\n" , ndone , S , closest , closestD );
-    //mexErrMsgTxt( "Exiting..." );
-
-    D[ closest ] = closestD;
-
+    D1[ closest ] = closestD;
     if (closestD == INF) finished=1; else {
-      /* add the closest to the determined list */
-      ndone++;
-
-      /* relax all nodes adjacent to closest */
-      startind = jcs[ closest   ];
-      endind   = jcs[ closest+1 ] - 1;
-
-      if (startind!=endind+1)
-        for (i=startind; i<=endind; i++) {
-          whichneighbor = irs[ i ];
-          arclength = sr[ i ];
-          olddist   = D[ whichneighbor ];
-
-          //mexPrintf( "INSPECT NEIGHBOR #%d  olddist=%f newdist=%f\n" , whichneighbor , olddist , closestD+arclength );
-
-          if ( olddist > ( closestD + arclength )) {
-            D[ whichneighbor ] = closestD + arclength;
-            if(P!=NULL) P[ whichneighbor ] = closest + 1;    // +1 because Matlab indexes from 1 and not 0
-
-            Temp = A[ whichneighbor ];
-            Temp.SetKeyValue( closestD + arclength );
-            theHeap->DecreaseKey( &A[ whichneighbor ], Temp );
-
-            //mexPrintf( "UPDATING NODE #%d  olddist=%f newdist=%f\n" , whichneighbor , olddist , closestD+arclength );
+      // relax all nodes adjacent to closest
+      nDone++;
+      startInd = Gjc[ closest   ];
+      endInd   = Gjc[ closest+1 ] - 1;
+      if( startInd!=endInd+1 )
+        for( i=startInd; i<=endInd; i++ ) {
+          whichNeigh = Gir[ i ];
+          arcLength = G[ i ];
+          oldDist = D1[ whichNeigh ];
+          if ( oldDist > ( closestD + arcLength )) {
+            D1[ whichNeigh ] = closestD + arcLength;
+            if(P1!=NULL) P1[ whichNeigh ] = closest + 1;
+            hnTmp = A[ whichNeigh ];
+            hnTmp.SetKeyValue( closestD + arcLength );
+            heap->DecreaseKey( &A[ whichNeigh ], hnTmp );
           }
         }
     }
   }
 }
 
+//void dijkstra( long int N, long int NS, double *SS, double *D, double *P, double *G, int *Gir, int *Gjc ) {
+//  double   *D1,*P1;
+//  HeapNode *A = NULL;
+//  FibHeap  *heap = NULL;
+//  long int S,i,j;
+//  
+//  D1 = (double *) mxCalloc( N , sizeof( double ));
+//  P1 = (P!=NULL) ? NULL : (double *) mxCalloc( N , sizeof( double ));
+//
+//  for( i=0; i<NS; i++ ) {
+//    // setup heap
+//    if ((heap = new FibHeap) == NULL || (A = new HeapNode[N+1]) == NULL )
+//      mexErrMsgTxt( "Memory allocation failed-- ABORTING.\n" );
+//    heap->ClearHeapOwnership();
+//
+//    // get source node (0 indexed)
+//    S = (long int) *( SS + i ); S--;
+//    if ((S < 0) || (S > N-1)) mexErrMsgTxt( "Source node(s) out of bound" );
+//
+//    // run the dijkstra code 
+//    dijkstra1( N,S,D1,P1,G,Gir,Gjc,A,heap );
+//
+//    // store results
+//    for( j=0; j<N; j++ ) {
+//      *( D + j*NS + i ) = *( D1 + j );
+//      if(P!=NULL) *( P + j*NS + i ) = *( P1 + j );
+//    }
+//
+//    // cleanup
+//    delete heap; delete[] A;
+//  }
+//}
 
 void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
   double    *sr,*D,*P,*SS,*Dsmall,*Psmall;
   int       *irs,*jcs;
-  long int  M,N,S,MS,NS,i,j;
-
+  long int  N,S,MS,NS,i,j;
   HeapNode *A = NULL;
-  FibHeap  *theHeap = NULL;
+  FibHeap  *heap = NULL;
 
-  if (nrhs != 2)
-    mexErrMsgTxt( "Only 2 input arguments allowed." );
-  if (nlhs > 2)
-    mexErrMsgTxt( "Only 2 output argument allowed." );
 
-  M = mxGetM( prhs[0] );
+  if (nrhs != 2) mexErrMsgTxt( "Only 2 input arguments allowed." );
+  if (nlhs > 2) mexErrMsgTxt( "Only 2 output argument allowed." );
   N = mxGetN( prhs[0] );
+  if (mxGetM( prhs[0] ) != N) mexErrMsgTxt( "Input matrix needs to be square." );
 
-  if (M != N) mexErrMsgTxt( "Input matrix needs to be square." );
-
-  SS = mxGetPr(prhs[1]);
-  MS = mxGetM( prhs[1] );
-  NS = mxGetN( prhs[1] );
-
+  SS = mxGetPr(prhs[1]); MS = mxGetM(prhs[1]); NS=mxGetN(prhs[1]);
   if ((MS==0) || (NS==0) || ((MS>1) && (NS>1)))
     mexErrMsgTxt( "Source nodes are specified in one dimensional matrix only" );
-  if (NS>MS) MS=NS;
+  if (MS>NS) NS=MS;
 
-  plhs[0] = mxCreateDoubleMatrix( MS,M, mxREAL);
+  plhs[0] = mxCreateDoubleMatrix( NS,N, mxREAL);
   D = mxGetPr(plhs[0]);
-  Dsmall = (double *) mxCalloc( M , sizeof( double ));
+  Dsmall = (double *) mxCalloc( N , sizeof( double ));
 
-  plhs[1] = (nlhs<2) ? NULL : mxCreateDoubleMatrix( MS,M, mxREAL);
+  plhs[1] = (nlhs<2) ? NULL : mxCreateDoubleMatrix( NS,N, mxREAL);
   P = (nlhs<2) ? NULL : mxGetPr(plhs[1]) ;
-  Psmall = (nlhs<2) ? NULL : (double *) mxCalloc( M , sizeof( double ));
+  Psmall = (nlhs<2) ? NULL : (double *) mxCalloc( N , sizeof( double ));
 
   if(mxIsSparse( prhs[ 0 ] ) == 1) {
     /* dealing with sparse array */
@@ -204,27 +177,27 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
     jcs     = mxGetJc(prhs[0]);
 
     // Setup for the Fibonacci heap
-    for (i=0; i<MS; i++) {
-      if ((theHeap = new FibHeap) == NULL || (A = new HeapNode[M+1]) == NULL ) {
+    for (i=0; i<NS; i++) {
+      if ((heap = new FibHeap) == NULL || (A = new HeapNode[N+1]) == NULL ) {
         mexErrMsgTxt( "Memory allocation failed-- ABORTING.\n" );
       }
 
-      theHeap->ClearHeapOwnership();
+      heap->ClearHeapOwnership();
 
       S = (long int) *( SS + i );
       S--;
 
-      if ((S < 0) || (S > M-1)) mexErrMsgTxt( "Source node(s) out of bound" );
+      if ((S < 0) || (S > N-1)) mexErrMsgTxt( "Source node(s) out of bound" );
 
       // run the dijkstra code 
       //mexPrintf( "Working on i=%d\n" , i );
-      dodijk_sparse( N,S,Dsmall,Psmall,sr,irs,jcs,A,theHeap );
-      for (j=0; j<M; j++) {
-        *( D + j*MS + i ) = *( Dsmall + j );
-        if(nlhs==2) *( P + j*MS + i ) = *( Psmall + j );
+      dijkstra1( N,S,Dsmall,Psmall,sr,irs,jcs,A,heap );
+      for (j=0; j<N; j++) {
+        *( D + j*NS + i ) = *( Dsmall + j );
+        if(nlhs==2) *( P + j*NS + i ) = *( Psmall + j );
         //mexPrintf( "Distance i=%d to j=%d =%f\n" , S+1 , j , *( Dsmall + j ) );
       }
-      delete theHeap;
+      delete heap;
       delete[] A;
     }
   } else mexErrMsgTxt( "Function not implemented for full arrays" );
