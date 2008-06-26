@@ -20,8 +20,8 @@ n=10; G=sparse(n,n); for i=1:n-1; G(i,i+1)=1; end; G=G+G';
 % % [D1;D3]
 % % [P1]
 
-% c
-% [D5,P5]=dijkstra(G,5); [D6,P6]=dijkstra(G,6); 
-% [D56,P56]=dijkstra( G, 5:6 ); 
-% [D5;D6]-D56, 
-% [P5;P6]-P56,
+c
+[D5,P5]=fibheap(G,5); [D6,P6]=fibheap(G,6); 
+[D56,P56]=fibheap( G, 5:6 ); 
+[D5;D6]-D56, 
+[P5;P6]-P56,
