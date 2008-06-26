@@ -111,38 +111,41 @@ void dijkstra1( long int N, long int S, double *D1, double *P1, double *G, int *
   }
 }
 
-//void dijkstra( long int N, long int NS, double *SS, double *D, double *P, double *G, int *Gir, int *Gjc ) {
-//  double   *D1,*P1;
-//  HeapNode *A = NULL;
-//  FibHeap  *heap = NULL;
-//  long int S,i,j;
-//  
-//  D1 = (double *) mxCalloc( N , sizeof( double ));
-//  P1 = (P!=NULL) ? NULL : (double *) mxCalloc( N , sizeof( double ));
-//
-//  for( i=0; i<NS; i++ ) {
-//    // setup heap
-//    if ((heap = new FibHeap) == NULL || (A = new HeapNode[N+1]) == NULL )
-//      mexErrMsgTxt( "Memory allocation failed-- ABORTING.\n" );
-//    heap->ClearHeapOwnership();
-//
-//    // get source node (0 indexed)
-//    S = (long int) *( SS + i ); S--;
-//    if ((S < 0) || (S > N-1)) mexErrMsgTxt( "Source node(s) out of bound" );
-//
-//    // run the dijkstra code 
-//    dijkstra1( N,S,D1,P1,G,Gir,Gjc,A,heap );
-//
-//    // store results
-//    for( j=0; j<N; j++ ) {
-//      *( D + j*NS + i ) = *( D1 + j );
-//      if(P!=NULL) *( P + j*NS + i ) = *( P1 + j );
-//    }
-//
-//    // cleanup
-//    delete heap; delete[] A;
-//  }
-//}
+void dijkstra( long int N, long int NS, double *SS, double *D, double *P, double *G, int *Gir, int *Gjc ) {
+  // variables
+  double   *D1,*P1;
+  HeapNode *A = NULL;
+  FibHeap  *heap = NULL;
+  long int S,i,j;
+
+  // allocate memory
+  D1 = (double *) mxCalloc( N , sizeof( double ));
+  P1 = (P==NULL) ? NULL : (double *) mxCalloc( N , sizeof( double ));
+
+  // loop over sources
+  for( i=0; i<NS; i++ ) {
+    // setup heap
+    if ((heap = new FibHeap) == NULL || (A = new HeapNode[N+1]) == NULL )
+      mexErrMsgTxt( "Memory allocation failed-- ABORTING.\n" );
+    heap->ClearHeapOwnership();
+
+    // get source node (0 indexed)
+    S = (long int) *( SS + i ); S--;
+    if ((S < 0) || (S > N-1)) mexErrMsgTxt( "Source node(s) out of bound" );
+
+    // run the dijkstra code for single source
+    dijkstra1( N,S,D1,P1,G,Gir,Gjc,A,heap );
+
+    // store results
+    for( j=0; j<N; j++ ) {
+      *( D + j*NS + i ) = *( D1 + j );
+      if(P!=NULL) *( P + j*NS + i ) = *( P1 + j );
+    }
+    delete heap; delete[] A;
+  }
+
+  // cleanup
+}
 
 void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
   double    *G,*D,*P,*SS;
@@ -173,36 +176,5 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
   Gjc     = mxGetJc(prhs[0]);
 
   // run dijkstra
-  //dijkstra( N, NS, SS, D, P, G, Gir, Gjc );
-
-  // setup for dijkstra
-  double   *D1,*P1;
-  HeapNode *A = NULL;
-  FibHeap  *heap = NULL;
-  long int S,i,j;
-  D1 = (double *) mxCalloc( N , sizeof( double ));
-  P1 = (P==NULL) ? NULL : (double *) mxCalloc( N , sizeof( double ));
-
-  for (i=0; i<NS; i++) {
-    // setup heap
-    if ((heap = new FibHeap) == NULL || (A = new HeapNode[N+1]) == NULL )
-      mexErrMsgTxt( "Memory allocation failed-- ABORTING.\n" );
-    heap->ClearHeapOwnership();
-
-    // get source node (0 indexed)
-    S = (long int) *( SS + i ); S--;
-    if ((S < 0) || (S > N-1)) mexErrMsgTxt( "Source node(s) out of bound" );
-
-    // run the dijkstra code for single source
-    dijkstra1( N,S,D1,P1,G,Gir,Gjc,A,heap );
-
-    // store results
-    for (j=0; j<N; j++) {
-      *( D + j*NS + i ) = *( D1 + j );
-      if(P!=NULL) *( P + j*NS + i ) = *( P1 + j );
-    }
-
-    // cleanup
-    delete heap; delete[] A;
-  }
+  dijkstra( N, NS, SS, D, P, G, Gir, Gjc );
 }
