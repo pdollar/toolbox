@@ -752,6 +752,7 @@ void dodijk_sparse( long int N, long int S, double *D, double *P, double *sr, in
   for (i=0; i<N; i++) {
     if (i!=S) A[ i ] = (double) INF; else A[ i ] = (double) SMALL;
     if (i!=S) D[ i ] = (double) INF; else D[ i ] = (double) SMALL;
+    if (P!=NULL) P[ i ] = -1;
     theHeap->Insert( &A[i] );
     A[ i ].SetIndexValue( (long int) i );
   }
