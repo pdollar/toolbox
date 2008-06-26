@@ -4,15 +4,12 @@
 // Test program for the F-heap implementation.
 // Copyright (c) 1996 by John Boyer.
 // See header file for free usage information.
-//***************************************************************************
-
-//***************************************************************************
-// This version has been modified from its original
+//
+// This version has been updated by V. Rabaud and P. Dollar in 2008:
 //  - to be compilable on GNU/Linux by removing the conio.h dependency.
 //  - to send back the array of previous nodes on the shortest paths
 //  - changed iostream.h to <iostream> and added using namespace std; 
-//  - removed duplicate includes
-// Changes by Vincent Rabaud and Piotr Dollar 2008
+//  - removed duplicate includes, cleaned up some, changed formatting
 //***************************************************************************
 
 #include <math.h>
@@ -23,7 +20,7 @@ extern void _main();
 #include <stdlib.h>
 #include <iostream>
 #include <stdio.h>
-#include <conio.h>
+//#include <conio.h>
 #include <ctype.h>
 #include <memory.h>
 #include <time.h>
