@@ -855,7 +855,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
   D = mxGetPr(plhs[0]);
   Dsmall = (double *) mxCalloc( M , sizeof( double ));
 
-  plhs[1] = mxCreateDoubleMatrix( MS,M, mxREAL);
+  plhs[1] = (nlhs<2) ? NULL : mxCreateDoubleMatrix( MS,M, mxREAL);
   P = (nlhs<2) ? NULL : mxGetPr(plhs[1]) ;
   Psmall = (nlhs<2) ? NULL : (double *) mxCalloc( M , sizeof( double ));
 
