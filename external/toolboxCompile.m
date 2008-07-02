@@ -39,11 +39,12 @@ try
   options={'-output', 'dijkstra', '-outdir', 'matlab'};
   mex([dir 'fibheap.cpp'],[dir 'dijkstra.cpp'], options{:} );
 catch ME
-  disp('Dijkstra''s shortest path algorithm compile failed,');
-  disp('most likely due to lack of C++ compiler.');
-  disp('Run ''mex -setup'' to specify a C++ compiler if available.');
-  disp('On Linux, try a specific compiler, e.g. :');
-  disp('mex CXX=g++-4.1 CC=g++-4.1 LD=g++-4.1 dijkstra.cpp fibheap.cpp fibheap.h');
+  fprintf(['Dijkstra''s shortest path algorithm compile failed,\n' ...
+    'most likely due to lack of a C++ compiler.\n' ...
+    'Run ''mex -setup'' to specify a C++ compiler if available.\n'...
+    'Or, on LINUX specify a specific C++ compiler using, e.g.:\n' ...
+    'mex CXX=g++-4.1 CC=g++-4.1 LD=g++-4.1 ' ...
+    'dijkstra.cpp fibheap.cpp fibheap.h\n']);
 end
 
 disp('.......................................Done Compiling');
