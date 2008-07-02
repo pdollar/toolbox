@@ -40,9 +40,10 @@ try
   mex([dir 'fibheap.cpp'],[dir 'dijkstra.cpp'], options{:} );
 catch ME
   disp('Dijkstra''s shortest path algorithm compile failed,');
-  disp('most likely due to lack of C++ compiler. Run');
-  disp('''mex -setup'' to specify a C++ compiler if avialable.');
+  disp('most likely due to lack of C++ compiler.');
+  disp('Run ''mex -setup'' to specify a C++ compiler if available.');
+  disp('On Linux, try a specific compiler, e.g. :');
+  disp('mex CXX=g++-4.1 CC=g++-4.1 LD=g++-4.1 dijkstra.cpp fibheap.cpp fibheap.h');
 end
 
 disp('.......................................Done Compiling');
-
