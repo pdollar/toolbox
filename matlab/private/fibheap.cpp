@@ -51,6 +51,17 @@
 #include "fibheap.h"
 using namespace std;
 
+//***************************************************************************
+//=========================================================
+// FibHeapNode Constructor
+//=========================================================
+//***************************************************************************
+
+//FibHeapNode::FibHeapNode() {
+//  Left = Right = Parent = Child = NULL;
+//  Degree = Mark = NegInfinityFlag = 0;
+//}
+
 //=========================================================
 // FibHeapNode Destructor
 //
@@ -60,6 +71,47 @@ using namespace std;
 //=========================================================
 
 FibHeapNode::~FibHeapNode() {}
+
+//=========================================================
+// FHN_Assign()
+//
+// To be used as first step of an assignment operator in a
+// derived class.  The derived class will handle assignment
+// of key value, and this function handles copy of the
+// NegInfinityFlag (which overrides the key value if it is
+// set).
+//=========================================================
+
+//void FibHeapNode::FHN_Assign(FibHeapNode& RHS) {
+//  NegInfinityFlag = RHS.NegInfinityFlag;
+//}
+
+//=========================================================
+// FHN_Cmp()
+//
+// To be used as the first step of ALL comparators in a
+// derived class.
+//
+// Compares the relative state of the two neg. infinity
+// flags.  Note that 'this' is the left hand side.  If
+// LHS neg. infinity is set, then it will be less than (-1)
+// the RHS unless RHS neg. infinity flag is also set.
+// Only if function returns 0 should the key comparison
+// defined in the derived class be performed, e.g.
+//
+// For ==, if zero returned, then compare keys
+//     if non-zero X returned, then return 0
+// For <,  if zero returned, then compare keys
+//         if non-zero X returned, then return X<0?1:0
+// For >,  if zero returned, then compare keys
+//         if non-zero X returned, then return X>0?1:0    
+//=========================================================
+
+//int  FibHeapNode::FHN_Cmp(FibHeapNode& RHS) {
+//  if (NegInfinityFlag)
+//    return RHS.NegInfinityFlag ? 0 : -1;
+//  return RHS.NegInfinityFlag ? 1 : 0; 
+//}
 
 //========================================================================
 // We do, on occasion, compare and assign objects of type FibHeapNode, but
@@ -224,9 +276,9 @@ void FibHeap::Union(FibHeap *OtherHeap) {
 // Minimum - O(1) actual; O(1) amortized
 //===========================================================================
 
-FibHeapNode *FibHeap::Minimum() {
-  return MinRoot;
-}
+//FibHeapNode *FibHeap::Minimum() {
+//  return MinRoot;
+//}
 
 //===========================================================================
 // ExtractMin() - O(n) worst-case actual; O(lg n) amortized
@@ -418,12 +470,12 @@ void FibHeap::Print(FibHeapNode *Tree, FibHeapNode *theParent) {
 //===========================================================================
 //===========================================================================
 
-void FibHeap::_Exchange(FibHeapNode*& N1, FibHeapNode*& N2) {
-  FibHeapNode *Temp;
-  Temp = N1;
-  N1 = N2;
-  N2 = Temp;
-}
+//void FibHeap::_Exchange(FibHeapNode*& N1, FibHeapNode*& N2) {
+//  FibHeapNode *Temp;
+//  Temp = N1;
+//  N1 = N2;
+//  N2 = Temp;
+//}
 
 //===========================================================================
 // Consolidate()
