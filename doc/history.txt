@@ -1,3 +1,8 @@
+Version 2.11 (09-July-08)
+ -removing external/xmltree from toolbox (not being used by anything)
+ -removing /private directories from doc
+ -added Google Analytics Code to documentation (replaced StatCounter) 
+
 Version 2.10 (02-July-08)
  -added kernelTracker.m (and helper funciton) to /images
  -added /matlab/plotRoc.m and /matlab/dirSynch.m
