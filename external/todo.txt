@@ -1,2 +1,1 @@
--toolboxCompile c++ fix?
--image display functions cleanup
+-switch to google analytics tracking code
