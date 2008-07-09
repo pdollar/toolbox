@@ -1,5 +1,6 @@
 Version NEW
  -removing external/xmltree from toolbox (not being used by anything)
+ -removing /private directories from doc
 
 Version 2.10 (02-July-08)
  -added kernelTracker.m (and helper funciton) to /images
