@@ -50,7 +50,7 @@ function [ IDX, C, sumd ] = kmeans2( X, k, prm )
 %
 % See also DEMOCLUSTER
 %
-% Piotr's Image&Video Toolbox      Version 2.0
+% Piotr's Image&Video Toolbox      Version 2.11
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -83,14 +83,14 @@ if( display); disp(msg); end
 
 bstSumd = inf;
 for i=1:nTrial
-  tic
+  t0 = clock;
   msg = ['kmeans iteration ' num2str(i) ' of ' num2str(nTrial) ', step: '];
   if( display); disp(msg); end
   [IDX,C,sumd,nIter]=kmeans2main(X,k,nOutl,minCl,maxIter,display,metric);
   if( sum(sumd)<sum(bstSumd)); bstIDX=IDX; bstC=C; bstSumd=sumd; end
   msg = ['\nCompleted iter ' num2str(i) ' of ' num2str(nTrial) '; ' ...
     'num steps= ' num2str(nIter) ';  sumd=' num2str(sum(sumd)) '\n'];
-  if( display && nTrial>1 ); fprintf(msg); toc, end
+  if( display && nTrial>1 ); fprintf(msg); etime(clock, t0), end
 end
 
 IDX = bstIDX; C = bstC; sumd = bstSumd; k = max(IDX);
