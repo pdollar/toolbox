@@ -1,5 +1,5 @@
 Version NEW
- -new version of savefig (should remove exportfig?)
+ -new version of savefig (also removed exportfig)
 
 Version 2.11 (09-July-08)
  -removing external/xmltree from toolbox (not being used by anything)
