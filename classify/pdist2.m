@@ -51,7 +51,7 @@ function D = pdist2( X, Y, metric )
 %
 % See also PDIST, DISTMATRIXSHOW
 %
-% Piotr's Image&Video Toolbox      Version 2.0
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -172,4 +172,16 @@ D = XX(:,ones(1,n)) + YY(ones(1,m),:) - 2*X*Yt;
 %     D = cat( 2, D1, D2 );
 %   end
 %   return;
+% end
+
+
+%%% L1 COMPUTATION WITH LOOP OVER p, FAST FOR SMALL p.
+% function D = distL1( X, Y )
+% 
+% m = size(X,1); n = size(Y,1); p = size(X,2);
+% mOnes = ones(1,m); nOnes = ones(1,n); D = zeros(m,n);
+% for i=1:p
+%   yi = Y(:,i);  yi = yi( :, mOnes );
+%   xi = X(:,i);  xi = xi( :, nOnes );
+%   D = D + abs( xi-yi' );
 % end

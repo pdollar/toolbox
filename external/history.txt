@@ -1,5 +1,6 @@
 Version NEW
  -new version of savefig (also removed exportfig)
+ -optimized/tweaked nonMaxSupr and nonMaxSuprList <--2-3x faster
 
 Version 2.11 (09-July-08)
  -removing external/xmltree from toolbox (not being used by anything)

@@ -10,7 +10,8 @@ function [subs,vals] = nonMaxSupr( I, radii, thresh, maxn )
 % subs/vals back to an array representation using subsToArray. Note that
 % values are suppressed iff there are strictly greater values in the
 % neighborhood.  Hences nonMaxSupr(ones(10),5) would not suppress any
-% values.
+% values. See also Example 3 for a trick for making nonMaxSupr fast (but
+% possibly innacurate) for large radii (for n small).
 %
 % USAGE
 %  [subs,vals] = nonMaxSupr( I, radii, [thresh], [maxn] )
@@ -42,12 +43,22 @@ function [subs,vals] = nonMaxSupr( I, radii, thresh, maxn )
 %  [subs,vals] = nonMaxSuprWin(subs,vals,[1 1]+6,siz-6);
 %  figure(3); im( subsToArray( subs, vals, siz ) );
 %  [subs2,vals2] = nonMaxSuprList( ind2sub2(siz,(1:prod(siz))'), ...
-%                                           I(:)',r,thresh,maxn,suprEq );
+%    I(:)',r,thresh,maxn,suprEq );
 %  figure(4); im( subsToArray( subs2, vals2, siz ) );
+%
+% EXAMPLE - 3
+%  I=abs(randn(1000)*50); I=I/max(I(:));
+%  I=gaussSmooth(I,10,'same',4); %note large radius
+%  figure(1); clf; im(I); hold on; radii=[50 50];
+%  tic, [subs1,vals1]=nonMaxSupr(I,[1 1],.1); toc
+%  tic, [subs1,vals1]=nonMaxSuprList(subs1,vals1,radii); toc
+%  plot(subs1(:,2),subs1(:,1),'+r');
+%  tic, [subs2,vals2]=nonMaxSupr(I,radii,.1); toc
+%  plot(subs2(:,2),subs2(:,1),'ob');
 %
 % See also SUBSTOARRAY, NONMAXSUPRLIST, NONMAXSUPRWIN
 %
-% Piotr's Image&Video Toolbox      Version 2.0
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
