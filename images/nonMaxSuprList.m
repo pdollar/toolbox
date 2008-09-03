@@ -46,7 +46,7 @@ if( nargin<5 || isempty(maxn)); maxn=0; end;
 if( nargin<6 || isempty(flag)); flag=0; end;
 
 vals=vals(:); siz=max(subs,[],1); nvals=length(vals); d=size(subs,2);
-if(nvals==0 && isempty(subs)), return; end
+if(nvals==0 && isempty(subs)), keep=[]; return; end
 [radii,er] = checkNumArgs( radii, size(siz), 0, 1 ); error(er);
 
 % CAN ADD RECURSION TO SIGNIFICANTLY SPEED IT UP (under certain assump)
