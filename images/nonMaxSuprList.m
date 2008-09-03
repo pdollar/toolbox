@@ -56,8 +56,8 @@ if( nvals>5000 ); error('Input too large - use nonMaxSupr.'); end;
 
 % sort according to vals
 if(flag==2), vals1=vals+randn(nvals,1)/10000; else vals1=vals; end
-[disc,ord]=sort(vals1,'descend'); [dsc,unord]=sort(ord);
-vals=vals(ord); subs=subs(ord,:);
+[disc,ord]=sort(vals1,'descend'); [disc,unord]=sort(ord);
+vals0=vals; subs0=subs; vals=vals(ord); subs=subs(ord,:);
 
 % discard vals below thresh
 if(~isempty(thresh))
@@ -74,8 +74,8 @@ for i=1:d
   close = close & abs(subsi-subsi')<=radii(i);
 end
 if(flag==2), bigger=triu(ones(nvals),1); else
-  bigger=vals(:,nOnes); bigger=bigger'-bigger;  
-  if(flag), bigger=bigger<=0 & ~eye(nvals); else bigger=bigger<0; end  
+  bigger=vals(:,nOnes); bigger=bigger'-bigger;
+  if(flag), bigger=bigger<=0 & ~eye(nvals); else bigger=bigger<0; end
 end
 keep = ~any(close & bigger)';
 
@@ -83,9 +83,6 @@ keep = ~any(close & bigger)';
 if(~isempty(maxn) && maxn>0), keep(cumsum(keep)>maxn)=0; end
 
 % adjust to original order, then discard all vals/subs not in keep
-if(~isempty(thresh))
-  keep=[keep; false(nvalsd,1)]; keep=keep(unord);
-  vals=[vals; zeros(nvalsd,1)]; vals=vals(unord);
-  subs=[subs; zeros(nvalsd,d)]; subs=subs(unord,:);
-end
+if(~isempty(thresh)), keep=[keep; false(nvalsd,1)]; end
+vals=vals0; subs=subs0; keep=keep(unord);
 vals = vals(keep); subs = subs(keep,:);
