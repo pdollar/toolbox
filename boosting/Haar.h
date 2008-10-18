@@ -23,9 +23,9 @@ typedef vector<Haar> VecHaar;
 //
 //// 3) visualize simple Haars and their application to image
 //VecHaar haars; 
-//HaarSetPrm haarSetPrm; 
-//haarSetPrm._width = haarSetPrm._height = 50;
-//Haar::makeHaarSet( haars, haarSetPrm );
+//HaarPrm haarPrm; 
+//haarPrm._width = haarPrm._height = 50;
+//Haar::makeHaarSet( haars, haarPrm );
 //cout << haars.size() << endl;
 //Haar::saveVisualization( haars, "C:/code/pbt/haars", true );
 //for( size_t i=0; i<haars.size(); i++ )
@@ -54,10 +54,10 @@ typedef vector<Haar> VecHaar;
 // |+| |-|		// |-| |+|		
 // | |-| |		// | |-| |		
 
-class HaarSetPrm
+class HaarPrm
 {
 public:
-					HaarSetPrm();
+					HaarPrm();
 
 	string			getDescr();
 
@@ -105,13 +105,13 @@ public:
 	bool			finalize();
 
 	// get info:
-	int				height()  const		{ return _boundRect.height(); };
 	int				width()   const		{ return _boundRect.width(); };
+	int				height()  const		{ return _boundRect.height(); };
 	float			area()	  const		{ return _areaTotal; }
 	float			areaPos() const		{ return _areaPos; }
 	float			areaNeg() const		{ return _areaNeg; }
-	int				getTp()	  const		{ return _boundRect.getTp(); };
-	int				getLf()   const		{ return _boundRect.getLf(); };
+	int				getTp()	  const		{ return _boundRect._tp; };
+	int				getLf()   const		{ return _boundRect._lf; };
 	int&			iwidth()			{ return _iwidth; };
 	int&			iheight()			{ return _iheight; };
 	int				getNumRects() const { return _nRects; };
@@ -134,8 +134,8 @@ public:
 	float			compHistDist(	const IntegralImage **IIs, const int nImages, bool normalize ) const;
 
 	// make set of Haars:
-	static void		makeHaarSet( VecHaar &haars, HaarSetPrm &haarSetPrm );
-	static void		freeDistant( VecHaar &haars, HaarSetPrm &haarSetPrm );
+	static void		makeHaarSet( VecHaar &haars, HaarPrm &haarPrm );
+	static void		freeDistant( VecHaar &haars, HaarPrm &haarPrm );
 	static void		unique(		 VecHaar &haars  );
 
 protected:
@@ -143,14 +143,13 @@ protected:
 	static int		minWidth( int type );
 	static int		minHeight( int type );
 
-protected:
+protected: // define Haar
 	int				_iwidth;
 	int				_iheight;
-	int				_minArea;
-	int				_maxArea;
 	int				_nRects;
 	VecRect			_rects;
 
+protected: // cached for speed
 	Rect			_boundRect;
 	float			_areaPos;
 	float			_areaNeg;
@@ -159,13 +158,14 @@ protected:
 	float			_areaTotal;
 };
 
+/////////////////////////////////////////////////////////////////////////////////
 inline float		Haar::compResp1(	const IntegralImage &II, bool normalize ) const
 {
 	float sum=0.0f; int l,r,t,b;
 	for( int i=0; i<_nRects; i++) {
-		l = _rects[i].getLf();  t=_rects[i].getTp(); 
-		r = _rects[i].getRt();  b=_rects[i].getBt();
-		sum += _rects[i].getWeight() * (float) II.rectSum(l,t,r,b);
+		l = _rects[i]._lf;  t=_rects[i]._tp; 
+		r = _rects[i]._rt;  b=_rects[i]._bt;
+		sum += _rects[i]._wt * (float) II.rectSum(l,t,r,b);
 	}
 
 	if( normalize ) {
@@ -182,9 +182,9 @@ inline float		Haar::compResp2(	const IntegralImage &II, bool normalize ) const
 	float sumPos, sumNeg, sumSqPos, sumSqNeg; int l,r,t,b;
 	sumPos = sumNeg = sumSqPos = sumSqNeg=0.0f;
 	for( int i=0; i<_nRects; i++) {
-		l = _rects[i].getLf();  t=_rects[i].getTp(); 
-		r = _rects[i].getRt();  b=_rects[i].getBt();
-		float weight = _rects[i].getWeight();
+		l = _rects[i]._lf;  t=_rects[i]._tp; 
+		r = _rects[i]._rt;  b=_rects[i]._bt;
+		float weight = _rects[i]._wt;
 		if( weight > 0  ) {
 			sumPos   += weight * (float) II.rectSum(l,t,r,b);
 			sumSqPos += weight * (float) II.rectSumSq(l,t,r,b);
@@ -225,9 +225,9 @@ inline float		Haar::compHistDist(	const IntegralImage *IIs,  const int nImages, 
 		for( j=0; j<nImages; j++ ) {
 			float sumPos, sumNeg; sumPos = sumNeg = 0.0f;
 			for( i=0; i<_nRects; i++ ) {
-				l = _rects[i].getLf();  t=_rects[i].getTp();
-				r = _rects[i].getRt();  b=_rects[i].getBt();
-				float weight = _rects[i].getWeight();
+				l = _rects[i]._lf;  t=_rects[i]._tp;
+				r = _rects[i]._rt;  b=_rects[i]._bt;
+				float weight = _rects[i]._wt;
 				if( weight > 0  )
 					sumPos   += weight * (float) IIs[j].rectSum(l,t,r,b);
 				else
@@ -245,9 +245,9 @@ inline float		Haar::compHistDist(	const IntegralImage *IIs,  const int nImages, 
 		for( j=0; j<nImages; j++ ) {
 			float sumPos = 0.0f;
 			for( i=0; i<_nRects; i++ ) {
-				l = _rects[i].getLf();  t=_rects[i].getTp(); 
-				r = _rects[i].getRt();  b=_rects[i].getBt();
-				sumPos   += _rects[i].getWeight() * (float) IIs[j].rectSum(l,t,r,b);
+				l = _rects[i]._lf;  t=_rects[i]._tp; 
+				r = _rects[i]._rt;  b=_rects[i]._bt;
+				sumPos   += _rects[i]._wt * (float) IIs[j].rectSum(l,t,r,b);
 			}
 			if( normalize ) {
 				mu = (float) IIs[j].getRoiMu(); sigmaInv = (float) IIs[j].getRoiSigInv();
@@ -267,9 +267,9 @@ inline float		Haar::compHistDist(	const IntegralImage **IIs, const int nImages, 
 		for( j=0; j<nImages; j++ ) {
 			float sumPos, sumNeg; sumPos = sumNeg = 0.0f;
 			for( i=0; i<_nRects; i++ ) {
-				l = _rects[i].getLf();  t=_rects[i].getTp();
-				r = _rects[i].getRt();  b=_rects[i].getBt();
-				float weight = _rects[i].getWeight();
+				l = _rects[i]._lf;  t=_rects[i]._tp;
+				r = _rects[i]._rt;  b=_rects[i]._bt;
+				float weight = _rects[i]._wt;
 				if( weight > 0  )
 					sumPos   += weight * (float) IIs[j]->rectSum(l,t,r,b);
 				else
@@ -287,9 +287,9 @@ inline float		Haar::compHistDist(	const IntegralImage **IIs, const int nImages, 
 		for( j=0; j<nImages; j++ ) {
 			float sumPos = 0.0f;
 			for( i=0; i<_nRects; i++ ) {
-				l = _rects[i].getLf();  t=_rects[i].getTp();
-				r = _rects[i].getRt();  b=_rects[i].getBt();
-				sumPos   += _rects[i].getWeight() * (float) IIs[j]->rectSum(l,t,r,b);
+				l = _rects[i]._lf;  t=_rects[i]._tp;
+				r = _rects[i]._rt;  b=_rects[i]._bt;
+				sumPos   += _rects[i]._wt * (float) IIs[j]->rectSum(l,t,r,b);
 			}
 			if( normalize ) {
 				mu = (float) IIs[j]->getRoiMu(); sigmaInv = (float) IIs[j]->getRoiSigInv();
@@ -301,6 +301,5 @@ inline float		Haar::compHistDist(	const IntegralImage **IIs, const int nImages, 
 	}
 	return dist;
 }
-
 
 #endif

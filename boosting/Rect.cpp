@@ -2,13 +2,14 @@
 
 			Rect::Rect()
 {
-	setWeight(1.0f); 
+
+	_wt = 1.0f;
 	setPos(0,0,0,0);
 }
 
 			Rect::Rect( int lf, int rt, int tp, int bt )
 { 
-	setWeight(1.0f); 
+	_wt = 1.0f;
 	setPos(lf,rt,tp,bt); 
 }
 
@@ -18,7 +19,7 @@ void		Rect::writeToStrm( ofstream &strm )
 	strm.write((char*)&_rt, sizeof(_rt));
 	strm.write((char*)&_tp, sizeof(_tp));
 	strm.write((char*)&_bt, sizeof(_bt));
-	strm.write((char*)&_weight, sizeof(_weight));
+	strm.write((char*)&_wt, sizeof(_wt));
 }
 
 void		Rect::readFrmStrm( ifstream &strm )
@@ -30,12 +31,12 @@ void		Rect::readFrmStrm( ifstream &strm )
 	strm.read((char*)&bt, sizeof(bt));
 	strm.read((char*)&weight, sizeof(weight));
 	setPos( lf, rt, tp, bt );
-	setWeight( weight );
+	_wt = weight;
 }
 
 bool		Rect::isValid()	const
 {
-	return ( getLf()<=getRt() && getTp()<=getBt() );
+	return ( _lf<=_rt && _tp<=_bt );
 }
 
 void		Rect::setPos( int lf, int rt, int tp, int bt )
@@ -45,7 +46,7 @@ void		Rect::setPos( int lf, int rt, int tp, int bt )
 
 void		Rect::shift(int jshift, int ishift)
 {
-	setPos( getLf()+ishift, getRt()+ishift, getTp()+jshift, getBt()+jshift );
+	setPos(_lf+ishift, _rt+ishift, _tp+jshift, _bt+jshift );
 }
 
 void		Rect::shift( int lfshift, int rtshift, int tpshift, int btshift )
@@ -57,10 +58,10 @@ void		Rect::getUnion( Rect &uRect, const VecRect &rects )
 {
 	int lf=10000, rt=-10000, tp=10000, bt=-10000;
 	for( int i=0; i<(int)rects.size(); i++ ) {
-		lf=min(rects[i].getLf(),lf);
-		rt=max(rects[i].getRt(),rt);
-		tp=min(rects[i].getTp(),tp);
-		bt=max(rects[i].getBt(),bt);
+		lf=min(rects[i]._lf,lf);
+		rt=max(rects[i]._rt,rt);
+		tp=min(rects[i]._tp,tp);
+		bt=max(rects[i]._bt,bt);
 	}
 	uRect.setPos(lf,rt,tp,bt); 
 }
@@ -68,36 +69,36 @@ void		Rect::getUnion( Rect &uRect, const VecRect &rects )
 /////////////////////////////////////////////////////////////////////////////////
 bool		operator== (const Rect &rect1, const Rect &rect2)
 {
-	if(		rect1.getLf()!=rect2.getLf() ||
-			rect1.getRt()!=rect2.getRt() ||
-			rect1.getTp()!=rect2.getTp() ||
-			rect1.getBt()!=rect2.getBt() )
+	if(	rect1._lf!=rect2._lf ||
+		rect1._rt!=rect2._rt ||
+		rect1._tp!=rect2._tp ||
+		rect1._bt!=rect2._bt )
 		return false;
 	else
-		return( rect1.getWeight()==rect2.getWeight() );
+		return( rect1._wt==rect2._wt );
 }
 
 int			compare(    const Rect &rect1, const Rect &rect2)
 {
-	if(      rect1.getLf()<rect2.getLf() )
+	if(      rect1._lf<rect2._lf )
 		return -1;
-	else if( rect1.getLf()>rect2.getLf() ) 
+	else if( rect1._lf>rect2._lf ) 
 		return 1;
-	else if( rect1.getRt()<rect2.getRt() )
+	else if( rect1._rt<rect2._rt )
 		return -1;
-	else if( rect1.getRt()>rect2.getRt() ) 
+	else if( rect1._rt>rect2._rt ) 
 		return 1;
-	else if( rect1.getTp()<rect2.getTp() )
+	else if( rect1._tp<rect2._tp )
 		return -1;
-	else if( rect1.getTp()>rect2.getTp() ) 
+	else if( rect1._tp>rect2._tp ) 
 		return 1;
-	else if( rect1.getBt()<rect2.getBt() )
+	else if( rect1._bt<rect2._bt )
 		return -1;
-	else if( rect1.getBt()>rect2.getBt() ) 
+	else if( rect1._bt>rect2._bt ) 
 		return 1;
-	else if( rect1.getWeight()<rect2.getWeight() )
+	else if( rect1._wt<rect2._wt )
 		return -1;
-	else if( rect1.getWeight()>rect2.getWeight() )
+	else if( rect1._wt>rect2._wt )
 		return 1;
 	else 
 		return 0;
