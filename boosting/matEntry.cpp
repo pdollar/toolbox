@@ -36,5 +36,5 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
 	Matrixf resp; h.compImageResp( resp, II, 1, false );
 
 	// return
-	convert(resp, plhs[0]);
+	convert(II._II, plhs[0]);
 }
