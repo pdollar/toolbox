@@ -32,7 +32,7 @@ classdef IntegralImage < handle
       %obj.II(2:end,2:end)=cumsum(cumsum(I),2);
       %obj.sqII(2:end,2:end)=cumsum(cumsum(I.*I),2);
       %%% C CODE
-      [mRows,nCols]=size(I);
+      [obj.mRows,obj.nCols]=size(I);
       [obj.II,obj.sqII]=integralImagePrepare(I);
     end
 

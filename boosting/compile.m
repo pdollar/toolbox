@@ -17,14 +17,14 @@ c
 % mex -O 'private/integralImagePrepare.cpp'
 % mex -O cpp/matEntry.cpp cpp/rect.cpp cpp/haar.cpp
 
-nrep=100;
-I=rand(500);
+% nrep=1000;
+% I=rand(100);
+% I =double(imread('cameraman.tif'));
 
-% II=IntegralImage;
+% II=IntegralImage; II.prepare(I);
 % tic, for i=1:nrep
-% %   clear(II);
-% prepare(II,I);
-% A = II.II;
+% % II.setRoi(1,1,10,10);
+% prepare(II,I); A=II.II;
 % end, toc
 
 % tic, for i=1:nrep
@@ -41,6 +41,6 @@ I=rand(500);
 % D=matEntry(I);
 % end, toc
 
-% sum(sum(abs(B-D)))
+% sum(sum(abs(A-B)))
 % [sum(sum(abs(A-B))) sum(sum(abs(A-C))) sum(sum(abs(A-D)))]
 
