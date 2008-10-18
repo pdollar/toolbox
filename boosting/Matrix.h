@@ -583,7 +583,7 @@ template<class T> Matrix<T>		operator^ ( const T a, const Matrix<T> &b )
 }
 
 // Pointwise (Matrix OP Matrix) operations - except *,&,^
-#define DOP(OP) \ 
+#define DOP(OP) \
 	template<class T> Matrix<T> Matrix<T>::operator OP ( const Matrix<T> &b ) const { \
         Matrix<T> c (rows(), cols()); \
         for (int i = 0; i < size(); i++) { \

@@ -1,10 +1,7 @@
 #ifndef RECT_H
 #define RECT_H
 
-#include <vector>
-#include <iostream>
-#include <fstream>
-using namespace std;
+#include "Public.h"
 
 class Rect;
 typedef vector< Rect > VecRect;
