@@ -53,7 +53,7 @@ void		Rect::shift( int lfshift, int rtshift, int tpshift, int btshift )
 	_lf += lfshift;  _rt += rtshift;  _tp += tpshift;  _bt += btshift;
 }
 
-void		Rect::getBoundingRect( Rect &bndRect, const VecRect &rects )
+void		Rect::getUnion( Rect &uRect, const VecRect &rects )
 {
 	int lf=10000, rt=-10000, tp=10000, bt=-10000;
 	for( int i=0; i<(int)rects.size(); i++ ) {
@@ -62,13 +62,10 @@ void		Rect::getBoundingRect( Rect &bndRect, const VecRect &rects )
 		tp=min(rects[i].getTp(),tp);
 		bt=max(rects[i].getBt(),bt);
 	}
-	bndRect.setPos(lf,rt,tp,bt); 
+	uRect.setPos(lf,rt,tp,bt); 
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-
 bool		operator== (const Rect &rect1, const Rect &rect2)
 {
 	if(		rect1.getLf()!=rect2.getLf() ||

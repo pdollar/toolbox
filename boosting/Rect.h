@@ -37,7 +37,7 @@ public:
 	void			setWeight( float weight ) { _weight = weight; };
 	float			getWeight()	const { return _weight; }
 
-	static void		getBoundingRect( Rect &bndRect, const VecRect &rects );
+	static void		getUnion( Rect &uRect, const VecRect &rects );
 
 	friend int		compare(	const Rect &rect1, const Rect &rect2);
 	friend bool		operator==(	const Rect &rect1, const Rect &rect2);

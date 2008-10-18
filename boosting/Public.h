@@ -7,6 +7,7 @@
 #include <vector>
 #include <cassert>
 #include <cmath>
+#include <algorithm>
 using namespace std;
 
 // typedefs
@@ -98,5 +99,49 @@ template<class T> ostream& operator<<(ostream& os, const vector<T>& v)
 	os << "[ " ; for (size_t i=0; i<v.size(); i++) os << v[i] << " "; os << "]"; return os;
 }
 
+
+// sort method that also gives order of elements after sorting
+template<class T> class				SortableElement
+{
+public:
+	T _val; int _ind;
+	SortableElement() {};
+	SortableElement( T val, int ind ) { _val=val; _ind=ind; }
+	bool operator< ( SortableElement &b ) { return (_val < b._val ); };
+};
+
+template<class T> void				sortOrder( vector<T> &v, vectori &order )
+{
+	int n=v.size();
+	vector< SortableElement<T> > v2; 
+	v2.resize(n); 
+	order.clear(); order.resize(n);
+	for( int i=0; i<n; i++ ) {
+		v2[i]._ind = i;
+		v2[i]._val = v[i];
+	}
+	std::sort( v2.begin(), v2.end() );
+	for( int i=0; i<n; i++ ) {
+		order[i] = v2[i]._ind;
+		v[i] = v2[i]._val;
+	}
+}
+
+template<class T> void				reorder( vector<T> &v, vectori &order )
+{
+	assert( v.size()==order.size() );
+	vector<T> copy( v.size() );
+	for( int i=0; i<(int)v.size(); i++ )
+		copy[i] = v[order[i]];
+	v = copy;
+}
+
+template<class Ta, class Tb> void	sortVia_b( vector<Ta> &a, vector<Tb> &b )
+{
+	assert( a.size()==b.size() );
+	vectori order;
+	sortOrder<Tb>( b, order );
+	reorder<Ta>( a, order );
+}
 
 #endif
