@@ -169,11 +169,11 @@ template<class T> void			Matrix<T>::writeToStrm(ofstream &strm)
 
 template<class T> void			Matrix<T>::readFrmStrm(ifstream &strm)
 {
-	int row_read, col_read;  Free();
-	strm.read((char*)&row_read, sizeof(row_read));
-	strm.read((char*)&col_read, sizeof(col_read));
-	if (row_read>0 && col_read>0)
-		setDims(row_read, col_read);
+	int row1, col1;  Free();
+	strm.read((char*)&row1, sizeof(row1));
+	strm.read((char*)&col1, sizeof(col1));
+	if (row1>0 && col1>0)
+		setDims(row1, col1);
 	strm.read((char*)_data, sizeof(T)*size());
 }
 
@@ -232,7 +232,6 @@ template<class T> bool			Matrix<T>::readFromTxt( const char *fname, char *delim 
 	strm.close();
 	return true;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 template<class T> bool			Matrix<T>::setDims(const int rows, const int cols)
@@ -542,11 +541,11 @@ template<class T> Matrix<T>		Matrix<T>::operator* ( const Matrix<T> &b ) const
 				sum = sum+(*this)(i, k)*b(k, j); //multiply
 			temp(i, j) = sum;
 		}
-	  return temp;
+	return temp;
 }
 
 template<class T> Matrix<T>		Matrix<T>::operator& ( const Matrix<T> &b ) const 
-{ // matrix pointwise multiplication
+{
 	assert(rows()==b.rows() && cols()==b.cols());
 	Matrix<T> temp;
 	temp.setDims(rows(),cols());
