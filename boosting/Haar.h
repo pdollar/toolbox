@@ -3,11 +3,11 @@
 
 #include "Public.h"
 #include "Matrix.h"
-#include "Rect.h"
 #include "IntegralImage.h"
 
-class Haar;
+class Haar; class Rect;
 typedef vector<Haar> VecHaar;
+typedef vector< Rect > VecRect;
 
 //// SAMPLE CODE:
 //// 1) create an integral image
@@ -32,6 +32,40 @@ typedef vector<Haar> VecHaar;
 //	cout << (haars[i].getDescr()) << endl;
 //Haar::compImageResps( "C:/code/pbt/haar", haars, II, 1, false );
 
+/////////////////////////////////////////////////////////////////////////////////
+
+class Rect
+{
+public:
+					Rect();
+					Rect( int lf, int rt, int tp, int bt );
+
+	void			writeToStrm( ofstream &strm );
+	void			readFrmStrm( ifstream &strm );
+
+	int				area()		const {return (_rt-_lf+1)*(_bt-_tp+1); };
+	int				height()	const {return _bt-_tp+1;};
+	int				width()		const {return _rt-_lf+1;};
+	bool			isValid()	const;
+
+	void			shift( const int jshift, const int ishift );
+	void			shift( int lfshift, int rtshift, int tpshift, int btshift );
+	void			setPos( const int lf, int rt, int tp, int bt );
+
+	static void		getUnion( Rect &uRect, const VecRect &rects );
+
+	friend int		compare(	const Rect &rect1, const Rect &rect2);
+	friend bool		operator==(	const Rect &rect1, const Rect &rect2);
+	friend bool		operator<(	const Rect &rect1, const Rect &rect2);
+
+public:
+	// define a rectangle
+	int				_lf;
+	int				_rt;
+	int				_tp;
+	int				_bt;
+	float			_wt;
+};
 
 /////////////////////////////////////////////////////////////////////////////////
 
