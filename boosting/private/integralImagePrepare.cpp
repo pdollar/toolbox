@@ -33,7 +33,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
 	if(nlhs != 2) mexErrMsgTxt( "Only 2 output arguments allowed." );
 
 	// create output vars
-	int m=mxGetM(plhs[0]), n=mxGetN(plhs[0]);
+	int m=mxGetM(prhs[0]), n=mxGetN(prhs[0]);
 	plhs[0]=mxCreateDoubleMatrix(m+1,n+1,mxREAL); 
 	plhs[1]=mxCreateDoubleMatrix(m+1,n+1,mxREAL);
 

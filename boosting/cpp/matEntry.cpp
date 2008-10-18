@@ -32,8 +32,8 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
 	II.prepare(A);
 
 	// run
-	Haar h; h.createSyst( 0, 50, 50, 10, 10, 0, 0 );
-	Matrixf resp; h.compImageResp( resp, II, 1, false );
+	//Haar h; h.createSyst( 0, 50, 50, 10, 10, 0, 0 );
+	//Matrixf resp; h.compImageResp( resp, II, 1, false );
 
 	// return
 	convert(II._II, plhs[0]);

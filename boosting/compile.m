@@ -1,12 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-c
-%mex rect.cpp -c
-% mex -O matEntry.cpp rect.cpp haar.cpp
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 % A=rand(100);
 % tic
 % B=matEntry(A);
@@ -20,17 +13,34 @@ c
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% n=10000;
-% A=rand(5)*2;
-% 
-% tic, for i=1:n
-% B=matEntry(A);
+c
+% mex -O 'private/integralImagePrepare.cpp'
+% mex -O cpp/matEntry.cpp cpp/rect.cpp cpp/haar.cpp
+
+nrep=100;
+I=rand(500);
+
+% II=IntegralImage;
+% tic, for i=1:nrep
+% %   clear(II);
+% prepare(II,I);
+% A = II.II;
 % end, toc
-% 
-% tic, for i=1:n
-% [m,n]=size(A); C=zeros(m+1,n+1); C2=C;
-% C(2:end,2:end)=cumsum(cumsum(A),2);
-% C2(2:end,2:end)=cumsum(cumsum(A.*A),2);
+
+% tic, for i=1:nrep
+% [II,IIsq]=integralImagePrepare(I); B=II;
 % end, toc
-% 
-% sum(sum(abs(B-C2)))
+
+% tic, for i=1:nrep
+% [m,n]=size(I); II=zeros(m+1,n+1); IIsq=II;
+% II(2:end,2:end)=cumsum(cumsum(I),2); C=II;
+% IIsq(2:end,2:end)=cumsum(cumsum(I.*I),2);
+% end, toc
+
+% tic, for i=1:nrep
+% D=matEntry(I);
+% end, toc
+
+% sum(sum(abs(B-D)))
+% [sum(sum(abs(A-B))) sum(sum(abs(A-C))) sum(sum(abs(A-D)))]
+
