@@ -115,7 +115,7 @@ function bb = intersect( bb1, bb2 )
 %
 % See also bbApply bbApply>union
 n1=size(bb1,1); n2=size(bb2,1);
-if(n1==0 && n2==0), bb=zeros(0,4); return, end
+if(n1==0 || n2==0), bb=zeros(0,4); return, end
 if(n1==1 && n2>1), bb1=repmat(bb1,n2,1); n1=n2; end
 if(n2==1 && n1>1), bb2=repmat(bb2,n1,1); n2=n1; end
 assert(n1==n2);
@@ -142,7 +142,7 @@ function bb = union( bb1, bb2 )
 %
 % See also bbApply bbApply>intersect
 n1=size(bb1,1); n2=size(bb2,1);
-if(n1==0 && n2==0), bb=zeros(0,4); return, end
+if(n1==0 || n2==0), bb=zeros(0,4); return, end
 if(n1==1 && n2>1), bb1=repmat(bb1,n2,1); n1=n2; end
 if(n2==1 && n1>1), bb2=repmat(bb2,n1,1); n2=n1; end
 assert(n1==n2);
