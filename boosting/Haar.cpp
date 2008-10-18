@@ -416,7 +416,7 @@ string		Haar::getDescr() const
 	return descr;
 }
 
-void		Haar::compImageResp( Matrixf &resp, IntegralImage &II, int moment, bool normalize )
+void		Haar::convHaar( Matrixf &resp, IntegralImage &II, int moment, bool normalize )
 {
 	moveTo(0,0); 
 	int r,c,w,h;
@@ -442,7 +442,7 @@ void		Haar::compImageResp( Matrixf &resp, IntegralImage &II, int moment, bool no
 	}
 }
 
-void		Haar::compImageHistDist( Matrixf &resp, IntegralImage *IIs, int nImages, bool normalize )
+void		Haar::convHaarHist( Matrixf &resp, IntegralImage *IIs, int nImages, bool normalize )
 {
 	moveTo(0,0); 
 	int r,c,w,h;

@@ -9,7 +9,7 @@ class Haar; class Rect;
 typedef vector<Haar> VecHaar;
 typedef vector< Rect > VecRect;
 
-//// SAMPLE CODE:
+//// SAMPLE CODE
 //// 1) create an integral image
 //Matrixf I; I.Load( "C:/code/pbt/public/I.tif" ); 
 //IntegralImage II; II.prepare( I, true );
@@ -18,7 +18,7 @@ typedef vector< Rect > VecRect;
 //Haar h; h.createSyst( 4, 50, 50, 9, 9, 0, 0 );
 //ColorImage hI; h.toVisible( hI );
 //hI.Scale().Save( "C:/code/pbt/h.tif" ); 
-//Matrixf resp; h.compImageResp( resp, II, 1, false );
+//Matrixf resp; h.convHaar( resp, II, 1, false );
 //resp.Scale().Save( "C:/code/pbt/R.tif" ); 
 //
 //// 3) visualize simple Haars and their application to image
@@ -30,10 +30,9 @@ typedef vector< Rect > VecRect;
 //Haar::saveVisualization( haars, "C:/code/pbt/haars", true );
 //for( size_t i=0; i<haars.size(); i++ )
 //	cout << (haars[i].getDescr()) << endl;
-//Haar::compImageResps( "C:/code/pbt/haar", haars, II, 1, false );
+//Haar::convHaars( "C:/code/pbt/haar", haars, II, 1, false );
 
 /////////////////////////////////////////////////////////////////////////////////
-
 class Rect
 {
 public:
@@ -59,7 +58,6 @@ public:
 	friend bool		operator<(	const Rect &rect1, const Rect &rect2);
 
 public:
-	// define a rectangle
 	int				_lf;
 	int				_rt;
 	int				_tp;
@@ -68,7 +66,6 @@ public:
 };
 
 /////////////////////////////////////////////////////////////////////////////////
-
 //// Haars (systematically designed)
 //
 // Type 0:		// Type 1:		// Type 2:		// Type 3:		// Type 4:
@@ -133,12 +130,12 @@ public:
 	void 			writeToStrm( ofstream &strm );
 	void 			readFrmStrm( ifstream &strm );
 
-	// create / alter:
+	// create / alter
     void			createSyst(	int type, int w, int h, int fw, int fh, int tp, int lf, bool flip=false );
 	void			moveTo( int tpNew, int lfNew );
 	bool			finalize();
 
-	// get info:
+	// get info
 	int				width()   const		{ return _boundRect.width(); };
 	int				height()  const		{ return _boundRect.height(); };
 	float			area()	  const		{ return _areaTotal; }
@@ -152,22 +149,22 @@ public:
 	VecRect&		getRects()			{ return _rects; };
 	string			getDescr() const;
 
-	// comparison (for sort, ect):
+	// comparison (for sort, ect)
 	friend int		compare(	const Haar &haar1, const Haar &haar2);
 	friend bool		operator==(	const Haar &haar1, const Haar &haar2);
 	friend bool		operator<(	const Haar &haar1, const Haar &haar2);
 
-	// visualization:
-	void			compImageResp( Matrixf &resp, IntegralImage &II, int moment, bool normalize );
-	void			compImageHistDist( Matrixf &resp, IntegralImage *IIs, int nImages, bool normalize );
+	// visualization
+	void			convHaar( Matrixf &resp, IntegralImage &II, int moment, bool normalize );
+	void			convHaarHist( Matrixf &resp, IntegralImage *IIs, int nImages, bool normalize );
 
-	// compute haars:
+	// compute haars
 	float			compResp1(		const IntegralImage &II, bool normalize ) const;
 	float			compResp2(		const IntegralImage &II, bool normalize ) const;
 	float			compHistDist(	const IntegralImage *IIs,  const int nImages, bool normalize ) const;
 	float			compHistDist(	const IntegralImage **IIs, const int nImages, bool normalize ) const;
 
-	// make set of Haars:
+	// make set of Haars
 	static void		makeHaarSet( VecHaar &haars, HaarPrm &haarPrm );
 	static void		freeDistant( VecHaar &haars, HaarPrm &haarPrm );
 	static void		unique(		 VecHaar &haars  );
