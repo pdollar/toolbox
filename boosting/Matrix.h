@@ -31,13 +31,13 @@ public:
 	// dimensions / access (note: [1xn] vectors more eff than [nx1])
 	bool			setDims( const int rows, const int cols );
 	bool			setDims( const int rows, const int cols, const T value );
-	void			getDims( int& rows, int& cols )	const { rows=_mrows; cols=_ncols; };
+	void			getDims( int& rows, int& cols )	const { rows=_mRows; cols=_nCols; };
 	bool			resizeTo( const int rows1, const int cols1 );
 	bool			valid( const int row, const int col ) const;
 	bool			valid( const int index ) const;
-	int				rows() const { return _mrows; };
-	int				cols() const { return _ncols; };
-	int				size() const { return _mrows*_ncols; };
+	int				rows() const { return _mRows; };
+	int				cols() const { return _nCols; };
+	int				size() const { return _mRows*_nCols; };
 	T&				operator() (const int index ) const; 
 	T&				operator() (const int index ); 
 	T&				operator() (const int row, const int col ) const;
@@ -49,11 +49,11 @@ public:
 	Matrix&			identity();								// set this matrix to be identity matrix
 	Matrix&			transpose();							// matrix transpose
 	Matrix&			absolute();								// absolute value of matrix
-	void			rotate90( Matrix &B, int K=1) const;	// rotate matrix by 90,180, or 270 degrees
-	void			flipHoriz( Matrix<T> &B) const;			// flip matrix horizontally
-	void			flipVert( Matrix<T> &B) const;			// flip matrix vertically
-	void			reshape( Matrix &B, int mrows, int ncols ) const;	// reshape to B, product of rows*cols can't change
-	T				product() const;						// product of elements
+	void			rot90( Matrix &B, int K=1) const;		// rotate matrix clockwise by k*90 degrees
+	void			fliplr( Matrix<T> &B) const;			// flip matrix horizontally
+	void			flipud( Matrix<T> &B) const;			// flip matrix vertically
+	void			reshape( Matrix &B, int mrows, int ncols ) const;	// reshape to B, size can't change
+	T				prod() const;							// product of elements
 	T				sum() const;							// sum of elements
 	T				trace() const;							// trace
 	virtual T		min() const;							// matrix min
@@ -61,7 +61,7 @@ public:
 	int				maxi() const;							// max index
 	int				mini() const;							// min index
 
-	// pointwise operators (mostly defined with a precompiler script "DOP")
+	// pointwise operators (defined with a precompiler script "DOP")
 	// For example division is pointwise: C=A/B means C(i)=A(i)/B(i)
 	// "*" - ONLY multiplcation of two matricies is NOT pointwise - it is standard matrix multiplication
 	// "&" - for pointwise multiplication between matricies use C=A&B; (careful has low precedence)
@@ -74,7 +74,7 @@ public:
 	#undef DOP
 	Matrix operator& (const Matrix &b ) const;
 
-	// computed assignment (all pointwise)
+	// computed assignment, all pointwise
 	#define DOP(OP) \
 		Matrix& operator OP (const T b); \
 		Matrix& operator OP (const Matrix &b);
@@ -83,44 +83,44 @@ public:
 
 protected:
 	T		*_data ;
-	T		**_dataindex;
-	int		_mrows, _ncols;
+	T		**_dataIndex;
+	int		_mRows, _nCols;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 template<class T>				Matrix<T>::Matrix()
 {
-	_mrows = 0;
-	_ncols = 0;
+	_mRows = 0;
+	_nCols = 0;
 	_data = NULL ;
-	_dataindex = NULL;
+	_dataIndex = NULL;
 }
 
 template<class T>				Matrix<T>::Matrix(int rows, int cols) 
 {
-	_mrows = 0;
-	_ncols = 0;
+	_mRows = 0;
+	_nCols = 0;
 	_data = NULL ;
-	_dataindex = NULL;
+	_dataIndex = NULL;
 	setDims(rows, cols);
 }
 
 template<class T>				Matrix<T>::Matrix(int rows, int cols, T value ) 
 {
-	_mrows = 0;
-	_ncols = 0;
+	_mRows = 0;
+	_nCols = 0;
 	_data = NULL ;
-	_dataindex = NULL;
+	_dataIndex = NULL;
 	setDims(rows, cols, value);
 }
 
 template<class T>				Matrix<T>::Matrix(const Matrix& x)
 {
 	_data = NULL ;
-	_dataindex = NULL;
-	_mrows = 0;
-	_ncols = 0;
-	setDims(x._mrows, x._ncols);
+	_dataIndex = NULL;
+	_mRows = 0;
+	_nCols = 0;
+	setDims(x._mRows, x._nCols);
 	for (int i = 0; i < size(); i++)
 		(*this)(i) = x(i);
 }
@@ -135,10 +135,10 @@ template<class T> void			Matrix<T>::Free()
 	if (_data != NULL)
 		delete[] _data;
 	_data = NULL;
-	if (_dataindex != NULL)
-		delete []_dataindex;
-	_dataindex = NULL;
-	_mrows = _ncols = 0;
+	if (_dataIndex != NULL)
+		delete []_dataIndex;
+	_dataIndex = NULL;
+	_mRows = _nCols = 0;
 }
 
 template<class T> Matrix<T>&	Matrix<T>::operator= (const Matrix<T> &x )
@@ -162,8 +162,8 @@ template<class T> Matrix<T>&	Matrix<T>::operator= (const vector<T> &x)
 ///////////////////////////////////////////////////////////////////////////////
 template<class T> void			Matrix<T>::writeToStrm(ofstream &strm)
 {
-	strm.write((char*)&_mrows, sizeof(_mrows));
-	strm.write((char*)&_ncols, sizeof(_ncols));
+	strm.write((char*)&_mRows, sizeof(_mRows));
+	strm.write((char*)&_nCols, sizeof(_nCols));
 	strm.write((char*)_data, sizeof(T)*size());
 }
 
@@ -177,12 +177,11 @@ template<class T> void			Matrix<T>::readFrmStrm(ifstream &strm)
 	strm.read((char*)_data, sizeof(T)*size());
 }
 
-template<class T> bool			Matrix<T>::writeToTxt( const char *fname, char *delim )
+template<class T> bool			Matrix<T>::writeToTxt( const char *fName, char *delim )
 {
-	remove( fname ); 
-	ofstream strm; strm.open(fname, std::ios::out);
-	if (strm.fail()) { abortError( "unable to write:", fname, __LINE__, __FILE__ ); return false; }
-	
+	remove( fName ); 
+	ofstream strm; strm.open(fName, std::ios::out);
+	if (strm.fail()) { abortError( "unable to write:", fName, __LINE__, __FILE__ ); return false; }
 	for( int r=0; r<rows(); r++ ) {
 		for( int c=0; c<cols(); c++ ) {
 			strm << (*this)(r,c);
@@ -190,14 +189,13 @@ template<class T> bool			Matrix<T>::writeToTxt( const char *fname, char *delim )
 		}
 		strm << endl;
 	}
-
 	strm.close();
 	return true;
 }
 
-template<class T> bool			Matrix<T>::readFromTxt( const char *fname, char *delim )
+template<class T> bool			Matrix<T>::readFromTxt( const char *fName, char *delim )
 {
-	ifstream strm; strm.open(fname, std::ios::in);
+	ifstream strm; strm.open(fName, std::ios::in);
 	if( strm.fail() ) return false;
 	char * tline = new char[40000000];
 
@@ -237,21 +235,21 @@ template<class T> bool			Matrix<T>::readFromTxt( const char *fname, char *delim 
 template<class T> bool			Matrix<T>::setDims(const int rows, const int cols)
 {
 	assert(rows>=0 && cols>=0 );
-	if (rows==_mrows && cols==_ncols) return true;
-	Free();  _mrows = rows;  _ncols = cols;
-	if (_mrows==0 || _ncols==0) return true;
+	if (rows==_mRows && cols==_nCols) return true;
+	Free();  _mRows = rows;  _nCols = cols;
+	if (_mRows==0 || _nCols==0) return true;
 
-	int lSize = ((int)_mrows) * _ncols;
+	int lSize = ((int)_mRows) * _nCols;
 	try {
 		_data = new T[lSize];
-		_dataindex = new T*[_mrows];
+		_dataIndex = new T*[_mRows];
 	} catch( bad_alloc& ) {
 		cout << "Matrix::setDims(..)  OUT OF MEMORY" << endl;
 		return false;
 	}
 
-	for (int i=0; i<_mrows; i++)
-		_dataindex[i] = &(_data[_ncols*i]);
+	for (int i=0; i<_mRows; i++)
+		_dataIndex[i] = &(_data[_nCols*i]);
 	return true;
 }
 
@@ -280,20 +278,20 @@ template<class T> bool			Matrix<T>::resizeTo(const int rows1, const int cols1)
 
 	for (int j=0; j<rows1; j++)
 		pdata1[j] = &(data1[cols1*j]);
-	for (int j=0; j<min((int)rows(),rows1); j++)
-		for (int i=0; i<min((int)cols(),cols1); i++)
+	for (int j=0; j<std::min((int)rows(),rows1); j++)
+		for (int i=0; i<std::min((int)cols(),cols1); i++)
 			pdata1[j][i] = (*this)(j, i);
 	Free();
-	_mrows = rows1;
-	_ncols = cols1;
+	_mRows = rows1;
+	_nCols = cols1;
 	_data = data1;
-	_dataindex = pdata1;
+	_dataIndex = pdata1;
 	return true;
 }
 
 template<class T> inline bool	Matrix<T>::valid(const int row, const int col) const
 {
-	return (row>=0 && row<_mrows && col>=0 && col<_ncols);
+	return (row>=0 && row<_mRows && col>=0 && col<_nCols);
 }
 
 template<class T> inline bool	Matrix<T>::valid(const int index) const
@@ -303,12 +301,12 @@ template<class T> inline bool	Matrix<T>::valid(const int index) const
 
 template<class T> inline T&		Matrix<T>::operator() ( const int row, const int col)
 {
-	return _dataindex[row][col];
+	return _dataIndex[row][col];
 }
 
 template<class T> inline T&		Matrix<T>::operator() ( const int row, const int col) const
 {
-	return _dataindex[row][col];
+	return _dataIndex[row][col];
 }
 
 template<class T> inline T&		Matrix<T>::operator() ( const int index)
@@ -325,7 +323,7 @@ template<class T> inline T&		Matrix<T>::operator() ( const int index) const
 template<class T> Matrix<T>&	Matrix<T>::zero()
 {
 	if (_data != NULL)
-		memset(_data, 0, sizeof(T)*_mrows*_ncols);
+		memset(_data, 0, sizeof(T)*_mRows*_nCols);
 	return *this;
 }
 
@@ -350,9 +348,9 @@ template<class T> Matrix<T>&	Matrix<T>::identity()
 template<class T> Matrix<T>&	Matrix<T>::transpose()
 {
 	Matrix temp;
-	temp.setDims(_ncols, _mrows);
-	for (int i = 0; i < _ncols; i++)
-		for (int j = 0; j < _mrows; j++)
+	temp.setDims(_nCols, _mRows);
+	for (int i = 0; i < _nCols; i++)
+		for (int j = 0; j < _mRows; j++)
 			temp(i, j) = (*this)(j, i);
 	(*this) = temp;
 	return *this;
@@ -370,46 +368,43 @@ template<class T> Matrix<T>&	Matrix<T>::absolute()
 	return (*this);
 }
 
-template<class T> void			Matrix<T>::rotate90( Matrix<T> &B, int K) const
+template<class T> void			Matrix<T>::rot90( Matrix<T> &B, int K) const
 {
-	// rotate90  Rotate Matrix 90 degrees.
-	// rotate90() is the 90 degree counterclockwise rotation of Matrix A.
-	// rotate90(K) is the K*90 degree rotation of A, K = +-1,+-2,...
 	int i,j;
     int k = K%4; if (k < 0) k += 4;
 	if (k==1) {
-		B.setDims(_ncols,_mrows);
-		for( i=0; i < _ncols; i++) for( j=0; j < _mrows; j++)
-			B(i, j) = (*this)(j, _ncols-i-1);
+		B.setDims(_nCols,_mRows);
+		for( i=0; i < _nCols; i++) for( j=0; j < _mRows; j++)
+			B(i, j) = (*this)(j, _nCols-i-1);
 	} else if (k==2) {
-		B.setDims(_mrows,_ncols);
-		for( i=0; i < _ncols; i++) for( j=0; j < _mrows; j++)
-			B(j, i) = (*this)(_mrows-j-1, _ncols-i-1);
+		B.setDims(_mRows,_nCols);
+		for( i=0; i < _nCols; i++) for( j=0; j < _mRows; j++)
+			B(j, i) = (*this)(_mRows-j-1, _nCols-i-1);
 	} else if (k==3) {
-		B.setDims(_ncols,_mrows);
-		for( i=0; i < _ncols; i++) for( j=0; j < _mrows; j++)
-			B(i, j) = (*this)( _mrows-j-1, i);
+		B.setDims(_nCols,_mRows);
+		for( i=0; i < _nCols; i++) for( j=0; j < _mRows; j++)
+			B(i, j) = (*this)( _mRows-j-1, i);
 	} else {
 		B = *this;		
 	}
 }
 
-template<class T> void			Matrix<T>::flipHoriz( Matrix<T> &B) const
+template<class T> void			Matrix<T>::fliplr( Matrix<T> &B) const
 {
 	int i,j;
-	B.setDims(_ncols,_mrows);
-    for( i=0; i<_mrows; i++ )
-		for( j=0; j<_ncols; j++ )
-			B(i,j) = (*this)(_mrows-i-1,j);
+	B.setDims(_nCols,_mRows);
+    for( i=0; i<_mRows; i++ )
+		for( j=0; j<_nCols; j++ )
+			B(i,j) = (*this)(_mRows-i-1,j);
 }
 
-template<class T> void			Matrix<T>::flipVert( Matrix<T> &B) const
+template<class T> void			Matrix<T>::flipud( Matrix<T> &B) const
 {
 	int i,j;
-	B.setDims(_ncols,_mrows);
-    for( i=0; i<_mrows; i++ )
-		for( j=0; j<_ncols; j++ )
-			B(i,j) = (*this)(i,_ncols-j-1);
+	B.setDims(_nCols,_mRows);
+    for( i=0; i<_mRows; i++ )
+		for( j=0; j<_nCols; j++ )
+			B(i,j) = (*this)(i,_nCols-j-1);
 }
 
 template<class T> void			Matrix<T>::reshape( Matrix<T> &B, int mrows, int ncols ) const
@@ -423,7 +418,7 @@ template<class T> void			Matrix<T>::reshape( Matrix<T> &B, int mrows, int ncols 
 		B(i) = (*this)(i);
 }
 
-template<class T> T				Matrix<T>::product() const
+template<class T> T				Matrix<T>::prod() const
 {
 	T value; value = 1;
 	for (int i=0; i<size(); i++)
@@ -442,9 +437,9 @@ template<class T> T				Matrix<T>::sum() const
 
 template<class T> T				Matrix<T>::trace() const
 {
-	assert(_mrows==_ncols);
+	assert(_mRows==_nCols);
 	T d; d=0;
-	for( int j=0; j<_mrows; j++) 
+	for( int j=0; j<_mRows; j++) 
 		d += (*this)(j,j);
 	return d;
 }
