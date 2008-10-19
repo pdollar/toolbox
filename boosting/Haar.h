@@ -42,8 +42,8 @@ public:
 
 	void			writeToStrm( ofstream &strm );
 	void			readFrmStrm( ifstream &strm );
-	SavObj*			save();
-	void			load( SavObj &s );
+	SavObj*			save( char *name );
+	void			load( SavObj &s, char *name=NULL );
 
 	int				area()		const {return (_rt-_lf+1)*(_bt-_tp+1); };
 	int				height()	const {return _bt-_tp+1;};
@@ -132,8 +132,8 @@ class Haar
 public:
 	void 			writeToStrm( ofstream &strm );
 	void 			readFrmStrm( ifstream &strm );
-	SavObj*			save();
-	void			load( SavObj &s );
+	SavObj*			save( char *name );
+	void			load( SavObj &s, char *name=NULL );
 
 	// create / alter
     void			createSyst(	int type, int w, int h, int fw, int fh, int tp, int lf, bool flip=false );

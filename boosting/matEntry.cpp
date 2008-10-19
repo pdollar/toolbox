@@ -35,6 +35,16 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
 	Haar h; h.createSyst( 0, 50, 50, 10, 10, 0, 0 );
 	Matrixf resp; h.convHaar( resp, II, 1, false );
 
+	// test
+	//Rect a(0,0,4,4), b;
+	//SavObj*	s = a.save("Rect");
+	//b.load( *s );
+	//mexPrintf((a==b) ? "YAY" : "NAY");
+	Haar b;
+	SavObj*	s = h.save("Haar");
+	b.load( *s );
+	mexPrintf((h==b) ? "YAY" : "NAY");
+
 	// return
 	convert(resp,plhs[0]);
 }

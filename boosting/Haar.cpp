@@ -37,30 +37,25 @@ void		Rect::readFrmStrm( ifstream &strm )
 }
 
 
-SavObj*		Rect::save()
+SavObj*		Rect::save( char *name )
 {
-	SavObj *s = new SavObj(5,Savable::RECT);
-	s->vals[0] = new SavPrim<int>( _lf, "lf" );
-	s->vals[1] = new SavPrim<int>( _rt, "rt" );
-	s->vals[2] = new SavPrim<int>( _tp, "tp" );
-	s->vals[3] = new SavPrim<int>( _bt, "bt" );
-	s->vals[4] = new SavPrim<float>( _wt, "wt" );
+	SavObj *s = new SavObj(name,5,Savable::RECT);
+	s->_vals[0] = new SavLeaf( "lf", &_lf );
+	s->_vals[1] = new SavLeaf( "rt", &_rt );
+	s->_vals[2] = new SavLeaf( "tp", &_tp );
+	s->_vals[3] = new SavLeaf( "bt", &_bt );
+	s->_vals[4] = new SavLeaf( "wt", &_wt );
 	return s;
 }
 
-void		Rect::load( SavObj &s )
+void		Rect::load( SavObj &s, char *name )
 {
-	s.checkLen(5,5); s.check("",Savable::RECT); //???
-	s.vals[0]->check( "lf", Savable::PRIMITIVE );
-	s.vals[1]->check( "rt", Savable::PRIMITIVE );
-	s.vals[2]->check( "tp", Savable::PRIMITIVE );
-	s.vals[3]->check( "bt", Savable::PRIMITIVE );
-	s.vals[4]->check( "wt", Savable::PRIMITIVE );
-	((SavPrim<int>*) s.vals[0])->load( _lf );
-	((SavPrim<int>*) s.vals[1])->load( _rt );
-	((SavPrim<int>*) s.vals[2])->load( _tp );
-	((SavPrim<int>*) s.vals[3])->load( _bt );
-	((SavPrim<float>*) s.vals[4])->load( _wt );
+	s.checkLen(5,5); s.check(Savable::RECT,name);
+	((SavLeaf*) s._vals[0])->load( "lf", &_lf );
+	((SavLeaf*) s._vals[1])->load( "rt", &_rt );
+	((SavLeaf*) s._vals[2])->load( "tp", &_tp );
+	((SavLeaf*) s._vals[3])->load( "bt", &_bt );
+	((SavLeaf*) s._vals[4])->load( "wt", &_wt );
 }
 
 bool		Rect::isValid()	const
@@ -158,32 +153,27 @@ void		Haar::readFrmStrm( ifstream &strm )
 	bool valid=finalize(); assert(valid);
 }
 
-SavObj*		Haar::save()
+SavObj*		Haar::save( char *name )
 {
-	//SavObj *s = new SavObj(3+_nRects,Savable::HAAR);
-	//s->vals[0] = new SavPrim<int>( _iwidth, "iwidth" );
-	//s->vals[1] = new SavPrim<int>( _iheight, "iheight" );
-	//s->vals[2] = new SavPrim<int>( _nRects, "nRects" );
-	//for( int i=0; i<_nRects; i++ )
-	//	s->vals[3+i]=_rects[i].save();
-	//return s;
+	SavObj *s = new SavObj(name,3+_nRects,Savable::HAAR);
+	s->_vals[0] = new SavLeaf( "iwidth", &_iwidth );
+	s->_vals[1] = new SavLeaf( "iheight", &_iheight );
+	s->_vals[2] = new SavLeaf( "nRects", &_nRects );
+	for( int i=0; i<_nRects; i++ )
+		s->_vals[3+i]=_rects[i].save("Rect");
+	return s;
 }
 
-void		Haar::load( SavObj &s )
+void		Haar::load( SavObj &s, char *name )
 {
-	//s.checkLen(4,INT_MAX); s.check("",Savable::HAAR); //???
-	//s.vals[0]->check( "iwidth", Savable::PRIMITIVE );
-	//((SavPrim<int>*) s.vals[0])->load( _iwidth );
-	//s.vals[1]->check( "iheight", Savable::PRIMITIVE );
-	//((SavPrim<int>*) s.vals[1])->load( _iheight );
-	//s.vals[2]->check( "nRects", Savable::PRIMITIVE );
-	//((SavPrim<int>*) s.vals[2])->load( _nRects );
-	//createRects(_nRects);
-	//for( int i=0; i<_nRects; i++ ) {
-	//	s.vals[2]->check( "nRects", Savable::PRIMITIVE );
-	//	_rects[i].load( *(s->vals[3+i]) );
-	//}
-	//bool valid=finalize(); assert(valid);
+	s.checkLen(4,INT_MAX); s.check(Savable::HAAR,name);
+	((SavLeaf*) s._vals[0])->load( "iwidth", &_iwidth );
+	((SavLeaf*) s._vals[1])->load( "iheight", &_iheight );
+	((SavLeaf*) s._vals[2])->load( "nRects", &_nRects );
+	createRects(_nRects);
+	for( int i=0; i<_nRects; i++ )
+		_rects[i].load( *((SavObj*) s._vals[3+i]), "Rect" );
+	bool valid=finalize(); assert(valid);
 }
 
 bool		operator==(	const Haar &h1, const Haar &h2)
