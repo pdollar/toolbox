@@ -4,66 +4,72 @@
 #include "Public.h"
 #include "Haar.h"
 
-class Savable;
-typedef vector<Savable> VecSavable;
-
-
 class Savable
 {
 public:
-	
-	const void load( void &val, const saveTypes type1 ) {
+	enum saveType { PRIMITIVE, ARRAY, RECT, HAAR };
+
+	void check( char *name1, saveType type1 ) {
 		assert( type==type1 );
-		switch( type ) 
-		{
-		case HAAR:
-			val = new Haar( vals );
-		default:
-			assert(false); break;
-		}
+		assert( strcmp(name,name1)==0 );
 	}
 
 public:
-	
-	enum saveTypes { PRIMITIVE, ARRAY, HAAR };
-	// const?
-	saveTypes type;
+	saveType type;
 	char name[64];
+};
+
+typedef vector< Savable* > VecSavable;
+
+/////////////////////////////////////////////////////////////////////////////////
+
+class SavObj : public Savable
+{
+public:
+	SavObj( int n, saveType type1 ) { vals.resize(n); }
+
+	void checkLen( int minL, int maxL ) {
+		assert(vals.size()>=minL && vals.size()<=maxL );
+	}
+
+public:
 	VecSavable vals;
 };
 
-template<class T> class SavablePrimitive : Savable
+/////////////////////////////////////////////////////////////////////////////////
+
+template< class T > class SavPrim : public Savable
 {
 public:
-	SavableBasic( char *name1, T &val1 ) { 
-		type=PRIMITIVE; strcpy(name,name1); val=val1; 
+	SavPrim( T &val1, char *name1 ) { 
+		strcpy(name,name1);
+		type=PRIMITIVE;
+		val=val1; 
 	}
 
-	const void load( T &val1, const saveTypes type1 ) { 
-		assert( type1==PRMITIVE ); val1=val;
+	void load( T &tar ) {
+		tar=val;
 	}
 
 private:
 	T val;
 };
 
-template<class T*> class SavableArray : Savable
+template<class T> class SavArray : public Savable
 {
 public:
-	SavableArray( char *name1, T *val1, int n1 ) {
-		type=ARRAY; strcpy(name,name1);
+	SavArray( T *val1, int n1, char *name1 ) {
+		strcpy(name,name1);
+		type=ARRAY;
 		n=n1; // also copy array
 	}
 
-	const void load( T *&val1, const saveTypes type1 ) {
-		assert( type==type1 );
-		val1 = new T[n];
-		// also copy array
-	}
+	virtual bool isLeaf() { return true; }
 
 private:
 	T* vals;
 	int n;
 };
+
 
 #endif

@@ -36,6 +36,33 @@ void		Rect::readFrmStrm( ifstream &strm )
 	_wt = weight;
 }
 
+
+SavObj*		Rect::save()
+{
+	SavObj *s = new SavObj(5,Savable::RECT);
+	s->vals[0] = new SavPrim<int>( _lf, "lf" );
+	s->vals[1] = new SavPrim<int>( _rt, "rt" );
+	s->vals[2] = new SavPrim<int>( _tp, "tp" );
+	s->vals[3] = new SavPrim<int>( _bt, "bt" );
+	s->vals[4] = new SavPrim<float>( _wt, "wt" );
+	return s;
+}
+
+void		Rect::load( SavObj &s )
+{
+	s.checkLen(5,5); s.check("",Savable::RECT); //???
+	s.vals[0]->check( "lf", Savable::PRIMITIVE );
+	s.vals[1]->check( "rt", Savable::PRIMITIVE );
+	s.vals[2]->check( "tp", Savable::PRIMITIVE );
+	s.vals[3]->check( "bt", Savable::PRIMITIVE );
+	s.vals[4]->check( "wt", Savable::PRIMITIVE );
+	((SavPrim<int>*) s.vals[0])->load( _lf );
+	((SavPrim<int>*) s.vals[1])->load( _rt );
+	((SavPrim<int>*) s.vals[2])->load( _tp );
+	((SavPrim<int>*) s.vals[3])->load( _bt );
+	((SavPrim<float>*) s.vals[4])->load( _wt );
+}
+
 bool		Rect::isValid()	const
 {
 	return ( _lf<=_rt && _tp<=_bt );
@@ -129,6 +156,34 @@ void		Haar::readFrmStrm( ifstream &strm )
 	for( int i=0; i<_nRects; i++ )
 		_rects[i].readFrmStrm(strm);
 	bool valid=finalize(); assert(valid);
+}
+
+SavObj*		Haar::save()
+{
+	//SavObj *s = new SavObj(3+_nRects,Savable::HAAR);
+	//s->vals[0] = new SavPrim<int>( _iwidth, "iwidth" );
+	//s->vals[1] = new SavPrim<int>( _iheight, "iheight" );
+	//s->vals[2] = new SavPrim<int>( _nRects, "nRects" );
+	//for( int i=0; i<_nRects; i++ )
+	//	s->vals[3+i]=_rects[i].save();
+	//return s;
+}
+
+void		Haar::load( SavObj &s )
+{
+	//s.checkLen(4,INT_MAX); s.check("",Savable::HAAR); //???
+	//s.vals[0]->check( "iwidth", Savable::PRIMITIVE );
+	//((SavPrim<int>*) s.vals[0])->load( _iwidth );
+	//s.vals[1]->check( "iheight", Savable::PRIMITIVE );
+	//((SavPrim<int>*) s.vals[1])->load( _iheight );
+	//s.vals[2]->check( "nRects", Savable::PRIMITIVE );
+	//((SavPrim<int>*) s.vals[2])->load( _nRects );
+	//createRects(_nRects);
+	//for( int i=0; i<_nRects; i++ ) {
+	//	s.vals[2]->check( "nRects", Savable::PRIMITIVE );
+	//	_rects[i].load( *(s->vals[3+i]) );
+	//}
+	//bool valid=finalize(); assert(valid);
 }
 
 bool		operator==(	const Haar &h1, const Haar &h2)

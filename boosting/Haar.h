@@ -2,6 +2,7 @@
 #define _HAAR_FEATURES_H_
 
 #include "Public.h"
+#include "Savable.h"
 #include "Matrix.h"
 #include "IntegralImage.h"
 
@@ -41,6 +42,8 @@ public:
 
 	void			writeToStrm( ofstream &strm );
 	void			readFrmStrm( ifstream &strm );
+	SavObj*			save();
+	void			load( SavObj &s );
 
 	int				area()		const {return (_rt-_lf+1)*(_bt-_tp+1); };
 	int				height()	const {return _bt-_tp+1;};
@@ -129,6 +132,8 @@ class Haar
 public:
 	void 			writeToStrm( ofstream &strm );
 	void 			readFrmStrm( ifstream &strm );
+	SavObj*			save();
+	void			load( SavObj &s );
 
 	// create / alter
     void			createSyst(	int type, int w, int h, int fw, int fh, int tp, int lf, bool flip=false );
