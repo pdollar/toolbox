@@ -63,16 +63,18 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////////
-template< class T > class Primitive
+template< class T > class Primitive : Savable
 {
 public:
 							Primitive() { _val=NULL; _n=0; };
 
 							Primitive( T *src, int n=1 );
 
-	void					save( ObjImg &oi, char *name );
+	virtual const char*		getCname() { return typeid(T).name(); };
 
-	void					load( ObjImg &oi, char *name=NULL );
+	virtual void			save( ObjImg &oi, char *name );
+
+	virtual void			load( ObjImg &oi, char *name=NULL );
 
 private:
 	T						*_val;
@@ -88,7 +90,7 @@ template< class T >			Primitive<T>::Primitive( T *src, int n )
 template<class T> void		Primitive<T>::save( ObjImg &oi, char *name )
 {
 	uchar nBytes=sizeof(T);
-	oi.set( name, typeid(T).name(), 0 );
+	oi.set( name, getCname(), 0 );
 	oi._el = new char[nBytes*_n];
 	oi._elBytes=nBytes; oi._elNum=_n;
 	memcpy(oi._el,_val,nBytes*_n);
@@ -96,7 +98,7 @@ template<class T> void		Primitive<T>::save( ObjImg &oi, char *name )
 
 template<class T> void		Primitive<T>::load( ObjImg &oi, char *name )
 {
-	oi.check( 0, 0, name, typeid(T).name() );
+	oi.check( 0, 0, name, getCname() );
 	uchar nBytes=oi._elBytes; _n=oi._elNum; 
 	memcpy(_val,oi._el,nBytes*_n);
 }
