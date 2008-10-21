@@ -1,4 +1,5 @@
 #include "Savable.h"
+#include <iomanip>
 
 				ObjImg::~ObjImg() 
 {
@@ -43,28 +44,48 @@ void			ObjImg::readFrmStrm(ifstream &strm) {
 	for( int i=0; i<n; i++ ) _objImgs[i].readFrmStrm(strm);
 }
 
-void			ObjImg::writeToTxtStrm(ofstream &os) {
-	os << _type << ' ' << _name << ' ' << _elNum << ' ';
-	if(_elNum>0) {
-		toStrm( os );
-	} else {
-		int n=_objImgs.size(); os << n << ' ';
-		for( int i=0; i<n; i++ ) _objImgs[i].writeToStrm(os);
+void			ObjImg::writeToTxtStrm(ofstream &os,int indent) {
+	for(int i=0; i<indent*2; i++) os.put(' '); char temp[20];
+	os << setw(10) << left << _type;
+	if( _elNum>=1 ) {
+		if( _elNum==1 )
+			os << setw(20) << left << _name;
+		else {
+			sprintf(temp,"%s[%i]",_name,_elNum);
+			os << setw(20) << left << temp;
+		} 
+		os << "= "; toStrm( os ); os << endl;
+	} else {		
+		int n=_objImgs.size(); 
+		sprintf(temp,"%s[%i]:",_name,n); os << temp << endl;
+		for( int i=0; i<n; i++ ) _objImgs[i].writeToTxtStrm(os,indent+1);		
 	}
 }
 
-void			ObjImg::readFrmTxtStrm(ifstream &is) {
-	is >> _type; is.get();
-	is >> _name; is.get();
-	is >> _elNum; is.get();
-	if(_elNum>0) {
-		is >> _elBytes; is.get();
-		//_el = new char[_elNum*_elBytes];
-		//is >> *((int*) _el); is.get();
-	}
-	int n; is >> n; is.get();
-	if(n>0) _objImgs.resize(n);
-	for( int i=0; i<n; i++ ) _objImgs[i].readFrmStrm(is);
+void			ObjImg::readFrmTxtStrm(ifstream &is) 
+{
+	//char temp[32];
+	//is >> _type >> _name >> temp;
+	//cout << _type << " " << _name << " " << temp;
+	//if( strcmp(temp,"=")==0 ) {
+	//	frmStrm( is );
+	//	cout << "woo" << endl;
+	//} else {
+	//	//int n=
+	//	//for( int i=0; i<n; i++ ) _objImgs[i].readFrmTxtStrm(os);
+	//}
+
+	//is >> _type; is.get();
+	//is >> _name; is.get();
+	//is >> _elNum; is.get();
+	//if(_elNum>0) {
+	//	is >> _elBytes; is.get();
+	//	//_el = new char[_elNum*_elBytes];
+	//	//is >> *((int*) _el); is.get();
+	//}
+	//int n; is >> n; is.get();
+	//if(n>0) _objImgs.resize(n);
+	//for( int i=0; i<n; i++ ) _objImgs[i].readFrmStrm(is);
 }
 
 bool			ObjImg::saveToFile( const char *fName, bool binary )
@@ -95,17 +116,37 @@ bool			ObjImg::loadFrmFile( const char *fName, ObjImg &oi, bool binary )
 
 void			ObjImg::toStrm( ofstream &os )
 {
-	#define PRIMITIVE_CREATE(TYPE) \
+	#define TOSTRM(TYPE) \
 	if(strcmp(_type,#TYPE)==0) { \
 		Primitive<TYPE> p( (TYPE*) _el, _elNum ); os << p; return; }
 	assert( _el!=NULL && _elNum>0 );
-	PRIMITIVE_CREATE(int)
-	PRIMITIVE_CREATE(long)
-	PRIMITIVE_CREATE(float)
-	PRIMITIVE_CREATE(double)
-	PRIMITIVE_CREATE(bool)
-	PRIMITIVE_CREATE(char)
+	TOSTRM(int)
+	TOSTRM(long)
+	TOSTRM(float)
+	TOSTRM(double)
+	TOSTRM(bool)
+	TOSTRM(char)
 	abortError( "Unknown type", _type, __LINE__, __FILE__ );
+	#undef TOSTRM
+}
+
+void			ObjImg::frmStrm( ifstream &is )
+{
+	//#define FRMSTRM(TYPE) \
+	//if(strcmp(_type,#TYPE)==0) { \
+	//	Primitive<TYPE> p( NULL, 0 ); \
+	//	is >> p; _elNum=p._n; _elBytes=sizeof(TYPE); \
+	//	_el=(char*) p._val; return; \
+	//}
+	//assert( _el==NULL && _elNum==0 );
+	//FRMSTRM(int)
+	//FRMSTRM(long)
+	//FRMSTRM(float)
+	//FRMSTRM(double)
+	//FRMSTRM(bool)
+	//FRMSTRM(char)
+	//abortError( "Unknown type", _type, __LINE__, __FILE__ );
+	//#undef FRMSTRM
 }
 
 void			ObjImg::check( int minL, int maxL, const char *name, const char *type )

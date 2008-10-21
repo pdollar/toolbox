@@ -41,18 +41,20 @@ public:
 
 	static bool				loadFrmFile( const char *fName, ObjImg &oi, bool binary=false );
 
-	void					toStrm( ofstream &os );
-
-protected:
+private:
 	void					writeToStrm(ofstream &strm);
 
 	void					readFrmStrm(ifstream &strm);
 
-	void					writeToTxtStrm(ofstream &strm);
+	void					writeToTxtStrm(ofstream &strm,int indent=0);
 
 	void					readFrmTxtStrm(ifstream &strm);
 
-public:
+	void					toStrm( ofstream &os );
+	
+	void					frmStrm( ifstream &is );
+
+private:
 	char					_type[32];
 
 	char					_name[32];
@@ -60,7 +62,7 @@ public:
 public:
 	VecObjImg				_objImgs;
 
-public:
+private:
 	char					*_el;
 
 	short					_elBytes;
@@ -83,7 +85,7 @@ public:
 	virtual void			load( ObjImg &oi, char *name=NULL );
 
 	template <class T1>	friend ostream& operator<<(ostream &os, const Primitive<T1> &p );
-
+	
 private:
 	T						*_val;
 
@@ -122,5 +124,24 @@ template<class T> ostream&	operator<<(ostream &os, const Primitive<T> &p )
 	}
 	return os;
 }
+
+//template <class T1> friend istream&	operator>>(istream& is, const Primitive<T1> &p );
+//template<class T> istream&	operator>>(istream& is, const Primitive<T> &p )
+//{
+//	char *line = new char[10000000];
+//	if( strcmp("char",p.getCname())==0 ) {
+//		is.getline( line, 10000000 );
+//		//_val = new char[
+//		cout << line << endl;
+//		cout << strlen(line) << endl;
+//	}
+//	//else if( p._n==1 ) 
+//	//	is<<*p._val;
+//	//else {
+//	//	is << "[ " ; for(int i=0; i<p._n; i++) is << p._val[i] << " "; is << "]"; 
+//	//}
+//	delete [] line;
+//	return is;
+//}
 
 #endif

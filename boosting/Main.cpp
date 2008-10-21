@@ -12,12 +12,11 @@ int main(int argc, const char* argv[])
 
 	// CREATE
 	//char *fName="D:/code/toolbox/boosting/temp.txt";
-	//Matrixd A(10,10,0); 
-	//for(int i=0; i<10; i++) A(i,i)=i;	
+	//Matrixd A(5,5,0); for(int i=0; i<5; i++) A(i,i)=i;	
 	//ObjImg o1; A.save(o1,"A");
-	//o1.saveToFile( fName, false );
+	//o1.saveToFile( fName, true );
 	//cout<<A<<endl;
-	//ObjImg o2; ObjImg::loadFrmFile( fName, o2, false );
+	//ObjImg o2; ObjImg::loadFrmFile( fName, o2, true );
 	//Matrixd B; B.load(o2);
 	//cout<<B<<endl;
 
@@ -32,13 +31,14 @@ int main(int argc, const char* argv[])
 	//cout << x << endl << y << endl;
 
 	//TEMP
-	double x=1.154159871057150715098721501515; Primitive<double> X(&x);
+	//double x=1.15415987557150715098721501515; Primitive<double> X(&x);
 	//float x[2]={59.5,7500}; Primitive<float> X(x,2);
-	//char *x="whatev-yo"; Primitive<char> X(x,strlen(x)+1);
-	ObjImg oi; X.save( oi, "x" );
-	char *fName="D:/code/toolbox/boosting/temp.txt";
-	oi.saveToFile( fName, 0 );
-
+	//char *x="whatev yo"; Primitive<char> X(x,strlen(x)+1);
+	//Matrixd X(5,5,0); for(int i=0; i<5; i++) X(i,i)=i;	
+	//ObjImg o1, o2; X.save( o1, "x" );
+	//char *fName="D:/code/toolbox/boosting/temp.txt";
+	//o1.saveToFile( fName, 0 );
+	//ObjImg::loadFrmFile( fName, o2, 0 );
 
 	system("pause");
 	return 0;
