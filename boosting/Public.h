@@ -149,6 +149,8 @@ class Cloneable
 {
 public:
 	virtual const char* getCname() = 0;
+
+
 };
 
 Cloneable* createObject( const char* cname );
