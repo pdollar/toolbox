@@ -18,10 +18,12 @@ public:
 
 public:
 	saveType _type;
-	char _name[64];
+	char _name[32];
 };
 
 typedef vector< Savable* > VecSavable;
+
+/////////////////////////////////////////////////////////////////////////////////
 
 class SavObj : public Savable
 {
@@ -31,37 +33,55 @@ public:
 	}
 
 	void checkLen( int minL, int maxL ) {
-		assert(_vals.size()>=minL && _vals.size()<=maxL );
+		assert(int(_vals.size())>=minL );
+		assert(int(_vals.size())<=maxL );
 	}
 
 public:
 	VecSavable _vals;
 };
 
+/////////////////////////////////////////////////////////////////////////////////
+
 class SavLeaf : public Savable
 {
 public:
-	 template< class T > SavLeaf( char *name, T *src, int elNum=1 ) { 
+	enum primType { UNKNOWN, INT, LONG, FLOAT, DOUBLE, CHAR, BOOL };
+
+	template< class T > SavLeaf( char *name, T *src, int elNum=1 ) { 
 		_type=LEAF; strcpy(_name,name);
 		_elBytes=sizeof(T); _elNum=elNum;
 		_val = new char[_elNum*_elBytes];
-		strcpy(_typeName,typeid(T).name());
+		_pType = getPrimType( *src );
 		memcpy(_val,src,_elNum*_elBytes);
 	}
 
 	~SavLeaf() { delete [] _val; }
 
 	template< class T > void load( char *name, T *tar ) {
+		assert( _type==LEAF );
+		assert( _pType==getPrimType(*tar) );
 		assert( strcmp(_name,name)==0 );
 		assert( sizeof(T)==_elBytes );
-		assert( strcmp(_typeName,typeid(T).name())==0 );
 		memcpy(tar,_val,_elNum*_elBytes);
+	}
+
+	template< class T > primType getPrimType( T val ) {
+		primType p; const char *stype=typeid(T).name();
+		if(strcmp(stype,"int")==0) p=INT;
+		else if(strcmp(stype,"long")==0) p=LONG;
+		else if(strcmp(stype,"float")==0) p=FLOAT;
+		else if(strcmp(stype,"double")==0) p=DOUBLE;
+		else if(strcmp(stype,"char")==0) p=CHAR;
+		else if(strcmp(stype,"bool")==0) p=BOOL;
+		else abortError( "Unknown type", __LINE__, __FILE__ );
+		return p;
 	}
 
 private:
 	char *_val;
-	char _typeName[16]; //large?
-	char _elBytes;
+	primType _pType;
+	short _elBytes;
 	int _elNum;
 };
 
