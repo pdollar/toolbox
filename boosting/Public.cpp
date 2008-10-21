@@ -12,8 +12,6 @@
 
 Cloneable* createObject( const char* cname ) 
 {
-	OBJFAC_CREATE( "SavObj", SavObj );
-	OBJFAC_CREATE( "SavLeaf", SavLeaf );
 	abortError( "unknown type", cname, __LINE__, __FILE__ );
 	return NULL;
 }

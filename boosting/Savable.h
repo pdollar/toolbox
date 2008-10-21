@@ -3,12 +3,19 @@
 
 #include "Public.h"
 
-class Savable : public Cloneable
+class ObjImg; template< class T > class Primitive;
+typedef vector< ObjImg > VecObjImg;
+
+class ObjImg
 {
 public:
-	void					checkType( char *type=NULL );
+							ObjImg() { _el=NULL; _elNum=0; };
 
-	void					checkName( char *name=NULL );
+							~ObjImg ();
+
+	void					set( const char *name, const char *type, int n );
+
+	void					check( int minL, int maxL, const char *name=NULL, const char *type=NULL );
 
 	virtual void			writeToStrm(ofstream &strm);
 
@@ -16,98 +23,62 @@ public:
 	
 	bool					saveToFile( const char *fName );
 
-	static Savable*			loadFrmFile( const char *fName );
+	static bool				loadFrmFile( const char *fName, ObjImg &oi );
 
 protected:
 	char					_type[32];
 
 	char					_name[32];
-};
-
-typedef vector< Savable* > VecSavable;
-
-class SavObj : public Savable
-{
-public:
-							SavObj() {};
-
-							SavObj( char *name, char *type, int n );
-
-							~SavObj ();
-
-	virtual const char*		getCname() { return "SavObj"; }
 
 public:
-	void					checkLen( int minL, int maxL );
-
-	virtual void			writeToStrm(ofstream &strm);
-
-	virtual void			readFrmStrm(ifstream &strm);
-
-public:
-	VecSavable				_vals;
-};
-
-class SavLeaf : public Savable
-{
-public:
-	enum primType { UNKNOWN, INT, LONG, FLOAT, DOUBLE, CHAR, BOOL };
-
-							SavLeaf() {};
-
-	template< class T >		SavLeaf( char *name, T *src, int elNum=1 );
-
-							~SavLeaf() { delete [] _val; }
-
-	virtual const char*		getCname() { return "SavLeaf"; }
-
-public:
-	template< class T > void		load( char *name, T *tar );
-
-	template< class T >	primType	getPrimType( T val );
-
-	virtual void			writeToStrm(ofstream &strm);
-
-	virtual void			readFrmStrm(ifstream &strm);
+	VecObjImg				_objImgs;
 
 private:
-	char					*_val;
+	char					*_el;
 
-	primType				_pType;
-
-	short					_elBytes;
+	uchar					_elBytes;
 
 	int						_elNum;
+
+	template<class> friend class Primitive; 
 };
 
-/////////////////////////////////////////////////////////////////////////////////
+template< class T > class Primitive
+{
+public:
+							Primitive() { _val=NULL; _n=0; };
 
-template< class T >				SavLeaf::SavLeaf( char *name, T *src, int elNum ) {
-	strcpy(_type,"Primitive"); strcpy(_name,name);
-	_elBytes=sizeof(T); _elNum=elNum;
-	_val = new char[_elNum*_elBytes];
-	_pType = getPrimType( *src );
-	memcpy(_val,src,_elNum*_elBytes);
+							Primitive( T *src, int n=1 );
+
+	void					save( ObjImg &oi, char *name );
+
+	void					load( ObjImg &oi, char *name=NULL );
+
+private:
+	T						*_val;
+
+	int						_n;
+};
+
+template< class T >			Primitive<T>::Primitive( T *src, int n ) 
+{
+	_n=n; _val=src;
 }
 
-template< class T > void		SavLeaf::load( char *name, T *tar ) {
-	checkType( "Primitive" );
-	checkName( name );
-	assert( _pType==getPrimType(*tar) );
-	assert( sizeof(T)==_elBytes );
-	memcpy(tar,_val,_elNum*_elBytes);
+template<class T> void		Primitive<T>::save( ObjImg &oi, char *name )
+{
+	uchar nBytes=sizeof(T);
+	oi.set( name, typeid(T).name(), 0 );
+	oi._el = new char[nBytes*_n];
+	oi._elBytes=nBytes; oi._elNum=_n;
+	memcpy(oi._el,_val,nBytes*_n);
 }
 
-template< class T > SavLeaf::primType	SavLeaf::getPrimType( T val ) {
-	primType p; const char *stype=typeid(T).name();
-	if(strcmp(stype,"int")==0) p=INT;
-	else if(strcmp(stype,"long")==0) p=LONG;
-	else if(strcmp(stype,"float")==0) p=FLOAT;
-	else if(strcmp(stype,"double")==0) p=DOUBLE;
-	else if(strcmp(stype,"char")==0) p=CHAR;
-	else if(strcmp(stype,"bool")==0) p=BOOL;
-	else abortError( "Unknown type", __LINE__, __FILE__ );
-	return p;
+template<class T> void		Primitive<T>::load( ObjImg &oi, char *name )
+{
+	oi.check( 0, 0, name, typeid(T).name() );
+	uchar nBytes=oi._elBytes; _n=oi._elNum; 
+	memcpy(_val,oi._el,nBytes*_n);
 }
 
 #endif

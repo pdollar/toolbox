@@ -27,8 +27,8 @@ public:
 	// write/read to/from stream/text
 	void			writeToStrm(ofstream &strm);
 	void			readFrmStrm(ifstream &strm);
-	SavObj*			save( char *name );
-	void			load( SavObj &s, char *name=NULL );
+	void			save( ObjImg &oi, char *name );
+	void			load( ObjImg &oi, char *name=NULL );
 	virtual bool	writeToTxt( const char* file, char* delim="," );
 	virtual bool	readFromTxt( const char* file, char* delim="," ); 
 
@@ -180,23 +180,26 @@ template<class T> void			Matrix<T>::readFrmStrm(ifstream &strm)
 	strm.read((char*)_data, sizeof(T)*size());
 }
 
-template<class T> SavObj*		Matrix<T>::save( char *name )
+template<class T> void			Matrix<T>::save( ObjImg &oi, char *name )
 {
-	SavObj *s = new SavObj(name,"Matrix",3);
-	s->_vals[0] = new SavLeaf( "mRows", &_mRows );
-	s->_vals[1] = new SavLeaf( "nCols", &_nCols );
-	s->_vals[2] = new SavLeaf( "data", _data, size() );
-	return s;
+	Primitive<int> mRows(&_mRows), nCols(&_nCols);
+	Primitive<T> data(_data,size());
+	oi.set(name,"Matrix",3);
+	mRows.save(oi._objImgs[0],"mRows");
+	nCols.save(oi._objImgs[1],"nCols");
+	data.save(oi._objImgs[2],"data");
 }
 
-template<class T> void			Matrix<T>::load( SavObj &s, char *name )
+template<class T> void			Matrix<T>::load( ObjImg &oi, char *name )
 {
-	s.checkLen(3,3); s.checkName(name); s.checkType("Matrix");
-	int mRows, nCols; Free();
-	((SavLeaf*) s._vals[0])->load( "mRows", &mRows );
-	((SavLeaf*) s._vals[1])->load( "nCols", &nCols );
-	if(mRows>0 && mRows>0) setDims(mRows, mRows);
-	((SavLeaf*) s._vals[2])->load( "data", _data );
+	Free(); oi.check(3,3,name,"Matrix");
+	int mRows, nCols;
+	Primitive<int> mRows1(&mRows), nCols1(&nCols);
+	mRows1.load(oi._objImgs[0],"mRows");
+	nCols1.load(oi._objImgs[1],"nCols");
+	if(mRows==0 || nCols==0) return; setDims(mRows,nCols);
+	Primitive<T> data(_data);
+	data.load(oi._objImgs[2],"data");
 }
 
 template<class T> bool			Matrix<T>::writeToTxt( const char *fName, char *delim )

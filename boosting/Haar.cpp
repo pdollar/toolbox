@@ -37,25 +37,28 @@ void		Rect::readFrmStrm( ifstream &strm )
 }
 
 
-SavObj*		Rect::save( char *name )
+void		Rect::save( ObjImg &oi, char *name )
 {
-	SavObj *s = new SavObj(name,"Rect",5);
-	s->_vals[0] = new SavLeaf( "lf", &_lf );
-	s->_vals[1] = new SavLeaf( "rt", &_rt );
-	s->_vals[2] = new SavLeaf( "tp", &_tp );
-	s->_vals[3] = new SavLeaf( "bt", &_bt );
-	s->_vals[4] = new SavLeaf( "wt", &_wt );
-	return s;
+	oi.set(name,"Rect",5);
+	Primitive<int> lf(&_lf), rt(&_rt), tp(&_tp), bt(&_bt);
+	Primitive<float> wt(&_wt);
+	lf.save(oi._objImgs[0],"lf");
+	rt.save(oi._objImgs[1],"rt");
+	tp.save(oi._objImgs[2],"tp");
+	bt.save(oi._objImgs[3],"bt");
+	wt.save(oi._objImgs[4],"wt");
 }
 
-void		Rect::load( SavObj &s, char *name )
+void		Rect::load( ObjImg &oi, char *name )
 {
-	s.checkLen(5,5); s.checkName(name); s.checkType("Rect");
-	((SavLeaf*) s._vals[0])->load( "lf", &_lf );
-	((SavLeaf*) s._vals[1])->load( "rt", &_rt );
-	((SavLeaf*) s._vals[2])->load( "tp", &_tp );
-	((SavLeaf*) s._vals[3])->load( "bt", &_bt );
-	((SavLeaf*) s._vals[4])->load( "wt", &_wt );
+	oi.check(5,5,name,"Rect");
+	Primitive<int> lf(&_lf), rt(&_rt), tp(&_tp), bt(&_bt);
+	Primitive<float> wt(&_wt);
+	lf.load(oi._objImgs[0],"lf");
+	rt.load(oi._objImgs[1],"rt");
+	tp.load(oi._objImgs[2],"tp");
+	bt.load(oi._objImgs[3],"bt");
+	wt.load(oi._objImgs[4],"wt");
 }
 
 bool		Rect::isValid()	const
@@ -153,26 +156,27 @@ void		Haar::readFrmStrm( ifstream &strm )
 	bool valid=finalize(); assert(valid);
 }
 
-SavObj*		Haar::save( char *name )
+void		Haar::save(  ObjImg &oi, char *name )
 {
-	SavObj *s = new SavObj(name,"Haar",3+_nRects);
-	s->_vals[0] = new SavLeaf( "iwidth", &_iwidth );
-	s->_vals[1] = new SavLeaf( "iheight", &_iheight );
-	s->_vals[2] = new SavLeaf( "nRects", &_nRects );
+	oi.set(name,"Haar",3+_nRects);
+	Primitive<int> iwidth(&_iwidth), iheight(&_iheight), nRects(&_nRects);
+	iwidth.save(oi._objImgs[0],"lf");
+	iheight.save(oi._objImgs[1],"rt");
+	nRects.save(oi._objImgs[2],"tp");
 	for( int i=0; i<_nRects; i++ )
-		s->_vals[3+i]=_rects[i].save("Rect");
-	return s;
+		_rects[i].save(oi._objImgs[3+i],"Rect");
 }
 
-void		Haar::load( SavObj &s, char *name )
+void		Haar::load( ObjImg &oi, char *name )
 {
-	s.checkLen(4,INT_MAX); s.checkName(name); s.checkType("Haar");
-	((SavLeaf*) s._vals[0])->load( "iwidth", &_iwidth );
-	((SavLeaf*) s._vals[1])->load( "iheight", &_iheight );
-	((SavLeaf*) s._vals[2])->load( "nRects", &_nRects );
+	oi.check(4,INT_MAX,name,"Haar");
+	Primitive<int> iwidth(&_iwidth), iheight(&_iheight), nRects(&_nRects);
+	iwidth.load(oi._objImgs[0],"lf");
+	iheight.load(oi._objImgs[1],"rt");
+	nRects.load(oi._objImgs[2],"tp");
 	createRects(_nRects);
 	for( int i=0; i<_nRects; i++ )
-		_rects[i].load( *((SavObj*) s._vals[3+i]), "Rect" );
+		_rects[i].load(oi._objImgs[3+i],"Rect");
 	bool valid=finalize(); assert(valid);
 }
 
