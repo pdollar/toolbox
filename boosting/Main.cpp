@@ -11,15 +11,15 @@ int main(int argc, const char* argv[])
 	#endif
 
 	// CREATE
-	//char *fName="D:/code/toolbox/boosting/temp";
-	//Matrixd A(10,10,0); 
-	//for(int i=0; i<10; i++) A(i,i)=i;	
-	//ObjImg o1; A.save(o1,"A");
-	//o1.saveToFile( fName );
-	//cout<<A<<endl;
-	//ObjImg o2; ObjImg::loadFrmFile( fName, o2 );
-	//Matrixd B; B.load(o2);
-	//cout<<B<<endl;
+	char *fName="D:/code/toolbox/boosting/temp";
+	Matrixd A(10,10,0); 
+	for(int i=0; i<10; i++) A(i,i)=i;	
+	ObjImg o1; A.save(o1,"A");
+	o1.saveToFile( fName );
+	cout<<A<<endl;
+	ObjImg o2; ObjImg::loadFrmFile( fName, o2 );
+	Matrixd B; B.load(o2);
+	cout<<B<<endl;
 
 	// PRIMITIVE TEST
 	//int x=12313, y; ObjImg o1, o2;

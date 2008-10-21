@@ -40,10 +40,9 @@ public:
 					Rect();
 					Rect( int lf, int rt, int tp, int bt );
 
-	void			writeToStrm( ofstream &strm );
-	void			readFrmStrm( ifstream &strm );
-	void			save( ObjImg &oi, char *name );
-	void			load( ObjImg &oi, char *name=NULL );
+	virtual const char* getCname() { return "Rect"; };
+	virtual void	save( ObjImg &oi, char *name );
+	virtual void	load( ObjImg &oi, char *name=NULL );
 
 	int				area()		const {return (_rt-_lf+1)*(_bt-_tp+1); };
 	int				height()	const {return _bt-_tp+1;};
@@ -130,10 +129,9 @@ public: // prms to limit haar positions to central region
 class Haar
 {
 public:
-	void 			writeToStrm( ofstream &strm );
-	void 			readFrmStrm( ifstream &strm );
-	void			save( ObjImg &oi, char *name );
-	void			load( ObjImg &oi, char *name=NULL );
+	virtual const char* getCname() { return "Haar"; };
+	virtual void	save( ObjImg &oi, char *name );
+	virtual void	load( ObjImg &oi, char *name=NULL );
 
 	// create / alter
     void			createSyst(	int type, int w, int h, int fw, int fh, int tp, int lf, bool flip=false );

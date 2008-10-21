@@ -15,31 +15,9 @@
 	setPos(lf,rt,tp,bt); 
 }
 
-void		Rect::writeToStrm( ofstream &strm )
-{
-	strm.write((char*)&_lf, sizeof(_lf));
-	strm.write((char*)&_rt, sizeof(_rt));
-	strm.write((char*)&_tp, sizeof(_tp));
-	strm.write((char*)&_bt, sizeof(_bt));
-	strm.write((char*)&_wt, sizeof(_wt));
-}
-
-void		Rect::readFrmStrm( ifstream &strm )
-{
-	int lf,rt,tp,bt; float weight;
-	strm.read((char*)&lf, sizeof(lf));
-	strm.read((char*)&rt, sizeof(rt));
-	strm.read((char*)&tp, sizeof(tp));
-	strm.read((char*)&bt, sizeof(bt));
-	strm.read((char*)&weight, sizeof(weight));
-	setPos( lf, rt, tp, bt );
-	_wt = weight;
-}
-
-
 void		Rect::save( ObjImg &oi, char *name )
 {
-	oi.set(name,"Rect",5);
+	oi.set(name,getCname(),5);
 	Primitive<int> lf(&_lf), rt(&_rt), tp(&_tp), bt(&_bt);
 	Primitive<float> wt(&_wt);
 	lf.save(oi._objImgs[0],"lf");
@@ -51,7 +29,7 @@ void		Rect::save( ObjImg &oi, char *name )
 
 void		Rect::load( ObjImg &oi, char *name )
 {
-	oi.check(5,5,name,"Rect");
+	oi.check(5,5,name,getCname());
 	Primitive<int> lf(&_lf), rt(&_rt), tp(&_tp), bt(&_bt);
 	Primitive<float> wt(&_wt);
 	lf.load(oi._objImgs[0],"lf");
@@ -136,29 +114,9 @@ bool		operator<  (const Rect &rect1, const Rect &rect2)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void		Haar::writeToStrm( ofstream &strm )
-{
-	strm.write((char*)&_iwidth,		sizeof(_iwidth));
-	strm.write((char*)&_iheight,	sizeof(_iheight));
-	strm.write((char*)&_nRects,		sizeof(_nRects));
-	for( int i=0; i<_nRects; i++ )
-		_rects[i].writeToStrm(strm);
-}
-
-void		Haar::readFrmStrm( ifstream &strm )
-{
-	strm.read((char*)&_iwidth,		sizeof(_iwidth));
-	strm.read((char*)&_iheight,		sizeof(_iheight));
-	strm.read((char*)&_nRects,		sizeof(_nRects));
-	createRects(_nRects);
-	for( int i=0; i<_nRects; i++ )
-		_rects[i].readFrmStrm(strm);
-	bool valid=finalize(); assert(valid);
-}
-
 void		Haar::save(  ObjImg &oi, char *name )
 {
-	oi.set(name,"Haar",3+_nRects);
+	oi.set(name,getCname(),3+_nRects);
 	Primitive<int> iwidth(&_iwidth), iheight(&_iheight), nRects(&_nRects);
 	iwidth.save(oi._objImgs[0],"lf");
 	iheight.save(oi._objImgs[1],"rt");
@@ -169,7 +127,7 @@ void		Haar::save(  ObjImg &oi, char *name )
 
 void		Haar::load( ObjImg &oi, char *name )
 {
-	oi.check(4,INT_MAX,name,"Haar");
+	oi.check(4,INT_MAX,name,getCname());
 	Primitive<int> iwidth(&_iwidth), iheight(&_iheight), nRects(&_nRects);
 	iwidth.load(oi._objImgs[0],"lf");
 	iheight.load(oi._objImgs[1],"rt");

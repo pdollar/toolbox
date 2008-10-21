@@ -3,9 +3,28 @@
 
 #include "Public.h"
 
-class ObjImg; template< class T > class Primitive;
+class ObjImg; 
+
+template< class T > class Primitive;
+
 typedef vector< ObjImg > VecObjImg;
 
+/////////////////////////////////////////////////////////////////////////////////
+class Savable
+{
+public:
+	virtual const char*		getCname() = 0;
+
+	virtual void			save( ObjImg &oi, char *name ) = 0;
+
+	virtual void			load( ObjImg &oi, char *name=NULL ) = 0;
+};
+
+Savable* createObject( const char* cname );
+
+Savable* cloneObject( Savable *obj );
+
+/////////////////////////////////////////////////////////////////////////////////
 class ObjImg
 {
 public:
@@ -43,6 +62,7 @@ private:
 	template<class> friend class Primitive; 
 };
 
+/////////////////////////////////////////////////////////////////////////////////
 template< class T > class Primitive
 {
 public:

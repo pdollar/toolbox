@@ -144,16 +144,4 @@ template<class Ta, class Tb> void	sortVia_b( vector<Ta> &a, vector<Tb> &b )
 	reorder<Ta>( a, order );
 }
 
-// object factory
-class Cloneable
-{
-public:
-	virtual const char* getCname() = 0;
-
-
-};
-
-Cloneable* createObject( const char* cname );
-Cloneable* cloneObject( Cloneable *obj );
-
 #endif

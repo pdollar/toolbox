@@ -78,3 +78,25 @@ void			ObjImg::check( int minL, int maxL, const char *name, const char *type )
 	assert(int(_objImgs.size())>=minL );
 	assert(int(_objImgs.size())<=maxL );
 }
+
+/////////////////////////////////////////////////////////////////////////////////
+
+#define OBJFAC_CREATE(TYPE,OBJ) \
+	if (!strcmp(cname, TYPE)) return (Savable*) new OBJ();
+#define OBJFAC_CLONE(TYPE,OBJ,SRC) \
+	if (!strcmp(cname, TYPE)) return (Savable*)new OBJ(*((OBJ*) SRC));
+#define OBJFAC_CLONECOPY(TYPE,OBJ,SRC) \
+	if (!strcmp(cname, TYPE)) { OBJ *obj=new OBJ(); (*obj)=*((OBJ*) SRC); return (Savable*) obj; }
+
+Savable* createObject( const char* cname ) 
+{
+	abortError( "unknown type", cname, __LINE__, __FILE__ );
+	return NULL;
+}
+
+Savable* cloneObject( Savable *obj )
+{
+	const char *cname = obj->getCname();
+	abortError( "unknown type", cname, __LINE__, __FILE__ );
+	return NULL;
+}

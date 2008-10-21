@@ -10,7 +10,7 @@ typedef Matrix< double > Matrixd;
 typedef Matrix< int > Matrixi;
 typedef Matrix< uchar >	Matrixu;
 
-template<class T> class Matrix
+template<class T> class Matrix : public Savable
 {
 public:
 
@@ -25,12 +25,11 @@ public:
 	Matrix<T>&		operator= (const vector<T> &x );
 
 	// write/read to/from stream/text
-	void			writeToStrm(ofstream &strm);
-	void			readFrmStrm(ifstream &strm);
-	void			save( ObjImg &oi, char *name );
-	void			load( ObjImg &oi, char *name=NULL );
-	virtual bool	writeToTxt( const char* file, char* delim="," );
-	virtual bool	readFromTxt( const char* file, char* delim="," ); 
+	virtual const char* getCname() { return "Matrix"; };
+	virtual void	save( ObjImg &oi, char *name );
+	virtual void	load( ObjImg &oi, char *name=NULL );
+	bool			writeToTxt( const char* file, char* delim="," );
+	bool			readFromTxt( const char* file, char* delim="," ); 
 
 	// dimensions / access (note: [1xn] vectors more eff than [nx1])
 	bool			setDims( const int rows, const int cols );
@@ -164,27 +163,11 @@ template<class T> Matrix<T>&	Matrix<T>::operator= (const vector<T> &x)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-template<class T> void			Matrix<T>::writeToStrm(ofstream &strm)
-{
-	strm.write((char*)&_mRows, sizeof(_mRows));
-	strm.write((char*)&_nCols, sizeof(_nCols));
-	strm.write((char*)_data, sizeof(T)*size());
-}
-
-template<class T> void			Matrix<T>::readFrmStrm(ifstream &strm)
-{
-	int mRows, mRows; Free();
-	strm.read((char*)&mRows, sizeof(mRows));
-	strm.read((char*)&mRows, sizeof(mRows));
-	if(mRows>0 && mRows>0) setDims(mRows, mRows);
-	strm.read((char*)_data, sizeof(T)*size());
-}
-
 template<class T> void			Matrix<T>::save( ObjImg &oi, char *name )
 {
 	Primitive<int> mRows(&_mRows), nCols(&_nCols);
 	Primitive<T> data(_data,size());
-	oi.set(name,"Matrix",3);
+	oi.set(name,getCname(),3);
 	mRows.save(oi._objImgs[0],"mRows");
 	nCols.save(oi._objImgs[1],"nCols");
 	data.save(oi._objImgs[2],"data");
@@ -192,7 +175,7 @@ template<class T> void			Matrix<T>::save( ObjImg &oi, char *name )
 
 template<class T> void			Matrix<T>::load( ObjImg &oi, char *name )
 {
-	Free(); oi.check(3,3,name,"Matrix");
+	Free(); oi.check(3,3,name,getCname());
 	int mRows, nCols;
 	Primitive<int> mRows1(&mRows), nCols1(&nCols);
 	mRows1.load(oi._objImgs[0],"mRows");
