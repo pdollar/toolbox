@@ -33,7 +33,7 @@ int main(int argc, const char* argv[])
 	//leaf->load( "x", &y );
 	//cout << x << " " << y << endl;
 
-	Matrixd A(10,10,0); Matrixf B;
+	Matrixd A(10,10,0); Matrixd B;
 	for(int i=0; i<10; i++) A(i,i)=i;
 	cout << A << endl;
 	SavObj*	s = A.save("A");
