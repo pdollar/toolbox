@@ -2,6 +2,8 @@
 #define _MATRIX_H
 
 #include "Public.h"
+#include "Savable.h"
+
 template< class T > class Matrix;
 typedef Matrix< float >	Matrixf;
 typedef Matrix< double > Matrixd;
@@ -25,6 +27,8 @@ public:
 	// write/read to/from stream/text
 	void			writeToStrm(ofstream &strm);
 	void			readFrmStrm(ifstream &strm);
+	SavObj*			save( char *name );
+	void			load( SavObj &s, char *name=NULL );
 	virtual bool	writeToTxt( const char* file, char* delim="," );
 	virtual bool	readFromTxt( const char* file, char* delim="," ); 
 
@@ -169,12 +173,30 @@ template<class T> void			Matrix<T>::writeToStrm(ofstream &strm)
 
 template<class T> void			Matrix<T>::readFrmStrm(ifstream &strm)
 {
-	int row1, col1;  Free();
-	strm.read((char*)&row1, sizeof(row1));
-	strm.read((char*)&col1, sizeof(col1));
-	if (row1>0 && col1>0)
-		setDims(row1, col1);
+	int mRows, mRows; Free();
+	strm.read((char*)&mRows, sizeof(mRows));
+	strm.read((char*)&mRows, sizeof(mRows));
+	if(mRows>0 && mRows>0) setDims(mRows, mRows);
 	strm.read((char*)_data, sizeof(T)*size());
+}
+
+template<class T> SavObj*		Matrix<T>::save( char *name )
+{
+	SavObj *s = new SavObj(name,"Matrix",3);
+	s->_vals[0] = new SavLeaf( "mRows", &_mRows );
+	s->_vals[1] = new SavLeaf( "nCols", &_nCols );
+	s->_vals[2] = new SavLeaf( "data", _data, size() );
+	return s;
+}
+
+template<class T> void			Matrix<T>::load( SavObj &s, char *name )
+{
+	s.checkLen(3,3); s.checkName(name); s.checkType("Matrix");
+	int mRows, nCols; Free();
+	((SavLeaf*) s._vals[0])->load( "mRows", &mRows );
+	((SavLeaf*) s._vals[1])->load( "nCols", &nCols );
+	if(mRows>0 && mRows>0) setDims(mRows, mRows);
+	((SavLeaf*) s._vals[2])->load( "data", _data );
 }
 
 template<class T> bool			Matrix<T>::writeToTxt( const char *fName, char *delim )

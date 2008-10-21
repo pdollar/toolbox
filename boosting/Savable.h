@@ -2,22 +2,22 @@
 #define SAVABLE_H
 
 #include "Public.h"
-#include "Haar.h"
 
 class Savable
 {
 public:
-	enum saveType { LEAF, RECT, HAAR };
+	void checkType( char *type=NULL ) {
+		if( type==NULL && strcmp(_type,type) )
+			abortError( "Invalid type", type, __LINE__, __FILE__ );
+	}
 
-	void check( saveType type, char *name=NULL ) {
-		if( _type!=type )
-			abortError( "Invalid type", __LINE__, __FILE__ );
+	void checkName( char *name=NULL ) {
 		if( name!=NULL && strcmp(_name,name) )
 			abortError( "Invalid name:", name, __LINE__, __FILE__ );
 	}
 
 public:
-	saveType _type;
+	char _type[32];
 	char _name[32];
 };
 
@@ -28,8 +28,8 @@ typedef vector< Savable* > VecSavable;
 class SavObj : public Savable
 {
 public:
-	SavObj( char *name, int n, saveType type ) { 
-		strcpy(_name,name); _vals.resize(n); _type=type;
+	SavObj( char *name, char *type, int n ) { 
+		strcpy(_name,name); strcpy(_type,type); _vals.resize(n); 
 	}
 
 	void checkLen( int minL, int maxL ) {
@@ -48,8 +48,8 @@ class SavLeaf : public Savable
 public:
 	enum primType { UNKNOWN, INT, LONG, FLOAT, DOUBLE, CHAR, BOOL };
 
-	template< class T > SavLeaf( char *name, T *src, int elNum=1 ) { 
-		_type=LEAF; strcpy(_name,name);
+	template< class T > SavLeaf( char *name, T *src, int elNum=1 ) {
+		strcpy(_type,"LEAF"); strcpy(_name,name);
 		_elBytes=sizeof(T); _elNum=elNum;
 		_val = new char[_elNum*_elBytes];
 		_pType = getPrimType( *src );
@@ -59,9 +59,9 @@ public:
 	~SavLeaf() { delete [] _val; }
 
 	template< class T > void load( char *name, T *tar ) {
-		assert( _type==LEAF );
+		checkType( "LEAF" );
+		checkName( name );
 		assert( _pType==getPrimType(*tar) );
-		assert( strcmp(_name,name)==0 );
 		assert( sizeof(T)==_elBytes );
 		memcpy(tar,_val,_elNum*_elBytes);
 	}

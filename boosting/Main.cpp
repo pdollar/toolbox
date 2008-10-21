@@ -5,6 +5,10 @@
 
 int main(int argc, const char* argv[])
 {
+	#ifndef  NDEBUG
+	cout << "DEBUGGING" << endl;
+	#endif
+
 	//// prep
 	//Matrixd A(10,10,0);
 	//IntegralImage II;
@@ -24,14 +28,18 @@ int main(int argc, const char* argv[])
 	//b.load( *s );
 	//cout << ((h==b) ? "YAY" : "NAY") << endl;
 
-	float x = 3; float y;
-	SavLeaf *leaf = new SavLeaf( "x", &x );
-	leaf->load( "x", &y );
-	cout << x << " " << y << endl;
+	//float x = 3; float y;
+	//SavLeaf *leaf = new SavLeaf( "x", &x );
+	//leaf->load( "x", &y );
+	//cout << x << " " << y << endl;
 
-	#ifdef  NDEBUG
-	cout << "not debugging" << endl;
-	#endif
+	Matrixd A(10,10,0); Matrixf B;
+	for(int i=0; i<10; i++) A(i,i)=i;
+	cout << A << endl;
+	SavObj*	s = A.save("A");
+	B.load(*s);
+	cout << B << endl;
+	//cout << A-B << endl;
 
 	system("pause");
 	return 0;

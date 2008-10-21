@@ -39,7 +39,7 @@ void		Rect::readFrmStrm( ifstream &strm )
 
 SavObj*		Rect::save( char *name )
 {
-	SavObj *s = new SavObj(name,5,Savable::RECT);
+	SavObj *s = new SavObj(name,"Rect",5);
 	s->_vals[0] = new SavLeaf( "lf", &_lf );
 	s->_vals[1] = new SavLeaf( "rt", &_rt );
 	s->_vals[2] = new SavLeaf( "tp", &_tp );
@@ -50,7 +50,7 @@ SavObj*		Rect::save( char *name )
 
 void		Rect::load( SavObj &s, char *name )
 {
-	s.checkLen(5,5); s.check(Savable::RECT,name);
+	s.checkLen(5,5); s.checkName(name); s.checkType("Rect");
 	((SavLeaf*) s._vals[0])->load( "lf", &_lf );
 	((SavLeaf*) s._vals[1])->load( "rt", &_rt );
 	((SavLeaf*) s._vals[2])->load( "tp", &_tp );
@@ -155,7 +155,7 @@ void		Haar::readFrmStrm( ifstream &strm )
 
 SavObj*		Haar::save( char *name )
 {
-	SavObj *s = new SavObj(name,3+_nRects,Savable::HAAR);
+	SavObj *s = new SavObj(name,"Haar",3+_nRects);
 	s->_vals[0] = new SavLeaf( "iwidth", &_iwidth );
 	s->_vals[1] = new SavLeaf( "iheight", &_iheight );
 	s->_vals[2] = new SavLeaf( "nRects", &_nRects );
@@ -166,7 +166,7 @@ SavObj*		Haar::save( char *name )
 
 void		Haar::load( SavObj &s, char *name )
 {
-	s.checkLen(4,INT_MAX); s.check(Savable::HAAR,name);
+	s.checkLen(4,INT_MAX); s.checkName(name); s.checkType("Haar");
 	((SavLeaf*) s._vals[0])->load( "iwidth", &_iwidth );
 	((SavLeaf*) s._vals[1])->load( "iheight", &_iheight );
 	((SavLeaf*) s._vals[2])->load( "nRects", &_nRects );
