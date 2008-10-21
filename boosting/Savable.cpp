@@ -18,8 +18,8 @@ void			ObjImg::set( const char *name, const char *type, int n )
 }
 
 void			ObjImg::writeToStrm(ofstream &strm) {
-	strm.write(_type,sizeof(char)*32);
-	strm.write(_name,sizeof(char)*32);
+	strm << _type << ' ';
+	strm << _name << ' ';
 	strm.write((char*)&_elNum,sizeof(_elNum));
 	if(_elNum>0) {
 		strm.write((char*)&_elBytes,sizeof(_elBytes));
@@ -30,8 +30,8 @@ void			ObjImg::writeToStrm(ofstream &strm) {
 }
 
 void			ObjImg::readFrmStrm(ifstream &strm) {
-	strm.read(_type,sizeof(char)*32);
-	strm.read(_name,sizeof(char)*32);	
+	strm >> _type; strm.get();
+	strm >> _name; strm.get();
 	strm.read((char*)&_elNum,sizeof(_elNum));
 	if(_elNum>0) {
 		strm.read((char*)&_elBytes,sizeof(_elBytes));
@@ -43,30 +43,69 @@ void			ObjImg::readFrmStrm(ifstream &strm) {
 	for( int i=0; i<n; i++ ) _objImgs[i].readFrmStrm(strm);
 }
 
-bool			ObjImg::saveToFile( const char *fName )
+void			ObjImg::writeToTxtStrm(ofstream &os) {
+	os << _type << ' ' << _name << ' ' << _elNum << ' ';
+	if(_elNum>0) {
+		toStrm( os );
+	} else {
+		int n=_objImgs.size(); os << n << ' ';
+		for( int i=0; i<n; i++ ) _objImgs[i].writeToStrm(os);
+	}
+}
+
+void			ObjImg::readFrmTxtStrm(ifstream &is) {
+	is >> _type; is.get();
+	is >> _name; is.get();
+	is >> _elNum; is.get();
+	if(_elNum>0) {
+		is >> _elBytes; is.get();
+		//_el = new char[_elNum*_elBytes];
+		//is >> *((int*) _el); is.get();
+	}
+	int n; is >> n; is.get();
+	if(n>0) _objImgs.resize(n);
+	for( int i=0; i<n; i++ ) _objImgs[i].readFrmStrm(is);
+}
+
+bool			ObjImg::saveToFile( const char *fName, bool binary )
 {
-	std::ofstream strm; remove( fName );
-	strm.open(fName, std::ios::out|std::ios::binary);
+	ofstream strm; remove( fName );
+	strm.open(fName, binary? ios::out|ios::binary : ios::out );
 	if (strm.fail()) {
 		abortError( "unable to save:", fName, __LINE__, __FILE__ );
 		return false;
 	}
-	writeToStrm( strm );
+	if(binary) writeToStrm(strm); else writeToTxtStrm(strm);
 	strm.close();
 	return true;
 }
 
-bool			ObjImg::loadFrmFile( const char *fName, ObjImg &oi )
+bool			ObjImg::loadFrmFile( const char *fName, ObjImg &oi, bool binary )
 {
-	std::ifstream strm;
-	strm.open(fName, std::ios::in|std::ios::binary);
+	ifstream strm;
+	strm.open(fName, binary? ios::in|ios::binary : ios::in );
 	if( strm.fail() ) {
 		abortError( "unable to load: ", fName, __LINE__, __FILE__ );
 		return false;
 	}
-	oi.readFrmStrm( strm );
+	if(binary) oi.readFrmStrm(strm); else oi.readFrmTxtStrm(strm);
 	strm.close();
 	return true;
+}
+
+void			ObjImg::toStrm( ofstream &os )
+{
+	#define PRIMITIVE_CREATE(TYPE) \
+	if(strcmp(_type,#TYPE)==0) { \
+		Primitive<TYPE> p( (TYPE*) _el, _elNum ); os << p; return; }
+	assert( _el!=NULL && _elNum>0 );
+	PRIMITIVE_CREATE(int)
+	PRIMITIVE_CREATE(long)
+	PRIMITIVE_CREATE(float)
+	PRIMITIVE_CREATE(double)
+	PRIMITIVE_CREATE(bool)
+	PRIMITIVE_CREATE(char)
+	abortError( "Unknown type", _type, __LINE__, __FILE__ );
 }
 
 void			ObjImg::check( int minL, int maxL, const char *name, const char *type )
@@ -81,20 +120,20 @@ void			ObjImg::check( int minL, int maxL, const char *name, const char *type )
 
 /////////////////////////////////////////////////////////////////////////////////
 
-#define OBJFAC_CREATE(TYPE,OBJ) \
+#define SAVABLE_CREATE(TYPE,OBJ) \
 	if (!strcmp(cname, TYPE)) return (Savable*) new OBJ();
-#define OBJFAC_CLONE(TYPE,OBJ,SRC) \
+#define SAVABLE_CLONE(TYPE,OBJ,SRC) \
 	if (!strcmp(cname, TYPE)) return (Savable*)new OBJ(*((OBJ*) SRC));
-#define OBJFAC_CLONECOPY(TYPE,OBJ,SRC) \
+#define SAVABLE_CLONECOPY(TYPE,OBJ,SRC) \
 	if (!strcmp(cname, TYPE)) { OBJ *obj=new OBJ(); (*obj)=*((OBJ*) SRC); return (Savable*) obj; }
 
-Savable* createObject( const char* cname ) 
+Savable*		Savable::createObj( const char* cname ) 
 {
 	abortError( "unknown type", cname, __LINE__, __FILE__ );
 	return NULL;
 }
 
-Savable* cloneObject( Savable *obj )
+Savable*		Savable::cloneObj( Savable *obj )
 {
 	const char *cname = obj->getCname();
 	abortError( "unknown type", cname, __LINE__, __FILE__ );

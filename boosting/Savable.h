@@ -13,16 +13,17 @@ typedef vector< ObjImg > VecObjImg;
 class Savable
 {
 public:
-	virtual const char*		getCname() = 0;
+	virtual const char*		getCname() const = 0 ;
 
 	virtual void			save( ObjImg &oi, char *name ) = 0;
 
 	virtual void			load( ObjImg &oi, char *name=NULL ) = 0;
+
+	static Savable*			createObj( const char* cname );
+
+	static Savable*			cloneObj( Savable *obj );
 };
 
-Savable* createObject( const char* cname );
-
-Savable* cloneObject( Savable *obj );
 
 /////////////////////////////////////////////////////////////////////////////////
 class ObjImg
@@ -36,15 +37,22 @@ public:
 
 	void					check( int minL, int maxL, const char *name=NULL, const char *type=NULL );
 
-	virtual void			writeToStrm(ofstream &strm);
+	bool					saveToFile( const char *fName, bool binary=false );
 
-	virtual void			readFrmStrm(ifstream &strm);
-	
-	bool					saveToFile( const char *fName );
+	static bool				loadFrmFile( const char *fName, ObjImg &oi, bool binary=false );
 
-	static bool				loadFrmFile( const char *fName, ObjImg &oi );
+	void					toStrm( ofstream &os );
 
 protected:
+	void					writeToStrm(ofstream &strm);
+
+	void					readFrmStrm(ifstream &strm);
+
+	void					writeToTxtStrm(ofstream &strm);
+
+	void					readFrmTxtStrm(ifstream &strm);
+
+public:
 	char					_type[32];
 
 	char					_name[32];
@@ -52,10 +60,10 @@ protected:
 public:
 	VecObjImg				_objImgs;
 
-private:
+public:
 	char					*_el;
 
-	uchar					_elBytes;
+	short					_elBytes;
 
 	int						_elNum;
 
@@ -66,15 +74,15 @@ private:
 template< class T > class Primitive : Savable
 {
 public:
-							Primitive() { _val=NULL; _n=0; };
-
 							Primitive( T *src, int n=1 );
 
-	virtual const char*		getCname() { return typeid(T).name(); };
+	virtual const char*		getCname() const { return typeid(T).name(); };
 
 	virtual void			save( ObjImg &oi, char *name );
 
 	virtual void			load( ObjImg &oi, char *name=NULL );
+
+	template <class T1>	friend ostream& operator<<(ostream &os, const Primitive<T1> &p );
 
 private:
 	T						*_val;
@@ -89,7 +97,7 @@ template< class T >			Primitive<T>::Primitive( T *src, int n )
 
 template<class T> void		Primitive<T>::save( ObjImg &oi, char *name )
 {
-	uchar nBytes=sizeof(T);
+	size_t nBytes=sizeof(T);
 	oi.set( name, getCname(), 0 );
 	oi._el = new char[nBytes*_n];
 	oi._elBytes=nBytes; oi._elNum=_n;
@@ -99,8 +107,20 @@ template<class T> void		Primitive<T>::save( ObjImg &oi, char *name )
 template<class T> void		Primitive<T>::load( ObjImg &oi, char *name )
 {
 	oi.check( 0, 0, name, getCname() );
-	uchar nBytes=oi._elBytes; _n=oi._elNum; 
+	size_t nBytes=oi._elBytes; _n=oi._elNum; 
 	memcpy(_val,oi._el,nBytes*_n);
+}
+
+template<class T> ostream&	operator<<(ostream &os, const Primitive<T> &p )
+{
+	if( strcmp("char",p.getCname())==0 )
+		os<<p._val;
+	else if( p._n==1 ) 
+		os<<*p._val;
+	else {
+		os << "[ " ; for(int i=0; i<p._n; i++) os << p._val[i] << " "; os << "]"; 
+	}
+	return os;
 }
 
 #endif

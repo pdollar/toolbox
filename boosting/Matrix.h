@@ -25,7 +25,7 @@ public:
 	Matrix<T>&		operator= (const vector<T> &x );
 
 	// write/read to/from stream/text
-	virtual const char* getCname() { return "Matrix"; };
+	virtual const char* getCname() const { return "Matrix"; };
 	virtual void	save( ObjImg &oi, char *name );
 	virtual void	load( ObjImg &oi, char *name=NULL );
 	bool			writeToTxt( const char* file, char* delim="," );

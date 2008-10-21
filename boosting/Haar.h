@@ -40,7 +40,7 @@ public:
 					Rect();
 					Rect( int lf, int rt, int tp, int bt );
 
-	virtual const char* getCname() { return "Rect"; };
+	virtual const char* getCname() const { return "Rect"; };
 	virtual void	save( ObjImg &oi, char *name );
 	virtual void	load( ObjImg &oi, char *name=NULL );
 
@@ -129,7 +129,7 @@ public: // prms to limit haar positions to central region
 class Haar
 {
 public:
-	virtual const char* getCname() { return "Haar"; };
+	virtual const char* getCname() const { return "Haar"; };
 	virtual void	save( ObjImg &oi, char *name );
 	virtual void	load( ObjImg &oi, char *name=NULL );
 
