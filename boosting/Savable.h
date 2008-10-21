@@ -4,11 +4,9 @@
 #include "Public.h"
 
 /////////////////////////////////////////////////////////////////////////////////
-class Savable
+class Savable : Cloneable
 {
 public:
-	virtual const char* getClassName() = 0;
-
 	void	checkType( char *type=NULL ) {
 		if( type==NULL && strcmp(_type,type) )
 			abortError( "Invalid type", type, __LINE__, __FILE__ );
@@ -29,8 +27,6 @@ public:
 		strm.read(_name,sizeof(char)*32);
 	}
 
-	static inline Savable* createSavable( const char* typeStr );
-
 protected:
 	char	_type[32];
 	char	_name[32];
@@ -42,19 +38,19 @@ typedef vector< Savable* > VecSavable;
 class SavObj : public Savable
 {
 public:
-			SavObj() {};
+	SavObj() {};
 
-			SavObj( char *name, char *type, int n ) { 
+	SavObj( char *name, char *type, int n ) { 
 		strcpy(_name,name); strcpy(_type,type); _vals.resize(n); 
 	}
 
-			~SavObj() {
-		for( int i=0; i<(int)_vals.size(); i++ ) 
+	~SavObj() {
+		for( int i=0; i<(int)_vals.size(); i++ )
 			delete _vals[i]; 
 		_vals.clear();
 	}
 
-	virtual const char* getClassName() { return "SavObj"; }
+	virtual const char* getCname() { return "SavObj"; }
 
 public:
 	void	checkLen( int minL, int maxL ) {
@@ -66,18 +62,18 @@ public:
 		Savable::writeToStrm( strm );		
 		int n=_vals.size(); strm.write((char*)&n,sizeof(n));
 		for( int i=0; i<n; i++ ) {
-			strm.write(_vals[i]->getClassName(),sizeof(char)*32);
+			strm << getCname() << '\0';
 			_vals[i]->writeToStrm(strm);
 		}
 	}
 
 	void	readFrmStrm(ifstream &strm) {
 		Savable::readFrmStrm( strm );
-		int n; char cName[32];
+		int n; char cname[128];
 		strm.read((char*)&n,sizeof(n)); _vals.resize(n);
 		for( int i=0; i<n; i++ ) {
-			strm.read(cName,sizeof(char)*32);
-			_vals[i]=createSavable(cName);
+			strm >> cname; strm.get();
+			_vals[i]=(Savable*) createObject(cname);
 			_vals[i]->readFrmStrm(strm);
 		}
 	}
@@ -104,7 +100,7 @@ public:
 
 	~SavLeaf() { delete [] _val; }
 
-	virtual const char* getClassName() { return "SavLeaf"; }
+	virtual const char* getCname() { return "SavLeaf"; }
 
 public:
 	template< class T > void load( char *name, T *tar ) {
@@ -133,13 +129,5 @@ private:
 	short _elBytes;
 	int _elNum;
 };
-
-/////////////////////////////////////////////////////////////////////////////////
-Savable* Savable::createSavable( const char* typeStr ) {
-	OBJFAC_CREATE( "SavObj", SavObj );
-	OBJFAC_CREATE( "SavLeaf", SavLeaf );
-	abortError( "unknown type", typeStr, __LINE__, __FILE__ );
-	return NULL;
-}
 
 #endif
