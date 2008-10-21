@@ -9,37 +9,24 @@ int main(int argc, const char* argv[])
 	cout << "DEBUGGING" << endl;
 	#endif
 
-	//// prep
-	//Matrixd A(10,10,0);
-	//IntegralImage II;
-	//II.prepare(A);
+	// CREATE
+	//Matrixd A(10,10,0); Matrixd B;
+	//for(int i=0; i<10; i++) A(i,i)=i;
+	//char *fName="D:/code/toolbox/boosting/temp";
+	//SavObj*	s1 = A.save("A");
+	//s1->saveToFile( fName );
+	//SavObj *s2 = (SavObj*) Savable::loadFrmFile( fName );
+	//B.load(*s2);
+	//cout << A << " " << B << endl;
 
-	//// run
-	//Haar h; h.createSyst( 0, 50, 50, 10, 10, 0, 0 );
-	//Matrixf resp; h.convHaar( resp, II, 1, false );
-
-	//// test
-	////Rect a(0,0,4,4), b;
-	////SavObj*	s = a.save("Rect");
-	////b.load( *s );
-	////mexPrintf((a==b) ? "YAY" : "NAY");
-	//Haar b;
-	//SavObj*	s = h.save("Haar");
-	//b.load( *s );
-	//cout << ((h==b) ? "YAY" : "NAY") << endl;
-
-	//float x = 3; float y;
-	//SavLeaf *leaf = new SavLeaf( "x", &x );
-	//leaf->load( "x", &y );
-	//cout << x << " " << y << endl;
-
-	Matrixd A(10,10,0); Matrixd B;
-	for(int i=0; i<10; i++) A(i,i)=i;
-	cout << A << endl;
-	SavObj*	s = A.save("A");
-	B.load(*s);
-	cout << B << endl;
-	//cout << A-B << endl;
+	// INT TEST
+	//int A=12321, B;
+	//char *fName="D:/code/toolbox/boosting/temp";
+	//SavLeaf *s1 = new SavLeaf( "A", &A );
+	//s1->saveToFile( fName );
+	//SavLeaf *s2 = (SavLeaf*) Savable::loadFrmFile( fName );
+	//s2->load(NULL,&B);
+	//cout << A << " " << B << endl;
 
 	system("pause");
 	return 0;

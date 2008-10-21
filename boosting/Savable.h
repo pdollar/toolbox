@@ -4,7 +4,7 @@
 #include "Public.h"
 
 /////////////////////////////////////////////////////////////////////////////////
-class Savable : Cloneable
+class Savable : public Cloneable
 {
 public:
 	void	checkType( char *type=NULL ) {
@@ -17,14 +17,47 @@ public:
 			abortError( "Invalid name:", name, __LINE__, __FILE__ );
 	}
 
-	void	writeToStrm(ofstream &strm) {
+	virtual void	writeToStrm(ofstream &strm) {
 		strm.write(_type,sizeof(char)*32);
 		strm.write(_name,sizeof(char)*32);
 	}
 
-	void	readFrmStrm(ifstream &strm) {
+	virtual void	readFrmStrm(ifstream &strm) {
 		strm.read(_type,sizeof(char)*32);
 		strm.read(_name,sizeof(char)*32);
+	}
+	
+	bool	saveToFile( const char *fName )
+	{
+		std::ofstream strm; remove( fName );
+		strm.open(fName, std::ios::out|std::ios::binary);
+		if (strm.fail()) {
+			abortError( "unable to save:", fName, __LINE__, __FILE__ );
+			return false;
+		}
+
+		strm << getCname() << '\0';
+		writeToStrm( strm );
+
+		strm.close();
+		return true;
+	}
+
+	static Savable* loadFrmFile( const char *fName )
+	{
+		char cname[512]; std::ifstream strm;
+		strm.open(fName, std::ios::in|std::ios::binary);
+		if( strm.fail() ) {
+			abortError( "unable to load: ", fName, __LINE__, __FILE__ );
+			return NULL;
+		}
+
+		strm >> cname; strm.get();
+		Savable *savable = (Savable*) createObject(cname);
+		savable->readFrmStrm( strm );
+
+		strm.close();
+		return savable;
 	}
 
 protected:
@@ -58,16 +91,16 @@ public:
 		assert(int(_vals.size())<=maxL );
 	}
 
-	void	writeToStrm(ofstream &strm) {
+	virtual void	writeToStrm(ofstream &strm) {
 		Savable::writeToStrm( strm );		
 		int n=_vals.size(); strm.write((char*)&n,sizeof(n));
 		for( int i=0; i<n; i++ ) {
-			strm << getCname() << '\0';
+			strm << _vals[i]->getCname() << '\0';
 			_vals[i]->writeToStrm(strm);
 		}
 	}
 
-	void	readFrmStrm(ifstream &strm) {
+	virtual void	readFrmStrm(ifstream &strm) {
 		Savable::readFrmStrm( strm );
 		int n; char cname[128];
 		strm.read((char*)&n,sizeof(n)); _vals.resize(n);
@@ -121,6 +154,23 @@ public:
 		else if(strcmp(stype,"bool")==0) p=BOOL;
 		else abortError( "Unknown type", __LINE__, __FILE__ );
 		return p;
+	}
+
+	virtual void	writeToStrm(ofstream &strm) {
+		Savable::writeToStrm( strm );
+		strm.write((char*)&_pType,sizeof(_pType));
+		strm.write((char*)&_elBytes,sizeof(_elBytes));
+		strm.write((char*)&_elNum,sizeof(_elNum));
+		strm.write(_val,_elNum*_elBytes);
+	}
+
+	virtual void	readFrmStrm(ifstream &strm) {
+		Savable::readFrmStrm( strm );
+		strm.read((char*)&_pType,sizeof(_pType));
+		strm.read((char*)&_elBytes,sizeof(_elBytes));
+		strm.read((char*)&_elNum,sizeof(_elNum));
+		_val = new char[_elNum*_elBytes];
+		strm.read(_val,_elNum*_elBytes);
 	}
 
 private:
