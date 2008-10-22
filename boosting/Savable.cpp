@@ -1,6 +1,7 @@
 #include "Savable.h"
 
 #include "Matrix.h"
+
 #include <iomanip>
 
 				ObjImg::~ObjImg() 
@@ -64,15 +65,16 @@ void			ObjImg::readFrmStrm(ifstream &is) {
 void			ObjImg::writeToTxt(ofstream &os,int indent) {
 	for(int i=0; i<indent*2; i++) os.put(' ');
 	os << setw(16) << left << _type;
-	if( _elNum>=1 ) {
+	Savable *s = Savable::createObj(_type);
+	if( s->customReadWrite() ) {
 		os << setw(20) << left << _name << "= ";
-		PrimitiveBase *p = (PrimitiveBase*) Savable::createObj(_type);
-		p->load(*this); p->writeToTxt( os ); os << endl; delete p;
+		s->load(*this); s->writeToTxt( os ); os << endl;
 	} else {		
 		int n=_objImgs.size(); char temp[20];
-		sprintf(temp,"%s [ %i ]:",_name,n); os << temp << endl;
+		sprintf(temp,"%s ( %i ):",_name,n); os << temp << endl;
 		for( int i=0; i<n; i++ ) _objImgs[i].writeToTxt(os,indent+1);		
 	}
+	delete s;
 }
 
 void			ObjImg::readFrmTxt(ifstream &is) 
@@ -80,11 +82,11 @@ void			ObjImg::readFrmTxt(ifstream &is)
 	char temp[32];
 	is >> _type >> _name >> temp;
 	if( strcmp(temp,"=")==0 ) {
-		PrimitiveBase *p = (PrimitiveBase*) Savable::createObj(_type);
-		p->readFrmTxt( is ); p->save(*this,_name); delete p;
+		Savable *s = Savable::createObj(_type);
+		s->readFrmTxt( is ); s->save(*this,_name); delete s;
 	} else {
-		assert(strcmp(temp,"[")==0);
-		int n; is>>n; is>>temp; assert(strcmp(temp,"]:")==0);
+		assert(strcmp(temp,"(")==0);
+		int n; is>>n; is>>temp; assert(strcmp(temp,"):")==0);
 		if(n>0) _objImgs.resize(n);
 		for( int i=0; i<n; i++ ) _objImgs[i].readFrmTxt(is);
 	}

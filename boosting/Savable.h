@@ -19,6 +19,14 @@ public:
 
 	virtual void			load( ObjImg &oi, char *name=NULL ) = 0;
 
+public:
+	virtual bool			customReadWrite() { return false; }
+
+	virtual void			writeToTxt( ostream &os ) {};
+
+	virtual void			readFrmTxt( istream &is ) {};
+
+public:
 	static Savable*			createObj( const char *cname );
 
 	static Savable*			cloneObj( Savable *obj );
@@ -71,15 +79,7 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////////
-class PrimitiveBase : public Savable
-{
-public:
-	virtual void			writeToTxt( ostream &os ) = 0;
-
-	virtual void			readFrmTxt( istream &is ) = 0;
-};
-
-template< class T > class Primitive : public PrimitiveBase
+template< class T > class Primitive : public Savable
 {
 public:
 							Primitive() : _owner(1), _val(NULL), _n(0) {};
@@ -95,6 +95,8 @@ public:
 	virtual void			save( ObjImg &oi, char *name );
 
 	virtual void			load( ObjImg &oi, char *name=NULL );
+
+	virtual bool			customReadWrite() { return true; }
 
 	virtual void			writeToTxt( ostream &os );
 
