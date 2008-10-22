@@ -4,6 +4,50 @@
 
 #include <iomanip>
 
+/////////////////////////////////////////////////////////////////////////////////
+Savable*		Savable::createObj( const char *cname ) 
+{
+	#define CREATE_PRIMITIVE(T) \
+		if(!strcmp(cname,#T)) return (Savable*) new Primitive<T>();
+	#define CREATE(T) \
+		if(!strcmp(cname,#T)) return (Savable*) new T();
+
+	CREATE_PRIMITIVE(int);
+	CREATE_PRIMITIVE(long);
+	CREATE_PRIMITIVE(float);
+	CREATE_PRIMITIVE(double);
+	CREATE_PRIMITIVE(bool);
+	CREATE_PRIMITIVE(char);
+	CREATE(Matrix<int>);
+	CREATE(Matrix<float>);
+	CREATE(Matrix<double>);
+	abortError( "unknown type", cname, __LINE__, __FILE__ );
+	return NULL;
+
+	#undef CREATE_PRIMITIVE
+	#undef CREATE
+}
+
+Savable*		Savable::createObj( ObjImg &oi )
+{
+	Savable *s = createObj(oi.getCname());
+	s->load( oi ); return s;
+}
+
+Savable*		Savable::cloneObj( Savable *obj )
+{
+	#define CLONE1(CLASS,SRC) \
+		if (!strcmp(cname,#CLASS)) return (Savable*)new CLASS(*((CLASS*) SRC));
+	#define CLONE2(CLASS,SRC) \
+		if (!strcmp(cname,#CLASS)) { CLASS *obj=new CLASS(); (*obj)=*((CLASS*) SRC); return (Savable*) obj; }
+	const char *cname = obj->getCname();
+	abortError( "unknown type", cname, __LINE__, __FILE__ );
+	return NULL;
+	#undef CLONE1
+	#undef CLONE2
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 				ObjImg::~ObjImg() 
 {
 	_objImgs.clear();
@@ -111,47 +155,4 @@ bool			ObjImg::loadFrmFile( const char *fName, ObjImg &oi, bool binary )
 	oi.readFrmStrm(is,binary);
 	is.close();
 	return true;
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-Savable*		Savable::createObj( const char *cname ) 
-{
-	#define CREATE_PRIMITIVE(T) \
-		if(!strcmp(cname,#T)) return (Savable*) new Primitive<T>();
-	#define CREATE(T) \
-		if(!strcmp(cname,#T)) return (Savable*) new T();
-
-	CREATE_PRIMITIVE(int);
-	CREATE_PRIMITIVE(long);
-	CREATE_PRIMITIVE(float);
-	CREATE_PRIMITIVE(double);
-	CREATE_PRIMITIVE(bool);
-	CREATE_PRIMITIVE(char);
-	CREATE(Matrix<int>);
-	CREATE(Matrix<float>);
-	CREATE(Matrix<double>);
-	abortError( "unknown type", cname, __LINE__, __FILE__ );
-	return NULL;
-
-	#undef CREATE_PRIMITIVE
-	#undef CREATE
-}
-
-Savable*		Savable::createObj( ObjImg &oi )
-{
-	Savable *s = createObj(oi.getCname());
-	s->load( oi ); return s;
-}
-
-Savable*		Savable::cloneObj( Savable *obj )
-{
-	#define CLONE1(CLASS,SRC) \
-		if (!strcmp(cname,#CLASS)) return (Savable*)new CLASS(*((CLASS*) SRC));
-	#define CLONE2(CLASS,SRC) \
-		if (!strcmp(cname,#CLASS)) { CLASS *obj=new CLASS(); (*obj)=*((CLASS*) SRC); return (Savable*) obj; }
-	const char *cname = obj->getCname();
-	abortError( "unknown type", cname, __LINE__, __FILE__ );
-	return NULL;
-	#undef CLONE1
-	#undef CLONE2
 }
