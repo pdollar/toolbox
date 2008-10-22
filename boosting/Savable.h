@@ -19,7 +19,7 @@ public:
 
 	virtual void			load( ObjImg &oi, char *name=NULL ) = 0;
 
-	static Savable*			createObj( const char* cname );
+	static Savable*			createObj( const char *cname );
 
 	static Savable*			cloneObj( Savable *obj );
 };
@@ -32,6 +32,8 @@ public:
 							ObjImg() { _el=NULL; _elNum=0; };
 
 							~ObjImg ();
+
+	Savable*				create();
 
 	void					set( const char *name, const char *type, int n );
 
@@ -76,7 +78,13 @@ private:
 template< class T > class Primitive : Savable
 {
 public:
-							Primitive( T *src, int n=1 );
+							Primitive() : _owner(1), _val(NULL), _n(0) {};
+
+							Primitive( T *src, int n=1 )  : _owner(0), _val(src), _n(n) {}
+
+							~Primitive() { free(); }
+
+	void					free() { if(_owner && _val!=NULL) { delete [] _val; _val=NULL; } }
 
 	virtual const char*		getCname() const { return typeid(T).name(); };
 
@@ -90,12 +98,9 @@ private:
 	T						*_val;
 
 	int						_n;
-};
 
-template< class T >			Primitive<T>::Primitive( T *src, int n ) 
-{
-	_n=n; _val=src;
-}
+	const bool				_owner;
+};
 
 template<class T> void		Primitive<T>::save( ObjImg &oi, char *name )
 {
@@ -108,8 +113,10 @@ template<class T> void		Primitive<T>::save( ObjImg &oi, char *name )
 
 template<class T> void		Primitive<T>::load( ObjImg &oi, char *name )
 {
+	free();
 	oi.check( 0, 0, name, getCname() );
-	size_t nBytes=oi._elBytes; _n=oi._elNum; 
+	size_t nBytes=oi._elBytes; _n=oi._elNum;
+	if(_owner ) _val=new T[nBytes*_n];
 	memcpy(_val,oi._el,nBytes*_n);
 }
 

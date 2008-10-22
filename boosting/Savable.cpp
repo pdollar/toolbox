@@ -7,6 +7,12 @@
 	if( _el!=NULL ) delete [] _el;
 }
 
+Savable*		ObjImg::create()
+{
+	Savable *s = Savable::createObj(_type);
+	s->load( *this ); return s;
+}
+
 void			ObjImg::set( const char *name, const char *type, int n ) 
 { 
 	assert( _el==NULL && _objImgs.size()==0 );
@@ -18,6 +24,17 @@ void			ObjImg::set( const char *name, const char *type, int n )
 	if(n>0) _objImgs.resize(n);
 }
 
+void			ObjImg::check( int minL, int maxL, const char *name, const char *type )
+{
+	if( type!=NULL && strcmp(_type,type) )
+		abortError( "Invalid type", type, __LINE__, __FILE__ );
+	if( name!=NULL && strcmp(_name,name) )
+		abortError( "Invalid name:", name, __LINE__, __FILE__ );
+	assert(int(_objImgs.size())>=minL );
+	assert(int(_objImgs.size())<=maxL );
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 void			ObjImg::writeToStrm(ofstream &strm) {
 	strm << _type << ' ';
 	strm << _name << ' ';
@@ -149,34 +166,36 @@ void			ObjImg::frmStrm( ifstream &is )
 	//#undef FRMSTRM
 }
 
-void			ObjImg::check( int minL, int maxL, const char *name, const char *type )
-{
-	if( type!=NULL && strcmp(_type,type) )
-		abortError( "Invalid type", type, __LINE__, __FILE__ );
-	if( name!=NULL && strcmp(_name,name) )
-		abortError( "Invalid name:", name, __LINE__, __FILE__ );
-	assert(int(_objImgs.size())>=minL );
-	assert(int(_objImgs.size())<=maxL );
-}
-
 /////////////////////////////////////////////////////////////////////////////////
-
-#define SAVABLE_CREATE(TYPE,OBJ) \
-	if (!strcmp(cname, TYPE)) return (Savable*) new OBJ();
-#define SAVABLE_CLONE(TYPE,OBJ,SRC) \
-	if (!strcmp(cname, TYPE)) return (Savable*)new OBJ(*((OBJ*) SRC));
-#define SAVABLE_CLONECOPY(TYPE,OBJ,SRC) \
-	if (!strcmp(cname, TYPE)) { OBJ *obj=new OBJ(); (*obj)=*((OBJ*) SRC); return (Savable*) obj; }
-
-Savable*		Savable::createObj( const char* cname ) 
+Savable*		Savable::createObj( const char *cname ) 
 {
+	#define CREATE_PRIMITIVE(T) \
+		if(!strcmp(cname,#T)) return (Savable*) new Primitive<T>();
+	#define CREATE(CLASS) \
+		if(!strcmp(cname,#CLASS)) return (Savable*) new CLASS();
+
+	CREATE_PRIMITIVE(int);
+	CREATE_PRIMITIVE(long);
+	CREATE_PRIMITIVE(float);
+	CREATE_PRIMITIVE(double);
+	CREATE_PRIMITIVE(bool);
+	CREATE_PRIMITIVE(char);
 	abortError( "unknown type", cname, __LINE__, __FILE__ );
 	return NULL;
+
+	#undef CREATE_PRIMITIVE
+	#undef CREATE
 }
 
 Savable*		Savable::cloneObj( Savable *obj )
 {
+	#define CLONE1(CLASS,SRC) \
+		if (!strcmp(cname,#CLASS)) return (Savable*)new CLASS(*((CLASS*) SRC));
+	#define CLONE2(CLASS,SRC) \
+		if (!strcmp(cname,#CLASS)) { CLASS *obj=new CLASS(); (*obj)=*((CLASS*) SRC); return (Savable*) obj; }
 	const char *cname = obj->getCname();
 	abortError( "unknown type", cname, __LINE__, __FILE__ );
 	return NULL;
+	#undef CLONE1
+	#undef CLONE2
 }

@@ -1,3 +1,5 @@
+#include "vld.h"
+
 #include "Public.h"
 #include "Savable.h"
 #include "Matrix.h"
@@ -39,6 +41,17 @@ int main(int argc, const char* argv[])
 	//char *fName="D:/code/toolbox/boosting/temp.txt";
 	//o1.saveToFile( fName, 0 );
 	//ObjImg::loadFrmFile( fName, o2, 0 );
+
+
+	// PRIMITIVE TEST
+	int x=87519651; ObjImg ox, oy; bool binary=1;
+	Primitive<int> X(&x); X.save( ox, "x" );
+	char *fName="D:/code/toolbox/boosting/temp.txt";
+	ox.saveToFile( fName, binary );
+	ObjImg::loadFrmFile( fName, oy, binary );
+	Primitive<int> *Y = (Primitive<int>*) oy.create();
+	cout << X << endl << *Y << endl;
+	delete Y;
 
 	system("pause");
 	return 0;
