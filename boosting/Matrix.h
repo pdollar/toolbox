@@ -29,7 +29,7 @@ public:
 	virtual void	save( ObjImg &oi, char *name );
 	virtual void	load( ObjImg &oi, char *name=NULL );
 	bool			writeToTxt( const char* file, char* delim="," );
-	bool			readFromTxt( const char* file, char* delim="," ); 
+	bool			readFrmTxt( const char* file, char* delim="," ); 
 
 	// dimensions / access (note: [1xn] vectors more eff than [nx1])
 	bool			setDims( const int rows, const int cols );
@@ -208,7 +208,7 @@ template<class T> bool			Matrix<T>::writeToTxt( const char *fName, char *delim )
 	return true;
 }
 
-template<class T> bool			Matrix<T>::readFromTxt( const char *fName, char *delim )
+template<class T> bool			Matrix<T>::readFrmTxt( const char *fName, char *delim )
 {
 	ifstream strm; strm.open(fName, std::ios::in);
 	if( strm.fail() ) return false;
