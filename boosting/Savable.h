@@ -20,14 +20,16 @@ public:
 	virtual void			load( ObjImg &oi, char *name=NULL ) = 0;
 
 public:
-	virtual bool			customReadWrite() { return false; }
+	virtual bool			customToTxt() const { return false; }
 
-	virtual void			writeToTxt( ostream &os ) {};
+	virtual void			writeToTxt( ostream &os ) const {};
 
 	virtual void			readFrmTxt( istream &is ) {};
 
 public:
 	static Savable*			createObj( const char *cname );
+
+	static Savable*			createObj( ObjImg &oi );
 
 	static Savable*			cloneObj( Savable *obj );
 };
@@ -41,41 +43,37 @@ public:
 
 							~ObjImg ();
 
-	Savable*				create();
-
 	void					set( const char *name, const char *type, int n );
 
 	void					check( int minL, int maxL, const char *name=NULL, const char *type=NULL );
+
+	const char*				getCname() const { return _cname; };
 
 	bool					saveToFile( const char *fName, bool binary=false );
 
 	static bool				loadFrmFile( const char *fName, ObjImg &oi, bool binary=false );
 
 private:
-	void					writeToStrm(ofstream &os);
+	void					writeToStrm( ofstream &os, bool binary, int indent=0 );
 
-	void					readFrmStrm(ifstream &is);
-
-	void					writeToTxt(ofstream &os, int indent=0);
-
-	void					readFrmTxt(ifstream &is);
+	void					readFrmStrm( ifstream &is, bool binary );
 
 private:
-	char					_type[32];
+	char					_cname[32];
 
 	char					_name[32];
-
-public:
-	VecObjImg				_objImgs;
 
 private:
 	char					*_el;
 
-	short					_elBytes;
-
 	int						_elNum;
 
+	size_t					_elBytes;
+
 	template<class> friend class Primitive; 
+
+public:
+	VecObjImg				_objImgs;
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -86,9 +84,9 @@ public:
 
 							Primitive( T *src, int n=1 )  : _owner(0), _val(src), _n(n) {}
 
-							~Primitive() { free(); }
+							~Primitive() { freeVal(); }
 
-	void					free() { if(_owner && _val!=NULL) { delete [] _val; _val=NULL; } }
+	void					freeVal() { if(_owner && _val!=NULL) { delete [] _val; _val=NULL; } }
 
 	virtual const char*		getCname() const { return typeid(T).name(); };
 
@@ -96,9 +94,9 @@ public:
 
 	virtual void			load( ObjImg &oi, char *name=NULL );
 
-	virtual bool			customReadWrite() { return true; }
+	virtual bool			customToTxt() const { return true; }
 
-	virtual void			writeToTxt( ostream &os );
+	virtual void			writeToTxt( ostream &os ) const;
 
 	virtual void			readFrmTxt( istream &is );
 
@@ -121,14 +119,14 @@ template<class T> void		Primitive<T>::save( ObjImg &oi, char *name )
 
 template<class T> void		Primitive<T>::load( ObjImg &oi, char *name )
 {
-	free();
+	freeVal();
 	oi.check( 0, 0, name, getCname() );
 	size_t nBytes=oi._elBytes; _n=oi._elNum;
 	if(_owner ) _val=new T[nBytes*_n];
 	memcpy(_val,oi._el,nBytes*_n);
 }
 
-template<class T> void		Primitive<T>::writeToTxt( ostream &os )
+template<class T> void		Primitive<T>::writeToTxt( ostream &os ) const
 {
 	if( strcmp("char",getCname())==0 )
 		os<<'"' << _val << '"';
