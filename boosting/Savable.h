@@ -17,11 +17,11 @@ public:
 
 	virtual const char*		getCname() const = 0 ;
 
+protected:
 	virtual void			save( ObjImg &oi, const char *name ) = 0;
 
 	virtual void			load( const ObjImg &oi, const char *name=NULL ) = 0;
 
-protected:
 	virtual bool			customToTxt() const { return false; }
 
 	virtual void			writeToTxt( ostream &os ) const {};
@@ -92,7 +92,7 @@ public:
 
 							~Primitive() { clear(); }
 
-	void					clear() { if(_owner && _val!=NULL) { delete [] _val; _val=NULL; } _n=0; }
+	void					clear() { if(!_owner) return; if(_val!=NULL) delete [] _val; _val=NULL; _n=0; }
 
 	virtual const char*		getCname() const { return typeid(T).name(); };
 
@@ -119,7 +119,6 @@ template<class T> void		Primitive<T>::save( ObjImg &oi, const char *name )
 {
 	size_t nBytes=sizeof(T);
 	oi.init( name, getCname(), 0 );
-	assert( oi._el==NULL );
 	oi._el = new char[nBytes*_n];
 	oi._elBytes=nBytes; oi._elNum=_n;
 	memcpy(oi._el,_val,nBytes*_n);
@@ -130,7 +129,7 @@ template<class T> void		Primitive<T>::load( const ObjImg &oi, const char *name )
 	clear();
 	oi.check( 0, 0, name, getCname() );
 	size_t nBytes=oi._elBytes; _n=oi._elNum;
-	if(_owner ) _val=new T[nBytes*_n];
+	if(_owner ) _val=new T[nBytes*_n]; else assert(_val!=NULL);
 	memcpy(_val,oi._el,nBytes*_n);
 }
 
@@ -147,6 +146,7 @@ template<class T> void		Primitive<T>::writeToTxt( ostream &os ) const
 
 template<class T> void		Primitive<T>::readFrmTxt( istream &is )
 {	
+	assert(_owner); clear();
 	char c=is.get(); assert(c==' ');
 	if( strcmp("char",getCname())==0 ) {
 		c=is.get(); assert(c=='"');

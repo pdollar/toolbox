@@ -20,7 +20,7 @@ public:
 	Matrix( int rows, int cols, T value );
 	Matrix( const Matrix& x );
 	~Matrix();
-	virtual void	Free(); 
+	virtual void	clear(); 
 	Matrix<T>&		operator= (const Matrix<T> &x );
 	Matrix<T>&		operator= (const vector<T> &x );
 
@@ -130,10 +130,10 @@ template<class T>				Matrix<T>::Matrix(const Matrix& x)
 
 template<class T>				Matrix<T>::~Matrix()
 {
-	Free();
+	clear();
 }
 
-template<class T> void			Matrix<T>::Free()
+template<class T> void			Matrix<T>::clear()
 {
 	if (_data != NULL)
 		delete[] _data;
@@ -182,7 +182,7 @@ template<class T> void			Matrix<T>::save( ObjImg &oi, const char *name )
 
 template<class T> void			Matrix<T>::load( const ObjImg &oi, const char *name )
 {
-	Free(); oi.check(3,3,name,getCname());
+	clear(); oi.check(3,3,name,getCname());
 	int mRows, nCols;
 	Primitive<int> mRows1(&mRows), nCols1(&nCols);
 	mRows1.load(oi._objImgs[0],"mRows");
@@ -251,7 +251,7 @@ template<class T> bool			Matrix<T>::setDims(const int rows, const int cols)
 {
 	assert(rows>=0 && cols>=0 );
 	if (rows==_mRows && cols==_nCols) return true;
-	Free();  _mRows = rows;  _nCols = cols;
+	clear();  _mRows = rows;  _nCols = cols;
 	if (_mRows==0 || _nCols==0) return true;
 
 	int lSize = ((int)_mRows) * _nCols;
@@ -296,7 +296,7 @@ template<class T> bool			Matrix<T>::resizeTo(const int rows1, const int cols1)
 	for (int j=0; j<std::min((int)rows(),rows1); j++)
 		for (int i=0; i<std::min((int)cols(),cols1); i++)
 			pdata1[j][i] = (*this)(j, i);
-	Free();
+	clear();
 	_mRows = rows1;
 	_nCols = cols1;
 	_data = data1;
@@ -515,7 +515,7 @@ template<class T> int			Matrix<T>::maxi() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-template<class T1, class T2> void Copy(Matrix<T1>& Mdest,const Matrix<T2>& Msrc)
+template<class T1, class T2> void copy(Matrix<T1>& Mdest,const Matrix<T2>& Msrc)
 {
 	Mdest.setDims(Msrc.rows(), Msrc.cols());
 	for(int i = 0; i < Msrc.rows(); i++)
@@ -620,7 +620,7 @@ template<class T> Matrix<T>		operator^ ( const T a, const Matrix<T> &b )
     } 
 	DOP(+); DOP(-); DOP(/); DOP(*); DOP(<); DOP(>); DOP(<=); DOP(>=); DOP(&&); DOP(||); DOP(==); DOP(!=); 
 #undef DOP
-// assignment operators
+// Pointwise assignment operators
 #define DOP(OP) \
 	template<class T> Matrix<T>& Matrix<T>::operator OP (const T b ) { \
         for (int i = 0; i < size(); i++) \
