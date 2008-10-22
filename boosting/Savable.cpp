@@ -10,7 +10,7 @@
 	if( _el!=NULL ) delete [] _el;
 }
 
-void			ObjImg::set( const char *name, const char *type, int n ) 
+void			ObjImg::init( const char *name, const char *type, int n ) 
 { 
 	assert( _el==NULL && _objImgs.size()==0 );
 	strcpy(_name,name);
@@ -21,7 +21,7 @@ void			ObjImg::set( const char *name, const char *type, int n )
 	if(n>0) _objImgs.resize(n);
 }
 
-void			ObjImg::check( int minL, int maxL, const char *name, const char *type )
+void			ObjImg::check( int minL, int maxL, const char *name, const char *type ) const
 {
 	if( type!=NULL && strcmp(_cname,type) )
 		abortError( "Invalid type", type, __LINE__, __FILE__ );

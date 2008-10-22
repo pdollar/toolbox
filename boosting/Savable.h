@@ -13,11 +13,13 @@ typedef vector< ObjImg > VecObjImg;
 class Savable
 {
 public:
+	virtual					~Savable() {};
+
 	virtual const char*		getCname() const = 0 ;
 
-	virtual void			save( ObjImg &oi, char *name ) = 0;
+	virtual void			save( ObjImg &oi, const char *name ) = 0;
 
-	virtual void			load( ObjImg &oi, char *name=NULL ) = 0;
+	virtual void			load( const ObjImg &oi, const char *name=NULL ) = 0;
 
 public:
 	virtual bool			customToTxt() const { return false; }
@@ -43,9 +45,9 @@ public:
 
 							~ObjImg ();
 
-	void					set( const char *name, const char *type, int n );
+	void					init( const char *name, const char *type, int n );
 
-	void					check( int minL, int maxL, const char *name=NULL, const char *type=NULL );
+	void					check( int minL, int maxL, const char *name=NULL, const char *type=NULL ) const;
 
 	const char*				getCname() const { return _cname; };
 
@@ -90,9 +92,9 @@ public:
 
 	virtual const char*		getCname() const { return typeid(T).name(); };
 
-	virtual void			save( ObjImg &oi, char *name );
+	virtual void			save( ObjImg &oi, const char *name );
 
-	virtual void			load( ObjImg &oi, char *name=NULL );
+	virtual void			load( const ObjImg &oi, const char *name=NULL );
 
 	virtual bool			customToTxt() const { return true; }
 
@@ -108,16 +110,16 @@ private:
 	const bool				_owner;
 };
 
-template<class T> void		Primitive<T>::save( ObjImg &oi, char *name )
+template<class T> void		Primitive<T>::save( ObjImg &oi, const char *name )
 {
 	size_t nBytes=sizeof(T);
-	oi.set( name, getCname(), 0 );
+	oi.init( name, getCname(), 0 );
 	oi._el = new char[nBytes*_n];
 	oi._elBytes=nBytes; oi._elNum=_n;
 	memcpy(oi._el,_val,nBytes*_n);
 }
 
-template<class T> void		Primitive<T>::load( ObjImg &oi, char *name )
+template<class T> void		Primitive<T>::load( const ObjImg &oi, const char *name )
 {
 	freeVal();
 	oi.check( 0, 0, name, getCname() );

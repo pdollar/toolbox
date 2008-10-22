@@ -41,8 +41,8 @@ public:
 					Rect( int lf, int rt, int tp, int bt );
 
 	virtual const char* getCname() const { return "Rect"; };
-	virtual void	save( ObjImg &oi, char *name );
-	virtual void	load( ObjImg &oi, char *name=NULL );
+	virtual void	save( ObjImg &oi, const char *name );
+	virtual void	load( const ObjImg &oi, const char *name=NULL );
 
 	int				area()		const {return (_rt-_lf+1)*(_bt-_tp+1); };
 	int				height()	const {return _bt-_tp+1;};
@@ -130,8 +130,8 @@ class Haar
 {
 public:
 	virtual const char* getCname() const { return "Haar"; };
-	virtual void	save( ObjImg &oi, char *name );
-	virtual void	load( ObjImg &oi, char *name=NULL );
+	virtual void	save( ObjImg &oi, const char *name );
+	virtual void	load( const ObjImg &oi, const char *name=NULL );
 
 	// create / alter
     void			createSyst(	int type, int w, int h, int fw, int fh, int tp, int lf, bool flip=false );

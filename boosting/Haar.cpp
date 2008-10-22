@@ -15,9 +15,9 @@
 	setPos(lf,rt,tp,bt); 
 }
 
-void		Rect::save( ObjImg &oi, char *name )
+void		Rect::save( ObjImg &oi, const char *name )
 {
-	oi.set(name,getCname(),5);
+	oi.init(name,getCname(),5);
 	Primitive<int> lf(&_lf), rt(&_rt), tp(&_tp), bt(&_bt);
 	Primitive<float> wt(&_wt);
 	lf.save(oi._objImgs[0],"lf");
@@ -27,7 +27,7 @@ void		Rect::save( ObjImg &oi, char *name )
 	wt.save(oi._objImgs[4],"wt");
 }
 
-void		Rect::load( ObjImg &oi, char *name )
+void		Rect::load( const ObjImg &oi, const char *name )
 {
 	oi.check(5,5,name,getCname());
 	Primitive<int> lf(&_lf), rt(&_rt), tp(&_tp), bt(&_bt);
@@ -114,9 +114,9 @@ bool		operator<  (const Rect &rect1, const Rect &rect2)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void		Haar::save(  ObjImg &oi, char *name )
+void		Haar::save(  ObjImg &oi, const char *name )
 {
-	oi.set(name,getCname(),3+_nRects);
+	oi.init(name,getCname(),3+_nRects);
 	Primitive<int> iwidth(&_iwidth), iheight(&_iheight), nRects(&_nRects);
 	iwidth.save(oi._objImgs[0],"lf");
 	iheight.save(oi._objImgs[1],"rt");
@@ -125,7 +125,7 @@ void		Haar::save(  ObjImg &oi, char *name )
 		_rects[i].save(oi._objImgs[3+i],"Rect");
 }
 
-void		Haar::load( ObjImg &oi, char *name )
+void		Haar::load( const ObjImg &oi, const char *name )
 {
 	oi.check(4,INT_MAX,name,getCname());
 	Primitive<int> iwidth(&_iwidth), iheight(&_iheight), nRects(&_nRects);
