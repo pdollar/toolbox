@@ -25,7 +25,7 @@ public:
 	Matrix<T>&		operator= (const vector<T> &x );
 
 	// write/read to/from stream/text
-	virtual const char* getCname() const { return "Matrix"; };
+	virtual const char* getCname() const;
 	virtual void	save( ObjImg &oi, char *name );
 	virtual void	load( ObjImg &oi, char *name=NULL );
 	bool			writeToTxt( const char* file, char* delim="," );
@@ -163,6 +163,13 @@ template<class T> Matrix<T>&	Matrix<T>::operator= (const vector<T> &x)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+template<class T> const char*	Matrix<T>::getCname() const
+{ 
+	static char cname[32];
+	sprintf(cname,"Matrix<%s>",typeid(T).name());
+	return cname;
+}
+
 template<class T> void			Matrix<T>::save( ObjImg &oi, char *name )
 {
 	Primitive<int> mRows(&_mRows), nCols(&_nCols);

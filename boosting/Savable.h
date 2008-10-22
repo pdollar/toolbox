@@ -44,17 +44,13 @@ public:
 	static bool				loadFrmFile( const char *fName, ObjImg &oi, bool binary=false );
 
 private:
-	void					writeToStrm(ofstream &strm);
+	void					writeToStrm(ofstream &os);
 
-	void					readFrmStrm(ifstream &strm);
+	void					readFrmStrm(ifstream &is);
 
-	void					writeToTxtStrm(ofstream &strm,int indent=0);
+	void					writeToTxt(ofstream &os, int indent=0);
 
-	void					readFrmTxtStrm(ifstream &strm);
-
-	void					toStrm( ofstream &os );
-	
-	void					frmStrm( ifstream &is );
+	void					readFrmTxt(ifstream &is);
 
 private:
 	char					_type[32];
@@ -75,7 +71,15 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////////
-template< class T > class Primitive : Savable
+class PrimitiveBase : public Savable
+{
+public:
+	virtual void			writeToTxt( ostream &os ) = 0;
+
+	virtual void			readFrmTxt( istream &is ) = 0;
+};
+
+template< class T > class Primitive : public PrimitiveBase
 {
 public:
 							Primitive() : _owner(1), _val(NULL), _n(0) {};
@@ -92,8 +96,10 @@ public:
 
 	virtual void			load( ObjImg &oi, char *name=NULL );
 
-	template <class T1>	friend ostream& operator<<(ostream &os, const Primitive<T1> &p );
-	
+	virtual void			writeToTxt( ostream &os );
+
+	virtual void			readFrmTxt( istream &is );
+
 private:
 	T						*_val;
 
@@ -120,35 +126,37 @@ template<class T> void		Primitive<T>::load( ObjImg &oi, char *name )
 	memcpy(_val,oi._el,nBytes*_n);
 }
 
-template<class T> ostream&	operator<<(ostream &os, const Primitive<T> &p )
+template<class T> void		Primitive<T>::writeToTxt( ostream &os )
 {
-	if( strcmp("char",p.getCname())==0 )
-		os<<p._val;
-	else if( p._n==1 ) 
-		os<<*p._val;
+	if( strcmp("char",getCname())==0 )
+		os<<'"' << _val << '"';
+	else if( _n==1 ) 
+		os<<*_val;
 	else {
-		os << "[ " ; for(int i=0; i<p._n; i++) os << p._val[i] << " "; os << "]"; 
+		os << "[ " ; for(int i=0; i<_n; i++) os << _val[i] << " "; os << "]"; 
 	}
-	return os;
 }
 
-//template <class T1> friend istream&	operator>>(istream& is, const Primitive<T1> &p );
-//template<class T> istream&	operator>>(istream& is, const Primitive<T> &p )
-//{
-//	char *line = new char[10000000];
-//	if( strcmp("char",p.getCname())==0 ) {
-//		is.getline( line, 10000000 );
-//		//_val = new char[
-//		cout << line << endl;
-//		cout << strlen(line) << endl;
-//	}
-//	//else if( p._n==1 ) 
-//	//	is<<*p._val;
-//	//else {
-//	//	is << "[ " ; for(int i=0; i<p._n; i++) is << p._val[i] << " "; is << "]"; 
-//	//}
-//	delete [] line;
-//	return is;
-//}
+template<class T> void		Primitive<T>::readFrmTxt( istream &is )
+{	
+	char c=is.get(); assert(c==' ');
+	if( strcmp("char",getCname())==0 ) {
+		c=is.get(); assert(c=='"');
+		char *tmp=new char[1000000]; is.get(tmp,1000000);
+		_n = strlen(tmp); assert(tmp[_n-1]=='"'); tmp[_n-1]='\0';
+		_val=new T[_n]; memcpy(_val,tmp,_n*sizeof(T)); delete [] tmp;
+	} else if( is.peek()=='[' ) {
+		c=is.get(); assert(c=='[');
+		T *tmp = new T[1000000]; _n=0;
+		while(1) {
+			is >> tmp[_n++]; c=is.get(); assert(c==' ');
+			if( is.peek()==']' ) { is.get(); break; }
+		}
+		_val=new T[_n]; memcpy(_val,tmp,_n*sizeof(T)); delete [] tmp;
+	} else {
+		_val = new T[1]; _n=1;
+		is >> *_val;
+	}
+}
 
 #endif
