@@ -57,6 +57,16 @@ Savable*		Savable::clone( Savable *obj )
 	#undef CLONE2
 }
 
+mxArray*		Savable::toMxArray() 
+{
+	#ifndef MATLAB_MEX_FILE
+		return NULL;
+	#else
+		ObjImg oi; save(oi,"savable");
+		return oi.toMxArray();	
+	#endif
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 void			ObjImg::clear() 
 {
@@ -172,24 +182,26 @@ bool			ObjImg::loadFrmFile( const char *fName, ObjImg &oi, bool binary )
 	is.close(); return 1;
 }
 
-#ifdef MATLAB_MEX_FILE
 mxArray*		ObjImg::toMxArray()
 {
-	mxArray *M; Savable *s=Savable::create(_cname);
-	if( s->customMxArray() ) {
-		s->load(*this,_name);
-		M = s->toMxArray();
-	} else {
-		int n=_objImgs.size(); char** names = new char*[n];
-		for( int i=0; i<n; i++ ) names[i]=_objImgs[i]._name;
-		M = mxCreateStructMatrix(1, 1, n, (const char**) names);
-		for( int i=0; i<n; i++ )
-			mxSetFieldByNumber( M, 0, i, _objImgs[i].toMxArray() );
-		delete [] names;
-	}
-	delete s; return M;
+	#ifndef MATLAB_MEX_FILE
+		return NULL;
+	#else
+		mxArray *M; Savable *s=Savable::create(_cname);
+		if( s->customMxArray() ) {
+			s->load(*this,_name);
+			M = s->toMxArray();
+		} else {
+			int i,n=_objImgs.size(); char **names=(char**) mxCalloc(n,sizeof(char*));
+			for( i=0; i<n; i++ ) names[i]=(char*) mxCalloc(512,sizeof(char));			
+			for( i=0; i<n; i++ ) sprintf(names[i],_objImgs[i]._name);
+			M = mxCreateStructMatrix(1, 1, n, (const char**) names);
+			for( i=0; i<n; i++ ) mxSetFieldByNumber(M,0,i,_objImgs[i].toMxArray());
+		}
+		delete s; return M;
+	#endif
 }
-#endif
+
 /////////////////////////////////////////////////////////////////////////////////
 void			VecSavable::save( ObjImg &oi, const char *name )
 {
@@ -205,4 +217,30 @@ void			VecSavable::load( const ObjImg &oi, const char *name )
 	oi.check(n,n,name,getCname());
 	for( int i=0; i<n; i++ )
 		_v.push_back( Savable::create(oi._objImgs[i],"[vec-element]") );
+}
+
+mxArray*		VecSavable::toMxArray() 
+{
+	#ifndef MATLAB_MEX_FILE
+		return NULL;
+	#else
+		int i,j,m,n=_v.size(); mxArray *M=NULL, *M1, *V;
+		if(n==0) return mxCreateStructMatrix(0,0,0,NULL);
+		for(int i=0; i<n; i++) {
+			M1=_v[i]->toMxArray(); assert(mxIsStruct(M1));
+			if( i==0 ) {
+				m=mxGetNumberOfFields(M1);
+				char **names=(char**) mxCalloc(m, sizeof(char*));
+				for(j=0; j<m; j++) names[j]=(char*) mxCalloc(512,sizeof(char));
+				for(j=0; j<m; j++) sprintf(names[j],mxGetFieldNameByNumber(M1,j));
+				M=mxCreateStructMatrix( 1, n, m, (const char**) names );
+			}
+			for(int j=0; j<m; j++) {
+				V=mxDuplicateArray(mxGetFieldByNumber(M1,0,j));
+				mxSetFieldByNumber(M,i,j,V);
+			}
+			mxDestroyArray(M1);
+		}
+		return M;
+	#endif
 }
