@@ -103,9 +103,9 @@ public:
 protected:
 	virtual bool			customToTxt() const { return true; }
 
-	virtual void			writeToTxt( ostream &os ) const;
+	virtual void			writeToTxt( ostream &os ) const { pWriteToTxt( *this, os ); };
 
-	virtual void			readFrmTxt( istream &is );
+	virtual void			readFrmTxt( istream &is ) { assert(_owner); clear(); pReadFrmTxt(*this,is); }
 
 private:
 	T						*_val;
@@ -113,7 +113,64 @@ private:
 	int						_n;
 
 	const bool				_owner;
+
+	template<class T1> friend void pReadFrmTxt( Primitive<T1> &p, istream &is );
+
+	template<class T1> friend void pWriteToTxt( const Primitive<T1> &p, ostream &os );
 };
+
+template<class T> void		pWriteToTxt( const Primitive<T> &p, ostream &os )
+{
+	if( p._n==1 )
+		os << *p._val;
+	else {
+		os << "[ " ; for(int i=0; i<p._n; i++) os << p._val[i] << " "; os << "]";
+	}
+}
+
+template<class T> void		pReadFrmTxt( Primitive<T> &p, istream &is )
+{
+	if( is.peek()=='[' ) {
+		char c=is.get(); assert(c=='[');
+		T *tmp=new T[1000000]; int n=0;
+		while(1) {
+			is >> tmp[n++]; c=is.get(); assert(c==' ');
+			if( is.peek()==']' ) { is.get(); break; }
+		}
+		p._n=n; p._val=new T[n]; memcpy(p._val,tmp,n*sizeof(T)); delete [] tmp;
+	} else {
+		p._n=1; p._val=new T[1]; is >> *p._val;
+	}
+}
+
+template<> inline void		pWriteToTxt<char>( const Primitive<char> &p, ostream &os )
+{
+	os << '"' << p._val << '"';
+}
+
+template<> inline void		pReadFrmTxt<char>( Primitive<char> &p, istream &is )
+{
+	char c=is.get(); assert(c=='"'); int n;
+	char *tmp=new char[1000000]; is.get(tmp,1000000);
+	p._n=n=strlen(tmp); assert(tmp[n-1]=='"'); tmp[n-1]='\0';
+	p._val=new char[n]; memcpy(p._val,tmp,n*sizeof(char));
+	delete [] tmp;
+}
+
+template<> inline void		pWriteToTxt<uchar>( const Primitive<uchar> &p, ostream &os )
+{
+	Primitive<int> pInt; int n=p._n;
+	pInt._n=n; pInt._val=new int[n];
+	for(int i=0; i<n; i++) pInt._val[i]=(int) p._val[i]; 	
+	pInt.writeToTxt(os);
+}
+
+template<> inline void		pReadFrmTxt<uchar>( Primitive<uchar> &p, istream &is )
+{
+	Primitive<int> pInt; pInt.readFrmTxt(is); int n=pInt._n;
+	p._n=n; p._val=new uchar[n];
+	for(int i=0; i<n; i++) p._val[i]=(uchar) pInt._val[i]; 	
+}
 
 template<class T> void		Primitive<T>::save( ObjImg &oi, const char *name )
 {
@@ -131,39 +188,6 @@ template<class T> void		Primitive<T>::load( const ObjImg &oi, const char *name )
 	size_t nBytes=oi._elBytes; _n=oi._elNum;
 	if(_owner ) _val=new T[nBytes*_n]; else assert(_val!=NULL);
 	memcpy(_val,oi._el,nBytes*_n);
-}
-
-template<class T> void		Primitive<T>::writeToTxt( ostream &os ) const
-{
-	if( strcmp("char",getCname())==0 )
-		os<<'"' << _val << '"';
-	else if( _n==1 ) 
-		os<<*_val;
-	else {
-		os << "[ " ; for(int i=0; i<_n; i++) os << _val[i] << " "; os << "]"; 
-	}
-}
-
-template<class T> void		Primitive<T>::readFrmTxt( istream &is )
-{	
-	assert(_owner); clear();
-	char c=is.get(); assert(c==' ');
-	if( strcmp("char",getCname())==0 ) {
-		c=is.get(); assert(c=='"');
-		char *tmp=new char[1000000]; is.get(tmp,1000000);
-		_n=strlen(tmp); assert(tmp[_n-1]=='"'); tmp[_n-1]='\0';
-		_val=new T[_n]; memcpy(_val,tmp,_n*sizeof(T)); delete [] tmp;
-	} else if( is.peek()=='[' ) {
-		c=is.get(); assert(c=='[');
-		T *tmp=new T[1000000]; _n=0;
-		while(1) {
-			is >> tmp[_n++]; c=is.get(); assert(c==' ');
-			if( is.peek()==']' ) { is.get(); break; }
-		}
-		_val=new T[_n]; memcpy(_val,tmp,_n*sizeof(T)); delete [] tmp;
-	} else {
-		_val=new T[1]; _n=1; is >> *_val;
-	}
 }
 
 #endif

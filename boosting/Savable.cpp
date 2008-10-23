@@ -18,9 +18,11 @@ Savable*		Savable::create( const char *cname )
 	CREATE_PRIMITIVE(double);
 	CREATE_PRIMITIVE(bool);
 	CREATE_PRIMITIVE(char);
+	CREATE_PRIMITIVE(unsigned char);
 	CREATE(Matrix<int>);
 	CREATE(Matrix<float>);
 	CREATE(Matrix<double>);
+	CREATE(Matrix<unsigned char>);
 	abortError( "unknown type", cname, __LINE__, __FILE__ );
 	return NULL;
 
@@ -45,6 +47,7 @@ Savable*		Savable::clone( Savable *obj )
 	CLONE1(Matrix<int>);
 	CLONE1(Matrix<float>);
 	CLONE1(Matrix<double>);
+	CLONE1(Matrix<unsigned char>);
 	abortError( "unknown type", cname, __LINE__, __FILE__ );
 	return NULL;
 
@@ -87,9 +90,12 @@ void			ObjImg::check( int minL, int maxL, const char *name, const char *type ) c
 		abortError( "Too many children:", __LINE__, __FILE__ );
 }
 
-void			ObjImg::writeToStrm( ofstream &os, bool binary, int indent ) {
+void			ObjImg::writeToStrm( ofstream &os, bool binary, int indent ) 
+{
+	char cname[32]; strcpy(cname,_cname);
+	for( int i=0; i<32; i++ ) if( cname[i]==' ' ) cname[i]='-';
 	if( binary ) {
-		os << _cname << ' ' << _name << ' ';
+		os << cname << ' ' << _name << ' ';
 		os.write((char*)&_elNum,sizeof(_elNum));
 		if(_elNum>0) {
 			os.write((char*)&_elBytes,sizeof(_elBytes));
@@ -100,12 +106,12 @@ void			ObjImg::writeToStrm( ofstream &os, bool binary, int indent ) {
 		}
 	} else {
 		for(int i=0; i<indent*2; i++) os.put(' ');
-		os << setw(16) << left << _cname;
+		os << setw(16) << left << cname << " ";
 		Savable *s = Savable::create(_cname);
 		if( s->customToTxt() ) {
 			os << setw(20) << left << _name << "= ";
 			s->load(*this,_name); s->writeToTxt(os); os << endl;
-		} else {		
+		} else {
 			int n=_objImgs.size(); char temp[20];
 			sprintf(temp,"%s ( %i ):",_name,n); os << temp << endl;
 			for( int i=0; i<n; i++ ) _objImgs[i].writeToStrm(os,binary,indent+1);		
@@ -116,9 +122,10 @@ void			ObjImg::writeToStrm( ofstream &os, bool binary, int indent ) {
 
 void			ObjImg::readFrmStrm( ifstream &is, bool binary )
 {
-	clear();
+	clear(); is >> _cname >> _name;
+	for( int i=0; i<32; i++ ) if( _cname[i]=='-' ) _cname[i]=' ';
 	if( binary ) {
-		is >> _cname >> _name; is.get();
+		is.get();
 		is.read((char*)&_elNum,sizeof(_elNum));
 		if(_elNum>0) {
 			is.read((char*)&_elBytes,sizeof(_elBytes));
@@ -130,9 +137,9 @@ void			ObjImg::readFrmStrm( ifstream &is, bool binary )
 			for( int i=0; i<n; i++ ) _objImgs[i].readFrmStrm(is,binary);
 		}
 	} else {
-		char temp[32];
-		is >> _cname >> _name >> temp;
+		char temp[32]; is >> temp;
 		if( strcmp(temp,"=")==0 ) {
+			char c=is.get(); assert(c==' ');
 			Savable *s = Savable::create(_cname);
 			s->readFrmTxt(is); s->save(*this,_name);
 			delete s;
