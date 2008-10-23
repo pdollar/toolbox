@@ -18,12 +18,13 @@ Savable*		Savable::create( const char *cname )
 	CREATE_PRIMITIVE(bool);
 	CREATE_PRIMITIVE(char);
 	CREATE_PRIMITIVE(unsigned char);
+	CREATE(VecSavable);
 	CREATE(Matrix<int>);
 	CREATE(Matrix<float>);
 	CREATE(Matrix<double>);
 	CREATE(Matrix<unsigned char>);
 	CREATE(Rect);
-	CREATE(Haar);
+	CREATE(Haar);	
 	abortError( "unknown type", cname, __LINE__, __FILE__ );
 	return NULL;
 
@@ -31,10 +32,10 @@ Savable*		Savable::create( const char *cname )
 	#undef CREATE
 }
 
-Savable*		Savable::create( ObjImg &oi )
+Savable*		Savable::create( const ObjImg &oi, const char *name )
 {
 	Savable *s = create(oi.getCname());
-	s->load( oi ); return s;
+	s->load( oi, name ); return s;
 }
 
 Savable*		Savable::clone( Savable *obj )
@@ -169,4 +170,21 @@ bool			ObjImg::loadFrmFile( const char *fName, ObjImg &oi, bool binary )
 	if(is.fail()) { abortError( "load failed:", fName, __LINE__, __FILE__ ); return 0; }
 	oi.readFrmStrm(is,binary);
 	is.close(); return 1;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+void			VecSavable::save( ObjImg &oi, const char *name )
+{
+	int n=_v.size();
+	oi.init(name,getCname(),n);
+	for( int i=0; i<n; i++ )		
+		_v[i]->save(oi._objImgs[i],"[VEC-ELEMENT]");
+}
+
+void			VecSavable::load( const ObjImg &oi, const char *name )
+{
+	int n = oi._objImgs.size();
+	oi.check(n,n,name,getCname());
+	for( int i=0; i<n; i++ )
+		_v.push_back( Savable::create(oi._objImgs[i],"[VEC-ELEMENT]") );
 }

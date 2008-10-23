@@ -33,7 +33,7 @@ void testToStrm()
 	//char *x="whatev yo"; Primitive<char> X(x,strlen(x)+1);
 	//Matrixd X(5,5,0); for(int i=0; i<5; i++) X(i,i)=i;
 	//Rect X(0,0,10,10); X._wt=.3f;
-	Haar X; X.createSyst(0,25,25,10,10,0,0); X.finalize();
+	Haar X; X.createSyst(1,25,25,10,10,0,0); X.finalize();
 
 	// save (inspect w debugger)
 	ObjImg ox, oy; X.save( ox, "x" ); bool binary=0;

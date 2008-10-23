@@ -4,7 +4,7 @@
 #include "Public.h"
 #include <iomanip>
 
-class ObjImg; 
+class ObjImg;
 
 typedef vector< ObjImg > VecObjImg;
 
@@ -16,7 +16,7 @@ class Savable
 public:
 	virtual					~Savable() {};
 
-	virtual const char*		getCname() const = 0 ;
+	virtual const char*		getCname() const = 0;
 
 	virtual void			save( ObjImg &oi, const char *name ) = 0;
 
@@ -34,7 +34,7 @@ protected:
 public:
 	static Savable*			create( const char *cname );
 
-	static Savable*			create( ObjImg &oi );
+	static Savable*			create( const ObjImg &oi, const char *name=NULL );
 
 	static Savable*			clone( Savable *obj );
 };
@@ -192,5 +192,19 @@ template<class T> void		Primitive<T>::load( const ObjImg &oi, const char *name )
 	if(_owner ) _val=new T[nBytes*_n]; else assert(_val!=NULL);
 	memcpy(_val,oi._el,nBytes*_n);
 }
+
+/////////////////////////////////////////////////////////////////////////////////
+class VecSavable : Savable
+{
+public:
+	virtual const char*		getCname() const {return "VecSavable"; };
+
+	virtual void			save( ObjImg &oi, const char *name );
+
+	virtual void			load( const ObjImg &oi, const char *name=NULL );
+
+public:
+	vector< Savable* >		_v;
+};
 
 #endif
