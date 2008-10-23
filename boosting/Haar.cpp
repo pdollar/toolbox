@@ -41,12 +41,16 @@ void		Rect::load( const ObjImg &oi, const char *name )
 
 void		Rect::writeToTxt( ostream &os ) const 
 {
-	os << _lf << " " << _rt << " " << _tp << " " << _bt << " " << setprecision(10) << _wt;
+	os << "< " << _lf << " " << _rt << " " << _tp << " " << _bt 
+		<< " " << setprecision(10) << _wt << " >";
 }
 
 void		Rect::readFrmTxt( istream &is ) 
 { 
+	char tmp[128]; 
+	is>>tmp; assert(!strcmp(tmp,"<"));
 	is >> _lf >> _rt >> _tp >> _bt >> _wt;
+	is>>tmp; assert(!strcmp(tmp,">"));
 }
 
 bool		Rect::isValid()	const
@@ -66,7 +70,7 @@ void		Rect::shift(int jshift, int ishift)
 
 void		Rect::shift( int lfshift, int rtshift, int tpshift, int btshift )
 {
-	_lf += lfshift;  _rt += rtshift;  _tp += tpshift;  _bt += btshift;
+	_lf += lfshift; _rt += rtshift; _tp += tpshift; _bt += btshift;
 }
 
 void		Rect::getUnion( Rect &uRect, const VecRect &rects )
@@ -126,25 +130,21 @@ bool		operator<  (const Rect &rect1, const Rect &rect2)
 /////////////////////////////////////////////////////////////////////////////////
 void		Haar::save(  ObjImg &oi, const char *name )
 {
-	oi.init(name,getCname(),3+_nRects);
-	Primitive<int> iwidth(&_iwidth), iheight(&_iheight), nRects(&_nRects);
-	iwidth.save(oi._objImgs[0],"lf");
-	iheight.save(oi._objImgs[1],"rt");
-	nRects.save(oi._objImgs[2],"tp");
+	oi.init(name,getCname(),1+_nRects);
+	Primitive<int> nRects(&_nRects);
+	nRects.save(oi._objImgs[0],"nRects");
 	for( int i=0; i<_nRects; i++ )
-		_rects[i].save(oi._objImgs[3+i],"Rect");
+		_rects[i].save(oi._objImgs[1+i],"rect");
 }
 
 void		Haar::load( const ObjImg &oi, const char *name )
 {
-	oi.check(4,INT_MAX,name,getCname());
-	Primitive<int> iwidth(&_iwidth), iheight(&_iheight), nRects(&_nRects);
-	iwidth.load(oi._objImgs[0],"lf");
-	iheight.load(oi._objImgs[1],"rt");
-	nRects.load(oi._objImgs[2],"tp");
+	oi.check(2,INT_MAX,name,getCname());
+	Primitive<int> nRects(&_nRects);
+	nRects.load(oi._objImgs[0],"nRects");
 	createRects(_nRects);
 	for( int i=0; i<_nRects; i++ )
-		_rects[i].load(oi._objImgs[3+i],"Rect");
+		_rects[i].load(oi._objImgs[1+i],"rect");
 	bool valid=finalize(); assert(valid);
 }
 
@@ -155,10 +155,7 @@ bool		operator==(	const Haar &h1, const Haar &h2)
 	for( int i=0; i<h1._nRects; i++ )
 		if( !(h1._rects[i]==h2._rects[i]) )
 			return false;
-	if (h1._iwidth!=h2._iwidth || h1._iheight!=h2._iheight )
-		return false;
-	else
-		return true;
+	return true;
 }
 
 int			compare(	const Haar &h1, const Haar &h2)
@@ -167,23 +164,11 @@ int			compare(	const Haar &h1, const Haar &h2)
 		return -1;
 	else if( h1._nRects > h2._nRects ) 
 		return 1;
-
 	for( int i=0; i<h1._nRects; i++ ) {
 		int comp = compare(h1._rects[i],h2._rects[i]);
 		if( comp!=0 ) return comp;
 	}
-
-	if(      h1._iwidth < h2._iwidth )
-		return -1;
-	else if( h1._iwidth > h2._iwidth )
-		return 1;
-	else if( h1._iheight < h2._iheight )
-		return -1;
-	else if( h1._iheight > h2._iheight )
-		return 1;
-	else
-		return 0;
-
+	return 0;
 }
 
 bool		operator<(	const Haar &h1, const Haar &h2)
@@ -191,12 +176,9 @@ bool		operator<(	const Haar &h1, const Haar &h2)
 	return( compare(h1,h2)<0 );
 }
 
-/////////////////////////////////////////////////////////////////////////////////
 void		Haar::createSyst( int type, int width, int height, int fw, int fh, int tp, int lf, bool flip )
 {
 	assert( fw>=1 && fh>=1 );
-	_iwidth = width;
-	_iheight = height;
 	int fw2, fh2, fw3, fh3, fw4;
 
 	// check if big enough
@@ -373,8 +355,7 @@ bool		Haar::finalize()
 
 	Rect::getUnion(_boundRect,_rects);
 
-	bool valid = (_boundRect._lf>=0 && _boundRect._rt<_iwidth &&
-				  _boundRect._tp>=0 && _boundRect._bt<_iheight );
+	bool valid = (_boundRect._lf>=0 && _boundRect._tp>=0);
 	for( int i=0; i<_nRects; i++ )
 		valid = valid && _rects[i].isValid();
 	return valid;
@@ -382,8 +363,7 @@ bool		Haar::finalize()
 
 void		Haar::createRects( int n )
 {
-	_nRects = n; 
-	_rects.resize(_nRects);
+	_nRects=n; _rects.resize(_nRects);
 }
 
 int			Haar::minWidth( int type )
@@ -424,7 +404,6 @@ int			Haar::minHeight( int type )
 	}
 }
 
-/////////////////////////////////////////////////////////////////////////////////
 string		Haar::getDescr() const
 {
 	char descr[64];

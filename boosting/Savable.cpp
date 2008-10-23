@@ -23,6 +23,7 @@ Savable*		Savable::create( const char *cname )
 	CREATE(Matrix<double>);
 	CREATE(Matrix<unsigned char>);
 	CREATE(Rect);
+	CREATE(Haar);
 	abortError( "unknown type", cname, __LINE__, __FILE__ );
 	return NULL;
 

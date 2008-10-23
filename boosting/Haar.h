@@ -40,6 +40,7 @@ public:
 					Rect();
 					Rect( int lf, int rt, int tp, int bt );
 
+	// implement Savable
 	virtual const char* getCname() const { return "Rect"; };
 	virtual void	save( ObjImg &oi, const char *name );
 	virtual void	load( const ObjImg &oi, const char *name=NULL );
@@ -47,26 +48,24 @@ public:
 	virtual void	writeToTxt( ostream &os ) const;
 	virtual void	readFrmTxt( istream &is );
 
+	// get/set basic properties
 	int				area()		const {return (_rt-_lf+1)*(_bt-_tp+1); };
 	int				height()	const {return _bt-_tp+1;};
 	int				width()		const {return _rt-_lf+1;};
 	bool			isValid()	const;
-
-	void			shift( const int jshift, const int ishift );
+	void			shift( int jshift, int ishift );
 	void			shift( int lfshift, int rtshift, int tpshift, int btshift );
-	void			setPos( const int lf, int rt, int tp, int bt );
+	void			setPos( int lf, int rt, int tp, int bt );
 
 	static void		getUnion( Rect &uRect, const VecRect &rects );
 
+	// comparison (for sort, ect)
 	friend int		compare(	const Rect &rect1, const Rect &rect2);
 	friend bool		operator==(	const Rect &rect1, const Rect &rect2);
 	friend bool		operator<(	const Rect &rect1, const Rect &rect2);
 
 public:
-	int				_lf;
-	int				_rt;
-	int				_tp;
-	int				_bt;
+	int				_lf, _rt, _tp, _bt;
 	float			_wt;
 };
 
@@ -129,9 +128,10 @@ public: // prms to limit haar positions to central region
 };
 
 /////////////////////////////////////////////////////////////////////////////////
-class Haar
+class Haar : Savable
 {
 public:
+	// implement Savable
 	virtual const char* getCname() const { return "Haar"; };
 	virtual void	save( ObjImg &oi, const char *name );
 	virtual void	load( const ObjImg &oi, const char *name=NULL );
@@ -149,8 +149,6 @@ public:
 	float			areaNeg() const		{ return _areaNeg; }
 	int				getTp()	  const		{ return _boundRect._tp; };
 	int				getLf()   const		{ return _boundRect._lf; };
-	int&			iwidth()			{ return _iwidth; };
-	int&			iheight()			{ return _iheight; };
 	int				getNumRects() const { return _nRects; };
 	VecRect&		getRects()			{ return _rects; };
 	string			getDescr() const;
@@ -160,7 +158,7 @@ public:
 	friend bool		operator==(	const Haar &haar1, const Haar &haar2);
 	friend bool		operator<(	const Haar &haar1, const Haar &haar2);
 
-	// visualization
+	// convolve w entire image
 	void			convHaar( Matrixf &resp, IntegralImage &II, int moment, bool normalize );
 	void			convHaarHist( Matrixf &resp, IntegralImage *IIs, int nImages, bool normalize );
 
@@ -181,8 +179,6 @@ protected:
 	static int		minHeight( int type );
 
 protected: // define Haar
-	int				_iwidth;
-	int				_iheight;
 	int				_nRects;
 	VecRect			_rects;
 
