@@ -26,8 +26,8 @@ int main(int argc, const char* argv[])
 void testToStrm()
 {
 	// data - uncomment one of the following
-	//int x=87519651; Primitive<int> X(&x); 
-	//uchar x=13; Primitive<uchar> X(&x); 
+	//int x=87519651; Primitive<int> X(&x);
+	//uchar x=13; Primitive<uchar> X(&x);
 	//double x=1.15415987557; Primitive<double> X(&x);
 	//float x[2]={59.5,7500}; Primitive<float> X(x,2);
 	//char *x="whatev yo"; Primitive<char> X(x,strlen(x)+1);
@@ -38,7 +38,7 @@ void testToStrm()
 	// save (inspect w debugger)
 	ObjImg ox, oy; X.save( ox, "x" ); bool binary=0;
 	char *fName="D:/code/toolbox/boosting/temp.txt";
-	ox.saveToFile( fName, binary );	
+	ox.saveToFile( fName, binary );
 
 	// load (inspect w debugger)
 	ObjImg::loadFrmFile( fName, oy, binary );

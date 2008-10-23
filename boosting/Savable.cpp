@@ -172,6 +172,24 @@ bool			ObjImg::loadFrmFile( const char *fName, ObjImg &oi, bool binary )
 	is.close(); return 1;
 }
 
+#ifdef MATLAB_MEX_FILE
+mxArray*		ObjImg::toMxArray()
+{
+	mxArray *M; Savable *s=Savable::create(_cname);
+	if( s->customMxArray() ) {
+		s->load(*this,_name);
+		M = s->toMxArray();
+	} else {
+		int n=_objImgs.size(); char** names = new char*[n];
+		for( int i=0; i<n; i++ ) names[i]=_objImgs[i]._name;
+		M = mxCreateStructMatrix(1, 1, n, (const char**) names);
+		for( int i=0; i<n; i++ )
+			mxSetFieldByNumber( M, 0, i, _objImgs[i].toMxArray() );
+		delete [] names;
+	}
+	delete s; return M;
+}
+#endif
 /////////////////////////////////////////////////////////////////////////////////
 void			VecSavable::save( ObjImg &oi, const char *name )
 {

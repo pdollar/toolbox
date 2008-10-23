@@ -1,10 +1,32 @@
+#include "mex.h"
+
+#include "Savable.h"
 #include "Public.h"
 #include "Matrix.h"
 #include "IntegralImage.h"
 #include "Haar.h"
 
-#include "mex.h"
+void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
+	// get / check inputs
+	if(nrhs != 0) mexErrMsgTxt( "Only 0 input args allowed." );
+	if(nlhs > 1) mexErrMsgTxt( "Only 1 output args allowed." );
 
+	// data - uncomment one of the following
+	//int x=87519651; Primitive<int> X(&x);
+	//uchar x=13; Primitive<uchar> X(&x);
+	//double x=1.15415987557; Primitive<double> X(&x);
+	//float x[2]={59.5,7500}; Primitive<float> X(x,2);
+	//char *x="whatev yo"; Primitive<char> X(x,strlen(x)+1);
+	//Matrixd X(5,5,0); for(int i=0; i<5; i++) X(i,i)=i;
+	//Rect X(0,0,10,10); X._wt=.3f;
+	Haar X; X.createSyst(1,25,25,10,10,0,0); X.finalize();
+
+	// save, send to matlab
+	ObjImg ox; X.save( ox, "x" );
+	plhs[0] = ox.toMxArray();
+}
+
+/*
 template<class T> void	convert( const mxArray *A, Matrix<T> &B )
 {
 	int m=mxGetM(A), n=mxGetN(A); 
@@ -36,15 +58,11 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
 	Matrixf resp; h.convHaar( resp, II, 1, false );
 
 	// test
-	//Rect a(0,0,4,4), b;
-	//SavObj*	s = a.save("Rect");
-	//b.load( *s );
-	//mexPrintf((a==b) ? "YAY" : "NAY");
-	Haar b;
-	SavObj*	s = h.save("Haar");
-	b.load( *s );
-	mexPrintf((h==b) ? "YAY" : "NAY");
+	ObjImg oi; h.save( oi, "haar" );
+	Haar b;	b.load( oi, "haar" );
+	mexPrintf((h==b) ? "YAY\n" : "NAY\n");
 
 	// return
 	convert(resp,plhs[0]);
 }
+*/

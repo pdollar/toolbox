@@ -4,6 +4,14 @@
 #include "Public.h"
 #include <iomanip>
 
+//#ifndef MATLAB_MEX_FILE
+//#define MATLAB_MEX_FILE
+//#endif
+
+#ifdef MATLAB_MEX_FILE
+#include "mex.h"
+#endif
+
 class ObjImg;
 
 typedef vector< ObjImg > VecObjImg;
@@ -30,6 +38,13 @@ protected:
 	virtual void			readFrmTxt( istream &is ) {};
 
 	friend class			ObjImg;
+
+#ifdef MATLAB_MEX_FILE
+public:
+	virtual bool			customMxArray() const { return false; }
+
+	virtual mxArray*		toMxArray() { return NULL; };
+#endif
 
 public:
 	static Savable*			create( const char *cname );
@@ -58,6 +73,11 @@ public:
 	bool					saveToFile( const char *fName, bool binary=false );
 
 	static bool				loadFrmFile( const char *fName, ObjImg &oi, bool binary=false );
+
+#ifdef MATLAB_MEX_FILE
+public:	
+	mxArray*				toMxArray();
+#endif
 
 private:
 	void					writeToStrm( ofstream &os, bool binary, int indent=0 );
@@ -107,16 +127,23 @@ protected:
 
 	virtual void			readFrmTxt( istream &is ) { assert(_owner); clear(); pReadFrmTxt(*this,is); }
 
+	template<class T1> friend void pReadFrmTxt( Primitive<T1> &p, istream &is );
+
+	template<class T1> friend void pWriteToTxt( const Primitive<T1> &p, ostream &os );
+
+#ifdef MATLAB_MEX_FILE
+protected:
+	virtual bool			customMxArray() const { return true; }
+
+	virtual mxArray*		toMxArray();
+#endif
+
 private:
 	T						*_val;
 
 	int						_n;
 
 	const bool				_owner;
-
-	template<class T1> friend void pReadFrmTxt( Primitive<T1> &p, istream &is );
-
-	template<class T1> friend void pWriteToTxt( const Primitive<T1> &p, ostream &os );
 };
 
 template<class T> void		pWriteToTxt( const Primitive<T> &p, ostream &os )
@@ -192,8 +219,32 @@ template<class T> void		Primitive<T>::load( const ObjImg &oi, const char *name )
 	memcpy(_val,oi._el,nBytes*_n);
 }
 
+#ifdef MATLAB_MEX_FILE
+template<class T> mxArray*	Primitive<T>::toMxArray()
+{
+	mxClassID id; const char *cname = getCname();
+	if(!strcmp(cname,"int")) id=mxINT32_CLASS;
+	else if(!strcmp(cname,"long")) id=mxINT64_CLASS;
+	else if(!strcmp(cname,"float")) id=mxSINGLE_CLASS;
+	else if(!strcmp(cname,"double")) id=mxDOUBLE_CLASS;
+	else if(!strcmp(cname,"bool")) id=mxLOGICAL_CLASS;
+	else if(!strcmp(cname,"char")) id=mxUINT8_CLASS;
+	else if(!strcmp(cname,"unsigned char")) id=mxINT8_CLASS;
+	else assert(false);
+
+	if(!strcmp(cname,"char"))
+		return mxCreateCharMatrixFromStrings(1,(const char **) &_val );
+	else {
+		mxArray *M = mxCreateNumericMatrix(1,_n,id,mxREAL);
+		void *p = mxGetData(M); memcpy(p,_val,sizeof(T)*_n);
+		return M;
+	}
+}
+
+#endif
+
 /////////////////////////////////////////////////////////////////////////////////
-class VecSavable : Savable
+class VecSavable : public Savable
 {
 public:
 	virtual const char*		getCname() const {return "VecSavable"; };
