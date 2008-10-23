@@ -178,7 +178,7 @@ void			VecSavable::save( ObjImg &oi, const char *name )
 	int n=_v.size();
 	oi.init(name,getCname(),n);
 	for( int i=0; i<n; i++ )		
-		_v[i]->save(oi._objImgs[i],"[VEC-ELEMENT]");
+		_v[i]->save(oi._objImgs[i],"[vec-element]");
 }
 
 void			VecSavable::load( const ObjImg &oi, const char *name )
@@ -186,5 +186,5 @@ void			VecSavable::load( const ObjImg &oi, const char *name )
 	int n = oi._objImgs.size();
 	oi.check(n,n,name,getCname());
 	for( int i=0; i<n; i++ )
-		_v.push_back( Savable::create(oi._objImgs[i],"[VEC-ELEMENT]") );
+		_v.push_back( Savable::create(oi._objImgs[i],"[vec-element]") );
 }
