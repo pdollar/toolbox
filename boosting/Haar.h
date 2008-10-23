@@ -34,7 +34,7 @@ typedef vector< Rect > VecRect;
 //Haar::convHaars( "C:/code/pbt/haar", haars, II, 1, false );
 
 /////////////////////////////////////////////////////////////////////////////////
-class Rect : Savable
+class Rect : public Savable
 {
 public:
 					Rect();
@@ -128,7 +128,7 @@ public: // prms to limit haar positions to central region
 };
 
 /////////////////////////////////////////////////////////////////////////////////
-class Haar : Savable
+class Haar : public Savable
 {
 public:
 	// implement Savable
