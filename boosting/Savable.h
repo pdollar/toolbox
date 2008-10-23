@@ -2,6 +2,7 @@
 #define SAVABLE_H
 
 #include "Public.h"
+#include <iomanip>
 
 class ObjImg; 
 
@@ -17,11 +18,11 @@ public:
 
 	virtual const char*		getCname() const = 0 ;
 
-protected:
 	virtual void			save( ObjImg &oi, const char *name ) = 0;
 
 	virtual void			load( const ObjImg &oi, const char *name=NULL ) = 0;
 
+protected:
 	virtual bool			customToTxt() const { return false; }
 
 	virtual void			writeToTxt( ostream &os ) const {};
@@ -122,9 +123,11 @@ private:
 template<class T> void		pWriteToTxt( const Primitive<T> &p, ostream &os )
 {
 	if( p._n==1 )
-		os << *p._val;
+		os << setprecision(10) << *p._val;
 	else {
-		os << "[ " ; for(int i=0; i<p._n; i++) os << p._val[i] << " "; os << "]";
+		os << "[ " ;
+		for(int i=0; i<p._n; i++) os << setprecision(10) << p._val[i] << " ";
+		os << "]";
 	}
 }
 

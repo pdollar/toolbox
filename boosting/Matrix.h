@@ -13,7 +13,6 @@ typedef Matrix< uchar >	Matrixu;
 template<class T> class Matrix : public Savable
 {
 public:
-
 	// constructors, destructor and assignment
 	Matrix();
 	Matrix( int rows, int cols );
@@ -24,13 +23,7 @@ public:
 	Matrix<T>&		operator= (const Matrix<T> &x );
 	Matrix<T>&		operator= (const vector<T> &x );
 
-	// write/read to/from stream/text
-	virtual const char* getCname() const;
-	virtual void	save( ObjImg &oi, const char *name );
-	virtual void	load( const ObjImg &oi, const char *name=NULL );
-	bool			writeToTxt( const char* file, char* delim="," );
-	bool			readFrmTxt( const char* file, char* delim="," ); 
-
+public:
 	// dimensions / access (note: [1xn] vectors more eff than [nx1])
 	bool			setDims( const int rows, const int cols );
 	bool			setDims( const int rows, const int cols, const T value );
@@ -45,7 +38,8 @@ public:
 	T&				operator() (const int index ); 
 	T&				operator() (const int row, const int col ) const;
 	T&				operator() (const int row, const int col );
-		
+
+public:
 	// basic matrix operations
 	Matrix&			zero();									// set this matrix to be zero matrix
 	Matrix&			setVal( T value );						// sets every element in matrix to have value
@@ -64,6 +58,15 @@ public:
 	int				maxi() const;							// max index
 	int				mini() const;							// min index
 
+public:
+	// write/read to/from stream/text
+	virtual const char* getCname() const;
+	virtual void	save( ObjImg &oi, const char *name );
+	virtual void	load( const ObjImg &oi, const char *name=NULL );
+	bool			writeToTxt( const char* file, char* delim="," );
+	bool			readFrmTxt( const char* file, char* delim="," ); 
+
+public:
 	// pointwise operators (defined with a precompiler script "DOP")
 	// For example division is pointwise: C=A/B means C(i)=A(i)/B(i)
 	// "*" - ONLY multiplcation of two matricies is NOT pointwise - it is standard matrix multiplication
@@ -89,6 +92,29 @@ protected:
 	T		**_dataIndex;
 	int		_mRows, _nCols;
 };
+
+///////////////////////////////////////////////////////////////////////////////
+template<class T1, class T2> void copy(Matrix<T1>& Mdest,const Matrix<T2>& Msrc)
+{
+	Mdest.setDims(Msrc.rows(), Msrc.cols());
+	for(int i = 0; i < Msrc.rows(); i++)
+		for(int j = 0; j < Msrc.cols(); j++)
+			Mdest(i, j) = (T1)(Msrc(i, j));
+}
+
+template<class T> ostream& operator<<(ostream& os, const Matrix<T>& x)
+{ //display matrix
+	os << "[";
+	for (int j=0; j<x.rows(); j++) {
+		for (int i=0; i<x.cols(); i++) {
+			os << x(j,i) << " ";
+		}
+		if( j!=x.rows()-1 )
+			os << "\n";
+	}
+	os << "]";
+	return os;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 template<class T>				Matrix<T>::Matrix()
@@ -512,29 +538,6 @@ template<class T> int			Matrix<T>::maxi() const
 			}
 	}
 	return ind;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-template<class T1, class T2> void copy(Matrix<T1>& Mdest,const Matrix<T2>& Msrc)
-{
-	Mdest.setDims(Msrc.rows(), Msrc.cols());
-	for(int i = 0; i < Msrc.rows(); i++)
-		for(int j = 0; j < Msrc.cols(); j++)
-			Mdest(i, j) = (T1)(Msrc(i, j));
-}
-
-template<class T> ostream&	operator<<(ostream& os, const Matrix<T>& x)
-{ //display matrix
-	os << "[";
-	for (int j=0; j<x.rows(); j++) {
-		for (int i=0; i<x.cols(); i++) {
-			os << x(j,i) << " ";
-		}
-		if( j!=x.rows()-1 )
-			os << "\n";
-	}
-	os << "]";
-	return os;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
