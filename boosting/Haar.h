@@ -1,5 +1,5 @@
-#ifndef _HAAR_FEATURES_H_
-#define _HAAR_FEATURES_H_
+#ifndef _HAAR_H_
+#define _HAAR_H_
 
 #include "Public.h"
 #include "Savable.h"
@@ -34,7 +34,7 @@ typedef vector< Rect > VecRect;
 //Haar::convHaars( "C:/code/pbt/haar", haars, II, 1, false );
 
 /////////////////////////////////////////////////////////////////////////////////
-class Rect
+class Rect : Savable
 {
 public:
 					Rect();
@@ -43,6 +43,9 @@ public:
 	virtual const char* getCname() const { return "Rect"; };
 	virtual void	save( ObjImg &oi, const char *name );
 	virtual void	load( const ObjImg &oi, const char *name=NULL );
+	virtual bool	customToTxt() const { return true; }
+	virtual void	writeToTxt( ostream &os ) const;
+	virtual void	readFrmTxt( istream &is );
 
 	int				area()		const {return (_rt-_lf+1)*(_bt-_tp+1); };
 	int				height()	const {return _bt-_tp+1;};

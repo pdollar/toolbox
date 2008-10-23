@@ -1,6 +1,7 @@
 #include "Savable.h"
 
 #include "Matrix.h"
+#include "Haar.h"
 
 /////////////////////////////////////////////////////////////////////////////////
 Savable*		Savable::create( const char *cname ) 
@@ -21,6 +22,7 @@ Savable*		Savable::create( const char *cname )
 	CREATE(Matrix<float>);
 	CREATE(Matrix<double>);
 	CREATE(Matrix<unsigned char>);
+	CREATE(Rect);
 	abortError( "unknown type", cname, __LINE__, __FILE__ );
 	return NULL;
 

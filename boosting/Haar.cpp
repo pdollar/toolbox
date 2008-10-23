@@ -39,6 +39,16 @@ void		Rect::load( const ObjImg &oi, const char *name )
 	wt.load(oi._objImgs[4],"wt");
 }
 
+void		Rect::writeToTxt( ostream &os ) const 
+{
+	os << _lf << " " << _rt << " " << _tp << " " << _bt << " " << setprecision(10) << _wt;
+}
+
+void		Rect::readFrmTxt( istream &is ) 
+{ 
+	is >> _lf >> _rt >> _tp >> _bt >> _wt;
+}
+
 bool		Rect::isValid()	const
 {
 	return ( _lf<=_rt && _tp<=_bt );

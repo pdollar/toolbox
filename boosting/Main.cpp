@@ -4,8 +4,8 @@
 #include "Public.h"
 #include "Savable.h"
 #include "Matrix.h"
-//#include "IntegralImage.h"
-//#include "Haar.h"
+#include "IntegralImage.h"
+#include "Haar.h"
 
 void testToStrm();
 
@@ -31,7 +31,8 @@ void testToStrm()
 	//double x=1.15415987557; Primitive<double> X(&x);
 	//float x[2]={59.5,7500}; Primitive<float> X(x,2);
 	//char *x="whatev yo"; Primitive<char> X(x,strlen(x)+1);
-	Matrixd X(5,5,0); for(int i=0; i<5; i++) X(i,i)=i;
+	//Matrixd X(5,5,0); for(int i=0; i<5; i++) X(i,i)=i;
+	Rect X(0,0,10,10); X._wt=.3f;
 
 	// save (inspect w debugger)
 	ObjImg ox, oy; X.save( ox, "x" ); bool binary=0;
