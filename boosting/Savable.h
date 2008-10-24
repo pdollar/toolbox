@@ -7,6 +7,7 @@
 #ifdef MATLAB_MEX_FILE
 	#include "mex.h"
 #else
+	//#define MATLAB_MEX_FILE
 	typedef void mxArray;
 #endif
 
@@ -39,6 +40,8 @@ public:
 
 	virtual mxArray*		toMxArray();
 
+	virtual void			fromMxArray( const mxArray *M, const char *name ) { assert(false); };
+		
 public:
 	static Savable*			create( const char *cname );
 
@@ -68,6 +71,8 @@ public:
 	static bool				loadFrmFile( const char *fName, ObjImg &oi, bool binary=false );
 
 	mxArray*				toMxArray();
+
+	void					fromMxArray( const mxArray *M, const char *name );
 
 private:
 	void					writeToStrm( ofstream &os, bool binary, int indent=0 );
@@ -125,6 +130,8 @@ protected:
 	virtual bool			customMxArray() const { return true; }
 
 	virtual mxArray*		toMxArray();
+
+	virtual void			fromMxArray( const mxArray *M, const char *name );
 
 private:
 	T						*_val;
@@ -209,9 +216,7 @@ template<class T> void		Primitive<T>::load( const ObjImg &oi, const char *name )
 
 template<class T> mxArray*	Primitive<T>::toMxArray()
 {
-	#ifndef MATLAB_MEX_FILE
-		return NULL;
-	#else
+	#ifdef MATLAB_MEX_FILE
 		mxClassID id; const char *cname = getCname();
 		if(!strcmp(cname,"int")) id=mxINT32_CLASS;
 		else if(!strcmp(cname,"long")) id=mxINT64_CLASS;
@@ -222,17 +227,31 @@ template<class T> mxArray*	Primitive<T>::toMxArray()
 		else if(!strcmp(cname,"unsigned char")) id=mxINT8_CLASS;
 		else assert(false);
 
-		if(!strcmp(cname,"char"))
+		if(!strcmp(cname,"char")) {
 			return mxCreateCharMatrixFromStrings(1,(const char **) &_val );
-		else {
+		} else {
 			mxArray *M = mxCreateNumericMatrix(1,_n,id,mxREAL);
 			void *p = mxGetData(M); memcpy(p,_val,sizeof(T)*_n);
 			return M;
 		}
+	#else 
+		return NULL;
 	#endif
 }
 
-
+template<class T> void		Primitive<T>::fromMxArray( const mxArray *M, const char *name )
+{
+	#ifdef MATLAB_MEX_FILE
+		assert(_owner); clear(); 
+		assert( (mxIsNumeric(M) || mxIsChar(M)) && mxGetM(M)==1 );
+		if(!strcmp(getCname(),"char")) {
+			//return mxCreateCharMatrixFromStrings(1,(const char **) &_val );
+		} else {
+			_n = mxGetN(M); _val=new T[_n];
+			void *p=mxGetData(M); memcpy(_val,p,sizeof(T)*_n);
+		}
+	#endif
+}
 
 /////////////////////////////////////////////////////////////////////////////////
 class VecSavable : public Savable
