@@ -7,14 +7,11 @@
 #ifdef MATLAB_MEX_FILE
 	#include "mex.h"
 #else
-	//#define MATLAB_MEX_FILE
 	typedef void mxArray;
 	typedef int mxClassID;
 #endif
 
-class ObjImg; 
-
-typedef vector< ObjImg > VecObjImg;
+class ObjImg; class VecSavable;
 
 template< class T > class Primitive;
 
@@ -48,6 +45,7 @@ protected:
 	virtual void			frmMxArray1( const mxArray *M ) { assert(0); };
 
 	friend					ObjImg;
+	friend					VecSavable;
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -55,45 +53,49 @@ class ObjImg
 {
 public:
 							ObjImg() { _el=NULL; clear(); };
-
 							~ObjImg() { clear(); };
-
 	void					clear();
 
 	void					init( const char *name, const char *type, int n );
-
 	void					check( int minL, int maxL, const char *name=NULL, const char *type=NULL ) const;
-
 	const char*				getCname() const { return _cname; };
 
-protected:
+private:
 	mxArray*				toMxArray();
-
 	void					frmMxArray( const mxArray *M, const char *name );
 
-private:
 	void					writeToStrm( ofstream &os, bool binary, int indent=0 );
-
 	void					readFrmStrm( ifstream &is, bool binary );
 
 private:
 	char					_cname[32];
-
 	char					_name[32];
 
-private:
 	char					*_el;
-
 	int						_elNum;
-
 	size_t					_elBytes;
 
 public:
-	VecObjImg				_objImgs;
+	vector< ObjImg > 		_objImgs;
 
 	friend					Savable;
-
 	template<class> friend class Primitive; 
+};
+
+/////////////////////////////////////////////////////////////////////////////////
+class VecSavable : public Savable
+{
+public:
+	virtual const char*		getCname() const {return "VecSavable"; };
+	virtual void			save( ObjImg &oi, const char *name );
+	virtual void			load( const ObjImg &oi, const char *name );
+
+	virtual bool			customMxArray() const { return 1; }
+	virtual mxArray*		toMxArray1();
+	virtual void			frmMxArray1( const mxArray *M );
+
+public:
+	vector< Savable* >		_v;
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -101,101 +103,31 @@ template< class T > class Primitive : public Savable
 {
 public:
 							Primitive() : _owner(1), _val(NULL), _n(0) {};
-
 							Primitive( T *src, int n=1 )  : _owner(0), _val(src), _n(n) {}
-
 							~Primitive() { clear(); }
-
 	void					clear() { if(!_owner) return; if(_val!=NULL) delete [] _val; _val=NULL; _n=0; }
 
-	const T*				getVal() { return _val; }
-
 	virtual const char*		getCname() const { return typeid(T).name(); };
-
 	virtual void			save( ObjImg &oi, const char *name );
-
 	virtual void			load( const ObjImg &oi, const char *name );
 
-public:
-	virtual bool			customToTxt() const { return true; }
+protected:
+	virtual bool			customToTxt() const { return 1; }
+	virtual void			writeToTxt( ostream &os ) const { primWriteToTxt( *this, os ); };
+	virtual void			readFrmTxt( istream &is ) { assert(_owner); clear(); primReadFrmTxt(*this,is); }
 
-	virtual void			writeToTxt( ostream &os ) const { pWriteToTxt( *this, os ); };
+	template<class T1> friend void primReadFrmTxt( Primitive<T1> &p, istream &is );
+	template<class T1> friend void primWriteToTxt( const Primitive<T1> &p, ostream &os );
 
-	virtual void			readFrmTxt( istream &is ) { assert(_owner); clear(); pReadFrmTxt(*this,is); }
-
-	template<class T1> friend void pReadFrmTxt( Primitive<T1> &p, istream &is );
-
-	template<class T1> friend void pWriteToTxt( const Primitive<T1> &p, ostream &os );
-
-public:
-	virtual bool			customMxArray() const { return true; }
-
+	virtual bool			customMxArray() const { return 1; }
 	virtual mxArray*		toMxArray1();
-
 	virtual void			frmMxArray1( const mxArray *M );
 
 private:
 	T						*_val;
-
 	int						_n;
-
 	const bool				_owner;
 };
-
-template<class T> void		pWriteToTxt( const Primitive<T> &p, ostream &os )
-{
-	if( p._n==1 )
-		os << setprecision(10) << *p._val;
-	else {
-		os << "[ " ;
-		for(int i=0; i<p._n; i++) os << setprecision(10) << p._val[i] << " ";
-		os << "]";
-	}
-}
-
-template<class T> void		pReadFrmTxt( Primitive<T> &p, istream &is )
-{
-	if( is.peek()=='[' ) {
-		char c=is.get(); assert(c=='[');
-		T *tmp=new T[1000000]; int n=0;
-		while(1) {
-			is >> tmp[n++]; c=is.get(); assert(c==' ');
-			if( is.peek()==']' ) { is.get(); break; }
-		}
-		p._n=n; p._val=new T[n]; memcpy(p._val,tmp,n*sizeof(T)); delete [] tmp;
-	} else {
-		p._n=1; p._val=new T[1]; is >> *p._val;
-	}
-}
-
-template<> inline void		pWriteToTxt<char>( const Primitive<char> &p, ostream &os )
-{
-	os << '"' << p._val << '"';
-}
-
-template<> inline void		pReadFrmTxt<char>( Primitive<char> &p, istream &is )
-{
-	char c=is.get(); assert(c=='"'); int n;
-	char *tmp=new char[1000000]; is.get(tmp,1000000);
-	p._n=n=strlen(tmp); assert(tmp[n-1]=='"'); tmp[n-1]='\0';
-	p._val=new char[n]; memcpy(p._val,tmp,n*sizeof(char));
-	delete [] tmp;
-}
-
-template<> inline void		pWriteToTxt<uchar>( const Primitive<uchar> &p, ostream &os )
-{
-	Primitive<int> pInt; int n=p._n;
-	pInt._n=n; pInt._val=new int[n];
-	for(int i=0; i<n; i++) pInt._val[i]=(int) p._val[i]; 	
-	pInt.writeToTxt(os);
-}
-
-template<> inline void		pReadFrmTxt<uchar>( Primitive<uchar> &p, istream &is )
-{
-	Primitive<int> pInt; pInt.readFrmTxt(is); int n=pInt._n;
-	p._n=n; p._val=new uchar[n];
-	for(int i=0; i<n; i++) p._val[i]=(uchar) pInt._val[i]; 	
-}
 
 template<class T> void		Primitive<T>::save( ObjImg &oi, const char *name )
 {
@@ -213,6 +145,61 @@ template<class T> void		Primitive<T>::load( const ObjImg &oi, const char *name )
 	size_t nBytes=oi._elBytes; _n=oi._elNum;
 	if(_owner ) _val=new T[nBytes*_n]; else assert(_val!=NULL);
 	memcpy(_val,oi._el,nBytes*_n);
+}
+
+template<class T> void		primWriteToTxt( const Primitive<T> &p, ostream &os )
+{
+	if( p._n==1 )
+		os << setprecision(10) << *p._val;
+	else {
+		os << "[ " ;
+		for(int i=0; i<p._n; i++) os << setprecision(10) << p._val[i] << " ";
+		os << "]";
+	}
+}
+
+template<class T> void		primReadFrmTxt( Primitive<T> &p, istream &is )
+{
+	if( is.peek()=='[' ) {
+		char c=is.get(); assert(c=='[');
+		T *tmp=new T[1000000]; int n=0;
+		while(1) {
+			is >> tmp[n++]; c=is.get(); assert(c==' ');
+			if( is.peek()==']' ) { is.get(); break; }
+		}
+		p._n=n; p._val=new T[n]; memcpy(p._val,tmp,n*sizeof(T)); delete [] tmp;
+	} else {
+		p._n=1; p._val=new T[1]; is >> *p._val;
+	}
+}
+
+template<> inline void		primWriteToTxt<char>( const Primitive<char> &p, ostream &os )
+{
+	os << '"' << p._val << '"';
+}
+
+template<> inline void		primReadFrmTxt<char>( Primitive<char> &p, istream &is )
+{
+	char c=is.get(); assert(c=='"'); int n;
+	char *tmp=new char[1000000]; is.get(tmp,1000000);
+	p._n=n=strlen(tmp); assert(tmp[n-1]=='"'); tmp[n-1]='\0';
+	p._val=new char[n]; memcpy(p._val,tmp,n*sizeof(char));
+	delete [] tmp;
+}
+
+template<> inline void		primWriteToTxt<uchar>( const Primitive<uchar> &p, ostream &os )
+{
+	Primitive<int> pInt; int n=p._n;
+	pInt._n=n; pInt._val=new int[n];
+	for(int i=0; i<n; i++) pInt._val[i]=(int) p._val[i]; 	
+	pInt.writeToTxt(os);
+}
+
+template<> inline void		primReadFrmTxt<uchar>( Primitive<uchar> &p, istream &is )
+{
+	Primitive<int> pInt; pInt.readFrmTxt(is); int n=pInt._n;
+	p._n=n; p._val=new uchar[n];
+	for(int i=0; i<n; i++) p._val[i]=(uchar) pInt._val[i]; 	
 }
 
 inline mxClassID			charToMxId( const char* cname)
@@ -253,12 +240,11 @@ template<class T> mxArray*	Primitive<T>::toMxArray1()
 {
 	#ifdef MATLAB_MEX_FILE
 		mxClassID id = charToMxId(getCname());
-		if(id==mxCHAR_CLASS) {
+		if( id==mxCHAR_CLASS ) {
 			return mxCreateString((char*)_val);
 		} else {
 			mxArray *M = mxCreateNumericMatrix(1,_n,id,mxREAL);
-			void *p = mxGetData(M); memcpy(p,_val,sizeof(T)*_n);
-			return M;
+			memcpy(mxGetData(M),_val,sizeof(T)*_n); return M;
 		}
 	#else 
 		return NULL;
@@ -268,34 +254,17 @@ template<class T> mxArray*	Primitive<T>::toMxArray1()
 template<class T> void		Primitive<T>::frmMxArray1( const mxArray *M )
 {
 	#ifdef MATLAB_MEX_FILE
-		assert(_owner); clear();
-		assert((mxIsNumeric(M) || mxIsChar(M) || mxIsLogical(M)) && mxGetM(M)==1);
+		assert(_owner); clear(); assert(mxGetM(M)==1);
 		if(!strcmp(getCname(),"char")) {
+			assert(mxIsChar(M));
 			_n=mxGetN(M)+1; _val=new T[_n];
 			mxGetString(M,(char*)_val,_n);
 		} else {
+			assert(mxIsNumeric(M) || mxIsLogical(M));
 			_n=mxGetN(M); _val=new T[_n];
-			void *p=mxGetData(M); memcpy(_val,p,sizeof(T)*_n);
+			memcpy(_val,mxGetData(M),sizeof(T)*_n);
 		}
 	#endif
 }
-
-/////////////////////////////////////////////////////////////////////////////////
-class VecSavable : public Savable
-{
-public:
-	virtual const char*		getCname() const {return "VecSavable"; };
-
-	virtual void			save( ObjImg &oi, const char *name );
-
-	virtual void			load( const ObjImg &oi, const char *name );
-
-	virtual bool			customMxArray() const { return true; }
-	virtual mxArray*		toMxArray1();
-	virtual void			frmMxArray1( const mxArray *M );
-
-public:
-	vector< Savable* >		_v;
-};
 
 #endif
