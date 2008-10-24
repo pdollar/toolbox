@@ -9,6 +9,7 @@
 #else
 	//#define MATLAB_MEX_FILE
 	typedef void mxArray;
+	typedef int mxClassID;
 #endif
 
 class ObjImg; 
@@ -25,29 +26,28 @@ public:
 
 	virtual const char*		getCname() const = 0;
 
-	virtual void			save( ObjImg &oi, const char *name ) = 0;
+	bool					saveToFile( const char *fName, bool binary=false );
+	static Savable*			loadFrmFile( const char *fName, bool binary=false );
 
-	virtual void			load( const ObjImg &oi, const char *name=NULL ) = 0;
+	mxArray*				toMxArray();
+	static Savable*			frmMxArray( const mxArray *M );
 
-public:
-	virtual bool			customToTxt() const { return false; }
-
-	virtual void			writeToTxt( ostream &os ) const {};
-
-	virtual void			readFrmTxt( istream &is ) {};
-
-	virtual bool			customMxArray() const { return false; }
-
-	virtual mxArray*		toMxArray();
-
-	virtual void			fromMxArray( const mxArray *M, const char *name ) { assert(false); };
-		
-public:
 	static Savable*			create( const char *cname );
-
-	static Savable*			create( const ObjImg &oi, const char *name=NULL );
-
 	static Savable*			clone( Savable *obj );
+
+protected:
+	virtual void			save( ObjImg &oi, const char *name ) = 0;
+	virtual void			load( const ObjImg &oi, const char *name ) = 0;
+
+	virtual bool			customToTxt() const { return 0; }
+	virtual void			writeToTxt( ostream &os ) const { assert(0); };
+	virtual void			readFrmTxt( istream &is ) { assert(0); };
+
+	virtual bool			customMxArray() const { return 0; }
+	virtual mxArray*		toMxArray1() { assert(0); return NULL; };
+	virtual void			frmMxArray1( const mxArray *M ) { assert(0); };
+
+	friend					ObjImg;
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -66,13 +66,10 @@ public:
 
 	const char*				getCname() const { return _cname; };
 
-	bool					saveToFile( const char *fName, bool binary=false );
-
-	static bool				loadFrmFile( const char *fName, ObjImg &oi, bool binary=false );
-
+protected:
 	mxArray*				toMxArray();
 
-	void					fromMxArray( const mxArray *M, const char *name );
+	void					frmMxArray( const mxArray *M, const char *name );
 
 private:
 	void					writeToStrm( ofstream &os, bool binary, int indent=0 );
@@ -91,10 +88,12 @@ private:
 
 	size_t					_elBytes;
 
-	template<class> friend class Primitive; 
-
 public:
 	VecObjImg				_objImgs;
+
+	friend					Savable;
+
+	template<class> friend class Primitive; 
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -109,13 +108,15 @@ public:
 
 	void					clear() { if(!_owner) return; if(_val!=NULL) delete [] _val; _val=NULL; _n=0; }
 
+	const T*				getVal() { return _val; }
+
 	virtual const char*		getCname() const { return typeid(T).name(); };
 
 	virtual void			save( ObjImg &oi, const char *name );
 
-	virtual void			load( const ObjImg &oi, const char *name=NULL );
+	virtual void			load( const ObjImg &oi, const char *name );
 
-protected:
+public:
 	virtual bool			customToTxt() const { return true; }
 
 	virtual void			writeToTxt( ostream &os ) const { pWriteToTxt( *this, os ); };
@@ -126,12 +127,12 @@ protected:
 
 	template<class T1> friend void pWriteToTxt( const Primitive<T1> &p, ostream &os );
 
-protected:
+public:
 	virtual bool			customMxArray() const { return true; }
 
-	virtual mxArray*		toMxArray();
+	virtual mxArray*		toMxArray1();
 
-	virtual void			fromMxArray( const mxArray *M, const char *name );
+	virtual void			frmMxArray1( const mxArray *M );
 
 private:
 	T						*_val;
@@ -214,21 +215,46 @@ template<class T> void		Primitive<T>::load( const ObjImg &oi, const char *name )
 	memcpy(_val,oi._el,nBytes*_n);
 }
 
-template<class T> mxArray*	Primitive<T>::toMxArray()
+inline mxClassID			charToMxId( const char* cname)
 {
 	#ifdef MATLAB_MEX_FILE
-		mxClassID id; const char *cname = getCname();
-		if(!strcmp(cname,"int")) id=mxINT32_CLASS;
-		else if(!strcmp(cname,"long")) id=mxINT64_CLASS;
-		else if(!strcmp(cname,"float")) id=mxSINGLE_CLASS;
-		else if(!strcmp(cname,"double")) id=mxDOUBLE_CLASS;
-		else if(!strcmp(cname,"bool")) id=mxLOGICAL_CLASS;
-		else if(!strcmp(cname,"char")) id=mxUINT8_CLASS;
-		else if(!strcmp(cname,"unsigned char")) id=mxINT8_CLASS;
-		else assert(false);
+		if(!strcmp(cname,"int")) return mxINT32_CLASS;
+		else if(!strcmp(cname,"long")) return mxINT64_CLASS;
+		else if(!strcmp(cname,"float")) return mxSINGLE_CLASS;
+		else if(!strcmp(cname,"double")) return mxDOUBLE_CLASS;
+		else if(!strcmp(cname,"bool")) return mxLOGICAL_CLASS;
+		else if(!strcmp(cname,"char")) return mxCHAR_CLASS;
+		else if(!strcmp(cname,"unsigned char")) return mxUINT8_CLASS;
+		else assert(false); return mxUNKNOWN_CLASS;
+	#else
+		return 0;
+	#endif
+}
 
-		if(!strcmp(cname,"char")) {
-			return mxCreateCharMatrixFromStrings(1,(const char **) &_val );
+inline const char*			mxIdToChar( mxClassID id ) 
+{
+	#ifdef MATLAB_MEX_FILE
+		switch( id ) {	
+		case mxINT32_CLASS: return "int";
+		case mxINT64_CLASS: return "long";
+		case mxSINGLE_CLASS: return "float";
+		case mxDOUBLE_CLASS: return "double";
+		case mxLOGICAL_CLASS: return "bool";
+		case mxCHAR_CLASS: return "char";
+		case mxUINT8_CLASS: return "unsigned char";
+		default: assert(false); return "unknown type";
+		}
+	#else
+		return NULL;
+	#endif
+}
+
+template<class T> mxArray*	Primitive<T>::toMxArray1()
+{
+	#ifdef MATLAB_MEX_FILE
+		mxClassID id = charToMxId(getCname());
+		if(id==mxCHAR_CLASS) {
+			return mxCreateString((char*)_val);
 		} else {
 			mxArray *M = mxCreateNumericMatrix(1,_n,id,mxREAL);
 			void *p = mxGetData(M); memcpy(p,_val,sizeof(T)*_n);
@@ -239,15 +265,16 @@ template<class T> mxArray*	Primitive<T>::toMxArray()
 	#endif
 }
 
-template<class T> void		Primitive<T>::fromMxArray( const mxArray *M, const char *name )
+template<class T> void		Primitive<T>::frmMxArray1( const mxArray *M )
 {
 	#ifdef MATLAB_MEX_FILE
-		assert(_owner); clear(); 
-		assert( (mxIsNumeric(M) || mxIsChar(M)) && mxGetM(M)==1 );
+		assert(_owner); clear();
+		assert((mxIsNumeric(M) || mxIsChar(M) || mxIsLogical(M)) && mxGetM(M)==1);
 		if(!strcmp(getCname(),"char")) {
-			//return mxCreateCharMatrixFromStrings(1,(const char **) &_val );
+			_n=mxGetN(M)+1; _val=new T[_n];
+			mxGetString(M,(char*)_val,_n);
 		} else {
-			_n = mxGetN(M); _val=new T[_n];
+			_n=mxGetN(M); _val=new T[_n];
 			void *p=mxGetData(M); memcpy(_val,p,sizeof(T)*_n);
 		}
 	#endif
@@ -261,11 +288,11 @@ public:
 
 	virtual void			save( ObjImg &oi, const char *name );
 
-	virtual void			load( const ObjImg &oi, const char *name=NULL );
+	virtual void			load( const ObjImg &oi, const char *name );
 
 	virtual bool			customMxArray() const { return true; }
-
-	virtual mxArray*		toMxArray();
+	virtual mxArray*		toMxArray1();
+	virtual void			frmMxArray1( const mxArray *M );
 
 public:
 	vector< Savable* >		_v;

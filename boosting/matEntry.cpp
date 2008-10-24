@@ -13,17 +13,20 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
 
 	// data - uncomment one of the following
 	//int x=87519651; Primitive<int> X(&x);
+	//bool x[4]={true,false,true,false}; Primitive<bool> X(x,4);
 	//uchar x=13; Primitive<uchar> X(&x);
 	//double x=1.15415987557; Primitive<double> X(&x);
-	//float x[2]={59.5,7500}; Primitive<float> X(x,2);
+	float x[2]={59.5,7500}; Primitive<float> X(x,2);
 	//char *x="whatev yo"; Primitive<char> X(x,strlen(x)+1);
 	//Matrixd X(5,5,0); for(int i=0; i<5; i++) X(i,i)=i;
 	//Rect X(0,0,10,10); X._wt=.3f;
-	Haar X; X.createSyst(1,25,25,10,10,0,0); X.finalize();
+	//Haar X; X.createSyst(1,25,25,10,10,0,0); X.finalize();
 
-	// save, send to matlab
-	ObjImg ox; X.save( ox, "x" );
-	plhs[0] = ox.toMxArray();
+	// to matlab struct, from matlab struct, to matlab struct again
+	//plhs[0] = X.toMxArray();
+	mxArray *M = X.toMxArray();
+	Savable *Y = Savable::frmMxArray(M);
+	plhs[0] = Y->toMxArray();
 }
 
 /*

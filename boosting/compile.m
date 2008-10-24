@@ -1,12 +1,5 @@
 c
 
-if( 1 ) % compile
-  if(~exist('compile','dir')), mkdir('compile'); end
-  mex -O -c Savable.cpp -outdir compile
-  mex -O -c Haar.cpp -outdir compile
-  mex -O matEntry.cpp compile/Haar.obj compile/Savable.obj
-end
-
 if( 0 ) % cleanup
   delete('compile/*');
   rmdir('compile');
@@ -14,8 +7,14 @@ if( 0 ) % cleanup
   delete('*.pdb');
 end
 
-A=matEntry()
+if( 1 ) % compile
+  if(~exist('compile','dir')), mkdir('compile'); end
+  mex -g -c Savable.cpp -outdir compile
+  mex -g -c Haar.cpp -outdir compile
+  mex -g matEntry.cpp compile/Haar.obj compile/Savable.obj
+end
 
+A=matEntry()
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

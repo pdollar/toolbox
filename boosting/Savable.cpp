@@ -4,6 +4,61 @@
 #include "Haar.h"
 
 /////////////////////////////////////////////////////////////////////////////////
+bool			Savable::saveToFile( const char *fName, bool binary )
+{
+	ofstream os; remove( fName );
+	os.open(fName, binary? ios::out|ios::binary : ios::out );
+	if(os.fail()) { abortError( "save failed:", fName, __LINE__, __FILE__ ); return 0; }
+
+	ObjImg oi; save(oi,"root");
+	oi.writeToStrm(os,binary);
+
+	os.close();	return 1;
+}
+
+Savable*		Savable::loadFrmFile( const char *fName, bool binary )
+{
+	ifstream is;
+	is.open(fName, binary? ios::in|ios::binary : ios::in );
+	if(is.fail()) { abortError( "load failed:", fName, __LINE__, __FILE__ ); return NULL; }
+
+	ObjImg oi; oi.readFrmStrm(is,binary);	
+	Savable *s = create(oi.getCname());
+	s->load(oi,"root");
+
+	is.close(); return s;
+}
+
+mxArray*		Savable::toMxArray() 
+{
+	#ifdef MATLAB_MEX_FILE
+		if( customMxArray() )
+			return toMxArray1();
+		else {
+			ObjImg oi; save(oi,"root");
+			return oi.toMxArray();
+		}
+	#else
+		return NULL;
+	#endif
+}
+
+Savable*		Savable::frmMxArray( const mxArray *M )
+{
+	#ifdef MATLAB_MEX_FILE
+		if( !mxIsStruct(M) ) {
+			Savable *s = create(mxIdToChar(mxGetClassID(M)));
+			s->frmMxArray1(M); return s;
+		} else {
+			ObjImg oi; oi.frmMxArray(M,"root");
+			Savable *s = create(oi.getCname());
+			s->load(oi,"root"); return s;
+		}
+	#else
+		return NULL;
+	#endif
+}
+
 Savable*		Savable::create( const char *cname ) 
 {
 	#define CREATE_PRIMITIVE(T) \
@@ -32,12 +87,6 @@ Savable*		Savable::create( const char *cname )
 	#undef CREATE
 }
 
-Savable*		Savable::create( const ObjImg &oi, const char *name )
-{
-	Savable *s = create(oi.getCname());
-	s->load( oi, name ); return s;
-}
-
 Savable*		Savable::clone( Savable *obj )
 {
 	#define CLONE1(T) \
@@ -57,15 +106,6 @@ Savable*		Savable::clone( Savable *obj )
 	#undef CLONE2
 }
 
-mxArray*		Savable::toMxArray() 
-{
-	#ifndef MATLAB_MEX_FILE
-		return NULL;
-	#else
-		ObjImg oi; save(oi,"savable");
-		return oi.toMxArray();	
-	#endif
-}
 
 /////////////////////////////////////////////////////////////////////////////////
 void			ObjImg::clear() 
@@ -164,64 +204,47 @@ void			ObjImg::readFrmStrm( ifstream &is, bool binary )
 	}
 }
 
-bool			ObjImg::saveToFile( const char *fName, bool binary )
-{
-	ofstream os; remove( fName );
-	os.open(fName, binary? ios::out|ios::binary : ios::out );
-	if(os.fail()) { abortError( "save failed:", fName, __LINE__, __FILE__ ); return 0; }
-	writeToStrm(os,binary);
-	os.close();	return 1;
-}
-
-bool			ObjImg::loadFrmFile( const char *fName, ObjImg &oi, bool binary )
-{
-	ifstream is;
-	is.open(fName, binary? ios::in|ios::binary : ios::in );
-	if(is.fail()) { abortError( "load failed:", fName, __LINE__, __FILE__ ); return 0; }
-	oi.readFrmStrm(is,binary);
-	is.close(); return 1;
-}
-
 mxArray*		ObjImg::toMxArray()
 {
-	#ifndef MATLAB_MEX_FILE
-		return NULL;
-	#else
+	#ifdef MATLAB_MEX_FILE
 		mxArray *M; Savable *s=Savable::create(_cname);
 		if( s->customMxArray() ) {
 			s->load(*this,_name);
-			M = s->toMxArray();
+			M = s->toMxArray1();
 		} else {
-			int i,n=_objImgs.size(); char **names=(char**) mxCalloc(n,sizeof(char*));
-			for( i=0; i<n; i++ ) names[i]=(char*) mxCalloc(512,sizeof(char));			
-			for( i=0; i<n; i++ ) sprintf(names[i],_objImgs[i]._name);
-			M = mxCreateStructMatrix(1, 1, n, (const char**) names);
-			for( i=0; i<n; i++ ) mxSetFieldByNumber(M,0,i,_objImgs[i].toMxArray());
+			int i,n=_objImgs.size(); char **names=(char**) mxCalloc(n+1,sizeof(char*));
+			for( i=0; i<n+1; i++ ) names[i]=(char*) mxCalloc(512,sizeof(char));
+			sprintf(names[0],"type");
+			for( i=0; i<n; i++ ) sprintf(names[i+1],_objImgs[i]._name);
+			M = mxCreateStructMatrix(1, 1, n+1, (const char**) names);
+			mxSetFieldByNumber(M,0,0,mxCreateString(_cname));
+			for( i=0; i<n; i++ ) mxSetFieldByNumber(M,0,i+1,_objImgs[i].toMxArray());
 		}
 		delete s; return M;
+	#else
+		return NULL;
 	#endif
 }
 
-void			ObjImg::fromMxArray( const mxArray *M, const char *name )
+void			ObjImg::frmMxArray( const mxArray *M, const char *name )
 {
 	#ifdef MATLAB_MEX_FILE
-		assert( mxIsNumeric(M) || mxIsChar(M) || mxIsStruct(M) );
-		if( mxIsNumeric(M) || mxIsChar(M) ) {
-			// primitive
-			Savable *s;// = Savable::create(mxGetClassID(M));
-			s->fromMxArray(M,name); s->save(*this,name);
-		} else if( mxGetN(M)==1 ) {
-			// standard
+		sprintf(_name,name);
+		if( !mxIsStruct(M) ) { // primitive
+			Savable *s = Savable::create(mxIdToChar(mxGetClassID(M)));
+			s->frmMxArray1(M); s->save(*this,name); delete s;
+		} else if( mxGetN(M)==1 ) { // standard
 			assert(!strcmp("type",mxGetFieldNameByNumber(M,0)));
-			int n = mxGetNumberOfFields(M)-1;			
+			mxArray *cname = mxGetFieldByNumber(M,0,0);
+			mxGetString(cname,_cname,mxGetN(cname)+1);
+			int n = mxGetNumberOfFields(M)-1;
 			if(n>0) _objImgs.resize(n);
 			for( int i=0; i<n; i++ ) {
 				const char *name = mxGetFieldNameByNumber(M,i+1);
-				_objImgs[i].fromMxArray(mxGetFieldByNumber(M,0,i+1),name);
+				_objImgs[i].frmMxArray(mxGetFieldByNumber(M,0,i+1),name);
 			}
-		} else {
-			// VecSavable
-			VecSavable v; v.fromMxArray(M,name); v.save(*this,name);
+		} else { // VecSavable
+			VecSavable v; v.frmMxArray1(M); v.save(*this,name);
 		}
 	#endif
 }
@@ -229,42 +252,66 @@ void			ObjImg::fromMxArray( const mxArray *M, const char *name )
 /////////////////////////////////////////////////////////////////////////////////
 void			VecSavable::save( ObjImg &oi, const char *name )
 {
-	int n=_v.size();
-	oi.init(name,getCname(),n);
-	for( int i=0; i<n; i++ )		
-		_v[i]->save(oi._objImgs[i],"[vec-element]");
+	//int n=_v.size();
+	//oi.init(name,getCname(),n);
+	//for( int i=0; i<n; i++ )		
+	//	_v[i]->save(oi._objImgs[i],"[vec-element]");
 }
 
 void			VecSavable::load( const ObjImg &oi, const char *name )
 {
-	int n = oi._objImgs.size();
-	oi.check(n,n,name,getCname());
-	for( int i=0; i<n; i++ )
-		_v.push_back( Savable::create(oi._objImgs[i],"[vec-element]") );
+	//int n = oi._objImgs.size();
+	//oi.check(n,n,name,getCname());
+	//for( int i=0; i<n; i++ )
+	//	_v.push_back( Savable::create(oi._objImgs[i],"[vec-element]") );
 }
 
-mxArray*		VecSavable::toMxArray() 
+mxArray*		VecSavable::toMxArray1() 
 {
-	#ifndef MATLAB_MEX_FILE
+	#ifdef MATLAB_MEX_FILE
+		//int i,j,m,n=_v.size(); mxArray *M=NULL, *M1, *V;
+		//if(n==0) return mxCreateStructMatrix(0,0,0,NULL);
+		//for(i=0; i<n; i++) {
+		//	M1=_v[i]->toMxArray(); assert(mxIsStruct(M1));
+		//	if( i==0 ) {
+		//		m=mxGetNumberOfFields(M1);
+		//		char **names=(char**) mxCalloc(m, sizeof(char*));
+		//		for(j=0; j<m; j++) names[j]=(char*) mxCalloc(512,sizeof(char));
+		//		for(j=0; j<m; j++) sprintf(names[j],mxGetFieldNameByNumber(M1,j));
+		//		M=mxCreateStructMatrix( 1, n, m, (const char**) names );
+		//	}
+		//	for(j=0; j<m; j++) {
+		//		V=mxDuplicateArray(mxGetFieldByNumber(M1,0,j));
+		//		mxSetFieldByNumber(M,i,j,V);
+		//	}
+		//	mxDestroyArray(M1);
+		//}
+		//return M;
 		return NULL;
 	#else
-		int i,j,m,n=_v.size(); mxArray *M=NULL, *M1, *V;
-		if(n==0) return mxCreateStructMatrix(0,0,0,NULL);
-		for(i=0; i<n; i++) {
-			M1=_v[i]->toMxArray(); assert(mxIsStruct(M1));
-			if( i==0 ) {
-				m=mxGetNumberOfFields(M1);
-				char **names=(char**) mxCalloc(m, sizeof(char*));
-				for(j=0; j<m; j++) names[j]=(char*) mxCalloc(512,sizeof(char));
-				for(j=0; j<m; j++) sprintf(names[j],mxGetFieldNameByNumber(M1,j));
-				M=mxCreateStructMatrix( 1, n, m, (const char**) names );
-			}
-			for(j=0; j<m; j++) {
-				V=mxDuplicateArray(mxGetFieldByNumber(M1,0,j));
-				mxSetFieldByNumber(M,i,j,V);
-			}
-			mxDestroyArray(M1);
-		}
-		return M;
+		return NULL;
+	#endif
+}
+
+void			VecSavable::frmMxArray1( const mxArray *M )
+{
+	#ifdef MATLAB_MEX_FILE
+		//int i,j,m,n=mxGetN(M); mxArray *M1;
+		//if(n==0) return mxCreateStructMatrix(0,0,0,NULL);
+		//for(i=0; i<n; i++) {
+		//	M1=_v[i]->toMxArray(); assert(mxIsStruct(M1));
+		//	if( i==0 ) {
+		//		m=mxGetNumberOfFields(M1);
+		//		char **names=(char**) mxCalloc(m, sizeof(char*));
+		//		for(j=0; j<m; j++) names[j]=(char*) mxCalloc(512,sizeof(char));
+		//		for(j=0; j<m; j++) sprintf(names[j],mxGetFieldNameByNumber(M1,j));
+		//		M=mxCreateStructMatrix( 1, n, m, (const char**) names );
+		//	}
+		//	for(j=0; j<m; j++) {
+		//		V=mxDuplicateArray(mxGetFieldByNumber(M1,0,j));
+		//		mxSetFieldByNumber(M,i,j,V);
+		//	}
+		//	mxDestroyArray(M1);
+		//}
 	#endif
 }
