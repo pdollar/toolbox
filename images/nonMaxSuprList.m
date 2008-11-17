@@ -1,4 +1,4 @@
-function [subs,vals,keep] = nonMaxSuprList1( subs, vals, radii, ...
+function [subs,vals,keep] = nonMaxSuprList( subs, vals, radii, ...
   thresh, maxn, flag)
 % Applies nonmaximal suppression to a list.
 %
@@ -47,7 +47,7 @@ if( nargin<6 || isempty(flag)); flag=0; end;
 
 vals=vals(:); siz=max(subs,[],1); nvals=length(vals); d=size(subs,2);
 if(nvals==0 && isempty(subs)), keep=[]; return; end
-[radii,er] = checkNumArgs( radii, size(siz), 0, 1 ); error(er);
+[radii,er] = checkNumArgs( radii, size(siz), -1, 1 ); error(er);
 
 % CAN ADD RECURSION TO SIGNIFICANTLY SPEED IT UP (under certain assump)
 % simply divide into 2 equal regions, (plus 3rd overlap region) using
