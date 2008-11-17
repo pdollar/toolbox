@@ -3,7 +3,8 @@ function R = randint2( m, n, range )
 %
 % Generate matrix of uniformly distributed random integers.
 % R=randint2(m,n,range) generates an m-by-n matrix of random integers
-% between [range(1), range(2)].
+% between [range(1), range(2)]. Note that randint is part of the
+% 'Communications Toolbox' and may not be available on all systems.
 %
 % To test speed:
 %  tic, for i=1:1000; R = randint( 100, 10, [0 10] ); end; toc
@@ -25,7 +26,7 @@ function R = randint2( m, n, range )
 %
 % See also RANDINT
 %
-% Piotr's Image&Video Toolbox      Version 2.0
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]

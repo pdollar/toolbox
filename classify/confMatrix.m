@@ -22,13 +22,13 @@ function CM = confMatrix( IDXtrue, IDXpred, ntypes )
 %
 % EXAMPLE
 %  IDXtrue = [ones(1,25) ones(1,25)*2];
-%  IDXpred = [ones(1,10) randint(1,30,[1 2]) ones(1,10)*2];
+%  IDXpred = [ones(1,10) randint2(1,30,[1 2]) ones(1,10)*2];
 %  CM = confMatrix( IDXtrue, IDXpred, 2 )
 %  confMatrixShow( CM, {'class-A','class-B'}, {'FontSize',20} )
 %
 % See also CONFMATRIXSHOW
 %
-% Piotr's Image&Video Toolbox      Version 2.0
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]

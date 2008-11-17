@@ -27,7 +27,7 @@ function varargout=pcaVisualize( U, mu, vars, X, index, ks, fname, show )
 %
 % See also PCA, PCAAPPLY
 %
-% Piotr's Image&Video Toolbox      Version 2.0
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -39,7 +39,7 @@ n = siz(end);  siz1 = siz(1:end-1);
 
 % some error checking
 if(prod(siz(1:end-1))~=D); error('incorrect size for X or U'); end
-if( nargin<5 || isempty(index) ); index = 1+randint(1,1,n); end
+if( nargin<5 || isempty(index) ); index = randint2(1,1,[1 n]); end
 if( index>n ); error(['index >' num2str(n)]); end
 if( nargin<6 || isempty(ks) ); maxp=floor(log2(r)); ks=2.^(0:maxp); end
 if( nargin<7 || isempty(fname)); fname = []; end

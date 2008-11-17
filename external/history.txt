@@ -2,6 +2,7 @@ Version NEW
  -new version of savefig (also removed exportfig)
  -optimized/tweaked nonMaxSupr and nonMaxSuprList <--2-3x faster
  -added matlab/bbApply: functions for manipulating bounding boxes
+ -removed dependency on randint from toolbox since not available on all systems
 
 Version 2.11 (09-July-08)
  -removing external/xmltree from toolbox (not being used by anything)
