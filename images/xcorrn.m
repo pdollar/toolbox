@@ -1,11 +1,13 @@
 function C = xcorrn( A, T, shape )
 % n-dimensional cross-correlation.  Generalized version of xcorr2.
 %
-% For 2 dimensional inputs this function is exactly the same as xcorr2,
-% but also works in higher dimensions.   Can also be more efficient
-% because it performs convolution using convnFast.
+% For 2 dimensional inputs this function is exactly the same as xcorr2, but
+% also works in higher dimensions. Can also be more efficient because it
+% performs convolution using convnFast.  Note that xcorr2 is part of the
+% 'Signal Processing Toolbox' and may not be available on all systems.
 %
-% The order of parameters is reversed from normxcorrn.  This is to be
+%
+% The order of parameters is reversed from normxcorrn. This is to be
 % compatible with the matlab functions normxcorr2 and xcorr2 (which take
 % parameters in different orders).
 %
