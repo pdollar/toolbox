@@ -48,7 +48,7 @@ function rbfBasis = rbfComputeBasis( X, k, cluster, scale, show )
 %
 % See also RBFDEMO, RBFCOMPUTEFTRS
 %
-% Piotr's Image&Video Toolbox      Version 2.0
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -68,8 +68,9 @@ if( cluster )
 else
   %%% GRID generate locations evenly spaced on grid
   if( d>4 ); error('d too high. curse of dimensionality..'); end
-  nBPer = round( k ^ (1/d) );  k = nBPer ^ d;
-  rg=minmax(X'); del=(rg(:,2)-rg(:,1))/(nBPer-1); rg=rg+[-del del]/2;
+  nBPer = round( k ^ (1/d) );  k = nBPer ^ d; rg=[min(X)' max(X)'];
+%   rg=minmax(X'),
+  del=(rg(:,2)-rg(:,1))/(nBPer-1); rg=rg+[-del del]/2;
   loc=cell(1,d);  for i=1:d; loc{i}=linspace(rg(i,1),rg(i,2),nBPer); end
   grid=cell(1,d); if(d>1); [grid{:}]=ndgrid(loc{:}); else grid=loc; end
   mu=zeros(d,k);   for i=1:d; mu(i,:) = grid{i}(:); end
