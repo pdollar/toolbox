@@ -7,6 +7,9 @@ function y = modefilt1( x, s )
 % for example y(1) is calculated over x(1:1+s/2).  Note that for this
 % function to make sense x should take on only a number of discrete values.
 %
+% This function is modeled after medfilt1, which is part of the 'Signal
+% Processing Toolbox' and may not be available on all systems.
+%
 % USAGE
 %  y = modefilt1( x, s )
 %
@@ -19,13 +22,13 @@ function y = modefilt1( x, s )
 %
 % EXAMPLE
 %  x=[0, 1, 0, 0, 0, 3, 0, 1, 3, 1, 2, 2, 0, 1]; s=4;
-%  ymedian = medfilt1( x, s );
+%  ymedian = medfilt1( x, s ); % may not be available
 %  ymode   = modefilt1( x, s );
 %  [x; ymedian; ymode]
 %
 % See also MEDFILT1
 %
-% Piotr's Image&Video Toolbox      Version 2.0
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
