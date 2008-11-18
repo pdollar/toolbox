@@ -4,7 +4,8 @@ function [Feven,Fodd] = filterGabor2d( r, sig, lam, theta, omega, show )
 % Creates a pair of Gabor filters (one odd one even) at the specified
 % orientation. For Thomas' ECCV98 filters, use sig=sqrt(2), lam=4.  Note
 % that originally this function computed a quadratic masked with a
-% Gaussian, and not a sin/cos masked with a Gaussian.
+% Gaussian, and not a sin/cos masked with a Gaussian. Requires Matlab's
+% 'Signal Processing Toolbox'.
 %
 % USAGE
 %  [Feven,Fodd] = filterGabor2d( r, sig, lam, theta, [omega], [show] )
