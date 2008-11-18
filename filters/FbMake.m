@@ -182,7 +182,7 @@ function FB = FbMakeDOG( r, sigmaStr, sigmaEnd, n )
 % adds a serires of difference of Gaussian filters.
 sigs = sigmaStr:(sigmaEnd-sigmaStr)/(n-1):sigmaEnd;
 for s=1:length(sigs)
-  FB(:,:,s) = filterDog2d(r,sigs(s),2);
+  FB(:,:,s) = filterDog2d(r,sigs(s),2); %#ok<AGROW>
   if( s==1 ); FB=repmat(FB,[1 1 length(sigs)]); end
 end
 

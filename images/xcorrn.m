@@ -6,7 +6,6 @@ function C = xcorrn( A, T, shape )
 % performs convolution using convnFast.  Note that xcorr2 is part of the
 % 'Signal Processing Toolbox' and may not be available on all systems.
 %
-%
 % The order of parameters is reversed from normxcorrn. This is to be
 % compatible with the matlab functions normxcorr2 and xcorr2 (which take
 % parameters in different orders).
@@ -29,7 +28,7 @@ function C = xcorrn( A, T, shape )
 %
 % See also XCORR2, NORMXCORRN, XEUCN, CONVNFAST
 %
-% Piotr's Image&Video Toolbox      Version 2.0
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]

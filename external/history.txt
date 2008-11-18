@@ -3,6 +3,8 @@ Version NEW
  -optimized/tweaked nonMaxSupr and nonMaxSuprList <--2-3x faster
  -added matlab/bbApply: functions for manipulating bounding boxes
  -removed dependencies to randint & minmax (not available on all systems)
+ -tested compatibility with Matlab 2008b (all ok!)
+ -tested on minimal Matlab install (requires Image Processing +  Signal Processing Toolboxes)
 
 Version 2.11 (09-July-08)
  -removing external/xmltree from toolbox (not being used by anything)

@@ -94,19 +94,19 @@ if nargout>0; M=repmat(getframe,[1 nframes]); end
 order = 1:nframes;  j=1;
 for nplayed = 1 : abs(loop)
   for i=order
-    tic; try disc=get(h); catch return; end %#ok<NASGU>
+    tic; try disc=get(h); catch, return; end %#ok<*CTCH,NASGU>
     if ~iscell(I)
       montage2(reshape(I(inds{:},i,:,:),sizeWithouti(I)),prm);
     else
       I2=cell(1,length(I));
       for k=1:length(I)
-        try I2{k}=reshape(I{k}(inds{:},i,:),sizeWithouti(I{k})); catch end
+        try I2{k}=reshape(I{k}(inds{:},i,:),sizeWithouti(I{k})); catch, end
       end
       montage2(I2,prm);
     end
     title(sprintf('frame %d of %d',i,nframes));
     if fps>0; pause(1/fps - toc); end
-    if nargout>0; try M(j) = getframe; catch end; j=j+1; else drawnow; end
+    if nargout>0; try M(j)=getframe; catch, end; j=j+1; else drawnow; end
   end
   if loop<0; order = order(end:-1:1); end
 end

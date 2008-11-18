@@ -105,7 +105,7 @@ for i=1:n
     nstr = int2str2( i+nStr-1, nDigits );
     try
       I = imread([srcDir name nstr '.' ext ] );
-    catch
+    catch %#ok<CTCH>
       error( ['Unable to read image: ' srcDir name nstr '.' ext] );
     end;
   end

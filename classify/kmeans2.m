@@ -74,7 +74,7 @@ if(outFrac<0 || outFrac>=1)
 nOutl = floor( size(X,1)*outFrac );
 
 % initialize random seed if specified
-if( ~isempty(rndSeed)); rand('state',rndSeed); end;
+if( ~isempty(rndSeed)); rand('state',rndSeed); end; %#ok<RAND>
 
 % run kmeans2main nTrial times
 msg = ['Running kmeans2 with k=' num2str(k)];

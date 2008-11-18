@@ -38,7 +38,7 @@ varargout = cell(1,nargout);
 [varargout{:}] = eval([action '(varargin{:});']);
 end
 
-function a = area( bb )
+function a = area( bb ) %#ok<*DEFNU>
 % Compute area of bbs.
 %
 % USAGE
