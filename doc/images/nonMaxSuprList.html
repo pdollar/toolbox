@@ -20,7 +20,7 @@
 <div class="box"><strong>Applies nonmaximal suppression to a list.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function [subs,vals,keepLocs] = nonMaxSuprList( subs, vals, radii,thresh, maxn, suprEq) </strong></div>
+<div class="box"><strong>function [subs,vals,keep] = nonMaxSuprList( subs, vals, radii,thresh, maxn, flag) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment"> Applies nonmaximal suppression to a list.
@@ -28,19 +28,19 @@
  See nonMaxSupr for more information.  Has the same effect as nonMaxSupr
  except it operates on a list of position/values pairs.  Running time is
  n^2 in the number of such pairs.  For comparison running time of
- nonMaxSupr is order( sum( size(I,d)*radii(d) ).
+ nonMaxSupr is ord( sum( size(I,d)*radii(d) ).
 
- This function has an additional parameter - suprEq that causes a value
- in a given window to be suppressed unless it is the UNIQUE maximum in the
- window.  This is if suprEq==1, then all locations that are not strictly
- the biggest in their window are suppressed.  This can be useful for large
- flat regions -- nonMaxSupr(ones(30),3) does no suppression since all
- values are equal in each window, but nonMaxSuprList(ones(30),3)
- suppresses all locations.
+ This function has an additional parameter - flag. If flag==1, then all
+ locations that are not strictly the biggest in their window are
+ suppressed (ie, keeps max only if it is UNIQUE).  This can be useful for
+ large flat regions -- nonMaxSupr(ones(30),3) does no suppression since
+ all values are equal in each window, but nonMaxSuprList(ones(30),3) w
+ flag==1 suppresses all locations. If flag==2 ties are broken randomly (in
+ fact this allows for slightly faster execution).
 
  USAGE
-  [subs,vals,keepLocs] = nonMaxSuprList( subs, vals, radii, ...
-                                        [thresh], [maxn], [suprEq] )
+  [subs,vals,keep] = nonMaxSuprList( subs, vals, radii, ...
+    [thresh], [maxn], [flag] )
 
  INPUTS
   subs       - subscripts of point locations (m x d)
@@ -48,18 +48,18 @@
   radii      - suppression window dimensions
   thresh     - [] minimum value below which not to look for (or [])
   maxn       - [] return at most maxn of the largest vals
-  suprEq     - [] suppress equal vals (see above)
+  flag       - [] suppress equal vals (see above)
 
  OUTPUTS
   subs       - subscripts of non-suppressed point locations (n x d)
   vals       - values at non-suppressed point locations (n x 1)
-  keepLocs   - indicies of kept locations from subs (n x 1)
+  keep       - indicies of kept locations from subs (n x 1)
 
  EXAMPLE
 
  See also SUBSTOARRAY, <a href="nonMaxSupr.html" class="code" title="function [subs,vals] = nonMaxSupr( I, radii, thresh, maxn )">NONMAXSUPR</a>, <a href="nonMaxSuprWin.html" class="code" title="function [subs,vals,keepLocs] = nonMaxSuprWin( subs, vals,strLocs, endLocs, thresh, maxn )">NONMAXSUPRWIN</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.0
+ Piotr's Image&amp;Video Toolbox      Version 2.12
  Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>

@@ -2,9 +2,9 @@
                 "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
 <head>
-  <title>Description of xcorrn</title>
-  <meta name="keywords" content="xcorrn">
-  <meta name="description" content="n-dimensional cross-correlation.  Generalized version of xcorr2.">
+  <title>Description of bbApply</title>
+  <meta name="keywords" content="bbApply">
+  <meta name="description" content="Functions for manipulating bounding boxes (bb).">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -12,45 +12,47 @@
 </head>
 <body>
 <a name="_top"></a>
-<!-- menu.html images -->
-<h1>xcorrn
+<!-- menu.html matlab -->
+<h1>bbApply
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>n-dimensional cross-correlation.  Generalized version of xcorr2.</strong></div>
+<div class="box"><strong>Functions for manipulating bounding boxes (bb).</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function C = xcorrn( A, T, shape ) </strong></div>
+<div class="box"><strong>function varargout = bbApply( action, varargin ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> n-dimensional cross-correlation.  Generalized version of xcorr2.
+<div class="fragment"><pre class="comment"> Functions for manipulating bounding boxes (bb).
 
- For 2 dimensional inputs this function is exactly the same as xcorr2, but
- also works in higher dimensions. Can also be more efficient because it
- performs convolution using convnFast.  Note that xcorr2 is part of the
- 'Signal Processing Toolbox' and may not be available on all systems.
+ A bounding box (bb) is also known as a position vector or a rectangle
+ object. It is a four element vector with the fields: [l r w h]. A set of
+ n bbs can be stores as an [nx4] array, most funcitons below can handle
+ either a single or multiple bbs. In addtion, typically [nxm] inputs with
+ m&gt;4 are ok (with the additional columns ignored/copied to the output).
 
- The order of parameters is reversed from normxcorrn. This is to be
- compatible with the matlab functions normxcorr2 and xcorr2 (which take
- parameters in different orders).
+ bbApply contains a number of utility functions for working with bbs. The
+ format for accessing the various utility functions is:
+  outputs = bbApply( 'action', inputs );
+ The list of functions and help for each is given in the &quot;See also&quot;
+ section. Also, help on individual subfunctions can be accessed by:
+  help bbApply&gt;action;
 
  USAGE
-  C = xcorrn( A, T, [shape] )
+  varargout = bbApply( action, varargin );
 
  INPUTS
-  A           - first d-dimensional matrix
-  T           - second d-dimensional matrix
-  shape       - ['full'] 'valid', or 'same' (see convn)
+  action     - string specifying action
+  varargin   - depends on action, see above
 
  OUTPUTS
-  C           - correlation matrix
+  varargout  - depends on action, see above
 
  EXAMPLE
-  T=gaussSmooth(rand(20),2); A=repmat(T,[3 3]);
-  C1=xcorr2(A,T); C2=xcorrn(A,T); C3=rot90(xcorrn(T,A),2);
-  figure(1); im(C1);  figure(2); im(C2);  figure(3); im(C3);
 
- See also XCORR2, <a href="normxcorrn.html" class="code" title="function C = normxcorrn( T, A, shape, Tm )">NORMXCORRN</a>, <a href="xeucn.html" class="code" title="function C = xeucn( A, T, shape )">XEUCN</a>, <a href="convnFast.html" class="code" title="function C = convnFast( A, B, shape )">CONVNFAST</a>
+ See also bbApply&gt;area bbApply&gt;shift bbApply&gt;getCenter bbApply&gt;intersect
+ bbApply&gt;union bbApply&gt;resize bbApply&gt;squarify bbApply&gt;draw bbApply&gt;crop
+ bbApply&gt;convert
 
  Piotr's Image&amp;Video Toolbox      Version 2.12
  Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -61,7 +63,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="convnFast.html" class="code" title="function C = convnFast( A, B, shape )">convnFast</a>	Fast convolution, replacement for both conv2 and convn.</li></ul>
+<li><a href="arrayCrop.html" class="code" title="function I = arrayCrop( I, strLocs, endLocs, padEl )">arrayCrop</a>	Used to crop a rectangular region from an n dimensional array.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>

@@ -1,12 +1,11 @@
 function toolboxGenDoc
 % Generate documentation, must run from dir toolbox.
 %
-% Requires external/m2html to be in path.
-%
-% Prior to running, update a few things in the overview.html file in:
-%   toolbox/external/m2html/templates/frame-piotr/overview.html
-%   1) The version / date
-%   2) Link to rar/zip file
+% 1) Requires external/m2html to be in path.
+% 2) Make sure to run toolboxUpdateHeader.m
+% 3) Update history.txt appropriately, including w current version
+% 4) Update overview.html file with the version/data/link to zip:
+%     edit external/m2html/templates/frame-piotr/overview.html
 %
 % USAGE
 %  toolboxGenDoc
@@ -19,13 +18,17 @@ function toolboxGenDoc
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 2.11
+% Piotr's Image&Video Toolbox      Version 2.12
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 % delete old doc
 delete('doc/*.*');
+delete('doc/classify/*.*');
+delete('doc/filters/*.*');
+delete('doc/images/*.*');
+delete('doc/matlab/*.*');
 
 % run m2html
 params = {'mfiles',{'classify','images','filters','matlab'}};

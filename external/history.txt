@@ -1,4 +1,4 @@
-Version NEW
+Version 1.12 (17-Nov-08)
  -new version of savefig (also removed exportfig)
  -optimized/tweaked nonMaxSupr and nonMaxSuprList <--2-3x faster
  -added matlab/bbApply: functions for manipulating bounding boxes

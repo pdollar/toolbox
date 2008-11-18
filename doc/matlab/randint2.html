@@ -27,7 +27,8 @@
 
  Generate matrix of uniformly distributed random integers.
  R=randint2(m,n,range) generates an m-by-n matrix of random integers
- between [range(1), range(2)].
+ between [range(1), range(2)]. Note that randint is part of the
+ 'Communications Toolbox' and may not be available on all systems.
 
  To test speed:
   tic, for i=1:1000; R = randint( 100, 10, [0 10] ); end; toc
@@ -49,7 +50,7 @@
 
  See also RANDINT
 
- Piotr's Image&amp;Video Toolbox      Version 2.0
+ Piotr's Image&amp;Video Toolbox      Version 2.12
  Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
@@ -61,7 +62,7 @@ This function calls:
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="../classify/kmeans2.html" class="code" title="function [ IDX, C, sumd ] = kmeans2( X, k, prm )">kmeans2</a>	Fast version of kmeans clustering.</li></ul>
+<li><a href="../classify/kmeans2.html" class="code" title="function [ IDX, C, sumd ] = kmeans2( X, k, prm )">kmeans2</a>	Fast version of kmeans clustering.</li><li><a href="../classify/pcaVisualize.html" class="code" title="function varargout=pcaVisualize( U, mu, vars, X, index, ks, fname, show )">pcaVisualize</a>	Visualization of quality of approximation of X given principal comp.</li><li><a href="../images/imShrink.html" class="code" title="function I = imShrink( I, ratios )">imShrink</a>	Used to shrink a multidimensional array I by integer amount.</li></ul>
 <!-- crossreference -->
 
 
