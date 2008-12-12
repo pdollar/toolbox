@@ -4,23 +4,23 @@
 #include "Haar.h"
 
 /////////////////////////////////////////////////////////////////////////////////
-bool			Savable::saveToFile( const char *fName, bool binary )
+bool			Savable::toFile( const char *fName, bool binary )
 {
 	ofstream os; remove( fName );
 	os.open(fName, binary? ios::out|ios::binary : ios::out );
 	if(os.fail()) { abortError( "save failed:", fName, __LINE__, __FILE__ ); return 0; }
-	ObjImg oi; save(oi,"root");
+	ObjImg oi; toObjImg(oi,"root");
 	oi.writeToStrm(os,binary);
 	os.close();	return 1;
 }
 
-Savable*		Savable::loadFrmFile( const char *fName, bool binary )
+Savable*		Savable::frmFile( const char *fName, bool binary )
 {
 	ifstream is;
 	is.open(fName, binary? ios::in|ios::binary : ios::in );
 	if(is.fail()) { abortError( "load failed:", fName, __LINE__, __FILE__ ); return NULL; }
 	ObjImg oi; oi.readFrmStrm(is,binary);
-	Savable *s=create(oi.getCname()); s->load(oi,"root");
+	Savable *s=create(oi.getCname()); s->frmObjImg(oi,"root");
 	is.close(); return s;
 }
 
@@ -30,7 +30,7 @@ mxArray*		Savable::toMxArray()
 	if(customMxArray())
 		return toMxArray1();
 	else {
-		ObjImg oi; save(oi,"root");
+		ObjImg oi; toObjImg(oi,"root");
 		return oi.toMxArray();
 	}
 #else
@@ -42,12 +42,13 @@ Savable*		Savable::frmMxArray( const mxArray *M )
 {
 #ifdef MATLAB_MEX_FILE
 	if( !mxIsStruct(M) ) {
+		// primitives ONLY are stored as non-structure mxArrays
 		Savable *s = create(mxIdToChar(mxGetClassID(M)));
 		s->frmMxArray1(M); return s;
 	} else {
 		ObjImg oi; oi.frmMxArray(M,"root");
 		Savable *s = create(oi.getCname());
-		s->load(oi,"root"); return s;
+		s->frmObjImg(oi,"root"); return s;
 	}
 #else
 	return NULL;
@@ -157,7 +158,7 @@ void			ObjImg::writeToStrm( ofstream &os, bool binary, int indent )
 		Savable *s = Savable::create(_cname);
 		if( s->customToTxt() ) {
 			os << setw(20) << left << _name << "= ";
-			s->load(*this,_name); s->writeToTxt(os); os << endl;
+			s->frmObjImg(*this,_name); s->writeToTxt(os); os << endl;
 		} else {
 			int n=_objImgs.size(); char temp[20];
 			sprintf(temp,"%s ( %i ):",_name,n); os << temp << endl;
@@ -188,7 +189,7 @@ void			ObjImg::readFrmStrm( ifstream &is, bool binary )
 		if( strcmp(temp,"=")==0 ) {
 			char c=is.get(); assert(c==' ');
 			Savable *s = Savable::create(_cname);
-			s->readFrmTxt(is); s->save(*this,_name);
+			s->readFrmTxt(is); s->toObjImg(*this,_name);
 			delete s;
 		} else {
 			assert(strcmp(temp,"(")==0);
@@ -204,7 +205,7 @@ mxArray*		ObjImg::toMxArray()
 #ifdef MATLAB_MEX_FILE
 	mxArray *M; Savable *s=Savable::create(_cname);
 	if( s->customMxArray() ) {
-		s->load(*this,_name); M=s->toMxArray1();
+		s->frmObjImg(*this,_name); M=s->toMxArray1();
 	} else {
 		int i,n=_objImgs.size(); char **names=(char**) mxCalloc(n+1,sizeof(char*));
 		for( i=0; i<n+1; i++ ) names[i]=(char*) mxCalloc(512,sizeof(char));
@@ -224,6 +225,7 @@ void			ObjImg::frmMxArray( const mxArray *M, const char *name )
 #ifdef MATLAB_MEX_FILE
 	sprintf(_name,name);
 	if( !mxIsStruct(M) ) {
+		// primitives ONLY are stored as non-structure mxArrays
 		strcpy(_cname,mxIdToChar(mxGetClassID(M)));
 	} else {
 		assert(!strcmp("type",mxGetFieldNameByNumber(M,0)));
@@ -232,7 +234,7 @@ void			ObjImg::frmMxArray( const mxArray *M, const char *name )
 	}
 	Savable *s = Savable::create(_cname);
 	if( s->customMxArray() ) {
-		s->frmMxArray1(M); s->save(*this,name);
+		s->frmMxArray1(M); s->toObjImg(*this,name);
 	} else {
 		int n=mxGetNumberOfFields(M)-1; if(n>0) _objImgs.resize(n);
 		for( int i=0; i<n; i++ ) {
@@ -288,21 +290,21 @@ mxArray*		mxStructArrayMerge( mxArray **MS, int n )
 #endif
 }
 
-void			VecSavable::save( ObjImg &oi, const char *name )
+void			VecSavable::toObjImg( ObjImg &oi, const char *name )
 {
 	int n=_v.size();
 	oi.init(name,getCname(),n);
 	for( int i=0; i<n; i++ )		
-		_v[i]->save(oi._objImgs[i],"[element]");
+		_v[i]->toObjImg(oi._objImgs[i],"[element]");
 }
 
-void			VecSavable::load( const ObjImg &oi, const char *name )
+void			VecSavable::frmObjImg( const ObjImg &oi, const char *name )
 {
 	int n=oi._objImgs.size();
 	oi.check(n,n,name,getCname());
 	for( int i=0; i<n; i++ ) {
 		Savable *s = create(oi._objImgs[i].getCname());
-		s->load(oi._objImgs[i],"[element]");
+		s->frmObjImg(oi._objImgs[i],"[element]");
 		_v.push_back( s );
 	}
 }

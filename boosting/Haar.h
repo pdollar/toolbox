@@ -42,8 +42,8 @@ public:
 
 	// implement Savable
 	virtual const char* getCname() const { return "Rect"; };
-	virtual void	save( ObjImg &oi, const char *name );
-	virtual void	load( const ObjImg &oi, const char *name=NULL );
+	virtual void	toObjImg( ObjImg &oi, const char *name );
+	virtual void	frmObjImg( const ObjImg &oi, const char *name=NULL );
 	virtual bool	customToTxt() const { return true; }
 	virtual void	writeToTxt( ostream &os ) const;
 	virtual void	readFrmTxt( istream &is );
@@ -133,8 +133,8 @@ class Haar : public Savable
 public:
 	// implement Savable
 	virtual const char* getCname() const { return "Haar"; };
-	virtual void	save( ObjImg &oi, const char *name );
-	virtual void	load( const ObjImg &oi, const char *name=NULL );
+	virtual void	toObjImg( ObjImg &oi, const char *name );
+	virtual void	frmObjImg( const ObjImg &oi, const char *name=NULL );
 
 	// create / alter
     void			createSyst(	int type, int w, int h, int fw, int fh, int tp, int lf, bool flip=false );

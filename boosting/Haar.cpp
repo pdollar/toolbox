@@ -15,28 +15,28 @@
 	setPos(lf,rt,tp,bt); 
 }
 
-void		Rect::save( ObjImg &oi, const char *name )
+void		Rect::toObjImg( ObjImg &oi, const char *name )
 {
 	oi.init(name,getCname(),5);
 	Primitive<int> lf(&_lf), rt(&_rt), tp(&_tp), bt(&_bt);
 	Primitive<float> wt(&_wt);
-	lf.save(oi._objImgs[0],"lf");
-	rt.save(oi._objImgs[1],"rt");
-	tp.save(oi._objImgs[2],"tp");
-	bt.save(oi._objImgs[3],"bt");
-	wt.save(oi._objImgs[4],"wt");
+	lf.toObjImg(oi._objImgs[0],"lf");
+	rt.toObjImg(oi._objImgs[1],"rt");
+	tp.toObjImg(oi._objImgs[2],"tp");
+	bt.toObjImg(oi._objImgs[3],"bt");
+	wt.toObjImg(oi._objImgs[4],"wt");
 }
 
-void		Rect::load( const ObjImg &oi, const char *name )
+void		Rect::frmObjImg( const ObjImg &oi, const char *name )
 {
 	oi.check(5,5,name,getCname());
 	Primitive<int> lf(&_lf), rt(&_rt), tp(&_tp), bt(&_bt);
 	Primitive<float> wt(&_wt);
-	lf.load(oi._objImgs[0],"lf");
-	rt.load(oi._objImgs[1],"rt");
-	tp.load(oi._objImgs[2],"tp");
-	bt.load(oi._objImgs[3],"bt");
-	wt.load(oi._objImgs[4],"wt");
+	lf.frmObjImg(oi._objImgs[0],"lf");
+	rt.frmObjImg(oi._objImgs[1],"rt");
+	tp.frmObjImg(oi._objImgs[2],"tp");
+	bt.frmObjImg(oi._objImgs[3],"bt");
+	wt.frmObjImg(oi._objImgs[4],"wt");
 }
 
 void		Rect::writeToTxt( ostream &os ) const 
@@ -128,18 +128,18 @@ bool		operator<  (const Rect &rect1, const Rect &rect2)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void		Haar::save(  ObjImg &oi, const char *name )
+void		Haar::toObjImg(  ObjImg &oi, const char *name )
 {
 	oi.init(name,getCname(),1);	VecSavable v; 
 	for(int i=0; i<_nRects; i++ ) 
 		v._v.push_back((Savable*) &_rects[i]);
-	v.save(oi._objImgs[0],"rects");
+	v.toObjImg(oi._objImgs[0],"rects");
 }
 
-void		Haar::load( const ObjImg &oi, const char *name )
+void		Haar::frmObjImg( const ObjImg &oi, const char *name )
 {
 	oi.check(1,1,name,getCname()); VecSavable v; 	
-	v.load(oi._objImgs[0],"rects");
+	v.frmObjImg(oi._objImgs[0],"rects");
 	_nRects=v._v.size(); createRects(_nRects);
 	for(int i=0; i<_nRects; i++ ) {
 		_rects[i]=*(Rect*)v._v[i]; delete v._v[i];

@@ -38,7 +38,7 @@ void testToStrm()
 
 	// save, then load (inspect results w debugger)
 	bool binary=0; char *fName="D:/code/toolbox/boosting/temp.txt";
-	X.saveToFile( fName, binary );
-	Savable *Y = Savable::loadFrmFile( fName, binary );
+	X.toFile( fName, binary );
+	Savable *Y = Savable::frmFile( fName, binary );
 	delete Y;
 }

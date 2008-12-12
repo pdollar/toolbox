@@ -31,7 +31,7 @@ template< class T > class Primitive;
 * only available if compiling from within Matlab. All conversions are done
 * using the intermediate class ObjImg (or Object Image), see below.
 * Essentially, to allow conversion to the different types, a subclass only
-% needs to define how to convert an object instance into an ObjImg. The
+% needs to define how to convert an object instance to/from an ObjImg. The
 % only restriction on a Savable object is that while it may contain
 % pointers ot other Savable objects, the pointers must form a tree with no
 % cycles. Savable objects can also be cloned (provided they define a copy
@@ -46,8 +46,8 @@ public:
 	virtual const char*		getCname() const = 0;
 
 	// converstion to/from binary file or human editable text file
-	bool					saveToFile( const char *fName, bool binary=false );
-	static Savable*			loadFrmFile( const char *fName, bool binary=false );
+	bool					toFile( const char *fName, bool binary=false );
+	static Savable*			frmFile( const char *fName, bool binary=false );
 
 	// convert to/from Matlab structure (mxArray)
 	mxArray*				toMxArray();
@@ -59,8 +59,8 @@ public:
 
 protected:
 	// subclasses MUST implement conversion to/from ObjImg
-	virtual void			save( ObjImg &oi, const char *name ) = 0;
-	virtual void			load( const ObjImg &oi, const char *name ) = 0;
+	virtual void			toObjImg( ObjImg &oi, const char *name ) = 0;
+	virtual void			frmObjImg( const ObjImg &oi, const char *name ) = 0;
 
 	// subclasses can have OPTIONAL custom conversion to/from text streams
 	virtual bool			customToTxt() const { return 0; }
@@ -98,10 +98,10 @@ public:
 	ObjImg() { _el=NULL; clear(); };
 	~ObjImg() { clear(); };
 	
-	// initialize ObjImg with n children (used during save)
+	// initialize ObjImg with n children (used during toObjImg)
 	void					init( const char *name, const char *cname, int n );
 
-	// check that ObjImg has the expected properties (used during load)
+	// check that ObjImg has the expected properties (used during frmObjImg)
 	void					check( int minN, int maxN, const char *name, const char *cname ) const;
 
 	// class name of serialized object
@@ -144,8 +144,8 @@ class VecSavable : public Savable
 {
 public:
 	virtual const char*		getCname() const {return "VecSavable"; };
-	virtual void			save( ObjImg &oi, const char *name );
-	virtual void			load( const ObjImg &oi, const char *name );
+	virtual void			toObjImg( ObjImg &oi, const char *name );
+	virtual void			frmObjImg( const ObjImg &oi, const char *name );
 
 	virtual bool			customMxArray() const { return 1; }
 	virtual mxArray*		toMxArray1();
@@ -165,8 +165,8 @@ public:
 	void					clear() { if(!_owner) return; if(_val!=NULL) delete [] _val; _val=NULL; _n=0; }
 
 	virtual const char*		getCname() const { return typeid(T).name(); };
-	virtual void			save( ObjImg &oi, const char *name );
-	virtual void			load( const ObjImg &oi, const char *name );
+	virtual void			toObjImg( ObjImg &oi, const char *name );
+	virtual void			frmObjImg( const ObjImg &oi, const char *name );
 
 protected:
 	virtual bool			customToTxt() const { return 1; }
@@ -187,7 +187,7 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////////
-template<class T> void		Primitive<T>::save( ObjImg &oi, const char *name )
+template<class T> void		Primitive<T>::toObjImg( ObjImg &oi, const char *name )
 {
 	size_t nBytes=sizeof(T);
 	oi.init( name, getCname(), 0 );
@@ -196,7 +196,7 @@ template<class T> void		Primitive<T>::save( ObjImg &oi, const char *name )
 	memcpy(oi._el,_val,nBytes*_n);
 }
 
-template<class T> void		Primitive<T>::load( const ObjImg &oi, const char *name )
+template<class T> void		Primitive<T>::frmObjImg( const ObjImg &oi, const char *name )
 {
 	clear();
 	oi.check( 0, 0, name, getCname() );

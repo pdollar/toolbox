@@ -61,8 +61,8 @@ public:
 public:
 	// write/read to/from stream/text
 	virtual const char* getCname() const;
-	virtual void	save( ObjImg &oi, const char *name );
-	virtual void	load( const ObjImg &oi, const char *name=NULL );
+	virtual void	toObjImg( ObjImg &oi, const char *name );
+	virtual void	frmObjImg( const ObjImg &oi, const char *name=NULL );
 	bool			writeToTxt( const char* file, char* delim="," );
 	bool			readFrmTxt( const char* file, char* delim="," ); 
 
@@ -196,26 +196,26 @@ template<class T> const char*	Matrix<T>::getCname() const
 	return cname;
 }
 
-template<class T> void			Matrix<T>::save( ObjImg &oi, const char *name )
+template<class T> void			Matrix<T>::toObjImg( ObjImg &oi, const char *name )
 {
 	Primitive<int> mRows(&_mRows), nCols(&_nCols);
 	Primitive<T> data(_data,size());
 	oi.init(name,getCname(),3);
-	mRows.save(oi._objImgs[0],"mRows");
-	nCols.save(oi._objImgs[1],"nCols");
-	data.save(oi._objImgs[2],"data");
+	mRows.toObjImg(oi._objImgs[0],"mRows");
+	nCols.toObjImg(oi._objImgs[1],"nCols");
+	data.toObjImg(oi._objImgs[2],"data");
 }
 
-template<class T> void			Matrix<T>::load( const ObjImg &oi, const char *name )
+template<class T> void			Matrix<T>::frmObjImg( const ObjImg &oi, const char *name )
 {
 	clear(); oi.check(3,3,name,getCname());
 	int mRows, nCols;
 	Primitive<int> mRows1(&mRows), nCols1(&nCols);
-	mRows1.load(oi._objImgs[0],"mRows");
-	nCols1.load(oi._objImgs[1],"nCols");
+	mRows1.frmObjImg(oi._objImgs[0],"mRows");
+	nCols1.frmObjImg(oi._objImgs[1],"nCols");
 	if(mRows==0 || nCols==0) return; setDims(mRows,nCols);
 	Primitive<T> data(_data);
-	data.load(oi._objImgs[2],"data");
+	data.frmObjImg(oi._objImgs[2],"data");
 }
 
 template<class T> bool			Matrix<T>::writeToTxt( const char *fName, char *delim )
