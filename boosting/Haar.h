@@ -44,9 +44,9 @@ public:
 	virtual const char* getCname() const { return "Rect"; };
 	virtual void	toObjImg( ObjImg &oi, const char *name );
 	virtual void	frmObjImg( const ObjImg &oi, const char *name=NULL );
-	virtual bool	customToTxt() const { return true; }
-	virtual void	writeToTxt( ostream &os ) const;
-	virtual void	readFrmTxt( istream &is );
+	virtual bool	customTxt() const { return true; }
+	virtual void	toTxt( ostream &os ) const;
+	virtual void	frmTxt( istream &is );
 
 	// get/set basic properties
 	int				area()		const {return (_rt-_lf+1)*(_bt-_tp+1); };

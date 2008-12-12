@@ -39,13 +39,13 @@ void		Rect::frmObjImg( const ObjImg &oi, const char *name )
 	wt.frmObjImg(oi._objImgs[4],"wt");
 }
 
-void		Rect::writeToTxt( ostream &os ) const 
+void		Rect::toTxt( ostream &os ) const 
 {
 	os << "< " << _lf << " " << _rt << " " << _tp << " " << _bt 
 		<< " " << setprecision(10) << _wt << " >";
 }
 
-void		Rect::readFrmTxt( istream &is ) 
+void		Rect::frmTxt( istream &is ) 
 { 
 	char tmp[128]; 
 	is>>tmp; assert(!strcmp(tmp,"<"));

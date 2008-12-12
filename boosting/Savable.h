@@ -63,9 +63,9 @@ protected:
 	virtual void			frmObjImg( const ObjImg &oi, const char *name ) = 0;
 
 	// subclasses can have OPTIONAL custom conversion to/from text streams
-	virtual bool			customToTxt() const { return 0; }
-	virtual void			writeToTxt( ostream &os ) const { assert(0); };
-	virtual void			readFrmTxt( istream &is ) { assert(0); };
+	virtual bool			customTxt() const { return 0; }
+	virtual void			toTxt( ostream &os ) const { assert(0); };
+	virtual void			frmTxt( istream &is ) { assert(0); };
 
 	// subclasses can have OPTIONAL custom conversion to/from mxArray
 	virtual bool			customMxArray() const { return 0; }
@@ -112,8 +112,8 @@ private:
 	void					clear();
 
 	// converstion to/from stream (actual work done here - called from Savable)
-	void					writeToStrm( ofstream &os, bool binary, int indent=0 );
-	void					readFrmStrm( ifstream &is, bool binary );
+	void					toStrm( ofstream &os, bool binary, int indent=0 );
+	void					frmStrm( ifstream &is, bool binary );
 
 	// conversion to/from mxArray (actual work done here - called from Savable)
 	mxArray*				toMxArray();
@@ -169,12 +169,12 @@ public:
 	virtual void			frmObjImg( const ObjImg &oi, const char *name );
 
 protected:
-	virtual bool			customToTxt() const { return 1; }
-	virtual void			writeToTxt( ostream &os ) const { primWriteToTxt( *this, os ); };
-	virtual void			readFrmTxt( istream &is ) { assert(_owner); clear(); primReadFrmTxt(*this,is); }
+	virtual bool			customTxt() const { return 1; }
+	virtual void			toTxt( ostream &os ) const { primToTxt( *this, os ); };
+	virtual void			frmTxt( istream &is ) { assert(_owner); clear(); primFrmTxt(*this,is); }
 
-	template<class T1> friend void primReadFrmTxt( Primitive<T1> &p, istream &is );
-	template<class T1> friend void primWriteToTxt( const Primitive<T1> &p, ostream &os );
+	template<class T1> friend void primFrmTxt( Primitive<T1> &p, istream &is );
+	template<class T1> friend void primToTxt( const Primitive<T1> &p, ostream &os );
 
 	virtual bool			customMxArray() const { return 1; }
 	virtual mxArray*		toMxArray1();
@@ -205,7 +205,7 @@ template<class T> void		Primitive<T>::frmObjImg( const ObjImg &oi, const char *n
 	memcpy(_val,oi._el,nBytes*_n);
 }
 
-template<class T> void		primWriteToTxt( const Primitive<T> &p, ostream &os )
+template<class T> void		primToTxt( const Primitive<T> &p, ostream &os )
 {
 	if( p._n==1 )
 		os << setprecision(10) << *p._val;
@@ -216,7 +216,7 @@ template<class T> void		primWriteToTxt( const Primitive<T> &p, ostream &os )
 	}
 }
 
-template<class T> void		primReadFrmTxt( Primitive<T> &p, istream &is )
+template<class T> void		primFrmTxt( Primitive<T> &p, istream &is )
 {
 	if( is.peek()=='[' ) {
 		char c=is.get(); assert(c=='[');
@@ -231,12 +231,12 @@ template<class T> void		primReadFrmTxt( Primitive<T> &p, istream &is )
 	}
 }
 
-template<> inline void		primWriteToTxt<char>( const Primitive<char> &p, ostream &os )
+template<> inline void		primToTxt<char>( const Primitive<char> &p, ostream &os )
 {
 	os << '"' << p._val << '"';
 }
 
-template<> inline void		primReadFrmTxt<char>( Primitive<char> &p, istream &is )
+template<> inline void		primFrmTxt<char>( Primitive<char> &p, istream &is )
 {
 	char c=is.get(); assert(c=='"'); int n;
 	char *tmp=new char[1000000]; is.get(tmp,1000000);
@@ -245,17 +245,17 @@ template<> inline void		primReadFrmTxt<char>( Primitive<char> &p, istream &is )
 	delete [] tmp;
 }
 
-template<> inline void		primWriteToTxt<uchar>( const Primitive<uchar> &p, ostream &os )
+template<> inline void		primToTxt<uchar>( const Primitive<uchar> &p, ostream &os )
 {
 	Primitive<int> pInt; int n=p._n;
 	pInt._n=n; pInt._val=new int[n];
 	for(int i=0; i<n; i++) pInt._val[i]=(int) p._val[i]; 	
-	pInt.writeToTxt(os);
+	pInt.toTxt(os);
 }
 
-template<> inline void		primReadFrmTxt<uchar>( Primitive<uchar> &p, istream &is )
+template<> inline void		primFrmTxt<uchar>( Primitive<uchar> &p, istream &is )
 {
-	Primitive<int> pInt; pInt.readFrmTxt(is); int n=pInt._n;
+	Primitive<int> pInt; pInt.frmTxt(is); int n=pInt._n;
 	p._n=n; p._val=new uchar[n];
 	for(int i=0; i<n; i++) p._val[i]=(uchar) pInt._val[i]; 	
 }
