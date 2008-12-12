@@ -8,7 +8,7 @@ bool			Savable::toFile( const char *fName, bool binary )
 {
 	ofstream os; remove( fName );
 	os.open(fName, binary? ios::out|ios::binary : ios::out );
-	if(os.fail()) { abortError( "save failed:", fName, __LINE__, __FILE__ ); return 0; }
+	if(os.fail()) { abortError( "toFile failed:", fName, __LINE__, __FILE__ ); return 0; }
 	ObjImg oi; toObjImg(oi,"root");
 	oi.toStrm(os,binary);
 	os.close();	return 1;
@@ -18,7 +18,7 @@ Savable*		Savable::frmFile( const char *fName, bool binary )
 {
 	ifstream is;
 	is.open(fName, binary? ios::in|ios::binary : ios::in );
-	if(is.fail()) { abortError( "load failed:", fName, __LINE__, __FILE__ ); return NULL; }
+	if(is.fail()) { abortError( "frmFile failed:", fName, __LINE__, __FILE__ ); return NULL; }
 	ObjImg oi; oi.frmStrm(is,binary);
 	Savable *s=create(oi.getCname()); s->frmObjImg(oi,"root");
 	is.close(); return s;
@@ -27,12 +27,9 @@ Savable*		Savable::frmFile( const char *fName, bool binary )
 mxArray*		Savable::toMxArray()
 {
 #ifdef MATLAB_MEX_FILE
-	if(customMxArray())
-		return toMxArray1();
-	else {
-		ObjImg oi; toObjImg(oi,"root");
-		return oi.toMxArray();
-	}
+	if(customMxArray()) return toMxArray1();
+	ObjImg oi; toObjImg(oi,"root");
+	return oi.toMxArray();
 #else
 	return NULL;
 #endif
@@ -41,15 +38,9 @@ mxArray*		Savable::toMxArray()
 Savable*		Savable::frmMxArray( const mxArray *M )
 {
 #ifdef MATLAB_MEX_FILE
-	if( !mxIsStruct(M) ) {
-		// primitives ONLY are stored as non-structure mxArrays
-		Savable *s = create(mxIdToChar(mxGetClassID(M)));
-		s->frmMxArray1(M); return s;
-	} else {
-		ObjImg oi; oi.frmMxArray(M,"root");
-		Savable *s = create(oi.getCname());
-		s->frmObjImg(oi,"root"); return s;
-	}
+	ObjImg oi; oi.frmMxArray(M,"root");
+	Savable *s = create(oi.getCname());
+	s->frmObjImg(oi,"root"); return s;
 #else
 	return NULL;
 #endif
@@ -112,6 +103,7 @@ void			ObjImg::clear()
 	_el			= NULL;
 	_elNum		= 0;
 	_elBytes	= 0;
+	for( size_t i=0; i<_objImgs.size(); i++ ) _objImgs[i].clear();
 	_objImgs.clear();
 }
 
@@ -209,7 +201,7 @@ mxArray*		ObjImg::toMxArray()
 	} else {
 		int i,n=_objImgs.size(); char **names=(char**) mxCalloc(n+1,sizeof(char*));
 		for( i=0; i<n+1; i++ ) names[i]=(char*) mxCalloc(512,sizeof(char));
-		sprintf(names[0],"type"); for(i=0; i<n; i++) strcpy(names[i+1],_objImgs[i]._name);
+		sprintf(names[0],"cname"); for(i=0; i<n; i++) strcpy(names[i+1],_objImgs[i]._name);
 		M = mxCreateStructMatrix(1, 1, n+1, (const char**) names);
 		mxSetFieldByNumber(M,0,0,mxCreateString(_cname));
 		for( i=0; i<n; i++ ) mxSetFieldByNumber(M,0,i+1,_objImgs[i].toMxArray());
@@ -228,7 +220,7 @@ void			ObjImg::frmMxArray( const mxArray *M, const char *name )
 		// primitives ONLY are stored as non-structure mxArrays
 		strcpy(_cname,mxIdToChar(mxGetClassID(M)));
 	} else {
-		assert(!strcmp("type",mxGetFieldNameByNumber(M,0)));
+		assert(!strcmp("cname",mxGetFieldNameByNumber(M,0)));
 		mxArray *cname=mxGetFieldByNumber(M,0,0);
 		mxGetString(cname,_cname,mxGetN(cname)+1);
 	}
@@ -316,7 +308,7 @@ mxArray*		VecSavable::toMxArray1()
 	if(n==0) return mxCreateStructMatrix(0,0,0,NULL);
 	MS=new mxArray*[n]; for(i=0; i<n; i++) MS[i]=_v[i]->toMxArray();
 	V=mxStructArrayMerge(MS,n); for(i=0; i<n; i++) mxDestroyArray(MS[i]);
-	const char *fns[] = {"type","valType","val"}; delete [] MS;
+	const char *fns[] = {"cname","valType","val"}; delete [] MS;
 	M=mxCreateStructMatrix( 1, 1, 3, fns );
 	mxSetFieldByNumber(M,0,0,mxCreateString(getCname()));
 	mxSetFieldByNumber(M,0,1,mxCreateString(_v[0]->getCname()));

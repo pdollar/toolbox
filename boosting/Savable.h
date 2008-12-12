@@ -53,7 +53,7 @@ public:
 	mxArray*				toMxArray();
 	static Savable*			frmMxArray( const mxArray *M );
 
-	// create or copy existing objects
+	// create new or clone existing Savable objects
 	static Savable*			create( const char *cname );
 	static Savable*			clone( Savable *obj );
 
