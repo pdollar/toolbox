@@ -3,8 +3,8 @@
 #include "Savable.h"
 #include "Public.h"
 #include "Matrix.h"
-#include "IntegralImage.h"
-#include "Haar.h"
+//#include "IntegralImage.h"
+//#include "Haar.h"
 
 void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
 	// get / check inputs
@@ -12,26 +12,37 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
 	if(nlhs > 1) mexErrMsgTxt( "Only 1 output args allowed." );
 
 	// data - uncomment one of the following
-	//int x=87519651; Primitive<int> X(&x);
-	//bool x[4]={true,false,true,false}; Primitive<bool> X(x,4);
-	//uchar x=13; Primitive<uchar> X(&x);
-	//double x=1.15415987557; Primitive<double> X(&x);
-	//float x[2]={59.5,7500}; Primitive<float> X(x,2);
-	//char *x="whatev yo"; Primitive<char> X(x,strlen(x)+1);
-	//Matrixd X(5,5,0); for(int i=0; i<5; i++) X(i,i)=i;
+	const int n=1; int x[n]={87519651};
+	//const int n=5; int x[n]={1,2,3,4,5};
+	//const int n=4; bool x[n]={true,false,true,false};
+	//const int n=1; uchar x[n]={13};
+	//const int n=7; uchar x[n]={-1,1,2,3,4,5,256};
+	//const int n=1; double x[n]={1.15415987557};
+	//const int n=2; float x[n]={59.5,7500};
+	//char *x="whatev yo"; const int n=strlen(x)+1;
+	ObjImg X; X.frmPrim( "x", x, n );
+
+	// data (complex) - uncomment one of the following
+	//Matrixd x(5,5,0); for(int i=0; i<5; i++) x(i,i)=i;
 	//Rect X(0,0,10,10); X._wt=.3f;
-	Haar X; X.createSyst(1,25,25,10,10,0,0); X.finalize();
+	//Haar X; X.createSyst(1,25,25,10,10,0,0); X.finalize();
+	//ObjImg X; X.frmSavable(&x);
+	// fun time
+	//Savable *y = X.toSavable();
+	//X.clear(); X.frmSavable(y); delete y;
+
+	// more fun
+	mxArray *M = X.toMxArray();
+	X.clear(); X.frmMxArray( M );
 
 	// to matlab struct, from matlab struct, to matlab struct again
-	mxArray *M = X.toMxArray();
-	Savable *Y = Savable::frmMxArray(M);
-	plhs[0] = Y->toMxArray();
+	plhs[0] = X.toMxArray();
 }
 
 /*
 template<class T> void	convert( const mxArray *A, Matrix<T> &B )
 {
-	int m=mxGetM(A), n=mxGetN(A); 
+	int m=mxGetM(A), n=mxGetN(A);
 	B.setDims(m,n);
 	double *pA=mxGetPr(A);
 	for( int i=0; i<B.size(); i++ ) B(i)=(T) pA[i];

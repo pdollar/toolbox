@@ -19,7 +19,7 @@ public:
 	Matrix( int rows, int cols, T value );
 	Matrix( const Matrix& x );
 	~Matrix();
-	virtual void	clear(); 
+	virtual void	clear();
 	Matrix<T>&		operator= (const Matrix<T> &x );
 	Matrix<T>&		operator= (const vector<T> &x );
 
@@ -34,8 +34,8 @@ public:
 	int				rows() const { return _mRows; };
 	int				cols() const { return _nCols; };
 	int				size() const { return _mRows*_nCols; };
-	T&				operator() (const int index ) const; 
-	T&				operator() (const int index ); 
+	T&				operator() (const int index ) const;
+	T&				operator() (const int index );
 	T&				operator() (const int row, const int col ) const;
 	T&				operator() (const int row, const int col );
 
@@ -61,10 +61,10 @@ public:
 public:
 	// write/read to/from stream/text
 	virtual const char* getCname() const;
-	virtual void	toObjImg( ObjImg &oi, const char *name );
+	virtual void	toObjImg( ObjImg &oi, const char *name ) const;
 	virtual void	frmObjImg( const ObjImg &oi, const char *name=NULL );
 	bool			writeToTxt( const char* file, char* delim="," );
-	bool			readFrmTxt( const char* file, char* delim="," ); 
+	bool			readFrmTxt( const char* file, char* delim="," );
 
 public:
 	// pointwise operators (defined with a precompiler script "DOP")
@@ -75,8 +75,8 @@ public:
 	#define DOP(OP) \
 		Matrix operator OP ( const Matrix &b ) const; \
 		Matrix operator OP ( const T &b ) const; \
-		template<class T1> friend Matrix<T1> operator OP ( const T1 &a, const Matrix<T1> &b ); 
-		DOP(+); DOP(-); DOP(/); DOP(*); DOP(^); DOP(<); DOP(>); DOP(<=); DOP(>=); DOP(&&); DOP(||); DOP(==); DOP(!=); 
+		template<class T1> friend Matrix<T1> operator OP ( const T1 &a, const Matrix<T1> &b );
+		DOP(+); DOP(-); DOP(/); DOP(*); DOP(^); DOP(<); DOP(>); DOP(<=); DOP(>=); DOP(&&); DOP(||); DOP(==); DOP(!=);
 	#undef DOP
 	Matrix operator& (const Matrix &b ) const;
 
@@ -196,26 +196,21 @@ template<class T> const char*	Matrix<T>::getCname() const
 	return cname;
 }
 
-template<class T> void			Matrix<T>::toObjImg( ObjImg &oi, const char *name )
+template<class T> void			Matrix<T>::toObjImg( ObjImg &oi, const char *name ) const
 {
-	Primitive<int> mRows(&_mRows), nCols(&_nCols);
-	Primitive<T> data(_data,size());
 	oi.init(name,getCname(),3);
-	mRows.toObjImg(oi._objImgs[0],"mRows");
-	nCols.toObjImg(oi._objImgs[1],"nCols");
-	data.toObjImg(oi._objImgs[2],"data");
+	oi._children[0].frmPrim("mRows",&_mRows);
+	oi._children[1].frmPrim("nCols",&_nCols);
+	oi._children[2].frmPrim("data",_data,size());
 }
 
 template<class T> void			Matrix<T>::frmObjImg( const ObjImg &oi, const char *name )
 {
-	clear(); oi.check(3,3,name,getCname());
-	int mRows, nCols;
-	Primitive<int> mRows1(&mRows), nCols1(&nCols);
-	mRows1.frmObjImg(oi._objImgs[0],"mRows");
-	nCols1.frmObjImg(oi._objImgs[1],"nCols");
-	if(mRows==0 || nCols==0) return; setDims(mRows,nCols);
-	Primitive<T> data(_data);
-	data.frmObjImg(oi._objImgs[2],"data");
+	clear(); oi.check(name,getCname(),3,3);
+	int mRows; oi._children[0].toPrim("mRows",&mRows);
+	int nCols; oi._children[1].toPrim("nCols",&nCols);
+	if(mRows && nCols) setDims(mRows,nCols); else return;
+	oi._children[2].toPrim("data",_data);
 }
 
 template<class T> bool			Matrix<T>::writeToTxt( const char *fName, char *delim )
@@ -603,7 +598,7 @@ template<class T> Matrix<T>		operator^ ( const T a, const Matrix<T> &b )
         } \
         return c; \
     } 
-	DOP(+); DOP(-); DOP(/); DOP(<); DOP(>); DOP(<=); DOP(>=); DOP(&&); DOP(||); DOP(==); DOP(!=); 
+	DOP(+); DOP(-); DOP(/); DOP(<); DOP(>); DOP(<=); DOP(>=); DOP(&&); DOP(||); DOP(==); DOP(!=);
 #undef DOP
 // Pointwise (Matrix<T> OP T) and (T OP Matrix<T>) operations - except ^
 #define DOP(OP) \
@@ -621,7 +616,7 @@ template<class T> Matrix<T>		operator^ ( const T a, const Matrix<T> &b )
         } \
         return c; \
     } 
-	DOP(+); DOP(-); DOP(/); DOP(*); DOP(<); DOP(>); DOP(<=); DOP(>=); DOP(&&); DOP(||); DOP(==); DOP(!=); 
+	DOP(+); DOP(-); DOP(/); DOP(*); DOP(<); DOP(>); DOP(<=); DOP(>=); DOP(&&); DOP(||); DOP(==); DOP(!=);
 #undef DOP
 // Pointwise assignment operators
 #define DOP(OP) \
