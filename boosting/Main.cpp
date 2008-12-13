@@ -25,7 +25,7 @@ int main(int argc, const char* argv[])
 
 void testToStrm()
 {
-	// data (primitives) - uncomment one of the following
+	//// data (primitives) - uncomment one of the following
 	const int n=1; int x[n]={87519651};
 	//const int n=5; int x[n]={1,2,3,4,5};
 	//const int n=4; bool x[n]={true,false,true,false};
@@ -36,16 +36,17 @@ void testToStrm()
 	//char *x="whatev yo"; const int n=strlen(x)+1;
 	ObjImg X; X.frmPrim( "x", x, n );
 
-	// data (complex) - uncomment one of the following
+	//// data (complex) - uncomment one of the following
 	//Matrixd x(5,5,0); for(int i=0; i<5; i++) x(i,i)=i;
 	//Rect x(0,0,10,10); x._wt=.3f;
+	//VecSavable x;
 	//Haar x; x.createSyst(1,25,25,10,10,0,0); x.finalize();
-	//ObjImg X; X.frmSavable(&x);
-	// fun time
-	//Savable *y = X.toSavable();
-	//X.clear(); X.frmSavable(y); delete y;
+	//ObjImg X; X.frmSavable("x",&x);
+	//// fun time
+	//Savable *y = X.toSavable("x");
+	//X.clear(); X.frmSavable("y",y); delete y;
 	
-	// save, then load (inspect results w debugger)
+	// save, then load, then save again
 	bool binary=1; char *fName="C:/code/toolbox/boosting/temp.txt";
 	X.toFile( fName, binary );
 	ObjImg Y; Y.frmFile( fName, binary );

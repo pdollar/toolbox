@@ -59,7 +59,7 @@ protected:
 
 	// subclasses can have OPTIONAL custom conversion to/from mxArray
 	virtual bool			customMxArray() const { return 0; }
-	virtual mxArray*		toMxArray() { assert(0); return NULL; };
+	virtual mxArray*		toMxArray() const { assert(0); return NULL; };
 	virtual void			frmMxArray( const mxArray *M ) { assert(0); };
 
 	friend					ObjImg;
@@ -106,8 +106,8 @@ public:
 	template<class T> void	frmPrim( char *name, T *src, int n=1 );
 
 	// conversion to/from Savable (ONLY if encodes Savable object)
-	Savable*				toSavable() const;
-	void					frmSavable( const Savable *s );
+	Savable*				toSavable( const char *name ) const;
+	void					frmSavable( const char *name, const Savable *s );
 
 	// conversion to/from mxArray
 	mxArray*				toMxArray() const;
@@ -160,9 +160,9 @@ public:
 	virtual void			toObjImg( ObjImg &oi, const char *name ) const;
 	virtual void			frmObjImg( const ObjImg &oi, const char *name );
 
-	//virtual bool			customMxArray() const { return 1; }
-	//virtual mxArray*		toMxArray() const;
-	//virtual void			frmMxArray( const mxArray *M );
+	virtual bool			customMxArray() const { return 1; }
+	virtual mxArray*		toMxArray() const;
+	virtual void			frmMxArray( const mxArray *M );
 
 public:
 	vector< Savable* >		_v;
