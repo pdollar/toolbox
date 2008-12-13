@@ -1,6 +1,6 @@
 #include "Haar.h"
 //#include "Rand.h"
-
+#include <iomanip>
 
 			Rect::Rect()
 {
@@ -15,42 +15,37 @@
 	setPos(lf,rt,tp,bt); 
 }
 
-void		Rect::toObjImg( ObjImg &oi, const char *name )
+void		Rect::toObjImg( ObjImg &oi, const char *name ) const
 {
 	oi.init(name,getCname(),5);
-	Primitive<int> lf(&_lf), rt(&_rt), tp(&_tp), bt(&_bt);
-	Primitive<float> wt(&_wt);
-	lf.toObjImg(oi._objImgs[0],"lf");
-	rt.toObjImg(oi._objImgs[1],"rt");
-	tp.toObjImg(oi._objImgs[2],"tp");
-	bt.toObjImg(oi._objImgs[3],"bt");
-	wt.toObjImg(oi._objImgs[4],"wt");
+	oi._children[0].frmPrim("lf",&_lf);
+	oi._children[1].frmPrim("rt",&_rt);
+	oi._children[2].frmPrim("tp",&_tp);
+	oi._children[3].frmPrim("bt",&_bt);
+	oi._children[4].frmPrim("wt",&_wt);
 }
 
 void		Rect::frmObjImg( const ObjImg &oi, const char *name )
 {
-	oi.check(5,5,name,getCname());
-	Primitive<int> lf(&_lf), rt(&_rt), tp(&_tp), bt(&_bt);
-	Primitive<float> wt(&_wt);
-	lf.frmObjImg(oi._objImgs[0],"lf");
-	rt.frmObjImg(oi._objImgs[1],"rt");
-	tp.frmObjImg(oi._objImgs[2],"tp");
-	bt.frmObjImg(oi._objImgs[3],"bt");
-	wt.frmObjImg(oi._objImgs[4],"wt");
+	oi.check(name,getCname(),5,5);
+	oi._children[0].toPrim("lf",&_lf);
+	oi._children[1].toPrim("rt",&_rt);
+	oi._children[2].toPrim("tp",&_tp);
+	oi._children[3].toPrim("bt",&_bt);
+	oi._children[4].toPrim("wt",&_wt);
 }
 
-void		Rect::toTxt( ostream &os ) const 
+void		Rect::toTxt( ofstream &os ) const 
 {
 	os << "< " << _lf << " " << _rt << " " << _tp << " " << _bt 
 		<< " " << setprecision(10) << _wt << " >";
 }
 
-void		Rect::frmTxt( istream &is ) 
+void		Rect::frmTxt( ifstream &is ) 
 { 
-	char tmp[128]; 
-	is>>tmp; assert(!strcmp(tmp,"<"));
+	assert(is.get()=='<'); 
 	is >> _lf >> _rt >> _tp >> _bt >> _wt;
-	is>>tmp; assert(!strcmp(tmp,">"));
+	assert(is.get()==' ' && is.get()=='>' && is.get()==10);
 }
 
 bool		Rect::isValid()	const
@@ -128,18 +123,17 @@ bool		operator<  (const Rect &rect1, const Rect &rect2)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void		Haar::toObjImg(  ObjImg &oi, const char *name )
+void		Haar::toObjImg(  ObjImg &oi, const char *name ) const
 {
-	oi.init(name,getCname(),1);	VecSavable v; 
-	for(int i=0; i<_nRects; i++ ) 
-		v._v.push_back((Savable*) &_rects[i]);
-	v.toObjImg(oi._objImgs[0],"rects");
+	oi.init(name,getCname(),1); VecSavable v; 
+	for(int i=0; i<_nRects; i++ ) v._v.push_back((Savable*) &_rects[i]);
+	v.toObjImg(oi._children[0],"rects");
 }
 
 void		Haar::frmObjImg( const ObjImg &oi, const char *name )
 {
-	oi.check(1,1,name,getCname()); VecSavable v; 	
-	v.frmObjImg(oi._objImgs[0],"rects");
+	oi.check(name,getCname(),1,1); VecSavable v; 	
+	v.frmObjImg(oi._children[0],"rects");
 	_nRects=v._v.size(); createRects(_nRects);
 	for(int i=0; i<_nRects; i++ ) {
 		_rects[i]=*(Rect*)v._v[i]; delete v._v[i];

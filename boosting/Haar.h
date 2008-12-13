@@ -42,11 +42,11 @@ public:
 
 	// implement Savable
 	virtual const char* getCname() const { return "Rect"; };
-	virtual void	toObjImg( ObjImg &oi, const char *name );
+	virtual void	toObjImg( ObjImg &oi, const char *name ) const;
 	virtual void	frmObjImg( const ObjImg &oi, const char *name=NULL );
 	virtual bool	customTxt() const { return true; }
-	virtual void	toTxt( ostream &os ) const;
-	virtual void	frmTxt( istream &is );
+	virtual void	toTxt( ofstream &os ) const;
+	virtual void	frmTxt( ifstream &is );
 
 	// get/set basic properties
 	int				area()		const {return (_rt-_lf+1)*(_bt-_tp+1); };
@@ -133,7 +133,7 @@ class Haar : public Savable
 public:
 	// implement Savable
 	virtual const char* getCname() const { return "Haar"; };
-	virtual void	toObjImg( ObjImg &oi, const char *name );
+	virtual void	toObjImg( ObjImg &oi, const char *name ) const;
 	virtual void	frmObjImg( const ObjImg &oi, const char *name=NULL );
 
 	// create / alter

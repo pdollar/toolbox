@@ -2,20 +2,20 @@
 #include <iomanip>
 
 #include "Matrix.h"
-//#include "Haar.h"
+#include "Haar.h"
 
 Savable*		Savable::create( const char *cname )
 {
 #define CREATE(T) \
 	if(!strcmp(cname,#T)) return (Savable*) new T();
 
-	//CREATE(VecSavable);
+	CREATE(VecSavable);
 	CREATE(Matrix<int>);
 	CREATE(Matrix<float>);
 	CREATE(Matrix<double>);
 	CREATE(Matrix<unsigned char>);
-	//CREATE(Rect);
-	//CREATE(Haar);	
+	CREATE(Rect);
+	CREATE(Haar);	
 	abortError( "unknown cname", cname, __LINE__, __FILE__ );
 	return NULL;
 
@@ -83,7 +83,7 @@ void			ObjImg::check( const char *name, const char *cname, int minN, int maxN ) 
 		abortError( "Primitive should not be initialized:", __LINE__, __FILE__ );
 }
 
-Savable*		ObjImg::toSavable()
+Savable*		ObjImg::toSavable() const
 {
 	Savable *s = Savable::create( _cname );
 	s->frmObjImg( *this, _name ); return s;
@@ -94,7 +94,7 @@ void			ObjImg::frmSavable( const Savable *s )
 	s->toObjImg( *this, "root" );
 }
 
-mxArray*		ObjImg::toMxArray()
+mxArray*		ObjImg::toMxArray() const
 {
 #ifdef MATLAB_MEX_FILE
 #define GETID(M,T) if(!strcmp(_cname,#T)) id=M;
@@ -186,7 +186,7 @@ bool			ObjImg::frmFile( const char *fName, bool binary )
 {
 	ifstream is; is.open(fName, binary? ios::in|ios::binary : ios::in );
 	if(is.fail()) { abortError( "frmFile failed:", fName, __LINE__, __FILE__ ); return 0; }
-	frmStrm(is,binary);	is.close(); return 1;
+	frmStrm(is,binary); char t[128]; is>>t; assert(strlen(t)==0); is.close(); return 1;
 }
 
 void			ObjImg::toStrm( ofstream &os, bool binary, int indent )
@@ -215,7 +215,7 @@ void			ObjImg::toStrm( ofstream &os, bool binary, int indent )
 		if( !s->customTxt() ) delete s; else {
 			os << setw(20) << left << _name << "= ";
 			s->frmObjImg(*this,_name); s->toTxt(os); 
-			os << endl; return;
+			os << endl; delete s; return;
 		}
 		// standard toStrm(binary=0)
 		int n=_children.size(); char temp[20];
@@ -244,7 +244,7 @@ void			ObjImg::frmStrm( ifstream &is, bool binary )
 	} else {
 		char temp[32]; is >> temp;
 		if( strcmp(temp,"=")==0 ) {
-			char c=is.get(); assert(c==' ');
+			assert(is.get()==' ');
 			// primitive frmStrm(binary=1)
 			if(primFrmTxt(is)) return;
 			// custom frmTxt
@@ -265,14 +265,14 @@ void			ObjImg::primToTxt( ofstream &os )
 {
 #define PWR(T1,T2) \
 	if(!strcmp(_cname,#T1)) for(int i=0; i<_elNum; i++) \
-	os << setprecision(10) << T2(*((T1*) (_el+i*_elBytes))) << " ";
+	os << setprecision(10) << T2(*((T1*) (_el+i*_elBytes))) << (i<_elNum-1 ? " " : "");
 
 	os << setw(20) << left << _name << "= ";
 	if(!strcmp(_cname,"char")) { os << '"' << _el << '"'; return; }
 	if(_elNum>1) os << "[ ";
 	PWR(int,int); PWR(long,long); PWR(float,float);
 	PWR(double,double); PWR(bool,bool); PWR(unsigned char,int);
-	if(_elNum>1) os << "]"; os << endl;
+	if(_elNum>1) os << " ]"; os << endl;
 
 #undef PWR
 }
@@ -292,7 +292,7 @@ bool			ObjImg::primFrmTxt( ifstream &is )
 
 	bool isPrim=false;
 	if(!strcmp(_cname,"char")) {
-		char c=is.get(); assert(c=='"'); int n;
+		assert(is.get()=='"'); int n;
 		char *tmp=new char[1000000]; is.get(tmp,1000000);
 		_elBytes=1; _elNum=n=strlen(tmp); assert(tmp[n-1]=='"'); tmp[n-1]='\0';
 		_el=new char[n]; memcpy(_el,tmp,n*sizeof(char));
@@ -305,75 +305,74 @@ bool			ObjImg::primFrmTxt( ifstream &is )
 		for(int i=0; i<_elNum; i++) tmp[i]=(uchar) *(_el+i*_elBytes);
 		delete [] _el; _el=(char*) tmp; _elBytes=1;
 	}
+	if(isPrim) assert(is.get()==10);
 	return isPrim;
 
 #undef PRD
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-//const char**	mxStructGetFieldNames( const mxArray *M )
-//{
-//#ifdef MATLAB_MEX_FILE
-//	assert(mxIsStruct(M)); int j,m=mxGetNumberOfFields(M);
-//	char **fns=(char**) mxCalloc(m, sizeof(char*));
-//	for(j=0; j<m; j++) fns[j]=(char*) mxCalloc(512,sizeof(char));
-//	for(j=0; j<m; j++) strcpy(fns[j],mxGetFieldNameByNumber(M,j));
-//	return (const char**) fns;
-//#else
-//	return NULL;
-//#endif
-//}
-//
-//mxArray**		mxStructArraySplit( const mxArray *M )
-//{
-//#ifdef MATLAB_MEX_FILE
-//	int i, j, n=mxGetN(M), m=mxGetNumberOfFields(M);
-//	mxArray **MS=new mxArray*[n];
-//	const char **fns=mxStructGetFieldNames(M);
-//	for(i=0; i<n; i++) MS[i]=mxCreateStructMatrix(1,1,m,fns);
-//	for(i=0; i<n; i++) for(j=0; j<m; j++)
-//		mxSetFieldByNumber(MS[i],0,j,mxDuplicateArray(mxGetFieldByNumber(M,i,j)));
-//	return MS;
-//#else
-//	return NULL;
-//#endif
-//}
-//
-//mxArray*		mxStructArrayMerge( mxArray **MS, int n )
-//{
-//#ifdef MATLAB_MEX_FILE
-//	if(n==0) return mxCreateStructMatrix(0,0,0,NULL);
-//	int i, j, m=mxGetNumberOfFields(MS[0]);
-//	const char **fns=mxStructGetFieldNames(MS[0]);
-//	mxArray *M=mxCreateStructMatrix(1,n,m,fns);
-//	for(i=0; i<n; i++) for(j=0; j<m; j++)
-//		mxSetFieldByNumber(M,i,j,mxDuplicateArray(mxGetFieldByNumber(MS[i],0,j)));
-//	return M;
-//#else
-//	return NULL;
-//#endif
-//}
-//
-//void			VecSavable::toObjImg( ObjImg &oi, const char *name )
-//{
-//	int n=_v.size();
-//	oi.init(name,getCname(),n);
-//	for( int i=0; i<n; i++ )		
-//		_v[i]->toObjImg(oi._children[i],"[element]");
-//}
-//
-//void			VecSavable::frmObjImg( const ObjImg &oi, const char *name )
-//{
-//	int n=oi._children.size();
-//	oi.check(name,getCname(),n,n);
-//	for( int i=0; i<n; i++ ) {
-//		Savable *s = create(oi._children[i].getCname());
-//		s->frmObjImg(oi._children[i],"[element]");
-//		_v.push_back( s );
-//	}
-//}
-//
-//mxArray*		VecSavable::toMxArray()
+const char**	mxStructGetFieldNames( const mxArray *M )
+{
+#ifdef MATLAB_MEX_FILE
+	assert(mxIsStruct(M)); int j,m=mxGetNumberOfFields(M);
+	char **fns=(char**) mxCalloc(m, sizeof(char*));
+	for(j=0; j<m; j++) fns[j]=(char*) mxCalloc(512,sizeof(char));
+	for(j=0; j<m; j++) strcpy(fns[j],mxGetFieldNameByNumber(M,j));
+	return (const char**) fns;
+#else
+	return NULL;
+#endif
+}
+
+mxArray**		mxStructArraySplit( const mxArray *M )
+{
+#ifdef MATLAB_MEX_FILE
+	int i, j, n=mxGetN(M), m=mxGetNumberOfFields(M);
+	mxArray **MS=new mxArray*[n];
+	const char **fns=mxStructGetFieldNames(M);
+	for(i=0; i<n; i++) MS[i]=mxCreateStructMatrix(1,1,m,fns);
+	for(i=0; i<n; i++) for(j=0; j<m; j++)
+		mxSetFieldByNumber(MS[i],0,j,mxDuplicateArray(mxGetFieldByNumber(M,i,j)));
+	return MS;
+#else
+	return NULL;
+#endif
+}
+
+mxArray*		mxStructArrayMerge( mxArray **MS, int n )
+{
+#ifdef MATLAB_MEX_FILE
+	if(n==0) return mxCreateStructMatrix(0,0,0,NULL);
+	int i, j, m=mxGetNumberOfFields(MS[0]);
+	const char **fns=mxStructGetFieldNames(MS[0]);
+	mxArray *M=mxCreateStructMatrix(1,n,m,fns);
+	for(i=0; i<n; i++) for(j=0; j<m; j++)
+		mxSetFieldByNumber(M,i,j,mxDuplicateArray(mxGetFieldByNumber(MS[i],0,j)));
+	return M;
+#else
+	return NULL;
+#endif
+}
+
+void			VecSavable::toObjImg( ObjImg &oi, const char *name ) const
+{
+	int n=_v.size(); oi.init(name,getCname(),n);
+	for( int i=0; i<n; i++ ) _v[i]->toObjImg(oi._children[i],"[element]");
+}
+
+void			VecSavable::frmObjImg( const ObjImg &oi, const char *name )
+{
+	int n=oi._children.size(); oi.check(name,getCname(),n,n);
+	for( int i=0; i<n; i++ ) _v.push_back( oi._children[i].toSavable() );
+	//for( int i=0; i<n; i++ ) {
+	//	Savable *s = create(oi._children[i].getCname());
+	//	s->frmObjImg(oi._children[i],"[element]");
+	//	_v.push_back( s );
+	//}
+}
+
+//mxArray*		VecSavable::toMxArray() const
 //{
 //#ifdef MATLAB_MEX_FILE
 //	int i,j,m,n=_v.size(); mxArray **MS, *V, *M;

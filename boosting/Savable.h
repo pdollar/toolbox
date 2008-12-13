@@ -54,8 +54,8 @@ public:
 protected:
 	// subclasses can have OPTIONAL custom conversion to/from text streams
 	virtual bool			customTxt() const { return 0; }
-	virtual void			toTxt( ostream &os ) const { assert(0); };
-	virtual void			frmTxt( istream &is ) { assert(0); };
+	virtual void			toTxt( ofstream &os ) const { assert(0); };
+	virtual void			frmTxt( ifstream &is ) { assert(0); };
 
 	// subclasses can have OPTIONAL custom conversion to/from mxArray
 	virtual bool			customMxArray() const { return 0; }
@@ -106,11 +106,11 @@ public:
 	template<class T> void	frmPrim( char *name, T *src, int n=1 );
 
 	// conversion to/from Savable (ONLY if encodes Savable object)
-	Savable*				toSavable();
+	Savable*				toSavable() const;
 	void					frmSavable( const Savable *s );
 
 	// conversion to/from mxArray
-	mxArray*				toMxArray();
+	mxArray*				toMxArray() const;
 	void					frmMxArray( const mxArray *M );
 
 	// converstion to/from binary file or human editable text file
@@ -153,19 +153,19 @@ template<class T> void		ObjImg::frmPrim( char *name, T *src, int n )
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-//class VecSavable : public Savable
-//{
-//public:
-//	virtual const char*		getCname() const {return "VecSavable"; };
-//	virtual void			toObjImg( ObjImg &oi, const char *name );
-//	virtual void			frmObjImg( const ObjImg &oi, const char *name );
-//
-//	virtual bool			customMxArray() const { return 1; }
-//	virtual mxArray*		toMxArray();
-//	virtual void			frmMxArray( const mxArray *M );
-//
-//public:
-//	vector< Savable* >		_v;
-//};
+class VecSavable : public Savable
+{
+public:
+	virtual const char*		getCname() const {return "VecSavable"; };
+	virtual void			toObjImg( ObjImg &oi, const char *name ) const;
+	virtual void			frmObjImg( const ObjImg &oi, const char *name );
+
+	//virtual bool			customMxArray() const { return 1; }
+	//virtual mxArray*		toMxArray() const;
+	//virtual void			frmMxArray( const mxArray *M );
+
+public:
+	vector< Savable* >		_v;
+};
 
 #endif
