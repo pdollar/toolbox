@@ -192,7 +192,7 @@ template<class T> Matrix<T>&	Matrix<T>::operator= (const vector<T> &x)
 template<class T> const char*	Matrix<T>::getCname() const
 { 
 	static char cname[32];
-	sprintf(cname,"Matrix<%s>",typeid(T).name());
+	sprintf(cname,"Matrix<%s>",PRIMNAME(T));
 	return cname;
 }
 

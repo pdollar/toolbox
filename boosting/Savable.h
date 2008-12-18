@@ -139,15 +139,25 @@ public:
 	vector< ObjImg > 		_children;
 };
 
+// alternative to typeid(T).name which is OS dependent
+#define PRIMNAME(T)\
+	((typeid(T)==typeid(int)) ? "int" :\
+	(typeid(T)==typeid(long)) ? "long" :\
+	(typeid(T)==typeid(float)) ? "float" :\
+	(typeid(T)==typeid(double)) ? "double" :\
+	(typeid(T)==typeid(bool)) ? "bool" :\
+	(typeid(T)==typeid(char)) ? "char" :\
+	(typeid(T)==typeid(uchar)) ? "uchar" : "unknown")
+
 template<class T> void		ObjImg::toPrim( char *name, T *tar ) const
 {
-	check(name,typeid(T).name(),0,0);
+	check(name,PRIMNAME(T),0,0);
 	memcpy(tar,_el,_elBytes*_elNum);
 }
 
 template<class T> void		ObjImg::frmPrim( char *name, T *src, int n )
 {
-	init(name,typeid(T).name(),0);
+	init(name,PRIMNAME(T),0);
 	_elBytes=sizeof(T); _elNum=n; int nBytes=_elBytes*n;
 	_el=new char[nBytes]; memcpy(_el,src,nBytes);
 }

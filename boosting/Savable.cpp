@@ -13,9 +13,9 @@ Savable*		Savable::create( const char *cname )
 	CREATE(Matrix<int>);
 	CREATE(Matrix<float>);
 	CREATE(Matrix<double>);
-	CREATE(Matrix<unsigned char>);
+	CREATE(Matrix<uchar>);
 	CREATE(Rect);
-	CREATE(Haar);	
+	CREATE(Haar);
 	abortError( "unknown cname", cname, __LINE__, __FILE__ );
 	return NULL;
 
@@ -33,7 +33,7 @@ Savable*		Savable::clone( Savable *obj )
 	CLONE1(Matrix<int>);
 	CLONE1(Matrix<float>);
 	CLONE1(Matrix<double>);
-	CLONE1(Matrix<unsigned char>);
+	CLONE1(Matrix<uchar>);
 	abortError( "unknown cname", cname, __LINE__, __FILE__ );
 	return NULL;
 
@@ -97,14 +97,14 @@ void			ObjImg::frmSavable( const char *name, const Savable *s )
 mxArray*		ObjImg::toMxArray() const
 {
 #ifdef MATLAB_MEX_FILE
-#define GETID(M,T) if(!strcmp(_cname,#T)) id=M;
+#define GETID(M,T) if(!strcmp(_cname,PRIMNAME(T))) id=M;
 	// primitive to non-struct mxArray
 	if(_elNum>0) {
 		mxClassID id = mxUNKNOWN_CLASS;
 		GETID( mxINT32_CLASS, int );     GETID( mxINT64_CLASS, long );
 		GETID( mxSINGLE_CLASS, float );  GETID( mxDOUBLE_CLASS, double );
 		GETID( mxLOGICAL_CLASS, bool );  GETID( mxCHAR_CLASS, char );
-		GETID( mxUINT8_CLASS, unsigned char );
+		GETID( mxUINT8_CLASS, uchar );
 		assert(id!=mxUNKNOWN_CLASS);
 		if( id==mxCHAR_CLASS ) {
 			return mxCreateString(_el);
@@ -134,7 +134,7 @@ mxArray*		ObjImg::toMxArray() const
 void			ObjImg::frmMxArray( const mxArray *M )
 {
 #ifdef MATLAB_MEX_FILE
-#define GETCNAME(M,T) if(id==M) { _elBytes=sizeof(T); strcpy(_cname,#T); }
+#define GETCNAME(M,T) if(id==M) { _elBytes=sizeof(T); strcpy(_cname,PRIMNAME(T)); }
 	// primitive from non-struct mxArray
 	if( !mxIsStruct(M) ) {
 		clear(); assert(mxGetM(M)==1); _elNum=mxGetN(M);
@@ -142,7 +142,7 @@ void			ObjImg::frmMxArray( const mxArray *M )
 		GETCNAME( mxINT32_CLASS, int );    GETCNAME( mxINT64_CLASS, long );
 		GETCNAME( mxSINGLE_CLASS, float ); GETCNAME( mxDOUBLE_CLASS, double );
 		GETCNAME( mxLOGICAL_CLASS, bool ); GETCNAME( mxCHAR_CLASS, char );
-		GETCNAME( mxUINT8_CLASS, unsigned char );
+		GETCNAME( mxUINT8_CLASS, uchar );
 		assert(_elBytes>0);
 		if(!strcmp(_cname,"char")) {
 			assert(mxIsChar(M)); _elNum++;
@@ -190,10 +190,8 @@ bool			ObjImg::frmFile( const char *fName, bool binary )
 
 void			ObjImg::toStrm( ofstream &os, bool binary, int indent )
 {
-	char cname[32]; strcpy(cname,_cname);
-	for( int i=0; i<32; i++ ) if( cname[i]==' ' ) cname[i]='-';
 	if( binary ) {
-		os << cname << ' ' << _name << ' ';
+		os << _cname << ' ' << _name << ' ';
 		os.write((char*)&_elNum,sizeof(_elNum));
 		if(_elNum>0) {
 			// primitive toStrm(binary=1)
@@ -206,7 +204,7 @@ void			ObjImg::toStrm( ofstream &os, bool binary, int indent )
 		}
 	} else {
 		for(int i=0; i<indent*2; i++) os.put(' ');
-		os << setw(16) << left << cname << " ";
+		os << setw(16) << left << _cname << " ";
 		// primitive toStrm(binary=0)
 		if(_elNum>0) { primToTxt(os); return; }
 		// custom toTxt
@@ -226,7 +224,6 @@ void			ObjImg::toStrm( ofstream &os, bool binary, int indent )
 void			ObjImg::frmStrm( ifstream &is, bool binary )
 {
 	clear(); is >> _cname >> _name;
-	for( int i=0; i<32; i++ ) if( _cname[i]=='-' ) _cname[i]=' ';
 	if( binary ) {
 		is.get(); is.read((char*)&_elNum,sizeof(_elNum));
 		if(_elNum>0) {
@@ -263,14 +260,14 @@ void			ObjImg::frmStrm( ifstream &is, bool binary )
 void			ObjImg::primToTxt( ofstream &os )
 {
 #define PWR(T1,T2) \
-	if(!strcmp(_cname,#T1)) for(int i=0; i<_elNum; i++) \
+	if(!strcmp(_cname,PRIMNAME(T1))) for(int i=0; i<_elNum; i++) \
 	os << setprecision(10) << T2(*((T1*) (_el+i*_elBytes))) << (i<_elNum-1 ? " " : "");
 
 	os << setw(20) << left << _name << "= ";
 	if(!strcmp(_cname,"char")) { os << '"' << _el << '"'; return; }
 	if(_elNum>1) os << "[ ";
 	PWR(int,int); PWR(long,long); PWR(float,float);
-	PWR(double,double); PWR(bool,bool); PWR(unsigned char,int);
+	PWR(double,double); PWR(bool,bool); PWR(uchar,int);
 	if(_elNum>1) os << " ]"; os << endl;
 
 #undef PWR
@@ -279,7 +276,7 @@ void			ObjImg::primToTxt( ofstream &os )
 bool			ObjImg::primFrmTxt( ifstream &is )
 {
 #define PRD(T1,T2) \
-	if(!strcmp(_cname,#T1)) { \
+	if(!strcmp(_cname,PRIMNAME(T1))) { \
 	_elBytes=sizeof(T2); T2 *tmp; \
 	if( is.peek()!='[' ) { tmp=new T2[1]; is>>*tmp; _elNum=1; } else { \
 	assert(is.get()=='['); tmp=new T2[1000000]; _elNum=0; \
@@ -298,8 +295,8 @@ bool			ObjImg::primFrmTxt( ifstream &is )
 		delete [] tmp; isPrim=true;
 	}
 	PRD(int,int); PRD(long,long); PRD(float,float);
-	PRD(double,double); PRD(bool,bool); PRD(unsigned char,int);
-	if(!strcmp(_cname,"unsigned char")) {
+	PRD(double,double); PRD(bool,bool); PRD(uchar,int);
+	if(!strcmp(_cname,"uchar")) {
 		uchar *tmp=new uchar[_elNum];
 		for(int i=0; i<_elNum; i++) tmp[i]=(uchar) *(_el+i*_elBytes);
 		delete [] _el; _el=(char*) tmp; _elBytes=1;
