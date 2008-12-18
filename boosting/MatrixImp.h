@@ -74,6 +74,77 @@ template<class T> Matrix<T>&	Matrix<T>::operator= (const vector<T> &x)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+template<class T> bool			Matrix<T>::setDims(const int mRows, const int nCols)
+{
+	assert(mRows>=0 && nCols>=0);
+	if(mRows==_mRows && nCols==_nCols) return true;
+	clear(); _mRows=mRows; _nCols=nCols;
+	if(_mRows==0 || _nCols==0) return true;
+
+	try {
+		_data = new T[size()];
+		_dataInd = new T*[_mRows];
+	} catch( bad_alloc& ) {
+		cout << "Matrix::setDims(..)  OUT OF MEMORY" << endl;
+		clear(); return false;
+	}
+
+	for( int i=0; i<_mRows; i++) _dataInd[i]=&(_data[_nCols*i]);
+	return true;
+}
+
+template<class T> bool			Matrix<T>::setDims(const int mRows, const int nCols, const T val )
+{
+	if(!setDims(mRows,nCols)) return false;
+	setVal(val); return true;
+}
+
+template<class T> bool			Matrix<T>::changeDims(const int mRows, const int nCols)
+{
+	if(mRows==rows() && nCols==cols()) return true;
+
+	T *data=NULL, **dataInd=NULL;
+	try{
+		data = new T[mRows*nCols];
+		dataInd = new T*[mRows];
+	} catch( bad_alloc& ) {		
+		cout << "Matrix::changeDims(..)  OUT OF MEMORY" << endl;
+		clear(); return false;
+	}
+
+	for( int j=0; j<mRows; j++) dataInd[j] = &(data[nCols*j]);
+	for( int j=0; j<std::min(rows(),mRows); j++)
+		for( int i=0; i<std::min(cols(),nCols); i++)
+			dataInd[j][i] = (*this)(j, i);
+
+	clear();
+	_mRows=mRows; _nCols=nCols;
+	_data=data; _dataInd=dataInd;
+	return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+template<class T> inline T&		Matrix<T>::operator() ( const int row, const int col )
+{
+	return _dataInd[row][col];
+}
+
+template<class T> inline T&		Matrix<T>::operator() ( const int row, const int col ) const
+{
+	return _dataInd[row][col];
+}
+
+template<class T> inline T&		Matrix<T>::operator() ( const int ind )
+{
+	return _data[ind];
+}
+
+template<class T> inline T&		Matrix<T>::operator() ( const int ind ) const
+{
+	return _data[ind];
+}
+
+///////////////////////////////////////////////////////////////////////////////
 template<class T> const char*	Matrix<T>::getCname() const
 {
 	static char cname[32];
@@ -150,77 +221,6 @@ template<class T> bool			Matrix<T>::frmTxtFile( const char *fName, char *delim )
 	delete [] tline;
 	strm.close();
 	return true;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-template<class T> bool			Matrix<T>::setDims(const int mRows, const int nCols)
-{
-	assert(mRows>=0 && nCols>=0);
-	if(mRows==_mRows && nCols==_nCols) return true;
-	clear(); _mRows=mRows; _nCols=nCols;
-	if(_mRows==0 || _nCols==0) return true;
-
-	try {
-		_data = new T[size()];
-		_dataInd = new T*[_mRows];
-	} catch( bad_alloc& ) {
-		cout << "Matrix::setDims(..)  OUT OF MEMORY" << endl;
-		clear(); return false;
-	}
-
-	for( int i=0; i<_mRows; i++) _dataInd[i]=&(_data[_nCols*i]);
-	return true;
-}
-
-template<class T> bool			Matrix<T>::setDims(const int mRows, const int nCols, const T val )
-{
-	if(!setDims(mRows,nCols)) return false;
-	setVal(val); return true;
-}
-
-template<class T> bool			Matrix<T>::changeDims(const int mRows, const int nCols)
-{
-	if(mRows==rows() && nCols==cols()) return true;
-
-	T *data=NULL, **dataInd=NULL;
-	try{
-		data = new T[mRows*nCols];
-		dataInd = new T*[mRows];
-	} catch( bad_alloc& ) {		
-		cout << "Matrix::changeDims(..)  OUT OF MEMORY" << endl;
-		clear(); return false;
-	}
-
-	for( int j=0; j<mRows; j++) dataInd[j] = &(data[nCols*j]);
-	for( int j=0; j<std::min(rows(),mRows); j++)
-		for( int i=0; i<std::min(cols(),nCols); i++)
-			dataInd[j][i] = (*this)(j, i);
-
-	clear();
-	_mRows=mRows; _nCols=nCols;
-	_data=data; _dataInd=dataInd;
-	return true;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-template<class T> inline T&		Matrix<T>::operator() ( const int row, const int col )
-{
-	return _dataInd[row][col];
-}
-
-template<class T> inline T&		Matrix<T>::operator() ( const int row, const int col ) const
-{
-	return _dataInd[row][col];
-}
-
-template<class T> inline T&		Matrix<T>::operator() ( const int ind )
-{
-	return _data[ind];
-}
-
-template<class T> inline T&		Matrix<T>::operator() ( const int ind ) const
-{
-	return _data[ind];
 }
 
 ///////////////////////////////////////////////////////////////////////////////
