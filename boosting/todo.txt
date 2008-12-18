@@ -1,0 +1,17 @@
+Todo:
+-comment/clean Matrix
+-comment IntegralImage
+-comment Haar
+-reintroduce Rand (in Public?)
+-reintroduce Rand in Haar
+
+Major:
+-Clean/Comment /public
+-Add Freeimage Linux support
+-More general matlab entry
+-Sall toolbox c file headers
+
+Done:
+-Linux Compile 12/17
+-Savable second pass 12/11-12/12
+-Savable commenting 12/11
