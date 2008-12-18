@@ -1,5 +1,5 @@
 /**************************************************************************
-* Matrix class definitions file.
+* Basic Matrix class.
 *
 * Piotr's Image&Video Toolbox      Version NEW
 * Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -39,7 +39,7 @@ public:
 	void			getDims( int& mRows, int& nCols ) const { mRows=_mRows; nCols=_nCols; };
 	int				rows() const { return _mRows; };
 	int				cols() const { return _nCols; };
-	int				size() const { return _mRows*_nCols; };
+	int				numel() const { return _mRows*_nCols; };
 
 	// indexing into matrix X via X(r,c) or X(ind)
 	T&				operator() (const int index ) const;
@@ -62,10 +62,10 @@ public:
 	Matrix&			identity();								// set this matrix to be identity matrix
 	Matrix&			transpose();							// matrix transpose
 	Matrix&			absolute();								// absolute val of matrix
-	void			rot90( Matrix &B, int K=1) const;		// rotate matrix clockwise by k*90 degrees
-	void			fliplr( Matrix<T> &B) const;			// flip matrix horizontally
-	void			flipud( Matrix<T> &B) const;			// flip matrix vertically
-	void			reshape( Matrix &B, int mRows, int nCols ) const;	// reshape to B, size can't change
+	void			rot90( Matrix &B, int k=1 ) const;		// rotate matrix clockwise by k*90 degrees
+	void			fliplr( Matrix &B ) const;				// flip matrix horizontally
+	void			flipud( Matrix &B ) const;				// flip matrix vertically
+	void			reshape( Matrix &B, int mRows, int nCols ) const; // reshape, numel can't change
 	T				prod() const;							// product of elements
 	T				sum() const;							// sum of elements
 	T				trace() const;							// trace
@@ -74,9 +74,8 @@ public:
 	int				maxi() const;							// max index
 	int				mini() const;							// min index
 
-public:
 	// pointwise operators (defined with a precompiler script "DOP")
-	// For example division is pointwise: C=A/B means C(i)=A(i)/B(i)
+	// For example, division is pointwise: C=A/B means C(i)=A(i)/B(i)
 	// "*" - ONLY multiplcation of two matricies is NOT pointwise - it is standard matrix multiplication
 	// "&" - for pointwise multiplication between matricies use C=A&B; (careful has low precedence)
 	// "^" - means power, uses "pow" call (careful has low precedence)
@@ -88,7 +87,7 @@ public:
 #undef DOP
 	Matrix operator& (const Matrix &b ) const;
 
-	// computed assignment, all pointwise
+	// computed assignment operators, all pointwise
 #define DOP(OP) \
 	Matrix& operator OP (const T b); \
 	Matrix& operator OP (const Matrix &b);
@@ -96,13 +95,15 @@ public:
 #undef DOP
 
 protected:
-	T		*_data ;
+	T		*_data;
 	T		**_dataInd;
 	int		_mRows, _nCols;
 };
 
-// helper functions
+// copy matricies of possibly varying type
 template<class T1, class T2> void copy(Matrix<T1>& Mdest,const Matrix<T2>& Msrc);
+
+// matrix display
 template<class T> ostream& operator<<(ostream& os, const Matrix<T>& x);
 
 // place actual implementation in separate file for readability

@@ -12,7 +12,7 @@ public:
 
 	void	clear();
 
-	bool	prepared() { return _II.size()>0; }
+	bool	prepared() { return _II.numel()>0; }
 
 	template<class T> void prepare( const Matrix<T> &I );
 
