@@ -187,6 +187,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\MatrixImp.h"
+			>
+		</File>
+		<File
 			RelativePath=".\Public.h"
 			>
 		</File>
