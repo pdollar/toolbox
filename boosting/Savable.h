@@ -62,8 +62,8 @@ protected:
 	virtual mxArray*		toMxArray() const { assert(0); return NULL; };
 	virtual void			frmMxArray( const mxArray *M ) { assert(0); };
 
-	friend					ObjImg;
-	friend					VecSavable;
+	friend class			ObjImg;
+	friend class			VecSavable;
 };
 
 /**************************************************************************

@@ -114,4 +114,4 @@ template<class T> void	IntegralImage::prepare( const Matrix<T> &I )
 	}
 }
 
-#endif 
+#endif
