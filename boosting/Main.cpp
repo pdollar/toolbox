@@ -16,11 +16,11 @@ int main(int argc, const char* argv[])
 	#endif
 
 	testToStrm();
-	
+
 	_CrtDumpMemoryLeaks();
 
 	system("pause");
-	return 0;	
+	return 0;
 }
 
 void testToStrm()
@@ -45,7 +45,7 @@ void testToStrm()
 	//// fun time
 	//Savable *y = X.toSavable("x");
 	//X.clear(); X.frmSavable("y",y); delete y;
-	
+
 	// save, then load, then save again
 	bool binary=1; char *fName="C:/code/toolbox/boosting/temp.txt";
 	X.toFile( fName, binary );

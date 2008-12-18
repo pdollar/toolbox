@@ -6,15 +6,15 @@
 class IntegralImage
 {
 public:
-			IntegralImage() { clear(); };
+	IntegralImage() { clear(); };
 
-			~IntegralImage() { clear(); };
-	
+	~IntegralImage() { clear(); };
+
 	void	clear();
 
 	bool	prepared() { return _II.size()>0; }
 
-	template<class T> void prepare( const Matrix<T> &I );	
+	template<class T> void prepare( const Matrix<T> &I );
 
 	void	setRoi( int lf, int tp, int rt, int bt );
 
@@ -29,7 +29,7 @@ public:
 	int		height() const {return _h-1;};
 
 	int		width() const {return _w-1;};
-	
+
 	double	rectSum(		int lf, int tp, int rt, int bt ) const;
 
 	double	rectSumSq(		int lf, int tp, int rt, int bt ) const;
@@ -71,14 +71,14 @@ inline void				IntegralImage::getRoi(		int &lf, int &tp, int &rt, int &bt )
 
 inline double			IntegralImage::rectSum(		int lf, int tp, int rt, int bt ) const
 {
-	lf+=_roiLf; rt+=_roiLf+1; tp+=_roiTp; bt+=_roiTp+1; 
+	lf+=_roiLf; rt+=_roiLf+1; tp+=_roiTp; bt+=_roiTp+1;
 	assert( tp>=0 && lf>=0 && bt<_h && rt<_w && tp<bt && lf<rt );
 	return (_II(tp, lf) + _II(bt, rt) - _II(tp, rt) - _II(bt, lf));
 }
 
 inline double			IntegralImage::rectSumSq(	int lf, int tp, int rt, int bt ) const
 {
-	lf+=_roiLf; rt+=_roiLf+1; tp+=_roiTp; bt+=_roiTp+1; 
+	lf+=_roiLf; rt+=_roiLf+1; tp+=_roiTp; bt+=_roiTp+1;
 	assert( tp>=0 && lf>=0 && bt<_h && rt<_w && tp<bt && lf<rt );
 	return (_sqrII(tp, lf) + _sqrII(bt, rt) - _sqrII(tp, rt) - _sqrII(bt, lf));
 }
@@ -86,9 +86,9 @@ inline double			IntegralImage::rectSumSq(	int lf, int tp, int rt, int bt ) const
 template<class T> void	IntegralImage::prepare( const Matrix<T> &I )
 {
 	double v; int i, j;
-	_w = I.cols() + 1;  
+	_w = I.cols() + 1;
 	_h = I.rows() + 1;
-	
+
 	// create integral image and square integral image.
 	// 1) set first row/column to II to be 0
 	// 2) create first real row/column of II

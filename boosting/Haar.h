@@ -12,19 +12,19 @@ typedef vector< Rect > VecRect;
 
 //// SAMPLE CODE
 //// 1) create an integral image
-//Matrixf I; I.Load( "C:/code/pbt/public/I.tif" ); 
+//Matrixf I; I.Load( "C:/code/pbt/public/I.tif" );
 //IntegralImage II; II.prepare( I, true );
 //
 //// 2) single Haar feature and it application to image
 //Haar h; h.createSyst( 4, 50, 50, 9, 9, 0, 0 );
 //ColorImage hI; h.toVisible( hI );
-//hI.Scale().Save( "C:/code/pbt/h.tif" ); 
+//hI.Scale().Save( "C:/code/pbt/h.tif" );
 //Matrixf resp; h.convHaar( resp, II, 1, false );
-//resp.Scale().Save( "C:/code/pbt/R.tif" ); 
+//resp.Scale().Save( "C:/code/pbt/R.tif" );
 //
 //// 3) visualize simple Haars and their application to image
-//VecHaar haars; 
-//HaarPrm haarPrm; 
+//VecHaar haars;
+//HaarPrm haarPrm;
 //haarPrm._width = haarPrm._height = 50;
 //Haar::makeHaarSet( haars, haarPrm );
 //cout << haars.size() << endl;
@@ -37,8 +37,8 @@ typedef vector< Rect > VecRect;
 class Rect : public Savable
 {
 public:
-					Rect();
-					Rect( int lf, int rt, int tp, int bt );
+	Rect();
+	Rect( int lf, int rt, int tp, int bt );
 
 	// implement Savable
 	virtual const char* getCname() const { return "Rect"; };
@@ -84,15 +84,15 @@ public:
 //
 //
 // Type 10:		// Type 11:
-//  _ _ _		//  _ _ _		
-// | |+| |		// | |+| |		
-// |+| |-|		// |-| |+|		
-// | |-| |		// | |-| |		
+//  _ _ _		//  _ _ _
+// | |+| |		// | |+| |
+// |+| |-|		// |-| |+|
+// | |-| |		// | |-| |
 
 class HaarPrm
 {
 public:
-					HaarPrm();
+	HaarPrm();
 
 	string			getDescr();
 
@@ -107,13 +107,13 @@ public: // general haar prms
 	int				_maxArea;		// [1,inf] largest valid size of any rectangle for haars
 	bool			_random;		// [T/F]   generate random/systematic haars
 
-public: // prms for systematicly designed haars only 
+public: // prms for systematicly designed haars only
 	bool			_useType[12];	// [T/F]   which haars to create
 	int				_nLocs;			// [1,inf] number of positions (along both axes, may be inf)
 	int				_nSizes;		// [1,inf] number of sizes (along both axes)
 	float			_minAreaFr;		// [0,1]   minimum size of each Haar as fraction of patch size
-	float			_sizeFactor;	// [0,inf] mult. difference between sizes 
-	float			_overlap;		// [0,1]   fraction overlap between nearby features 
+	float			_sizeFactor;	// [0,inf] mult. difference between sizes
+	float			_overlap;		// [0,1]   fraction overlap between nearby features
 
 public: // prms for random haars only
 	int				_nRandom;		// [1,inf] maximum number of random haars
@@ -137,7 +137,7 @@ public:
 	virtual void	frmObjImg( const ObjImg &oi, const char *name=NULL );
 
 	// create / alter
-    void			createSyst(	int type, int w, int h, int fw, int fh, int tp, int lf, bool flip=false );
+	void			createSyst(	int type, int w, int h, int fw, int fh, int tp, int lf, bool flip=false );
 	void			moveTo( int tpNew, int lfNew );
 	bool			finalize();
 
@@ -196,7 +196,7 @@ inline float		Haar::compResp1(	const IntegralImage &II, bool normalize ) const
 {
 	float sum=0.0f; int l,r,t,b;
 	for( int i=0; i<_nRects; i++) {
-		l = _rects[i]._lf;  t=_rects[i]._tp; 
+		l = _rects[i]._lf;  t=_rects[i]._tp;
 		r = _rects[i]._rt;  b=_rects[i]._bt;
 		sum += _rects[i]._wt * (float) II.rectSum(l,t,r,b);
 	}
@@ -206,7 +206,7 @@ inline float		Haar::compResp1(	const IntegralImage &II, bool normalize ) const
 		float mu = (float) II.getRoiMu();
 		float sigmaInv = (float) II.getRoiSigInv();
 		sum = (sum - (_areaPos-_areaNeg) * mu) * sigmaInv;
-	} 
+	}
 	return sum;
 }
 
@@ -215,7 +215,7 @@ inline float		Haar::compResp2(	const IntegralImage &II, bool normalize ) const
 	float sumPos, sumNeg, sumSqPos, sumSqNeg; int l,r,t,b;
 	sumPos = sumNeg = sumSqPos = sumSqNeg=0.0f;
 	for( int i=0; i<_nRects; i++) {
-		l = _rects[i]._lf;  t=_rects[i]._tp; 
+		l = _rects[i]._lf;  t=_rects[i]._tp;
 		r = _rects[i]._rt;  b=_rects[i]._bt;
 		float weight = _rects[i]._wt;
 		if( weight > 0  ) {
@@ -235,17 +235,17 @@ inline float		Haar::compResp2(	const IntegralImage &II, bool normalize ) const
 		sumSqPos = (sumSqPos -2.0f*sumPos*mu + mu*mu*_areaPos) * sigmaInv * sigmaInv;
 		sumPos = (sumPos - _areaPos * mu) * sigmaInv;
 		if( _areaNeg > 0 ) {
-		sumSqNeg = (sumSqNeg -2.0f*sumNeg*mu + mu*mu*_areaNeg) * sigmaInv * sigmaInv;
-		sumNeg = (sumNeg - _areaNeg * mu) * sigmaInv;
+			sumSqNeg = (sumSqNeg -2.0f*sumNeg*mu + mu*mu*_areaNeg) * sigmaInv * sigmaInv;
+			sumNeg = (sumNeg - _areaNeg * mu) * sigmaInv;
 		}
 	}
 
-	sumPos *= _areaPosInv; sumSqPos *= _areaPosInv; 
+	sumPos *= _areaPosInv; sumSqPos *= _areaPosInv;
 	float stdPos = sumSqPos - sumPos*sumPos;
 	//stdPos = sqrt(max(stdPos, 0.0));
 	if( _areaNeg==0 ) return stdPos;
 
-	sumNeg *= _areaNegInv; sumSqNeg *= _areaNegInv; 
+	sumNeg *= _areaNegInv; sumSqNeg *= _areaNegInv;
 	float stdNeg = sumSqNeg - sumNeg*sumNeg;
 	//stdNeg = sqrt(max(stdNeg, 0.0));
 	return (stdPos - stdNeg);
@@ -278,7 +278,7 @@ inline float		Haar::compHistDist(	const IntegralImage *IIs,  const int nImages, 
 		for( j=0; j<nImages; j++ ) {
 			float sumPos = 0.0f;
 			for( i=0; i<_nRects; i++ ) {
-				l = _rects[i]._lf;  t=_rects[i]._tp; 
+				l = _rects[i]._lf;  t=_rects[i]._tp;
 				r = _rects[i]._rt;  b=_rects[i]._bt;
 				sumPos   += _rects[i]._wt * (float) IIs[j].rectSum(l,t,r,b);
 			}
@@ -293,7 +293,7 @@ inline float		Haar::compHistDist(	const IntegralImage *IIs,  const int nImages, 
 	return dist;
 }
 
-inline float		Haar::compHistDist(	const IntegralImage **IIs, const int nImages, bool normalize ) const 
+inline float		Haar::compHistDist(	const IntegralImage **IIs, const int nImages, bool normalize ) const
 {
 	int l,r,t,b; int i, j; float mu, sigmaInv; float dist=0.0f;
 	if( _areaNeg>0 ) {
@@ -327,7 +327,7 @@ inline float		Haar::compHistDist(	const IntegralImage **IIs, const int nImages, 
 			if( normalize ) {
 				mu = (float) IIs[j]->getRoiMu(); sigmaInv = (float) IIs[j]->getRoiSigInv();
 				sumPos = (sumPos - _areaPos* mu) * sigmaInv;
-			} 
+			}
 			sumPos *= _areaPosInv;
 			dist += sumPos*sumPos;
 		}

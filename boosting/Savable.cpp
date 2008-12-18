@@ -356,7 +356,7 @@ void			VecSavable::toObjImg( ObjImg &oi, const char *name ) const
 }
 
 void			VecSavable::frmObjImg( const ObjImg &oi, const char *name )
-{	
+{
 	int n=oi._children.size(); if(n==0) return; oi.check(name,getCname(),n,n);
 	for(int i=0; i<n; i++) _v.push_back(oi._children[i].toSavable("[elt]"));
 }

@@ -2,17 +2,17 @@
 //#include "Rand.h"
 #include <iomanip>
 
-			Rect::Rect()
+Rect::Rect()
 {
 
 	_wt = 1.0f;
 	setPos(0,0,0,0);
 }
 
-			Rect::Rect( int lf, int rt, int tp, int bt )
-{ 
+Rect::Rect( int lf, int rt, int tp, int bt )
+{
 	_wt = 1.0f;
-	setPos(lf,rt,tp,bt); 
+	setPos(lf,rt,tp,bt);
 }
 
 void		Rect::toObjImg( ObjImg &oi, const char *name ) const
@@ -35,15 +35,15 @@ void		Rect::frmObjImg( const ObjImg &oi, const char *name )
 	oi._children[4].toPrim("wt",&_wt);
 }
 
-void		Rect::toTxt( ofstream &os ) const 
+void		Rect::toTxt( ofstream &os ) const
 {
-	os << "< " << _lf << " " << _rt << " " << _tp << " " << _bt 
+	os << "< " << _lf << " " << _rt << " " << _tp << " " << _bt
 		<< " " << setprecision(10) << _wt << " >";
 }
 
-void		Rect::frmTxt( ifstream &is ) 
-{ 
-	assert(is.get()=='<'); 
+void		Rect::frmTxt( ifstream &is )
+{
+	assert(is.get()=='<');
 	is >> _lf >> _rt >> _tp >> _bt >> _wt;
 	assert(is.get()==' ' && is.get()=='>' && is.get()==10);
 }
@@ -77,7 +77,7 @@ void		Rect::getUnion( Rect &uRect, const VecRect &rects )
 		tp=min(rects[i]._tp,tp);
 		bt=max(rects[i]._bt,bt);
 	}
-	uRect.setPos(lf,rt,tp,bt); 
+	uRect.setPos(lf,rt,tp,bt);
 }
 
 bool		operator== (const Rect &rect1, const Rect &rect2)
@@ -95,25 +95,25 @@ int			compare(    const Rect &rect1, const Rect &rect2)
 {
 	if(      rect1._lf<rect2._lf )
 		return -1;
-	else if( rect1._lf>rect2._lf ) 
+	else if( rect1._lf>rect2._lf )
 		return 1;
 	else if( rect1._rt<rect2._rt )
 		return -1;
-	else if( rect1._rt>rect2._rt ) 
+	else if( rect1._rt>rect2._rt )
 		return 1;
 	else if( rect1._tp<rect2._tp )
 		return -1;
-	else if( rect1._tp>rect2._tp ) 
+	else if( rect1._tp>rect2._tp )
 		return 1;
 	else if( rect1._bt<rect2._bt )
 		return -1;
-	else if( rect1._bt>rect2._bt ) 
+	else if( rect1._bt>rect2._bt )
 		return 1;
 	else if( rect1._wt<rect2._wt )
 		return -1;
 	else if( rect1._wt>rect2._wt )
 		return 1;
-	else 
+	else
 		return 0;
 }
 
@@ -125,14 +125,14 @@ bool		operator<  (const Rect &rect1, const Rect &rect2)
 /////////////////////////////////////////////////////////////////////////////////
 void		Haar::toObjImg(  ObjImg &oi, const char *name ) const
 {
-	oi.init(name,getCname(),1); VecSavable v; 
+	oi.init(name,getCname(),1); VecSavable v;
 	for(int i=0; i<_nRects; i++ ) v._v.push_back((Savable*) &_rects[i]);
 	v.toObjImg(oi._children[0],"rects");
 }
 
 void		Haar::frmObjImg( const ObjImg &oi, const char *name )
 {
-	oi.check(name,getCname(),1,1); VecSavable v; 	
+	oi.check(name,getCname(),1,1); VecSavable v; 
 	v.frmObjImg(oi._children[0],"rects");
 	_nRects=v._v.size(); createRects(_nRects);
 	for(int i=0; i<_nRects; i++ ) {
@@ -143,7 +143,7 @@ void		Haar::frmObjImg( const ObjImg &oi, const char *name )
 
 bool		operator==(	const Haar &h1, const Haar &h2)
 {
-	if( h1._nRects!=h2._nRects ) 
+	if( h1._nRects!=h2._nRects )
 		return false;
 	for( int i=0; i<h1._nRects; i++ )
 		if( !(h1._rects[i]==h2._rects[i]) )
@@ -155,7 +155,7 @@ int			compare(	const Haar &h1, const Haar &h2)
 {
 	if(      h1._nRects < h2._nRects )
 		return -1;
-	else if( h1._nRects > h2._nRects ) 
+	else if( h1._nRects > h2._nRects )
 		return 1;
 	for( int i=0; i<h1._nRects; i++ ) {
 		int comp = compare(h1._rects[i],h2._rects[i]);
@@ -179,7 +179,7 @@ void		Haar::createSyst( int type, int width, int height, int fw, int fh, int tp,
 
 	// creating according to type
 	switch( type )
-	{	
+	{
 	case 0: // single square
 		createRects(1);
 		_rects[0].setPos( 0,  fw-1, 0, fh-1 );
@@ -188,7 +188,7 @@ void		Haar::createSyst( int type, int width, int height, int fw, int fh, int tp,
 
 	case 1: // diagonal diff ul/lr
 		createRects(2);
-		fh2 = fh/2; fw2 = fw/2; 
+		fh2 = fh/2; fw2 = fw/2;
 		_rects[0].setPos( 0,  fw2-1, 0, fh2-1 );
 		_rects[1].setPos( fw2,  fw-1, fh2, fh-1 );
 		_rects[0]._wt = 1.0;
@@ -197,7 +197,7 @@ void		Haar::createSyst( int type, int width, int height, int fw, int fh, int tp,
 
 	case 2: // diagonal diff ur/ll
 		createRects(2);
-		fh2 = fh/2; fw2 = fw/2; 
+		fh2 = fh/2; fw2 = fw/2;
 		_rects[0].setPos( fw2,  fw-1, 0, fh2-1 );
 		_rects[1].setPos( 0,  fw2-1, fh2, fh-1 );
 		_rects[0]._wt = 1.0f;
@@ -206,7 +206,7 @@ void		Haar::createSyst( int type, int width, int height, int fw, int fh, int tp,
 
 	case 3: // opp diagonals
 		createRects(4);
-		fh2 = fh/2; fw2 = fw/2; 
+		fh2 = fh/2; fw2 = fw/2;
 		_rects[0].setPos( 0,  fw2-1, 0, fh2-1 );
 		_rects[1].setPos( fw2,  fw-1, 0, fh2-1 );
 		_rects[2].setPos( fw2,  fw-1, fh2, fh-1 );
@@ -216,7 +216,7 @@ void		Haar::createSyst( int type, int width, int height, int fw, int fh, int tp,
 		_rects[2]._wt = 1.0f;
 		_rects[3]._wt = -1.0f;
 		break;
-		
+
 	case 4: // center-surround
 		createRects(2);
 		fw2 = fw/2; fh2 = fh/2;
@@ -228,7 +228,7 @@ void		Haar::createSyst( int type, int width, int height, int fw, int fh, int tp,
 
 	case 5: // edge
 		createRects(2);
-		fw2 = fw/2; 
+		fw2 = fw/2;
 		_rects[0].setPos( 0, fw2-1, 0,  fh-1 );
 		_rects[1].setPos( fw2, fw-1, 0,  fh-1 );
 		_rects[0]._wt = 1.0f;
@@ -237,7 +237,7 @@ void		Haar::createSyst( int type, int width, int height, int fw, int fh, int tp,
 
 	case 6: // ridge +-+
 		createRects(2);
-		fw2 = fw/3; fw3 = (fw*2)/3; 
+		fw2 = fw/3; fw3 = (fw*2)/3;
 		_rects[0].setPos( 0,  fw-1, 0, fh-1 );
 		_rects[1].setPos( fw2,  fw3-1, 0, fh-1 );
 		_rects[0]._wt = 1.0f;
@@ -246,7 +246,7 @@ void		Haar::createSyst( int type, int width, int height, int fw, int fh, int tp,
 
 	case 7: // separated difference (1 space)
 		createRects(2);
-		fw2 = fw/3; fw3 = (fw*2)/3; 
+		fw2 = fw/3; fw3 = (fw*2)/3;
 		_rects[0].setPos( 0,  fw2-1, 0, fh-1 );
 		_rects[1].setPos( fw3,  fw-1, 0, fh-1 );
 		_rects[0]._wt = 1.0f;
@@ -255,7 +255,7 @@ void		Haar::createSyst( int type, int width, int height, int fw, int fh, int tp,
 
 	case 8: // ridge +--+
 		createRects(2);
-		fw2 = fw/4; fw3 = (fw*3)/4; 
+		fw2 = fw/4; fw3 = (fw*3)/4;
 		_rects[0].setPos( 0,  fw-1, 0, fh-1 );
 		_rects[1].setPos( fw2,  fw3-1, 0, fh-1 );
 		_rects[0]._wt = 1.0f;
@@ -270,11 +270,11 @@ void		Haar::createSyst( int type, int width, int height, int fw, int fh, int tp,
 		_rects[0]._wt = 1.0f;
 		_rects[1]._wt = -1.0f;
 		break;
-	
+
 	case 10:  // 4 boxes, arranged in pattern (1)
 		createRects(4);
-		fw2 = fw/3; fw3 = (fw*2)/3; 
-		fh2 = fh/3; fh3 = (fh*2)/3; 
+		fw2 = fw/3; fw3 = (fw*2)/3;
+		fh2 = fh/3; fh3 = (fh*2)/3;
 		_rects[0].setPos( 0, fw2-1, fh2, fh3-1 );
 		_rects[1].setPos( fw2, fw3-1, fh3, fh-1 );
 		_rects[2].setPos( fw2, fw3-1, 0, fh2-1 );
@@ -287,8 +287,8 @@ void		Haar::createSyst( int type, int width, int height, int fw, int fh, int tp,
 
 	case 11: // 4 boxes, arranged in pattern (2)
 		createRects(4);
-		fw2 = fw/3; fw3 = (fw*2)/3; 
-		fh2 = fh/3; fh3 = (fh*2)/3; 
+		fw2 = fw/3; fw3 = (fw*2)/3;
+		fh2 = fh/3; fh3 = (fh*2)/3;
 		_rects[0].setPos( fw2, fw3-1, 0, fh2-1 );
 		_rects[1].setPos( 0, fw2-1, fh2, fh3-1 );
 		_rects[2].setPos( fw3, fw-1, fh2, fh3-1 );
@@ -304,11 +304,11 @@ void		Haar::createSyst( int type, int width, int height, int fw, int fh, int tp,
 		break;
 	}
 
-	// flip around diagonal 
+	// flip around diagonal
 	if( flip ) {
 		for( int i=0; i<_nRects; i++ )
-			_rects[i].setPos( _rects[i]._tp, _rects[i]._bt, 
-							  _rects[i]._lf, _rects[i]._rt );
+			_rects[i].setPos( _rects[i]._tp, _rects[i]._bt,
+			_rects[i]._lf, _rects[i]._rt );
 	}
 
 	// finish creating
@@ -362,7 +362,7 @@ void		Haar::createRects( int n )
 int			Haar::minWidth( int type )
 {
 	switch( type ) {
-	case 0:  return 1;	break; 
+	case 0:  return 1;	break;
 	case 1:  return 2;	break;
 	case 2:  return 2;	break;
 	case 3:  return 2;	break;
@@ -374,14 +374,14 @@ int			Haar::minWidth( int type )
 	case 9:	 return 1;	break;
 	case 10: return 3;	break;
 	case 11: return 3;	break;
-	default: assert(false); return 0; break; 
+	default: assert(false); return 0; break;
 	}
 }
 
 int			Haar::minHeight( int type )
 {
 	switch( type ) {
-	case 0:  return 1;	break; 
+	case 0:  return 1;	break;
 	case 1:  return 2;	break;
 	case 2:  return 2;	break;
 	case 3:  return 2;	break;
@@ -401,26 +401,26 @@ string		Haar::getDescr() const
 {
 	char descr[64];
 	sprintf( descr, "nRct=%i w=%2i h=%2i tp=%2i lf=%2i", _nRects,
-				width(), height(), _boundRect._tp, _boundRect._lf );
+		width(), height(), _boundRect._tp, _boundRect._lf );
 	return descr;
 }
 
 void		Haar::convHaar( Matrixf &resp, IntegralImage &II, int moment, bool normalize )
 {
-	moveTo(0,0); 
+	moveTo(0,0);
 	int r,c,w,h;
 	w = II.width() - width() + 1;
 	h = II.height() - height() + 1;
 	resp.setDims(h,w,0);
 
 	switch(moment) {
-	case 1: 
+	case 1:
 		for( r=0; r<h; r++ ) for( c=0; c<w; c++ ) {
 			II.setRoi( c, r, c+width()-1, r+height()-1 );
 			resp(r,c) = compResp1( II, normalize );
 		}
 		break;
-	case 2: 
+	case 2:
 		for( r=0; r<h; r++ ) for( c=0; c<w; c++ ) {
 			II.setRoi( c, r, c+width()-1, r+height()-1 );
 			resp(r,c) = compResp2( II, normalize );
@@ -433,7 +433,7 @@ void		Haar::convHaar( Matrixf &resp, IntegralImage &II, int moment, bool normali
 
 void		Haar::convHaarHist( Matrixf &resp, IntegralImage *IIs, int nImages, bool normalize )
 {
-	moveTo(0,0); 
+	moveTo(0,0);
 	int r,c,w,h;
 	w = IIs[0].width() - width() + 1;
 	h = IIs[0].height() - height() + 1;
@@ -472,7 +472,7 @@ bool		isInRect( double x, double y, double wd, double ht, double xCen, double yC
 	return (x>=(xCen-wd/2.0) && x<=(xCen+wd/2.0) && y>=(yCen-ht/2.0) && y<=(yCen+ht/2.0));
 }
 
-			HaarPrm::HaarPrm() 
+HaarPrm::HaarPrm()
 {
 	_width			= 0;
 	_height			= 0;
@@ -484,7 +484,7 @@ bool		isInRect( double x, double y, double wd, double ht, double xCen, double yC
 	_nLocs			= 1;
 	_nSizes			= 1;
 	_minAreaFr		= .5f;
-	_sizeFactor		= 2.0f; 
+	_sizeFactor		= 2.0f;
 	_overlap		= .6f;
 
 	_nRandom		= 0;
@@ -493,7 +493,7 @@ bool		isInRect( double x, double y, double wd, double ht, double xCen, double yC
 
 	_constWd		= 0;
 	_constHt		= 0;
-	_centerDist		= 0; 
+	_centerDist		= 0;
 	_elliptical		= false;
 }
 
@@ -547,7 +547,7 @@ void		HaarPrm::writeToStrm( ofstream &strm )
 	strm.write((char*)&_constWd,	sizeof(_constWd));
 	strm.write((char*)&_constHt,	sizeof(_constHt));
 	strm.write((char*)&_centerDist,	sizeof(_centerDist));
-	strm.write((char*)&_elliptical,	sizeof(_elliptical));	
+	strm.write((char*)&_elliptical,	sizeof(_elliptical));
 }
 
 void		HaarPrm::readFrmStrm( ifstream &strm )
@@ -573,7 +573,7 @@ void		HaarPrm::readFrmStrm( ifstream &strm )
 	strm.read((char*)&_constWd,		sizeof(_constWd));
 	strm.read((char*)&_constHt,		sizeof(_constHt));
 	strm.read((char*)&_centerDist,	sizeof(_centerDist));
-	strm.read((char*)&_elliptical,	sizeof(_elliptical));	
+	strm.read((char*)&_elliptical,	sizeof(_elliptical));
 }
 
 void		Haar::makeHaarSet(	VecHaar &haars, HaarPrm &haarPrm )
@@ -597,31 +597,31 @@ void		Haar::makeHaarSet(	VecHaar &haars, HaarPrm &haarPrm )
 		overlap = max(0.0f,min(1.0f,overlap));
 		minAreaFr = max(0.0f,min(1.0f,minAreaFr));
 
-		int j1, j2, i1, i2, fw, fh, fw1, fh1; 
-		float t_ctr, l_ctr, t_stp, l_stp; int t_num, l_num, t, l;		
+		int j1, j2, i1, i2, fw, fh, fw1, fh1;
+		float t_ctr, l_ctr, t_stp, l_stp; int t_num, l_num, t, l;
 		for( int type=0; type<12; type++ ) if( useType[type] ) {
 			for( i1=0; i1<nSizes; i1++ )
-			for( i2=0; i2<nSizes; i2++ ) {
-				fw = (int) ceil( (float)width  * minAreaFr * pow(sizeFactor,(float)i1) ); 
-				fh = (int) ceil( (float)height * minAreaFr * pow(sizeFactor,(float)i2) );
-				for( int flip=0; flip<=1; flip++ ) {
-					if(flip) { fh1=fw; fw1=fh; } else { fw1=fw; fh1=fh; }
-					l_stp = max( 1.0f, fw1*(1.0f-overlap) );
-					t_stp = max( 1.0f, fh1*(1.0f-overlap) );
-					t_ctr = ((float)height-fh1)/2;   
-					l_ctr = ((float)width-fw1)/2;
-					t_num = min((nLocs-1)/2,(int)ceil(t_ctr/t_stp));
-					l_num = min((nLocs-1)/2,(int)ceil(l_ctr/l_stp));
-					for( j1=-t_num; j1<=t_num; j1++ )
-					for( j2=-l_num; j2<=l_num; j2++ ) {
-						t = (int) (t_ctr + j1*t_stp+.5f);
-						l = (int) (l_ctr + j2*l_stp+.5f);
-						haar.createSyst( type, width, height, fw, fh, t, l, flip>0 );
-						if( haar.finalize() ) haars.push_back(haar);
+				for( i2=0; i2<nSizes; i2++ ) {
+					fw = (int) ceil( (float)width  * minAreaFr * pow(sizeFactor,(float)i1) );
+					fh = (int) ceil( (float)height * minAreaFr * pow(sizeFactor,(float)i2) );
+					for( int flip=0; flip<=1; flip++ ) {
+						if(flip) { fh1=fw; fw1=fh; } else { fw1=fw; fh1=fh; }
+						l_stp = max( 1.0f, fw1*(1.0f-overlap) );
+						t_stp = max( 1.0f, fh1*(1.0f-overlap) );
+						t_ctr = ((float)height-fh1)/2;
+						l_ctr = ((float)width-fw1)/2;
+						t_num = min((nLocs-1)/2,(int)ceil(t_ctr/t_stp));
+						l_num = min((nLocs-1)/2,(int)ceil(l_ctr/l_stp));
+						for( j1=-t_num; j1<=t_num; j1++ )
+							for( j2=-l_num; j2<=l_num; j2++ ) {
+								t = (int) (t_ctr + j1*t_stp+.5f);
+								l = (int) (l_ctr + j2*l_stp+.5f);
+								haar.createSyst( type, width, height, fw, fh, t, l, flip>0 );
+								if( haar.finalize() ) haars.push_back(haar);
+							}
 					}
 				}
-			}
-			unique( haars );
+				unique( haars );
 		}
 		unique( haars ); freeDistant( haars, haarPrm );
 	}
@@ -649,9 +649,9 @@ void		Haar::freeDistant(	VecHaar &haars, HaarPrm &haarPrm )
 		h = (float)constHt; if(centerDist>0) w=min(w,centerDist*float(bRect.height()));
 		l=bRect._lf; r=bRect._rt; t=bRect._tp; b=bRect._bt;
 		if( (elliptical  && isInEllipse(l,t,w/2,h/2,xc,yc) && isInEllipse(l,b,w/2,h/2,xc,yc)
-						 && isInEllipse(r,t,w/2,h/2,xc,yc) && isInEllipse(r,b,w/2,h/2,xc,yc)) ||
-		    (!elliptical && isInRect(l,t,w,h,xc,yc) && isInRect(l,b,w,h,xc,yc)
-						 && isInRect(r,t,w,h,xc,yc) && isInRect(r,b,w,h,xc,yc)) )
+			&& isInEllipse(r,t,w/2,h/2,xc,yc) && isInEllipse(r,b,w/2,h/2,xc,yc)) ||
+			(!elliptical && isInRect(l,t,w,h,xc,yc) && isInRect(l,b,w,h,xc,yc)
+			&& isInRect(r,t,w,h,xc,yc) && isInRect(r,b,w,h,xc,yc)) )
 			haar++;
 		else
 			haar = haars.erase( haar );

@@ -37,7 +37,7 @@ inline double			degToRad(double dDeg) { return dDeg * PI / 180; }
 inline double			radToDeg(double dRad) { return dRad * 180 / PI; }
 inline double			factorial(const int i) { double d=1.0; for(int k=2; k<=i; k++) d*=k; return d; }
 inline int				roundInt(double v) {return (int)(v+0.5);}
-inline void				abortError( const char *msg, const int line, const char *file) 
+inline void				abortError( const char *msg, const int line, const char *file)
 {
 	if( msg==NULL )
 		fprintf(stderr, "%s %d: ERROR\n", file, line );
@@ -46,7 +46,7 @@ inline void				abortError( const char *msg, const int line, const char *file)
 	abort();
 }
 
-inline void				abortError( const char *msg1, const char *msg2, const int line, const char *file) 
+inline void				abortError( const char *msg1, const char *msg2, const int line, const char *file)
 {
 	fprintf(stderr, "%s %d: ERROR: %s %s\n", file, line, msg1, msg2 );
 	abort();
@@ -122,8 +122,8 @@ public:
 template<class T> void				sortOrder( vector<T> &v, vectori &order )
 {
 	int n=v.size();
-	vector< SortableElement<T> > v2; 
-	v2.resize(n); 
+	vector< SortableElement<T> > v2;
+	v2.resize(n);
 	order.clear(); order.resize(n);
 	for( int i=0; i<n; i++ ) {
 		v2[i]._ind = i;

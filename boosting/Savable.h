@@ -124,9 +124,9 @@ private:
 	void					primToTxt( ofstream &os );
 	bool					primFrmTxt( ifstream &is );
 
-private:	
+private:
 	// the class and instance name of serialized object
-	char					_cname[32]; 	
+	char					_cname[32]; 
 	char					_name[32];
 
 	// used to store primitive types only
