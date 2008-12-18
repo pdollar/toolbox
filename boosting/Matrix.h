@@ -47,6 +47,15 @@ public:
 	T&				operator() (const int row, const int col ) const;
 	T&				operator() (const int row, const int col );
 
+	// implementation of Savable
+	virtual const char* getCname() const;
+	virtual void	toObjImg( ObjImg &oi, const char *name ) const;
+	virtual void	frmObjImg( const ObjImg &oi, const char *name=NULL );
+
+	// write/read text (as array of numbers, different from Savable to/frmFile)
+	bool			toTxtFile( const char* file, char* delim="," );
+	bool			frmTxtFile( const char* file, char* delim="," );
+
 	// basic matrix operations
 	Matrix&			zero();									// set this matrix to be zero matrix
 	Matrix&			setVal( T val );						// sets every element in matrix to have val
@@ -64,15 +73,6 @@ public:
 	T				max() const;							// matrix max
 	int				maxi() const;							// max index
 	int				mini() const;							// min index
-
-	// implementation of Savable
-	virtual const char* getCname() const;
-	virtual void	toObjImg( ObjImg &oi, const char *name ) const;
-	virtual void	frmObjImg( const ObjImg &oi, const char *name=NULL );
-
-	// write/read text (as array of numbers, different from Savable to/frmFile)
-	bool			toTxtFile( const char* file, char* delim="," );
-	bool			frmTxtFile( const char* file, char* delim="," );
 
 public:
 	// pointwise operators (defined with a precompiler script "DOP")
