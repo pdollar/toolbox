@@ -1,3 +1,12 @@
+/**************************************************************************
+* Basic utility functions and common includes.
+*
+* Piotr's Image&Video Toolbox      Version NEW
+* Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+* Please email me if you find bugs, or have suggestions or questions!
+* Licensed under the Lesser GPL [see external/lgpl.txt]
+**************************************************************************/
+
 #ifndef PUBLIC_H
 #define PUBLIC_H
 
@@ -43,7 +52,7 @@ inline void				abortError( const char *msg1, const char *msg2, const int line, c
 	abort();
 }
 
-// vector ops
+// vector arithmetic operations
 template<class T> T         vecSum( const vector<T> &v )
 {
 	T sum = (T) 0.0; for( size_t i=0; i<v.size(); i++ ) sum+=v[i]; return sum;
@@ -94,11 +103,11 @@ template<class T> vector<T> vecSub( T val, const vector<T> &v )
 	vector<T> r(v.size(),val); for( size_t i=0; i<v.size(); i++ ) r[i]-=v[i]; return r;
 }
 
+// vector display
 template<class T> ostream& operator<<(ostream& os, const vector<T>& v)
 {
 	os << "[ " ; for (size_t i=0; i<v.size(); i++) os << v[i] << " "; os << "]"; return os;
 }
-
 
 // sort method that also gives order of elements after sorting
 template<class T> class				SortableElement
