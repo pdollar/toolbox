@@ -22,57 +22,57 @@ template<class T> class Matrix : public Savable
 {
 public:
 	// constructors, destructor and assignment
-	Matrix();
-	Matrix( int rows, int cols );
-	Matrix( int rows, int cols, T value );
+	Matrix() { init(); };
+	Matrix( int mRows, int nCols );
+	Matrix( int mRows, int nCols, T val );
 	Matrix( const Matrix& x );
-	~Matrix();
-	virtual void	clear();
+	~Matrix() { clear(); };
+	void			init();
+	void			clear();
 	Matrix<T>&		operator= (const Matrix<T> &x );
 	Matrix<T>&		operator= (const vector<T> &x );
 
-public:
-	// dimensions / access (note: [1xn] vectors more eff than [nx1])
-	bool			setDims( const int rows, const int cols );
-	bool			setDims( const int rows, const int cols, const T value );
-	void			getDims( int& rows, int& cols )	const { rows=_mRows; cols=_nCols; };
-	bool			resizeTo( const int rows1, const int cols1 );
-	bool			valid( const int row, const int col ) const;
-	bool			valid( const int index ) const;
+	// set/get dimensions (note: [1xn] vectors more efficient than [nx1])
+	bool			setDims( const int mRows, const int nCols );
+	bool			setDims( const int mRows, const int nCols, const T val );
+	bool			changeDims( const int mRows, const int nCols );
+	void			getDims( int& mRows, int& nCols ) const { mRows=_mRows; nCols=_nCols; };
 	int				rows() const { return _mRows; };
 	int				cols() const { return _nCols; };
 	int				size() const { return _mRows*_nCols; };
+
+	// indexing into matrix X via X(r,c) or X(ind)
 	T&				operator() (const int index ) const;
 	T&				operator() (const int index );
 	T&				operator() (const int row, const int col ) const;
 	T&				operator() (const int row, const int col );
 
-public:
 	// basic matrix operations
 	Matrix&			zero();									// set this matrix to be zero matrix
-	Matrix&			setVal( T value );						// sets every element in matrix to have value
+	Matrix&			setVal( T val );						// sets every element in matrix to have val
 	Matrix&			identity();								// set this matrix to be identity matrix
 	Matrix&			transpose();							// matrix transpose
-	Matrix&			absolute();								// absolute value of matrix
+	Matrix&			absolute();								// absolute val of matrix
 	void			rot90( Matrix &B, int K=1) const;		// rotate matrix clockwise by k*90 degrees
 	void			fliplr( Matrix<T> &B) const;			// flip matrix horizontally
 	void			flipud( Matrix<T> &B) const;			// flip matrix vertically
-	void			reshape( Matrix &B, int mrows, int ncols ) const;	// reshape to B, size can't change
+	void			reshape( Matrix &B, int mRows, int nCols ) const;	// reshape to B, size can't change
 	T				prod() const;							// product of elements
 	T				sum() const;							// sum of elements
 	T				trace() const;							// trace
-	virtual T		min() const;							// matrix min
-	virtual T		max() const;							// matrix max
+	T				min() const;							// matrix min
+	T				max() const;							// matrix max
 	int				maxi() const;							// max index
 	int				mini() const;							// min index
 
-public:
-	// write/read to/from stream/text
+	// implementation of Savable
 	virtual const char* getCname() const;
 	virtual void	toObjImg( ObjImg &oi, const char *name ) const;
 	virtual void	frmObjImg( const ObjImg &oi, const char *name=NULL );
-	bool			writeToTxt( const char* file, char* delim="," );
-	bool			readFrmTxt( const char* file, char* delim="," );
+
+	// write/read text (as array of numbers, different from Savable to/frmFile)
+	bool			toTxtFile( const char* file, char* delim="," );
+	bool			frmTxtFile( const char* file, char* delim="," );
 
 public:
 	// pointwise operators (defined with a precompiler script "DOP")
@@ -97,9 +97,13 @@ public:
 
 protected:
 	T		*_data ;
-	T		**_dataIndex;
+	T		**_dataInd;
 	int		_mRows, _nCols;
 };
+
+// helper functions
+template<class T1, class T2> void copy(Matrix<T1>& Mdest,const Matrix<T2>& Msrc);
+template<class T> ostream& operator<<(ostream& os, const Matrix<T>& x);
 
 // place actual implementation in separate file for readability
 #include "MatrixImp.h"
