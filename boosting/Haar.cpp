@@ -1,10 +1,17 @@
+/**************************************************************************
+* Haar.cpp
+*
+* Piotr's Image&Video Toolbox      Version NEW
+* Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+* Please email me if you find bugs, or have suggestions or questions!
+* Licensed under the Lesser GPL [see external/lgpl.txt]
+**************************************************************************/
 #include "Haar.h"
 //#include "Rand.h"
 #include <iomanip>
 
 Rect::Rect()
 {
-
 	_wt = 1.0f;
 	setPos(0,0,0,0);
 }
@@ -58,14 +65,14 @@ void		Rect::setPos( int lf, int rt, int tp, int bt )
 	_lf = lf;  _rt = rt;  _tp = tp;  _bt = bt;
 }
 
-void		Rect::shift(int jshift, int ishift)
+void		Rect::shift(int jShift, int iShift)
 {
-	setPos(_lf+ishift, _rt+ishift, _tp+jshift, _bt+jshift );
+	setPos(_lf+iShift, _rt+iShift, _tp+jShift, _bt+jShift );
 }
 
-void		Rect::shift( int lfshift, int rtshift, int tpshift, int btshift )
+void		Rect::shift( int lfShift, int rtShift, int tpShift, int btShift )
 {
-	_lf += lfshift; _rt += rtshift; _tp += tpshift; _bt += btshift;
+	_lf += lfShift; _rt += rtShift; _tp += tpShift; _bt += btShift;
 }
 
 void		Rect::getUnion( Rect &uRect, const VecRect &rects )
@@ -318,11 +325,11 @@ void		Haar::createSyst( int type, int width, int height, int fw, int fh, int tp,
 
 void		Haar::moveTo( int tpNew, int lfNew )
 {
-	int jshift,ishift;
-	jshift = tpNew-_boundRect._tp;
-	ishift = lfNew-_boundRect._lf;
+	int jShift,iShift;
+	jShift = tpNew-_boundRect._tp;
+	iShift = lfNew-_boundRect._lf;
 	for( int i=0; i<_nRects; i++ )
-		_rects[i].shift(jshift, ishift);
+		_rects[i].shift(jShift, iShift);
 }
 
 bool		Haar::finalize()
@@ -405,7 +412,7 @@ string		Haar::getDescr() const
 	return descr;
 }
 
-void		Haar::convHaar( Matrixf &resp, IntegralImage &II, int moment, bool normalize )
+void		Haar::convHaar( Matrixf &resp, IntegralImg &II, int moment, bool normalize )
 {
 	moveTo(0,0);
 	int r,c,w,h;
@@ -431,7 +438,7 @@ void		Haar::convHaar( Matrixf &resp, IntegralImage &II, int moment, bool normali
 	}
 }
 
-void		Haar::convHaarHist( Matrixf &resp, IntegralImage *IIs, int nImages, bool normalize )
+void		Haar::convHaarHist( Matrixf &resp, IntegralImg *IIs, int nImages, bool normalize )
 {
 	moveTo(0,0);
 	int r,c,w,h;

@@ -1,10 +1,18 @@
+/**************************************************************************
+* Generalized Haar features.
+*
+* Piotr's Image&Video Toolbox      Version NEW
+* Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+* Please email me if you find bugs, or have suggestions or questions!
+* Licensed under the Lesser GPL [see external/lgpl.txt]
+**************************************************************************/
 #ifndef _HAAR_H_
 #define _HAAR_H_
 
 #include "Public.h"
 #include "Savable.h"
 #include "Matrix.h"
-#include "IntegralImage.h"
+#include "IntegralImg.h"
 
 class Haar; class Rect;
 typedef vector<Haar> VecHaar;
@@ -13,7 +21,7 @@ typedef vector< Rect > VecRect;
 //// SAMPLE CODE
 //// 1) create an integral image
 //Matrixf I; I.Load( "C:/code/pbt/public/I.tif" );
-//IntegralImage II; II.prepare( I, true );
+//IntegralImg II; II.prepare( I, true );
 //
 //// 2) single Haar feature and it application to image
 //Haar h; h.createSyst( 4, 50, 50, 9, 9, 0, 0 );
@@ -33,7 +41,9 @@ typedef vector< Rect > VecRect;
 //	cout << (haars[i].getDescr()) << endl;
 //Haar::convHaars( "C:/code/pbt/haar", haars, II, 1, false );
 
-/////////////////////////////////////////////////////////////////////////////////
+/**************************************************************************
+* Simple class for weighted rectangles.
+**************************************************************************/
 class Rect : public Savable
 {
 public:
@@ -53,10 +63,11 @@ public:
 	int				height()	const {return _bt-_tp+1;};
 	int				width()		const {return _rt-_lf+1;};
 	bool			isValid()	const;
-	void			shift( int jshift, int ishift );
-	void			shift( int lfshift, int rtshift, int tpshift, int btshift );
+	void			shift( int jShift, int iShift );
+	void			shift( int lfShift, int rtShift, int tpShift, int btShift );
 	void			setPos( int lf, int rt, int tp, int bt );
 
+	// union is the smallest rectangle that contains all the other rects
 	static void		getUnion( Rect &uRect, const VecRect &rects );
 
 	// comparison (for sort, ect)
@@ -159,14 +170,14 @@ public:
 	friend bool		operator<(	const Haar &haar1, const Haar &haar2);
 
 	// convolve w entire image
-	void			convHaar( Matrixf &resp, IntegralImage &II, int moment, bool normalize );
-	void			convHaarHist( Matrixf &resp, IntegralImage *IIs, int nImages, bool normalize );
+	void			convHaar( Matrixf &resp, IntegralImg &II, int moment, bool normalize );
+	void			convHaarHist( Matrixf &resp, IntegralImg *IIs, int nImages, bool normalize );
 
 	// compute haars
-	float			compResp1(		const IntegralImage &II, bool normalize ) const;
-	float			compResp2(		const IntegralImage &II, bool normalize ) const;
-	float			compHistDist(	const IntegralImage *IIs,  const int nImages, bool normalize ) const;
-	float			compHistDist(	const IntegralImage **IIs, const int nImages, bool normalize ) const;
+	float			compResp1(		const IntegralImg &II, bool normalize ) const;
+	float			compResp2(		const IntegralImg &II, bool normalize ) const;
+	float			compHistDist(	const IntegralImg *IIs,  const int nImages, bool normalize ) const;
+	float			compHistDist(	const IntegralImg **IIs, const int nImages, bool normalize ) const;
 
 	// make set of Haars
 	static void		makeHaarSet( VecHaar &haars, HaarPrm &haarPrm );
@@ -192,7 +203,7 @@ protected: // cached for speed
 };
 
 /////////////////////////////////////////////////////////////////////////////////
-inline float		Haar::compResp1(	const IntegralImage &II, bool normalize ) const
+inline float		Haar::compResp1(	const IntegralImg &II, bool normalize ) const
 {
 	float sum=0.0f; int l,r,t,b;
 	for( int i=0; i<_nRects; i++) {
@@ -210,7 +221,7 @@ inline float		Haar::compResp1(	const IntegralImage &II, bool normalize ) const
 	return sum;
 }
 
-inline float		Haar::compResp2(	const IntegralImage &II, bool normalize ) const
+inline float		Haar::compResp2(	const IntegralImg &II, bool normalize ) const
 {
 	float sumPos, sumNeg, sumSqPos, sumSqNeg; int l,r,t,b;
 	sumPos = sumNeg = sumSqPos = sumSqNeg=0.0f;
@@ -251,7 +262,7 @@ inline float		Haar::compResp2(	const IntegralImage &II, bool normalize ) const
 	return (stdPos - stdNeg);
 }
 
-inline float		Haar::compHistDist(	const IntegralImage *IIs,  const int nImages, bool normalize ) const
+inline float		Haar::compHistDist(	const IntegralImg *IIs,  const int nImages, bool normalize ) const
 {
 	int l,r,t,b; int i, j; float mu, sigmaInv; float dist=0.0f;
 	if( _areaNeg>0 ) {
@@ -293,7 +304,7 @@ inline float		Haar::compHistDist(	const IntegralImage *IIs,  const int nImages, 
 	return dist;
 }
 
-inline float		Haar::compHistDist(	const IntegralImage **IIs, const int nImages, bool normalize ) const
+inline float		Haar::compHistDist(	const IntegralImg **IIs, const int nImages, bool normalize ) const
 {
 	int l,r,t,b; int i, j; float mu, sigmaInv; float dist=0.0f;
 	if( _areaNeg>0 ) {

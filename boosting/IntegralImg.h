@@ -6,17 +6,17 @@
 * Please email me if you find bugs, or have suggestions or questions!
 * Licensed under the Lesser GPL [see external/lgpl.txt]
 **************************************************************************/
-#ifndef _ITEGRAL_IMAGE_H_
-#define _ITEGRAL_IMAGE_H_
+#ifndef _ITEGRALIMG_H_
+#define _ITEGRALIMG_H_
 
 #include "Matrix.h"
 
-class IntegralImage
+class IntegralImg
 {
 public:
-	IntegralImage() { clear(); };
+	IntegralImg() { clear(); };
 
-	~IntegralImage() { clear(); };
+	~IntegralImg() { clear(); };
 
 	void	clear();
 
@@ -49,14 +49,14 @@ public:
 	Matrixd	_II, _sqrII;
 };
 
-inline void				IntegralImage::clear()
+inline void				IntegralImg::clear()
 {
 	_II.clear(); _sqrII.clear();
 	_w = _h = _roiLf = _roiTp = _roiRt = _roiBt = 0;
 	_roiMu = 0.0; _roiSig = 1.0; _roiSigInv = 1.0;
 }
 
-inline void				IntegralImage::setRoi(		int lf, int tp, int rt, int bt )
+inline void				IntegralImg::setRoi(		int lf, int tp, int rt, int bt )
 {
 	if( _roiLf==lf && _roiTp==tp && _roiRt==rt && _roiBt==bt ) return;
 	_roiLf	= _roiTp = 0;
@@ -69,26 +69,26 @@ inline void				IntegralImage::setRoi(		int lf, int tp, int rt, int bt )
 	_roiLf=lf; _roiTp=tp; _roiRt=rt; _roiBt=bt;
 }
 
-inline void				IntegralImage::getRoi(		int &lf, int &tp, int &rt, int &bt )
+inline void				IntegralImg::getRoi(		int &lf, int &tp, int &rt, int &bt )
 {
 	lf=_roiLf; tp=_roiTp; rt=_roiRt; bt=_roiBt;
 }
 
-inline double			IntegralImage::rectSum(		int lf, int tp, int rt, int bt ) const
+inline double			IntegralImg::rectSum(		int lf, int tp, int rt, int bt ) const
 {
 	lf+=_roiLf; rt+=_roiLf+1; tp+=_roiTp; bt+=_roiTp+1;
 	assert( tp>=0 && lf>=0 && bt<_h && rt<_w && tp<bt && lf<rt );
 	return (_II(tp, lf) + _II(bt, rt) - _II(tp, rt) - _II(bt, lf));
 }
 
-inline double			IntegralImage::rectSumSq(	int lf, int tp, int rt, int bt ) const
+inline double			IntegralImg::rectSumSq(	int lf, int tp, int rt, int bt ) const
 {
 	lf+=_roiLf; rt+=_roiLf+1; tp+=_roiTp; bt+=_roiTp+1;
 	assert( tp>=0 && lf>=0 && bt<_h && rt<_w && tp<bt && lf<rt );
 	return (_sqrII(tp, lf) + _sqrII(bt, rt) - _sqrII(tp, rt) - _sqrII(bt, lf));
 }
 
-template<class T> void	IntegralImage::prepare( const Matrix<T> &I )
+template<class T> void	IntegralImg::prepare( const Matrix<T> &I )
 {
 	double v; int i, j;
 	_w = I.cols() + 1;
