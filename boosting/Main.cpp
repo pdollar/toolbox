@@ -1,10 +1,7 @@
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
 
-#include "Public.h"
-#include "Savable.h"
 #include "Matrix.h"
-#include "IntegralImage.h"
 #include "Haar.h"
 
 void testToStrm();
