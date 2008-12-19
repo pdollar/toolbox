@@ -105,15 +105,9 @@ void			ObjImg::frmSavable( const char *name, const Savable *s )
 mxArray*		ObjImg::toMxArray() const
 {
 #ifdef MATLAB_MEX_FILE
-#define GETID(M,T) if(!strcmp(_cname,PRIMNAME(T))) id=M;
 	// primitive to non-struct mxArray
 	if(_elNum>0) {
-		mxClassID id = mxUNKNOWN_CLASS;
-		GETID( mxINT32_CLASS, int );     GETID( mxINT64_CLASS, long );
-		GETID( mxSINGLE_CLASS, float );  GETID( mxDOUBLE_CLASS, double );
-		GETID( mxLOGICAL_CLASS, bool );  GETID( mxCHAR_CLASS, char );
-		GETID( mxUINT8_CLASS, uchar );
-		assert(id!=mxUNKNOWN_CLASS);
+		mxClassID id = getClassId( _cname );
 		if( id==mxCHAR_CLASS ) {
 			return mxCreateString(_el);
 		} else {
@@ -133,7 +127,6 @@ mxArray*		ObjImg::toMxArray() const
 	M = mxCreateStructMatrix(1, 1, n+1, (const char**) names);
 	mxSetFieldByNumber(M,0,0,mxCreateString(_cname));
 	for( i=0; i<n; i++ ) mxSetFieldByNumber(M,0,i+1,_children[i].toMxArray()); return M;
-#undef GETID
 #else
 	return NULL;
 #endif
@@ -142,16 +135,10 @@ mxArray*		ObjImg::toMxArray() const
 void			ObjImg::frmMxArray( const mxArray *M )
 {
 #ifdef MATLAB_MEX_FILE
-#define GETCNAME(M,T) if(id==M) { _elBytes=sizeof(T); strcpy(_cname,PRIMNAME(T)); }
 	// primitive from non-struct mxArray
 	if( !mxIsStruct(M) ) {
 		clear(); assert(mxGetM(M)==1); _elNum=mxGetN(M);
-		mxClassID id = mxGetClassID(M); _elBytes=0;
-		GETCNAME( mxINT32_CLASS, int );    GETCNAME( mxINT64_CLASS, long );
-		GETCNAME( mxSINGLE_CLASS, float ); GETCNAME( mxDOUBLE_CLASS, double );
-		GETCNAME( mxLOGICAL_CLASS, bool ); GETCNAME( mxCHAR_CLASS, char );
-		GETCNAME( mxUINT8_CLASS, uchar );
-		assert(_elBytes>0);
+		sprintf(_cname,getClassName( mxGetClassID(M), _elBytes ));
 		if(!strcmp(_cname,"char")) {
 			assert(mxIsChar(M)); _elNum++;
 			_el=new char[_elNum]; mxGetString(M,_el,_elNum);
@@ -177,7 +164,38 @@ void			ObjImg::frmMxArray( const mxArray *M )
 		_children[i].frmMxArray(mxGetFieldByNumber(M,0,i+1));
 		sprintf(_children[i]._name,name);
 	}
+#endif
+}
+
+mxClassID		ObjImg::getClassId( const char *cname )
+{
+#ifdef MATLAB_MEX_FILE
+#define GETID(M,T) if(!strcmp( cname,PRIMNAME(T))) return M;
+	mxClassID id = mxUNKNOWN_CLASS;
+	GETID( mxINT32_CLASS, int );     GETID( mxINT64_CLASS, long );
+	GETID( mxSINGLE_CLASS, float );  GETID( mxDOUBLE_CLASS, double );
+	GETID( mxLOGICAL_CLASS, bool );  GETID( mxCHAR_CLASS, char );
+	GETID( mxUINT8_CLASS, uchar );
+	abortError( "Unkown primitive type:", cname, __LINE__, __FILE__ );
+	return mxUNKNOWN_CLASS;
+#undef GETID
+#else
+	return 0;
+#endif
+}
+
+const char*		ObjImg::getClassName( const mxClassID id, size_t &bytes )
+{
+#ifdef MATLAB_MEX_FILE
+#define GETCNAME(M,T) if(id==M) { bytes=sizeof(T); return PRIMNAME(T); }
+	GETCNAME( mxINT32_CLASS, int );    GETCNAME( mxINT64_CLASS, long );
+	GETCNAME( mxSINGLE_CLASS, float ); GETCNAME( mxDOUBLE_CLASS, double );
+	GETCNAME( mxLOGICAL_CLASS, bool ); GETCNAME( mxCHAR_CLASS, char );
+	GETCNAME( mxUINT8_CLASS, uchar );
+	abortError( "Unkown mxClassID", __LINE__, __FILE__ ); return "";
 #undef GETCNAME
+#else
+	return "";
 #endif
 }
 

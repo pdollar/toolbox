@@ -111,6 +111,8 @@ public:
 	// conversion to/from mxArray
 	mxArray*				toMxArray() const;
 	void					frmMxArray( const mxArray *M );
+	static mxClassID		getClassId( const char *cname );
+	static const char*		getClassName( const mxClassID id, size_t &bytes );
 
 	// converstion to/from binary file or human editable text file
 	bool					toFile( const char *fName, bool binary=false );
@@ -138,7 +140,7 @@ public:
 	vector< ObjImg > 		_children;
 };
 
-// alternative to typeid(T).name which is OS dependent
+// alternative to typeid(T).name which is OS independent
 #define PRIMNAME(T)\
 	((typeid(T)==typeid(int)) ? "int" :\
 	(typeid(T)==typeid(long)) ? "long" :\
