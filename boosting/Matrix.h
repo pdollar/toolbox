@@ -48,9 +48,12 @@ public:
 	T&				operator() (const int row, const int col );
 
 	// implementation of Savable
-	virtual const char* getCname() const;
-	virtual void	toObjImg( ObjImg &oi, const char *name ) const;
-	virtual void	frmObjImg( const ObjImg &oi, const char *name=NULL );
+	virtual const char*		getCname() const;
+	virtual void			toObjImg( ObjImg &oi, const char *name ) const;
+	virtual void			frmObjImg( const ObjImg &oi, const char *name=NULL );
+	virtual bool			customMxArray() const { return 1; }
+	virtual mxArray*		toMxArray() const;
+	virtual void			frmMxArray( const mxArray *M );
 
 	// write/read text (as array of numbers, different from Savable to/frmFile)
 	bool			toTxtFile( const char* file, char* delim="," );

@@ -169,6 +169,25 @@ template<class T> void			Matrix<T>::frmObjImg( const ObjImg &oi, const char *nam
 	oi._children[2].toPrim("data",_data);
 }
 
+template<class T> mxArray*		Matrix<T>::toMxArray() const
+{
+#ifdef MATLAB_MEX_FILE
+	mxClassID id = ObjImg::getClassId( PRIMNAME(T) );
+	mxArray *M = mxCreateNumericMatrix(_mRows,_nCols,id,mxREAL);
+	memcpy(mxGetData(M),_data,sizeof(T)*numel()); return M;
+#else
+	return NULL;
+#endif
+}
+
+template<class T> void			Matrix<T>::frmMxArray( const mxArray *M )
+{
+#ifdef MATLAB_MEX_FILE
+	setDims( mxGetM(M), mxGetN(M) );
+	memcpy(_data,mxGetData(M),sizeof(T)*numel());
+#endif
+}
+
 template<class T> bool			Matrix<T>::toTxtFile( const char *fName, char *delim )
 {
 	remove( fName );
