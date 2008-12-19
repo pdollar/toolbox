@@ -132,7 +132,7 @@ void		Haar::toObjImg(  ObjImg &oi, const char *name ) const
 
 void		Haar::frmObjImg( const ObjImg &oi, const char *name )
 {
-	oi.check(name,getCname(),1,1); VecSavable v; 
+	oi.check(name,getCname(),1,1); VecSavable v;
 	v.frmObjImg(oi._children[0],"rects");
 	_nRects=v._v.size(); createRects(_nRects);
 	for(int i=0; i<_nRects; i++ ) {
