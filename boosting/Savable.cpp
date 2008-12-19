@@ -118,7 +118,10 @@ mxArray*		ObjImg::toMxArray() const
 	// check to see if underlying Savable object has custom toMxArray
 	mxArray *M; Savable *s=Savable::create(_cname);
 	if( !s->customMxArray() ) delete s; else {
-		s->frmObjImg(*this,_name); M=s->toMxArray(); delete s; return M;
+		s->frmObjImg(*this,_name); mxArray *V=s->toMxArray(); delete s;
+		const char *fns[]={"cname","val"}; M=mxCreateStructMatrix(1,1,2,fns);
+		mxSetFieldByNumber(M,0,0,mxCreateString(_cname));
+		mxSetFieldByNumber(M,0,1,V); return M;
 	}
 	// standard toMxArray (to Matlab struct array)
 	int i,n=_children.size(); char **names=(char**) mxCalloc(n+1,sizeof(char*));
@@ -155,7 +158,10 @@ void			ObjImg::frmMxArray( const mxArray *M )
 	mxGetString(cname,_cname,mxGetN(cname)+1);
 	Savable *s = Savable::create(_cname);
 	if( !s->customMxArray() ) delete s; else {
-		s->frmMxArray(M); s->toObjImg(*this,"tmp"); delete s; return;
+		assert(mxGetNumberOfFields(M)==2);
+		assert(!strcmp(mxGetFieldNameByNumber(M,1),"val"));
+		mxArray *V = mxGetFieldByNumber(M,0,1);
+		s->frmMxArray(V); s->toObjImg(*this,"tmp"); delete s; return;
 	}
 	// standard frmMxArray (to Matlab struct array)
 	int n=mxGetNumberOfFields(M)-1; if(n>0) _children.resize(n);
@@ -392,9 +398,7 @@ mxArray*		VecSavable::toMxArray() const
 #ifdef MATLAB_MEX_FILE
 	int i,n=_v.size(); mxArray **VS=new mxArray*[n];
 	for(i=0; i<n; i++) { ObjImg oi; _v[i]->toObjImg(oi,"tmp"); VS[i]=oi.toMxArray(); }
-	const char *fns[]={"cname","val"}; mxArray *M=mxCreateStructMatrix(1,1,2,fns);
-	mxSetFieldByNumber(M,0,0,mxCreateString(getCname()));
-	mxSetFieldByNumber(M,0,1,mxStructArrayMerge(VS,n));
+	mxArray *M=mxStructArrayMerge(VS,n);
 	for(i=0; i<n; i++) mxDestroyArray(VS[i]); delete [] VS; return M;
 #else
 	return NULL;
@@ -404,10 +408,7 @@ mxArray*		VecSavable::toMxArray() const
 void			VecSavable::frmMxArray( const mxArray *M )
 {
 #ifdef MATLAB_MEX_FILE
-	int i,n; assert(mxGetNumberOfFields(M)==2);
-	assert(!strcmp(mxGetFieldNameByNumber(M,0),"cname"));
-	assert(!strcmp(mxGetFieldNameByNumber(M,1),"val"));
-	mxArray **VS=mxStructArraySplit(mxGetFieldByNumber(M,0,1),n); _v.resize(n);
+	int i,n; mxArray **VS=mxStructArraySplit(M,n); _v.resize(n);
 	for(i=0; i<n; i++) { ObjImg oi; oi.frmMxArray(VS[i]); _v[i]=oi.toSavable(""); }
 	for(i=0; i<n; i++) mxDestroyArray(VS[i]); delete [] VS;
 #endif
