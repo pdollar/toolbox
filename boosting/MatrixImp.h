@@ -12,17 +12,17 @@
 template<class T1, class T2> void copy(Matrix<T1>& Mdest,const Matrix<T2>& Msrc)
 {
 	Mdest.setDims(Msrc.rows(), Msrc.cols());
-	for(int i=0; i<Msrc.rows(); i++ )
-		for(int j=0; j<Msrc.cols(); j++ )
-			Mdest(i,j) = (T1)(Msrc(i, j));
+	for(int i=0; i<Msrc.rows(); i++)
+		for(int j=0; j<Msrc.cols(); j++)
+			Mdest(i,j) = (T1) (Msrc(i,j));
 }
 
 template<class T> ostream& operator<<(ostream& os, const Matrix<T>& x)
 {
 	os << "[";
-	for(int j=0; j<x.rows(); j++ ) {
-		for(int i=0; i<x.cols(); i++) os << x(j,i) << " ";
-		if( j!=x.rows()-1 ) os << "\n";
+	for(int i=0; i<x.rows(); i++) {
+		for(int j=0; j<x.cols(); j++) os << x(i,j) << " ";
+		if( i!=x.rows()-1 ) os << "\n";
 	}
 	os << "]";
 	return os;
@@ -61,7 +61,7 @@ template<class T> Matrix<T>&	Matrix<T>::operator= (const Matrix<T> &x )
 {
 	if( this != &x ) {
 		setDims( x.rows(), x.cols() );
-		for(int i = 0; i<numel(); i++) (*this)(i) = x(i);
+		for(int i=0; i<numel(); i++) (*this)(i)=x(i);
 	}
 	return *this;
 }
@@ -69,7 +69,7 @@ template<class T> Matrix<T>&	Matrix<T>::operator= (const Matrix<T> &x )
 template<class T> Matrix<T>&	Matrix<T>::operator= (const vector<T> &x)
 {
 	setDims( x.numel(), 1 );
-	for(int i=0; i<rows(); i++) (*this)(i) = x[i];
+	for(int i=0; i<rows(); i++) (*this)(i)=x[i];
 	return *this;
 }
 
@@ -107,15 +107,15 @@ template<class T> bool			Matrix<T>::changeDims(const int mRows, const int nCols)
 	try{
 		data = new T[mRows*nCols];
 		dataInd = new T*[mRows];
-	} catch( bad_alloc& ) {		
+	} catch( bad_alloc& ) {
 		cout << "Matrix::changeDims(..) OUT OF MEMORY" << endl;
 		clear(); return false;
 	}
 
-	for(int j=0; j<mRows; j++) dataInd[j] = &(data[nCols*j]);
-	for(int j=0; j<std::min(rows(),mRows); j++)
-		for(int i=0; i<std::min(cols(),nCols); i++)
-			dataInd[j][i] = (*this)(j, i);
+	for(int i=0; i<mRows; i++) dataInd[i] = &(data[nCols*i]);
+	for(int i=0; i<std::min(rows(),mRows); i++)
+		for(int j=0; j<std::min(cols(),nCols); j++)
+			dataInd[i][j] = (*this)(i,j);
 
 	clear();
 	_mRows=mRows; _nCols=nCols;
@@ -229,7 +229,7 @@ template<class T> Matrix<T>&	Matrix<T>::zero()
 
 template<class T> Matrix<T>&	Matrix<T>::setVal(T val)
 {
-	if(val==0) return zero(); 
+	if(val==0) return zero();
 	if(_data!=NULL) for(int i=0; i<numel(); i++) (*this)(i)=val;
 	return *this;
 }
@@ -261,7 +261,7 @@ template<class T> Matrix<T>&	Matrix<T>::absolute()
 
 template<class T> void			Matrix<T>::rot90( Matrix<T> &B, int k) const
 {
-	int i,j; 
+	int i,j;
 	k=k%4; if(k<0) k+=4;
 	if(k==1) {
 		B.setDims(_nCols,_mRows);
@@ -280,17 +280,17 @@ template<class T> void			Matrix<T>::rot90( Matrix<T> &B, int k) const
 	}
 }
 
-template<class T> void			Matrix<T>::fliplr( Matrix<T> &B) const
+template<class T> void			Matrix<T>::flipud( Matrix<T> &B) const
 {
-	B.setDims(_nCols,_mRows);
+	B.setDims(_mRows,_nCols);
 	for(int i=0; i<_mRows; i++)
 		for(int j=0; j<_nCols; j++)
 			B(i,j) = (*this)(_mRows-i-1,j);
 }
 
-template<class T> void			Matrix<T>::flipud( Matrix<T> &B) const
+template<class T> void			Matrix<T>::fliplr( Matrix<T> &B) const
 {
-	B.setDims(_nCols,_mRows);
+	B.setDims(_mRows,_nCols);
 	for(int i=0; i<_mRows; i++)
 		for(int j=0; j<_nCols; j++)
 			B(i,j) = (*this)(i,_nCols-j-1);
@@ -304,6 +304,18 @@ template<class T> void			Matrix<T>::reshape( Matrix<T> &B, int mRows, int nCols 
 	B.setDims( mRows, nCols );
 	for(int i=0; i<numel(); i++ )
 		B(i) = (*this)(i);
+}
+
+template<class T> Matrix<T>		Matrix<T>::multiply( const Matrix<T> &B ) const
+{
+	assert( cols()==B.rows() );
+	int mRow=rows(), nCol=B.cols(), kCol=cols();
+	Matrix<T> C(mRow,nCol,0);
+	for(int i=0; i<mRow; i++)
+		for(int j=0; j<nCol; j++)
+			for(int k=0; k<kCol; k++)
+				C(i,j) += (*this)(i,k)*B(k,j);
+	return C;
 }
 
 template<class T> T				Matrix<T>::prod() const
@@ -322,25 +334,23 @@ template<class T> T				Matrix<T>::sum() const
 
 template<class T> T				Matrix<T>::trace() const
 {
-	T val; val=0; assert(_mRows==_nCols);
-	for(int i=0; i<_mRows; i++) val+=(*this)(i,i);
+	T val; val=0;
+	for(int i=0; i<std::min(rows(),cols()); i++) val+=(*this)(i,i);
 	return val;
 }
 
 template<class T> T				Matrix<T>::min() const
 {
-	T val=0; if(numel()==0) return val;
-	val = (*this)(0);
-	for(int i=1; i<numel(); i++) if((*this)(i)<val) 
+	if(numel()==0) return (T) 0; T val=(*this)(0);
+	for(int i=1; i<numel(); i++) if((*this)(i)<val)
 		val=(*this)(i);
 	return val;
 }
 
 template<class T> int			Matrix<T>::mini() const
 {
-	int ind=0; if(numel()==0) return ind;
-	T val = (*this)(0);
-	for(int i=1; i<numel(); i++) if((*this)(i)<val )  {
+	if(numel()==0) return 0; int ind=0; T val=(*this)(0);
+	for(int i=1; i<numel(); i++) if((*this)(i)<val ) {
 		ind=i; val=(*this)(i);
 	}
 	return ind;
@@ -348,8 +358,7 @@ template<class T> int			Matrix<T>::mini() const
 
 template<class T> T				Matrix<T>::max() const
 {
-	T val=0; if(numel()==0) return val;
-	val = (*this)(0);
+	if(numel()==0) return (T) 0; T val=(*this)(0);
 	for(int i=1; i<numel(); i++) if((*this)(i)>val)
 		val = (*this)(i);
 	return val;
@@ -357,8 +366,7 @@ template<class T> T				Matrix<T>::max() const
 
 template<class T> int			Matrix<T>::maxi() const
 {
-	int ind=0; if(numel()==0) return ind;
-	T val = (*this)(0);
+	if(numel()==0) return 0; int ind=0; T val=(*this)(0);
 	for(int i=1; i<numel(); i++) if((*this)(i)>val) {
 		ind=i; val=(*this)(i);
 	}
@@ -366,75 +374,39 @@ template<class T> int			Matrix<T>::maxi() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-template<class T> Matrix<T>		Matrix<T>::operator* ( const Matrix<T> &b ) const
-{
-	// multiply two matrices (standard matrix multiplication)
-	int mRow=rows(), nCol=b.cols(), xnCol=cols();
-	Matrix<T> tmp(mRow,nCol,0);
-	for(int i=0; i<mRow; i++)
-		for(int j=0; j<nCol; j++)
-			for(int k=0; k<xnCol; k++)
-				tmp(i,j) += (*this)(i, k)*b(k, j);
-	return tmp;
-}
-
-template<class T> Matrix<T>		Matrix<T>::operator& ( const Matrix<T> &b ) const
-{
-	assert(rows()==b.rows() && cols()==b.cols());
-	Matrix<T> tmp(b); tmp*=(*this); return tmp;
-}
-
 template<class T> Matrix<T>		Matrix<T>::operator^ ( const Matrix<T> &b ) const
 {
-	Matrix<T> tmp(rows(),cols());
-	for(int i=0; i<numel(); i++) tmp(i)=pow((*this)(i),b(i));
-	return tmp;
+	Matrix<T> c(rows(),cols());
+	for(int i=0; i<numel(); i++) c(i)=(T) pow((double)(*this)(i),(double)b(i)); return c;
 }
 
 template<class T> Matrix<T>		Matrix<T>::operator^ ( const T &b ) const
 {
-	Matrix<T> tmp(rows(),cols());
-	for(int i=0; i<numel(); i++) tmp(i)=pow((*this)(i),b);
-	return tmp;
+	Matrix<T> c(rows(),cols());
+	for(int i=0; i<numel(); i++) c(i)=(T) pow((double)(*this)(i),(double)b); return c;
 }
 
-template<class T> Matrix<T>		operator^ ( const T a, const Matrix<T> &b )
+template<class T> Matrix<T>		operator^ (const T &a, const Matrix<T> &b )
 {
-	Matrix<T> tmp(b.rows(),b.cols());
-	for(int i=0; i<b.numel(); i++) tmp(i)=pow(a,b(i));
-	return tmp;
+	Matrix<T> c(b.rows(),b.cols());
+	for(int i=0; i<b.numel(); i++) c(i)=(T) pow((double)a,(double)b(i)); return c;
 }
 
-// Pointwise (Matrix OP Matrix) operations - except *,&,^
 #define DOP(OP) \
 	template<class T> Matrix<T> Matrix<T>::operator OP ( const Matrix<T> &b ) const { \
-	Matrix<T> c(rows(), cols()); \
-	for(int i=0; i<numel(); i++) c(i)=(*this)(i) OP b(i); \
-	return c; }
-DOP(+); DOP(-); DOP(/); DOP(<); DOP(>); DOP(<=); DOP(>=); DOP(&&); DOP(||); DOP(==); DOP(!=);
-#undef DOP
-
-// Pointwise (Matrix<T> OP T) and (T OP Matrix<T>) operations - except ^
-#define DOP(OP) \
+	Matrix<T> c(rows(), cols()); for(int i=0; i<numel(); i++) c(i)=(*this)(i) OP b(i); return c; } \
 	template<class T> Matrix<T> Matrix<T>::operator OP (const T &b ) const { \
-	Matrix<T> c(rows(), cols()); \
-	for(int i=0; i<numel(); i++) c(i)=(*this)(i) OP b; \
-	return c; } \
+	Matrix<T> c(rows(),cols()); for(int i=0; i<numel(); i++) c(i)=(*this)(i) OP b; return c; } \
 	template<class T> Matrix<T> operator OP (const T &a, const Matrix<T> &b ) { \
-	Matrix<T> c(b.rows(), b.cols()); \
-	for(int i=0; i<b.numel(); i++) c(i)=a OP b(i); \
-	return c; }
+	Matrix<T> c(b.rows(),b.cols()); for(int i=0; i<b.numel(); i++) c(i)=a OP b(i); return c; }
 DOP(+); DOP(-); DOP(/); DOP(*); DOP(<); DOP(>); DOP(<=); DOP(>=); DOP(&&); DOP(||); DOP(==); DOP(!=);
 #undef DOP
 
-// Pointwise assignment operators
 #define DOP(OP) \
 	template<class T> Matrix<T>& Matrix<T>::operator OP (const T b ) { \
-	for(int i=0; i<numel(); i++) (*this)(i) OP b; \
-	return *this; } \
+	for(int i=0; i<numel(); i++) (*this)(i) OP b; return *this; } \
 	template<class T> Matrix<T>& Matrix<T>::operator OP (const Matrix<T> &b ) { \
-	for(int i=0; i<numel(); i++) (*this)(i) OP b(i); \
-	return *this; }
+	for(int i=0; i<numel(); i++) (*this)(i) OP b(i); return *this; }
 DOP(+=); DOP(-=); DOP(*=); DOP(/=);
 #undef DOP
 

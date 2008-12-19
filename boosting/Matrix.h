@@ -63,9 +63,10 @@ public:
 	Matrix&			transpose();							// matrix transpose
 	Matrix&			absolute();								// absolute val of matrix
 	void			rot90( Matrix &B, int k=1 ) const;		// rotate matrix clockwise by k*90 degrees
-	void			fliplr( Matrix &B ) const;				// flip matrix horizontally
 	void			flipud( Matrix &B ) const;				// flip matrix vertically
+	void			fliplr( Matrix &B ) const;				// flip matrix horizontally
 	void			reshape( Matrix &B, int mRows, int nCols ) const; // reshape, numel can't change
+	Matrix			multiply( const Matrix &B ) const;		// standard matrix multiplication
 	T				prod() const;							// product of elements
 	T				sum() const;							// sum of elements
 	T				trace() const;							// trace
@@ -74,10 +75,10 @@ public:
 	int				maxi() const;							// max index
 	int				mini() const;							// min index
 
-	// pointwise operators (defined with a precompiler script "DOP")
-	// For example, division is pointwise: C=A/B means C(i)=A(i)/B(i)
-	// "*" - ONLY multiplcation of two matricies is NOT pointwise - it is standard matrix multiplication
-	// "&" - for pointwise multiplication between matricies use C=A&B; (careful has low precedence)
+	// Pointwise (Matrix OP Matrix), (Matrix<T> OP T) and (T OP Matrix<T>) operators
+	// Example: C=A/B - C(i)=A(i)/B(i) for all i
+	// Example: C=A*B - C(i)=A(i)*B(i) for all i (use C=A.multiply(B) for standard matrix mult)
+	// Example: B=A+(A==0)*10 - set all 0 elements to 10
 	// "^" - means power, uses "pow" call (careful has low precedence)
 #define DOP(OP) \
 	Matrix operator OP ( const Matrix &b ) const; \
@@ -85,9 +86,8 @@ public:
 	template<class T1> friend Matrix<T1> operator OP ( const T1 &a, const Matrix<T1> &b );
 	DOP(+); DOP(-); DOP(/); DOP(*); DOP(^); DOP(<); DOP(>); DOP(<=); DOP(>=); DOP(&&); DOP(||); DOP(==); DOP(!=);
 #undef DOP
-	Matrix operator& (const Matrix &b ) const;
 
-	// computed assignment operators, all pointwise
+	// Pointwise assignment operators
 #define DOP(OP) \
 	Matrix& operator OP (const T b); \
 	Matrix& operator OP (const Matrix &b);
