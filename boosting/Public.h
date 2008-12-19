@@ -6,7 +6,6 @@
 * Please email me if you find bugs, or have suggestions or questions!
 * Licensed under the Lesser GPL [see external/lgpl.txt]
 **************************************************************************/
-
 #ifndef PUBLIC_H
 #define PUBLIC_H
 

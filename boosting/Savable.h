@@ -7,7 +7,6 @@
 * Please email me if you find bugs, or have suggestions or questions!
 * Licensed under the Lesser GPL [see external/lgpl.txt]
 **************************************************************************/
-
 #ifndef SAVABLE_H
 #define SAVABLE_H
 
