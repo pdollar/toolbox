@@ -19,47 +19,36 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 		mexErrMsgTxt( "First input argument must be a string." );
 	char action[1024]; mxGetString(prhs[0], action, 1024);
 
-	try{
-		assert(false);
-		if( !strcmp(action,"getPrimitiveTest") ) {
-			// simple test - pass primitive to Matlab
-			checkArgs(action,nlhs,1,nrhs,1,1);
-			int flag = (int) mxGetScalar(prhs[1]); ObjImg X;
-			if(flag==0)      { int x=87519651; X.frmPrim("x",&x); }
-			else if(flag==1) { int x[5]={1,2,3,4,5}; X.frmPrim("x",x,5); }
-			else if(flag==2) { bool x[4]={true,false,true,false}; X.frmPrim("x",x,4); }
-			else if(flag==3) { uchar x[7]={-1,1,2,3,4,5,256}; X.frmPrim("x",x,7); }
-			else if(flag==4) { double x=1.15415987557; X.frmPrim("x",&x); }
-			else if(flag==5) { float x[2]={59.5,7500}; X.frmPrim("x",x,2); }
-			else if(flag==6) { char *x="whatev yo"; X.frmPrim("x",x,strlen(x)+1); }
-			else mexErrMsgTxt("Invalid flag");
-			mxArray *M=X.toMxArray(); X.clear(); X.frmMxArray(M);
-			plhs[0] = X.toMxArray();
-
-		} else if( !strcmp(action,"getSavableTest") ) {
-			// simple test - pass Savable object to Matlab
-			checkArgs(action,nlhs,1,nrhs,1,1);
-			int flag = (int) mxGetScalar(prhs[1]); ObjImg X;
-			if(flag==0)      { Matrixd x(5,5,0); for(int i=0; i<5; i++) x(i,i)=i; X.frmSavable("x",&x); }
-			else if(flag==1) { Haar x; x.createSyst(1,25,25,10,10,0,0); x.finalize(); X.frmSavable("x",&x); }
-			else if(flag==2) { Rect x(0,0,10,10); x._wt=.3f; X.frmSavable("x",&x); }
-			else if(flag==3) { VecSavable x; X.frmSavable("x",&x); }
-			else mexErrMsgTxt("Invalid flag");
-			mxArray *M=X.toMxArray(); X.clear(); X.frmMxArray(M);
-			plhs[0] = X.toMxArray();
-
-		} else if( !strcmp(action,"transpose") ) {
-			// transpose matrix
-			checkArgs(action,nlhs,1,nrhs,1,1);
-			Matrixd A; A.frmMxArray(prhs[1]);
-			A.transpose(); plhs[0]=A.toMxArray();
-
-		} else {
-			// action not recognized
-			char err[1124]; sprintf(err,"Unkown action: %s.",action); mexErrMsgTxt(err);
+	if( !strcmp(action,"getObject") ) {
+		// simple test - pass primitive or savable to Matlab
+		checkArgs(action,nlhs,1,nrhs,1,1);
+		int flag=(int) mxGetScalar(prhs[1]); ObjImg X;
+		switch( flag ) {
+			case 0:  { int x=87519651; X.frmPrim("x",&x); break; }
+			case 1:  { int x[5]={1,2,3,4,5}; X.frmPrim("x",x,5); break; }
+			case 2:  { bool x[4]={true,false,true,false}; X.frmPrim("x",x,4); break; }
+			case 3:  { uchar x[7]={-1,1,2,3,4,5,256}; X.frmPrim("x",x,7); break; }
+			case 4:  { double x=1.15415987557; X.frmPrim("x",&x); break; }
+			case 5:  { float x[2]={59.5,7500}; X.frmPrim("x",x,2); break; }
+			case 6:  { char *x="whatev yo"; X.frmPrim("x",x,strlen(x)+1); break; }
+			case 7:  { Matrixd x(5,5,0); for(int i=0; i<5; i++) x(i,i)=i; X.frmSavable("x",&x); break; }
+			case 8:  { Haar x; x.createSyst(1,25,25,10,10,0,0); x.finalize(); X.frmSavable("x",&x); break; }
+			case 9:  { Rect x(0,0,10,10); x._wt=.3f; X.frmSavable("x",&x); break; }
+			case 10: { VecSavable x; X.frmSavable("x",&x); break; }
+			default: mexErrMsgTxt("Invalid flag");
 		}
-	} catch(...) {
-		mexErrMsgTxt("some exception occurred.");
+		mxArray *M=X.toMxArray(); X.clear(); X.frmMxArray(M);
+		plhs[0] = X.toMxArray();
+
+	} else if( !strcmp(action,"transpose") ) {
+		// transpose matrix
+		checkArgs(action,nlhs,1,nrhs,1,1);
+		Matrixd A; A.frmMxArray(prhs[1]);
+		A.transpose(); plhs[0]=A.toMxArray();
+
+	} else {
+		// action not recognized
+		char err[1124]; sprintf(err,"Unkown action: %s.",action); mexErrMsgTxt(err);
 	}
 }
 
