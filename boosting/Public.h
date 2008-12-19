@@ -152,4 +152,34 @@ template<class Ta, class Tb> void	sortVia_b( vector<Ta> &a, vector<Tb> &b )
 	reorder<Ta>( a, order );
 }
 
+// use asserta(C)/errora(msg1,...) to throw exceptions ALWAYS, or assertd/errord for DEBUG only
+class	InformativeException: public exception
+{
+public:
+	InformativeException( int line, char *file, char* msg1=NULL, char* msg2=NULL, char* msg3=NULL  ) {
+		if(msg1==NULL)
+			sprintf(_msg, "ERROR: %s (%d)", file, line );
+		else if(msg2==NULL)
+			sprintf(_msg, "ERROR: %s (%d): %s", file, line, msg1 );
+		else if(msg3==NULL)
+			sprintf(_msg, "ERROR: %s (%d): %s %s", file, line, msg1, msg2 );
+		else
+			sprintf(_msg, "ERROR: %s (%d): %s %s %s", file, line, msg1, msg2, msg3 );
+	}
+
+	virtual const char* what() const throw() { return _msg; }
+
+private:
+	char _msg[1024];
+};
+#define asserta(C) if(!C) throw InformativeException(__LINE__,__FILE__,"assert failed:",#C);
+#define errora(...) throw InformativeException(__LINE__,__FILE__,__VA_ARGS__);
+#ifndef NDEBUG
+#define assertd(C) asserta(C)
+#define errord(C) errora(C)
+#else
+#define assertd(C) ((void) 0)
+#define errord(C) ((void) 0)
+#endif
+
 #endif
