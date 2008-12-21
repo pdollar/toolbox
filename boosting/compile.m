@@ -1,4 +1,6 @@
 c
+addpath(genpath('/common/pdollar/toolbox'));
+cd(fileparts(mfilename('fullpath')));
 
 if( 0 ) % cleanup
   delete('compile/*');
@@ -8,13 +10,15 @@ if( 0 ) % cleanup
 end
 
 if( 1 ) % compile
-  if(~exist('compile','dir')), mkdir('compile'); end
-  mex -g -c Savable.cpp -outdir compile
-  mex -g -c Haar.cpp -outdir compile
+  %if(~exist('compile','dir')), mkdir('compile'); end
+  %mex -g -c Savable.cpp -outdir compile
+  %mex -g -c Haar.cpp -outdir compile
   mex -g matEntry.cpp compile/Haar.obj compile/Savable.obj
+  %mex -g matEntry.cpp compile/Haar.o compile/Savable.o
 end
 
-A=matEntry()
+% A = matEntry('getObject',1)
+% A=rand(3); B=matEntry('transpose',A); A-B'
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -29,4 +33,10 @@ A=matEntry()
 % % figure(2); im(C)
 % sum(sum(abs(B-C)))
 
+% addpath(genpath('/common/pdollar/toolbox'));
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%I=imread('cameraman.tif');
+% dlmwrite('cameraman.txt',I);
+%I=dlmread('res.txt'); im(I);
