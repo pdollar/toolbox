@@ -157,29 +157,20 @@ class	InformativeException: public exception
 {
 public:
 	InformativeException( int line, char *file, char* msg1=NULL, char* msg2=NULL, char* msg3=NULL  ) {
-		if(msg1==NULL)
-			sprintf(_msg, "ERROR: %s (%d)", file, line );
-		else if(msg2==NULL)
-			sprintf(_msg, "ERROR: %s (%d): %s", file, line, msg1 );
-		else if(msg3==NULL)
-			sprintf(_msg, "ERROR: %s (%d): %s %s", file, line, msg1, msg2 );
-		else
-			sprintf(_msg, "ERROR: %s (%d): %s %s %s", file, line, msg1, msg2, msg3 );
+		sprintf(_msg, "ERROR: %s (%d)", file, line ); char *msgs[3]={msg1,msg2,msg3};
+		for(int i=0; i<3; i++) if(msgs[i]!=NULL) sprintf(_msg,"%s %s",_msg,msgs[i]);
 	}
-
 	virtual const char* what() const throw() { return _msg; }
-
-private:
-	char _msg[1024];
+	char _msg[2048];
 };
 #define asserta(C) if(!C) throw InformativeException(__LINE__,__FILE__,"assert failed:",#C);
 #define errora(...) throw InformativeException(__LINE__,__FILE__,__VA_ARGS__);
 #ifndef NDEBUG
 #define assertd(C) asserta(C)
-#define errord(C) errora(C)
+#define errord(...) errora(__VA_ARGS__)
 #else
 #define assertd(C) ((void) 0)
-#define errord(C) ((void) 0)
+#define errord(...) ((void) 0)
 #endif
 
 #endif
