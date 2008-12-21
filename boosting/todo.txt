@@ -1,15 +1,14 @@
 Todo:
--comment/clean Matrix
--comment IntegralImage
 -comment Haar
 -reintroduce Rand (in Public?)
 -reintroduce Rand in Haar
+-MultiImage
 
 Major:
--Clean/Comment /public
+-Clean/Comment /public 12/17-12/18
+-More general matlab entry 12/18,
+-Exception handling 12/18,
 -Add Freeimage Linux support
--More general matlab entry
--Sall toolbox c file headers
 
 Done:
 -Linux Compile 12/17
