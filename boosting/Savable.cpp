@@ -24,7 +24,7 @@ Savable*		Savable::create( const char *cname )
 	CREATE(Matrix<uchar>);
 	CREATE(Rect);
 	CREATE(Haar);
-	abortError( "unknown cname", cname, __LINE__, __FILE__ );
+	error( "unknown cname:", cname );
 	return NULL;
 
 #undef CREATE
@@ -42,7 +42,7 @@ Savable*		Savable::clone( Savable *obj )
 	CLONE1(Matrix<float>);
 	CLONE1(Matrix<double>);
 	CLONE1(Matrix<uchar>);
-	abortError( "unknown cname", cname, __LINE__, __FILE__ );
+	error( "unknown cname:", cname );
 	return NULL;
 
 #undef CLONE1
@@ -77,18 +77,12 @@ void			ObjImg::init( const char *name, const char *cname, int n )
 void			ObjImg::check( const char *name, const char *cname, int minN, int maxN ) const
 {
 	int n = _children.size();
-	if( strcmp(_cname,cname) )
-		abortError( "Invalid cname", cname, __LINE__, __FILE__ );
-	if( strcmp(_name,name) )
-		abortError( "Invalid name:", name, __LINE__, __FILE__ );
-	if( n<minN )
-		abortError( "Too few children:", __LINE__, __FILE__ );
-	if( n>maxN )
-		abortError( "Too many children:", __LINE__, __FILE__ );
-	if( maxN==0 && (_elNum==0 || _el==NULL) )
-		abortError( "Primitive type not initialized:", __LINE__, __FILE__ );
-	if( maxN>0 && (_elNum>0 || _el!=NULL) )
-		abortError( "Primitive should not be initialized:", __LINE__, __FILE__ );
+	if( strcmp(_cname,cname) ) error( "Invalid cname:", cname );
+	if( strcmp(_name,name) ) error( "Invalid name:", name );
+	if( n<minN ) error( "Too few children" );
+	if( n>maxN ) error( "Too many children" );
+	if( maxN==0 && (_elNum==0 || _el==NULL) ) error( "Primitive type not initialized" );
+	if( maxN>0 && (_elNum>0 || _el!=NULL) ) error( "Primitive should not be initialized" );
 }
 
 Savable*		ObjImg::toSavable( const char *name ) const
@@ -182,7 +176,7 @@ mxClassID		ObjImg::getClassId( const char *cname )
 	GETID( mxSINGLE_CLASS, float );  GETID( mxDOUBLE_CLASS, double );
 	GETID( mxLOGICAL_CLASS, bool );  GETID( mxCHAR_CLASS, char );
 	GETID( mxUINT8_CLASS, uchar );
-	abortError( "Unkown primitive type:", cname, __LINE__, __FILE__ );
+	error( "Unkown primitive type:", cname );
 	return mxUNKNOWN_CLASS;
 #undef GETID
 #else
@@ -198,7 +192,7 @@ const char*		ObjImg::getClassName( const mxClassID id, size_t &bytes )
 	GETCNAME( mxSINGLE_CLASS, float ); GETCNAME( mxDOUBLE_CLASS, double );
 	GETCNAME( mxLOGICAL_CLASS, bool ); GETCNAME( mxCHAR_CLASS, char );
 	GETCNAME( mxUINT8_CLASS, uchar );
-	abortError( "Unkown mxClassID", __LINE__, __FILE__ ); return "";
+	error( "Unkown mxClassID" ); return "";
 #undef GETCNAME
 #else
 	return "";
@@ -209,14 +203,14 @@ const char*		ObjImg::getClassName( const mxClassID id, size_t &bytes )
 bool			ObjImg::toFile( const char *fName, bool binary )
 {
 	ofstream os; remove( fName ); os.open(fName, binary? ios::out|ios::binary : ios::out );
-	if(os.fail()) { abortError( "toFile failed:", fName, __LINE__, __FILE__ ); return 0; }
+	if(os.fail()) { error( "toFile failed:", fName ); return 0; }
 	toStrm(os,binary); os.close(); return 1;
 }
 
 bool			ObjImg::frmFile( const char *fName, bool binary )
 {
 	ifstream is; is.open(fName, binary? ios::in|ios::binary : ios::in );
-	if(is.fail()) { abortError( "frmFile failed:", fName, __LINE__, __FILE__ ); return 0; }
+	if(is.fail()) { error( "frmFile failed:", fName ); return 0; }
 	frmStrm(is,binary); char t[128]; is>>t; assert(strlen(t)==0); is.close(); return 1;
 }
 

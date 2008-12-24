@@ -77,14 +77,14 @@ inline void				IntegralImg::getRoi(		int &lf, int &tp, int &rt, int &bt )
 inline double			IntegralImg::rectSum(		int lf, int tp, int rt, int bt ) const
 {
 	lf+=_roiLf; rt+=_roiLf+1; tp+=_roiTp; bt+=_roiTp+1;
-	assert( tp>=0 && lf>=0 && bt<_h && rt<_w && tp<bt && lf<rt );
+	ifdebug( assert( tp>=0 && lf>=0 && bt<_h && rt<_w && tp<bt && lf<rt ) );
 	return (_II(tp, lf) + _II(bt, rt) - _II(tp, rt) - _II(bt, lf));
 }
 
 inline double			IntegralImg::rectSumSq(	int lf, int tp, int rt, int bt ) const
 {
 	lf+=_roiLf; rt+=_roiLf+1; tp+=_roiTp; bt+=_roiTp+1;
-	assert( tp>=0 && lf>=0 && bt<_h && rt<_w && tp<bt && lf<rt );
+	ifdebug( assert( tp>=0 && lf>=0 && bt<_h && rt<_w && tp<bt && lf<rt ) );
 	return (_sqrII(tp, lf) + _sqrII(bt, rt) - _sqrII(tp, rt) - _sqrII(bt, lf));
 }
 

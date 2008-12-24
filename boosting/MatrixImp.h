@@ -192,7 +192,7 @@ template<class T> bool			Matrix<T>::toTxtFile( const char *fName, char *delim )
 {
 	remove( fName );
 	ofstream strm; strm.open(fName, std::ios::out);
-	if(strm.fail()) { abortError( "unable to write:", fName, __LINE__, __FILE__ ); return false; }
+	if(strm.fail()) { error("unable to write:",fName); return false; }
 	for(int r=0; r<rows(); r++ ) {
 		for(int c=0; c<cols(); c++ ) {
 			strm << (*this)(r,c);
@@ -317,9 +317,7 @@ template<class T> void			Matrix<T>::fliplr( Matrix<T> &B) const
 
 template<class T> void			Matrix<T>::reshape( Matrix<T> &B, int mRows, int nCols ) const
 {
-	if( mRows*nCols != rows()*cols() ) {
-		abortError( "product of rows*cols cannot change", __LINE__, __FILE__ ); return;
-	}
+	if(mRows*nCols!=numel()) error("numel cannot change");
 	B.setDims( mRows, nCols );
 	for(int i=0; i<numel(); i++ )
 		B(i) = (*this)(i);

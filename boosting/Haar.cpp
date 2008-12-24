@@ -434,7 +434,7 @@ void		Haar::convHaar( Matrixf &resp, IntegralImg &II, int moment, bool normalize
 		}
 		break;
 	default:
-		abortError( "Illegal moment", __LINE__, __FILE__ );
+		error( "Illegal moment" );
 	}
 }
 

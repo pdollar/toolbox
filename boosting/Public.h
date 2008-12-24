@@ -13,7 +13,6 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <cassert>
 #include <cmath>
 #include <algorithm>
 using namespace std;
@@ -36,21 +35,6 @@ inline double			degToRad(double dDeg) { return dDeg * PI / 180; }
 inline double			radToDeg(double dRad) { return dRad * 180 / PI; }
 inline double			factorial(const int i) { double d=1.0; for(int k=2; k<=i; k++) d*=k; return d; }
 inline int				roundInt(double v) {return (int)(v+0.5);}
-inline void				abortError( const char *msg, const int line, const char *file)
-{
-	if( msg==NULL )
-		fprintf(stderr, "%s %d: ERROR\n", file, line );
-	else
-		fprintf(stderr, "%s %d: ERROR: %s\n", file, line, msg );
-	abort();
-}
-
-inline void				abortError( const char *msg1, const char *msg2, const int line, const char *file)
-{
-	fprintf(stderr, "%s %d: ERROR: %s %s\n", file, line, msg1, msg2 );
-	abort();
-}
-
 // vector arithmetic operations
 template<class T> T         vecSum( const vector<T> &v )
 {
@@ -152,25 +136,24 @@ template<class Ta, class Tb> void	sortVia_b( vector<Ta> &a, vector<Tb> &b )
 	reorder<Ta>( a, order );
 }
 
-// use asserta(C)/errora(msg1,...) to throw exceptions ALWAYS, or assertd/errord for DEBUG only
+// use assert(C)/error(msg1,...) to throw an InformativeException 
 class	InformativeException: public exception
 {
 public:
-	InformativeException( int line, char *file, char* msg1=NULL, char* msg2=NULL, char* msg3=NULL  ) {
-		sprintf(_msg, "ERROR: %s (%d)", file, line ); char *msgs[3]={msg1,msg2,msg3};
+	InformativeException( int line, char *file, const char* m1=NULL, const char* m2=NULL, const char* m3=NULL ) {
+		sprintf(_msg, "ERROR: %s (%d)", file, line ); const char *msgs[3]={m1,m2,m3};
 		for(int i=0; i<3; i++) if(msgs[i]!=NULL) sprintf(_msg,"%s %s",_msg,msgs[i]);
 	}
 	virtual const char* what() const throw() { return _msg; }
 	char _msg[2048];
 };
-#define asserta(C) if(!C) throw InformativeException(__LINE__,__FILE__,"assert failed:",#C);
-#define errora(...) throw InformativeException(__LINE__,__FILE__,__VA_ARGS__);
+#define assert(C) if(!(C)) throw InformativeException(__LINE__,__FILE__,"assertion failed:",#C);
+#define error(...) throw InformativeException(__LINE__,__FILE__,__VA_ARGS__);
+// use to define blocks of code only during debugging
 #ifndef NDEBUG
-#define assertd(C) asserta(C)
-#define errord(...) errora(__VA_ARGS__)
+#define ifdebug(C) C
 #else
-#define assertd(C) ((void) 0)
-#define errord(...) ((void) 0)
+#define ifdebug(C) ((void) 0)
 #endif
 
 #endif
