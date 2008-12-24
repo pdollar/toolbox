@@ -73,6 +73,12 @@ template<class T> Matrix<T>&	Matrix<T>::operator= (const vector<T> &x)
 	return *this;
 }
 
+template<class T> void		Matrix<T>::toVector( vector<T> &v )
+{
+	v.clear(); v.resize(numel());
+	for(int i=0; i<numel(); i++) v[i]=(*this)(i);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 template<class T> void			Matrix<T>::setDims(const int mRows, const int nCols)
 {
@@ -349,9 +355,21 @@ template<class T> T				Matrix<T>::prod() const
 
 template<class T> T				Matrix<T>::sum() const
 {
-	T val; val=0;
+	T val=0;
 	for(int i=0; i<numel(); i++) val+=(*this)(i);
 	return val;
+}
+
+template<class T> T				Matrix<T>::mean() const
+{
+	return sum()/T(std::max(1,numel()));
+}
+
+template<class T> T				Matrix<T>::variance() const
+{
+	int n=numel(); if(n==0) return 0; T v=0, m=mean();
+	for( int i=0; i<n; i++ ) v+=(*this)(i)*(*this)(i);
+	v-=m*m*n; if(n>1) v/=T(n-1); return v;
 }
 
 template<class T> T				Matrix<T>::trace() const

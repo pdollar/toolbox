@@ -31,6 +31,7 @@ public:
 	void			clear();
 	Matrix<T>&		operator= (const Matrix<T> &x );
 	Matrix<T>&		operator= (const vector<T> &x );
+	void			toVector( vector<T> &v );
 
 	// set/get dimensions (note: [1xn] vectors more efficient than [nx1])
 	void			setDims( const int mRows, const int nCols );
@@ -72,6 +73,8 @@ public:
 	void			mergeud( const Matrix &A, Matrix &B ) const;		// B=[this; A] in Matlab notation
 	void			mergelr( const Matrix &A, Matrix &B ) const;		// B=[this A] in Matlab notation
 	Matrix			multiply( const Matrix &B ) const;		// standard matrix multiplication
+	T				mean() const;							// mean of all elements
+	T				variance() const;						// variance of all elements
 	T				prod() const;							// product of elements
 	T				sum() const;							// sum of elements
 	T				trace() const;							// trace
