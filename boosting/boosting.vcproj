@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="H:\Program Files\Visual Leak Detector\include"
+				AdditionalIncludeDirectories="common\"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -115,6 +115,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="common\"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -166,40 +167,52 @@
 	<References>
 	</References>
 	<Files>
-		<File
-			RelativePath=".\Haar.cpp"
+		<Filter
+			Name="common"
 			>
-		</File>
-		<File
-			RelativePath=".\Haar.h"
-			>
-		</File>
-		<File
-			RelativePath=".\IntegralImg.h"
-			>
-		</File>
+			<File
+				RelativePath=".\common\Common.h"
+				>
+			</File>
+			<File
+				RelativePath=".\common\Haar.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\common\Haar.h"
+				>
+			</File>
+			<File
+				RelativePath=".\common\IntegralImg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\common\Matrix.h"
+				>
+			</File>
+			<File
+				RelativePath=".\common\MatrixImp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\common\Rand.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\common\Rand.h"
+				>
+			</File>
+			<File
+				RelativePath=".\common\Savable.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\common\Savable.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\Main.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Matrix.h"
-			>
-		</File>
-		<File
-			RelativePath=".\MatrixImp.h"
-			>
-		</File>
-		<File
-			RelativePath=".\Public.h"
-			>
-		</File>
-		<File
-			RelativePath=".\Savable.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\Savable.h"
 			>
 		</File>
 	</Files>

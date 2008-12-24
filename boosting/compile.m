@@ -10,11 +10,11 @@ if( 0 ) % cleanup
 end
 
 if( 1 ) % compile
-  %if(~exist('compile','dir')), mkdir('compile'); end
-  %mex -g -c Savable.cpp -outdir compile
-  %mex -g -c Haar.cpp -outdir compile
-  mex -g matEntry.cpp compile/Haar.obj compile/Savable.obj
-  %mex -g matEntry.cpp compile/Haar.o compile/Savable.o
+  if(~exist('compile','dir')), mkdir('compile'); end
+  mex -g -c common/Savable.cpp -outdir compile
+  mex -g -c common/Haar.cpp -outdir compile
+  mex -g -Icommon matEntry.cpp compile/Haar.obj compile/Savable.obj
+  %mex -g -Icommon matEntry.cpp compile/Haar.o compile/Savable.o
 end
 
 % A = matEntry('getObject',1)
