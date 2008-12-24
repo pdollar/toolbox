@@ -68,7 +68,9 @@ public:
 	void			rot90( Matrix &B, int k=1 ) const;		// rotate matrix clockwise by k*90 degrees
 	void			flipud( Matrix &B ) const;				// flip matrix vertically
 	void			fliplr( Matrix &B ) const;				// flip matrix horizontally
-	void			reshape( Matrix &B, int mRows, int nCols ) const; // reshape, numel can't change
+	void			reshape( Matrix &B, int mRows, int nCols ) const;	// reshape, numel can't change
+	void			mergeud( const Matrix &A, Matrix &B ) const;		// B=[this; A] in Matlab notation
+	void			mergelr( const Matrix &A, Matrix &B ) const;		// B=[this A] in Matlab notation
 	Matrix			multiply( const Matrix &B ) const;		// standard matrix multiplication
 	T				prod() const;							// product of elements
 	T				sum() const;							// sum of elements

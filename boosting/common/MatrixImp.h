@@ -312,6 +312,22 @@ template<class T> void			Matrix<T>::reshape( Matrix<T> &B, int mRows, int nCols 
 		B(i) = (*this)(i);
 }
 
+template<class T> void			Matrix<T>::mergeud( const Matrix<T> &A, Matrix<T> &B ) const
+{
+	if(cols()!=A.cols()) error( "bad dimensions" );
+	B.setDims(rows()+A.rows(), cols()); int r, c;
+	for(r=0; r<A.rows(); r++) for(c=0; c<cols(); c++) B(r,c)=A(r,c);
+	for(r=A.rows(); r<B.rows(); r++) for(c=0; c<cols(); c++) B(r,c)=(*this)(r-A.rows(),c);
+}
+
+template<class T> void			Matrix<T>::mergelr( const Matrix<T> &A, Matrix<T> &B ) const
+{
+	if(rows()!=A.rows()) error( "bad dimensions" );
+	B.setDims(rows(), cols()+A.cols()); int r, c;
+	for(r=0; r<rows(); r++) for(c=0; c<A.cols(); c++) B(r,c)=A(r,c);
+	for(r=0; r<rows(); r++) for(c=A.cols(); c<B.cols(); c++) B(r,c)=(*this)(r,c-A.cols());
+}
+
 template<class T> Matrix<T>		Matrix<T>::multiply( const Matrix<T> &B ) const
 {
 	assert( cols()==B.rows() );
