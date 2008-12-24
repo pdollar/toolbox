@@ -29,22 +29,6 @@ template<class T> ostream& operator<<(ostream& os, const Matrix<T>& x)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-template<class T>				Matrix<T>::Matrix(int mRows, int nCols)
-{
-	init(); setDims(mRows, nCols);
-}
-
-template<class T>				Matrix<T>::Matrix(int mRows, int nCols, T val )
-{
-	init(); setDims(mRows, nCols, val);
-}
-
-template<class T>				Matrix<T>::Matrix(const Matrix& x)
-{
-	init(); setDims(x._mRows, x._nCols);
-	for(int i=0; i<numel(); i++) (*this)(i) = x(i);
-}
-
 template<class T> void			Matrix<T>::init()
 {
 	_mRows=_nCols=0; _data=NULL; _dataInd=NULL;
@@ -73,7 +57,7 @@ template<class T> Matrix<T>&	Matrix<T>::operator= (const vector<T> &x)
 	return *this;
 }
 
-template<class T> void		Matrix<T>::toVector( vector<T> &v )
+template<class T> void			Matrix<T>::toVector( vector<T> &v )
 {
 	v.clear(); v.resize(numel());
 	for(int i=0; i<numel(); i++) v[i]=(*this)(i);
@@ -89,7 +73,7 @@ template<class T> void			Matrix<T>::setDims(const int mRows, const int nCols)
 	try {
 		_data = new T[numel()];
 		_dataInd = new T*[_mRows];
-	} catch( bad_alloc& ) { 
+	} catch( bad_alloc& ) {
 		clear(); error( "Matrix::setDims(..) OUT OF MEMORY" );
 	}
 	for(int i=0; i<_mRows; i++) _dataInd[i]=&(_data[_nCols*i]);

@@ -23,9 +23,9 @@ template<class T> class Matrix : public Savable
 public:
 	// constructors, destructor and assignment
 	Matrix() { init(); };
-	Matrix( int mRows, int nCols );
-	Matrix( int mRows, int nCols, T val );
-	Matrix( const Matrix& x );
+	Matrix( int mRows, int nCols ) { init(); setDims(mRows,nCols); }
+	Matrix( int mRows, int nCols, T val ) { init(); setDims(mRows,nCols,val); }
+	Matrix( const Matrix& x ) { init(); *this=x; }
 	~Matrix() { clear(); };
 	void			init();
 	void			clear();
