@@ -33,9 +33,9 @@ public:
 	Matrix<T>&		operator= (const vector<T> &x );
 
 	// set/get dimensions (note: [1xn] vectors more efficient than [nx1])
-	bool			setDims( const int mRows, const int nCols );
-	bool			setDims( const int mRows, const int nCols, const T val );
-	bool			changeDims( const int mRows, const int nCols );
+	void			setDims( const int mRows, const int nCols );
+	void			setDims( const int mRows, const int nCols, const T val );
+	void			changeDims( const int mRows, const int nCols );
 	void			getDims( int& mRows, int& nCols ) const { mRows=_mRows; nCols=_nCols; };
 	int				rows() const { return _mRows; };
 	int				cols() const { return _nCols; };
@@ -56,8 +56,8 @@ public:
 	virtual void			frmMxArray( const mxArray *M );
 
 	// write/read text (as array of numbers, different from Savable to/frmFile)
-	bool			toTxtFile( const char* file, char* delim="," );
-	bool			frmTxtFile( const char* file, char* delim="," );
+	void			toTxtFile( const char* file, char* delim="," );
+	void			frmTxtFile( const char* file, char* delim="," );
 
 	// basic matrix operations
 	Matrix&			zero();									// set this matrix to be zero matrix

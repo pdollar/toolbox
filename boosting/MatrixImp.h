@@ -74,53 +74,42 @@ template<class T> Matrix<T>&	Matrix<T>::operator= (const vector<T> &x)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-template<class T> bool			Matrix<T>::setDims(const int mRows, const int nCols)
+template<class T> void			Matrix<T>::setDims(const int mRows, const int nCols)
 {
 	assert(mRows>=0 && nCols>=0);
-	if(mRows==_mRows && nCols==_nCols) return true;
+	if(mRows==_mRows && nCols==_nCols) return;
 	clear(); _mRows=mRows; _nCols=nCols;
-	if(_mRows==0 || _nCols==0) return true;
-
+	if(_mRows==0 || _nCols==0) return;
 	try {
 		_data = new T[numel()];
 		_dataInd = new T*[_mRows];
-	} catch( bad_alloc& ) {
-		cout << "Matrix::setDims(..) OUT OF MEMORY" << endl;
-		clear(); return false;
+	} catch( bad_alloc& ) { 
+		clear(); error( "Matrix::setDims(..) OUT OF MEMORY" );
 	}
-
 	for(int i=0; i<_mRows; i++) _dataInd[i]=&(_data[_nCols*i]);
-	return true;
 }
 
-template<class T> bool			Matrix<T>::setDims(const int mRows, const int nCols, const T val )
+template<class T> void			Matrix<T>::setDims(const int mRows, const int nCols, const T val )
 {
-	if(!setDims(mRows,nCols)) return false;
-	setVal(val); return true;
+	setDims(mRows,nCols); setVal(val);
 }
 
-template<class T> bool			Matrix<T>::changeDims(const int mRows, const int nCols)
+template<class T> void			Matrix<T>::changeDims(const int mRows, const int nCols)
 {
-	if(mRows==rows() && nCols==cols()) return true;
-
+	if(mRows==rows() && nCols==cols()) return;
 	T *data=NULL, **dataInd=NULL;
 	try{
 		data = new T[mRows*nCols];
 		dataInd = new T*[mRows];
 	} catch( bad_alloc& ) {
-		cout << "Matrix::changeDims(..) OUT OF MEMORY" << endl;
-		clear(); return false;
+		clear(); error( "Matrix::changeDims(..) OUT OF MEMORY" );
 	}
-
 	for(int i=0; i<mRows; i++) dataInd[i] = &(data[nCols*i]);
 	for(int i=0; i<std::min(rows(),mRows); i++)
 		for(int j=0; j<std::min(cols(),nCols); j++)
 			dataInd[i][j] = (*this)(i,j);
-
-	clear();
-	_mRows=mRows; _nCols=nCols;
+	clear(); _mRows=mRows; _nCols=nCols;
 	_data=data; _dataInd=dataInd;
-	return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -188,11 +177,11 @@ template<class T> void			Matrix<T>::frmMxArray( const mxArray *M )
 #endif
 }
 
-template<class T> bool			Matrix<T>::toTxtFile( const char *fName, char *delim )
+template<class T> void			Matrix<T>::toTxtFile( const char *fName, char *delim )
 {
 	remove( fName );
 	ofstream strm; strm.open(fName, std::ios::out);
-	if(strm.fail()) { error("unable to write:",fName); return false; }
+	if(strm.fail()) error("unable to write:",fName);
 	for(int r=0; r<rows(); r++ ) {
 		for(int c=0; c<cols(); c++ ) {
 			strm << (*this)(r,c);
@@ -200,13 +189,13 @@ template<class T> bool			Matrix<T>::toTxtFile( const char *fName, char *delim )
 		}
 		strm << endl;
 	}
-	strm.close(); return true;
+	strm.close();
 }
 
-template<class T> bool			Matrix<T>::frmTxtFile( const char *fName, char *delim )
+template<class T> void			Matrix<T>::frmTxtFile( const char *fName, char *delim )
 {
 	ifstream strm; strm.open(fName, std::ios::in);
-	if( strm.fail() ) return false;
+	if(strm.fail()) error("unable to read:",fName);
 	char * tline = new char[40000000];
 
 	// get number of cols
@@ -236,7 +225,7 @@ template<class T> bool			Matrix<T>::frmTxtFile( const char *fName, char *delim )
 		delete rowVec;
 	}
 	allRowVecs.clear(); delete [] tline;
-	strm.close(); return true;
+	strm.close();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

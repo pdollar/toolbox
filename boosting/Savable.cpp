@@ -200,18 +200,18 @@ const char*		ObjImg::getClassName( const mxClassID id, size_t &bytes )
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-bool			ObjImg::toFile( const char *fName, bool binary )
+void			ObjImg::toFile( const char *fName, bool binary )
 {
 	ofstream os; remove( fName ); os.open(fName, binary? ios::out|ios::binary : ios::out );
-	if(os.fail()) { error( "toFile failed:", fName ); return 0; }
-	toStrm(os,binary); os.close(); return 1;
+	if(os.fail()) error( "toFile failed:", fName );
+	toStrm(os,binary); os.close();
 }
 
-bool			ObjImg::frmFile( const char *fName, bool binary )
+void			ObjImg::frmFile( const char *fName, bool binary )
 {
 	ifstream is; is.open(fName, binary? ios::in|ios::binary : ios::in );
-	if(is.fail()) { error( "frmFile failed:", fName ); return 0; }
-	frmStrm(is,binary); char t[128]; is>>t; assert(strlen(t)==0); is.close(); return 1;
+	if(is.fail()) error( "frmFile failed:", fName );
+	frmStrm(is,binary); char t[128]; is>>t; assert(strlen(t)==0); is.close();
 }
 
 void			ObjImg::toStrm( ofstream &os, bool binary, int indent )

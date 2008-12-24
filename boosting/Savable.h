@@ -115,8 +115,8 @@ public:
 	static const char*		getClassName( const mxClassID id, size_t &bytes );
 
 	// converstion to/from binary file or human editable text file
-	bool					toFile( const char *fName, bool binary=false );
-	bool					frmFile( const char *fName, bool binary=false );
+	void					toFile( const char *fName, bool binary=false );
+	void					frmFile( const char *fName, bool binary=false );
 
 private:
 	// converstion to/from stream (helpers for to/frmFile)
