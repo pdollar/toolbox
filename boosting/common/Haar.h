@@ -9,7 +9,7 @@
 #ifndef _HAAR_H_
 #define _HAAR_H_
 
-#include "Public.h"
+#include "Common.h"
 #include "Savable.h"
 #include "Matrix.h"
 #include "IntegralImg.h"

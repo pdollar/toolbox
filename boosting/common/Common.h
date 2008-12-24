@@ -6,8 +6,8 @@
 * Please email me if you find bugs, or have suggestions or questions!
 * Licensed under the Lesser GPL [see external/lgpl.txt]
 **************************************************************************/
-#ifndef PUBLIC_H
-#define PUBLIC_H
+#ifndef COMMON_H
+#define COMMON_H
 
 // standard include
 #include <iostream>
@@ -35,7 +35,7 @@ inline double			degToRad(double dDeg) { return dDeg * PI / 180; }
 inline double			radToDeg(double dRad) { return dRad * 180 / PI; }
 inline double			factorial(const int i) { double d=1.0; for(int k=2; k<=i; k++) d*=k; return d; }
 inline int				roundInt(double v) {return (int)(v+0.5);}
-// vector arithmetic operations
+// vector arithmetic operations and display
 template<class T> T         vecSum( const vector<T> &v )
 {
 	T sum = (T) 0.0; for( size_t i=0; i<v.size(); i++ ) sum+=v[i]; return sum;
@@ -86,7 +86,6 @@ template<class T> vector<T> vecSub( T val, const vector<T> &v )
 	vector<T> r(v.size(),val); for( size_t i=0; i<v.size(); i++ ) r[i]-=v[i]; return r;
 }
 
-// vector display
 template<class T> ostream& operator<<(ostream& os, const vector<T>& v)
 {
 	os << "[ " ; for (size_t i=0; i<v.size(); i++) os << v[i] << " "; os << "]"; return os;

@@ -10,7 +10,7 @@
 #ifndef SAVABLE_H
 #define SAVABLE_H
 
-#include "Public.h"
+#include "Common.h"
 
 #ifdef MATLAB_MEX_FILE
 #include "mex.h"
