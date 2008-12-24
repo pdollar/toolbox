@@ -30,7 +30,7 @@ static const double PI		= 3.1415926535897931;
 
 // basic utility functions
 template<class T> int	sign( T s ) { return (s > 0 ) ? 1 : ((s<0) ? -1 : 0); }
-template<class T> T		squeeze( T v, T vMin, T vMax ) { return max((vMin),min((v),(vMax))); }
+template<class T> T		squeeze( T v, T vMin, T vMax ) { return v<vMin ? vMin : v>vMax ? vMax : v; }
 inline double			degToRad(double dDeg) { return dDeg * PI / 180; }
 inline double			radToDeg(double dRad) { return dRad * 180 / PI; }
 inline double			factorial(const int i) { double d=1.0; for(int k=2; k<=i; k++) d*=k; return d; }

@@ -257,7 +257,7 @@ template<class T> Matrix<T>&	Matrix<T>::absolute()
 	return (*this);
 }
 
-template<class T> void			Matrix<T>::rot90( Matrix<T> &B, int k) const
+template<class T> Matrix<T>&	Matrix<T>::rot90( Matrix<T> &B, int k) const
 {
 	int i,j;
 	k=k%4; if(k<0) k+=4;
@@ -276,58 +276,64 @@ template<class T> void			Matrix<T>::rot90( Matrix<T> &B, int k) const
 	} else {
 		B = *this;
 	}
+	return B;
 }
 
-template<class T> void			Matrix<T>::flipud( Matrix<T> &B) const
+template<class T> Matrix<T>&	Matrix<T>::flipud( Matrix<T> &B) const
 {
 	B.setDims(_mRows,_nCols);
 	for(int i=0; i<_mRows; i++)
 		for(int j=0; j<_nCols; j++)
 			B(i,j) = (*this)(_mRows-i-1,j);
+	return B;
 }
 
-template<class T> void			Matrix<T>::fliplr( Matrix<T> &B) const
+template<class T> Matrix<T>&	Matrix<T>::fliplr( Matrix<T> &B) const
 {
 	B.setDims(_mRows,_nCols);
 	for(int i=0; i<_mRows; i++)
 		for(int j=0; j<_nCols; j++)
 			B(i,j) = (*this)(i,_nCols-j-1);
+	return B;
 }
 
-template<class T> void			Matrix<T>::reshape( Matrix<T> &B, int mRows, int nCols ) const
+template<class T> Matrix<T>&	Matrix<T>::reshape( Matrix<T> &B, int mRows, int nCols ) const
 {
 	if(mRows*nCols!=numel()) error("numel cannot change");
 	B.setDims( mRows, nCols );
 	for(int i=0; i<numel(); i++ )
 		B(i) = (*this)(i);
+	return B;
 }
 
-template<class T> void			Matrix<T>::mergeud( const Matrix<T> &A, Matrix<T> &B ) const
+template<class T> Matrix<T>&	Matrix<T>::mergeud( const Matrix<T> &A, Matrix<T> &B ) const
 {
 	if(cols()!=A.cols()) error( "bad dimensions" );
 	B.setDims(rows()+A.rows(), cols()); int r, c;
 	for(r=0; r<A.rows(); r++) for(c=0; c<cols(); c++) B(r,c)=A(r,c);
 	for(r=A.rows(); r<B.rows(); r++) for(c=0; c<cols(); c++) B(r,c)=(*this)(r-A.rows(),c);
+	return B;
 }
 
-template<class T> void			Matrix<T>::mergelr( const Matrix<T> &A, Matrix<T> &B ) const
+template<class T> Matrix<T>&	Matrix<T>::mergelr( const Matrix<T> &A, Matrix<T> &B ) const
 {
 	if(rows()!=A.rows()) error( "bad dimensions" );
 	B.setDims(rows(), cols()+A.cols()); int r, c;
 	for(r=0; r<rows(); r++) for(c=0; c<A.cols(); c++) B(r,c)=A(r,c);
 	for(r=0; r<rows(); r++) for(c=A.cols(); c<B.cols(); c++) B(r,c)=(*this)(r,c-A.cols());
+	return B;
 }
 
-template<class T> Matrix<T>		Matrix<T>::multiply( const Matrix<T> &B ) const
+template<class T> Matrix<T>&	Matrix<T>::multiply( const Matrix<T> &A, Matrix<T> &B ) const
 {
-	assert( cols()==B.rows() );
-	int mRow=rows(), nCol=B.cols(), kCol=cols();
-	Matrix<T> C(mRow,nCol,0);
+	assert( cols()==A.rows() );
+	int mRow=rows(), nCol=A.cols(), kCol=cols();
+	B.setDims(mRow,nCol,0);
 	for(int i=0; i<mRow; i++)
 		for(int j=0; j<nCol; j++)
 			for(int k=0; k<kCol; k++)
-				C(i,j) += (*this)(i,k)*B(k,j);
-	return C;
+				B(i,j) += (*this)(i,k)*A(k,j);
+	return B;
 }
 
 template<class T> T				Matrix<T>::prod() const

@@ -66,13 +66,13 @@ public:
 	Matrix&			identity();								// set this matrix to be identity matrix
 	Matrix&			transpose();							// matrix transpose
 	Matrix&			absolute();								// absolute val of matrix
-	void			rot90( Matrix &B, int k=1 ) const;		// rotate matrix clockwise by k*90 degrees
-	void			flipud( Matrix &B ) const;				// flip matrix vertically
-	void			fliplr( Matrix &B ) const;				// flip matrix horizontally
-	void			reshape( Matrix &B, int mRows, int nCols ) const;	// reshape, numel can't change
-	void			mergeud( const Matrix &A, Matrix &B ) const;		// B=[this; A] in Matlab notation
-	void			mergelr( const Matrix &A, Matrix &B ) const;		// B=[this A] in Matlab notation
-	Matrix			multiply( const Matrix &B ) const;		// standard matrix multiplication
+	Matrix&			rot90( Matrix &B, int k=1 ) const;		// rotate matrix clockwise by k*90 degrees
+	Matrix&			flipud( Matrix &B ) const;				// flip matrix vertically
+	Matrix&			fliplr( Matrix &B ) const;				// flip matrix horizontally
+	Matrix&			reshape( Matrix &B, int mRows, int nCols ) const;	// reshape, numel can't change
+	Matrix&			mergeud( const Matrix &A, Matrix &B ) const;		// B=[this; A] in Matlab notation
+	Matrix&			mergelr( const Matrix &A, Matrix &B ) const;		// B=[this A] in Matlab notation
+	Matrix&			multiply( const Matrix &A, Matrix &B ) const;		// B=this*A; standard matrix mult
 	T				mean() const;							// mean of all elements
 	T				variance() const;						// variance of all elements
 	T				prod() const;							// product of elements
@@ -85,7 +85,7 @@ public:
 
 	// Pointwise (Matrix OP Matrix), (Matrix<T> OP T) and (T OP Matrix<T>) operators
 	// Example: C=A/B - C(i)=A(i)/B(i) for all i
-	// Example: C=A*B - C(i)=A(i)*B(i) for all i (use C=A.multiply(B) for standard matrix mult)
+	// Example: C=A*B - C(i)=A(i)*B(i) for all i (use A.multiply(B,C) for standard matrix mult)
 	// Example: B=A+(A==0)*10 - set all 0 elements to 10
 	// "^" - means power, uses "pow" call (careful has low precedence)
 #define DOP(OP) \
