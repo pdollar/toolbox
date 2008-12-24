@@ -18,16 +18,16 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 	if(nrhs==0 || !mxIsChar(prhs[0]) )
 		mexErrMsgTxt( "First input argument must be a string." );
 	char action[1024]; mxGetString(prhs[0], action, 1024);
-
-	if( !strcmp(action,"getObject") ) {
-		// simple test - pass primitive or savable to Matlab
-		checkArgs(action,nlhs,1,nrhs,1,1);
-		int flag=(int) mxGetScalar(prhs[1]); ObjImg X;
-		switch( flag ) {
+	try{
+		if( !strcmp(action,"getObject") ) {
+			// simple test - pass primitive or savable to Matlab
+			checkArgs(action,nlhs,1,nrhs,1,1);
+			int flag=(int) mxGetScalar(prhs[1]); ObjImg X;
+			switch( flag ) {
 			case 0:  { int x=87519651; X.frmPrim("x",&x); break; }
 			case 1:  { int x[5]={1,2,3,4,5}; X.frmPrim("x",x,5); break; }
 			case 2:  { bool x[4]={true,false,true,false}; X.frmPrim("x",x,4); break; }
-			case 3:  { uchar x[7]={-1,1,2,3,4,5,256}; X.frmPrim("x",x,7); break; }
+			case 3:  { uchar x[7]={(uchar)-1,1,2,3,4,5,(uchar)256}; X.frmPrim("x",x,7); break; }
 			case 4:  { double x=1.15415987557; X.frmPrim("x",&x); break; }
 			case 5:  { float x[2]={59.5,7500}; X.frmPrim("x",x,2); break; }
 			case 6:  { char *x="whatev yo"; X.frmPrim("x",x,strlen(x)+1); break; }
@@ -36,20 +36,22 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 			case 9:  { Rect x(0,0,10,10); x._wt=.3f; X.frmSavable("x",&x); break; }
 			case 10: { VecSavable x; X.frmSavable("x",&x); break; }
 			default: mexErrMsgTxt("Invalid flag");
+			}
+			mxArray *M=X.toMxArray(); X.clear(); X.frmMxArray(M);
+			plhs[0] = X.toMxArray();
+
+		} else if( !strcmp(action,"transpose") ) {
+			// transpose matrix
+			checkArgs(action,nlhs,1,nrhs,1,1);
+			Matrixd A; A.frmMxArray(prhs[1]);
+			A.transpose(); plhs[0]=A.toMxArray();
+
+		} else {
+			// action not recognized
+			char err[1124]; sprintf(err,"Unkown action: %s.",action); mexErrMsgTxt(err);
 		}
-		mxArray *M=X.toMxArray(); X.clear(); X.frmMxArray(M);
-		plhs[0] = X.toMxArray();
+	} catch ( exception &e ) { mexErrMsgTxt(e.what()); }
 
-	} else if( !strcmp(action,"transpose") ) {
-		// transpose matrix
-		checkArgs(action,nlhs,1,nrhs,1,1);
-		Matrixd A; A.frmMxArray(prhs[1]);
-		A.transpose(); plhs[0]=A.toMxArray();
-
-	} else {
-		// action not recognized
-		char err[1124]; sprintf(err,"Unkown action: %s.",action); mexErrMsgTxt(err);
-	}
 }
 
 void checkArgs( char *action, int nlhs, int maxlhs, int nrhs, int minrhs, int maxrhs )

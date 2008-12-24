@@ -7,10 +7,10 @@ Todo:
 Major:
 -Clean/Comment /public 12/17-12/18
 -More general matlab entry 12/18,
--Exception handling 12/18,
 -Add Freeimage Linux support
 
 Done:
+-Exception handling 12/18,12/23
 -Linux Compile 12/17
 -Savable second pass 12/11-12/12
 -Savable commenting 12/11
