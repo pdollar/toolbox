@@ -336,6 +336,21 @@ template<class T> Matrix<T>&	Matrix<T>::multiply( const Matrix<T> &A, Matrix<T> 
 	return B;
 }
 
+template<class T> Matrix<T>&	Matrix<T>::scale( double dMin, double dMax, double sMin, double sMax )
+{
+	if(sMin>=sMax) { sMin=min(); sMax=max(); if(sMin==sMax) sMax++; } double r=(dMax-dMin)/(sMax-sMin);
+	for(int i=0; i<numel(); i++) (*this)(i)=squeeze(T((double((*this)(i))-sMin)*r+dMin),T(dMin),T(dMax));
+	return *this;
+}
+
+template<class T> Matrixi&		Matrix<T>::hist( Matrixi &h, int nBin, double minv, double maxv ) const
+{
+	Matrix<T> tmp(*this); h.setDims(nBin,1,0);
+	tmp.scale(0,double(nBin)-1e-3,minv,maxv);
+	for(int i=0; i<tmp.numel(); i++) h(int(tmp(i)))++;
+	return h;
+}
+
 template<class T> T				Matrix<T>::prod() const
 {
 	T val; val=1;

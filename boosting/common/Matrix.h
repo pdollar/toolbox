@@ -73,6 +73,8 @@ public:
 	Matrix&			mergeud( const Matrix &A, Matrix &B ) const;		// B=[this; A] in Matlab notation
 	Matrix&			mergelr( const Matrix &A, Matrix &B ) const;		// B=[this A] in Matlab notation
 	Matrix&			multiply( const Matrix &A, Matrix &B ) const;		// B=this*A; standard matrix mult
+	Matrix&			scale( double dMin, double dMax, double sMin=0, double sMax=0 );	// scale entries
+	Matrixi&		hist( Matrixi &h, int nBin, double minv=0, double maxv=0 ) const;	// histogram vals
 	T				mean() const;							// mean of all elements
 	T				variance() const;						// variance of all elements
 	T				prod() const;							// product of elements
