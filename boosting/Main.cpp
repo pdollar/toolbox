@@ -3,6 +3,7 @@
 
 #include "Matrix.h"
 #include "Haar.h"
+#include "Rand.h"
 
 void testToStrm();
 
@@ -11,6 +12,10 @@ int main(int argc, const char* argv[])
 	#ifndef  NDEBUG
 	cout << "DEBUGGING" << endl;
 	#endif
+
+	//Matrixd x(5,5,0); for(int i=0; i<5; i++) x(i,i)=i;
+	//Matrixd y(5,5,0); for(int i=0; i<5; i++) y(i,i)=-i;
+	//Matrixd B; cout << x.multiply(y,B) << endl;
 
 	testToStrm();
 
@@ -38,6 +43,7 @@ void testToStrm()
 	//Rect x(0,0,10,10); x._wt=.3f;
 	//VecSavable x;
 	//Haar x; x.createSyst(1,25,25,10,10,0,0); x.finalize();
+	//RF x; x.setUniformInt(1,10);
 	//ObjImg X; X.frmSavable("x",&x);
 	//// fun time
 	//Savable *y = X.toSavable("x");
