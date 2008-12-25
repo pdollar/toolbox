@@ -13,7 +13,8 @@ if( 1 ) % compile
   if(~exist('compile','dir')), mkdir('compile'); end
   mex -g -c common/Savable.cpp -outdir compile
   mex -g -c common/Haar.cpp -outdir compile
-  mex -g -Icommon matEntry.cpp compile/Haar.obj compile/Savable.obj
+  mex -g -c common/Rand.cpp -outdir compile
+  mex -g -Icommon matEntry.cpp compile/Rand.obj compile/Haar.obj compile/Savable.obj
   %mex -g -Icommon matEntry.cpp compile/Haar.o compile/Savable.o
 end
 
