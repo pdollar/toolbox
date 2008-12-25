@@ -1,5 +1,5 @@
 /**************************************************************************
-* Random number generators (and RF for arbitrary distributions).
+* Random number generators (use RF for arbitrary distributions).
 *
 * Piotr's Image&Video Toolbox      Version NEW
 * Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -13,7 +13,7 @@
 #include "Matrix.h"
 #include "Savable.h"
 
-// Uniform [0,1) random float generator
+// Uniform [0,1) random float generator (from Numerical Recipes in C)
 float	randf();
 
 // Uniform [minV,mavV] random integer generator
@@ -22,7 +22,7 @@ int		randi( int minV=0, int mavV=1 );
 // Gaussian random number generator
 double	randgauss( double mean=0, double sig=1 );
 
-// returns random permuation of integers 0 to n-1; if k given only returns first k elts
+// Random permuation of integers 0 to n-1; if k>0 only returns first k elts
 void	randperm( vectori &p, int n, int k=-1 );
 
 // n samples from d-dimensional gaussian with given mean/sig per d (V is nxd)
@@ -32,21 +32,29 @@ void	sampleGaussian( Matrixd &V, int d, int n, double w, double *mean, double *s
 void	sampleUniform( Matrixd &V, int d, int n, double w, double *minV, double *maxV );
 
 /**************************************************************************
-* Random Field (generating random samples from an arbitrary distribution)
-* _pdf is the probibility distribution. To get the probability of some value x, first need to
-* convert x into an ind into the _pdf. For this _minV (value first bin in _pdf corresponds to)
-* and _w (the width between successive bins in the _pdf) are used (see getInd(x)).
-* Note: bin 0 includes all values x such that: (_minV-w/2 <= x < _minV+_w/2)
-* getInd(x) returns the ind of the nearest bin to x. Conversely getVal(ind) returns
-* the value at the corresponding bin. Note that getVal(getInd(x))!=x because of rounding.
-* For sampling efficiency (generating random values based on the distribution), one can precompute
-* the cumulative distribution using setCdf(). _cdfInd(V), where 0<=V<=1, gives the ind at which the _pdf
-* has a cumulative value of V. This ind is than easily converted into a sample x. Drawing a
-* sample by uniformly generating V and following the procedure above is equivalent to sampling
-* from the original probability distribution.
-* Example: generate 100 samples from a mean=0/var=1 Gaussian:
-* RF R; R.setGaussian(0,1,.001); R.setCdf(); Matrixd V; R.sample(V,100,1);
-* cout <<V<<endl <<"mu="<<V.mean() <<" var="<<V.variance() << endl;
+* Random Field (RF) is used to generate random samples from an arbitrary
+* probability distribution. A RF is basically a histogram that represents
+* an arbitrary probability density function (pdf). The histogram is stored
+* as a vector _pdf, along with the real value corresponding to the first
+* bin (_minV) and the real width of a bin (_w). To convert between real
+* values and bin indices use ind=getInd(x) and x=getVal(ind). Note that
+* bin 0 includes all x such that _minV-w/2 <= x < _minV+_w/2, and that
+* getVal(getInd(x))!=x because of rounding.
+*
+* Sampling a random value according to the pdf can be performed directly
+* using sampleNonSetCdf() (inefficient) or after precomputing the cdf using
+* sample() (fast).  The call setCdf() precomputes both the cumulative
+* density function (cdf), where _cdf(ind)=sum(_pdf(1:ind)), and the inverse
+* mapping _cdfInd s.t. ind=_cdfInd(_cdf(ind)). Using the inverse mapping
+* and a random value f drawn uniformly from [0,1], we obtain ind=_cdfInd(f)
+* s.t. f=_cdf(ind). So, drawing f and using x=getVal(_cdfInd(f)) is the
+* same as drawing x directly from the true pdf up to numerical error. Note
+* that if any changes are made to _pdf, the cdf must be recomputed, so if
+* _pdf changes frequently use sampleNonSetCdf() instead.
+*
+* Example usage, generate 100 samples from a mean=0/var=1 Gaussian:
+*  RF R; R.setGaussian(0,1,.001); R.setCdf(); Matrixd V; R.sample(V,100,1);
+*  cout << "mu=" << V.mean() << " var=" << V.variance() << endl;
 **************************************************************************/
 class RF : public Savable
 {
@@ -59,8 +67,7 @@ public:
 	// create/alter RF (w determines granularity of sampling; ie w==1 only samples integers)
 	void					init( double minV, double mavV, double w );
 	void					normalize();
-	void					setUniform( double minV, double mavV, double w );
-	void					setUniformInt( int minV, int mavV );
+	void					setUniform( double minV, double mavV, double w=1.0 );
 	void					setGaussian( double mean=0, double sig=1, double w=.01 );
 	void					setPoisson( double lambda );
 	void					set( const vectord &v, double minV=0, double mavV=0, double w=1 );
@@ -71,41 +78,39 @@ public:
 	int						getCnt()				const { return _pdf.cols(); };
 	int						getInd( double x )		const { return int((x-_minV)*_wInv+.5); }
 	double					getVal( int ind )		const { return _minV+_w*ind; };
-	bool					inRange( int ind )		const { return (ind>=0 && ind<getCnt()); };
-	double					getInterval()			const { return _w;};
-	bool					cdfInit()				const { return _cdfInd.cols()>0; };
 	double					minVal()				const { return _minV; };
 	double					maxVal()				const { return getVal(getCnt()-1); };
+	bool					cdfInit()				const { return _cdfInv.cols()>0; };
 	double					pdf( double x )			const;
 	double					cdf( double x )			const;
 	double					mean()					const;
 	double					variance()				const;
 
-	// sample distribution (call setCdf() before using sample())
+	// sample distribution (call setCdf() before using sample() or use sampleNonSetCdf())
 	void					setCdf( int cntPerBin=100 );
-	void					clearCdf() { _cdf.clear(); _cdfInd.clear(); };
+	void					clearCdf() { _cdf.clear(); _cdfInv.clear(); };
 	double					sample() const;
 	double					sampleNonSetCdf( double cumsum=0 ) const;
-	void					sample(				Matrixd &V, int rows, int cols ) const;
-	void					sample(				vectord &v, int n ) const;
-	void					sampleNoReplace(	Matrixd &V, int rows, int cols );
-	void					sampleNoReplace(	vectord &v, int &n );
+	void					sample( Matrixd &V, int rows, int cols ) const;
+	void					sample( vectord &v, int n ) const;
+	void					sampleNoReplace( Matrixd &V, int rows, int cols ) const;
+	void					sampleNoReplace( vectord &v, int &n ) const;
 
 private:
 	// probability density function (pdf) and cumulative density function (cdf)
+	Matrixd					_pdf;
 	double					_minV;
 	double					_w;
 	double					_wInv;
-	Matrixd					_pdf;
 	Matrixd					_cdf;
-	Matrixi					_cdfInd;
+	Matrixi					_cdfInv;
 };
 
 inline double			RF::sample() const
 {
-	if(!cdfInit()) error("CDF not set");
-	int ind = int(randf()*_cdfInd.cols());
-	return getVal( _cdfInd(ind) );
+	ifdebug(if(!cdfInit()) error("CDF not set"));
+	int ind = _cdfInv(int(randf()*_cdfInv.cols()));
+	return getVal(ind);
 }
 
 #endif

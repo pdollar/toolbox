@@ -57,24 +57,18 @@ float			randf()
 }
 
 int				randi( int minV, int mavV ) {
-	return minV + (int) (((float)(mavV-minV+1))*randf());
+	return minV + int(float(mavV-minV+1)*randf());
 }
 
 double			randgauss( double mean, double sig )
 {
-	// Generate 2 Gaussian random number using 2 random numbers from the uniform [0,1] distr.
-	double x1, x2, y1, wid=1.0; static double y2; static bool useLast=false;
-	if(useLast) y1=y2; else {
-		while( wid >= 1.0 ) {
-			x1 = 2.0 * randf() - 1.0;
-			x2 = 2.0 * randf() - 1.0;
-			wid = x1 * x1 + x2 * x2;
-		}
-		wid = sqrt( (-2.0 * log( wid ) ) / wid );
-		y1 = x1 * wid; y2 = x2 * wid;
+	// Generate 2 Gaussian random number using 2 random numbers uniformly from unit disc
+	double x1, x2, y1, r=1; static double y2; static bool useLast=false;
+	if(useLast) { y1=y2; useLast=0; } else {
+		while(r>=1) { x1=2.0*randf()-1.0; x2=2.0*randf()-1.0; r=x1*x1+x2*x2; }
+		r=sqrt(-2*log(r)/r); y1=x1*r; y2=x2*r; useLast=1;
 	}
-	useLast = !useLast;
-	return( mean + y1 * sig );
+	return( mean + y1*sig );
 }
 
 void			randperm( vectori &p, int n, int k )
@@ -129,7 +123,7 @@ void			RF::frmObjImg( const ObjImg &oi, const char *name )
 void			RF::init( double minV, double mavV, double w )
 {
 	assert(minV<=mavV);
-	_minV=minV; _w=w; _wInv=1.0/_w;
+	_minV=minV; _w=w; _wInv=1/_w;
 	int cnt = (int) ((mavV-minV)*_wInv+1.01);
 	_pdf.setDims(1,cnt,0); clearCdf();
 }
@@ -143,14 +137,8 @@ void			RF::normalize()
 
 void			RF::setUniform( double minV, double mavV, double w )
 {
-	RF::init( minV, mavV, w );
-	_pdf.setVal(1); normalize();
-}
-
-void			RF::setUniformInt( int minV, int mavV )
-{
-	RF::init( minV, mavV, 1.0 );
-	_pdf.setVal(1); normalize();
+	RF::init(minV,mavV,w); _pdf.setVal(1);
+	normalize();
 }
 
 void			RF::setGaussian( double mean, double sig, double w )
@@ -158,7 +146,7 @@ void			RF::setGaussian( double mean, double sig, double w )
 	RF::init( mean-4*sig, mean+4*sig, w );
 	if(getCnt()== 0) return;
 	double x, z=-1/(2*sig*sig);
-	for( int i=0; i<getCnt(); i++) {
+	for(int i=0; i<getCnt(); i++) {
 		x=getVal(i)-mean; _pdf(i)=exp(x*x*z);
 	}
 	normalize();
@@ -167,9 +155,9 @@ void			RF::setGaussian( double mean, double sig, double w )
 void			RF::setPoisson( double lambda )
 {
 	if( lambda>100 ) error( "SetPoisson(lambda) only works if lambda<=100" );
-	init( 0.0, min(150.0,15.0*lambda), 1.0 ); double factorial=1;
-	for( int i=0; i<getCnt(); i++ ) { // overflow a bit after i>150
-		_pdf(i)=pow(lambda,(double)i)/(exp(lambda)*factorial); factorial *= i+1;
+	init( 0, min(150.0,15*lambda), 1 ); double factorial=1;
+	for(int i=0; i<getCnt(); i++) { // overflow a bit after i>150
+		_pdf(i)=pow(lambda,(double)i)/(exp(lambda)*factorial); factorial*=i+1;
 	}
 	normalize();
 }
@@ -192,20 +180,20 @@ void			RF::set( const Matrixd &v, double minV, double mavV, double w )
 double			RF::pdf( double x ) const
 {
 	int ind = getInd(x);
-	if(!inRange(ind)) return 0.0;
+	if(ind<0 || ind>=getCnt()) return 0;
 	return _pdf(ind);
 }
 
 double			RF::cdf( double x ) const
 {
-	int ind=getInd(x); if(ind>=getCnt()) return 1.0;
-	if(cdfInit()) return _cdf(ind); // precomputed
-	double c=0.0; for(int j=0; j<=ind; j++) c+=_pdf(j); return c;
+	int ind=getInd(x); if(ind>=getCnt()) return 1;
+	if(cdfInit()) return _cdf(ind);
+	double c=0; for(int j=0; j<=ind; j++) c+=_pdf(j); return c;
 }
 
 double			RF::mean() const
 {
-	double mean = 0;
+	double mean=0;
 	for(int i=0; i<getCnt(); i++)
 		mean += _pdf(i)*getVal(i);
 	return mean;
@@ -221,55 +209,55 @@ double			RF::variance() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void			RF::setCdf(int cntPerBin)
+void			RF::setCdf( int cntPerBin )
 {
 	normalize(); if(cntPerBin<1) cntPerBin=1;
 	int cdfCount = min( 1000000, cntPerBin*getCnt() );
-	_cdfInd.setDims(1,cdfCount); _cdf.setDims(1,getCnt());
-	double cumDel=1.0/double(cdfCount), cumi=0, cum=cumDel/10; int j=0;
+	_cdfInv.setDims(1,cdfCount); _cdf.setDims(1,getCnt());
+	double cumDel=1.0/double(cdfCount), cum=0, cum1=cumDel/10; int j=0;
 	for(int i=0; i<getCnt(); i++) {
-		cumi+=_pdf(i); _cdf(i)=cumi;
-		while(cum < cumi) { _cdfInd(j++)=i; cum+=cumDel; }
+		cum+=_pdf(i); _cdf(i)=cum;
+		while(cum1 < cum) { _cdfInv(j++)=i; cum1+=cumDel; }
 	}
 	assert( j==cdfCount );
 }
 
-double			RF::sampleNonSetCdf(double cumsum) const
+double			RF::sampleNonSetCdf( double cumsum ) const
 {
 	if( cumsum==0 ) cumsum=_pdf.sum();
 	if( cumsum==0 ) error( "Cannot sample: empty pdf");
-	double v=randf()*cumsum, sum=0.0; int ind;
+	double f=randf()*cumsum, cum=0; int ind;
 	for( ind=0; ind<getCnt(); ind++) {
-		sum+=_pdf(ind); if( sum>=v && _pdf(ind)>0.0 ) break;
+		cum+=_pdf(ind); if( cum>=f && _pdf(ind)>0 ) break;
 	}
 	if( ind==getCnt() ) error("cumsum invalid");
 	return getVal( ind );
 }
 
-void			RF::sample(				Matrixd &V, int rows, int cols ) const
+void			RF::sample( Matrixd &V, int rows, int cols ) const
 {
 	if(!cdfInit()) error("CDF not set"); assert(rows>=0 && cols>=0);
 	V.setDims(rows,cols); for(int i=0; i<rows*cols; i++) V(i)=sample();
 }
 
-void			RF::sample(				vectord &v, int n ) const
+void			RF::sample(	vectord &v, int n ) const
 {
 	if(!cdfInit()) error("CDF not set"); assert(n>=0);
 	v.clear(); v.resize(n); for(int i=0; i<n; i++) v[i]=sample();
 }
 
-void			RF::sampleNoReplace(	Matrixd &V, int rows, int cols )
+void			RF::sampleNoReplace( Matrixd &V, int rows, int cols ) const
 {
 	vectord v; int n=rows*cols; sampleNoReplace(v,n); assert(n==rows*cols);
-	V.setDims(rows,cols); for(int i=0; i<V.numel(); i++) V(i)=v[i];
+	V.setDims(rows,cols); for(int i=0; i<n; i++) V(i)=v[i];
 }
 
-void			RF::sampleNoReplace(	vectord &v, int &n )
+void			RF::sampleNoReplace( vectord &v, int &n ) const
 {
 	assert(n>=0); v.clear();
 	int nMax = (int) (_pdf>0).sum(); n=min(n,nMax);
 	if( n==nMax ) {
-		for(int i=0; i<getCnt(); i++) if(_pdf(i)>0.0)
+		for(int i=0; i<getCnt(); i++) if(_pdf(i)>0)
 			v.push_back( getVal(i) );
 	} else {
 		v.resize(n); RF tmp=*this;
@@ -277,7 +265,7 @@ void			RF::sampleNoReplace(	vectord &v, int &n )
 		for(int i=0; i<n; i++ ) {
 			v1=tmp.sampleNonSetCdf(cumsum); v[i]=v1;
 			ind=getInd(v1); cumsum-=tmp._pdf(ind);
-			tmp._pdf(ind)=0.0;
+			tmp._pdf(ind)=0;
 		}
 	}
 }
