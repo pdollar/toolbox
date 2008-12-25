@@ -198,7 +198,7 @@ double			RF::pdf( double x ) const
 
 double			RF::cdf( double x ) const
 {
-	int ind=getInd(x); if(ind>=getCnt()) return 1.0; 
+	int ind=getInd(x); if(ind>=getCnt()) return 1.0;
 	if(cdfInit()) return _cdf(ind); // precomputed
 	double c=0.0; for(int j=0; j<=ind; j++) c+=_pdf(j); return c;
 }

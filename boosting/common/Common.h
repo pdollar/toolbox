@@ -135,7 +135,7 @@ template<class Ta, class Tb> void	sortVia_b( vector<Ta> &a, vector<Tb> &b )
 	reorder<Ta>( a, order );
 }
 
-// use assert(C)/error(msg1,...) to throw an InformativeException 
+// use assert(C)/error(msg1,...) to throw an InformativeException
 class	InformativeException: public exception
 {
 public:

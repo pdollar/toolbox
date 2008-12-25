@@ -80,7 +80,7 @@ public:
 	double					cdf( double x )			const;
 	double					mean()					const;
 	double					variance()				const;
-	
+
 	// sample distribution (call setCdf() before using sample())
 	void					setCdf( int cntPerBin=100 );
 	void					clearCdf() { _cdf.clear(); _cdfInd.clear(); };
