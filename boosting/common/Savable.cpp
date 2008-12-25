@@ -11,6 +11,7 @@
 
 #include "Matrix.h"
 #include "Haar.h"
+#include "Rand.h"
 
 Savable*		Savable::create( const char *cname )
 {
@@ -24,6 +25,7 @@ Savable*		Savable::create( const char *cname )
 	CREATE(Matrix<uchar>);
 	CREATE(Rect);
 	CREATE(Haar);
+	CREATE(RF);
 	error( "unknown cname:", cname );
 	return NULL;
 
