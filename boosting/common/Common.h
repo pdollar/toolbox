@@ -15,6 +15,7 @@
 #include <vector>
 #include <cmath>
 #include <algorithm>
+#include <string>
 using namespace std;
 
 // typedefs
@@ -35,6 +36,11 @@ inline double			degToRad(double dDeg) { return dDeg * PI / 180; }
 inline double			radToDeg(double dRad) { return dRad * 180 / PI; }
 inline double			factorial(const int i) { double d=1.0; for(int k=2; k<=i; k++) d*=k; return d; }
 inline int				roundInt(double v) {return (int)(v+0.5);}
+inline string			int2str( int i, int nDigit )
+{
+	char f[32], t[64]; sprintf(f,"%%0%ii",nDigit); sprintf(t,f,i); return string(t);
+}
+
 // vector arithmetic operations and display
 template<class T> T         vecSum( const vector<T> &v )
 {
