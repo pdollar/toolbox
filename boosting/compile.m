@@ -11,12 +11,22 @@ end
 
 if( 1 ) % compile
   if(~exist('compile','dir')), mkdir('compile'); end
-  mex -g -c common/Savable.cpp -outdir compile
-  mex -g -c common/Haar.cpp -outdir compile
-  mex -g -c common/Rand.cpp -outdir compile
-  mex -g -Icommon matEntry.cpp compile/Rand.obj compile/Haar.obj compile/Savable.obj
-  %mex -g -Icommon matEntry.cpp compile/Haar.o compile/Savable.o
+  % compile common objects for which no object file
+  common = {'Savable', 'Haar', 'Rand', 'ChImage' };
+  n=length(common); objs=cell(1,n);
+  for i=1:n
+    sName=['common/' common{i} '.cpp'];
+    tName=['compile/' common{i} '.obj'];
+    if(~exist(tName,'file'))
+      mex('-O','-c',sName,'-outdir','compile');
+    end
+    objs{i} = tName;
+  end
+  % finally compile matEntry
+  mex('-O','-Icommon','-Lcommon','matEntry.cpp','-lFreeImage',objs{:});
 end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % A = matEntry('getObject',1)
 % A=rand(3); B=matEntry('transpose',A); A-B'
@@ -39,5 +49,5 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %I=imread('cameraman.tif');
-% dlmwrite('cameraman.txt',I);
+%dlmwrite('cameraman.txt',I);
 %I=dlmread('res.txt'); im(I);
