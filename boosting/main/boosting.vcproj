@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="common\;freeimage\"
+				AdditionalIncludeDirectories="..\common\;..\freeimage\"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -63,7 +63,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="freeimage.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="common\;freeimage\"
+				AdditionalLibraryDirectories="..\common\;..\freeimage\"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -117,7 +117,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="common\;freeimage\"
+				AdditionalIncludeDirectories="..\common\;..\freeimage\"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -137,7 +137,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="common\;freeimage\"
+				AdditionalLibraryDirectories="..\common\;..\freeimage\"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -174,51 +174,51 @@
 			Name="common"
 			>
 			<File
-				RelativePath=".\common\ChImage.cpp"
+				RelativePath="..\common\ChImage.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\common\ChImage.h"
+				RelativePath="..\common\ChImage.h"
 				>
 			</File>
 			<File
-				RelativePath=".\common\Common.h"
+				RelativePath="..\common\Common.h"
 				>
 			</File>
 			<File
-				RelativePath=".\common\Haar.cpp"
+				RelativePath="..\common\Haar.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\common\Haar.h"
+				RelativePath="..\common\Haar.h"
 				>
 			</File>
 			<File
-				RelativePath=".\common\IntegralImg.h"
+				RelativePath="..\common\IntegralImg.h"
 				>
 			</File>
 			<File
-				RelativePath=".\common\Matrix.h"
+				RelativePath="..\common\Matrix.h"
 				>
 			</File>
 			<File
-				RelativePath=".\common\MatrixImp.h"
+				RelativePath="..\common\MatrixImp.h"
 				>
 			</File>
 			<File
-				RelativePath=".\common\Rand.cpp"
+				RelativePath="..\common\Rand.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\common\Rand.h"
+				RelativePath="..\common\Rand.h"
 				>
 			</File>
 			<File
-				RelativePath=".\common\Savable.cpp"
+				RelativePath="..\common\Savable.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\common\Savable.h"
+				RelativePath="..\common\Savable.h"
 				>
 			</File>
 		</Filter>
