@@ -10,6 +10,7 @@
 #include "Matrix.h"
 #include "Rand.h"
 #include "Haar.h"
+#include "ChImage.h"
 
 void checkArgs( char *action, int nlhs, int maxlhs, int nrhs, int minrhs, int maxrhs );
 
@@ -36,7 +37,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 			case 8:  { Haar x; x.createSyst(1,25,25,10,10,0,0); x.finalize(); X.frmSavable("x",&x); break; }
 			case 9:  { Rect x(0,0,10,10); x._wt=.3f; X.frmSavable("x",&x); break; }
 			case 10: { VecSavable x; X.frmSavable("x",&x); break; }
-			case 11: { RF x; x.setUniformInt(1,10); X.frmSavable("x",&x); break; }
+			case 11: { RF x; x.setUniform(1,10,1); X.frmSavable("x",&x); break; }
 			default: error("Invalid flag");
 			}
 			mxArray *M=X.toMxArray(); X.clear(); X.frmMxArray(M);
