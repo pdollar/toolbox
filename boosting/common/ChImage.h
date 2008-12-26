@@ -5,7 +5,7 @@
 #include "Savable.h"
 #include "Matrix.h"
 
-typedef vector<Matrixu> VecMatrixu;
+typedef vector<Matrixu>		VecMatrixu;
 
 class ChImage
 {

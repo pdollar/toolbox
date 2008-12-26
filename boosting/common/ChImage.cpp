@@ -1,4 +1,5 @@
 #include "ChImage.h"
+#include "FreeImage.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 void				ChImage::clear()
@@ -17,6 +18,55 @@ ChImage&			ChImage::operator= ( const ChImage &x )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+FIBITMAP* GenericLoader(const char* fName, int flag)
+{
+	// Generic image loader
+	//   @param fName Pointer to the full file name
+	//   @param flag Optional load flag constant
+	//   @return Returns the loaded dib if successful, returns NULL otherwise
+
+	// check file signature and deduce its format
+	// (second argument is currently not used by FreeImage)
+	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
+	//fif = FreeImage_GetFileType(fName, 0);
+	if(fif == FIF_UNKNOWN) {
+		// no signature?  // try to guess the file format from the file extension
+		fif = FreeImage_GetFIFFromFilename(fName);
+	}
+	// check that the plugin has reading capabilities ...
+	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) 	{
+		// ok, let's load the file, unless a bad file format, we are done!
+		FIBITMAP *dib = FreeImage_Load(fif, fName, flag);
+		return dib;
+	}
+	return NULL;
+}
+
+bool GenericWriter(FIBITMAP* dib, const char* fName, int flag)
+{
+	// Generic image writer
+	//   @param dib Pointer to the dib to be saved
+	//   @param fName Pointer to the full file name
+	//   @param flag Optional save flag constant
+	//   @return Returns true if successful, returns false otherwise
+
+	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
+	BOOL bSuccess = FALSE;
+	if(dib) {
+		// try to guess the file format from the file extension
+		fif = FreeImage_GetFIFFromFilename(fName);
+		if(fif != FIF_UNKNOWN ) {
+			// check that the plugin has sufficient writing and export capabilities ...
+			WORD bpp = FreeImage_GetBPP(dib);
+			if(FreeImage_FIFSupportsWriting(fif) && FreeImage_FIFSupportsExportBPP(fif, bpp)) {
+				// ok, we can save the file, unless an abnormal bug, we are done
+				bSuccess = FreeImage_Save(fif, dib, fName, flag);
+			}
+		}
+	}
+	return (bSuccess == TRUE) ? true : false;
+}
+
 void				ChImage::save( const char *fName )
 {
 	//Matrixf image;
@@ -55,6 +105,7 @@ void				ChImage::toVisible( Matrixf &image )
 	//Copy( image, imageu );
 }
 
+///////////////////////////////////////////////////////////////////////////////
 void				ChImage::set( VecMatrixu &images )
 {
 	// use images directly without copying
