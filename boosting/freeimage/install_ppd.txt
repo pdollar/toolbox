@@ -9,8 +9,8 @@ LINUX
 (2) Change permissions, create additional link files. Copy and paste below into shell from this directory:
   chmod 644 libfreeimage.a
   chmod 755 libfreeimage-3.11.0.so
-  ln -sf libfreeimage-3.11.0.so ./libfreeimage.so.3
-  ln -sf libfreeimage.so.3 ./libfreeimage.so	
+  ln -sf libfreeimage-3.11.0.so libfreeimage.so.3
+  ln -sf libfreeimage.so.3 libfreeimage.so
 (3) Add to runtime search path (same as adding dll to C:\WINDOWS\system32). See 3.5 in http://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html.  The below command should be added to ~/.bash_profile. Type "export" in shell to see environment and if LD_LIBRARY_PATH properly set.
    # add freeimage to LD_LIBRARY_PATH so at runtime linker knows where to look
    export LD_LIBRARY_PATH=/common/pdollar/boosting/freeimage:$LD_LIBRARY_PATH
