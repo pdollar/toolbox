@@ -1,5 +1,4 @@
-c
-addpath(genpath('/common/pdollar/toolbox'));
+if(~ispc()), addpath(genpath('/common/pdollar/toolbox')); end; c
 cd(fileparts(mfilename('fullpath')));
 
 if( 0 ) % cleanup
@@ -11,19 +10,20 @@ end
 
 if( 1 ) % compile
   if(~exist('compile','dir')), mkdir('compile'); end
-  % compile common objects for which no object file
+  if(ispc()), oExt='.obj'; else oExt='.o'; end
+  
+  % compile common objects
   common = {'Savable', 'Haar', 'Rand', 'ChImage' };
   n=length(common); objs=cell(1,n);
   for i=1:n
-    sName=['common/' common{i} '.cpp'];
-    tName=['compile/' common{i} '.obj'];
-    if(~exist(tName,'file'))
-      mex('-O','-c',sName,'-outdir','compile');
-    end
-    objs{i} = tName;
+    sName=['common/' common{i} '.cpp']; 
+    objs{i}=['compile/' common{i} oExt];
+    mex('-O','-c',sName,'-outdir','compile','-Ifreeimage');
   end
+  
   % finally compile matEntry
-  mex('-O','-Icommon','-Lcommon','matEntry.cpp','-lFreeImage',objs{:});
+  mex('-O','matEntry.cpp','-Icommon', objs{:},...
+    '-Ifreeimage','-Lfreeimage','-lfreeimage');
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
