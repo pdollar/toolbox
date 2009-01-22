@@ -1,2 +1,1 @@
 -switch to better svm code
--pidst2, why restricted to only type double?  legacy?

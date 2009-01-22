@@ -1,5 +1,6 @@
 Version NEW
  -tweaked/improved confMatrixShow
+ -removed restriction that pidst2 must use type double
 
 Version 2.12 (17-Nov-08)
  -new version of savefig (also removed exportfig)

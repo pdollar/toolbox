@@ -51,7 +51,7 @@ function D = pdist2( X, Y, metric )
 %
 % See also PDIST, DISTMATRIXSHOW
 %
-% Piotr's Image&Video Toolbox      Version 2.12
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -86,9 +86,6 @@ end
 
 function D = distCosine( X, Y )
 
-if( ~isa(X,'double') || ~isa(Y,'double'))
-  error( 'Inputs must be of type double'); end;
-
 p=size(X,2);
 XX = sqrt(sum(X.*X,2)); X = X ./ XX(:,ones(1,p));
 YY = sqrt(sum(Y.*Y,2)); Y = Y ./ YY(:,ones(1,p));
@@ -121,8 +118,6 @@ D = D/2;
 
 function D = distEucSq( X, Y )
 
-if( ~isa(X,'double') || ~isa(Y,'double'))
-  error( 'Inputs must be of type double'); end;
 m = size(X,1); n = size(Y,1);
 Yt = Y';
 XX = sum(X.*X,2);
@@ -177,7 +172,7 @@ D = XX(:,ones(1,n)) + YY(ones(1,m),:) - 2*X*Yt;
 
 %%% L1 COMPUTATION WITH LOOP OVER p, FAST FOR SMALL p.
 % function D = distL1( X, Y )
-% 
+%
 % m = size(X,1); n = size(Y,1); p = size(X,2);
 % mOnes = ones(1,m); nOnes = ones(1,n); D = zeros(m,n);
 % for i=1:p
