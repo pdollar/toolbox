@@ -2,7 +2,7 @@ function varargout = bbApply( action, varargin )
 % Functions for manipulating bounding boxes (bb).
 %
 % A bounding box (bb) is also known as a position vector or a rectangle
-% object. It is a four element vector with the fields: [l r w h]. A set of
+% object. It is a four element vector with the fields: [x y w h]. A set of
 % n bbs can be stores as an [nx4] array, most funcitons below can handle
 % either a single or multiple bbs. In addtion, typically [nxm] inputs with
 % m>4 are ok (with the additional columns ignored/copied to the output).
@@ -30,7 +30,7 @@ function varargout = bbApply( action, varargin )
 % bbApply>union bbApply>resize bbApply>squarify bbApply>draw bbApply>crop
 % bbApply>convert
 %
-% Piotr's Image&Video Toolbox      Version 2.12
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -251,7 +251,7 @@ if(nargin<4 || isempty(ls)), ls='-'; end
 if(nargin<5 || isempty(prop)), prop={}; end
 n=size(bb,1); hs=zeros(1,n);
 for b=1:n
-  hs(b) = rectangle( 'Position',bb(b,:), 'EdgeColor',col, ...
+  hs(b) = rectangle( 'Position',bb(b,1:4), 'EdgeColor',col, ...
     'LineWidth',lw, 'LineStyle',ls, prop{:});
 end
 end
