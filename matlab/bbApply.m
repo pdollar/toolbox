@@ -28,7 +28,7 @@ function varargout = bbApply( action, varargin )
 %
 % See also bbApply>area bbApply>shift bbApply>getCenter bbApply>intersect
 % bbApply>union bbApply>resize bbApply>squarify bbApply>draw bbApply>crop
-% bbApply>convert
+% bbApply>convert bbApply>random
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -341,4 +341,31 @@ else
   bb=bb.*bbRef([3 4 3 4]);
   bb(1:2)=bb(1:2)+bbRef(1:2);
 end
+end
+
+function bb = random( w, h, bbw, bbh, n )
+% Uniformly generate n (integer) bbs constrained between [1,w]x[1,h].
+%
+% USAGE
+%  bb = bbApply('random',w,h,bbw,bbh,n)
+%
+% INPUTS
+%  w      - maximum right most bb location
+%  h      - maximum bottom most bb location
+%  bbw    - bb width
+%  bbh    - bb height
+%  n      - number of bbs to generate
+%
+% OUTPUTS
+%  bb     - randomly generate bbs
+%
+% EXAMPLE
+%  bb = bbApply('random',5,5,3,3,10)
+%
+% See also bbApply
+
+bb=zeros(n,4); bb(:,3)=bbw; bb(:,4)=bbh;
+bb(:,1) = randint2(n,1,[1,h-bbh+1]);
+bb(:,2) = randint2(n,1,[1,w-bbw+1]);
+
 end

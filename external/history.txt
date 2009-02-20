@@ -2,6 +2,7 @@ Version NEW
  -tweaked/improved confMatrixShow
  -removed restriction that pidst2 must use type double
  -added matlab/uniqueColor.m for generating random colors
+ -tweaked/added to bbApply.m
 
 Version 2.12 (17-Nov-08)
  -new version of savefig (also removed exportfig)
