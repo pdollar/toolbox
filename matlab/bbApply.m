@@ -28,7 +28,7 @@ function varargout = bbApply( action, varargin )
 %
 % See also bbApply>area bbApply>shift bbApply>getCenter bbApply>intersect
 % bbApply>union bbApply>resize bbApply>squarify bbApply>draw bbApply>crop
-% bbApply>convert bbApply>random
+% bbApply>convert bbApply>random bbApply>nms
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -368,4 +368,65 @@ bb=zeros(n,4); bb(:,3)=bbw; bb(:,4)=bbh;
 bb(:,1) = randint2(n,1,[1,h-bbh+1]);
 bb(:,2) = randint2(n,1,[1,w-bbw+1]);
 
+end
+
+function bbs = nms( bbs, thr, radii )
+% Mean shift non-maximal suppression (nms) of bbs w variable width kernel.
+%
+% radii controls the amount of suppression. radii is a 4 element vector
+% containing the radius for each dimension (x,y,w,h). Typically the first
+% two elements should be the same, as should the last two. Distance between
+% w/h are computed in log2 space (ie w and w*2 are 1 unit apart), and the
+% radii should be set accordingly. Default radii=[.05 .05 .5 .5].
+%
+% USAGE
+%  bbs = bbApply('nms',bbs,thr,[radii])
+%
+% INPUTS
+%  bbs      - original bbs (must be of form [x y w h wt])
+%  thr      - threshold below which to discard bbs
+%  radii    - [] supression radii (see above)
+%
+% OUTPUTS
+%  bbs      - suppressed bbs
+%
+% EXAMPLE
+%  bbs=[0 0 1 1 1; .1 .1 1 1 1.1; 2 2 1 1 1];
+%  bbs1 = bbApply('nms',bbs,.1)
+%
+% See also bbApply, nonMaxSuprList
+
+% remove all bbs that fall below threshold
+keep=bbs(:,5)>thr; bbs=bbs(keep,:); n=size(bbs,1);
+if(n<=1), return; end; 
+if(nargin<3 || isempty(radii)), radii=[.05 .05 .5 .5]; end
+
+% position = [x/w,y/h,log2(w),log2(h)], ws=weights-thr
+ws=bbs(:,5)-thr; w=bbs(:,3); h=bbs(:,4);
+ps=[bbs(:,1)+w/2 bbs(:,2)+h/2 log2(w) log2(h)];
+
+% find modes starting from each element, then merge nodes that are same
+ps1=zeros(n,4); ws1=zeros(n,1); stopThr=1e-2;
+for i=1:n, [ps1(i,:) ws1(i,:)]=nms1(i); end
+[ps1,ws1] = nonMaxSuprList(ps1,ws1,stopThr*100,[],[],2);
+
+% convert back to bbs format
+w=pow2(ps1(:,3)); h=pow2(ps1(:,4));
+bbs=[ps1(:,1)-w/2 ps1(:,2)-h/2 w h ws1+thr];
+
+  function [p,w]=nms1(ind)
+    % variable bandwith kernel (analytically defined)
+    p=ps(ind,:); [n,m]=size(ps); onesN=ones(n,1);
+    h = [pow2(ps(:,3)) pow2(ps(:,4)) onesN onesN];
+    h = h .* radii(onesN,:); hInv=1./h;
+    while(1)
+      % compute (weighted) squared Euclidean distance to each neighbor
+      d=(ps-p(onesN,:)).*hInv; d=d.*d; d=sum(d,2);
+      % compute new mode
+      wMask=ws.*exp(-d); wMask=wMask/sum(wMask); p1=wMask'*ps;
+      % stopping criteria
+      diff=sum(abs(p1-p))/m; p=p1; if(diff<stopThr), break; end
+    end
+    w = sum(ws.*wMask);
+  end
 end
