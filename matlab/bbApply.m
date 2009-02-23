@@ -372,22 +372,29 @@ bb(:,2) = randint2(n,1,[1,w-bbw+1]);
 
 end
 
-function bbs = nms( bbs, thr, radii )
+function bbs = nms( bbs, thr, radii, maxn )
 % Mean shift non-maximal suppression (nms) of bbs w variable width kernel.
 %
 % radii controls the amount of suppression. radii is a 4 element vector
 % containing the radius for each dimension (x,y,w,h). Typically the first
 % two elements should be the same, as should the last two. Distance between
 % w/h are computed in log2 space (ie w and w*2 are 1 unit apart), and the
-% radii should be set accordingly. Default radii=[.05 .05 .5 .5].
+% radii should be set accordingly. radii should change depending on spatial
+% and scale stride of bbs.
+%
+% Mean shift is O(n^2) where n is the number of bbs. To speed things up for
+% large n, can divide data randomly into two sets, run nms on each, combine
+% and run nms on the result. If maxn is specified, will split the set if
+% n>maxn. Note that this is a heuristic and can change the results of nms.
 %
 % USAGE
-%  bbs = bbApply('nms',bbs,thr,[radii])
+%  bbs = bbApply('nms',bbs,thr,[radii],[maxn])
 %
 % INPUTS
 %  bbs      - original bbs (must be of form [x y w h wt])
 %  thr      - threshold below which to discard bbs
-%  radii    - [] supression radii (see above)
+%  radii    - [.25 .25 1 1] supression radii (see above)
+%  maxn     - [1000] if n>maxn split and run nms recursively (see above)
 %
 % OUTPUTS
 %  bbs      - suppressed bbs
@@ -399,36 +406,52 @@ function bbs = nms( bbs, thr, radii )
 % See also bbApply, nonMaxSuprList
 
 % remove all bbs that fall below threshold
-keep=bbs(:,5)>thr; bbs=bbs(keep,:); n=size(bbs,1);
-if(n<=1), return; end;
-if(nargin<3 || isempty(radii)), radii=[.05 .05 .5 .5]; end
+keep=bbs(:,5)>thr; bbs=bbs(keep,:); if(size(bbs,1)<=1), return; end;
+if(nargin<3 || isempty(radii)), radii=[.15 .15 1 1]; end
+if(nargin<4 || isempty(maxn)), maxn=1000; end
 
 % position = [x/w,y/h,log2(w),log2(h)], ws=weights-thr
 ws=bbs(:,5)-thr; w=bbs(:,3); h=bbs(:,4);
 ps=[bbs(:,1)+w/2 bbs(:,2)+h/2 log2(w) log2(h)];
 
-% find modes starting from each element, then merge nodes that are same
-ps1=zeros(n,4); ws1=zeros(n,1); stopThr=1e-2;
-for i=1:n, [ps1(i,:) ws1(i,:)]=nms1(i); end
-[ps1,ws1] = nonMaxSuprList(ps1,ws1,stopThr*100,[],[],2);
+% perform actual nms
+[ps,ws]=nms1(ps,ws,radii,maxn);
 
-% convert back to bbs format
-w=pow2(ps1(:,3)); h=pow2(ps1(:,4));
-bbs=[ps1(:,1)-w/2 ps1(:,2)-h/2 w h ws1+thr];
+% convert back to bbs format and sort by weight
+w=pow2(ps(:,3)); h=pow2(ps(:,4));
+bbs=[ps(:,1)-w/2 ps(:,2)-h/2 w h ws+thr];
+[ws,ord]=sort(ws,'descend'); bbs=bbs(ord,:);
 
-  function [p,w]=nms1(ind)
-    % variable bandwith kernel (analytically defined)
-    p=ps(ind,:); [n,m]=size(ps); onesN=ones(n,1);
-    h = [pow2(ps(:,3)) pow2(ps(:,4)) onesN onesN];
-    h = h .* radii(onesN,:); hInv=1./h;
-    while(1)
-      % compute (weighted) squared Euclidean distance to each neighbor
-      d=(ps-p(onesN,:)).*hInv; d=d.*d; d=sum(d,2);
-      % compute new mode
-      wMask=ws.*exp(-d); wMask=wMask/sum(wMask); p1=wMask'*ps;
-      % stopping criteria
-      diff=sum(abs(p1-p))/m; p=p1; if(diff<stopThr), break; end
+  function [ps,ws]=nms1(ps,ws,radii,maxn)
+    % if too many split in two randomly and recurse
+    n=size(ps,1);
+    if( n>maxn )
+      ord=randperm(n); ps=ps(ord,:); ws=ws(ord); n2=floor(n/2); n3=n2+1;
+      ps0=ps(1:n2,:); ws0=ws(1:n2,:); [ps0,ws0]=nms1(ps0,ws0,radii,maxn);
+      ps1=ps(n3:n,:); ws1=ws(n3:n,:); [ps1,ws1]=nms1(ps1,ws1,radii,maxn);
+      ps=[ps0; ps1]; ws=[ws0; ws1]; n0=n; n=size(ps,1);
+      if(n<n0), [ps,ws]=nms1(ps,ws,radii,maxn); return; end
     end
-    w = sum(ws.*wMask);
+    
+    % find modes starting from each element, then merge nodes that are same
+    ps1=zeros(n,4); ws1=zeros(n,1); stopThr=1e-2;
+    for i=1:n, [ps1(i,:) ws1(i,:)]=nms2(i); end
+    [ps,ws] = nonMaxSuprList(ps1,ws1,stopThr*100,[],[],2);
+    
+    function [p,w]=nms2(ind)
+      % variable bandwith kernel (analytically defined)
+      p=ps(ind,:); [n,m]=size(ps); onesN=ones(n,1);
+      h = [pow2(ps(:,3)) pow2(ps(:,4)) onesN onesN];
+      h = h .* radii(onesN,:); hInv=1./h;
+      while(1)
+        % compute (weighted) squared Euclidean distance to each neighbor
+        d=(ps-p(onesN,:)).*hInv; d=d.*d; d=sum(d,2);
+        % compute new mode
+        wMask=ws.*exp(-d); wMask=wMask/sum(wMask); p1=wMask'*ps;
+        % stopping criteria
+        diff=sum(abs(p1-p))/m; p=p1; if(diff<stopThr), break; end
+      end
+      w = sum(ws.*wMask);
+    end
   end
 end
