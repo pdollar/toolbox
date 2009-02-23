@@ -45,6 +45,7 @@
 %   sub2ind2          - Improved version of sub2ind.
 %   subsToArray       - Converts subs/vals image representation to array representation.
 %   subsampleMatrix   - Samples elements of X so result uses at most maxMegs megabytes of memory.
+%   uniqueColors      - Generate m*n visually distinct RGB colors suitable for display.
 %
 % Thin plate splines:
 %   tpsGetWarp        - Given two sets of corresponding points, calculates warp between them.
