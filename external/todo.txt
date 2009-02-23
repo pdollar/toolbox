@@ -1,5 +1,5 @@
--switch to better svm code
+-update c/c++ headers, recompile all (some missing in Linux)
+-eventually switch to better svm code
 -add links to good toolboxes (Vincent's, VideoIO, Lightspeed)
 -add bibtex entry to front page (see Vincent's http://vision.ucsd.edu/~vrabaud/toolbox/doc/ )
 -Google Analytics code to <a> tags (see Vincent's overview)
--inputParser for getPrmDflt??
