@@ -4,7 +4,7 @@
 % (results are a bit sharper). Inspired by resize.cpp from Deva Ramanan.
 %
 % USAGE
-%   B = imdownsample( A, scale )
+%   B = imDownsample( A, scale )
 %
 % INPUT
 %   A       - input image, 2D or 3D, must have type double
@@ -16,7 +16,7 @@
 % EXAMPLE
 %  I=double(imread('cameraman.tif'));
 %  tic, for i=1:10, I1=imresize(I,.5,'bilinear'); end; toc
-%  tic, for i=1:10, I2=imdownsample(I,.5); end; toc
+%  tic, for i=1:10, I2=imDownsample(I,.5); end; toc
 %  figure(1); im(I1); figure(2); im(I2);
 %
 % See also IMRESIZE

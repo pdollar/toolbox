@@ -32,7 +32,7 @@ mex([dir 'maskEllipse1.c'],         '-outdir', dir );
 mex([dir 'nlfiltersep_max.c'],      '-outdir', dir );
 mex([dir 'nlfiltersep_sum.c'],      '-outdir', dir );
 mex([dir 'nlfiltersep_blocksum.c'], '-outdir', dir );
-mex([dir 'imdownsample.c'],         '-outdir', 'images' );
+mex([dir 'imDownsample.c'],         '-outdir', 'images' );
 
 try
   % requires c++ compiler
