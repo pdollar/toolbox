@@ -1,4 +1,4 @@
-function varargout = getPrmDflt( prm, dfs )
+function varargout = getPrmDflt( prm, dfs, checkUseless )
 % Helper to set default values (if not already set) of parameter struct.
 %
 % Takes input parameters and a list of 'name'/default pairs, and for each
@@ -14,8 +14,11 @@ function varargout = getPrmDflt( prm, dfs )
 %  [ param1 ... paramN ] = getPrmDflt( prm, dfs )
 %
 % INPUTS
-%  prm    - parameter struct or cell of form {'name1' v1 'name2' v2 ...}
-%  dfs    - cell of form {'name1' def1 'name2' def2 ...}
+%  prm          - parameter struct
+%                 or cell of form {'name1' v1 'name2' v2 ...}
+%  dfs          - cell of form {'name1' def1 'name2' def2 ...}
+%  checkUseless - [0] useless parameter check
+%                  1 if prm contains a parameter not in dfs, throw an error
 %
 % OUTPUTS (nargout==1)
 %  prm    - parameter struct with fields 'name1' through 'nameN' assigned
@@ -38,6 +41,7 @@ function varargout = getPrmDflt( prm, dfs )
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 if (mod(length(dfs),2)~=0); error('odd number of default parameters'); end
+if nargin<=2; checkUseless = 0; end
 
 if iscell(prm)
   if length(prm)==1
@@ -68,6 +72,15 @@ else
   dfsField = fieldnames( dfs ); dfsVal = struct2cell( dfs );
 end
 
+if checkUseless
+  prmName = fieldnames(prm);
+  for i = 1 : length(prmName)
+    if ~any(strcmp( prmName{i}, dfsField ))
+      error( [ 'parameter ' prmName{i} ...
+        ' is not a valid default parameter.' ] );
+    end
+  end
+end
 toDo = find( ~isfield( prm, dfsField ) );
 if size(toDo,1)~=1; toDo = toDo'; end
 
