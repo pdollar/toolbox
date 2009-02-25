@@ -367,8 +367,8 @@ function bb = random( w, h, bbw, bbh, n )
 % See also bbApply
 
 bb=zeros(n,4); bb(:,3)=bbw; bb(:,4)=bbh;
-bb(:,1) = randint2(n,1,[1,h-bbh+1]);
-bb(:,2) = randint2(n,1,[1,w-bbw+1]);
+bb(:,1) = randint2(n,1,[1,w-bbw+1]);
+bb(:,2) = randint2(n,1,[1,h-bbh+1]);
 
 end
 
