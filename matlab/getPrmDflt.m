@@ -1,4 +1,4 @@
-function varargout = getPrmDflt( prm, dfs, checkUseless )
+function varargout = getPrmDflt( prm, dfs, checkExtra )
 % Helper to set default values (if not already set) of parameter struct.
 %
 % Takes input parameters and a list of 'name'/default pairs, and for each
@@ -8,17 +8,15 @@ function varargout = getPrmDflt( prm, dfs, checkUseless )
 % 'name' is not given, an error is thrown. See below for usage details.
 %
 % USAGE (nargout==1)
-%  prm = getPrmDflt( prm, dfs )
+%  prm = getPrmDflt( prm, dfs, [checkExtra] )
 %
 % USAGE (nargout>1)
-%  [ param1 ... paramN ] = getPrmDflt( prm, dfs )
+%  [ param1 ... paramN ] = getPrmDflt( prm, dfs, [checkExtra] )
 %
 % INPUTS
-%  prm          - parameter struct
-%                 or cell of form {'name1' v1 'name2' v2 ...}
+%  prm          - param struct or cell of form {'name1' v1 'name2' v2 ...}
 %  dfs          - cell of form {'name1' def1 'name2' def2 ...}
-%  checkUseless - [0] useless parameter check
-%                  1 if prm contains a parameter not in dfs, throw an error
+%  checkExtra   - [0] if 1 throw error if prm contains params not in dfs
 %
 % OUTPUTS (nargout==1)
 %  prm    - parameter struct with fields 'name1' through 'nameN' assigned
@@ -33,15 +31,15 @@ function varargout = getPrmDflt( prm, dfs, checkUseless )
 %  prm = getPrmDflt( struct('x',1,'y',1), dfs )
 %  [ x y z eps ] = getPrmDflt( {'x',2,'y',1}, dfs )
 %
-% See also
+% See also INPUTPARSER
 %
-% Piotr's Image&Video Toolbox      Version 2.10
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 if (mod(length(dfs),2)~=0); error('odd number of default parameters'); end
-if nargin<=2; checkUseless = 0; end
+if nargin<=2; checkExtra = 0; end
 
 if iscell(prm)
   if length(prm)==1
@@ -72,12 +70,11 @@ else
   dfsField = fieldnames( dfs ); dfsVal = struct2cell( dfs );
 end
 
-if checkUseless
+if checkExtra
   prmName = fieldnames(prm);
   for i = 1 : length(prmName)
     if ~any(strcmp( prmName{i}, dfsField ))
-      error( [ 'parameter ' prmName{i} ...
-        ' is not a valid default parameter.' ] );
+      error( [ 'parameter ' prmName{i} ' is not a valid parameter.' ] );
     end
   end
 end
