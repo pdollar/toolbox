@@ -31,7 +31,7 @@ mu = rbfBasis.mu';
 Xrbf = zeros( N, k );
 onesVec = ones(k,1);
 for i=1:N
-  eucdist = sum( ((X(onesVec*i,:) - mu)).^2, 2 );
+  Xrbf(i,:) = sum( ((X(onesVec*i,:) - mu)).^2, 2 );
 end
 Xrbf = exp( -Xrbf/2 ./ rbfBasis.vars(ones(N,1),:) );
 
