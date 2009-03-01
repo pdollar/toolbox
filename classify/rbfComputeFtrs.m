@@ -17,7 +17,7 @@ function Xrbf = rbfComputeFtrs( X, rbfBasis )
 %
 % See also RBFDEMO, RBFCOMPUTEBASIS
 %
-% Piotr's Image&Video Toolbox      Version 2.0
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -25,17 +25,16 @@ function Xrbf = rbfComputeFtrs( X, rbfBasis )
 N = size(X,1);
 k = rbfBasis.k;
 mu = rbfBasis.mu';
-var = rbfBasis.var;
 
 % for each point, compute values of all basis functions
 % mu=[k x d]; onesVec=[k x 1]; Xi=[1 x d];
 Xrbf = zeros( N, k );
 onesVec = ones(k,1);
 for i=1:N
-  eucdist = sum( ((onesVec*X(i,:) - mu)).^2, 2 );
-  Xrbf(i,:) = eucdist' / 2 ./ var;
-end;
-Xrbf = exp( -Xrbf );
+  eucdist = sum( ((X(onesVec*i,:) - mu)).^2, 2 );
+end
+Xrbf = exp( -Xrbf/2 ./ rbfBasis.vars(ones(N,1),:) );
+
 
 % normalize rbfs to sum to 1
 if( 0 ); Xrbf = Xrbf ./ repmat( sum(Xrbf,2), [1 k] ); end
