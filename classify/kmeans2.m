@@ -50,7 +50,7 @@ function [ IDX, C, sumd ] = kmeans2( X, k, prm )
 %
 % See also DEMOCLUSTER
 %
-% Piotr's Image&Video Toolbox      Version 2.11
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -77,25 +77,32 @@ nOutl = floor( size(X,1)*outFrac );
 if( ~isempty(rndSeed)); rand('state',rndSeed); end; %#ok<RAND>
 
 % run kmeans2main nTrial times
-msg = ['Running kmeans2 with k=' num2str(k)];
-if( nTrial>1); msg=[msg ', ' num2str(nTrial) ' times.']; end
-if( display); disp(msg); end
+if( display)
+  msg = ['Running kmeans2 with k=' num2str(k)];
+  if( nTrial>1); msg=[msg ', ' num2str(nTrial) ' times.']; end
+  disp(msg);
+end
 
 bstSumd = inf;
 for i=1:nTrial
   t0 = clock;
-  msg = ['kmeans iteration ' num2str(i) ' of ' num2str(nTrial) ', step: '];
-  if( display); disp(msg); end
+  if( display)
+    disp(['kmeans iteration ' num2str(i) ' of ' num2str(nTrial) ', step: ']);
+  end
   [IDX,C,sumd,nIter]=kmeans2main(X,k,nOutl,minCl,maxIter,display,metric);
   if( sum(sumd)<sum(bstSumd)); bstIDX=IDX; bstC=C; bstSumd=sumd; end
-  msg = ['\nCompleted iter ' num2str(i) ' of ' num2str(nTrial) '; ' ...
-    'num steps= ' num2str(nIter) ';  sumd=' num2str(sum(sumd)) '\n'];
-  if( display && nTrial>1 ); fprintf(msg); etime(clock, t0), end
+  if( display && nTrial>1 )
+    fprintf(['\nCompleted iter ' num2str(i) ' of ' num2str(nTrial) '; ' ...
+      'num steps= ' num2str(nIter) ';  sumd=' num2str(sum(sumd)) '\n']);
+    etime(clock, t0);
+  end
 end
 
 IDX = bstIDX; C = bstC; sumd = bstSumd; k = max(IDX);
-msg = ['Final num clusters = ' num2str( k ) ';  sumd=' num2str(sum(sumd))];
-if(display); if(nTrial==1); fprintf('\n'); end; disp(msg); end
+if(display)
+  if(nTrial==1); fprintf('\n'); end
+  disp(['Final num clusters = ' num2str( k ) ';  sumd=' num2str(sum(sumd))]);
+end
 
 % sort IDX to have biggest clusters have lower indicies
 cnts = zeros(1,k); for i=1:k; cnts(i) = sum( IDX==i ); end
@@ -108,34 +115,41 @@ function [ IDX, C, sumd, nIter ] = kmeans2main( X, k, nOutl, ...
 % initialize cluster centers to be k random X points
 [N p] = size(X);  k = min(k,N);
 IDX = ones(N,1); oldIDX = zeros(N,1);
-index = randsample(N,k);  C = X(index,:);
+C = X(randsample(N,k),:);
 
 % MAIN LOOP: loop until the cluster assigments do not change
 nIter = 0;  ndisdigits = ceil( log10(maxIter-1) );
 if( display ); fprintf( ['\b' repmat( '0',[1,ndisdigits] )] ); end
-while( sum(abs(oldIDX - IDX)) ~= 0 && nIter < maxIter)
+while( any(oldIDX~=IDX) && nIter < maxIter)
 
   % assign each point to closest cluster center
   oldIDX = IDX;  D = pdist2( X, C, metric ); [mind IDX] = min(D,[],2);
 
   % do not use most distant nOutl elements in computation of  centers
-  mindsort = sort(mind); thr = mindsort(end-nOutl);  IDX(mind > thr) = -1;
+  mindsort = sort(mind); thr = mindsort(end-nOutl);
 
   % discard small clusters [add to outliers, will get included next iter]
-  i=1; while(i<=k); if(sum(IDX==i)<minCl); IDX(IDX==i)=-1;
-      if(i<k); IDX(IDX==k)=i; end; k=k-1; else i=i+1; end; end
-  if( k==0 ); IDX( randint2( 1,1, [1,N] ) ) = 1; k=1; end;
-  for i=1:k;
-    if((sum(IDX==i))==0); error('internal error - empty cluster'); end
-  end;
-
-  % Recalculate means based on new assignment (faster than looping over k)
-  C = zeros(k,p);  cnts = zeros(k,1);
-  for i=find(IDX>0)'
-    IDx = IDX(i); cnts(IDx)=cnts(IDx)+1;
-    C(IDx,:) = C(IDx,:)+X(i,:);
+  IDX(mind > thr) = -1;
+  % Recalculate means based on new assignment
+  i=1;
+  C = zeros(k,size(X,1));
+  for IDx=1:k
+    cluster = find(IDX==IDx);
+    cnts=size(cluster,1);
+    if (cnts<minCl)
+      IDX(cluster) = -1;
+    else
+      IDX(cluster) = i;
+      C(i,cluster) = 1/cnts;
+      i = i + 1;
+    end
   end
-  C = C ./ cnts(:,ones(1,p));
+  k = i-1;
+  if( k~=0 )
+    C = C(1:k,:)*X;
+  else
+    C = X(randint2( 1,1, [1,N] ),:);
+  end
 
   nIter = nIter+1;
   if( display )
