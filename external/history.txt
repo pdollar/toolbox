@@ -6,7 +6,8 @@ Version NEW
  -tweaked/added to bbApply.m
  -added images/imdownsample (fast bilinear image downsampling)
  -tweaked/added to getPrmDflt.m
- -teaked/improved classify/rbf*
+ -tweaked/improved classify/rbf*
+ -added multiprod.m to external/other
 
 Version 2.12 (17-Nov-08)
  -new version of savefig (also removed exportfig)
