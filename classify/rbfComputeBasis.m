@@ -19,6 +19,9 @@ function rbfBasis = rbfComputeBasis( X, k, cluster, scale, show )
 %  rbfBasis  = rbfComputeBasis( Xtrain, k, cluster, scale, show );
 %  rbfWeight = rbfComputeFtrs(Xtrain,rbfBasis) \ ytrain;
 %  ytest     = rbfComputeFtrs(Xtest,rbfBasis) * rbfWeight;
+% Note, in the returned rbfBasis struct there are a number of flags that
+% control how the rbf features are computed. These can be altered to
+% achieve the desired effect.
 %
 % For an in depth discussion of rbf networks see:
 %  Christopher M. Bishop. "Neural Networks for Pattern Recognition"
@@ -38,17 +41,20 @@ function rbfBasis = rbfComputeBasis( X, k, cluster, scale, show )
 %
 % OUTPUTS
 %  rfbBasis
-%   .d        - feature vector size
-%   .k        - number of basis functions actually used
-%   .mu       - [d x k] rbf centers
-%   .vars     - [1 x k] rbf widths
-%   .var      - rbf average width
+%   .d          - feature vector size
+%   .k          - number of basis functions actually used
+%   .mu         - [d x k] rbf centers
+%   .vars       - [1 x k] rbf widths
+%   .var        - rbf average width
+%   .globalVar  - [1] if true use single average var for rbfs
+%   .constant   - [0] if true include extra basis with constant activation
+%   .normalize  - [0] if true normalize overall rbf response to sum to 1
 %
 % EXAMPLE
 %
 % See also RBFDEMO, RBFCOMPUTEFTRS
 %
-% Piotr's Image&Video Toolbox      Version 2.12
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -69,7 +75,6 @@ else
   %%% GRID generate locations evenly spaced on grid
   if( d>4 ); error('d too high. curse of dimensionality..'); end
   nBPer = round( k ^ (1/d) );  k = nBPer ^ d; rg=[min(X)' max(X)'];
-%   rg=minmax(X'),
   del=(rg(:,2)-rg(:,1))/(nBPer-1); rg=rg+[-del del]/2;
   loc=cell(1,d);  for i=1:d; loc{i}=linspace(rg(i,1),rg(i,2),nBPer); end
   grid=cell(1,d); if(d>1); [grid{:}]=ndgrid(loc{:}); else grid=loc; end
@@ -84,11 +89,14 @@ var  = mean(vars);
 vars = max( vars, var/100 );
 
 %%% store results
-rbfBasis.d     = d;
-rbfBasis.k     = k;
-rbfBasis.mu    = mu;
-rbfBasis.vars  = vars;
-rbfBasis.var   = var;
+rbfBasis.d          = d;
+rbfBasis.k          = k;
+rbfBasis.mu         = mu;
+rbfBasis.vars       = vars;
+rbfBasis.var        = var;
+rbfBasis.globalVar  = 1;
+rbfBasis.constant   = 0;
+rbfBasis.normalize  = 0;
 
 %%% optionally display
 if( abs(show) )
@@ -106,7 +114,7 @@ if( abs(show) )
       plot( xs, ys );
     end
   elseif( d==2 ) % 2D data
-    figure(show); clf; 
+    figure(show); clf;
     minX = min(X,[],1 );  maxX = max(X,[],1 );
     xs1 = linspace(minX(1),maxX(1),25);
     xs2 = linspace(minX(2),maxX(2),25);
