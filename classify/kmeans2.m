@@ -1,4 +1,4 @@
-function [ IDX, C, sumd ] = kmeans2( X, k, prm )
+function [ IDX, C, d ] = kmeans2( X, k, prm )
 % Fast version of kmeans clustering.
 %
 % Cluster the N x p matrix X into k clusters using the kmeans algorithm. It
@@ -25,7 +25,7 @@ function [ IDX, C, sumd ] = kmeans2( X, k, prm )
 % that matlab's version of kmeans does not have outliers.
 %
 % USAGE
-%  [ IDX, C, sumd ] = kmeans2( X, k, [prm] )
+%  [ IDX, C, d ] = kmeans2( X, k, [prm] )
 %
 % INPUTS
 %  X       - [n x p] matrix of n p-dim vectors.
@@ -43,8 +43,8 @@ function [ IDX, C, sumd ] = kmeans2( X, k, prm )
 % OUTPUTS
 %  IDX    - [n x 1] cluster membership (see above)
 %  C      - [k x p] matrix of centroid locations C(j,:) = mean(X(IDX==j,:))
-%  sumd   - [1 x k] sumd(j) is sum of distances from X(IDX==j,:) to C(j,:)
-%           sum(sumd) is a typical measure of the quality of a clustering
+%  d      - [1 x k] d(j) is sum of distances from X(IDX==j,:) to C(j,:)
+%           sum(d) is a typical measure of the quality of a clustering
 %
 % EXAMPLE
 %
@@ -55,97 +55,68 @@ function [ IDX, C, sumd ] = kmeans2( X, k, prm )
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
-%%% get input args
+% get input args
 dfs = {'nTrial',1, 'maxIter',100, 'display',0, 'rndSeed',[],...
-  'outFrac',0, 'minCl',1, 'metric',[] };
-if(isempty(k)); dfs={dfs{:} 'k', 'REQ'}; end;
-if nargin<3 || isempty(prm); prm=struct(); end
-prm = getPrmDflt( prm, dfs );
-nTrial  =prm.nTrial;    maxIter =prm.maxIter;  display =prm.display;
-rndSeed =prm.rndSeed;   outFrac =prm.outFrac;  minCl   =prm.minCl;
-metric  =prm.metric;
-if(isempty(k)); k=prm.k; end;
+  'outFrac',0, 'minCl',1, 'metric',[], 'k','REQ' };
+if(nargin<3 || isempty(prm)), prm=struct(); end
+if(~isempty(k)); dfs{end}=k; end;
+[nTrial,maxt,dsp,rndSeed,outFrac,minCl,metric,k] = getPrmDflt(prm,dfs);
 
 % error checking
 if(k<1); error('k must be greater than 1'); end
 if(ndims(X)~=2 || any(size(X)==0)); error('Illegal X'); end
-if(outFrac<0 || outFrac>=1)
-  error('fraction of outliers must be between 0 and 1'); end
-nOutl = floor( size(X,1)*outFrac );
+if(outFrac<0 || outFrac>=1), error('outFrac must be in [0,1)'); end
+nOut = floor( size(X,1)*outFrac );
 
 % initialize random seed if specified
-if( ~isempty(rndSeed)); rand('state',rndSeed); end; %#ok<RAND>
+if(~isempty(rndSeed)); rand('state',rndSeed); end; %#ok<RAND>
 
 % run kmeans2main nTrial times
-if( display)
-  msg = ['Running kmeans2 with k=' num2str(k)];
-  if( nTrial>1); msg=[msg ', ' num2str(nTrial) ' times.']; end
-  disp(msg);
+bd=inf; t0=clock;
+for i=1:nTrial, t1=clock;
+  if(dsp), fprintf('kmeans2 iter %i/%i step: ',i,nTrial); end
+  [IDX,C,d]=kmeans2main(X,k,nOut,minCl,maxt,dsp,metric);
+  if(sum(d)<sum(bd)), bIDX=IDX; bC=C; bd=d; end
+  if(dsp), fprintf('  d=%f  t=%fs\n',sum(d),etime(clock,t1)); end
 end
-
-bstSumd = inf;
-for i=1:nTrial
-  t0 = clock;
-  if( display)
-    disp(['kmeans iteration ' num2str(i) ' of ' num2str(nTrial) ', step: ']);
-  end
-  [IDX,C,sumd,nIter]=kmeans2main(X,k,nOutl,minCl,maxIter,display,metric);
-  if( sum(sumd)<sum(bstSumd)); bstIDX=IDX; bstC=C; bstSumd=sumd; end
-  if( display && nTrial>1 )
-    fprintf(['\nCompleted iter ' num2str(i) ' of ' num2str(nTrial) '; ' ...
-      'num steps= ' num2str(nIter) ';  sumd=' num2str(sum(sumd)) '\n']);
-    etime(clock, t0);
-  end
-end
-
-IDX = bstIDX; C = bstC; sumd = bstSumd; k = max(IDX);
-if(display)
-  if(nTrial==1); fprintf('\n'); end
-  disp(['Final num clusters = ' num2str( k ) ';  sumd=' num2str(sum(sumd))]);
-end
+IDX=bIDX; C=bC; d=bd; k=max(IDX);
+if(dsp), fprintf('k=%i  d=%f  t=%fs\n',k,sum(d),etime(clock,t0)); end
 
 % sort IDX to have biggest clusters have lower indicies
 cnts = zeros(1,k); for i=1:k; cnts(i) = sum( IDX==i ); end
-[ids,order] = sort( -cnts );  C = C(order,:);  sumd = sumd(order);
-IDX2 = IDX;  for i=1:k; IDX2(IDX==order(i))=i; end; IDX = IDX2;
+[ids,order] = sort( -cnts ); C = C(order,:); d = d(order);
+IDX2=IDX; for i=1:k; IDX2(IDX==order(i))=i; end; IDX = IDX2;
 
-function [ IDX, C, sumd, nIter ] = kmeans2main( X, k, nOutl, ...
-  minCl, maxIter, display, metric )
+end
+
+function [IDX, C, d] = kmeans2main( X, k, nOut, minCl, maxt, dsp, metric )
 
 % initialize cluster centers to be k random X points
-[N,p] = size(X);  k = min(k,N);
+[N p] = size(X); k = min(k,N);
 IDX = ones(N,1); oldIDX = zeros(N,1);
-C = X(randsample(N,k),:);
+C = X(randsample(N,k),:); t = 0;
 
 % MAIN LOOP: loop until the cluster assigments do not change
-nIter = 0;  ndisdigits = ceil( log10(maxIter-1) );
-if( display ); fprintf( ['\b' repmat( '0',[1,ndisdigits] )] ); end
-while( any(oldIDX~=IDX) && nIter < maxIter)
-  
+if(dsp), nDg=ceil(log10(maxt-1)); fprintf(int2str2(0,nDg)); end
+while( any(oldIDX~=IDX) && t<maxt )
   % assign each point to closest cluster center
-  oldIDX = IDX;  D = pdist2( X, C, metric ); [mind IDX] = min(D,[],2);
+  oldIDX=IDX; D=pdist2(X,C,metric); [mind IDX]=min(D,[],2);
   
-  % do not use most distant nOutl elements in computation of centers
-  mindsort = sort(mind); thr = mindsort(end-nOutl);  IDX(mind > thr) = -1;
+  % do not use most distant nOut elements in computation of centers
+  mind1=sort(mind); thr=mind1(end-nOut); IDX(mind>thr)=-1;
   
-  % Recalculate means C based on new assignment
+  % Recalculate means based on new assignment, discard small clusters
   k0=0; C=zeros(k,p);
   for IDx=1:k
     ids=find(IDX==IDx); nCl=size(ids,1);
-    if( nCl<minCl ) % discard small clusters [add to outliers]
-      IDX(ids)=-1;
-    else % reassign cluster index, store new mean
-      k0=k0+1; IDX(ids)=k0;
-      C(k0,:)=sum(X(ids,:),1)/nCl;
-    end
+    if( nCl<minCl ), IDX(ids)=-1; continue; end
+    k0=k0+1; IDX(ids)=k0; C(k0,:)=sum(X(ids,:),1)/nCl;
   end
   if(k0>0), k=k0; C=C(1:k,:); else k=1; C=X(randint2(1,1,[1 N]),:); end
-  
-  nIter = nIter+1;
-  if( display )
-    fprintf( [repmat('\b',[1 ndisdigits]) int2str2(nIter,ndisdigits)] );
-  end;
+  t=t+1; if(dsp), fprintf([repmat('\b',[1 nDg]) int2str2(t,nDg)]); end
 end
 
 % record within-cluster sums of point-to-centroid distances
-sumd = zeros(1,k); for i=1:k;  sumd(i) = sum( mind(IDX==i) ); end
+d=zeros(1,k); for i=1:k, d(i)=sum(mind(IDX==i)); end
+
+end
