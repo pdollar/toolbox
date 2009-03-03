@@ -1,10 +1,12 @@
 Version NEW
+ -sped up classify/kmeans2 even more
  -tweaked/improved confMatrixShow
  -removed restriction that pidst2 must use type double
  -added matlab/uniqueColor.m for generating random colors
  -tweaked/added to bbApply.m
  -added images/imdownsample (fast bilinear image downsampling)
  -tweaked/added to getPrmDflt.m
+ -teaked/improved classify/rbf*
 
 Version 2.12 (17-Nov-08)
  -new version of savefig (also removed exportfig)
