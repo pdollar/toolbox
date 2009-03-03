@@ -113,7 +113,7 @@ function [ IDX, C, sumd, nIter ] = kmeans2main( X, k, nOutl, ...
   minCl, maxIter, display, metric )
 
 % initialize cluster centers to be k random X points
-[N p] = size(X);  k = min(k,N);
+[N,p] = size(X);  k = min(k,N);
 IDX = ones(N,1); oldIDX = zeros(N,1);
 C = X(randsample(N,k),:);
 
@@ -121,36 +121,26 @@ C = X(randsample(N,k),:);
 nIter = 0;  ndisdigits = ceil( log10(maxIter-1) );
 if( display ); fprintf( ['\b' repmat( '0',[1,ndisdigits] )] ); end
 while( any(oldIDX~=IDX) && nIter < maxIter)
-
+  
   % assign each point to closest cluster center
   oldIDX = IDX;  D = pdist2( X, C, metric ); [mind IDX] = min(D,[],2);
-
-  % do not use most distant nOutl elements in computation of  centers
-  mindsort = sort(mind); thr = mindsort(end-nOutl);
-
-  % discard small clusters [add to outliers, will get included next iter]
-  IDX(mind > thr) = -1;
-  % Recalculate means based on new assignment
-  i=1;
-  C = zeros(k,size(X,1));
+  
+  % do not use most distant nOutl elements in computation of centers
+  mindsort = sort(mind); thr = mindsort(end-nOutl);  IDX(mind > thr) = -1;
+  
+  % Recalculate means C based on new assignment
+  k0=0; C=zeros(k,p);
   for IDx=1:k
-    cluster = find(IDX==IDx);
-    cnts=size(cluster,1);
-    if (cnts<minCl)
-      IDX(cluster) = -1;
-    else
-      IDX(cluster) = i;
-      C(i,cluster) = 1/cnts;
-      i = i + 1;
+    ids=find(IDX==IDx); nCl=size(ids,1);
+    if( nCl<minCl ) % discard small clusters [add to outliers]
+      IDX(ids)=-1;
+    else % reassign cluster index, store new mean
+      k0=k0+1; IDX(ids)=k0;
+      C(k0,:)=sum(X(ids,:),1)/nCl;
     end
   end
-  k = i-1;
-  if( k~=0 )
-    C = C(1:k,:)*X;
-  else
-    C = X(randint2( 1,1, [1,N] ),:);
-  end
-
+  if(k0>0), k=k0; C=C(1:k,:); else k=1; C=X(randint2(1,1,[1 N]),:); end
+  
   nIter = nIter+1;
   if( display )
     fprintf( [repmat('\b',[1 ndisdigits]) int2str2(nIter,ndisdigits)] );
