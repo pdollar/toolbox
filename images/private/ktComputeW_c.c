@@ -44,7 +44,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   B = (uchar*) mxGetData(prhs[0]);
   q = mxGetPr(prhs[1]);
   p = mxGetPr(prhs[2]);
-  nBits = mxGetScalar(prhs[3]);
+  nBits = (int) mxGetScalar(prhs[3]);
   
   /* create output variable -- nBins = 2^nBits */
   dims[0]=n; dims[1]=1;

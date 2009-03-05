@@ -20,24 +20,31 @@
 
 disp('Compiling.......................................');
 
+optionsLinux = {};
+if  strcmp(computer,'GLNX86')
+  optionsLinux  = { 'CXX=g++-4.1' 'CC=g++-4.1' 'LD=g++-4.1' };
+end
+
 dir = 'classify/private/';
-mex([dir 'meanShift1.c'],           '-outdir', dir );
+options = { '-outdir' dir optionsLinux{:} };
+mex([dir 'meanShift1.c'],           options{:} );
 
 dir = 'images/private/';
-mex([dir 'assignToBins1.c'],        '-outdir', dir );
-mex([dir 'histc2c.c'],              '-outdir', dir );
-mex([dir 'ktHistcRgb_c.c'],         '-outdir', dir );
-mex([dir 'ktComputeW_c.c'],         '-outdir', dir );
-mex([dir 'maskEllipse1.c'],         '-outdir', dir );
-mex([dir 'nlfiltersep_max.c'],      '-outdir', dir );
-mex([dir 'nlfiltersep_sum.c'],      '-outdir', dir );
-mex([dir 'nlfiltersep_blocksum.c'], '-outdir', dir );
-mex([dir 'imDownsample.c'],         '-outdir', 'images' );
+options = { '-outdir' dir optionsLinux{:} };
+mex([dir 'assignToBins1.c'],        options{:} );
+mex([dir 'histc2c.c'],              options{:} );
+mex([dir 'ktHistcRgb_c.c'],         options{:} );
+mex([dir 'ktComputeW_c.c'],         options{:} );
+mex([dir 'maskEllipse1.c'],         options{:} );
+mex([dir 'nlfiltersep_max.c'],      options{:} );
+mex([dir 'nlfiltersep_sum.c'],      options{:} );
+mex([dir 'nlfiltersep_blocksum.c'], options{:} );
+mex([dir 'imDownsample.c'],         options{:} );
 
 try
   % requires c++ compiler
   dir='matlab/private/';
-  options={'-output', 'dijkstra', '-outdir', 'matlab'};
+  options={'-output', 'dijkstra', '-outdir', 'matlab', optionsLinux{:} };
   mex([dir 'fibheap.cpp'],[dir 'dijkstra.cpp'], options{:} );
 catch ME
   fprintf(['Dijkstra''s shortest path algorithm compile failed,\n' ...

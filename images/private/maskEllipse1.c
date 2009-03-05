@@ -39,7 +39,7 @@ unsigned int get_ellipse_interior_inds(int* interior_pnts, int mrows, int ncols,
   sint = b*sintheta/denom;   cost = a*costheta/denom;
   coladd = a*costheta*cost + b*sintheta*sint;
   if(coladd < 0) coladd = -coladd;
-  colsmall = ceil( ccol - coladd );  colbig = floor( ccol + coladd );
+  colsmall = (int) ceil( ccol - coladd );  colbig = (int) floor( ccol + coladd );
   if(colsmall < 1) colsmall = 1;     if(colbig > ncols) colbig = ncols;
     
   /* Find the top and bottom points for each c */
@@ -106,8 +106,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   theta = mxGetScalar( prhs[4] );
 
   /* extract arguments (image size) */  
-  mrows = mxGetScalar( prhs[5] );
-  ncols = mxGetScalar( prhs[6] );
+  mrows = (int) mxGetScalar( prhs[5] );
+  ncols = (int) mxGetScalar( prhs[6] );
   
   /* create output array */
   plhs[1] = mxCreateNumericMatrix( mrows * ncols, 2, mxINT32_CLASS, mxREAL );
