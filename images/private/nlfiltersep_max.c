@@ -1,113 +1,65 @@
-/*********************************************************************
-* DATESTAMP  29-Sep-2005  2:00pm
-* Piotr's Image&Video Toolbox      Version 1.0   
-* Written and maintained by Piotr Dollar    pdollar-at-cs.ucsd.edu 
-* Please email me if you find bugs, or have suggestions or questions! 
-*********************************************************************/
-
-
+/***************************************************************************
+* Piotr's Image&Video Toolbox      Version 2.2
+* Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
+* Please email me if you find bugs, or have suggestions or questions!
+* Licensed under the Lesser GPL [see external/lgpl.txt]
+***************************************************************************/
 #include "mex.h"
 
-/* 
-    Please see accompanying m file for usage.
-    
-    Row non-linear seperable filter - max  (see nlfilt_sep)
-    
-    Given an mxn array A and a radius r, replaces each element A[i] with
-    the maximum value in A within r elements of i along the FIRST dimension -
-    ie along each ROW.  
-    
-    Example:
-    >>  rnlfilt_max( [ 1 9; 5 9; 0 0; 4 8; 7 3; 2 6], 1 )
-        ans =
-             5     9
-             5     9
-             5     9
-             7     8
-             7     8
-             7     6
+#define arraymax(A,m,s,e,i) m=A[s]; for(i=s+1; i<=e; i++) { m=((A[i])>(m)?(A[i]):(m)); };
+int	maxi( int x, int y ) { return (x > y) ? x : y; };
+int	mini( int x, int y ) { return (x < y) ? x : y; };
 
-    Note that A must have type double. Works for multidimensional 
-    arrays but will need to reshape output. 
-*/
-    
-
-#define max(A,B) ( (A) > (B) ? (A):(B))
-#define min(A,B) ( (A) < (B) ? (A):(B))
-#define arraymax(A,m,s,e,i) m=A[s];  for(i=s+1; i<=e; i++) { m=((A[i])>(m)?(A[i]):(m)); };
-
-/**
- * B(i,j) is the max of A(i-r1:i+r2,j).  It has the same dimensions as A.
- * For efficiency, the leading and ending border calculations are done separately 
- * (these require an if statement every iteration). Works even if r1 or r2 is as big 
- * as A, except in this case no 'main calculations' are done and there is some 
- * duplication of effort.
- */
-void rnlfilt_max( const double *A, double *B, const int r1, const int r2, 
-                            const int mrows, const int ncols )
+/***************************************************************************
+* Row non-linear seperable filter - max (see nlfiltersep.m)
+*  x = nlfiltersep_max( [ 1 9; 5 9; 0 0; 4 8; 7 3; 2 6], 1, 1 )
+*  y = [5 9; 5 9; 5 9; 7 8; 7 8; 7 6]; x-y
+* B(i,j) is the max of A(i-r1:i+r2,j). It has the same dims as A.
+* Border calculations are done separately for efficiency.
+***************************************************************************/
+void nlfiltersep_max( const double *A, double *B, int r1, int r2, int mRows, int nCols )
 {
-    int i;
-    double m;
-    int rowstart, e, s;
-    int rowi, coli;
-    
-    for( coli=0; coli<ncols; coli++ ) {
-        rowstart = mrows * coli;
-    
-        /* leading border calculations */
-        for(rowi=0; rowi<min(r1,mrows-1); rowi++) {
-            e = min( rowi+r2, mrows-1 );
-            arraymax( A, m, rowstart, rowstart+e, i ); 
-            B[rowi+rowstart] = m;
-        }
-    
-        /* main caclulations */
-        for(rowi=r1; rowi<mrows-r2; rowi++) {
-            arraymax( A, m, rowi-r1+rowstart, rowi+r2+rowstart, i ); 
-            B[rowi+rowstart] = m;
-        }
-    
-        /* end border calculations */
-        for(rowi=max(mrows-r2-1,0); rowi<mrows; rowi++) {
-            s = max( rowi-r1, 0 );
-            arraymax( A, m, s+rowstart, mrows-1+rowstart, i ); 
-            B[rowi+rowstart] = m;
-        }
-    }
+	int i, row0, e, s, r, c; double m;
+	for( c=0; c<nCols; c++ ) {
+		row0 = mRows * c;
+		/* leading border calculations */
+		for(r=0; r<mini(r1,mRows-1); r++) {
+			e = mini( r+r2, mRows-1 );
+			arraymax( A, m, row0, row0+e, i );
+			B[r+row0] = m;
+		}
+		/* main caclulations */
+		for(r=r1; r<mRows-r2; r++) {
+			arraymax( A, m, r-r1+row0, r+r2+row0, i ); B[r+row0]=m;
+		}
+		/* end border calculations */
+		for(r=maxi(mRows-r2-1,0); r<mRows; r++) {
+			s = maxi( r-r1, 0 );
+			arraymax( A, m, s+row0, mRows-1+row0, i );
+			B[r+row0] = m;
+		}
+	}
 }
 
-
-
-
-void mexFunction(int nlhs, mxArray *plhs[], int nrhs,
-                 const mxArray *prhs[])
+void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
-  /* Declare variables. */ 
-  int mrows, ncols;
-  double *A; double* B;
-  int r1, r2;
+	int mRows, nCols, r1, r2; double *A, *B;
 
-  
-  /* Error checking on arguments */    
-  if (nrhs != 3)
-    mexErrMsgTxt("Three input arguments required.");
-  if (nlhs > 1) 
-    mexErrMsgTxt("Too many output arguments.");
-  mrows = mxGetM( prhs[0] );   ncols = mxGetN( prhs[0] );
-  if (mxIsComplex(prhs[1]) || !(mxGetM(prhs[1])==1 && mxGetN(prhs[1])==1))
-    mexErrMsgTxt("2nd input must be a noncomplex scalar.");   
-  if (mxIsDouble(prhs[0])==0)
-    mexErrMsgTxt("Input array must be of type double.");  
-    
-  /* extract arguments */
-  A = (double *) mxGetData(prhs[0]);
-  r1 = (int) mxGetScalar(prhs[1]);
-  r2 = (int) mxGetScalar(prhs[2]);
-  
-  /* create output array */
-  plhs[0] = mxCreateDoubleMatrix(mrows, ncols, mxREAL );
-  B = (double *) mxGetData(plhs[0]);
-  
-  /* Apply filter */
-  rnlfilt_max( A, B, r1, r2, mrows, ncols );
+	/* Error checking on arguments */
+	if( nrhs!=3 ) mexErrMsgTxt("Three input arguments required.");
+	if( nlhs>1 ) mexErrMsgTxt("Too many output arguments.");
+	mRows = mxGetM(prhs[0]); nCols = mxGetN(prhs[0]);
+	if(!mxIsDouble(prhs[0])) mexErrMsgTxt("Input array must be of type double.");
+
+	/* extract inputs */
+	A = (double*) mxGetData(prhs[0]);
+	r1 = (int) mxGetScalar(prhs[1]);
+	r2 = (int) mxGetScalar(prhs[2]);
+
+	/* create outputs */
+	plhs[0] = mxCreateDoubleMatrix(mRows, nCols, mxREAL );
+	B = (double*) mxGetData(plhs[0]);
+
+	/* Apply filter */
+	nlfiltersep_max( A, B, r1, r2, mRows, nCols );
 }
