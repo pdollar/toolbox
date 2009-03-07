@@ -25,13 +25,11 @@ function Xrbf = rbfComputeFtrs( X, rbfBasis )
 N = size(X,1);
 k = rbfBasis.k;
 mu = rbfBasis.mu';
+d = size(mu,2);
 
 % compute distance to each basis function
 % mu=[k x d]; onesK=[k x 1]; Xi=[1 x d];
-Xrbf=zeros(N,k); onesK=ones(k,1);
-for i=1:N
-  Xrbf(i,:) = sum(((X(onesK*i,:)-mu)).^2,2);
-end
+Xrbf = sum(bsxfun(@minus,reshape(X,[N 1 d]),reshape(mu,[1 k d])).^2,3);
 
 % compute gaussian response
 if( rbfBasis.globalVar )
