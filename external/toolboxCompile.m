@@ -22,9 +22,7 @@ disp('Compiling.......................................');
 
 % general compile options
 opts0 = {'-outdir'};
-if(strcmp(computer,'GLNX86'))
-  opts0=['CXX=g++-4.1' 'CC=g++-4.1' 'LD=g++-4.1' opts0];
-end
+%opts0=['CXX=g++-4.1' 'CC=g++-4.1' 'LD=g++-4.1' opts0];
 
 dir='classify/private/'; opts=[opts0 dir];
 mex([dir 'meanShift1.c'],           opts{:} );
