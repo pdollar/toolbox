@@ -1,4 +1,4 @@
-Version 2.2 (06-Mar-09)
+Version 2.20 (06-Mar-09)
  -optimized classify/kmeans2 and classify/meanShift
  -added matlab/uniqueColor.m for generating random colors
  -added images/imDownsample (fast bilinear image downsampling) 
