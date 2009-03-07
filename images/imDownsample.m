@@ -4,11 +4,12 @@
 % (results are a bit sharper). Inspired by resize.cpp from Deva Ramanan.
 %
 % USAGE
-%   B = imDownsample( A, scale )
+%  B = imDownsample( A, scaleHt, [scaleWd] )
 %
 % INPUT
-%   A       - input image, 2D or 3D, must have type double
-%   scale   - resize ratio 0<scale<=1
+%  A        - input image, 2D or 3D, must have type double
+%  scaleHt  - resize ratio 0<scaleHt<=1
+%  scaleWd  - [] resize ratio 0<scaleWd<=1, defaults to scaleHt
 %
 % OUPUT
 %   B       - downsampled image

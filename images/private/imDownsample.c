@@ -61,20 +61,20 @@ void			downsample1( double *A, double *B, int ha, int hb, int w, int nCh )
 void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
 	/* B=downsample(A,scale) - A should be 2 or 3 dim with double vals */
-	double scale; int *ns, ms[3], nCh, nDims; double *A,*B,*T;
+	double scale0, scale1; int *ns, ms[3], nCh, nDims; double *A,*B,*T;
 
 	/* Error checking on arguments */
-	if( nrhs!=2 ) mexErrMsgTxt("Two inputs expected.");
+	if( nrhs<2 || nrhs>3) mexErrMsgTxt("Two or three inputs expected.");
 	if( nlhs>1 ) mexErrMsgTxt("One output expected.");
 	nDims=mxGetNumberOfDimensions(prhs[0]);
 	if( (nDims!=2 && nDims!=3) || mxGetClassID(prhs[0])!=mxDOUBLE_CLASS)
 		mexErrMsgTxt("A must be a double 2 or 3 dim array.");
-	scale = mxGetScalar(prhs[1]);
-	if( scale>1 ) mexErrMsgTxt("Scaling factor must be at most 1.");
+	scale0=mxGetScalar(prhs[1]); scale1=(nrhs==3)?mxGetScalar(prhs[2]):scale0;
+	if( scale0>1 || scale1>1 ) mexErrMsgTxt("Scaling factor must be at most 1.");
 
 	/* create output array */
 	ns = (int*) mxGetDimensions(prhs[0]); nCh=(nDims==2) ? 1 : ns[2];
-	ms[0]=(int)(ns[0]*scale+.5); ms[1]=(int)(ns[1]*scale+.5); ms[2]=nCh;
+	ms[0]=(int)(ns[0]*scale0+.5); ms[1]=(int)(ns[1]*scale1+.5); ms[2]=nCh;
 	plhs[0] = mxCreateNumericArray(3,ms,mxDOUBLE_CLASS, mxREAL);
 
 	/* Perform rescaling */
