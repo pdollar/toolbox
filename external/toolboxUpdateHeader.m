@@ -14,13 +14,13 @@ function toolboxUpdateHeader
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version NEW
+% Piotr's Image&Video Toolbox      Version 2.20
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 header={
-  '% Piotr''s Image&Video Toolbox      Version 2.12'; ...
+  '% Piotr''s Image&Video Toolbox      Version 2.20'; ...
   '% Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]'; ...
   '% Please email me if you find bugs, or have suggestions or questions!'; ...
   '% Licensed under the Lesser GPL [see external/lgpl.txt]'};
@@ -54,7 +54,7 @@ if(loc>n-nHeader+1), warning([fName ' no header']); return; end %#ok<WNTAG>
 for i=1:nHeader; assert( strfind(lines{loc+i-1},header{i}(1:10))>0 ); end
 
 % check if first lines changed, if so update; optionally update rest
-if(any(strfind(lines{loc},'NEW'))); lines{loc}=header{1}; end;
+if(any(strfind(lines{loc},'NEW'))); lines{loc}=header{1}; else return; end
 if(1), for i=2:nHeader; lines{loc+i-1}=header{i}; end; end
 assert(isempty(lines{loc-1}) || strcmp(lines{loc-1},'%'));
 if(1), lines{loc-1} = '%'; end
