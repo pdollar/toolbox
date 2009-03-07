@@ -20,7 +20,7 @@
 <div class="box"><strong>Helper to set default values (if not already set) of parameter struct.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function varargout = getPrmDflt( prm, dfs ) </strong></div>
+<div class="box"><strong>function varargout = getPrmDflt( prm, dfs, checkExtra ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment"> Helper to set default values (if not already set) of parameter struct.
@@ -32,14 +32,15 @@
  'name' is not given, an error is thrown. See below for usage details.
 
  USAGE (nargout==1)
-  prm = getPrmDflt( prm, dfs )
+  prm = getPrmDflt( prm, dfs, [checkExtra] )
 
  USAGE (nargout&gt;1)
-  [ param1 ... paramN ] = getPrmDflt( prm, dfs )
+  [ param1 ... paramN ] = getPrmDflt( prm, dfs, [checkExtra] )
 
  INPUTS
-  prm    - parameter struct or cell of form {'name1' v1 'name2' v2 ...}
-  dfs    - cell of form {'name1' def1 'name2' def2 ...}
+  prm          - param struct or cell of form {'name1' v1 'name2' v2 ...}
+  dfs          - cell of form {'name1' def1 'name2' def2 ...}
+  checkExtra   - [0] if 1 throw error if prm contains params not in dfs
 
  OUTPUTS (nargout==1)
   prm    - parameter struct with fields 'name1' through 'nameN' assigned
@@ -54,10 +55,10 @@
   prm = getPrmDflt( struct('x',1,'y',1), dfs )
   [ x y z eps ] = getPrmDflt( {'x',2,'y',1}, dfs )
 
- See also
+ See also INPUTPARSER
 
- Piotr's Image&amp;Video Toolbox      Version 2.10
- Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 2.20
+ Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
 
@@ -68,7 +69,7 @@ This function calls:
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="../classify/kmeans2.html" class="code" title="function [ IDX, C, sumd ] = kmeans2( X, k, prm )">kmeans2</a>	Fast version of kmeans clustering.</li><li><a href="../images/kernelTracker.html" class="code" title="function [allRct, allSim, allIc] = kernelTracker( I, prm )">kernelTracker</a>	Kernel Tracker from Comaniciu, Ramesh and Meer PAMI 2003.</li><li><a href="../images/makeGif.html" class="code" title="function makeGif( M, fileName, prm )">makeGif</a>	Writes a matlab movie to an animated GIF.</li><li><a href="../images/montage2.html" class="code" title="function varargout = montage2( IS, prm )">montage2</a>	Used to display collections of images and videos.</li><li><a href="../images/playMovie.html" class="code" title="function M = playMovie( I, fps, loop, prm )">playMovie</a>	Shows/makes an/several movie(s) from an image sequence.</li><li><a href="plotRoc.html" class="code" title="function h = plotRoc( D, varargin )">plotRoc</a>	Function for display of rocs (receiver operator characteristic curves).</li></ul>
+<li><a href="../classify/kmeans2.html" class="code" title="function [ IDX, C, d ] = kmeans2( X, k, prm )">kmeans2</a>	Fast version of kmeans clustering.</li><li><a href="../images/kernelTracker.html" class="code" title="function [allRct, allSim, allIc] = kernelTracker( I, prm )">kernelTracker</a>	Kernel Tracker from Comaniciu, Ramesh and Meer PAMI 2003.</li><li><a href="../images/makeGif.html" class="code" title="function makeGif( M, fileName, prm )">makeGif</a>	Writes a matlab movie to an animated GIF.</li><li><a href="../images/montage2.html" class="code" title="function varargout = montage2( IS, prm )">montage2</a>	Used to display collections of images and videos.</li><li><a href="../images/playMovie.html" class="code" title="function M = playMovie( I, fps, loop, prm )">playMovie</a>	Shows/makes an/several movie(s) from an image sequence.</li><li><a href="plotRoc.html" class="code" title="function h = plotRoc( D, varargin )">plotRoc</a>	Function for display of rocs (receiver operator characteristic curves).</li></ul>
 <!-- crossreference -->
 
 

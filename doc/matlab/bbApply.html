@@ -26,7 +26,7 @@
 <div class="fragment"><pre class="comment"> Functions for manipulating bounding boxes (bb).
 
  A bounding box (bb) is also known as a position vector or a rectangle
- object. It is a four element vector with the fields: [l r w h]. A set of
+ object. It is a four element vector with the fields: [x y w h]. A set of
  n bbs can be stores as an [nx4] array, most funcitons below can handle
  either a single or multiple bbs. In addtion, typically [nxm] inputs with
  m&gt;4 are ok (with the additional columns ignored/copied to the output).
@@ -52,10 +52,10 @@
 
  See also bbApply&gt;area bbApply&gt;shift bbApply&gt;getCenter bbApply&gt;intersect
  bbApply&gt;union bbApply&gt;resize bbApply&gt;squarify bbApply&gt;draw bbApply&gt;crop
- bbApply&gt;convert
+ bbApply&gt;convert bbApply&gt;random bbApply&gt;nms
 
- Piotr's Image&amp;Video Toolbox      Version 2.12
- Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 2.20
+ Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
 
@@ -63,7 +63,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="arrayCrop.html" class="code" title="function I = arrayCrop( I, strLocs, endLocs, padEl )">arrayCrop</a>	Used to crop a rectangular region from an n dimensional array.</li></ul>
+<li><a href="../images/nonMaxSuprList.html" class="code" title="function [subs,vals,keep] = nonMaxSuprList( subs, vals, radii,thresh, maxn, flag)">nonMaxSuprList</a>	Applies nonmaximal suppression to a list.</li><li><a href="arrayCrop.html" class="code" title="function I = arrayCrop( I, strLocs, endLocs, padEl )">arrayCrop</a>	Used to crop a rectangular region from an n dimensional array.</li><li><a href="randint2.html" class="code" title="function R = randint2( m, n, range )">randint2</a>	Faster but restricted version of randint.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>

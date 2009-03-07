@@ -43,6 +43,9 @@
   rbfBasis  = rbfComputeBasis( Xtrain, k, cluster, scale, show );
   rbfWeight = rbfComputeFtrs(Xtrain,rbfBasis) \ ytrain;
   ytest     = rbfComputeFtrs(Xtest,rbfBasis) * rbfWeight;
+ Note, in the returned rbfBasis struct there are a number of flags that
+ control how the rbf features are computed. These can be altered to
+ achieve the desired effect.
 
  For an in depth discussion of rbf networks see:
   Christopher M. Bishop. &quot;Neural Networks for Pattern Recognition&quot;
@@ -62,18 +65,21 @@
 
  OUTPUTS
   rfbBasis
-   .d        - feature vector size
-   .k        - number of basis functions actually used
-   .mu       - [d x k] rbf centers
-   .vars     - [1 x k] rbf widths
-   .var      - rbf average width
+   .d          - feature vector size
+   .k          - number of basis functions actually used
+   .mu         - [d x k] rbf centers
+   .vars       - [1 x k] rbf widths
+   .var        - rbf average width
+   .globalVar  - [1] if true use single average var for rbfs
+   .constant   - [0] if true include extra basis with constant activation
+   .normalize  - [0] if true normalize overall rbf response to sum to 1
 
  EXAMPLE
 
  See also <a href="rbfDemo.html" class="code" title="function rbfDemo( dataType, noiseSig, scale, k, cluster, show )">RBFDEMO</a>, <a href="rbfComputeFtrs.html" class="code" title="function Xrbf = rbfComputeFtrs( X, rbfBasis )">RBFCOMPUTEFTRS</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.12
- Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 2.20
+ Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
 
@@ -81,7 +87,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="kmeans2.html" class="code" title="function [ IDX, C, sumd ] = kmeans2( X, k, prm )">kmeans2</a>	Fast version of kmeans clustering.</li><li><a href="pdist2.html" class="code" title="function D = pdist2( X, Y, metric )">pdist2</a>	Calculates the distance between sets of vectors.</li><li><a href="../images/clusterMontage.html" class="code" title="function IC = clusterMontage( I, IDX, nElem, pad )">clusterMontage</a>	Used for visualization of clusters of images and videos.</li><li><a href="../images/montage2.html" class="code" title="function varargout = montage2( IS, prm )">montage2</a>	Used to display collections of images and videos.</li></ul>
+<li><a href="kmeans2.html" class="code" title="function [ IDX, C, d ] = kmeans2( X, k, prm )">kmeans2</a>	Fast version of kmeans clustering.</li><li><a href="pdist2.html" class="code" title="function D = pdist2( X, Y, metric )">pdist2</a>	Calculates the distance between sets of vectors.</li><li><a href="../images/clusterMontage.html" class="code" title="function IC = clusterMontage( I, IDX, nElem, pad )">clusterMontage</a>	Used for visualization of clusters of images and videos.</li><li><a href="../images/montage2.html" class="code" title="function varargout = montage2( IS, prm )">montage2</a>	Used to display collections of images and videos.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 <li><a href="rbfDemo.html" class="code" title="function rbfDemo( dataType, noiseSig, scale, k, cluster, show )">rbfDemo</a>	Demonstration of rbf networks for regression.</li></ul>
