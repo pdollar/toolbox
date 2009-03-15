@@ -36,6 +36,7 @@
 %   ind2sub2          - Improved version of ind2sub.
 %   isfield2          - Similar to isfield but also test whether fields are initialized.
 %   int2str2          - Convert integer to string of given length; improved version of int2str.
+%   multiTimes        - Matrix multiply each submatrix of two 3D arrays without looping.
 %   normpdf2          - Normal prob. density function (pdf) with arbitrary covariance matrix.
 %   num2strs          - Applies num2str to each element of an array X.
 %   plotRoc           - Function for display of rocs (receiver operator characteristic curves).
