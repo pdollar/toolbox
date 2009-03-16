@@ -12,7 +12,7 @@
 #include "mex.h"
 
 /* struct used for caching interpolation values for single column */
-typedef struct { int ya, yb; double weight; } InterpInfo;
+typedef struct { int ya, yb; double wt; } InterpInfo;
 
 InterpInfo*		copmuteInterpInfo( int ha, int hb, int *n )
 {
@@ -24,13 +24,13 @@ InterpInfo*		copmuteInterpInfo( int ha, int hb, int *n )
 	for( yb=0; yb<hb; yb++ ) {
 		yaStr=(int)ceil(yaStrf); yaEnd=(int)floor(yaEndf);
 		if( yaStr-yaStrf > 1e-3 ) { /* upper elt contributing to yb */
-			ii[c].yb=yb; ii[c].ya=yaStr-1; ii[c].weight=(yaStr-yaStrf)*sc; c++;
+			ii[c].yb=yb; ii[c].ya=yaStr-1; ii[c].wt=(yaStr-yaStrf)*sc; c++;
 		}
 		for( ya=yaStr; ya<yaEnd; ya++ ) { /* main elts contributing to yb */
-			ii[c].yb=yb; ii[c].ya=ya; ii[c].weight=sc; c++;
+			ii[c].yb=yb; ii[c].ya=ya; ii[c].wt=sc; c++;
 		}
 		if( yaEndf-yaEnd > 1e-3 ) { /* lower elt contributing to yb */
-			ii[c].yb=yb; ii[c].ya=yaEnd; ii[c].weight=(yaEndf-yaEnd)*sc; c++;
+			ii[c].yb=yb; ii[c].ya=yaEnd; ii[c].wt=(yaEndf-yaEnd)*sc; c++;
 		}
 		yaStrf=yaEndf; yaEndf+=scInv;
 	}
@@ -46,7 +46,7 @@ void			downsample( double *A, double *B, int ha, int hb, int w, int nCh )
 	for(ch=0; ch<nCh; ch++) for(x=0; x<w; x++) {
 		a = A + ch*w*ha + x*ha;
 		b = B + ch*w*hb + x;
-		for(y=0; y<n; y++) b[ii[y].yb]+=ii[y].weight*a[ii[y].ya];
+		for(y=0; y<n; y++) b[ii[y].yb]+=ii[y].wt*a[ii[y].ya];
 	}
 	mxFree(ii);
 }
@@ -54,13 +54,13 @@ void			downsample( double *A, double *B, int ha, int hb, int w, int nCh )
 void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
 	/* B=downsample(A,scale) - A should be 2 or 3 dim with double vals */
-	double scale0, scale1; int *ns, ms[3], nCh, nDims; double *A,*B,*T;
+	double scale0, scale1; int *ns, ms[3], nCh, nDims; void *A,*B,*T; mxClassID id;
 
 	/* Error checking on arguments */
 	if( nrhs<2 || nrhs>3) mexErrMsgTxt("Two or three inputs expected.");
 	if( nlhs>1 ) mexErrMsgTxt("One output expected.");
-	nDims=mxGetNumberOfDimensions(prhs[0]);
-	if( (nDims!=2 && nDims!=3) || mxGetClassID(prhs[0])!=mxDOUBLE_CLASS)
+	nDims=mxGetNumberOfDimensions(prhs[0]); id=mxGetClassID(prhs[0]);
+	if( (nDims!=2 && nDims!=3) || id!=mxDOUBLE_CLASS )
 		mexErrMsgTxt("A must be a double 2 or 3 dim array.");
 	scale0=mxGetScalar(prhs[1]); scale1=(nrhs==3)?mxGetScalar(prhs[2]):scale0;
 
@@ -68,13 +68,12 @@ void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	ns = (int*) mxGetDimensions(prhs[0]); nCh=(nDims==2) ? 1 : ns[2]; ms[2]=nCh;
 	ms[0]=(int) ((scale0<=1) ? ns[0]*scale0+.5 : scale0);
 	ms[1]=(int) ((scale1<=1) ? ns[1]*scale1+.5 : scale1);
-	plhs[0] = mxCreateNumericArray(3,ms,mxDOUBLE_CLASS, mxREAL);
+	plhs[0] = mxCreateNumericArray(3,ms,id,mxREAL);
 
 	/* Perform rescaling */
-	A = (double*) mxGetPr(prhs[0]);
-	B = (double*) mxGetPr(plhs[0]);
-	T = (double*) mxCalloc(ms[0]*ns[1]*nCh, sizeof(double));
-	downsample(A, T, ns[0], ms[0], ns[1], nCh);
-	downsample(T, B, ns[1], ms[1], ms[0], nCh);
+	A=mxGetData(prhs[0]); B=mxGetData(plhs[0]);
+	T=mxCalloc(ms[0]*ns[1]*nCh, mxGetElementSize(prhs[0]));
+	downsample( (double*) A, (double*) T, ns[0], ms[0], ns[1], nCh);
+	downsample( (double*) T, (double*) B, ns[1], ms[1], ms[0], nCh);
 	mxFree(T);
 }
