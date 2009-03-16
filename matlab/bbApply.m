@@ -30,7 +30,7 @@ function varargout = bbApply( action, varargin )
 % bbApply>union bbApply>resize bbApply>squarify bbApply>draw bbApply>crop
 % bbApply>convert bbApply>random bbApply>nms
 %
-% Piotr's Image&Video Toolbox      Version 2.20
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -280,7 +280,7 @@ function [patches, bbs] = crop( I, bbs, padEl )
 %  padEl    - [0] value to pad I or [] to indicate no padding
 %
 % OUTPUTS
-%  patches  - [1xn] cell of cropped image regions (or single region)
+%  patches  - [1xn] cell of cropped image regions
 %  bbs      - actual integer-valued bbs used to crop
 %
 % EXAMPLE
@@ -296,7 +296,6 @@ if(isempty(padEl)), bbs=intersect([.5 .5 w h],bbs); end
 % crop each patch in turn
 n=size(bbs,1); patches=cell(1,n);
 for i=1:n, [patches{i},bbs(i,1:4)]=crop1(bbs(i,1:4)); end
-if(n==1), patches=patches{1}; end
 
   function [patch, bb] = crop1( bb )
     % crop single patch (use arrayCrop only if necessary)
