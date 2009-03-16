@@ -37,23 +37,16 @@ InterpInfo*		copmuteInterpInfo( int ha, int hb, int *n )
 	*n=c; return ii;
 }
 
-void			downsample2( double *a, double *b, InterpInfo *ii, int n )
-{
-	/* downsample single column a, store in b */
-	InterpInfo *end = ii + n;
-	while(ii!=end) { b[ii->yb]+=ii->weight*a[ii->ya]; ii++; }
-}
-
-void			downsample1( double *A, double *B, int ha, int hb, int w, int nCh )
+void			downsample( double *A, double *B, int ha, int hb, int w, int nCh )
 {
 	/* downsample every column in A, store in B, result is transposed */
-	int ch, x, n; double *a, *b; InterpInfo *ii;
+	int ch, x, y, n; double *a, *b; InterpInfo *ii;
 	ii = copmuteInterpInfo( ha, hb, &n );
-	for(x=0; x<n; x++ ) ii[x].yb*=w; /* transpose B */
+	for(x=0; x<n; x++) ii[x].yb*=w; /* transpose B */
 	for(ch=0; ch<nCh; ch++) for(x=0; x<w; x++) {
 		a = A + ch*w*ha + x*ha;
 		b = B + ch*w*hb + x;
-		downsample2(a, b, ii, n);
+		for(y=0; y<n; y++) b[ii[y].yb]+=ii[y].weight*a[ii[y].ya];
 	}
 	mxFree(ii);
 }
@@ -73,15 +66,15 @@ void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
 	/* create output array */
 	ns = (int*) mxGetDimensions(prhs[0]); nCh=(nDims==2) ? 1 : ns[2]; ms[2]=nCh;
-	ms[0]=(int) (scale0<=1) ? (ns[0]*scale0+.5) : scale0;
-	ms[1]=(int) (scale1<=1) ? (ns[1]*scale1+.5) : scale1;
+	ms[0]=(int) ((scale0<=1) ? ns[0]*scale0+.5 : scale0);
+	ms[1]=(int) ((scale1<=1) ? ns[1]*scale1+.5 : scale1);
 	plhs[0] = mxCreateNumericArray(3,ms,mxDOUBLE_CLASS, mxREAL);
 
 	/* Perform rescaling */
 	A = (double*) mxGetPr(prhs[0]);
 	B = (double*) mxGetPr(plhs[0]);
 	T = (double*) mxCalloc(ms[0]*ns[1]*nCh, sizeof(double));
-	downsample1(A, T, ns[0], ms[0], ns[1], nCh);
-	downsample1(T, B, ns[1], ms[1], ms[0], nCh);
+	downsample(A, T, ns[0], ms[0], ns[1], nCh);
+	downsample(T, B, ns[1], ms[1], ms[0], nCh);
 	mxFree(T);
 }
