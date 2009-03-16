@@ -70,11 +70,11 @@ void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	if( (nDims!=2 && nDims!=3) || mxGetClassID(prhs[0])!=mxDOUBLE_CLASS)
 		mexErrMsgTxt("A must be a double 2 or 3 dim array.");
 	scale0=mxGetScalar(prhs[1]); scale1=(nrhs==3)?mxGetScalar(prhs[2]):scale0;
-	if( scale0>1 || scale1>1 ) mexErrMsgTxt("Scaling factor must be at most 1.");
 
 	/* create output array */
-	ns = (int*) mxGetDimensions(prhs[0]); nCh=(nDims==2) ? 1 : ns[2];
-	ms[0]=(int)(ns[0]*scale0+.5); ms[1]=(int)(ns[1]*scale1+.5); ms[2]=nCh;
+	ns = (int*) mxGetDimensions(prhs[0]); nCh=(nDims==2) ? 1 : ns[2]; ms[2]=nCh;
+	ms[0]=(int) (scale0<=1) ? (ns[0]*scale0+.5) : scale0;
+	ms[1]=(int) (scale1<=1) ? (ns[1]*scale1+.5) : scale1;
 	plhs[0] = mxCreateNumericArray(3,ms,mxDOUBLE_CLASS, mxREAL);
 
 	/* Perform rescaling */

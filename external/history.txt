@@ -1,6 +1,7 @@
 Version NEW
  -optimized rbfComputeFtrs
  -removed multiprod.m from external/other (huge overhead). Replaced by multiTimes
+ -new usage to imDownsample.m
 
 Version 2.20 (06-Mar-09)
  -optimized classify/kmeans2 and classify/meanShift
