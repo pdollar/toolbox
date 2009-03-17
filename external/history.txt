@@ -2,6 +2,7 @@ Version NEW
  -optimized rbfComputeFtrs
  -removed multiprod.m from external/other (huge overhead). Replaced by multiTimes
  -new usage to imDownsample.m
+ -updated version of savefig to 2.0 (can embed fonts)
 
 Version 2.20 (06-Mar-09)
  -optimized classify/kmeans2 and classify/meanShift

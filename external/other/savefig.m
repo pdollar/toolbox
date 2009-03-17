@@ -28,6 +28,7 @@ function savefig(fname, varargin)
 % '-rgb':  Output in rgb colours.
 % '-cmyk': Output in cmyk colours (not yet 'png' or 'jpeg' -- '-rgb' is used).
 % '-gray': Output in grayscale (not yet 'eps' -- '-rgb' is used).
+% '-fonts':  Include fonts in eps or pdf. Includes only the subset needed.
 % '-lossless':  Use lossless compression, works on most formats. same as '-c0', below.
 % '-c<float>':  Set compression for non-indexed bitmaps in PDFs -
 %               0: lossless; 0.1: high quality; 0.5: medium; 1: high compression.
@@ -83,6 +84,8 @@ function savefig(fname, varargin)
 %   Thanks to Olly Woodford for idea and implementation!
 % - Removed option '-nointerpolate' -- now savefig never interpolates.
 % - Fixed a few small bugs and removed some mlint comments. 
+% Version 2.0, 2008-11-07:
+% - Added the possibility to include fonts into eps or pdf.
 %
 % TO DO: (Need Ghostscript support for these, so don't expect anything soon...)
 % - svg output.
@@ -114,9 +117,9 @@ function savefig(fname, varargin)
 	% Create gs command.
 	cmdEnd=			' -sDEVICE=%s -sOutputFile="%s"';					% Essential.
 	epsCmd=			'';
-	epsCmd=	[epsCmd ' -dSubsetFonts=true -dEmbedAllFonts=false -dNOPLATFONTS'];% Future support?
-	epsCmd=	[epsCmd ' -dUseCIEColor=true -dColorConversionStrategy=/UseDeviceIndependentColor' ...
-					' -dProcessColorModel=/%s'];						% Color conversion.
+	epsCmd=	[epsCmd ' -dSubsetFonts=true -dNOPLATFONTS'];				% Future support?
+	epsCmd=	[epsCmd ' -dUseCIEColor=true -dColorConversionStrategy=/UseDeviceIndependentColor'];
+	epsCmd=	[epsCmd ' -dProcessColorModel=/%s'];						% Color conversion.
 	pdfCmd=	[epsCmd ' -dAntiAliasColorImages=false' cmdEnd];
 	epsCmd=	[epsCmd cmdEnd];
 	
@@ -164,6 +167,7 @@ function savefig(fname, varargin)
 	varargin=	{'-r300', '-lossless', '-rgb', varargin{:}};			% Add defaults.
 	res=		'';
 	types=		{};
+	fonts=		'false';
 	crop=		false;
 	for n= 1:length(varargin)											% Read options.
 		if(ischar(varargin{n}))
@@ -172,6 +176,7 @@ function savefig(fname, varargin)
 			case '-rgb',				color=	'rgb';	deps= {'-depsc2'};
 			case '-cmyk',				color=	'cmyk';	deps= {'-depsc2', '-cmyk'};
 			case '-gray',				color=	'gray';	deps= {'-deps2'};
+			case '-fonts',				fonts=			'true';
 			case '-lossless',			comp=			0;
 			case '-crop',				crop=			true;
 			case '-dbg',				op_dbg=			true;
@@ -203,6 +208,7 @@ function savefig(fname, varargin)
 		otherwise,						gs= 'gs';
 	end
 	gs=		[gs		' -q -dNOPAUSE -dBATCH -dEPSCrop'];					% Essential.
+	gs=		[gs     ' -dPDFSETTINGS=/prepress -dEmbedAllFonts=' fonts];	% Must be first?
 	gs=		[gs		' -dUseFlateCompression=true'];						% Useful stuff.
 	gs=		[gs		' -dAutoRotatePages=/None'];						% Probably good.
 	gs=		[gs		' -dHaveTrueTypes'];								% Probably good.
