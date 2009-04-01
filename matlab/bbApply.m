@@ -227,7 +227,7 @@ end
 end
 
 function hs = draw( bb, col, lw, ls, prop )
-% Draw single or multiple bbs to image (calls rectangle())
+% Draw single or multiple bbs to image (calls rectangle()).
 %
 % USAGE
 %  hs = bbApply( 'draw', bb, col, [lw], [ls], [prop] )
@@ -249,10 +249,13 @@ function hs = draw( bb, col, lw, ls, prop )
 if(nargin<3 || isempty(lw)), lw=2; end
 if(nargin<4 || isempty(ls)), ls='-'; end
 if(nargin<5 || isempty(prop)), prop={}; end
-n=size(bb,1); hs=zeros(1,n);
+[n,m]=size(bb); if(m==4), hs=zeros(1,n); else hs=zeros(1,2*n); end
 for b=1:n
   hs(b) = rectangle( 'Position',bb(b,1:4), 'EdgeColor',col, ...
     'LineWidth',lw, 'LineStyle',ls, prop{:});
+  if(m==4), continue; end
+  hs(b+n)=text( bb(b,1), bb(b,2), num2str(bb(b,5),4), 'FontSize',10, ...
+    'color','w', 'FontWeight','bold', 'VerticalAlignment','bottom' );
 end
 end
 
