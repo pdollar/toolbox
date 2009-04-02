@@ -492,6 +492,7 @@ function bbs = nmsMax( bbs, thr, overlap, maxn )
 if(nargin<3 || isempty(overlap)), overlap=.5; end
 if(nargin<4 || isempty(maxn)), maxn=1000; end
 kp=bbs(:,5)>thr; bbs=bbs(kp,:); if(size(bbs,1)<=1), return; end;
+assert(maxn>=2); assert(numel(overlap)==1);
 bbs=nmsMax1(bbs,overlap,maxn); % perform actual nms
 
   function bbs = nmsMax1(bbs,overlap,maxn)
