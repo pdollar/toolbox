@@ -458,7 +458,7 @@ bbs=[ps(:,1)-w/2 ps(:,2)-h/2 w h ws+thr];
   end
 end
 
-function bbs = nmsMax( bbs, thr, overlap )
+function bbs = nmsMax( bbs, thr, overlap, maxn )
 % Non-maximal suppression (nms) of bbs using area of overlap criteria.
 %
 % For each pair of bounding boxes, if their overlap, defined by:
@@ -466,42 +466,56 @@ function bbs = nmsMax( bbs, thr, overlap )
 % is greater than overlap, then the bb with the lower score is suppressed.
 % In the Pascal critieria two bbs are considered a match if overlap>=.5;
 %
-% Although efficient, at worst this function is O(n^2).
-%
+% Although efficient, this function is O(n^2). To speed things up for large
+% n, can divide data randomly into two sets, run nms on each, combine and
+% run nms on the result. If maxn is specified, will split the set if
+% n>maxn. Note that this is a heuristic and can change the results of nms.
+
 % USAGE
-%  bbs = bbApply('nmsMax',bbs,thr,[overlap])
+%  bbs = bbApply('nmsMax',bbs,thr,[overlap],[maxn])
 %
 % INPUTS
 %  bbs      - original bbs (must be of form [x y w h wt])
 %  thr      - threshold below which to discard bbs
-%  overlap  - [.5]
+%  overlap  - [.5] area of overlap between bbs to be considered a match
+%  maxn     - [1000] if n>maxn split and run nms recursively (see above)
 %
 % OUTPUTS
 %  bbs      - suppressed bbs
 %
 % EXAMPLE
 %  bbs=[0 0 1 1 1; .1 .1 1 1 1.1; 2 2 1 1 1];
-%  bbs1 = bbApply('nmsMax',bbs,.1)
+%  bbs1 = bbApply('nmsMax',bbs,.5)
 %
 % See also bbApply, bbApply>nms
 
-% default parameters
 if(nargin<3 || isempty(overlap)), overlap=.5; end
-
-% intialize and sort bbs
+if(nargin<4 || isempty(maxn)), maxn=1000; end
 kp=bbs(:,5)>thr; bbs=bbs(kp,:); if(size(bbs,1)<=1), return; end;
-[score,ord]=sort(bbs(:,5),'descend'); bbs=bbs(ord,:);
+bbs=nmsMax1(bbs,overlap,maxn); % perform actual nms
 
-% for each i suppress all j st j>i and overlap>.5
-n=size(bbs,1); kp=true(1,n); areas=bbs(:,3).*bbs(:,4);
-xs=bbs(:,1); xe=bbs(:,1)+bbs(:,3); ys=bbs(:,2); ye=bbs(:,2)+bbs(:,4);
-for i=1:n
-  for j=i+find( kp(i+1:n) )
-    iw=min(xe(i),xe(j))-max(xs(i),xs(j)); if(iw<=0), continue; end
-    ih=min(ye(i),ye(j))-max(ys(i),ys(j)); if(ih<=0), continue; end
-    o=iw*ih; o=o/(areas(i)+areas(j)-o); if(o>overlap), kp(j)=0; end
+  function bbs = nmsMax1(bbs,overlap,maxn)
+    % if too many split in two randomly and recurse
+    if( size(bbs,1)>maxn )
+      n=size(bbs,1); bbs=bbs(randperm(n),:); n2=floor(n/2);
+      bbs0=nmsMax1(bbs(1:n2,:),overlap,maxn);
+      bbs1=nmsMax1(bbs(n2+1:n,:),overlap,maxn);
+      bbs=[bbs0; bbs1]; n0=n; n=size(bbs,1);
+      if(n<n0), bbs=nmsMax1(bbs,overlap,maxn); return; end
+    end
+    
+    % for each i suppress all j st j>i and overlap>.5
+    [score,ord]=sort(bbs(:,5),'descend'); bbs=bbs(ord,:);
+    n=size(bbs,1); kp=true(1,n); areas=bbs(:,3).*bbs(:,4);
+    xs=bbs(:,1); xe=bbs(:,1)+bbs(:,3); ys=bbs(:,2); ye=bbs(:,2)+bbs(:,4);
+    for i=1:n
+      for j=i+find( kp(i+1:n) )
+        iw=min(xe(i),xe(j))-max(xs(i),xs(j)); if(iw<=0), continue; end
+        ih=min(ye(i),ye(j))-max(ys(i),ys(j)); if(ih<=0), continue; end
+        o=iw*ih; o=o/(areas(i)+areas(j)-o); if(o>overlap), kp(j)=0; end
+      end
+    end
+    bbs=bbs(kp,:);
   end
-end
-bbs=bbs(kp,:);
 
 end
