@@ -1,4 +1,5 @@
 Version NEW
+ -added bbApply>nmsMax
  -optimized rbfComputeFtrs
  -removed multiprod.m from external/other (huge overhead). Replaced by multiTimes
  -new usage to imDownsample.m
