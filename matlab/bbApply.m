@@ -28,7 +28,7 @@ function varargout = bbApply( action, varargin )
 %
 % See also bbApply>area bbApply>shift bbApply>getCenter bbApply>intersect
 % bbApply>union bbApply>resize bbApply>squarify bbApply>draw bbApply>crop
-% bbApply>convert bbApply>random bbApply>nms
+% bbApply>convert bbApply>random bbApply>nms bbApply>nmsMax
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -405,14 +405,14 @@ function bbs = nms( bbs, thr, radii, maxn )
 %  bbs=[0 0 1 1 1; .1 .1 1 1 1.1; 2 2 1 1 1];
 %  bbs1 = bbApply('nms',bbs,.1)
 %
-% See also bbApply, nonMaxSuprList
+% See also bbApply, bbApply>nmsMax, nonMaxSuprList
 
 % remove all bbs that fall below threshold
 keep=bbs(:,5)>thr; bbs=bbs(keep,:); if(size(bbs,1)<=1), return; end;
 if(nargin<3 || isempty(radii)), radii=[.15 .15 1 1]; end
 if(nargin<4 || isempty(maxn)), maxn=1000; end
 
-% position = [x/w,y/h,log2(w),log2(h)], ws=weights-thr
+% position = [x+w/2,y+h/2,log2(w),log2(h)], ws=weights-thr
 ws=bbs(:,5)-thr; w=bbs(:,3); h=bbs(:,4);
 ps=[bbs(:,1)+w/2 bbs(:,2)+h/2 log2(w) log2(h)];
 
@@ -456,4 +456,52 @@ bbs=[ps(:,1)-w/2 ps(:,2)-h/2 w h ws+thr];
       w = sum(ws.*wMask);
     end
   end
+end
+
+function bbs = nmsMax( bbs, thr, overlap )
+% Non-maximal suppression (nms) of bbs using area of overlap criteria.
+%
+% For each pair of bounding boxes, if their overlap, defined by:
+%  overlap(bb1,bb2) = area(intersect(bb1,bb2))/area(union(bb1,bb2))
+% is greater than overlap, then the bb with the lower score is suppressed.
+% In the Pascal critieria two bbs are considered a match if overlap>=.5;
+%
+% Although efficient, at worst this function is O(n^2).
+%
+% USAGE
+%  bbs = bbApply('nmsMax',bbs,thr,[overlap])
+%
+% INPUTS
+%  bbs      - original bbs (must be of form [x y w h wt])
+%  thr      - threshold below which to discard bbs
+%  overlap  - [.5]
+%
+% OUTPUTS
+%  bbs      - suppressed bbs
+%
+% EXAMPLE
+%  bbs=[0 0 1 1 1; .1 .1 1 1 1.1; 2 2 1 1 1];
+%  bbs1 = bbApply('nmsMax',bbs,.1)
+%
+% See also bbApply, bbApply>nms
+
+% default parameters
+if(nargin<3 || isempty(overlap)), overlap=.5; end
+
+% intialize and sort bbs
+kp=bbs(:,5)>thr; bbs=bbs(kp,:); if(size(bbs,1)<=1), return; end;
+[score,ord]=sort(bbs(:,5),'descend'); bbs=bbs(ord,:);
+
+% for each i suppress all j st j>i and overlap>.5
+n=size(bbs,1); kp=true(1,n); areas=bbs(:,3).*bbs(:,4);
+xs=bbs(:,1); xe=bbs(:,1)+bbs(:,3); ys=bbs(:,2); ye=bbs(:,2)+bbs(:,4);
+for i=1:n
+  for j=i+find( kp(i+1:n) )
+    iw=min(xe(i),xe(j))-max(xs(i),xs(j)); if(iw<=0), continue; end
+    ih=min(ye(i),ye(j))-max(ys(i),ys(j)); if(ih<=0), continue; end
+    o=iw*ih; o=o/(areas(i)+areas(j)-o); if(o>overlap), kp(j)=0; end
+  end
+end
+bbs=bbs(kp,:);
+
 end
