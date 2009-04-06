@@ -38,7 +38,7 @@ mex([dir 'nlfiltersep_sum.c'],      opts{:} );
 mex([dir 'nlfiltersep_blocksum.c'], opts{:} );
 
 dir='images/private/'; opts=[opts0 'images/'];
-mex([dir 'imDownsample.c'],         opts{:} );
+mex([dir 'imResample.c'],         opts{:} );
 
 try
   % requires c++ compiler
