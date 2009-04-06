@@ -1,7 +1,7 @@
 % Fast bilinear image downsampling.
 %
-% Does not give identical results to imresize with the bilinear option
-% (results are a bit sharper). Inspired by resize.cpp from Deva Ramanan.
+% Gives identical results to imresize with the bilinear option and
+% antialiasing turned off. Inspired by resize.cpp from Deva Ramanan.
 %
 % USAGE
 %  B = imDownsample( A, h, [w] )
@@ -15,11 +15,11 @@
 %   B       - downsampled image
 %
 % EXAMPLE
-%  I=double(imread('cameraman.tif'));
-%  tic, for i=1:100, I1=imresize(I,.5,'bilinear'); end; toc
-%  tic, for i=1:100, I2=imDownsample(I,.5); end; toc
-%  tic, for i=1:100, I3=imDownsample(I,128,128); end; toc
-%  figure(1); im(I1); figure(2); im(I2);
+%  I=double(imread('cameraman.tif')); n=100;
+%  tic, for i=1:n, I1=imresize(I,.5,'bilinear','Antialiasing',0); end; toc
+%  tic, for i=1:n, I2=imDownsample(I,.5); end; toc
+%  tic, for i=1:n, I3=imDownsample(I,128,128); end; toc
+%  figure(1); im(I1); figure(2); im(I2); figure(3); im(abs(I1-I2));
 %
 % See also IMRESIZE
 %
