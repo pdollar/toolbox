@@ -23,8 +23,8 @@
 %   xeucn          - n-dimensional euclidean distance between each window in A and template T.
 %
 % Image deformation:
-%   imDownsample   - Fast bilinear image downsampling.
 %   imNormalize    - Various ways to normalize a (multidimensional) image.
+%   imResample     - Fast bilinear image downsampling/upsampling.
 %   imShrink       - Used to shrink a multidimensional array I by integer amount.
 %   imtransform2   - Applies a general/special homography on an image I
 %   textureMap     - Maps texture in I according to rowDst and colDst.
