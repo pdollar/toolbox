@@ -79,8 +79,8 @@ end
 
 % perform appropriate operation
 switch( cmd )
-  case 'addframe',  chk(nIn,1,2); cFrm=addFrame(fid,info,cFrm,tNm,in{:});
-  case 'addframeb', chk(nIn,1,2); cFrm=addFrameb(fid,info,cFrm,in{:});
+  case 'addframe',  chk(nIn,1,2); cFrm=addFrame(fid,info,cFrm,tNm,1,in{:});
+  case 'addframeb', chk(nIn,1,2); cFrm=addFrame(fid,info,cFrm,tNm,0,in{:});
   otherwise,        error(['Unrecognized command: "' cmd '"']);
 end
 cFrms(h)=cFrm;
@@ -123,46 +123,36 @@ nByte=info.width*info.height*nCh; info.imageSizeBytes=nByte;
 info.numFrames=0; info.trueImageSize=nByte+6+512-mod(nByte+6,512);
 end
 
-function cFrm = addFrame( fid, info, cFrm, tNm, I, ts )
+function cFrm = addFrame( fid, info, cFrm, tNm, encode, I, ts )
 % write frame
 imageFormat=info.imageFormat; cFrm=cFrm+1;
-siz = [info.height info.width info.imageBitDepth/8];
-assert(size(I,1)==siz(1) && size(I,2)==siz(2) && size(I,3)==siz(3));
+if( encode )
+  siz = [info.height info.width info.imageBitDepth/8];
+  assert(size(I,1)==siz(1) && size(I,2)==siz(2) && size(I,3)==siz(3));
+end
 switch imageFormat
   case {100,200}
     % write an uncompressed image (assume imageBitDepthReal==8)
-    if(imageFormat==200), t=I(:,:,3); I(:,:,3)=I(:,:,1); I(:,:,1)=t; end
-    if( siz(3)==1 ), I=I'; else I=permute(I,[3,2,1]); end
+    if( ~encode ), assert(numel(I)==info.imageSizeBytes); else
+      if(imageFormat==200), t=I(:,:,3); I(:,:,3)=I(:,:,1); I(:,:,1)=t; end
+      if( siz(3)==1 ), I=I'; else I=permute(I,[3,2,1]); end
+    end
     fwrite(fid,I(:),'uint8'); pad=info.trueImageSize-info.imageSizeBytes-6;
   case {102,201}
     % write/read to/from temporary .jpg (not that much overhead)
-    q=info.quality;
-    wjpg8c(I,tNm,struct('quality',q,'comment',{{}},'mode','lossy'));
-    fr=fopen(tNm,'r'); assert(fr~=-1); J=fread(fr); fclose(fr);
-    assert(J(1)==255 && J(2)==216 && J(end-1)==255 && J(end)==217); % JPG
-    fwrite(fid,numel(J)+4,'uint32'); fwrite(fid,J); pad=10;
+    q=info.quality; pad=10;
+    if( ~encode ), fwrite(fid,I(:),'uint8'); else
+      wjpg8c(I,tNm,struct('quality',q,'comment',{{}},'mode','lossy'));
+      fr=fopen(tNm,'r'); assert(fr~=-1); I=fread(fr); fclose(fr);
+      assert(I(1)==255 && I(2)==216 && I(end-1)==255 && I(end)==217); % JPG
+      fwrite(fid,numel(I)+4,'uint32'); fwrite(fid,I);
+    end
   otherwise, assert(false);
 end
 % write timestamp
-if(nargin<6), ts=cFrm/info.fps; end; s=floor(ts); ms=floor(mod(ts,1)*1000);
+if(nargin<7), ts=cFrm/info.fps; end; s=floor(ts); ms=floor(mod(ts,1)*1000);
 fwrite(fid,s,'int32'); fwrite(fid,ms,'uint16');
 % pad with zeros
-if(pad>0), fwrite(fid,zeros(1,pad),'uint8'); end
-end
-
-function cFrm = addFrameb( fid, info, cFrm, I, ts )
-% Write video frame with no encoding.
-switch info.imageFormat
-  case {100,200}
-    assert(numel(I)==info.imageSizeBytes);
-    pad=info.trueImageSize-info.imageSizeBytes-6;
-  case {102,201}
-    assert(I(5)==255 && I(6)==216 && I(end-1)==255 && I(end)==217); pad=10;
-  otherwise, assert(false);
-end
-fwrite(fid,I(:)); cFrm=cFrm+1;
-if(nargin<5), ts=cFrm/info.fps; end; s=floor(ts); ms=floor(mod(ts,1)*1000);
-fwrite(fid,s,'int32'); fwrite(fid,ms,'uint16');
 if(pad>0), fwrite(fid,zeros(1,pad),'uint8'); end
 end
 
