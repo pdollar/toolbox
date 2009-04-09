@@ -1,4 +1,4 @@
-function [out,out2] = seqReaderPlugin( cmd, handle, varargin )
+function varargout = seqReaderPlugin( cmd, h, varargin )
 % Plugin for seqIo and videoIO to allow reading of seq files.
 %
 % Do not call directly, use as plugin for seqIo or videoIO instead.
@@ -14,7 +14,7 @@ function [out,out2] = seqReaderPlugin( cmd, handle, varargin )
 %  out = srp('step',h,delta)  % Go to current frame+delta (out=-1 on fail).
 %
 % USAGE
-%  [out, out2] = seqReaderPlugin( cmd, h, varargin )
+%  varargout = seqReaderPlugin( cmd, h, varargin )
 %
 % INPUTS
 %  cmd        - string indicating operation to perform
@@ -22,8 +22,7 @@ function [out,out2] = seqReaderPlugin( cmd, handle, varargin )
 %  varargin   - additional options (vary according to cmd)
 %
 % OUTPUTS
-%  out        - output (varies according to cmd)
-%  out2       - output (varies according to cmd)
+%  varargout  - output (varies according to cmd)
 %
 % EXAMPLE
 %
@@ -35,34 +34,29 @@ function [out,out2] = seqReaderPlugin( cmd, handle, varargin )
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 % persistent variables to keep track of all loaded .seq files
-persistent nextHandle handles cFrms fids infos tNms;
-if( isempty(nextHandle) )
-  nextHandle = int32(now);          % handle to use for the next open cmd
-  handles    = zeros(0,0,'int32');  % list of currently-active handles
-  cFrms      = [];                  % current frame num for each handle
-  fids       = [];                  % handle to .seq file for each handle
-  infos      = {};                  % info for each handle
-  tNms       = {};                  % names for temporary files
-end
-nIn=nargin-2; in=varargin;
+persistent nxth hs cFrms fids infos tNms;
+if( isempty(nxth) )
+  nxth=int32(now); hs=int32([]); cFrms=[]; fids=[]; infos={}; tNms={};
+end; nIn=nargin-2; in=varargin; out2=[];
 
 if(strcmp(cmd,'open')) % open seq file
-  chk(nIn,1); fName=in{1}; h=length(handles)+1;
-  handles(h)=nextHandle; out=nextHandle; nextHandle=int32(nextHandle+1);
+  chk(nIn,1); fName=in{1}; h=length(hs)+1;
+  hs(h)=nxth; varargout={nxth}; nxth=int32(nxth+1);
   [pth name]=fileparts(fName); if(isempty(pth)), pth='.'; end
   fName=[pth filesep name '.seq']; cFrms(h)=-1;
   [infos{h},fids(h),tNms{h}] = open(fName); return;
 end
 
 % Get the handle for this instance
-[v,h] = ismember(handle,handles); out2=[];
+[v,h] = ismember(h,hs);
 if(~v), error('Invalid load plugin handle'); end
 cFrm=cFrms(h); fid=fids(h); info=infos{h}; tNm=tNms{h};
 
 if(strcmp(cmd,'close')) % close seq file
-  chk(nIn,0); fclose(fids(h)); kp=[1:h-1 h+1:length(handles)];
-  handles=handles(kp); cFrms=cFrms(kp); fids=fids(kp); infos=infos(kp);
-  tNms=tNms(kp); if(exist(tNm,'file')), delete(tNm); end; out=nan; return;
+  chk(nIn,0); fclose(fids(h)); kp=[1:h-1 h+1:length(hs)];
+  hs=hs(kp); cFrms=cFrms(kp); fids=fids(kp); infos=infos(kp);
+  tNms=tNms(kp); if(exist(tNm,'file')), delete(tNm); end
+  varargout={-1}; return;
 end
 
 % perform appropriate operation
@@ -77,7 +71,7 @@ switch( cmd )
   case 'step',      chk(nIn,1); [cFrm,out]=valid(cFrm+in{1},info);
   otherwise,        error(['Unrecognized command: "' cmd '"']);
 end
-cFrms(h)=cFrm;
+cFrms(h)=cFrm; varargout={out,out2};
 
 end
 
@@ -118,7 +112,7 @@ dels=ts(2:end)-ts(1:end-1); info.fps=1/median(dels);
 end
 
 function [frame,v] = valid( frame, info )
-v=int32(frame>=0 && frame<info.numFrames);
+v=(frame>=0 && frame<info.numFrames);
 end
 
 function [I,ts] = getFrame( frame, fid, info, tNm, decode )

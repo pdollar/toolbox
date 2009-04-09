@@ -1,4 +1,4 @@
-function out = seqWriterPlugin( cmd, handle, varargin )
+function varargout = seqWriterPlugin( cmd, h, varargin )
 % Plugin for seqIo and videoIO to allow writing of seq files.
 %
 % Do not call directly, use as plugin for seqIo or videoIO instead.
@@ -20,7 +20,7 @@ function out = seqWriterPlugin( cmd, handle, varargin )
 %   'jpg'/'imageFormat201'          - color jpg compressed
 %
 % USAGE
-%  out = seqWriterPlugin( cmd, h, varargin )
+%  varargout = seqWriterPlugin( cmd, h, varargin )
 %
 % INPUTS
 %  cmd        - string indicating operation to perform
@@ -28,7 +28,7 @@ function out = seqWriterPlugin( cmd, handle, varargin )
 %  varargin   - additional options (vary according to cmd)
 %
 % OUTPUTS
-%  out        - output (varies according to cmd)
+%  varargout  - output (varies according to cmd)
 %
 % EXAMPLE
 %
@@ -40,35 +40,30 @@ function out = seqWriterPlugin( cmd, handle, varargin )
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 % persistent variables to keep track of all loaded .seq files
-persistent nextHandle handles cFrms fids infos tNms;
-if( isempty(nextHandle) )
-  nextHandle = int32(now);          % handle to use for the next open cmd
-  handles    = zeros(0,0,'int32');  % list of currently-active handles
-  cFrms      = [];                  % current frame num for each handle
-  fids       = [];                  % handle to .seq file for each handle
-  infos      = {};                  % info for each handle
-  tNms       = {};                  % names for temporary files
-end
-nIn=nargin-2; in=varargin;
+persistent nxth hs cFrms fids infos tNms;
+if( isempty(nxth) )
+  nxth=int32(now); hs=int32([]); cFrms=[]; fids=[]; infos={}; tNms={};
+end; nIn=nargin-2; in=varargin; out=[];
 
 if(strcmp(cmd,'open')) % open seq file
-  chk(nIn,2); fName=in{1}; h=length(handles)+1;
-  handles(h)=nextHandle; out=nextHandle; nextHandle=int32(nextHandle+1);
+  chk(nIn,2); fName=in{1}; h=length(hs)+1;
+  hs(h)=nxth; varargout={nxth}; nxth=int32(nxth+1);
   [pth name]=fileparts(fName); if(isempty(pth)), pth='.'; end
   fName=[pth filesep name '.seq']; cFrms(h)=-1;
   [infos{h},fids(h),tNms{h}] = open(fName,in{2}); return;
 end
 
 % Get the handle for this instance
-[v,h] = ismember(handle,handles);
+[v,h] = ismember(h,hs);
 if(~v), error('Invalid load plugin handle'); end
 cFrm=cFrms(h); fid=fids(h); info=infos{h}; tNm=tNms{h};
 
 if(strcmp(cmd,'close')) % close seq file
   writeHeader(fid,info,cFrm);
-  chk(nIn,0); fclose(fids(h)); kp=[1:h-1 h+1:length(handles)];
-  handles=handles(kp); cFrms=cFrms(kp); fids=fids(kp); infos=infos(kp);
-  tNms=tNms(kp); if(exist(tNm,'file')), delete(tNm); end; out=nan; return
+  chk(nIn,0); fclose(fids(h)); kp=[1:h-1 h+1:length(hs)];
+  hs=hs(kp); cFrms=cFrms(kp); fids=fids(kp); infos=infos(kp);
+  tNms=tNms(kp); if(exist(tNm,'file')), delete(tNm); end
+  varargout={-1}; return;
 end
 
 % perform appropriate operation
@@ -77,7 +72,7 @@ switch( cmd )
   case 'addframeb', chk(nIn,1,2); cFrm=addFrame(fid,info,cFrm,tNm,0,in{:});
   otherwise,        error(['Unrecognized command: "' cmd '"']);
 end
-cFrms(h)=cFrm;
+cFrms(h)=cFrm; varargout={out};
 
 end
 
