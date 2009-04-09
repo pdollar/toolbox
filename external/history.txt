@@ -1,4 +1,5 @@
 Version NEW
+ -adding images/seq* (support for .seq video files)
  -added bbApply>nmsMax
  -optimized rbfComputeFtrs
  -added matlab/multiTimes.m (faster than external/other/multiprod.m)

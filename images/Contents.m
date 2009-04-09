@@ -39,6 +39,12 @@
 %   optFlowHorn    - Calculate optical flow using Horn & Schunck.
 %   optFlowLk      - Calculate optical flow using Lucas & Kanade.  Fast, parallel code.
 %
+% Seq files:
+%   seqIo           - Wrapper for reading/writing seq files.
+%   seqReaderPlugin - Plugin to allow reading of seq files.
+%   seqWriterPlugin - Plugin to allow writing of seq files.
+%   seqPlayer       - Simple GUI to play seq files.
+%
 % Miscellaneous:
 %   convnFast      - Fast convolution, replacement for both conv2 and convn.
 %   gaussSmooth    - Applies Gaussian smoothing to a (multidimensional) image.
