@@ -41,16 +41,15 @@ function varargout = seqWriterPlugin( cmd, h, varargin )
 
 % persistent variables to keep track of all loaded .seq files
 persistent nxth hs cFrms fids infos tNms;
-if( isempty(nxth) )
-  nxth=int32(now); hs=int32([]); cFrms=[]; fids=[]; infos={}; tNms={};
-end; nIn=nargin-2; in=varargin; out=[];
+if(isempty(nxth)), nxth=int32(now); hs=int32([]); infos={}; tNms={}; end
+nIn=nargin-2; in=varargin; o1=[];
 
-if(strcmp(cmd,'open')) % open seq file
-  chk(nIn,2); fName=in{1}; h=length(hs)+1;
-  hs(h)=nxth; varargout={nxth}; nxth=int32(nxth+1);
-  [pth name]=fileparts(fName); if(isempty(pth)), pth='.'; end
+% open seq file
+if(strcmp(cmd,'open'))
+  chk(nIn,2); h=length(hs)+1; hs(h)=nxth; varargout={nxth}; nxth=nxth+1;
+  [pth name]=fileparts(in{1}); if(isempty(pth)), pth='.'; end
   fName=[pth filesep name '.seq']; cFrms(h)=-1;
-  [infos{h},fids(h),tNms{h}] = open(fName,in{2}); return;
+  [infos{h},fids(h),tNms{h}]=open(fName,in{2}); return;
 end
 
 % Get the handle for this instance
@@ -58,7 +57,8 @@ end
 if(~v), error('Invalid load plugin handle'); end
 cFrm=cFrms(h); fid=fids(h); info=infos{h}; tNm=tNms{h};
 
-if(strcmp(cmd,'close')) % close seq file
+% close seq file
+if(strcmp(cmd,'close'))
   writeHeader(fid,info,cFrm);
   chk(nIn,0); fclose(fids(h)); kp=[1:h-1 h+1:length(hs)];
   hs=hs(kp); cFrms=cFrms(kp); fids=fids(kp); infos=infos(kp);
@@ -72,7 +72,7 @@ switch( cmd )
   case 'addframeb', chk(nIn,1,2); cFrm=addFrame(fid,info,cFrm,tNm,0,in{:});
   otherwise,        error(['Unrecognized command: "' cmd '"']);
 end
-cFrms(h)=cFrm; varargout={out};
+cFrms(h)=cFrm; varargout={o1};
 
 end
 
