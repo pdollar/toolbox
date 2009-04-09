@@ -40,7 +40,7 @@ function varargout = seqWriterPlugin( cmd, h, varargin )
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 % persistent variables to keep track of all loaded .seq files
-persistent h1 hs cfs fids infos tNms;
+persistent h1 hs cs fids infos tNms;
 if(isempty(h1)), h1=int32(now); hs=int32([]); infos={}; tNms={}; end
 nIn=nargin-2; in=varargin; o1=[];
 
@@ -48,29 +48,29 @@ nIn=nargin-2; in=varargin; o1=[];
 if(strcmp(cmd,'open'))
   chk(nIn,2); h=length(hs)+1; hs(h)=h1; varargout={h1}; h1=h1+1;
   [pth name]=fileparts(in{1}); if(isempty(pth)), pth='.'; end
-  fName=[pth filesep name '.seq']; cfs(h)=-1;
+  fName=[pth filesep name '.seq']; cs(h)=-1;
   [infos{h},fids(h),tNms{h}]=open(fName,in{2}); return;
 end
 
 % Get the handle for this instance
 [v,h]=ismember(h,hs); if(~v), error('Invalid load plugin handle'); end
-cf=cfs(h); fid=fids(h); info=infos{h}; tNm=tNms{h};
+c=cs(h); fid=fids(h); info=infos{h}; tNm=tNms{h};
 
 % close seq file
 if(strcmp(cmd,'close'))
-  writeHeader(fid,info,cf);
+  writeHeader(fid,info,c);
   chk(nIn,0); varargout={-1}; fclose(fid); kp=[1:h-1 h+1:length(hs)];
-  hs=hs(kp); cfs=cfs(kp); fids=fids(kp); infos=infos(kp);
+  hs=hs(kp); cs=cs(kp); fids=fids(kp); infos=infos(kp);
   tNms=tNms(kp); if(exist(tNm,'file')), delete(tNm); end; return;
 end
 
 % perform appropriate operation
 switch( cmd )
-  case 'addframe', chk(nIn,1,2); cf=addFrame(fid,info,cf,tNm,1,in{:});
-  case 'addframeb',chk(nIn,1,2); cf=addFrame(fid,info,cf,tNm,0,in{:});
-  otherwise,       error(['Unrecognized command: "' cmd '"']);
+  case 'addframe',  chk(nIn,1,2); c=addFrame(fid,info,c,tNm,1,in{:});
+  case 'addframeb', chk(nIn,1,2); c=addFrame(fid,info,c,tNm,0,in{:});
+  otherwise,        error(['Unrecognized command: "' cmd '"']);
 end
-cfs(h)=cf; varargout={o1};
+cs(h)=c; varargout={o1};
 
 end
 
@@ -110,9 +110,9 @@ nByte=info.width*info.height*nCh; info.imageSizeBytes=nByte;
 info.numFrames=0; info.trueImageSize=nByte+6+512-mod(nByte+6,512);
 end
 
-function cf = addFrame( fid, info, cf, tNm, encode, I, ts )
+function c = addFrame( fid, info, c, tNm, encode, I, ts )
 % write frame
-imageFormat=info.imageFormat; cf=cf+1;
+imageFormat=info.imageFormat; c=c+1;
 if( encode )
   siz = [info.height info.width info.imageBitDepth/8];
   assert(size(I,1)==siz(1) && size(I,2)==siz(2) && size(I,3)==siz(3));
@@ -137,14 +137,14 @@ switch imageFormat
   otherwise, assert(false);
 end
 % write timestamp
-if(nargin<7), ts=cf/info.fps; end; s=floor(ts); ms=floor(mod(ts,1)*1000);
+if(nargin<7), ts=c/info.fps; end; s=floor(ts); ms=floor(mod(ts,1)*1000);
 fwrite(fid,s,'int32'); fwrite(fid,ms,'uint16');
 % pad with zeros
 if(pad>0), fwrite(fid,zeros(1,pad),'uint8'); end
 end
 
-function writeHeader( fid, info, cf )
-fseek(fid,0,'bof'); info.numFrames=cf+1;
+function writeHeader( fid, info, c )
+fseek(fid,0,'bof'); info.numFrames=c+1;
 % first 4 bytes store OxFEED, next 24 store 'Norpix seq  '
 fwrite(fid,hex2dec('FEED'),'uint32');
 fwrite(fid,['Norpix seq' 0 0],'uint16');
