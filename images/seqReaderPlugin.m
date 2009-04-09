@@ -1,32 +1,24 @@
 function [out,out2] = seqReaderPlugin( cmd, handle, varargin )
 % Plugin for seqIo and videoIO to allow reading of seq files.
 %
-% The following is a list of commands available (modeled after videoIO):
-%  'open': Open a seq file for reading (input handle ignored).
-%    handle = seqReaderPlugin( 'open', handle, fName )
-%  'close': Close seq file (output handle is -1).
-%    handle = seqReaderPlugin( 'close', handle )
-%  'getframe': Get current frame (returns [] if invalid frame).
-%    [I,ts] = seqReaderPlugin( 'getframe', handle )
-%  'getframeb': Get current frame with no decoding (raw bytes).
-%    [I,ts] = seqReaderPlugin( 'getframeb', handle )
-%  'getinfo': Return struct with info about video.
-%    info = seqReaderPlugin( 'getinfo', handle )
-%  'getnext': Shortcut for 'next' followed by 'getframe'.
-%    [I,ts] = seqReaderPlugin( 'getnext', handle )
-%  'next': Go to next frame (out=-1 on fail).
-%    out = seqReaderPlugin( 'next', handle )
-%  'seek': Go to specified frame (out=-1 on fail).
-%    out = seqReaderPlugin( 'seek', handle, frame )
-%  'step': Go to current frame + delta (out=-1 on fail).
-%    out = seqReaderPlugin( 'step', handle, delta )
+% Do not call directly, use as plugin for seqIo or videoIO instead.
+% The following is a list of commands available (srp=seqReaderPlugin):
+%  h = srp('open',h,fName)    % Open a seq file for reading (h ignored).
+%  h = srp('close',h);        % Close seq file (output h is -1).
+%  [I,ts] =srp('getframe',h)  % Get current frame (returns [] if invalid).
+%  [I,ts] =srp('getframeb',h) % Get current frame with no decoding.
+%  info = srp('getinfo',h)    % Return struct with info about video.
+%  [I,ts] =srp('getnext',h)   % Shortcut for 'next' followed by 'getframe'.
+%  out = srp('next',h)        % Go to next frame (out=-1 on fail).
+%  out = srp('seek',h,frame)  % Go to specified frame (out=-1 on fail).
+%  out = srp('step',h,delta)  % Go to current frame+delta (out=-1 on fail).
 %
 % USAGE
-%  [out, out2] = seqReaderPlugin( cmd, handle, varargin )
+%  [out, out2] = seqReaderPlugin( cmd, h, varargin )
 %
 % INPUTS
 %  cmd        - string indicating operation to perform
-%  handle     - unique identifier for open seq file
+%  h          - unique identifier for open seq file
 %  varargin   - additional options (vary according to cmd)
 %
 % OUTPUTS

@@ -10,38 +10,34 @@ function sobj = seqIo( fName, mode, info )
 % over storing as a directory of images is that a single large file is
 % created. Currently, either uncompressed or jpg compressed frames are
 % supported. Should not be called directly, rather use with seqIo or
-% videoIO. The seq file format is very similar to the Norpix seq format (in
+% videoIO. The seq file format is modeled after the Norpix seq format (in
 % fact this reader can be used to read some Norpix seq files).
 %
 % The actual work of reading/writing seq files is done by seqReaderPlugin
 % and seqWriterPlugin. These plugins were originally intended for use with
-% the videoIO Toolbox for Matlab written by Gerald Daley: 
+% the videoIO Toolbox for Matlab written by Gerald Daley:
 %  http://sourceforge.net/projects/videoio/.
 % However, the plugins also work with seqIo.m (this function), and there is
 % no need to actually have videoIO installed to use seq files. In fact,
 % the plugins have not yet been tested with videoIO.
 %
-% mode=='r': Serves as a for wrapper for seqReaderPlugin. Create with:
-%  sr = seqIo( fName, 'r' )
-% This creates the object sr which is used as the interface to the seq
-% file. The available actions on sr (modeled on videoIO) are as follows:
-%   sr.close();            % Close seq file (sr is useless after).
-%   [I,ts]=sr.getframe();  % Get current frame (returns [] if invalid).
-%   [I,ts]=sr.getframeb(); % Get current frame with no decoding.
-%   info = sr.getinfo();   % Return struct with info about video.
-%   [I,ts]=sr.getnext();   % Shortcut for next() followed by getframe().
-%   out = sr.next();       % Go to next frame (out=-1 on fail).
-%   out = sr.seek(frame);  % Go to specified frame (out=-1 on fail).
-%   out = sr.step(delta);  % Go to current frame + delta (out=-1 on fail).
+% mode=='r': Serves as a wrapper for seqReaderPlugin, available actions:
+%  sr=seqIo(fName,'r')    % Create new sequence reader object.
+%  sr.close();            % Close seq file (sr is useless after).
+%  [I,ts]=sr.getframe();  % Get current frame (returns [] if invalid).
+%  [I,ts]=sr.getframeb(); % Get current frame with no decoding.
+%  info = sr.getinfo();   % Return struct with info about video.
+%  [I,ts]=sr.getnext();   % Shortcut for next() followed by getframe().
+%  out = sr.next();       % Go to next frame (out=-1 on fail).
+%  out = sr.seek(frame);  % Go to specified frame (out=-1 on fail).
+%  out = sr.step(delta);  % Go to current frame + delta (out=-1 on fail).
 % See seqReaderPlugin for more info about the individual actions.
 %
-% mode=='w': Serves as a wrapper for seqWriterPlugin. Create with:
-%  sw = seqIo( fName, 'w', info )
-% This creates the object sw which is used as the interface to the seq
-% file. The available actions on sw (modeled on videoIO) are as follows:
-%   sw.close();            % Close seq file (sw is useless after).
-%   sw.addframe(I,[ts]);   % Writes video frame (and timestamp)
-%   sw.addframeb(bytes);   % Writes video frame with no encoding.
+% mode=='w': Serves as a wrapper for seqWriterPlugin, available actions:
+%  sw=seqIo(fName,'w',info) % Create new sequence writer object.
+%  sw.close();             % Close seq file (sw is useless after).
+%  sw.addframe(I,[ts]);    % Writes video frame (and timestamp)
+%  sw.addframeb(bytes);    % Writes video frame with no encoding.
 % See seqWriterPlugin for more info about the individual actions and about
 % the parameter sturcutre 'info' used to create the writer.
 %
@@ -50,8 +46,8 @@ function sobj = seqIo( fName, mode, info )
 % returns the concatentation of the two frames. For videos of different
 % frame counts, the first video serves as the "dominant" video and the
 % frame count of the second video is adjusted accordingly. Same general
-% usage as in mode=='r', but the only supported operations are: close,
-% getframe, getinfo, and seek. Open with:
+% usage as in mode=='r', but the only supported operations are: close(),
+% getframe(), getinfo(), and seek(). Open with:
 %  sr = seqIo( {fName1,fName2}, 'rdual' )
 %
 % USAGE

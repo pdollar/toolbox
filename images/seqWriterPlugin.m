@@ -1,15 +1,12 @@
 function out = seqWriterPlugin( cmd, handle, varargin )
 % Plugin for seqIo and videoIO to allow writing of seq files.
 %
-% The following is a list of commands available (modeled after videoIO):
-%  'open': Open a seq file for writing (input handle ignored).
-%    handle = seqWriterPlugin( 'open', handle, fName, info )
-%  'close': Close seq file (output handle is -1).
-%    handle = seqWriterPlugin( 'close', handle )
-%  'addframe': Writes a video frame.
-%    seqWriterPlugin( 'addframe', handle, I, [ts] )
-%  'addframeb': Writes a video frame with no encoding.
-%    seqWriterPlugin( 'addframeb', handle, I, [ts] )
+% Do not call directly, use as plugin for seqIo or videoIO instead.
+% The following is a list of commands available (swp=seqWriterPlugin):
+%  h=swp('open',h,fName,info) % Open a seq file for writing (h ignored).
+%  h=swp('close',h)           % Close seq file (output h is -1).
+%  swp('addframe',h,I,[ts])   % Writes a video frame.
+%  swp('addframeb',h,I,[ts])  % Writes a video frame with no encoding.
 %
 % The following params must be specified in struct 'info' upon opening:
 %  width          - frame width
@@ -17,17 +14,17 @@ function out = seqWriterPlugin( cmd, handle, varargin )
 %  fps            - frames per second
 %  quality        - [80] compression quality (0 to 100)
 %  codec          - string representing codec, options include:
-%   {'monoraw', 'imageFormat100'}     - black/white uncompressed
-%   {'raw', 'imageFormat200'}         - color (BGR) uncompressed
-%   {'monojpg', 'imageFormat102'}     - black/white jpg compressed
-%   {'jpg', 'imageFormat201'}         - color jpg compressed
+%   'monoraw'/'imageFormat100'      - black/white uncompressed
+%   'raw'/'imageFormat200'          - color (BGR) uncompressed
+%   'monojpg'/'imageFormat102'      - black/white jpg compressed
+%   'jpg'/'imageFormat201'          - color jpg compressed
 %
 % USAGE
-%  out = seqWriterPlugin( cmd, handle, varargin )
+%  out = seqWriterPlugin( cmd, h, varargin )
 %
 % INPUTS
 %  cmd        - string indicating operation to perform
-%  handle     - unique identifier for open seq file
+%  h          - unique identifier for open seq file
 %  varargin   - additional options (vary according to cmd)
 %
 % OUTPUTS
