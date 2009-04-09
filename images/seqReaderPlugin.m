@@ -34,13 +34,13 @@ function varargout = seqReaderPlugin( cmd, h, varargin )
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 % persistent variables to keep track of all loaded .seq files
-persistent nxth hs cfs fids infos tNms;
-if(isempty(nxth)), nxth=int32(now); hs=int32([]); infos={}; tNms={}; end
+persistent h1 hs cfs fids infos tNms;
+if(isempty(h1)), h1=int32(now); hs=int32([]); infos={}; tNms={}; end
 nIn=nargin-2; in=varargin; o2=[];
 
 % open seq file
 if(strcmp(cmd,'open'))
-  chk(nIn,1); h=length(hs)+1; hs(h)=nxth; varargout={nxth}; nxth=nxth+1;
+  chk(nIn,1); h=length(hs)+1; hs(h)=h1; varargout={h1}; h1=h1+1;
   [pth name]=fileparts(in{1}); if(isempty(pth)), pth='.'; end
   fName=[pth filesep name '.seq']; cfs(h)=-1;
   [infos{h},fids(h),tNms{h}]=open(fName); return;
