@@ -34,7 +34,7 @@ function varargout = seqReaderPlugin( cmd, h, varargin )
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 % persistent variables to keep track of all loaded .seq files
-persistent nxth hs cFrms fids infos tNms;
+persistent nxth hs cfs fids infos tNms;
 if(isempty(nxth)), nxth=int32(now); hs=int32([]); infos={}; tNms={}; end
 nIn=nargin-2; in=varargin; o2=[];
 
@@ -42,36 +42,33 @@ nIn=nargin-2; in=varargin; o2=[];
 if(strcmp(cmd,'open'))
   chk(nIn,1); h=length(hs)+1; hs(h)=nxth; varargout={nxth}; nxth=nxth+1;
   [pth name]=fileparts(in{1}); if(isempty(pth)), pth='.'; end
-  fName=[pth filesep name '.seq']; cFrms(h)=-1;
+  fName=[pth filesep name '.seq']; cfs(h)=-1;
   [infos{h},fids(h),tNms{h}]=open(fName); return;
 end
 
 % Get the handle for this instance
-[v,h] = ismember(h,hs);
-if(~v), error('Invalid load plugin handle'); end
-cFrm=cFrms(h); fid=fids(h); info=infos{h}; tNm=tNms{h};
+[v,h]=ismember(h,hs); if(~v), error('Invalid load plugin handle'); end
+cf=cfs(h); fid=fids(h); info=infos{h}; tNm=tNms{h};
 
 % close seq file
 if(strcmp(cmd,'close'))
-  chk(nIn,0); fclose(fids(h)); kp=[1:h-1 h+1:length(hs)];
-  hs=hs(kp); cFrms=cFrms(kp); fids=fids(kp); infos=infos(kp);
-  tNms=tNms(kp); if(exist(tNm,'file')), delete(tNm); end
-  varargout={-1}; return;
+  chk(nIn,0); varargout={-1}; fclose(fid); kp=[1:h-1 h+1:length(hs)];
+  hs=hs(kp); cfs=cfs(kp); fids=fids(kp); infos=infos(kp);
+  tNms=tNms(kp); if(exist(tNm,'file')), delete(tNm); end; return;
 end
 
 % perform appropriate operation
 switch( cmd )
-  case 'getframe',  chk(nIn,0); [o1,o2]=getFrame(cFrm,fid,info,tNm,1);
-  case 'getframeb', chk(nIn,0); [o1,o2]=getFrame(cFrm,fid,info,tNm,0);
-  case 'getinfo',   chk(nIn,0); o1=info;
-  case 'getnext',   chk(nIn,0); cFrm=valid(cFrm+1,info);
-    [o1,o2]=getFrame(cFrm,fid,info,tNm,1);
-  case 'next',      chk(nIn,0); [cFrm,o1]=valid(cFrm+1,info);
-  case 'seek',      chk(nIn,1); [cFrm,o1]=valid(in{1},info);
-  case 'step',      chk(nIn,1); [cFrm,o1]=valid(cFrm+in{1},info);
-  otherwise,        error(['Unrecognized command: "' cmd '"']);
+  case 'getframe', chk(nIn,0); [o1,o2]=getFrame(cf,fid,info,tNm,1);
+  case 'getframeb',chk(nIn,0); [o1,o2]=getFrame(cf,fid,info,tNm,0);
+  case 'getinfo',  chk(nIn,0); o1=info;
+  case 'getnext',  chk(nIn,0); cf=cf+1;[o1,o2]=getFrame(cf,fid,info,tNm,1);
+  case 'next',     chk(nIn,0); [cf,o1]=valid(cf+1,info);
+  case 'seek',     chk(nIn,1); [cf,o1]=valid(in{1},info);
+  case 'step',     chk(nIn,1); [cf,o1]=valid(cf+in{1},info);
+  otherwise,       error(['Unrecognized command: "' cmd '"']);
 end
-cFrms(h)=cFrm; varargout={o1,o2};
+cfs(h)=cf; varargout={o1,o2};
 
 end
 
