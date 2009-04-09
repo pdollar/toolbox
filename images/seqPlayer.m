@@ -1,17 +1,27 @@
 function seqPlayer( fName )
 % Simple GUI to play seq files.
 %
+% Use arrow keys to play the video. Controls are as follows:
+% (1) If stopped: [L] play backward, [R] play forward
+% (2) If playing forward: [L] halve speed, [R] double speed, [U/D] stop
+% (3) If playing backward: [L] double speed, [R] halve speed,[U/D] stop
+% You can explicitly enter a frame or use the slider to jump in the video.
+%
 % USAGE
-%  seqPlayer
+%  seqPlayer( [fName] )
 %
 % INPUTS
+%  fName    - optional seq file to load
 %
 % OUTPUTS
 %
 % EXAMPLE
-%  seqPlayer
+%  load images; [h,w,n]=size(video);
+%  info=struct('height',h,'width',w,'codec','monojpg','fps',10);
+%  sw=seqIo('video','w',info); for t=1:n, sw.addframe(video(:,:,t)); end
+%  sw.close(); seqPlayer('video');
 %
-% See also SEQREADER
+% See also SEQIO
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -275,7 +285,7 @@ dispApi.mainLoop();
       if(nargin==1)
         [d f]=fileparts(f); if(isempty(d)), d='./'; else d=[d '/']; end
       else
-        [f,d]=uigetfile([dVid '/*.seq'],'Select video'); 
+        [f,d]=uigetfile([dVid '/*.seq'],'Select video');
       end
       if(f==0), return; end; vidClose(); dVid=d; fVid=f;
       try

@@ -48,7 +48,7 @@ function sobj = seqIo( fName, mode, info )
 %
 % EXAMPLE
 %
-% See also SEQREADERPLUGIN, SEQWRITERPLUGIN
+% See also SEQPLAYER, SEQREADERPLUGIN, SEQWRITERPLUGIN
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
