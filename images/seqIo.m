@@ -35,9 +35,9 @@ function sobj = seqIo( fName, mode, info )
 %
 % mode=='w': Serves as a wrapper for seqWriterPlugin, available actions:
 %  sw=seqIo(fName,'w',info) % Create new sequence writer object.
-%  sw.close();             % Close seq file (sw is useless after).
-%  sw.addframe(I,[ts]);    % Writes video frame (and timestamp)
-%  sw.addframeb(bytes);    % Writes video frame with no encoding.
+%  sw.close();              % Close seq file (sw is useless after).
+%  sw.addframe(I,[ts]);     % Writes video frame (and timestamp)
+%  sw.addframeb(bytes);     % Writes video frame with no encoding.
 % See seqWriterPlugin for more info about the individual actions and about
 % the parameter sturcutre 'info' used to create the writer.
 %
@@ -51,12 +51,12 @@ function sobj = seqIo( fName, mode, info )
 %  sr = seqIo( {fName1,fName2}, 'rdual' )
 %
 % USAGE
-%  sobj = seqIo( fName, mode, info )
+%  sobj = seqIo( fName, mode, [info] )
 %
 % INPUTS
 %  fName      - seq file to open
 %  mode       - 'r' = read, 'w' = write, 'rdual' = dual read
-%  info       - struct that defines seq encoding (see seqWriterPlugin)
+%  info       - [] struct that defines seq encoding (see seqWriterPlugin)
 %
 % OUTPUTS
 %  sobj       - object used to access seq file
