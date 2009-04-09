@@ -1,27 +1,7 @@
 function [out,out2] = seqReaderPlugin( cmd, handle, varargin )
-% Plugin to allow reading of seq files.
+% Plugin for seqIo and videoIO to allow reading of seq files.
 %
-% A seq file is a series of concatentated image frames with a fixed size
-% header. It is essentially the same as merging a directory of images into
-% a single file. seq files are convenient for storing videos because: (1)
-% no video codec is required, (2) seek is instant and exact, (3) seq files
-% can be read on any operating system. The main drawback is that each frame
-% is encoded independently, resulting in increased file size. The advantage
-% over storing as a directory of images is that a single large file is
-% created. Currently, either uncompressed or jpg compressed frames are
-% supported. Should not be called directly, rather use with seqIo or
-% videoIO. The seq file format is very similar to the Norpix seq format (in
-% fact this reader can be used to read some Norpix seq files).
-%
-% The plugin is intended for use with the videoIO Toolbox for Matlab
-% written by Gerald Daley: http://sourceforge.net/projects/videoio/. It
-% follows the conventions and format of videoIO.  However, it can also be
-% used with the wrapper seqIo instead. Note, that this has actually NOT
-% been tested as a plugin for VideoIO yet.
-%
-% Seq files are manipulated using a unique handle created upon opening the
-% file. The string cmd is used to dictate available operations. The
-% following is a list of commands available (modeled after videoIO):
+% The following is a list of commands available (modeled after videoIO):
 %  'open': Open a seq file for reading (input handle ignored).
 %    handle = seqReaderPlugin( 'open', handle, fName )
 %  'close': Close seq file (output handle is -1).
@@ -42,7 +22,7 @@ function [out,out2] = seqReaderPlugin( cmd, handle, varargin )
 %    out = seqReaderPlugin( 'step', handle, delta )
 %
 % USAGE
-%  out = seqReaderPlugin( cmd, handle, varargin )
+%  [out, out2] = seqReaderPlugin( cmd, handle, varargin )
 %
 % INPUTS
 %  cmd        - string indicating operation to perform

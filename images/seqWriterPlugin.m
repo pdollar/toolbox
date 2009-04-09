@@ -1,19 +1,5 @@
 function out = seqWriterPlugin( cmd, handle, varargin )
-% Plugin to allow writing of seq files.
-%
-% For information on .seq files and general usage see seqReaderPlugin.
-%
-% When opening a sequence writer, the following parameters must be
-% specified in the struct info:
-%  width          - frame width
-%  height         - frame height
-%  fps            - frames per second of resulting video
-%  codec          - string representing codec, options include:
-%   {'monoraw', 'imageFormat100'}     - black/white uncompressed
-%   {'raw', 'imageFormat200'}         - color (BGR) uncompressed
-%   {'monojpg', 'imageFormat102'}     - black/white jpg compressed
-%   {'jpg', 'imageFormat201'}         - color jpg compressed
-%  quality        - [80] compression quality (between 0 and 100)
+% Plugin for seqIo and videoIO to allow writing of seq files.
 %
 % The following is a list of commands available (modeled after videoIO):
 %  'open': Open a seq file for writing (input handle ignored).
@@ -24,6 +10,17 @@ function out = seqWriterPlugin( cmd, handle, varargin )
 %    seqWriterPlugin( 'addframe', handle, I, [ts] )
 %  'addframeb': Writes a video frame with no encoding.
 %    seqWriterPlugin( 'addframeb', handle, I, [ts] )
+%
+% The following params must be specified in struct 'info' upon opening:
+%  width          - frame width
+%  height         - frame height
+%  fps            - frames per second
+%  quality        - [80] compression quality (0 to 100)
+%  codec          - string representing codec, options include:
+%   {'monoraw', 'imageFormat100'}     - black/white uncompressed
+%   {'raw', 'imageFormat200'}         - color (BGR) uncompressed
+%   {'monojpg', 'imageFormat102'}     - black/white jpg compressed
+%   {'jpg', 'imageFormat201'}         - color jpg compressed
 %
 % USAGE
 %  out = seqWriterPlugin( cmd, handle, varargin )
@@ -38,7 +35,7 @@ function out = seqWriterPlugin( cmd, handle, varargin )
 %
 % EXAMPLE
 %
-% See also SEQREADERPLUGIN, SEQIO
+% See also SEQIO, SEQREADERPLUGIN
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]

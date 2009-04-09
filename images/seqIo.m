@@ -1,9 +1,27 @@
 function sobj = seqIo( fName, mode, info )
 % Wrapper for reading/writing seq files.
 %
-% If mode=='r': Serves as a simple wrapper for seqReaderPlugin (see
-% seqReaderPlugin for more details on reading seq files). This is an
-% alternative wrapper instead of using videoIO. A seq file is opened with:
+% A seq file is a series of concatentated image frames with a fixed size
+% header. It is essentially the same as merging a directory of images into
+% a single file. seq files are convenient for storing videos because: (1)
+% no video codec is required, (2) seek is instant and exact, (3) seq files
+% can be read on any operating system. The main drawback is that each frame
+% is encoded independently, resulting in increased file size. The advantage
+% over storing as a directory of images is that a single large file is
+% created. Currently, either uncompressed or jpg compressed frames are
+% supported. Should not be called directly, rather use with seqIo or
+% videoIO. The seq file format is very similar to the Norpix seq format (in
+% fact this reader can be used to read some Norpix seq files).
+%
+% The actual work of reading/writing seq files is done by seqReaderPlugin
+% and seqWriterPlugin. These plugins were originally intended for use with
+% the videoIO Toolbox for Matlab written by Gerald Daley: 
+%  http://sourceforge.net/projects/videoio/.
+% However, the plugins also work with seqIo.m (this function), and there is
+% no need to actually have videoIO installed to use seq files. In fact,
+% the plugins have not yet been tested with videoIO.
+%
+% mode=='r': Serves as a for wrapper for seqReaderPlugin. Create with:
 %  sr = seqIo( fName, 'r' )
 % This creates the object sr which is used as the interface to the seq
 % file. The available actions on sr (modeled on videoIO) are as follows:
@@ -17,22 +35,23 @@ function sobj = seqIo( fName, mode, info )
 %   out = sr.step(delta);  % Go to current frame + delta (out=-1 on fail).
 % See seqReaderPlugin for more info about the individual actions.
 %
-% If mode=='w': Serves as a wrapper for seqWriterPlugin. Create with:
+% mode=='w': Serves as a wrapper for seqWriterPlugin. Create with:
 %  sw = seqIo( fName, 'w', info )
 % This creates the object sw which is used as the interface to the seq
 % file. The available actions on sw (modeled on videoIO) are as follows:
 %   sw.close();            % Close seq file (sw is useless after).
 %   sw.addframe(I,[ts]);   % Writes video frame (and timestamp)
 %   sw.addframeb(bytes);   % Writes video frame with no encoding.
-% See seqWriterPlugin for more info about the individual actions.
+% See seqWriterPlugin for more info about the individual actions and about
+% the parameter sturcutre 'info' used to create the writer.
 %
-% If mode=='rdual': Wrapper for two videos of the same image dims and
-% roughly the same frame counts that are treated as a single IO object.
-% getframe() returns the concatentation of the two frames. For videos
-% of different frame counts, the first video serves as the "dominant" video
-% and the frame count of the second video is adjusted accordingly. Same
-% general usage as in mode=='r', but the only supported operations are:
-% close, getframe, getinfo, and seek. Open with:
+% mode=='rdual': Wrapper for two videos of the same image dims and roughly
+% the same frame counts that are treated as a single IO object. getframe()
+% returns the concatentation of the two frames. For videos of different
+% frame counts, the first video serves as the "dominant" video and the
+% frame count of the second video is adjusted accordingly. Same general
+% usage as in mode=='r', but the only supported operations are: close,
+% getframe, getinfo, and seek. Open with:
 %  sr = seqIo( {fName1,fName2}, 'rdual' )
 %
 % USAGE
