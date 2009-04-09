@@ -95,11 +95,11 @@ end
 
 % perform appropriate operation
 switch( cmd )
-  case 'getframe',  chk(nIn,0); [out,out2]=getFrame(cFrm,fid,info,tNm);
-  case 'getframeb', chk(nIn,0); [out,out2]=getFrameb(cFrm,fid,info);
+  case 'getframe',  chk(nIn,0); [out,out2]=getFrame(cFrm,fid,info,tNm,1);
+  case 'getframeb', chk(nIn,0); [out,out2]=getFrame(cFrm,fid,info,tNm,0);
   case 'getinfo',   chk(nIn,0); out=info;
   case 'getnext',   chk(nIn,0); cFrm=valid(cFrm+1,info);
-    [out,out2]=getFrame(cFrm,fid,info,tNm);
+    [out,out2]=getFrame(cFrm,fid,info,tNm,1);
   case 'next',      chk(nIn,0); [cFrm,out]=valid(cFrm+1,info);
   case 'seek',      chk(nIn,1); [cFrm,out]=valid(in{1},info);
   case 'step',      chk(nIn,1); [cFrm,out]=valid(cFrm+in{1},info);
@@ -149,7 +149,7 @@ function [frame,v] = valid( frame, info )
 v=int32(frame>=0 && frame<info.numFrames);
 end
 
-function [I,ts] = getFrame( frame, fid, info, tNm )
+function [I,ts] = getFrame( frame, fid, info, tNm, decode )
 % get frame image (I) and timestamp (ts) at which frame was recorded
 imageFormat=info.imageFormat;
 if(frame<0 || frame>=info.numFrames), I=[]; ts=[]; return; end
@@ -157,36 +157,26 @@ switch imageFormat
   case {100,200}
     % read in an uncompressed image (assume imageBitDepthReal==8)
     fseek(fid,1024+frame*info.trueImageSize,'bof');
-    siz = [info.height info.width info.imageBitDepth/8];
-    I = uint8(fread(fid,info.imageSizeBytes,'uint8'));
-    % reshape appropriately for mxn or mxnx3 RGB image
-    if( siz(3)==1 ), I=reshape(I,siz(2),siz(1))'; else
-      I = permute(reshape(I,siz(3),siz(2),siz(1)),[3,2,1]);
+    I = fread(fid,info.imageSizeBytes,'*uint8');
+    if( decode )
+      % reshape appropriately for mxn or mxnx3 RGB image
+      siz = [info.height info.width info.imageBitDepth/8];
+      if( siz(3)==1 ), I=reshape(I,siz(2),siz(1))'; else
+        I = permute(reshape(I,siz(3),siz(2),siz(1)),[3,2,1]);
+      end
+      if(imageFormat==200), t=I(:,:,3); I(:,:,3)=I(:,:,1); I(:,:,1)=t; end
     end
-    if(imageFormat==200), t=I(:,:,3); I(:,:,3)=I(:,:,1); I(:,:,1)=t; end
   case {102,201}
-    % write/read to/from temporary .jpg (not that much overhead)
-    fseek(fid,info.seek(frame+1),'bof');
-    nBytes=fread(fid,1,'uint32'); J=fread(fid,nBytes-4,'uint8');
-    assert(J(1)==255 && J(2)==216 && J(end-1)==255 && J(end)==217); % JPG
-    fw=fopen(tNm,'w'); assert(fw~=-1); fwrite(fw,J); fclose(fw);
-    I=rjpg8c(tNm);
-  otherwise, assert(false);
-end
-if(nargout==2), ts=fread(fid,1,'uint32')+fread(fid,1,'uint16')/1000; end
-end
-
-function [I,ts] = getFrameb( frame, fid, info )
-% get frame I with no decoding
-if(frame<0 || frame>=info.numFrames), I=[]; ts=[]; return; end
-switch info.imageFormat;
-  case {100,200}
-    fseek(fid,1024+frame*info.trueImageSize,'bof');
-    I = fread(fid,info.imageSizeBytes);
-  case {102,201}
-    fseek(fid,info.seek(frame+1),'bof');
-    nBytes = fread(fid,1,'uint32'); fseek(fid,-4,'cof');
-    I = fread(fid,nBytes,'uint8');
+    fseek(fid,info.seek(frame+1),'bof'); nBytes=fread(fid,1,'uint32');
+    if( decode )
+      % write/read to/from temporary .jpg (not that much overhead)
+      I=fread(fid,nBytes-4,'*uint8');
+      assert(I(1)==255 && I(2)==216 && I(end-1)==255 && I(end)==217); % JPG
+      fw=fopen(tNm,'w'); assert(fw~=-1); fwrite(fw,I); fclose(fw);
+      I=rjpg8c(tNm);
+    else
+      fseek(fid,-4,'cof'); I=fread(fid,nBytes,'*uint8');
+    end
   otherwise, assert(false);
 end
 if(nargout==2), ts=fread(fid,1,'uint32')+fread(fid,1,'uint16')/1000; end
