@@ -79,6 +79,7 @@ function sobj = seqIo( fName, mode, varargin )
 srp=@seqReaderPlugin;
 swp=@seqWriterPlugin;
 
+mode=lower(mode);
 if( strcmp(mode,'r') )
   s = srp( 'open', int32(-1), fName );
   sobj = struct( 'close',@() srp('close',s), ...
@@ -110,7 +111,7 @@ elseif( strcmp(mode,'toimgs') )
   s = srp( 'open', int32(-1), fName );
   while(srp('next',s)), srp('saveframe',s,dir); end;
   srp( 'close', s );
-
+  
 else assert(0);
   
 end

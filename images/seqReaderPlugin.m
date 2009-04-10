@@ -37,7 +37,7 @@ function varargout = seqReaderPlugin( cmd, h, varargin )
 % persistent variables to keep track of all loaded .seq files
 persistent h1 hs cs fids infos tNms;
 if(isempty(h1)), h1=int32(now); hs=int32([]); infos={}; tNms={}; end
-nIn=nargin-2; in=varargin; o1=[]; o2=[];
+nIn=nargin-2; in=varargin; o1=[]; o2=[]; cmd=lower(cmd);
 
 % open seq file
 if(strcmp(cmd,'open'))
