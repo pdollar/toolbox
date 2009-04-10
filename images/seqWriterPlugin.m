@@ -126,14 +126,14 @@ switch imageFormat
     end
     fwrite(fid,I(:),'uint8'); pad=info.trueImageSize-info.imageSizeBytes-6;
   case {102,201}
-    % write/read to/from temporary .jpg (not that much overhead)
-    q=info.quality; pad=10;
-    if( ~encode ), fwrite(fid,I(:),'uint8'); else
+    if( encode )
+      % write/read to/from temporary .jpg (not that much overhead)
+      q=info.quality;
       wjpg8c(I,tNm,struct('quality',q,'comment',{{}},'mode','lossy'));
       fr=fopen(tNm,'r'); assert(fr~=-1); I=fread(fr); fclose(fr);
-      assert(I(1)==255 && I(2)==216 && I(end-1)==255 && I(end)==217); % JPG
-      fwrite(fid,numel(I)+4,'uint32'); fwrite(fid,I);
     end
+    assert(I(1)==255 && I(2)==216 && I(end-1)==255 && I(end)==217); % JPG
+    fwrite(fid,numel(I)+4,'uint32'); fwrite(fid,I); pad=10;
   otherwise, assert(false);
 end
 % write timestamp

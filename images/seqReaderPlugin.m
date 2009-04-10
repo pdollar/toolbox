@@ -131,14 +131,12 @@ switch imageFormat
     end
   case {102,201}
     fseek(fid,info.seek(frame+1),'bof'); nBytes=fread(fid,1,'uint32');
+    I = fread(fid,nBytes-4,'*uint8');
     if( decode )
       % write/read to/from temporary .jpg (not that much overhead)
-      I=fread(fid,nBytes-4,'*uint8');
       assert(I(1)==255 && I(2)==216 && I(end-1)==255 && I(end)==217); % JPG
       fw=fopen(tNm,'w'); assert(fw~=-1); fwrite(fw,I); fclose(fw);
       I=rjpg8c(tNm);
-    else
-      fseek(fid,-4,'cof'); I=fread(fid,nBytes,'*uint8');
     end
   otherwise, assert(false);
 end
