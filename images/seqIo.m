@@ -53,6 +53,9 @@ function sobj = seqIo( fName, mode, varargin )
 % mode=='crop': Crop subsequence from seq file:
 %  seqIo( fName, 'crop', tName, f0, f1 )
 %
+% mode=='toimgs': Extract images from seq file:
+%  seqIo( fName, 'toimgs', dir )
+%
 % USAGE
 %  sobj = seqIo( fName, mode, varargin )
 %
@@ -102,6 +105,12 @@ elseif( strcmp(mode,'crop') )
   for f=f0:f1, [I,ts]=sr.getframeb(); sw.addframeb(I,ts); sr.next(); end
   sw.close(); sr.close();
   
+elseif( strcmp(mode,'toimgs') )
+  dir=varargin{1}; if(~exist(dir,'dir')), mkdir(dir); end
+  s = srp( 'open', int32(-1), fName );
+  while(srp('next',s)), srp('saveframe',s,dir); end;
+  srp( 'close', s );
+
 else assert(0);
   
 end
