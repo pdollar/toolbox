@@ -7,7 +7,6 @@ function varargout = seqReaderPlugin( cmd, h, varargin )
 %  h = srp('close',h);        % Close seq file (output h is -1).
 %  [I,ts] =srp('getframe',h)  % Get current frame (returns [] if invalid).
 %  [I,ts] =srp('getframeb',h) % Get current frame with no decoding.
-%  srp('saveframe',h,dir);    % Save frame to dir/I[frame]
 %  info = srp('getinfo',h)    % Return struct with info about video.
 %  [I,ts] =srp('getnext',h)   % Shortcut for 'next' followed by 'getframe'.
 %  out = srp('next',h)        % Go to next frame (out=-1 on fail).
@@ -37,7 +36,7 @@ function varargout = seqReaderPlugin( cmd, h, varargin )
 % persistent variables to keep track of all loaded .seq files
 persistent h1 hs cs fids infos tNms;
 if(isempty(h1)), h1=int32(now); hs=int32([]); infos={}; tNms={}; end
-nIn=nargin-2; in=varargin; o1=[]; o2=[]; cmd=lower(cmd);
+nIn=nargin-2; in=varargin; o2=[]; cmd=lower(cmd);
 
 % open seq file
 if(strcmp(cmd,'open'))
@@ -62,7 +61,6 @@ end
 switch( cmd )
   case 'getframe',  chk(nIn,0); [o1,o2]=getFrame(c,fid,info,tNm,1);
   case 'getframeb', chk(nIn,0); [o1,o2]=getFrame(c,fid,info,tNm,0);
-  case 'saveframe', chk(nIn,1); saveFrame(c,fid,info,in{1});
   case 'getinfo',   chk(nIn,0); o1=info;
   case 'getnext',   chk(nIn,0); c=c+1; [o1,o2]=getFrame(c,fid,info,tNm,1);
   case 'next',      chk(nIn,0); [c,o1]=valid(c+1,info);
@@ -143,19 +141,6 @@ switch imageFormat
   otherwise, assert(false);
 end
 if(nargout==2), ts=fread(fid,1,'uint32')+fread(fid,1,'uint16')/1000; end
-end
-
-function saveFrame( frame, fid, info, dir )
-switch info.imageFormat
-  case {100,200}, decode=1; ext='png';
-  case {102,201}, decode=0; ext='jpg';
-  otherwise, assert(false);
-end
-I=getFrame(frame,fid,info,'',decode); assert(~isempty(I));
-fName=[dir '/I' int2str2(frame,5) '.' ext];
-if(decode), imwrite(I,fName); else
-  fw=fopen(fName,'w'); assert(fw>0); fwrite(fw,I); fclose(fw);
-end
 end
 
 function ts = getTimeStamp( frame, fid, info )
