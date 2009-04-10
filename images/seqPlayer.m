@@ -1,4 +1,4 @@
-function seqPlayer( fName )
+function seqPlayer( fName, dispFunc )
 % Simple GUI to play seq files.
 %
 % Use arrow keys to play the video. Controls are as follows:
@@ -7,11 +7,16 @@ function seqPlayer( fName )
 % (3) If playing backward: [L] double speed, [R] halve speed,[U/D] stop
 % You can explicitly enter a frame or use the slider to jump in the video.
 %
+% One can pass in a function handle dispFunc, where "hs=dispFunc(frame)"
+% performs additional custom display for the given frame (and returns the
+% handles for any created objects).
+%
 % USAGE
-%  seqPlayer( [fName] )
+%  seqPlayer( [fName], [dispFunc] )
 %
 % INPUTS
 %  fName    - optional seq file to load
+%  dispFunc - allow custom display per frame
 %
 % OUTPUTS
 %
@@ -28,6 +33,9 @@ function seqPlayer( fName )
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
+if(nargin<1), fName=[]; end
+if(nargin<2), dispFunc=[]; end
+
 % handles to gui objects / other globals
 [hFig,menu,pTop,pMid,dispApi] = deal([]);
 
@@ -38,7 +46,7 @@ dispApi = dispMakeApi();
 menuApi.vidClose();
 
 % open vid if given
-if(nargin==1), menuApi.vidOpen(fName); end
+if(~isempty(fName)), menuApi.vidOpen(fName); end
 
 % begin display
 dispApi.mainLoop();
@@ -142,7 +150,7 @@ dispApi.mainLoop();
 
   function api = dispMakeApi()
     % create api
-    [sr, audio, info, nFrame, speed, curInd, ...
+    [sr, audio, info, nFrame, speed, curInd, hs, ...
       hImg, needUpdate, prevTime, exitFlag ]=deal([]);
     api = struct( 'setVid',@setVid, 'setAud',@setAud, ...
       'mainLoop',@mainLoop, 'setSpeed',@setSpeed, 'getInfo',@getInfo, ...
@@ -156,7 +164,8 @@ dispApi.mainLoop();
     function setVid( vr1 )
       % reset local variables
       if(isstruct(sr)), sr=sr.close(); end
-      [sr, audio, info, nFrame, speed, curInd, ...
+      if(~isempty(hs)), delete(hs); hs=[]; end
+      [sr, audio, info, nFrame, speed, curInd, hs, ...
         hImg, needUpdate, prevTime, exitFlag ]=deal([]);
       sr=vr1; exitFlag=0; nFrame=0; speed=-1; setFrame( 0, 0 );
       % update GUI
@@ -207,6 +216,8 @@ dispApi.mainLoop();
         % update display if necessary
         if(~needUpdate), pause(.1); else
           sr.seek( round(curInd) ); I=sr.getframe();
+          if(~isempty(hs)), delete(hs); hs=[]; end
+          if(~isempty(dispFunc)), hs=dispFunc(round(curInd)); end
           assert(~isempty(I)); set(hImg,'CData',I);
           set(pMid.hSl,'Value',curInd);
           set(pTop.hFrmInd,'String',int2str(round(curInd+1)));
