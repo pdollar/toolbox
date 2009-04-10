@@ -48,7 +48,7 @@ dispApi.mainLoop();
     % common properties
     name = 'Seq Player';
     bg='BackgroundColor'; fg='ForegroundColor'; ha='HorizontalAlignment';
-    units = {'Units','pixels'}; st='String'; ps='Position';
+    units = {'Units','pixels'}; st='String'; ps='Position'; fs='FontSize';
     
     % initial figures size / pos
     set(0,'Units','pixels');  ss = get(0,'ScreenSize');
@@ -63,6 +63,9 @@ dispApi.mainLoop();
     % mid panel
     pMid.hAx=axes(units{:},'Parent',hFig,'XTick',[],'YTick',[]);
     pMid.hSl=uicontrol(hFig,'Style','slider','Min',0,'Max',1,bg,'k');
+    btnPrp={units{:},'Style','pushbutton', bg,[.9 .9 .9],fs,9,st};
+    pMid.hLf=uicontrol(hFig,'FontWeight','bold',btnPrp{:},'<<');
+    pMid.hRt=uicontrol(hFig,'FontWeight','bold',btnPrp{:},'>>');
     imshow(0);
     
     % top panel
@@ -79,7 +82,7 @@ dispApi.mainLoop();
     pTop.hPlySpd=uicontrol(pTop.h,txtPrp{:},'Left',st,'0x');
     
     % set the keyPressFcn for all focusable components (except popupmenus)
-    set( [hFig, pMid.hSl], 'keyPressFcn',@keyPress );
+    set( [hFig pMid.hSl pMid.hLf pMid.hRt], 'keyPressFcn',@keyPress );
     
     % create menus
     menu.hVid = uimenu(hFig,'Label','Video');
@@ -114,7 +117,9 @@ dispApi.mainLoop();
       % overall layout
       wd=pos(3)-2*pad; ht=pos(4)-2*pad-htSl-htTop;
       wd=min(wd,ht*ar); ht=min(ht,wd/ar); x=(pos(3)-wd)/2; y=pad;
-      set(pMid.hSl,ps,[x y wd htSl]); y=y+htSl;
+      set(pMid.hLf,ps,[x y 22 htSl]);
+      set(pMid.hSl,ps,[x+22 y wd-44 htSl]);
+      set(pMid.hRt,ps,[x+wd-22 y 22 htSl]); y=y+htSl;
       set(pMid.hAx,ps,[x y wd ht]); y=y+ht;
       set(pTop.h,ps,[x y wd htTop]);
       % position stuff in top panel
@@ -145,6 +150,8 @@ dispApi.mainLoop();
       'requestUpdate',@requestUpdate );
     set(pMid.hSl,    'Callback',@(h,evnt) setFrameCb(0));
     set(pTop.hFrmInd,'Callback',@(h,evnt) setFrameCb(1));
+    set(pMid.hLf, 'Callback',@(h,evnt) setSpeed(-1));
+    set(pMid.hRt, 'Callback',@(h,evnt) setSpeed(+1));
     
     function setVid( vr1 )
       % reset local variables
@@ -160,7 +167,7 @@ dispApi.mainLoop();
         hImg = imshow( sr.getframe() );
       end
       set(pMid.hSl,'Value',0); v=(nFrame>1)+1;
-      en={'off','on'}; set(pMid.hSl,'Enable',en{v});
+      en={'off','on'}; set([pMid.hSl pMid.hLf pMid.hRt],'Enable',en{v});
       en={'inactive','on'}; set(pTop.hFrmInd,'Enable',en{v});
       set(pTop.hFrmInd,'String','0'); set(pTop.hTmVal,'String','0:00');
       set(pTop.hFrmNum,'String',[' / ' int2str(nFrame)]);
