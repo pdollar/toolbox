@@ -1,4 +1,4 @@
-function sobj = seqIo( fName, mode, info )
+function sobj = seqIo( fName, mode, varargin )
 % Wrapper for reading/writing seq files.
 %
 % A seq file is a series of concatentated image frames with a fixed size
@@ -50,13 +50,16 @@ function sobj = seqIo( fName, mode, info )
 % getframe(), getinfo(), and seek(). Open with:
 %  sr = seqIo( {fName1,fName2}, 'rdual' )
 %
+% mode=='crop': Crop subsequence from seq file:
+%  seqIo( fName, 'crop', tName, f0, f1 )
+%
 % USAGE
-%  sobj = seqIo( fName, mode, [info] )
+%  sobj = seqIo( fName, mode, varargin )
 %
 % INPUTS
 %  fName      - seq file to open
-%  mode       - 'r' = read, 'w' = write, 'rdual' = dual read
-%  info       - [] struct that defines seq encoding (see seqWriterPlugin)
+%  mode       - 'r'=read, 'w'=write, for other modes see above
+%  varargin   - additional input (varies according to cmd)
 %
 % OUTPUTS
 %  sobj       - object used to access seq file
@@ -83,13 +86,21 @@ if( strcmp(mode,'r') )
     'step',@(d) srp('step',s,d));
   
 elseif( strcmp(mode,'w') )
-  s = swp( 'open', int32(-1), fName, info );
+  s = swp( 'open', int32(-1), fName, varargin{1} );
   sobj = struct( 'close',@() swp('close',s), ...
     'addframe',@(varargin) swp('addframe',s,varargin{:}), ...
     'addframeb',@(varargin) swp('addframeb',s,varargin{:}) );
   
 elseif( strcmp(mode,'rdual') )
   sobj = seqReaderDual(fName{:});
+  
+elseif( strcmp(mode,'crop') )
+  tName=varargin{1}; f0=varargin{2}; f1=varargin{3};
+  sr=seqIo(fName,'r'); info=sr.getinfo();
+  f1=min(f1,info.numFrames-1); f0=min(f0,f1);
+  sw=seqIo(tName,'w',info); sr.seek(f0);
+  for f=f0:f1, [I,ts]=sr.getframeb(); sw.addframeb(I,ts); sr.next(); end
+  sw.close(); sr.close();
   
 else assert(0);
   
