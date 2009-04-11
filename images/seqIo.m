@@ -113,7 +113,7 @@ elseif( strcmp(mode,'crop') )
   
 elseif( strcmp(mode,'toimgs') )
   d=varargin{1}; if(~exist(d,'dir')), mkdir(d); end
-  sr=seqIo(fName,'r'); i=0; ext=getExt(sr.getinfo());
+  sr=seqIo(fName,'r'); i=0; info=sr.getinfo(); ext=info.ext;
   while( 1 )
     f=[d '/I' int2str2(i,5) ext]; i=i+1; if(~sr.next()), break; end
     I=sr.getframeb(); f=fopen(f,'w'); assert(f>0); fwrite(f,I); fclose(f);
@@ -122,7 +122,7 @@ elseif( strcmp(mode,'toimgs') )
   
 elseif( strcmp(mode,'frimgs') )
   d=varargin{1}; info=varargin{2}; assert(exist(d,'dir')==7);
-  sw=seqIo(fName,'w',info); i=0; ext=getExt(info);
+  sw=seqIo(fName,'w',info); i=0; info=sw.getinfo(); ext=info.ext;
   while( 1 )
     f=[d '/I' int2str2(i,5) ext]; i=i+1; if(~exist(f,'file')), break; end
     f=fopen(f,'r'); assert(f>0); I=fread(f); fclose(f); sw.addframeb(I);
@@ -132,14 +132,6 @@ elseif( strcmp(mode,'frimgs') )
 else assert(0);
   
 end
-
-  function ext = getExt( info )
-    switch info.imageFormat
-      case {100,200}, ext='.raw';
-      case {102,201}, ext='.jpg';
-      otherwise, assert(false);
-    end
-  end
 
   function sobj = seqReaderDual( fName1, fName2 )
     s1=srp('open',int32(-1),fName1); s2=srp('open',int32(-1),fName2);
