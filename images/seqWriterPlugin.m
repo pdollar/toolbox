@@ -19,6 +19,8 @@ function varargout = seqWriterPlugin( cmd, h, varargin )
 %   'raw'/'imageFormat200'          - color (BGR) uncompressed
 %   'monojpg'/'imageFormat102'      - black/white jpg compressed
 %   'jpg'/'imageFormat201'          - color jpg compressed
+%   'monopng'/'imageFormat001'      - black/white png compressed
+%   'png'/'imageFormat002'          - color png compressed
 %
 % USAGE
 %  varargout = seqWriterPlugin( cmd, h, varargin )
@@ -103,9 +105,12 @@ switch(info.codec)
   case {'raw', 'imageFormat200'},     frmt=200; nCh=3; ext='raw';
   case {'monojpg', 'imageFormat102'}, frmt=102; nCh=1; ext='jpg';
   case {'jpg', 'imageFormat201'},     frmt=201; nCh=3; ext='jpg';
+  case {'monopng', 'imageFormat001'}, frmt=001; nCh=1; ext='png';
+  case {'png', 'imageFormat002'},     frmt=002; nCh=3; ext='png';
   otherwise, error('unknown format');
 end
 if(strcmp(ext,'jpg')), getImgFile( 'wjpg8c' ); end
+if(strcmp(ext,'png')), getImgFile( 'png' ); end
 tNm=['tmp' int2str(fid) '.' ext]; info.imageFormat=frmt; info.ext=ext;
 if(~isfield2(info,'quality')), info.quality=80; end
 info.imageBitDepth=8*nCh; info.imageBitDepthReal=8;
@@ -115,7 +120,7 @@ end
 
 function c = addFrame( fid, info, c, tNm, encode, I, ts )
 % write frame
-imageFormat=info.imageFormat; ext=info.ext; c=c+1;
+frmt=info.imageFormat; ext=info.ext; c=c+1;
 if( encode )
   siz = [info.height info.width info.imageBitDepth/8];
   assert(size(I,1)==siz(1) && size(I,2)==siz(2) && size(I,3)==siz(3));
@@ -124,7 +129,7 @@ switch ext
   case 'raw'
     % write an uncompressed image (assume imageBitDepthReal==8)
     if( ~encode ), assert(numel(I)==info.imageSizeBytes); else
-      if(imageFormat==200), t=I(:,:,3); I(:,:,3)=I(:,:,1); I(:,:,1)=t; end
+      if(frmt==200), t=I(:,:,3); I(:,:,3)=I(:,:,1); I(:,:,1)=t; end
       if( siz(3)==1 ), I=I'; else I=permute(I,[3,2,1]); end
     end
     fwrite(fid,I(:),'uint8'); pad=info.trueImageSize-info.imageSizeBytes-6;
@@ -136,6 +141,14 @@ switch ext
       fr=fopen(tNm,'r'); assert(fr~=-1); I=fread(fr); fclose(fr);
     end
     assert(I(1)==255 && I(2)==216 && I(end-1)==255 && I(end)==217); % JPG
+    fwrite(fid,numel(I)+4,'uint32'); fwrite(fid,I); pad=10;
+  case 'png'
+    if( encode )
+      % write/read to/from temporary .png (not that much overhead)
+      p=cell(1,18); p{1}='write'; if(frmt==1), p{5}=0; else p{5}=2; end
+      p{2}=I; p{4}=tNm; p{6}=8; p{9}='none'; p{17}=cell(0,2); png(p{:})
+      fr=fopen(tNm,'r'); assert(fr~=-1); I=fread(fr); fclose(fr);
+    end
     fwrite(fid,numel(I)+4,'uint32'); fwrite(fid,I); pad=10;
   otherwise, assert(false);
 end

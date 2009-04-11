@@ -93,9 +93,11 @@ info=readHeader( fid ); n=info.numFrames;
 switch(info.imageFormat)
   case {100,200}, ext='raw';
   case {102,201}, ext='jpg';
+  case {001,002}, ext='png';
   otherwise, error('unknown format');
 end
 if(strcmp(ext,'jpg')), getImgFile( 'rjpg8c' ); end
+if(strcmp(ext,'png')), getImgFile( 'png' ); end
 tNm=['tmp' int2str(fid) '.' ext]; info.ext=ext;
 % compute seek info for compressed images
 if(~strcmp(ext,'raw'))
@@ -144,6 +146,14 @@ switch ext
       fw=fopen(tNm,'w'); assert(fw~=-1); fwrite(fw,I); fclose(fw);
       I=rjpg8c(tNm);
     end
+  case 'png'
+    fseek(fid,info.seek(frame+1),'bof'); nBytes=fread(fid,1,'uint32');
+    I = fread(fid,nBytes-4,'*uint8');
+    if( decode )
+      % write/read to/from temporary .png (not that much overhead)
+      fw=fopen(tNm,'w'); assert(fw~=-1); fwrite(fw,I); fclose(fw);
+      I=png('read',tNm,[]); I=permute(I,ndims(I):-1:1);
+    end
   otherwise, assert(false);
 end
 if(nargout==2), ts=fread(fid,1,'uint32')+fread(fid,1,'uint16')/1000; end
@@ -155,7 +165,7 @@ if(frame<0 || frame>=info.numFrames), ts=[]; return; end
 switch info.ext
   case 'raw' % uncompressed
     fseek(fid,1024+frame*info.trueImageSize+info.imageSizeBytes,'bof');
-  case 'jpg' % jpg compressed
+  case {'jpg','png'} % compressed
     fseek(fid,info.seek(frame+1),'bof');
     fseek(fid,fread(fid,1,'uint32')-4,'cof');
   otherwise, assert(false);
