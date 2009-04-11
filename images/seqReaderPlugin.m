@@ -89,9 +89,16 @@ end
 function [info, fid, tNm] = open( fName )
 % open video for reading, get header
 assert(exist([fName '.seq'],'file')==2); fid=fopen([fName '.seq'],'r','l');
-info=readHeader( fid ); n=info.numFrames; tNm=[];
-% compute seek info for jpg encoded images
-if(any(info.imageFormat==[102 201]))
+info=readHeader( fid ); n=info.numFrames;
+switch(info.imageFormat)
+  case {100,200}, ext='raw';
+  case {102,201}, ext='jpg';
+  otherwise, error('unknown format');
+end
+if(strcmp(ext,'jpg')), getImgFile( 'rjpg8c' ); end
+tNm=['tmp' int2str(fid) '.' ext]; info.ext=ext;
+% compute seek info for compressed images
+if(~strcmp(ext,'raw'))
   oName=[fName '-seek.mat'];
   if(exist(oName,'file')==2), load(oName); info.seek=seek; else %#ok<NODEF>
     disp('loading seek info...'); seek=zeros(n,1,'uint32'); seek(1)=1024;
@@ -100,7 +107,6 @@ if(any(info.imageFormat==[102 201]))
     end
     try save(oName,'seek'); catch; end; info.seek=seek; %#ok<CTCH>
   end
-  tNm=['tmp' int2str(fid) '.jpg']; getImgFile( 'rjpg8c' );
 end
 % compute frame rate from timestamps as stored fps may be incorrect
 n=min(100,n); if(n==1), return; end; ts=zeros(1,n);
@@ -114,10 +120,10 @@ end
 
 function [I,ts] = getFrame( frame, fid, info, tNm, decode )
 % get frame image (I) and timestamp (ts) at which frame was recorded
-imageFormat=info.imageFormat;
+imageFormat=info.imageFormat; ext=info.ext;
 if(frame<0 || frame>=info.numFrames), I=[]; ts=[]; return; end
-switch imageFormat
-  case {100,200}
+switch ext
+  case 'raw'
     % read in an uncompressed image (assume imageBitDepthReal==8)
     fseek(fid,1024+frame*info.trueImageSize,'bof');
     I = fread(fid,info.imageSizeBytes,'*uint8');
@@ -129,7 +135,7 @@ switch imageFormat
       end
       if(imageFormat==200), t=I(:,:,3); I(:,:,3)=I(:,:,1); I(:,:,1)=t; end
     end
-  case {102,201}
+  case 'jpg'
     fseek(fid,info.seek(frame+1),'bof'); nBytes=fread(fid,1,'uint32');
     I = fread(fid,nBytes-4,'*uint8');
     if( decode )
@@ -146,10 +152,10 @@ end
 function ts = getTimeStamp( frame, fid, info )
 % get timestamp (ts) at which frame was recorded
 if(frame<0 || frame>=info.numFrames), ts=[]; return; end
-switch info.imageFormat
-  case {100,200} % uncompressed
+switch info.ext
+  case 'raw' % uncompressed
     fseek(fid,1024+frame*info.trueImageSize+info.imageSizeBytes,'bof');
-  case {102,201} % JPG compressed
+  case 'jpg' % jpg compressed
     fseek(fid,info.seek(frame+1),'bof');
     fseek(fid,fread(fid,1,'uint32')-4,'cof');
   otherwise, assert(false);
@@ -169,7 +175,7 @@ version=fread(fid,1,'int32'); assert(fread(fid,1,'uint32')==1024);
 descr=char(fread(fid,256,'uint16'))'; %#ok<FREAD>
 % read in more info
 tmp=fread(fid,9,'uint32'); assert(tmp(8)==0);
-fps = fread(fid,1,'float64'); codec=['imageFormat' int2str(tmp(6))];
+fps = fread(fid,1,'float64'); codec=['imageFormat' int2str2(tmp(6),3)];
 % store information in info struct
 info=struct( 'width',tmp(1), 'height',tmp(2), 'imageBitDepth',tmp(3), ...
   'imageBitDepthReal',tmp(4), 'imageSizeBytes',tmp(5), ...

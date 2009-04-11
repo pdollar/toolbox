@@ -93,18 +93,18 @@ function [info, fid, tNm] = open( fName, info )
 t=[fName '.seq']; if(exist(t,'file')), delete(t); end
 t=[fName '-seek.mat']; if(exist(t,'file')), delete(t); end
 fid=fopen([fName '.seq'],'w','l'); assert(fid~=-1);
-fwrite(fid,zeros(1,1024),'uint8'); tNm=[];
+fwrite(fid,zeros(1,1024),'uint8');
 % initialize info struct (w all fields necessary for writeHeader)
 assert(isfield2(info,{'width','height','fps','codec'},1));
 switch(info.codec)
-  case {'monoraw', 'imageFormat100'}, info.imageFormat=100; nCh=1;
-  case {'raw', 'imageFormat200'},     info.imageFormat=200; nCh=3;
-  case {'monojpg', 'imageFormat102'}, info.imageFormat=102; nCh=1;
-  case {'jpg', 'imageFormat201'},     info.imageFormat=201; nCh=3;
+  case {'monoraw', 'imageFormat100'}, frmt=100; nCh=1; ext='raw';
+  case {'raw', 'imageFormat200'},     frmt=200; nCh=3; ext='raw';
+  case {'monojpg', 'imageFormat102'}, frmt=102; nCh=1; ext='jpg';
+  case {'jpg', 'imageFormat201'},     frmt=201; nCh=3; ext='jpg';
+  otherwise, error('unknown format');
 end
-if(any(info.imageFormat==[102 201]))
-  tNm=['tmp' int2str(fid) '.jpg']; getImgFile( 'wjpg8c' );
-end
+if(strcmp(ext,'jpg')), getImgFile( 'wjpg8c' ); end
+tNm=['tmp' int2str(fid) '.' ext]; info.imageFormat=frmt; info.ext=ext;
 if(~isfield2(info,'quality')), info.quality=80; end
 info.imageBitDepth=8*nCh; info.imageBitDepthReal=8;
 nByte=info.width*info.height*nCh; info.imageSizeBytes=nByte;
@@ -113,20 +113,20 @@ end
 
 function c = addFrame( fid, info, c, tNm, encode, I, ts )
 % write frame
-imageFormat=info.imageFormat; c=c+1;
+imageFormat=info.imageFormat; ext=info.ext; c=c+1;
 if( encode )
   siz = [info.height info.width info.imageBitDepth/8];
   assert(size(I,1)==siz(1) && size(I,2)==siz(2) && size(I,3)==siz(3));
 end
-switch imageFormat
-  case {100,200}
+switch ext
+  case 'raw'
     % write an uncompressed image (assume imageBitDepthReal==8)
     if( ~encode ), assert(numel(I)==info.imageSizeBytes); else
       if(imageFormat==200), t=I(:,:,3); I(:,:,3)=I(:,:,1); I(:,:,1)=t; end
       if( siz(3)==1 ), I=I'; else I=permute(I,[3,2,1]); end
     end
     fwrite(fid,I(:),'uint8'); pad=info.trueImageSize-info.imageSizeBytes-6;
-  case {102,201}
+  case 'jpg'
     if( encode )
       % write/read to/from temporary .jpg (not that much overhead)
       q=info.quality;
