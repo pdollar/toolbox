@@ -148,7 +148,7 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
   function api = dispMakeApi()
     % create api
     [sr, audio, info, nFrame, speed, curInd, hs, ...
-      hImg, needUpdate, prevTime ]=deal([]);
+      hImg, needUpdate, prevTime, looping ]=deal([]);
     api = struct( 'setVid',@setVid, 'setAud',@setAud, ...
       'setSpeedCb',@setSpeedCb, 'getInfo',@getInfo, ...
       'getFrame',@getFrame, 'requestUpdate',@requestUpdate );
@@ -162,8 +162,8 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
       if(isstruct(sr)), sr=sr.close(); end
       if(~isempty(hs)), delete(hs); hs=[]; end
       [sr, audio, info, nFrame, speed, curInd, hs, ...
-        hImg, needUpdate, prevTime ]=deal([]);
-      sr=vr1; nFrame=0; speed=-1; setFrame( 0, 0 );
+        hImg, needUpdate, prevTime, looping ]=deal([]);
+      sr=vr1; nFrame=0; looping=0; speed=-1; setFrame( 0, 0 );
       % update GUI
       if(~isstruct(sr)), cla(pMid.hAx); else
         info=sr.getinfo(); nFrame=info.numFrames;
@@ -191,9 +191,10 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
     end
     
     function dispLoop()
+      if(looping), return; end; looping=1;
       while( 1 )
         % exit if appropriate, or if vid not loaded do nothing
-        if(~isstruct(sr)), return; end
+        if(~isstruct(sr)), looping=0; return; end
         
         % stop playing video if at begin/end
         if((speed>0&&curInd==nFrame-1) || (speed<0&&curInd==0))
@@ -210,7 +211,7 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
         end
         
         % update display if necessary
-        if(~needUpdate), return; else
+        if(~needUpdate), looping=0; return; else
           sr.seek( round(curInd) ); I=sr.getframe();
           if(~isempty(hs)), delete(hs); hs=[]; end
           if(~isempty(dispFunc)), hs=dispFunc(round(curInd)); end
