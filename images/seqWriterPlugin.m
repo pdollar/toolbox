@@ -48,7 +48,7 @@ nIn=nargin-2; in=varargin; o1=[]; cmd=lower(cmd);
 if(strcmp(cmd,'open'))
   chk(nIn,2); h=length(hs)+1; hs(h)=h1; varargout={h1}; h1=h1+1;
   [pth name]=fileparts(in{1}); if(isempty(pth)), pth='.'; end
-  fName=[pth filesep name '.seq']; cs(h)=-1;
+  fName=[pth filesep name]; cs(h)=-1;
   [infos{h},fids(h),tNms{h}]=open(fName,in{2}); return;
 end
 
@@ -90,8 +90,9 @@ end
 
 function [info, fid, tNm] = open( fName, info )
 % open video for writing, create space for header
-if(exist(fName,'file')), delete(fName); end
-fid=fopen(fName,'w','l'); assert(fid~=-1);
+t=[fName '.seq']; if(exist(t,'file')), delete(t); end
+t=[fName '-seek.mat']; if(exist(t,'file')), delete(t); end
+fid=fopen([fName '.seq'],'w','l'); assert(fid~=-1);
 fwrite(fid,zeros(1,1024),'uint8'); tNm=[];
 % initialize info struct (w all fields necessary for writeHeader)
 assert(isfield2(info,{'width','height','fps','codec'},1));

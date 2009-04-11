@@ -42,7 +42,7 @@ nIn=nargin-2; in=varargin; o2=[]; cmd=lower(cmd);
 if(strcmp(cmd,'open'))
   chk(nIn,1); h=length(hs)+1; hs(h)=h1; varargout={h1}; h1=h1+1;
   [pth name]=fileparts(in{1}); if(isempty(pth)), pth='.'; end
-  fName=[pth filesep name '.seq']; cs(h)=-1;
+  fName=[pth filesep name]; cs(h)=-1;
   [infos{h},fids(h),tNms{h}]=open(fName); return;
 end
 
@@ -88,11 +88,11 @@ end
 
 function [info, fid, tNm] = open( fName )
 % open video for reading, get header
-assert(exist(fName,'file')==2); fid=fopen(fName,'r','l');
+assert(exist([fName '.seq'],'file')==2); fid=fopen([fName '.seq'],'r','l');
 info=readHeader( fid ); n=info.numFrames; tNm=[];
 % compute seek info for jpg encoded images
 if(any(info.imageFormat==[102 201]))
-  [pth name]=fileparts(fName); oName=[pth '/' name '-seek.mat'];
+  oName=[fName '-seek.mat'];
   if(exist(oName,'file')==2), load(oName); info.seek=seek; else %#ok<NODEF>
     disp('loading seek info...'); seek=zeros(n,1,'uint32'); seek(1)=1024;
     for i=2:n
