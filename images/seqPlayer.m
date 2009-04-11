@@ -141,18 +141,17 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
     end
     
     function exitProg( h, evnt ) %#ok<INUSD>
-      menuApi.vidClose(); dispApi.exitProg();
+      menuApi.vidClose();
     end
   end
 
   function api = dispMakeApi()
     % create api
     [sr, audio, info, nFrame, speed, curInd, hs, ...
-      hImg, needUpdate, prevTime, exitFlag ]=deal([]);
+      hImg, needUpdate, prevTime ]=deal([]);
     api = struct( 'setVid',@setVid, 'setAud',@setAud, ...
       'setSpeedCb',@setSpeedCb, 'getInfo',@getInfo, ...
-      'getFrame',@getFrame, 'exitProg',@exitProg, ...
-      'requestUpdate',@requestUpdate );
+      'getFrame',@getFrame, 'requestUpdate',@requestUpdate );
     set(pMid.hSl,    'Callback',@(h,evnt) setFrameCb(0));
     set(pTop.hFrmInd,'Callback',@(h,evnt) setFrameCb(1));
     set(pMid.hLf, 'Callback',@(h,evnt) setSpeedCb(-1));
@@ -163,8 +162,8 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
       if(isstruct(sr)), sr=sr.close(); end
       if(~isempty(hs)), delete(hs); hs=[]; end
       [sr, audio, info, nFrame, speed, curInd, hs, ...
-        hImg, needUpdate, prevTime, exitFlag ]=deal([]);
-      sr=vr1; exitFlag=0; nFrame=0; speed=-1; setFrame( 0, 0 );
+        hImg, needUpdate, prevTime ]=deal([]);
+      sr=vr1; nFrame=0; speed=-1; setFrame( 0, 0 );
       % update GUI
       if(~isstruct(sr)), cla(pMid.hAx); else
         info=sr.getinfo(); nFrame=info.numFrames;
@@ -194,7 +193,6 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
     function dispLoop()
       while( 1 )
         % exit if appropriate, or if vid not loaded do nothing
-        if(exitFlag); break; end;
         if(~isstruct(sr)), return; end
         
         % stop playing video if at begin/end
@@ -275,8 +273,6 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
     function info1 = getInfo(), info1=info; end
     
     function curInd1 = getFrame(), curInd1=round(curInd); end
-    
-    function exitProg(), exitFlag=true; end
   end
 
   function api = menuMakeApi()
