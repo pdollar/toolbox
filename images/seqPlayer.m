@@ -22,7 +22,7 @@ function seqPlayer( fName, dispFunc )
 %
 % EXAMPLE
 %  load images; [h,w,n]=size(video);
-%  info=struct('height',h,'width',w,'codec','monojpg','fps',10);
+%  info=struct('height',h,'width',w,'codec','monojpg','fps',20);
 %  sw=seqIo('video','w',info); for t=1:n, sw.addframe(video(:,:,t)); end
 %  sw.close(); seqPlayer('video');
 %
@@ -107,7 +107,7 @@ dispApi.mainLoop();
       char=int8(evnt.Character); if(isempty(char)), char=0; end;
       if( char>=28 && char<=31 ) % L/R/U/D = 28/29/30/31
         if(char>=30), flag=0; else flag=double(char-28)*2-1; end
-        dispApi.setSpeed(flag);
+        dispApi.setSpeedCb(flag);
       end
     end
     
@@ -153,13 +153,13 @@ dispApi.mainLoop();
     [sr, audio, info, nFrame, speed, curInd, hs, ...
       hImg, needUpdate, prevTime, exitFlag ]=deal([]);
     api = struct( 'setVid',@setVid, 'setAud',@setAud, ...
-      'mainLoop',@mainLoop, 'setSpeed',@setSpeed, 'getInfo',@getInfo, ...
-      'getFrame',@getFrame, 'setFrame',@setFrame, 'exitProg',@exitProg, ...
+      'mainLoop',@mainLoop, 'setSpeedCb',@setSpeedCb, 'getInfo',@getInfo, ...
+      'getFrame',@getFrame, 'exitProg',@exitProg, ...
       'requestUpdate',@requestUpdate );
     set(pMid.hSl,    'Callback',@(h,evnt) setFrameCb(0));
     set(pTop.hFrmInd,'Callback',@(h,evnt) setFrameCb(1));
-    set(pMid.hLf, 'Callback',@(h,evnt) setSpeed(-1));
-    set(pMid.hRt, 'Callback',@(h,evnt) setSpeed(+1));
+    set(pMid.hLf, 'Callback',@(h,evnt) setSpeedCb(-1));
+    set(pMid.hRt, 'Callback',@(h,evnt) setSpeedCb(+1));
     
     function setVid( vr1 )
       % reset local variables
@@ -190,7 +190,7 @@ dispApi.mainLoop();
       if(a>.01), error('Audio/video mismatch.'); end
       audio.fPlay=audioplayer(y,fs,nb);
       audio.bPlay=audioplayer(flipud(y),fs,nb);
-      audio.fs=fs; audio.ln=length(y); setSpeed1(speed);
+      audio.fs=fs; audio.ln=length(y); setSpeed(speed);
     end
     
     function mainLoop()
@@ -201,7 +201,7 @@ dispApi.mainLoop();
         
         % stop playing video if at begin/end
         if((speed>0&&curInd==nFrame-1) || (speed<0&&curInd==0))
-          setSpeed1(0);
+          setSpeed(0);
         end
         
         % increment/decrement curInd appropriately
@@ -228,22 +228,22 @@ dispApi.mainLoop();
       end
     end
     
-    function setSpeed( flag )
+    function setSpeedCb( flag )
       if(~isstruct(sr)),return; end
       if( flag==0 )
-        setSpeed1( 0 );
+        setSpeed( 0 );
       elseif( speed==0 )
-        setSpeed1( flag ); prevTime=clock();
+        setSpeed( flag ); prevTime=clock();
       elseif( sign(speed)==flag && abs(speed)<256 )
-        setSpeed1( speed*2 );
+        setSpeed( speed*2 );
       elseif( sign(speed)~=flag && abs(speed)>1/8 )
-        setSpeed1( speed/2 );
+        setSpeed( speed/2 );
       elseif( sign(speed)~=flag )
-        setSpeed1( 0 );
+        setSpeed( 0 );
       end
     end
     
-    function setSpeed1( speed1 )
+    function setSpeed( speed1 )
       if((speed1>0&&curInd==nFrame-1)||(speed1<0&&curInd==0)),speed1=0;end
       speed=speed1; p=abs(speed); if(speed<0), ss='-'; else ss=''; end
       if(p<1 && p~=0), s=['1/' int2str(1/p)]; else s=int2str(p); end
@@ -268,7 +268,7 @@ dispApi.mainLoop();
     
     function setFrame( curInd1, speed1 )
       curInd=max(0,min(curInd1,nFrame-1)); requestUpdate();
-      if( speed~=speed1 ), setSpeed1(speed1); end
+      if( speed~=speed1 ), setSpeed(speed1); end
     end
     
     function requestUpdate(), needUpdate=true; end
