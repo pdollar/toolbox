@@ -113,7 +113,7 @@ elseif( strcmp(mode,'crop') )
   
 elseif( strcmp(mode,'toimgs') )
   d=varargin{1}; if(~exist(d,'dir')), mkdir(d); end
-  sr=seqIo(fName,'r'); i=0; info=sr.getinfo(); ext=info.ext;
+  sr=seqIo(fName,'r'); i=0; info=sr.getinfo(); ext=['.' info.ext];
   while( 1 )
     f=[d '/I' int2str2(i,5) ext]; i=i+1; if(~sr.next()), break; end
     I=sr.getframeb(); f=fopen(f,'w'); assert(f>0); fwrite(f,I); fclose(f);
@@ -122,7 +122,7 @@ elseif( strcmp(mode,'toimgs') )
   
 elseif( strcmp(mode,'frimgs') )
   d=varargin{1}; info=varargin{2}; assert(exist(d,'dir')==7);
-  sw=seqIo(fName,'w',info); i=0; info=sw.getinfo(); ext=info.ext;
+  sw=seqIo(fName,'w',info); i=0; info=sw.getinfo(); ext=['.' info.ext];
   while( 1 )
     f=[d '/I' int2str2(i,5) ext]; i=i+1; if(~exist(f,'file')), break; end
     f=fopen(f,'r'); assert(f>0); I=fread(f); fclose(f); sw.addframeb(I);
