@@ -38,6 +38,7 @@ function sobj = seqIo( fName, mode, varargin )
 %  sw.close();              % Close seq file (sw is useless after).
 %  sw.addframe(I,[ts]);     % Writes video frame (and timestamp)
 %  sw.addframeb(bytes);     % Writes video frame with no encoding.
+%  info = sw.getinfo();     % Return struct with info about video.
 % See seqWriterPlugin for more info about the individual actions and about
 % the parameter sturcutre 'info' used to create the writer.
 %
@@ -96,7 +97,8 @@ elseif( strcmp(mode,'w') )
   s = swp( 'open', int32(-1), fName, varargin{1} );
   sobj = struct( 'close',@() swp('close',s), ...
     'addframe',@(varargin) swp('addframe',s,varargin{:}), ...
-    'addframeb',@(varargin) swp('addframeb',s,varargin{:}) );
+    'addframeb',@(varargin) swp('addframeb',s,varargin{:}), ...
+    'getinfo',@() swp('getinfo',s) );
   
 elseif( strcmp(mode,'rdual') )
   sobj = seqReaderDual(fName{:});

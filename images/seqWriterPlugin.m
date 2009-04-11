@@ -7,6 +7,7 @@ function varargout = seqWriterPlugin( cmd, h, varargin )
 %  h=swp('close',h)           % Close seq file (output h is -1).
 %  swp('addframe',h,I,[ts])   % Writes a video frame.
 %  swp('addframeb',h,I,[ts])  % Writes a video frame with no encoding.
+%  info = swp('getinfo',h)    % Return struct with info about video.
 %
 % The following params must be specified in struct 'info' upon opening:
 %  width          - frame width
@@ -68,6 +69,7 @@ end
 switch( cmd )
   case 'addframe',  chk(nIn,1,2); c=addFrame(fid,info,c,tNm,1,in{:});
   case 'addframeb', chk(nIn,1,2); c=addFrame(fid,info,c,tNm,0,in{:});
+  case 'getinfo',   chk(nIn,0); o1=info;
   otherwise,        error(['Unrecognized command: "' cmd '"']);
 end
 cs(h)=c; varargout={o1};
