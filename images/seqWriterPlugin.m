@@ -120,17 +120,17 @@ end
 
 function c = addFrame( fid, info, c, tNm, encode, I, ts )
 % write frame
-frmt=info.imageFormat; ext=info.ext; c=c+1;
+nCh=info.imageBitDepth/8; ext=info.ext; c=c+1;
 if( encode )
-  siz = [info.height info.width info.imageBitDepth/8];
+  siz = [info.height info.width nCh];
   assert(size(I,1)==siz(1) && size(I,2)==siz(2) && size(I,3)==siz(3));
 end
 switch ext
   case 'raw'
     % write an uncompressed image (assume imageBitDepthReal==8)
     if( ~encode ), assert(numel(I)==info.imageSizeBytes); else
-      if(frmt==200), t=I(:,:,3); I(:,:,3)=I(:,:,1); I(:,:,1)=t; end
-      if( siz(3)==1 ), I=I'; else I=permute(I,[3,2,1]); end
+      if(nCh==3), t=I(:,:,3); I(:,:,3)=I(:,:,1); I(:,:,1)=t; end
+      if(nCh==1), I=I'; else I=permute(I,[3,2,1]); end
     end
     fwrite(fid,I(:),'uint8'); pad=info.trueImageSize-info.imageSizeBytes-6;
   case 'jpg'
@@ -145,7 +145,7 @@ switch ext
   case 'png'
     if( encode )
       % write/read to/from temporary .png (not that much overhead)
-      p=cell(1,18); p{1}='write'; if(frmt==1), p{5}=0; else p{5}=2; end
+      p=cell(1,18); p{1}='write'; if(nCh==1), p{5}=0; else p{5}=2; end
       p{2}=I; p{4}=tNm; p{6}=8; p{9}='none'; p{17}=cell(0,2); png(p{:})
       fr=fopen(tNm,'r'); assert(fr~=-1); I=fread(fr); fclose(fr);
     end

@@ -122,7 +122,7 @@ end
 
 function [I,ts] = getFrame( frame, fid, info, tNm, decode )
 % get frame image (I) and timestamp (ts) at which frame was recorded
-imageFormat=info.imageFormat; ext=info.ext;
+nCh=info.imageBitDepth/8; ext=info.ext;
 if(frame<0 || frame>=info.numFrames), I=[]; ts=[]; return; end
 switch ext
   case 'raw'
@@ -132,10 +132,10 @@ switch ext
     if( decode )
       % reshape appropriately for mxn or mxnx3 RGB image
       siz = [info.height info.width info.imageBitDepth/8];
-      if( siz(3)==1 ), I=reshape(I,siz(2),siz(1))'; else
+      if(nCh==1), I=reshape(I,siz(2),siz(1))'; else
         I = permute(reshape(I,siz(3),siz(2),siz(1)),[3,2,1]);
       end
-      if(imageFormat==200), t=I(:,:,3); I(:,:,3)=I(:,:,1); I(:,:,1)=t; end
+      if(nCh==3), t=I(:,:,3); I(:,:,3)=I(:,:,1); I(:,:,1)=t; end
     end
   case 'jpg'
     fseek(fid,info.seek(frame+1),'bof'); nBytes=fread(fid,1,'uint32');
