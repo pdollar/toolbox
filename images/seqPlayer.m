@@ -48,9 +48,6 @@ menuApi.vidClose();
 % open vid if given
 if(~isempty(fName)), menuApi.vidOpen(fName); end
 
-% begin display
-dispApi.mainLoop();
-
 
   function makeLayout()
     % common properties
@@ -153,7 +150,7 @@ dispApi.mainLoop();
     [sr, audio, info, nFrame, speed, curInd, hs, ...
       hImg, needUpdate, prevTime, exitFlag ]=deal([]);
     api = struct( 'setVid',@setVid, 'setAud',@setAud, ...
-      'mainLoop',@mainLoop, 'setSpeedCb',@setSpeedCb, 'getInfo',@getInfo, ...
+      'setSpeedCb',@setSpeedCb, 'getInfo',@getInfo, ...
       'getFrame',@getFrame, 'exitProg',@exitProg, ...
       'requestUpdate',@requestUpdate );
     set(pMid.hSl,    'Callback',@(h,evnt) setFrameCb(0));
@@ -191,17 +188,18 @@ dispApi.mainLoop();
       audio.fPlay=audioplayer(y,fs,nb);
       audio.bPlay=audioplayer(flipud(y),fs,nb);
       audio.fs=fs; audio.ln=length(y); setSpeed(speed);
+      requestUpdate();
     end
     
-    function mainLoop()
+    function dispLoop()
       while( 1 )
         % exit if appropriate, or if vid not loaded do nothing
         if(exitFlag); break; end;
-        if(~isstruct(sr)), pause(.1); continue; end
+        if(~isstruct(sr)), return; end
         
         % stop playing video if at begin/end
         if((speed>0&&curInd==nFrame-1) || (speed<0&&curInd==0))
-          setSpeed(0);
+          setSpeed(0); needUpdate=1;
         end
         
         % increment/decrement curInd appropriately
@@ -210,11 +208,11 @@ dispApi.mainLoop();
           del = speed * max(10,info.fps) * min(.1,eTime);
           if( speed>0 ), del=min(del, nFrame-curInd-1 ); end
           if( speed<0 ), del=max(del, -curInd ); end
-          setFrame(curInd+del, speed); prevTime=t;
+          setFrame(curInd+del, speed); prevTime=t; needUpdate=1;
         end
         
         % update display if necessary
-        if(~needUpdate), pause(.1); else
+        if(~needUpdate), return; else
           sr.seek( round(curInd) ); I=sr.getframe();
           if(~isempty(hs)), delete(hs); hs=[]; end
           if(~isempty(dispFunc)), hs=dispFunc(round(curInd)); end
@@ -241,13 +239,14 @@ dispApi.mainLoop();
       elseif( sign(speed)~=flag )
         setSpeed( 0 );
       end
+      requestUpdate();
     end
     
     function setSpeed( speed1 )
       if((speed1>0&&curInd==nFrame-1)||(speed1<0&&curInd==0)),speed1=0;end
       speed=speed1; p=abs(speed); if(speed<0), ss='-'; else ss=''; end
       if(p<1 && p~=0), s=['1/' int2str(1/p)]; else s=int2str(p); end
-      set(pTop.hPlySpd,'String',[ss s 'x']); requestUpdate();
+      set(pTop.hPlySpd,'String',[ss s 'x']);
       if(~isempty(audio))
         stop(audio.fPlay); stop(audio.bPlay); if(speed==0), return; end;
         st=curInd/(nFrame-1); if(speed<0), st=1-st; end; st=st*audio.ln+1;
@@ -256,22 +255,22 @@ dispApi.mainLoop();
       end
     end
     
-    function setFrameCb(flag)
+    function setFrameCb( flag )
       if( flag==0 )
         f=round(get(pMid.hSl,'Value')); set(pMid.hSl,'Value',f);
       elseif(flag==1)
         f=str2double(get(pTop.hFrmInd,'String'));
         if(isnan(f)), requestUpdate(); return; else f=f-1; end
       end
-      setFrame(f,0);
+      setFrame(f,0); requestUpdate();
     end
     
     function setFrame( curInd1, speed1 )
-      curInd=max(0,min(curInd1,nFrame-1)); requestUpdate();
+      curInd=max(0,min(curInd1,nFrame-1));
       if( speed~=speed1 ), setSpeed(speed1); end
     end
     
-    function requestUpdate(), needUpdate=true; end
+    function requestUpdate(), needUpdate=true; dispLoop(); end
     
     function info1 = getInfo(), info1=info; end
     
