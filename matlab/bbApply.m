@@ -272,7 +272,8 @@ function [patches, bbs] = crop( I, bbs, padEl )
 %
 % If ~isempty(padEl), image is padded so can extract full bb region (no
 % actual padding is done, this is fast). Otherwise bb is intersected with
-% the image bb prior to cropping.
+% the image bb prior to cropping. If padEl is a string ('circular',
+% 'replicate', or 'symmetric'), uses padarray to do actual padding (slow).
 %
 % USAGE
 %  [patches, bbs] = bbApply('crop',I,bb,[padEl])
@@ -291,7 +292,7 @@ function [patches, bbs] = crop( I, bbs, padEl )
 %  p1=bbApply('crop',I,bb); p2=bbApply('crop',I,bb,[]);
 %  figure(1); im(I); figure(2); im(p1); figure(3); im(p2);
 %
-% See also bbApply, ARRAYCROP
+% See also bbApply, ARRAYCROP, PADARRAY
 
 % get padEl, bound bb to visible region if empty
 if( nargin<3 ), padEl=0; end; h=size(I,1); w=size(I,2);
@@ -304,8 +305,17 @@ for i=1:n, [patches{i},bbs(i,1:4)]=crop1(bbs(i,1:4)); end
     % crop single patch (use arrayCrop only if necessary)
     lcsS=round(bb([2 1])+.5-.001); lcsE=lcsS+round(bb([4 3]))-1;
     if( any(lcsS<1) || lcsE(1)>h || lcsE(2)>w )
-      if(ndims(I)==3); lcsS=[lcsS 1]; lcsE=[lcsE 3]; end
-      patch = arrayCrop(I,lcsS,lcsE,padEl);
+      if( ischar(padEl) )
+        pt=max(0,1-lcsS(1)); pb=max(0,lcsE(1)-h);
+        pl=max(0,1-lcsS(2)); pr=max(0,lcsE(2)-w);
+        lcsS=max(1,lcsS); lcsE=min(lcsE,[h w]);
+        patch = I(lcsS(1):lcsE(1),lcsS(2):lcsE(2),:);
+        patch = padarray(patch,[pt pl],padEl,'pre');
+        patch = padarray(patch,[pb pr],padEl,'post');
+      else
+        if(ndims(I)==3); lcsS=[lcsS 1]; lcsE=[lcsE 3]; end
+        patch = arrayCrop(I,lcsS,lcsE,padEl);
+      end
     else
       patch = I(lcsS(1):lcsE(1),lcsS(2):lcsE(2),:);
     end
