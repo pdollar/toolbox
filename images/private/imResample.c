@@ -73,7 +73,7 @@ void			resample( double *A, double *B, int ha, int hb, int w, int nCh )
 
 void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
-	/* B=imResample(A,scale) or B=imResample(A,w,h); */
+	/* B=imResample(A,scale) or B=imResample(A,h,w); */
 	double input1=0, input2=0; int *ns, ms[3], nCh, nDims; void *A,*B,*T; mxClassID id;
 
 	/* Error checking on arguments */
