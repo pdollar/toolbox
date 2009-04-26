@@ -480,7 +480,7 @@ function bbs = nmsMax( bbs, thr, overlap, maxn )
 % n, can divide data randomly into two sets, run nms on each, combine and
 % run nms on the result. If maxn is specified, will split the set if
 % n>maxn. Note that this is a heuristic and can change the results of nms.
-
+%
 % USAGE
 %  bbs = bbApply('nmsMax',bbs,thr,[overlap],[maxn])
 %
