@@ -68,13 +68,13 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
     % mid panel
     pMid.hAx=axes(units{:},'Parent',hFig,'XTick',[],'YTick',[]);
     pMid.hSl=uicontrol(hFig,'Style','slider','Min',0,'Max',1,bg,'k');
-    btnPrp={units{:},'Style','pushbutton', bg,[.9 .9 .9],fs,9,st};
+    btnPrp=[units,{'Style','pushbutton', bg,[.9 .9 .9],fs,9,st}];
     pMid.hLf=uicontrol(hFig,'FontWeight','bold',btnPrp{:},'<<');
     pMid.hRt=uicontrol(hFig,'FontWeight','bold',btnPrp{:},'>>');
     imshow(0);
     
     % top panel
-    pnlProp = {units{:},bg,[.1 .1 .1],'BorderType','none'};
+    pnlProp = [units {bg,[.1 .1 .1],'BorderType','none'}];
     txtPrp = {'Style','text',bg,[.1 .1 .1],fg,'w',ha};
     edtPrp = {'Style','edit',bg,[.1 .1 .1],fg,'w',ha};
     pTop.h = uipanel(pnlProp{:},'Parent',hFig);
