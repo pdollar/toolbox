@@ -57,8 +57,8 @@ function sobj = seqIo( fName, mode, varargin )
 % mode=='toimgs': Extract images from seq file to dir/I[frame,5].ext:
 %  seqIo( fName, 'toimgs', dir )
 %
-% mode=='frimgs': Make seq file frome images in dir/I[frame,5].ext:
-%  seqIo( fName, 'toimgs', info, dir )
+% mode=='frimgs': Make seq file from images in dir/I[frame,5].ext:
+%  seqIo( fName, 'frimgs', info, dir )
 %
 % USAGE
 %  sobj = seqIo( fName, mode, varargin )
