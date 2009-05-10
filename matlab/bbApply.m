@@ -281,7 +281,7 @@ function [patches, bbs] = crop( I, bbs, padEl )
 % INPUTS
 %  I        - image from which to crop patches
 %  bbs      - bbs that indicate regions to crop
-%  padEl    - [0] value to pad I or [] to indicate no padding
+%  padEl    - [0] value to pad I or [] to indicate no padding (see above)
 %
 % OUTPUTS
 %  patches  - [1xn] cell of cropped image regions
@@ -289,8 +289,8 @@ function [patches, bbs] = crop( I, bbs, padEl )
 %
 % EXAMPLE
 %  I=imread('cameraman.tif'); bb=[-10 -10 100 100];
-%  p1=bbApply('crop',I,bb); p2=bbApply('crop',I,bb,[]);
-%  figure(1); im(I); figure(2); im(p1); figure(3); im(p2);
+%  p1=bbApply('crop',I,bb); p2=bbApply('crop',I,bb,'replicate');
+%  figure(1); im(I); figure(2); im(p1{1}); figure(3); im(p2{1});
 %
 % See also bbApply, ARRAYCROP, PADARRAY
 
