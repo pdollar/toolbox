@@ -169,7 +169,7 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
         info=sr.getinfo(); nFrame=info.numFrames;
         sr.seek(0); s=1/(nFrame-1); ss={'SliderStep',[s,s]};
         if(nFrame>1), set(pMid.hSl,'Max',nFrame-1,ss{:}); end
-        hImg = imshow( sr.getframe() );
+        hImg = imshow( zeros(info.height,info.width) );
       end
       set(pMid.hSl,'Value',0); v=(nFrame>1)+1;
       en={'off','on'}; set([pMid.hSl pMid.hLf pMid.hRt],'Enable',en{v});
