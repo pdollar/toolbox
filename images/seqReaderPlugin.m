@@ -95,10 +95,12 @@ switch(info.imageFormat)
   case {102,201}, ext='jpg';
   case {001,002}, ext='png';
   otherwise, error('unknown format');
-end
+end; info.ext=ext;
 if(strcmp(ext,'jpg')), getImgFile( 'rjpg8c' ); end
 if(strcmp(ext,'png')), getImgFile( 'png' ); end
-tNm=['tmp' int2str(fid) '.' ext]; info.ext=ext;
+% generate unique temporary name
+[tNm tNm]=fileparts(fName); t=clock; t=mod(t(end),1);
+tNm=sprintf('tmp_%s_%09i.%s',tNm,round((t+rand)/2*1e9),ext);
 % compute seek info for compressed images
 if(~strcmp(ext,'raw'))
   oName=[fName '-seek.mat'];

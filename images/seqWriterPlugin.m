@@ -111,11 +111,14 @@ switch(info.codec)
 end
 if(strcmp(ext,'jpg')), getImgFile( 'wjpg8c' ); end
 if(strcmp(ext,'png')), getImgFile( 'png' ); end
-tNm=['tmp' int2str(fid) '.' ext]; info.imageFormat=frmt; info.ext=ext;
+info.imageFormat=frmt; info.ext=ext;
 if(~isfield2(info,'quality')), info.quality=80; end
 info.imageBitDepth=8*nCh; info.imageBitDepthReal=8;
 nByte=info.width*info.height*nCh; info.imageSizeBytes=nByte;
 info.numFrames=0; info.trueImageSize=nByte+6+512-mod(nByte+6,512);
+% generate unique temporary name
+[tNm tNm]=fileparts(fName); t=clock; t=mod(t(end),1);
+tNm=sprintf('tmp_%s_%09i.%s',tNm,round((t+rand)/2*1e9),ext);
 end
 
 function c = addFrame( fid, info, c, tNm, encode, I, ts )
