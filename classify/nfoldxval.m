@@ -60,7 +60,7 @@ function CM=nfoldxval( data, IDX, clfInit, clfparams, ...
 %
 % See also CLFKNN, CLFLDA, CLFSVM, CLFECOC, CLFDECTREE, DEMOCLASSIFY
 %
-% Piotr's Image&Video Toolbox      Version 2.0
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -74,12 +74,12 @@ dispflag = 0;
 %%% divide n data points into n different sets, perform nfoldxval on each
 if( ~iscell(data) && ~iscell(IDX) )
   [n,p]=size(data);
-  IDX=mat2cell(IDX,ones(1,n),1);
+  IDX=mat2cell(IDX,ones(1,n),1); %#ok<MMTC>
   data=mat2cell(data,ones(1,n),p);
 end
 
 %%% correct format
-data={data{:}}; IDX={IDX{:}};
+data={data{:}}; IDX={IDX{:}}; %#ok<CCAT>
 nsets = length( data );
 
 %%% remove data points with type specified by ignoreT

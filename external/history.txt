@@ -5,6 +5,7 @@ Version NEW
  -added matlab/multiTimes.m (faster than external/other/multiprod.m)
  -replaced images/imDownsample with images/imResample
  -updated version of savefig to 2.0 (can embed fonts)
+ -fixed/suppressed mlint errors new to Matlab 2009a
 
 Version 2.20 (06-Mar-09)
  -optimized classify/kmeans2 and classify/meanShift

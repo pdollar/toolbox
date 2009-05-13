@@ -22,7 +22,7 @@ function ps = normpdf2( xs, m, C )
 %
 % See also NORMPDF
 %
-% Piotr's Image&Video Toolbox      Version 2.0
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -34,15 +34,15 @@ N=size(xs,2);
 
 if( d==1 ) % fast special case
   ps = 1/sqrt(2*pi*C) * exp(-(xs-m).*(xs-m)/(2*C))';
-
+  
 elseif( rcond(C)<eps ) % if matrix is badly conditioned
   warning('normpdf2: Covariance matrix close to singular.'); %#ok<WNTAG>
   ps = zeros(N,1);
-
+  
 else % get probabilities
   xs = (xs-m(:)*ones(1,N))';
   denom = (2*pi)^(d/2)*sqrt(abs(det(C)));
-  mahal = sum( (xs*inv(C)).*xs, 2 );
+  mahal = sum( (xs/C).*xs, 2 );
   numer = exp(-0.5*mahal);
   ps = numer/denom;
 end

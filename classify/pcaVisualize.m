@@ -27,7 +27,7 @@ function varargout=pcaVisualize( U, mu, vars, X, index, ks, fname, show )
 %
 % See also PCA, PCAAPPLY
 %
-% Piotr's Image&Video Toolbox      Version 2.12
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -75,7 +75,7 @@ Uim = reshape( U(:,1+st:k+st), [ siz1 k ]  );
 %%% visualization
 labels=cell(1,length(ks));
 for k=1:length(ks); labels{k} = ['k=' num2str(ks(k))]; end
-labels2={'orig', labels{:}};
+labels2=[{'orig'} labels];
 if( nd==3 ) % images
   figure(show+1); clf;
   subplot(2,2,1); montage2( Uim ); title('principal components');

@@ -38,7 +38,7 @@ function h = plotRoc( D, varargin )
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 2.10
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -58,7 +58,7 @@ if(smooth); for j=1:nD, D{j}=smoothRoc(D{j}); end; end
 % plot: (1) h for legend only, (2) roc curves, (3) markers, (4) error bars
 hold on; axis(lims);
 prmMrkr = {'MarkerSize',mrkrSiz,'MarkerFaceColor',color};
-prmClr={'Color',color}; prmPlot = {prmClr{:},'LineWidth',lineWd };
+prmClr={'Color',color}; prmPlot = [prmClr,{'LineWidth',lineWd}];
 h = plot( 2, 0, [lineSt marker], prmMrkr{:}, prmPlot{:} ); %(1)
 if(nD==1), D1=D{j}; else D1=mean(quantizeRoc(D,100,logx,lims),3); end
 plot( D1(:,1), D1(:,2), lineSt, prmPlot{:} ); %(2)

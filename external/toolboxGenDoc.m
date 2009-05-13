@@ -18,7 +18,7 @@ function toolboxGenDoc
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 2.12
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -32,8 +32,8 @@ delete('doc/matlab/*.*');
 
 % run m2html
 params = {'mfiles',{'classify','images','filters','matlab'}};
-params = {params{:},'htmldir','doc','recursive','on','source','off'};
-params = {params{:},'template','frame-piotr','index','menu','global','on'};
+params = [params {'htmldir','doc','recursive','on','source','off'}];
+params = [params {'template','frame-piotr','index','menu','global','on'}];
 m2html(params{:});
 
 % copy custom menu.html

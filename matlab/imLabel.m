@@ -56,7 +56,7 @@ switch position
       xloc = xs(1) + (2*i-1)/(2*nlabels)*nxs;
       text2( xloc,yloc,labels{i},txtAlign{:},pvPairs{:});
     end;
-
+    
   case 'top'
     title(''); %title interfere
     if(abs(S)<=15)
@@ -71,13 +71,13 @@ switch position
       H='right'; V='middle';
     end;
     txtAlign ={'VerticalAlignment',V,'HorizontalAlignment',H,'Rotation',S};
-    txtAlign = {txtAlign{:}, 'Rotation',S}; %rotate
+    txtAlign = [txtAlign, {'Rotation',S}]; %rotate
     yloc = ys(2) + nys/40;
     for i=1:nlabels
       xloc = xs(1) + (2*i-1)/(2*nlabels)*nxs;
       text2( xloc,yloc,labels{i},txtAlign{:},pvPairs{:});
     end;
-
+    
   case 'left'
     set(gca,'YTick',[]); %ticks interfere
     txtAlign ={'VerticalAlignment','middle','HorizontalAlignment','right'};
@@ -86,7 +86,7 @@ switch position
       yloc = ys(2) - (2*i-1)/(2*nlabels)*nys;
       text2( xloc,yloc,labels{i},txtAlign{:},pvPairs{:});
     end;
-
+    
   case 'right'
     colorbar off; % colorbar interferes
     txtAlign = {'VerticalAlignment','middle','HorizontalAlignment','left'};
@@ -95,7 +95,7 @@ switch position
       yloc = ys(2) - (2*i-1)/(2*nlabels)*nys;
       text2( xloc,yloc,labels{i},txtAlign{:},pvPairs{:});
     end;
-
+    
   otherwise
     error(['illegal position: ' position]);
 end

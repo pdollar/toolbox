@@ -54,7 +54,7 @@ function I = imwrite2( I, mulFlag, imagei, path, ...
 %
 % See also FEVALIMAGES, FEVALARRAYS
 %
-% Piotr's Image&Video Toolbox      Version 2.0
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -68,7 +68,7 @@ n = size(I,3);  if(isempty(I)); n=0; end
 
 % multiple splits -- call imwrite2 recursively
 if( nSplits>1 )
-  write2inp = { name, ext, nDigits, 1, 0, varargin{:} };
+  write2inp = [ {name, ext, nDigits, 1, 0} varargin ];
   if(n>0); nSplits=min(n,nSplits); end;
   for s=1:nSplits
     pathS = [path int2str2(s-1+spliti,2)];
