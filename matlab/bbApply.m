@@ -384,6 +384,56 @@ bb(:,2) = randint2(n,1,[1,h-bbh+1]);
 
 end
 
+function bbs = frMask( M, w, h )
+% Convert a binary mask to bounding boxes, assuming pixels that are turned
+% on indicate the center of a bounding box.
+%
+% USAGE
+%  bbs = bbApply('frMask',M,w,h)
+%
+% INPUTS
+%  M      - mask
+%  w      - width
+%  h      - height
+%
+% OUTPUTS
+%  bbs    - bounding boxes
+%
+% EXAMPLE
+%  bbs = bbApply('frMask',rand(10,10)>0.8,3,3)
+%
+% See also bbApply
+
+pos=ind2sub2(size(M),find(M));
+bbs=[fliplr(pos) pos]; bbs(:,3)=w; bbs(:,4)=h;
+bbs(:,1)=bbs(:,1)-floor(w/2); bbs(:,2)=bbs(:,2)-floor(h/2);
+
+end
+
+function M = toMask( bbs, w, h )
+% Create binary mask out of bounding boxes
+%
+% USAGE
+%  M = bbApply('toMask',bbs,w,h)
+%
+% INPUTS
+%  bbs    - bounding boxes
+%  w      - width of mask
+%  h      - height of mask
+%
+% OUTPUTS
+%  M      - mask
+%
+% EXAMPLE
+%  M = bbApply('toMask',rand(10,10)>0.8,3,3)
+%
+% See also bbApply
+
+M=zeros(h,w,'uint8'); cen=floor(bbApply('getCenter',bbs));
+M(sub2ind([h w],cen(:,2),cen(:,1)))=1;
+
+end
+
 function bbs = nms( bbs, thr, radii, maxn )
 % Mean shift non-maximal suppression (nms) of bbs w variable width kernel.
 %
