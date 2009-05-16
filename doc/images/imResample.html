@@ -2,9 +2,9 @@
                 "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
 <head>
-  <title>Description of imDownsample</title>
-  <meta name="keywords" content="imDownsample">
-  <meta name="description" content="Fast bilinear image downsampling.">
+  <title>Description of imResample</title>
+  <meta name="keywords" content="imResample">
+  <meta name="description" content="Fast bilinear image downsampling/upsampling.">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -13,41 +13,47 @@
 <body>
 <a name="_top"></a>
 <!-- menu.html images -->
-<h1>imDownsample
+<h1>imResample
 &nbsp;&nbsp;<img src="../mex.png" alt="Linux x86" border="0" title="Linux x86"></h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>Fast bilinear image downsampling.</strong></div>
+<div class="box"><strong>Fast bilinear image downsampling/upsampling.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>This is a script file. </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> Fast bilinear image downsampling.
+<div class="fragment"><pre class="comment"> Fast bilinear image downsampling/upsampling.
 
- Does not give identical results to imresize with the bilinear option
- (results are a bit sharper). Inspired by resize.cpp from Deva Ramanan.
+ Gives similar results to imresize with the bilinear option and
+ antialiasing turned off, except sometimes the final dims are off by 1
+ pixel. Inspired by fast downsapmling routine resize.cpp by Deva Ramanan.
 
  USAGE
-  B = imDownsample( A, scaleHt, [scaleWd] )
+  B = imResample( A, scale )
+  B = imResample( A, h, w )
 
- INPUT
-  A        - input image, 2D or 3D, must have type double
-  scaleHt  - resize ratio 0&lt;scaleHt&lt;=1
-  scaleWd  - [] resize ratio 0&lt;scaleWd&lt;=1, defaults to scaleHt
+ INPUT [1]
+  A        - input image (2D or 3D double array)
+  scale    - size(B)=size(A)*scale
+
+ INPUT [2]
+  A        - input image (2D or 3D double array)
+  h        - height(B)=h
+  w        - width(B)=w
 
  OUPUT
-   B       - downsampled image
+   B       - resampled image
 
  EXAMPLE
-  I=double(imread('cameraman.tif'));
-  tic, for i=1:10, I1=imresize(I,.5,'bilinear'); end; toc
-  tic, for i=1:10, I2=imDownsample(I,.5); end; toc
-  figure(1); im(I1); figure(2); im(I2);
+  I=double(imread('cameraman.tif')); n=100; s=.5;
+  tic, for i=1:n, I1=imresize(I,s,'bilinear','Antialiasing',0); end; toc
+  tic, for i=1:n, I2=imResample(I,s); end; toc
+  figure(1); im(I1); figure(2); im(I2); figure(3); im(abs(I1-I2));
 
  See also IMRESIZE
 
- Piotr's Image&amp;Video Toolbox      Version 2.20
+ Piotr's Image&amp;Video Toolbox      Version 2.30
  Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>

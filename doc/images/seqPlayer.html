@@ -2,9 +2,9 @@
                 "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
 <head>
-  <title>Description of isfield2</title>
-  <meta name="keywords" content="isfield2">
-  <meta name="description" content="Similar to isfield but also test whether fields are initialized.">
+  <title>Description of seqPlayer</title>
+  <meta name="keywords" content="seqPlayer">
+  <meta name="description" content="Simple GUI to play seq files.">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -12,44 +12,48 @@
 </head>
 <body>
 <a name="_top"></a>
-<!-- menu.html matlab -->
-<h1>isfield2
+<!-- menu.html images -->
+<h1>seqPlayer
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>Similar to isfield but also test whether fields are initialized.</strong></div>
+<div class="box"><strong>Simple GUI to play seq files.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function tf = isfield2( S, fs, isinit ) </strong></div>
+<div class="box"><strong>function seqPlayer( fName, dispFunc ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> Similar to isfield but also test whether fields are initialized.
+<div class="fragment"><pre class="comment"> Simple GUI to play seq files.
 
- A more comprehensive test of what fields are present [and optionally
- initialized] in a stuct S.  fs is either a single field name or a cell
- array of field names.  The presence of all fields in fs are tested for in
- S, tf is true iif all fs are present. Additionally, if isinit==1, then tf
- is true iff every field fs of every element of S is nonempty (test done
- using isempty).
+ Use arrow keys to play the video. Controls are as follows:
+ (1) If stopped: [L] play backward, [R] play forward
+ (2) If playing forward: [L] halve speed, [R] double speed, [U/D] stop
+ (3) If playing backward: [L] double speed, [R] halve speed,[U/D] stop
+ You can explicitly enter a frame or use the slider to jump in the video.
+
+ One can pass in a function handle dispFunc, where &quot;hs=dispFunc(frame)&quot;
+ performs additional custom display for the given frame (and returns the
+ handles for any created objects).
 
  USAGE
-  tf = isfield2( S, fs, [isinit] )
+  seqPlayer( [fName], [dispFunc] )
 
  INPUTS
-  S        - struct array
-  fs       - cell of string name or string
-  isinit   - [0] if true additionally test if all fields are initialized
+  fName    - optional seq file to load
+  dispFunc - allow custom display per frame
 
  OUTPUTS
-  tf      - true or false, depending on results of above tests
 
  EXAMPLE
-  isfield2( struct('a',1,'b',2), {'a','b'}, 1 )
+  load images; [h,w,n]=size(video);
+  info=struct('height',h,'width',w,'codec','monojpg','fps',20);
+  sw=seqIo('video','w',info); for t=1:n, sw.addframe(video(:,:,t)); end
+  sw.close(); seqPlayer('video');
 
- See also ISFIELD
+ See also <a href="seqIo.html" class="code" title="function sobj = seqIo( fName, mode, varargin )">SEQIO</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.10
- Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 2.30
+ Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
 
@@ -57,10 +61,10 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-</ul>
+<li><a href="seqIo.html" class="code" title="function sobj = seqIo( fName, mode, varargin )">seqIo</a>	Wrapper for reading/writing seq files.</li><li><a href="../matlab/c.html" class="code" title="">c</a>	clc - clear command window.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="../images/seqWriterPlugin.html" class="code" title="function varargout = seqWriterPlugin( cmd, h, varargin )">seqWriterPlugin</a>	Plugin for seqIo and videoIO to allow writing of seq files.</li></ul>
+</ul>
 <!-- crossreference -->
 
 

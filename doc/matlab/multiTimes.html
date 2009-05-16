@@ -2,9 +2,9 @@
                 "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
 <head>
-  <title>Description of isfield2</title>
-  <meta name="keywords" content="isfield2">
-  <meta name="description" content="Similar to isfield but also test whether fields are initialized.">
+  <title>Description of multiTimes</title>
+  <meta name="keywords" content="multiTimes">
+  <meta name="description" content="Matrix multiply each submatrix of two 3D arrays without looping.">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -13,43 +13,46 @@
 <body>
 <a name="_top"></a>
 <!-- menu.html matlab -->
-<h1>isfield2
+<h1>multiTimes
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>Similar to isfield but also test whether fields are initialized.</strong></div>
+<div class="box"><strong>Matrix multiply each submatrix of two 3D arrays without looping.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function tf = isfield2( S, fs, isinit ) </strong></div>
+<div class="box"><strong>function C = multiTimes( A, B, type ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> Similar to isfield but also test whether fields are initialized.
+<div class="fragment"><pre class="comment"> Matrix multiply each submatrix of two 3D arrays without looping.
 
- A more comprehensive test of what fields are present [and optionally
- initialized] in a stuct S.  fs is either a single field name or a cell
- array of field names.  The presence of all fields in fs are tested for in
- S, tf is true iif all fs are present. Additionally, if isinit==1, then tf
- is true iff every field fs of every element of S is nonempty (test done
- using isempty).
+ type controls the matrix multiplication to perform (for each i):
+  1    - C(:,:,i) = A(:,:,i)*B(:,:)
+  1.1  - C(i,:,:) = A(:,:,i)*B(:,:)
+  2.1  - C(:,:,i) = A(:,:,i)'*B(:,:,i)
+  3    - C(:,i) = A(:,:,i)*B(:,i)
+  3.1  - C(:,i) = A(:,:,i)'*B(:,i)
+ Corresponding dimensions of A and B must match appropriately.
 
  USAGE
-  tf = isfield2( S, fs, [isinit] )
+  C = multiTimes( A, B, type )
 
  INPUTS
-  S        - struct array
-  fs       - cell of string name or string
-  isinit   - [0] if true additionally test if all fields are initialized
+  A         - [ma x na x oa] matrix
+  B         - [mb x nb x ob] matrix
+  type      - multiplication type (see above)
 
  OUTPUTS
-  tf      - true or false, depending on results of above tests
+  C         - result of the multiplication
 
  EXAMPLE
-  isfield2( struct('a',1,'b',2), {'a','b'}, 1 )
+  n=10000; A=randn(2,2,n); B=randn(2);
+  tic, C1=multiTimes(A,B,1); toc
+  tic, C2=zeros(size(A)); for i=1:n, C2(:,:,i)=A(:,:,i)*B; end; toc
 
- See also ISFIELD
+ See also BSXFUN, MTIMES
 
- Piotr's Image&amp;Video Toolbox      Version 2.10
- Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 2.30
+ Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
 
@@ -60,7 +63,7 @@ This function calls:
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="../images/seqWriterPlugin.html" class="code" title="function varargout = seqWriterPlugin( cmd, h, varargin )">seqWriterPlugin</a>	Plugin for seqIo and videoIO to allow writing of seq files.</li></ul>
+</ul>
 <!-- crossreference -->
 
 

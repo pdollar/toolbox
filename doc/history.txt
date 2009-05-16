@@ -1,3 +1,12 @@
+Version 2.30 (15-May-09)
+ -adding images/seq* (support for .seq video files)
+ -added bbApply>nmsMax,toMask,frMask, tweaked other bbApply funcs
+ -optimized rbfComputeFtrs
+ -added matlab/multiTimes.m (faster than external/other/multiprod.m)
+ -replaced images/imDownsample with images/imResample
+ -updated version of savefig to 2.0 (can embed fonts)
+ -fixed/suppressed mlint errors new to Matlab 2009a
+
 Version 2.20 (06-Mar-09)
  -optimized classify/kmeans2 and classify/meanShift
  -added matlab/uniqueColor.m for generating random colors

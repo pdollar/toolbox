@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of seqIo</title>
+  <meta name="keywords" content="seqIo">
+  <meta name="description" content="Wrapper for reading/writing seq files.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>seqIo
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Wrapper for reading/writing seq files.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function sobj = seqIo( fName, mode, varargin ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Wrapper for reading/writing seq files.
+
+ A seq file is a series of concatentated image frames with a fixed size
+ header. It is essentially the same as merging a directory of images into
+ a single file. seq files are convenient for storing videos because: (1)
+ no video codec is required, (2) seek is instant and exact, (3) seq files
+ can be read on any operating system. The main drawback is that each frame
+ is encoded independently, resulting in increased file size. The advantage
+ over storing as a directory of images is that a single large file is
+ created. Currently, either uncompressed or jpg compressed frames are
+ supported. Should not be called directly, rather use with seqIo or
+ videoIO. The seq file format is modeled after the Norpix seq format (in
+ fact this reader can be used to read some Norpix seq files).
+
+ The actual work of reading/writing seq files is done by seqReaderPlugin
+ and seqWriterPlugin. These plugins were originally intended for use with
+ the videoIO Toolbox for Matlab written by Gerald Daley:
+  http://sourceforge.net/projects/videoio/.
+ However, the plugins also work with seqIo.m (this function), and there is
+ no need to actually have videoIO installed to use seq files. In fact,
+ the plugins have not yet been tested with videoIO.
+
+ mode=='r': Serves as a wrapper for seqReaderPlugin, available actions:
+  sr=seqIo(fName,'r')    % Create new sequence reader object.
+  sr.close();            % Close seq file (sr is useless after).
+  [I,ts]=sr.getframe();  % Get current frame (returns [] if invalid).
+  [I,ts]=sr.getframeb(); % Get current frame with no decoding.
+  info = sr.getinfo();   % Return struct with info about video.
+  [I,ts]=sr.getnext();   % Shortcut for next() followed by getframe().
+  out = sr.next();       % Go to next frame (out=-1 on fail).
+  out = sr.seek(frame);  % Go to specified frame (out=-1 on fail).
+  out = sr.step(delta);  % Go to current frame + delta (out=-1 on fail).
+ See seqReaderPlugin for more info about the individual actions.
+
+ mode=='w': Serves as a wrapper for seqWriterPlugin, available actions:
+  sw=seqIo(fName,'w',info) % Create new sequence writer object.
+  sw.close();              % Close seq file (sw is useless after).
+  sw.addframe(I,[ts]);     % Writes video frame (and timestamp)
+  sw.addframeb(bytes);     % Writes video frame with no encoding.
+  info = sw.getinfo();     % Return struct with info about video.
+ See seqWriterPlugin for more info about the individual actions and about
+ the parameter sturcutre 'info' used to create the writer.
+
+ mode=='rdual': Wrapper for two videos of the same image dims and roughly
+ the same frame counts that are treated as a single IO object. getframe()
+ returns the concatentation of the two frames. For videos of different
+ frame counts, the first video serves as the &quot;dominant&quot; video and the
+ frame count of the second video is adjusted accordingly. Same general
+ usage as in mode=='r', but the only supported operations are: close(),
+ getframe(), getinfo(), and seek(). Open with:
+  sr = seqIo( {fName1,fName2}, 'rdual' )
+
+ mode=='crop': Crop subsequence from seq file:
+  seqIo( fName, 'crop', tName, f0, f1 )
+
+ mode=='toimgs': Extract images from seq file to dir/I[frame,5].ext:
+  seqIo( fName, 'toimgs', dir )
+
+ mode=='frimgs': Make seq file from images in dir/I[frame,5].ext:
+  seqIo( fName, 'frimgs', info, dir )
+
+ USAGE
+  sobj = seqIo( fName, mode, varargin )
+
+ INPUTS
+  fName      - seq file to open
+  mode       - 'r'=read, 'w'=write, for other modes see above
+  varargin   - additional input (varies according to cmd)
+
+ OUTPUTS
+  sobj       - object used to access seq file
+
+ EXAMPLE
+
+ See also <a href="seqPlayer.html" class="code" title="function seqPlayer( fName, dispFunc )">SEQPLAYER</a>, <a href="seqReaderPlugin.html" class="code" title="function varargout = seqReaderPlugin( cmd, h, varargin )">SEQREADERPLUGIN</a>, <a href="seqWriterPlugin.html" class="code" title="function varargout = seqWriterPlugin( cmd, h, varargin )">SEQWRITERPLUGIN</a>
+
+ Piotr's Image&amp;Video Toolbox      Version 2.30
+ Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Please email me if you find bugs, or have suggestions or questions!
+ Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="seqIo.html" class="code" title="function sobj = seqIo( fName, mode, varargin )">seqIo</a>	Wrapper for reading/writing seq files.</li><li><a href="seqReaderPlugin.html" class="code" title="function varargout = seqReaderPlugin( cmd, h, varargin )">seqReaderPlugin</a>	Plugin for seqIo and videoIO to allow reading of seq files.</li><li><a href="seqWriterPlugin.html" class="code" title="function varargout = seqWriterPlugin( cmd, h, varargin )">seqWriterPlugin</a>	Plugin for seqIo and videoIO to allow writing of seq files.</li><li><a href="../matlab/int2str2.html" class="code" title="function nstr = int2str2( n, nDigits )">int2str2</a>	Convert integer to string of given length; improved version of int2str.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="seqIo.html" class="code" title="function sobj = seqIo( fName, mode, varargin )">seqIo</a>	Wrapper for reading/writing seq files.</li><li><a href="seqPlayer.html" class="code" title="function seqPlayer( fName, dispFunc )">seqPlayer</a>	Simple GUI to play seq files.</li></ul>
+<!-- crossreference -->
+
+
+
+
+<!-- Start of Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-4884268-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+<!-- end of Google Analytics Code -->
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>
