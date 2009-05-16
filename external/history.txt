@@ -1,6 +1,6 @@
-Version NEW
+Version 2.30 (15-May-09)
  -adding images/seq* (support for .seq video files)
- -added bbApply>nmsMax,toMask,frMask
+ -added bbApply>nmsMax,toMask,frMask, tweaked other bbApply funcs
  -optimized rbfComputeFtrs
  -added matlab/multiTimes.m (faster than external/other/multiprod.m)
  -replaced images/imDownsample with images/imResample
