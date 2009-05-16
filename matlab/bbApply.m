@@ -28,7 +28,8 @@ function varargout = bbApply( action, varargin )
 %
 % See also bbApply>area bbApply>shift bbApply>getCenter bbApply>intersect
 % bbApply>union bbApply>resize bbApply>squarify bbApply>draw bbApply>crop
-% bbApply>convert bbApply>random bbApply>nms bbApply>nmsMax
+% bbApply>convert bbApply>random bbApply>frMask bbApply>toMask
+% bbApply>nms bbApply>nmsMax
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -384,54 +385,51 @@ bb(:,2) = randint2(n,1,[1,h-bbh+1]);
 
 end
 
-function bbs = frMask( M, w, h )
-% Convert a binary mask to bounding boxes, assuming pixels that are turned
-% on indicate the center of a bounding box.
+function bbs = frMask( M, bbw, bbh )
+% Convert binary mask to bbs, assuming `on' pixels indicate bb centers.
 %
 % USAGE
-%  bbs = bbApply('frMask',M,w,h)
+%  bbs = bbApply('frMask',M,bbw,bbh)
 %
 % INPUTS
 %  M      - mask
-%  w      - width
-%  h      - height
+%  bbw    - bb target width
+%  bbh    - bb target height
 %
 % OUTPUTS
 %  bbs    - bounding boxes
 %
 % EXAMPLE
-%  bbs = bbApply('frMask',rand(10,10)>0.8,3,3)
+%  w=20; h=10; bbw=5; bbh=8; M=uint8(rand(h,w)>0.95);
+%  bbs=bbApply('frMask',M,bbw,bbh); M2=bbApply('toMask',bbs,w,h);
+%  sum(abs(M(:)-M2(:)))
 %
-% See also bbApply
-
+% See also bbApply, bbApply>toMask
 pos=ind2sub2(size(M),find(M));
-bbs=[fliplr(pos) pos]; bbs(:,3)=w; bbs(:,4)=h;
-bbs(:,1)=bbs(:,1)-floor(w/2); bbs(:,2)=bbs(:,2)-floor(h/2);
-
+bbs=[fliplr(pos) pos]; bbs(:,3)=bbw; bbs(:,4)=bbh;
+bbs(:,1)=bbs(:,1)-floor(bbw/2);
+bbs(:,2)=bbs(:,2)-floor(bbh/2);
 end
 
 function M = toMask( bbs, w, h )
-% Create binary mask out of bounding boxes
+% Create binary mask encoding bb centers.
 %
 % USAGE
 %  M = bbApply('toMask',bbs,w,h)
 %
 % INPUTS
 %  bbs    - bounding boxes
-%  w      - width of mask
-%  h      - height of mask
+%  w      - mask target width
+%  h      - mask target height
 %
 % OUTPUTS
-%  M      - mask
+%  M      - hxw binary mask
 %
 % EXAMPLE
-%  M = bbApply('toMask',rand(10,10)>0.8,3,3)
 %
-% See also bbApply
-
-M=zeros(h,w,'uint8'); cen=floor(bbApply('getCenter',bbs));
+% See also bbApply, bbApply>frMask
+M=zeros(h,w,'uint8'); cen=floor(getCenter(bbs));
 M(sub2ind([h w],cen(:,2),cen(:,1)))=1;
-
 end
 
 function bbs = nms( bbs, thr, radii, maxn )
