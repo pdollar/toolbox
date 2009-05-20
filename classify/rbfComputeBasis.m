@@ -67,7 +67,7 @@ if( nargin<5 || isempty(show)); show=0;  end
 
 if( cluster )
   %%% CLUSTERS subsample, run kmeans
-  maxN=5000; if( N>maxN );  X=X(randsample(N,maxN),:);  N=maxN;  end
+  maxN=5000; if( N>maxN );  X=X(randSample(N,maxN),:);  N=maxN;  end
   prm.nTrial=5; prm.display=0;
   [IDX,mu] = kmeans2( X, k, prm );
   mu = mu'; k = size(mu,2);

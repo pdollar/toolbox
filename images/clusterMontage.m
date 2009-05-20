@@ -27,7 +27,7 @@ function IC = clusterMontage( I, IDX, nElem, pad )
 %
 % EXAMPLE - images
 %  load( 'images.mat' );
-%  keep=randsample(144,80); IDXi=IDXi(keep); images=images(:,:,keep);
+%  keep=randSample(144,80); IDXi=IDXi(keep); images=images(:,:,keep);
 %  IC = clusterMontage( images, IDXi, 9, 0 );
 %  figure(1); montage2( IC )
 %
@@ -58,7 +58,7 @@ uIDX=unique(IDX)';
 for i=uIDX
   locs = find(IDX==i);  nLocs = length(locs);
   if( nLocs>nElem )
-    keepLocs = [find(IDX~=i); locs(randsample(nLocs,nElem))];
+    keepLocs = [find(IDX~=i); locs(randSample(nLocs,nElem))];
     IDX = IDX(keepLocs); I=I(inds{:},keepLocs);
   elseif( nLocs<nElem && pad )
     nAdd = nElem-nLocs;

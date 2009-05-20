@@ -94,7 +94,7 @@ function [IDX, C, d] = kmeans2main( X, k, nOut, minCl, maxt, dsp, metric )
 % initialize cluster centers to be k random X points
 [N p] = size(X); k = min(k,N);
 IDX = ones(N,1); oldIDX = zeros(N,1);
-C = X(randsample(N,k),:); t = 0;
+C = X(randSample(N,k),:); t = 0;
 
 % MAIN LOOP: loop until the cluster assigments do not change
 if(dsp), nDg=ceil(log10(maxt-1)); fprintf(int2str2(0,nDg)); end

@@ -72,7 +72,7 @@ X = reshape( X, D, n );
 X = X / sqrt(n-1); %normalize vars
 
 % make sure X does not exceed certain size or SVD too slow
-maxN=1500; if( min(D,n)>maxN ); X=X(:,randsample(n,maxN)); n=maxN; end;
+maxN=1500; if( min(D,n)>maxN ); X=X(:,randSample(n,maxN)); n=maxN; end;
 
 % get principal components using the SVD- X=U*S*V';  maxrank=min(n-1,D)
 % basically same as svd(X,'econ'), slightly faster?
