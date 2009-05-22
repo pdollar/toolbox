@@ -41,6 +41,7 @@
 %   num2strs          - Applies num2str to each element of an array X.
 %   plotRoc           - Function for display of rocs (receiver operator characteristic curves).
 %   randint2          - Faster but restricted version of randint.
+%   randSample        - Generate values sampled uniformly without replacement from 1:n.
 %   rotationMatrix    - Performs different operations dealing with a rotation matrix
 %   simpleCache       - A simple cache that can be used to store results of computations.
 %   sub2ind2          - Improved version of sub2ind.
