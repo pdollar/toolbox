@@ -1,6 +1,6 @@
 Version NEW
- -remove dependencies to randsample from the statistics toolbox by adding our
-own implementation: randSample
+ -tweaked imrectLite.m 
+ -added matlab/randSample.m (custom implem. of randsample in Stat Toolbox)
 
 Version 2.30 (15-May-09)
  -adding images/seq* (support for .seq video files)
