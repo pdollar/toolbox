@@ -45,7 +45,7 @@ function [hRect,api] = imrectLite( hParent, pos, lims, ar, varargin )
 %
 % See also IMRECT, RECTANGLE, PATCH
 %
-% Piotr's Image&Video Toolbox      Version 2.03
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -110,7 +110,7 @@ api = struct('hRect',hRect, 'getPos',@getPos, 'setPos',@setPos, ...
       posEnd = max( min(posEnd,lims(3:4)), posStr+minSiz );
       pos = [posStr posEnd-posStr];
     end
-
+    
     % now constrain for aspect ratio
     if( ar<=0 ); return; end;
     w=pos(3); h=pos(4);
@@ -286,26 +286,15 @@ api = struct('hRect',hRect, 'getPos',@getPos, 'setPos',@setPos, ...
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  function pos = setAr( ar1 )
-    ar = ar1;
-    pos = setPos(getPos());
-  end
+  function pos = setAr( ar1 ), ar=ar1; pos=setPos(getPos()); end
 
-  function setPosChnCb( f )
-    posChnCb=f;
-  end
+  function setPosChnCb( f ), posChnCb=f; end
 
-  function setPosSetCb( f )
-    posSetCb=f;
-  end
+  function setPosSetCb( f ), posSetCb=f; end
 
-  function setPosLock( b )
-    posLock = b;
-  end
+  function setPosLock( b ), posLock=b; end
 
-  function setSizLock( b )
-    sizLock = b;
-  end
+  function setSizLock( b ), sizLock=b; end
 
   function uistack1( varargin )
     if(isempty(hRect) || isempty(hPatch)); return; end;
