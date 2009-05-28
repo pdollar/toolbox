@@ -18,7 +18,7 @@ function [hRect,api] = imrectLite( hParent, pos, lims, ar, varargin )
 %
 % INPUTS
 %  hParent    - [gca] object parent, typically an axes object (gca)
-%  pos        - [] initial pos vector [xMin yMin width height] or []
+%  pos        - [] initial pos vector [x y w h] or [] or [x0 y0]
 %  lims       - [] 2x2 matrix of [xMin xMax; yMin yMax]
 %  ar         - [0] aspect ratio (if positive w/h is constrained to ar)
 %  varargin   - [] parameters to RECTANGLE graphics object
@@ -72,7 +72,7 @@ set(hRect,'ButtonDownFcn',{@btnDwn,0});
 set(hPatch,'ButtonDownFcn',{@btnDwn,0});
 
 % set / get position
-if( isempty(pos) )
+if( isempty(pos) || length(pos)==2 )
   btnDwn( [], [], -1 );
   waitfor( hFig, 'WindowButtonUpFcn', '' );
 else
@@ -231,7 +231,11 @@ api = struct('hRect',hRect, 'getPos',@getPos, 'setPos',@setPos, ...
     if( sizLock ); flag=1; end;
     if( flag==-1 )
       % create new rectangle
-      anchor = ginput(1);
+      if( isempty(pos) )
+        anchor = ginput(1);
+      else
+        anchor = pos(1:2);
+      end
       pos0 = [anchor 1 1];
       setPos( pos0 );
       set(hRect,'Visible','on');
