@@ -47,6 +47,7 @@
 %
 % Miscellaneous:
 %   convnFast      - Fast convolution, replacement for both conv2 and convn.
+%   diffTracker    - Fast, robust estimation of translational offset between a pair of images.
 %   gaussSmooth    - Applies Gaussian smoothing to a (multidimensional) image.
 %   imMlGauss      - Calculates max likelihood params of Gaussian that gave rise to image G.
 %   imrectLite     - A 'lite' version of imrect (fast, bugfree, simple).

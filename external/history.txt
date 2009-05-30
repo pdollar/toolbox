@@ -1,6 +1,7 @@
 Version NEW
- -tweaked imrectLite.m 
+ -tweaked images/imrectLite.m 
  -added matlab/randSample.m (custom implem. of randsample in Stat Toolbox)
+ -added images/diffTracker.m (see documentation)
 
 Version 2.30 (15-May-09)
  -adding images/seq* (support for .seq video files)
