@@ -53,6 +53,7 @@ function sobj = seqIo( fName, mode, varargin )
 %
 % mode=='crop': Crop subsequence from seq file:
 %  seqIo( fName, 'crop', tName, f0, f1 )
+%  seqIo( fName, 'crop', tName, frames )
 %
 % mode=='toimgs': Extract images from seq file to dir/I[frame,5].ext:
 %  seqIo( fName, 'toimgs', dir )
@@ -75,7 +76,7 @@ function sobj = seqIo( fName, mode, varargin )
 %
 % See also SEQPLAYER, SEQREADERPLUGIN, SEQWRITERPLUGIN
 %
-% Piotr's Image&Video Toolbox      Version 2.30
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -104,11 +105,19 @@ elseif( strcmp(mode,'rdual') )
   sobj = seqReaderDual(fName{:});
   
 elseif( strcmp(mode,'crop') )
-  tName=varargin{1}; f0=varargin{2}; f1=varargin{3};
+  tName=varargin{1}; fs=varargin{2};
+  if(nargin==5), fs=fs:varargin{3}; end; fs=fs(:)';
   sr=seqIo(fName,'r'); info=sr.getinfo();
-  f1=min(f1,info.numFrames-1); f0=min(f0,f1);
-  sw=seqIo(tName,'w',info); sr.seek(f0);
-  for f=f0:f1, [I,ts]=sr.getframeb(); sw.addframeb(I,ts); sr.next(); end
+  sw=seqIo(tName,'w',info); pad=sr.getnext(); pad(:)=0;
+  for f=fs
+    if( all(fs>0) )
+      sr.seek(f); [I,ts]=sr.getframeb(); sw.addframeb(I,ts);
+    elseif( f>=0 )
+      sr.seek(f); I=sr.getframeb(); sw.addframeb(I);
+    else
+      sw.addframe(pad);
+    end
+  end
   sw.close(); sr.close();
   
 elseif( strcmp(mode,'toimgs') )
