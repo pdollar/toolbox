@@ -105,12 +105,12 @@ elseif( strcmp(mode,'rdual') )
   sobj = seqReaderDual(fName{:});
   
 elseif( strcmp(mode,'crop') )
-  tName=varargin{1}; fs=varargin{2};
-  if(nargin==5), fs=fs:varargin{3}; end; fs=fs(:)';
+  tName=varargin{1}; fs=varargin{2}; ordered=0;
+  if(nargin==5), fs=fs:varargin{3}; ordered=1; end; fs=fs(:)';
   sr=seqIo(fName,'r'); info=sr.getinfo();
   sw=seqIo(tName,'w',info); pad=sr.getnext(); pad(:)=0;
   for f=fs
-    if( all(fs>0) )
+    if( ordered )
       sr.seek(f); [I,ts]=sr.getframeb(); sw.addframeb(I,ts);
     elseif( f>=0 )
       sr.seek(f); I=sr.getframeb(); sw.addframeb(I);
