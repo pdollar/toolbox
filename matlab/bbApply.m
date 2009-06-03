@@ -31,7 +31,7 @@ function varargout = bbApply( action, varargin )
 % bbApply>convert bbApply>random bbApply>frMask bbApply>toMask
 % bbApply>nms bbApply>nmsMax
 %
-% Piotr's Image&Video Toolbox      Version 2.30
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -193,22 +193,24 @@ for i=1:size(bb,1)
 end
 end
 
-function bbr = squarify( bb, flag )
-% Make bbs square (without moving their centers).
+function bbr = squarify( bb, flag, ar )
+% Fix bb aspect ratios (without moving the bb centers).
 %
-% The w/h of each bb is adjusted to make it square with side length s.
-% flag controls which of w/h is used as s. Possible values for flag:
-%  flag==0: s = max(w,h)
-%  flag==1: s = min(w,h)
-%  flag==2: s = w
-%  flag==3: s = h
+% The w or h of each bb is adjusted so that w/h=ar.
+% The parameter flag controls whether w or h should change:
+%  flag==0: expand bb to given ar
+%  flag==1: shrink bb to given ar
+%  flag==2: use original w, alter h
+%  flag==3: use original h, alter w
+% If ar==1 (the default), always converts bb to a square, hence the name.
 %
 % USAGE
-%  bbr = bbApply( 'squarify', bb, flag )
+%  bbr = bbApply( 'squarify', bb, flag, [ar] )
 %
 % INPUTS
 %  bb     - [nx4] original bbs
-%  flag   - controls which of w/h is used as s
+%  flag   - controls whether w or h should change
+%  ar     - [1] desired aspect ratio
 %
 % OUTPUT
 %  bbr    - the output 'squarified' bbs
@@ -217,14 +219,13 @@ function bbr = squarify( bb, flag )
 %  bbr = bbApply('squarify',[0 0 1 2],0)
 %
 % See also bbApply, bbApply>resize
-bbr=bb;
+if(nargin<3 || isempty(ar)), ar=1; end; bbr=bb;
 for i=1:size(bb,1)
   p=bb(i,1:4);
-  useWidth = (flag==0 && p(3)>p(4)) || (flag==1 && p(3)<p(4)) || flag==2;
-  if(useWidth), p=resize(p,0,1,1); else p=resize(p,1,0,1); end
+  usew = (flag==0 && p(3)>p(4)*ar) || (flag==1 && p(3)<p(4)*ar) || flag==2;
+  if(usew), p=resize(p,0,1,ar); else p=resize(p,1,0,ar); end
   bbr(i,1:4)=p;
 end
-
 end
 
 function hs = draw( bb, col, lw, ls, prop )
