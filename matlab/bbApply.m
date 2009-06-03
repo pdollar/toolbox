@@ -412,16 +412,17 @@ bbs(:,1)=bbs(:,1)-floor(bbw/2);
 bbs(:,2)=bbs(:,2)-floor(bbh/2);
 end
 
-function M = toMask( bbs, w, h )
-% Create binary mask encoding bb centers.
+function M = toMask( bbs, w, h, fill )
+% Create binary mask encoding bb centers (or extent).
 %
 % USAGE
-%  M = bbApply('toMask',bbs,w,h)
+%  M = bbApply('toMask',bbs,w,h,[fill])
 %
 % INPUTS
 %  bbs    - bounding boxes
 %  w      - mask target width
 %  h      - mask target height
+%  fill   - [0] if 1 encodes extent of bbs
 %
 % OUTPUTS
 %  M      - hxw binary mask
@@ -429,8 +430,16 @@ function M = toMask( bbs, w, h )
 % EXAMPLE
 %
 % See also bbApply, bbApply>frMask
-M=zeros(h,w,'uint8'); cen=floor(getCenter(bbs));
-M(sub2ind([h w],cen(:,2),cen(:,1)))=1;
+if(nargin<4||isempty(fill)), fill=0; end
+if( fill==0 )
+  M=zeros(h,w,'uint8'); cen=floor(getCenter(bbs));
+  M(sub2ind([h w],cen(:,2),cen(:,1)))=1;
+else
+  M=zeros(h,w,'uint8'); bbs=intersect(round(bbs),[1 1 w h]);
+  for i=1:size(bbs,1), bb=bbs(i,:);
+    M(bb(2):bb(2)+bb(4)-1,bb(1):bb(1)+bb(3)-1)=1;
+  end
+end
 end
 
 function bbs = nms( bbs, thr, radii, maxn )

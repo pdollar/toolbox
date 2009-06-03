@@ -1,6 +1,6 @@
 Version NEW
  -tweaked images/imrectLite.m 
- -generalized matlab/bbApply>squarify
+ -generalized matlab/bbApply>squarify and bbApply>toMask
  -added matlab/randSample.m (custom implem. of randsample in Stat Toolbox)
  -added images/diffTracker.m (see documentation)
  -images/seqIo.m: more versatile crop function
