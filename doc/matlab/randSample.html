@@ -2,9 +2,9 @@
                 "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
 <head>
-  <title>Description of seqPlayer</title>
-  <meta name="keywords" content="seqPlayer">
-  <meta name="description" content="Simple GUI to play seq files.">
+  <title>Description of randSample</title>
+  <meta name="keywords" content="randSample">
+  <meta name="description" content="Generate values sampled uniformly without replacement from 1:n.">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -12,45 +12,39 @@
 </head>
 <body>
 <a name="_top"></a>
-<!-- menu.html images -->
-<h1>seqPlayer
+<!-- menu.html matlab -->
+<h1>randSample
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>Simple GUI to play seq files.</strong></div>
+<div class="box"><strong>Generate values sampled uniformly without replacement from 1:n.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function seqPlayer( fName, dispFunc ) </strong></div>
+<div class="box"><strong>function r = randSample( n, k ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> Simple GUI to play seq files.
+<div class="fragment"><pre class="comment"> Generate values sampled uniformly without replacement from 1:n.
 
- Use arrow keys to play the video. Controls are as follows:
- (1) If stopped: [L] play backward, [R] play forward
- (2) If playing forward: [L] halve speed, [R] double speed, [U/D] stop
- (3) If playing backward: [L] double speed, [R] halve speed,[U/D] stop
- You can explicitly enter a frame or use the slider to jump in the video.
-
- One can pass in a function handle dispFunc, where &quot;hs=dispFunc(frame)&quot;
- performs additional custom display for the given frame (and returns the
- handles for any created objects).
+ If n is an integer, samples k values from 1:n without replacement. If n
+ is an array, samples k values without replacement from n. This function
+ implements much of the same functionality as randsample.m in the
+ Statistics Toolbox.
 
  USAGE
-  seqPlayer( [fName], [dispFunc] )
+  r = randSample( n, k )
 
  INPUTS
-  fName    - optional seq file to load
-  dispFunc - allow custom display per frame
+  n           - specifies sampling source (if array) or range (if scalar)
+  k           - the number of samples to draw
 
  OUTPUTS
+  r           - k uniformly generated random samples
 
  EXAMPLE
-  load images; [h,w,n]=size(video);
-  info=struct('height',h,'width',w,'codec','monojpg','fps',20);
-  sw=seqIo('video','w',info); for t=1:n, sw.addframe(video(:,:,t)); end
-  sw.close(); seqPlayer('video');
+  r = randSample( 10, 5 );
+  r = randSample( [ 5 6 8 9 32 45 ], 2 );
 
- See also <a href="seqIo.html" class="code" title="function sobj = seqIo( fName, mode, varargin )">SEQIO</a>
+ See also RANDPERM
 
  Piotr's Image&amp;Video Toolbox      Version 2.31
  Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -61,10 +55,10 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="seqIo.html" class="code" title="function sobj = seqIo( fName, mode, varargin )">seqIo</a>	Wrapper for reading/writing seq files.</li><li><a href="../matlab/c.html" class="code" title="">c</a>	clc - clear command window.</li></ul>
+</ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-</ul>
+<li><a href="../classify/kmeans2.html" class="code" title="function [ IDX, C, d ] = kmeans2( X, k, prm )">kmeans2</a>	Fast version of kmeans clustering.</li><li><a href="../classify/pca.html" class="code" title="function [ U, mu, vars ] = pca( X )">pca</a>	Principal components analysis (alternative to princomp).</li><li><a href="../classify/rbfComputeBasis.html" class="code" title="function rbfBasis = rbfComputeBasis( X, k, cluster, scale, show )">rbfComputeBasis</a>	Get locations and sizes of radial basis functions for use in rbf network.</li><li><a href="../images/clusterMontage.html" class="code" title="function IC = clusterMontage( I, IDX, nElem, pad )">clusterMontage</a>	Used for visualization of clusters of images and videos.</li></ul>
 <!-- crossreference -->
 
 
