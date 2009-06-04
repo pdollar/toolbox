@@ -1,3 +1,6 @@
+Version NEW
+ -generalized seqIo.m>to/frimgs
+
 Version 2.31 (03-Jun-09)
  -tweaked images/imrectLite.m 
  -generalized matlab/bbApply>squarify and bbApply>toMask

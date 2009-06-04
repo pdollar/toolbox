@@ -56,10 +56,10 @@ function sobj = seqIo( fName, mode, varargin )
 %  seqIo( fName, 'crop', tName, frames )
 %
 % mode=='toimgs': Extract images from seq file to dir/I[frame,5].ext:
-%  seqIo( fName, 'toimgs', dir )
+%  seqIo( fName, 'toimgs', dir, [skip] )
 %
 % mode=='frimgs': Make seq file from images in dir/I[frame,5].ext:
-%  seqIo( fName, 'frimgs', info, dir )
+%  seqIo( fName, 'frimgs', info, dir, [skip] )
 %
 % USAGE
 %  sobj = seqIo( fName, mode, varargin )
@@ -76,7 +76,7 @@ function sobj = seqIo( fName, mode, varargin )
 %
 % See also SEQPLAYER, SEQREADERPLUGIN, SEQWRITERPLUGIN
 %
-% Piotr's Image&Video Toolbox      Version 2.31
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -122,21 +122,24 @@ elseif( strcmp(mode,'crop') )
   
 elseif( strcmp(mode,'toimgs') )
   d=varargin{1}; if(~exist(d,'dir')), mkdir(d); end
-  sr=seqIo(fName,'r'); i=0; info=sr.getinfo(); ext=['.' info.ext];
-  while( 1 )
-    f=[d '/I' int2str2(i,5) ext]; i=i+1; if(~sr.next()), break; end
+  if(nargin==4), skip=varargin{2}; else skip=1; end
+  sr=seqIo(fName,'r'); info=sr.getinfo(); ext=['.' info.ext];
+  for frame = skip-1:skip:info.numFrames-1
+    f=[d '/I' int2str2(frame,5) ext]; sr.seek(frame);
     I=sr.getframeb(); f=fopen(f,'w'); assert(f>0); fwrite(f,I); fclose(f);
   end
   sr.close();
   
 elseif( strcmp(mode,'frimgs') )
   d=varargin{1}; info=varargin{2}; assert(exist(d,'dir')==7);
-  sw=seqIo(fName,'w',info); i=0; info=sw.getinfo(); ext=['.' info.ext];
-  while( 1 )
-    f=[d '/I' int2str2(i,5) ext]; i=i+1; if(~exist(f,'file')), break; end
+  if(nargin==5), skip=varargin{3}; else skip=1; end
+  sw=seqIo(fName,'w',info); info=sw.getinfo(); ext=['.' info.ext];
+  for frame = skip-1:skip:1e5
+    f=[d '/I' int2str2(frame,5) ext]; if(~exist(f,'file')), break; end
     f=fopen(f,'r'); assert(f>0); I=fread(f); fclose(f); sw.addframeb(I);
   end
   sw.close();
+  if(frame==skip-1), warning('No images found.'); end %#ok<WNTAG>
   
 else assert(0);
   
