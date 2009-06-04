@@ -1,4 +1,4 @@
-Version NEW
+Version 2.31 (03-Jun-09)
  -tweaked images/imrectLite.m 
  -generalized matlab/bbApply>squarify and bbApply>toMask
  -added matlab/randSample.m (custom implem. of randsample in Stat Toolbox)
