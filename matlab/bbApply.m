@@ -10,9 +10,39 @@ function varargout = bbApply( action, varargin )
 % bbApply contains a number of utility functions for working with bbs. The
 % format for accessing the various utility functions is:
 %  outputs = bbApply( 'action', inputs );
-% The list of functions and help for each is given in the "See also"
-% section. Also, help on individual subfunctions can be accessed by:
-%  help bbApply>action;
+% The list of functions and help for each is given below. Also, help on
+% individual subfunctions can be accessed by: "help bbApply>action".
+%
+% Compute area of bbs.
+%   bb = bbApply( 'area', bb )
+% Shift center of bbs.
+%   bb = bbApply( 'shift', bb, xdel, ydel )
+% Get center of bbs.
+%   cen = bbApply( 'getCenter', bb )
+% Get bb at intersection of bb1 and bb2 (may be empty).
+%   bb = bbApply( 'intersect', bb1, bb2 )
+% Get bb that is union of bb1 and bb2 (smallest bb containing both).
+%   bb = bbApply( 'union', bb1, bb2 )
+% Resize the bbs (without moving their centers).
+%   bbr = bbApply( 'resize', bb, hr, wr, [ar] )
+% Fix bb aspect ratios (without moving the bb centers).
+%   bbr = bbApply( 'squarify', bb, flag, [ar] )
+% Draw single or multiple bbs to image (calls rectangle()).
+%   hs = bbApply( 'draw', bb, col, [lw], [ls], [prop] )
+% Crop image regions from I encompassed by bbs.
+%   [patches, bbs] = bbApply('crop',I,bb,[padEl])
+% Convert bb relative to absolute coordinates and vice-versa.
+%   bb = bbApply( 'convert', bb, bbRef, isAbs )
+% Uniformly generate n (integer) bbs constrained between [1,w]x[1,h].
+%   bb = bbApply('random',w,h,bbw,bbh,n)
+% Convert binary mask to bbs, assuming `on' pixels indicate bb centers.
+%   bbs = bbApply('frMask',M,bbw,bbh)
+% Create binary mask encoding bb centers (or extent).
+%   M = bbApply('toMask',bbs,w,h,[fill])
+% Mean shift non-maximal suppression (nms) of bbs w variable width kernel.
+%   bbs = bbApply('nms',bbs,thr,[radii],[maxn])
+% Non-maximal suppression (nms) of bbs using area of overlap criteria.
+%   bbs = bbApply('nmsMax',bbs,thr,[overlap],[maxn])
 %
 % USAGE
 %  varargout = bbApply( action, varargin );
@@ -31,15 +61,32 @@ function varargout = bbApply( action, varargin )
 % bbApply>convert bbApply>random bbApply>frMask bbApply>toMask
 % bbApply>nms bbApply>nmsMax
 %
-% Piotr's Image&Video Toolbox      Version 2.31
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-varargout = cell(1,nargout);
-[varargout{:}] = eval([action '(varargin{:});']);
+varargout = cell(1,max(1,nargout));
+switch action
+  case 'area',        [varargout{:}] = area(varargin{:});
+  case 'shift',       [varargout{:}] = shift(varargin{:});
+  case 'getCenter',   [varargout{:}] = getCenter(varargin{:});
+  case 'intersect',   [varargout{:}] = intersect(varargin{:});
+  case 'union',       [varargout{:}] = union(varargin{:});
+  case 'resize',      [varargout{:}] = resize(varargin{:});
+  case 'squarify',    [varargout{:}] = squarify(varargin{:});
+  case 'draw',        [varargout{:}] = draw(varargin{:});
+  case 'crop',        [varargout{:}] = crop(varargin{:});
+  case 'convert',     [varargout{:}] = convert(varargin{:});
+  case 'random',      [varargout{:}] = random(varargin{:});
+  case 'frMask',      [varargout{:}] = frMask(varargin{:});
+  case 'toMask',      [varargout{:}] = toMask(varargin{:});
+  case 'nms',         [varargout{:}] = nms(varargin{:});
+  case 'nmsMax',      [varargout{:}] = nmsMax(varargin{:});
+  otherwise, error(['unkown command:' command]);
+end
 end
 
-function a = area( bb ) %#ok<*DEFNU>
+function a = area( bb )
 % Compute area of bbs.
 %
 % USAGE
