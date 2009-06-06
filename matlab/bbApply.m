@@ -65,25 +65,10 @@ function varargout = bbApply( action, varargin )
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
+
+%#ok<*DEFNU>
 varargout = cell(1,max(1,nargout));
-switch action
-  case 'area',        [varargout{:}] = area(varargin{:});
-  case 'shift',       [varargout{:}] = shift(varargin{:});
-  case 'getCenter',   [varargout{:}] = getCenter(varargin{:});
-  case 'intersect',   [varargout{:}] = intersect(varargin{:});
-  case 'union',       [varargout{:}] = union(varargin{:});
-  case 'resize',      [varargout{:}] = resize(varargin{:});
-  case 'squarify',    [varargout{:}] = squarify(varargin{:});
-  case 'draw',        [varargout{:}] = draw(varargin{:});
-  case 'crop',        [varargout{:}] = crop(varargin{:});
-  case 'convert',     [varargout{:}] = convert(varargin{:});
-  case 'random',      [varargout{:}] = random(varargin{:});
-  case 'frMask',      [varargout{:}] = frMask(varargin{:});
-  case 'toMask',      [varargout{:}] = toMask(varargin{:});
-  case 'nms',         [varargout{:}] = nms(varargin{:});
-  case 'nmsMax',      [varargout{:}] = nmsMax(varargin{:});
-  otherwise, error(['unkown command:' command]);
-end
+[varargout{:}] = feval(action,varargin{:});
 end
 
 function a = area( bb )
