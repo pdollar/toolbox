@@ -1,4 +1,6 @@
 Version NEW
+ -imResample can now take inputs of type uint8
+ -tweaked bbApply
  -generalized seqIo.m>to/frimgs
 
 Version 2.31 (03-Jun-09)

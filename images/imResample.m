@@ -9,11 +9,11 @@
 %  B = imResample( A, h, w )
 %
 % INPUT [1]
-%  A        - input image (2D or 3D double array)
+%  A        - input image (2D or 3D double or uint8 array)
 %  scale    - size(B)=size(A)*scale
 %
 % INPUT [2]
-%  A        - input image (2D or 3D double array)
+%  A        - input image (2D or 3D double or uint8 array)
 %  h        - height(B)=h
 %  w        - width(B)=w
 %
@@ -28,7 +28,7 @@
 %
 % See also IMRESIZE
 %
-% Piotr's Image&Video Toolbox      Version 2.30
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]

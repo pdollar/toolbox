@@ -10,6 +10,7 @@
 ****************************************************************************/
 #include <math.h>
 #include "mex.h"
+typedef unsigned char uchar;
 
 /* struct used for caching interpolation values for single column */
 typedef struct { int yb, ya0, ya1; double wt0, wt1; } InterpInfo;
@@ -74,14 +75,15 @@ void			resample( double *A, double *B, int ha, int hb, int w, int nCh )
 void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
 	/* B=imResample(A,scale) or B=imResample(A,h,w); */
-	double input1=0, input2=0; int *ns, ms[3], nCh, nDims; void *A,*B,*T; mxClassID id;
+	double input1=0, input2=0; int *ns, ms[3], nCh, nDims, i;
+	double *A,*B,*T; void *A1, *B1; mxClassID id;
 
 	/* Error checking on arguments */
 	if( nrhs<2 || nrhs>3) mexErrMsgTxt("Two or three inputs expected.");
 	if( nlhs>1 ) mexErrMsgTxt("One output expected.");
 	nDims=mxGetNumberOfDimensions(prhs[0]); id=mxGetClassID(prhs[0]);
-	if( (nDims!=2 && nDims!=3) || id!=mxDOUBLE_CLASS )
-		mexErrMsgTxt("A should be 2D or 3D double array.");
+	if( (nDims!=2 && nDims!=3) || (id!=mxDOUBLE_CLASS && id!=mxUINT8_CLASS) )
+		mexErrMsgTxt("A should be 2D or 3D double or uint8 array.");
 	input1=mxGetScalar(prhs[1]); if(nrhs>=3) input2=mxGetScalar(prhs[2]);
 
 	/* create output array */
@@ -93,10 +95,21 @@ void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 	}
 	plhs[0] = mxCreateNumericArray(3,ms,id,mxREAL);
 
+	/* convert to double if id!=mxDOUBLE_CLASS */
+	A1=mxGetData(prhs[0]); B1=mxGetData(plhs[0]);
+	if( id==mxDOUBLE_CLASS ) { A=A1; B=B1; } else {
+		A = mxMalloc( ns[0]*ns[1]*nCh*sizeof(double) );
+		B = mxCalloc( ms[0]*ms[1]*nCh,sizeof(double) );
+	}
+	if(id==mxUINT8_CLASS) for(i=0; i<ns[0]*ns[1]*nCh; i++) A[i]=(double) ((uchar*)A1)[i];
+
 	/* Perform rescaling */
-	A=mxGetData(prhs[0]); B=mxGetData(plhs[0]);
-	T=mxCalloc(ms[0]*ns[1]*nCh, mxGetElementSize(prhs[0]));
-	resample( (double*) A, (double*) T, ns[0], ms[0], ns[1], nCh);
-	resample( (double*) T, (double*) B, ns[1], ms[1], ms[0], nCh);
+	T = mxCalloc(ms[0]*ns[1]*nCh, sizeof(double) );
+	resample( A, T, ns[0], ms[0], ns[1], nCh );
+	resample( T, B, ns[1], ms[1], ms[0], nCh );
 	mxFree(T);
+
+	/* convert from double if id!=mxDOUBLE_CLASS */
+	if(id==mxUINT8_CLASS) for(i=0; i<ms[0]*ms[1]*nCh; i++) ((uchar*)B1)[i]=(uchar) (B[i]+.5);
+	if( id!=mxDOUBLE_CLASS ) { mxFree(A); mxFree(B); }
 }
