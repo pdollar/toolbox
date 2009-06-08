@@ -1,6 +1,9 @@
 Version NEW
+ -Added "detection and bb support" to /images:
+  -moved bbApply to /images (from /matlab)
+  -added bbGt: routines for evaluating object detection results
+  -added bbEval: data structure and routines for bb annotations
  -imResample can now take inputs of type uint8
- -tweaked bbApply
  -generalized seqIo.m>to/frimgs
 
 Version 2.31 (03-Jun-09)

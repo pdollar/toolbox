@@ -45,6 +45,11 @@
 %   seqWriterPlugin - Plugin for seqIo and videoIO to allow writing of seq files.
 %   seqPlayer       - Simple GUI to play seq files.
 %
+% Detection and bb support:
+%   bbApply         - Functions for manipulating bounding boxes (bb).
+%   bbEval          - Routines for evaluating the Pascal criteria for object detection.
+%   bbGt            - Data structure for bounding box (bb) image annotations.
+%
 % Miscellaneous:
 %   convnFast      - Fast convolution, replacement for both conv2 and convn.
 %   diffTracker    - Fast, robust estimation of translational offset between a pair of images.

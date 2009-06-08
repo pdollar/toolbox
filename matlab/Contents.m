@@ -27,7 +27,6 @@
 %   text2             - Wrapper for text.m that ensures displayed text fits in figure.
 %
 % Miscellaneous:
-%   bbApply           - Functions for manipulating bounding boxes (bb).
 %   checkNumArgs      - Helper utility for checking numeric vector arguments.
 %   dijkstra          - Runs Dijkstra's shortest path algorithm on a distance matrix.
 %   dirSynch          - Synchronize two directory trees (or show differences between them).
