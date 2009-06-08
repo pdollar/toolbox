@@ -30,7 +30,7 @@ function varargout = bbApply( action, varargin )
 % Draw single or multiple bbs to image (calls rectangle()).
 %   hs = bbApply( 'draw', bb, col, [lw], [ls], [prop] )
 % Crop image regions from I encompassed by bbs.
-%   [patches, bbs] = bbApply('crop',I,bb,[padEl])
+%   [patches, bbs] = bbApply('crop',I,bb,[padEl],[dims])
 % Convert bb relative to absolute coordinates and vice-versa.
 %   bb = bbApply( 'convert', bb, bbRef, isAbs )
 % Uniformly generate n (integer) bbs constrained between [1,w]x[1,h].
@@ -293,7 +293,7 @@ for b=1:n
 end
 end
 
-function [patches, bbs] = crop( I, bbs, padEl )
+function [patches, bbs] = crop( I, bbs, padEl, dims )
 % Crop image regions from I encompassed by bbs.
 %
 % The only subtlety is that a pixel centered at location (i,j) would have a
@@ -310,12 +310,13 @@ function [patches, bbs] = crop( I, bbs, padEl )
 % 'replicate', or 'symmetric'), uses padarray to do actual padding (slow).
 %
 % USAGE
-%  [patches, bbs] = bbApply('crop',I,bb,[padEl])
+%  [patches, bbs] = bbApply('crop',I,bb,[padEl],[dims])
 %
 % INPUTS
 %  I        - image from which to crop patches
 %  bbs      - bbs that indicate regions to crop
 %  padEl    - [0] value to pad I or [] to indicate no padding (see above)
+%  dims     - [] if specified resize each cropped patch to [w h]
 %
 % OUTPUTS
 %  patches  - [1xn] cell of cropped image regions
@@ -326,10 +327,11 @@ function [patches, bbs] = crop( I, bbs, padEl )
 %  p1=bbApply('crop',I,bb); p2=bbApply('crop',I,bb,'replicate');
 %  figure(1); im(I); figure(2); im(p1{1}); figure(3); im(p2{1});
 %
-% See also bbApply, ARRAYCROP, PADARRAY
+% See also bbApply, ARRAYCROP, PADARRAY, IMRESAMPLE
 
 % get padEl, bound bb to visible region if empty
 if( nargin<3 ), padEl=0; end; h=size(I,1); w=size(I,2);
+if( nargin<4 ), dims=[]; end;
 if(isempty(padEl)), bbs=intersect([.5 .5 w h],bbs); end
 % crop each patch in turn
 n=size(bbs,1); patches=cell(1,n);
@@ -354,6 +356,7 @@ for i=1:n, [patches{i},bbs(i,1:4)]=crop1(bbs(i,1:4)); end
       patch = I(lcsS(1):lcsE(1),lcsS(2):lcsE(2),:);
     end
     bb = [lcsS([2 1]) lcsE([2 1])-lcsS([2 1])+1];
+    if(~isempty(dims)), patch=imResample(patch,dims(2),dims(1)); end
   end
 end
 
