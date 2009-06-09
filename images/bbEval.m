@@ -54,7 +54,7 @@ function [gt, dt] = evalRes( gt0, dt0, thr )
 % Highest scoring detections are matched first. Matches to standard,
 % (non-ignore) gtBb are preferred. Each dtBb and gtBb may be matched at
 % most once, except for ignore-gtBb which can be matched multiple times.
-% Unmatched dtBb are false-positives, unmatched dtGt are false-negatives.
+% Unmatched dtBb are false-positives, unmatched gtBb are false-negatives.
 % Each match between a dtBb and gtBb is a true-positive, except matches
 % between dtBb and ignore-gtBb which do not affect the evaluation criteria.
 %
