@@ -151,7 +151,7 @@ function [gtBbs,ids] = toGt( objs, lbls, prm )
 % Tested properties include the height (h), width (w), area (a), aspect
 % ratio (ar), and fraction visible (v). The last property is computed as
 % the visible object area divided by the total area, except if o.occ==0, in
-% which case v=1, or all(o.bbv==0), which indicates the object may be
+% which case v=1, or all(o.bbv==o.bb), which indicates the object may be
 % barely visible, in which case v=0.
 %
 % USAGE
