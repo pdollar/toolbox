@@ -397,15 +397,15 @@ else
 end
 end
 
-function bb = random( w, h, bbw, bbh, n )
-% Uniformly generate n (integer) bbs constrained between [1,w]x[1,h].
+function bb = random( maxx, maxy, bbw, bbh, n )
+% Uniformly generate n (integer) bbs that lie in [1 maxx]x[1 maxy].
 %
 % USAGE
-%  bb = bbApply('random',w,h,bbw,bbh,n)
+%  bb = bbApply('random',maxx,maxy,bbw,bbh,n)
 %
 % INPUTS
-%  w      - maximum right most bb location
-%  h      - maximum bottom most bb location
+%  maxx   - maximum right most bb location
+%  maxy   - maximum bottom most bb location
 %  bbw    - bb width, or range for bbw [min max]
 %  bbh    - bb height, or range for bbh [min max]
 %  n      - number of bbs to generate
@@ -419,8 +419,8 @@ function bb = random( w, h, bbw, bbh, n )
 %
 % See also bbApply
 
-[x w]=random1(n,w,bbw);
-[y h]=random1(n,h,bbh);
+[x w]=random1(n,maxx,bbw);
+[y h]=random1(n,maxy,bbh);
 bb=[x y w h];
 
   function [x w] = random1( n, maxx, rng )
