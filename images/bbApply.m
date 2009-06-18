@@ -263,6 +263,9 @@ end
 function hs = draw( bb, col, lw, ls, prop )
 % Draw single or multiple bbs to image (calls rectangle()).
 %
+% To draw bbs aligned with pixel boundaries, subtract .5 from the x and y
+% coordinates (since pixel centers are located at integer locations).
+%
 % USAGE
 %  hs = bbApply( 'draw', bb, col, [lw], [ls], [prop] )
 %
@@ -403,22 +406,39 @@ function bb = random( w, h, bbw, bbh, n )
 % INPUTS
 %  w      - maximum right most bb location
 %  h      - maximum bottom most bb location
-%  bbw    - bb width
-%  bbh    - bb height
+%  bbw    - bb width, or range for bbw [min max]
+%  bbh    - bb height, or range for bbh [min max]
 %  n      - number of bbs to generate
 %
 % OUTPUTS
 %  bb     - randomly generate bbs
 %
 % EXAMPLE
-%  bb = bbApply('random',5,5,3,3,10)
+%  s=20; bb=bbApply('random',s,s,[1 s],5,10);
+%  figure(1); clf; im(rand(s+1)); bbApply('draw',bb,'g');
 %
 % See also bbApply
 
-bb=zeros(n,4); bb(:,3)=bbw; bb(:,4)=bbh;
-bb(:,1) = randint2(n,1,[1,w-bbw+1]);
-bb(:,2) = randint2(n,1,[1,h-bbh+1]);
+[x w]=random1(n,w,bbw);
+[y h]=random1(n,h,bbh);
+bb=[x y w h];
 
+  function [x w] = random1( n, maxx, rng )
+    if( numel(rng)==1 )
+      % simple case, generate 1<=x<=maxx-rng+1 and w=rng
+      x=randint2(n,1,[1,maxx-rng+1]); w=rng(ones(n,1));
+    else
+      % generate random [x w] pairs until have n that fall in rng
+      assert(rng(1)<=rng(2)); k=0; x=zeros(n,1); w=zeros(n,1);
+      for i=0:10000
+        t=1+floor(maxx*rand(n,2));
+        x1=min(t(:,1),t(:,2)); w1=max(t(:,1),t(:,2))-x1+1;
+        kp=(w1>=rng(1) & w1<=rng(2)); x1=x1(kp); w1=w1(kp);
+        k1=length(x1); if(k1>n-k), k1=n-k; x1=x1(1:k1); w1=w1(1:k1); end
+        x(k+1:k+k1,:)=x1; w(k+1:k+k1,:)=w1; k=k+k1; if(k==n), break; end
+      end, assert(k==n);
+    end
+  end
 end
 
 function bbs = frMask( M, bbw, bbh )

@@ -5,6 +5,7 @@ Version NEW
   -added bbEval: data structure and routines for bb annotations
  -imResample can now take inputs of type uint8
  -generalized seqIo.m>to/frimgs
+ -generalized bbApply>random
 
 Version 2.31 (03-Jun-09)
  -tweaked images/imrectLite.m 
