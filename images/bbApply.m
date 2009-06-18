@@ -400,6 +400,10 @@ end
 function bb = random( maxx, maxy, bbw, bbh, n )
 % Uniformly generate n (integer) bbs that lie in [1 maxx]x[1 maxy].
 %
+% bbw either specifies a fixed width or a range of acceptable widths.
+% Likewise bbh (for heights). A special case is bbh<0, in which case
+% ar=-bbh, and the height of each generated bb is set so that w/h=ar.
+%
 % USAGE
 %  bb = bbApply('random',maxx,maxy,bbw,bbh,n)
 %
@@ -419,8 +423,13 @@ function bb = random( maxx, maxy, bbw, bbh, n )
 %
 % See also bbApply
 
-[x w]=random1(n,maxx,bbw);
-[y h]=random1(n,maxy,bbh);
+if(all(bbh>0))
+  [x w]=random1(n,maxx,bbw);
+  [y h]=random1(n,maxy,bbh);
+else
+  ar=-bbh; bbw=min(bbw,maxy*ar); [x w]=random1(n,maxx,bbw);
+  y=x; h=w/ar; for j=1:n, y(j)=random1(1,maxy,h(j)); end
+end
 bb=[x y w h];
 
   function [x w] = random1( n, maxx, rng )
