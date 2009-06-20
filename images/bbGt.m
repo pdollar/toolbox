@@ -234,8 +234,8 @@ function [bbs, patches] = sampleData( I, prm )
 %   .bbs        - [REQ] candidate bbs from which to sample [x y w h ign]
 %   .ibbs       - [] bbs that should not be sampled [x y w h ign]
 %   .thr        - [.5] overlap threshold between bbs and ibbs
-%   .dims       - [] target bb aspect ratio [ar] or dims [h w]
-%   .pad        - [0] frac extra padding for each patch (or [pady padx])
+%   .dims       - [] target bb aspect ratio [ar] or dims [w h]
+%   .pad        - [0] frac extra padding for each patch (or [padx pady])
 %   .padEl      - ['replicate'] how to pad at boundaries (see bbApply>crop)
 %
 % OUTPUTS
@@ -261,7 +261,7 @@ for i=1:m, kp(i)=all(bbEval('compOas',bbs(i,:),ibbs,ibbs(:,5))<thr); end
 bbs=bbs(kp,:); m=sum(kp); if(m>n), bbs=bbs(randSample(m,n),:); end
 % standardize aspect ratios (by growing bbs) and pad bbs
 if(~isempty(ar)), bbs=bbApply('squarify',bbs,0,ar); end
-if(any(pad~=0)), bbs=bbApply('resize',bbs,1+pad(1),1+pad(2)); end
+if(any(pad~=0)), bbs=bbApply('resize',bbs,1+pad(2),1+pad(1)); end
 % crop patches, resizing if dims~=[]
 if(nargout==2), [patches,bbs]=bbApply('crop',I,bbs,padEl,dims); end
 
