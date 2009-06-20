@@ -26,7 +26,7 @@ function varargout = bbGt( action, varargin )
 % Load bb annotation from text file.
 %   objs = bbGt( 'bbLoad', fName )
 % Returns the ground truth bbs for purpose of evaluation.
-%   gtBbs = bbGt( 'toGt', objs, lbls, prm )
+%   gtBbs = bbGt( 'toGt', objs, prm )
 % Sample pos or neg examples for training from an annotated image.
 %   [bbs, patches] = bbGt( 'sampleData', I, prm )
 %
@@ -135,7 +135,7 @@ ign=mat2cell(in{11},O,1);
 objs=struct('lbl',in{1},'bb',bb,'occ',occ,'bbv',bbv,'ign',ign);
 end
 
-function [gtBbs,ids] = toGt( objs, lbls, prm )
+function [gtBbs,ids] = toGt( objs, prm )
 % Returns the ground truth bbs for purpose of evaluation.
 %
 % Returns bbs for all objects with lbl in lbls. The result is an [nx5]
@@ -152,15 +152,16 @@ function [gtBbs,ids] = toGt( objs, lbls, prm )
 % ratio (ar), and fraction visible (v). The last property is computed as
 % the visible object area divided by the total area, except if o.occ==0, in
 % which case v=1, or all(o.bbv==o.bb), which indicates the object may be
-% barely visible, in which case v=0.
+% barely visible, in which case v=0 (note that v~=1 in this case).
 %
 % USAGE
-%  gtBbs = bbGt( 'toGt', objs, lbls, prm )
+%  gtBbs = bbGt( 'toGt', objs, prm )
 %
 % INPUTS
 %  objs     - ground truth objects
-%  lbls     - string or cell array of string labels
 %  prm      -
+%   .lbls       - [] return objs w these labels (or [] to return all)
+%   .ilbls      - [] return objs w these labels but set to ignore
 %   .hRng       - [0 inf] range of acceptable obj heights
 %   .wRng       - [0 inf] range of acceptable obj widths
 %   .aRng       - [0 inf] range of acceptable obj areas
@@ -176,22 +177,23 @@ function [gtBbs,ids] = toGt( objs, lbls, prm )
 %  objs(1).ign=0; objs(1).lbl='person'; objs(1).bb=[0 0 10 10];
 %  objs(2).ign=0; objs(2).lbl='person'; objs(2).bb=[0 0 20 20];
 %  objs(3).ign=0; objs(3).lbl='bicycle'; objs(3).bb=[0 0 20 20];
-%  [gtBbs,ids] = bbGt( 'toGt', objs, 'person', {'hRng',[15 inf]} )
+%  [gtBbs,ids] = bbGt('toGt',objs,{'lbls',{'person'},'hRng',[15 inf]})
 %
 % See also bbGt
 
-r=[0 inf]; dfs={'hRng',r,'wRng',r,'aRng',r,'arRng',r,'vRng',r};
-[hRng,wRng,aRng,arRng,vRng] = getPrmDflt( prm, dfs, 1 );
+r=[0 inf];
+dfs={'lbls',[],'ilbls',[],'hRng',r,'wRng',r,'aRng',r,'arRng',r,'vRng',r};
+[lbls,ilbls,hRng,wRng,aRng,arRng,vRng] = getPrmDflt(prm,dfs,1);
 nObj=length(objs); keep=true(nObj,1); gtBbs=zeros(nObj,5);
-check = @(v,rng) v<rng(1) || v>rng(2);
+check = @(v,rng) v<rng(1) || v>rng(2); lbls=[lbls ilbls];
 for i=1:nObj, o=objs(i);
-  if(~any(strcmp(o.lbl,lbls))), keep(i)=0; continue; end
+  if(~isempty(lbls) && ~any(strcmp(o.lbl,lbls))), keep(i)=0; continue; end
   bb=o.bb; bbv=o.bbv; w=bb(3); h=bb(4); a=w*h; ar=w/h;
   if(~o.occ || all(bbv==0)), v=1; elseif(all(bbv==bb)), v=0; else
     v=bbv(3)*bbv(4)/a;
   end
-  ign = o.ign || check(h,hRng) || check(w,wRng) || ...
-    check(a,aRng) || check(ar,arRng) || check(v,vRng );
+  ign = o.ign || any(strcmp(o.lbl,ilbls)) || check(h,hRng) || ...
+    check(w,wRng) || check(a,aRng) || check(ar,arRng) || check(v,vRng );
   gtBbs(i,1:4)=o.bb; gtBbs(i,5)=ign;
 end
 ids=find(keep); gtBbs=gtBbs(keep,:);
