@@ -256,10 +256,12 @@ dfs={'n','REQ', 'bbs','REQ', 'ibbs',[], 'thr',.5, 'dims',[], ...
 if(numel(dims)==2), ar=dims(1)/dims(2); else ar=dims; dims=[]; end
 if(numel(pad)==1), pad=[pad pad]; end; if(dims), dims=dims.*(1+pad); end
 % discard any candidate bbs that match the ignore bbs, sample to at most n
-if(size(bbs,2)==5), bbs=bbs(bbs(:,5)==0,:); end
-m=size(bbs,1); kp=true(1,m); if(isempty(ibbs)), m=0; end
-for i=1:m, kp(i)=all(bbEval('compOas',bbs(i,:),ibbs,ibbs(:,5))<thr); end
-bbs=bbs(kp,:); m=sum(kp); if(m>n), bbs=bbs(randsample(m,n),:); end
+if(size(bbs,2)==5), bbs=bbs(bbs(:,5)==0,:); end; m=size(bbs,1);
+if(isempty(ibbs)), if(m>n), bbs=bbs(randsample(m,n),:); end; else
+  if(m>n), bbs=bbs(randperm(m),:); end; K=false(1,m); i=1;
+  keep=@(i) all(bbEval('compOas',bbs(i,:),ibbs,ibbs(:,5))<thr);
+  while(sum(K)<n && i<m), K(i)=keep(i); i=i+1; end; bbs=bbs(K,:);
+end
 % standardize aspect ratios (by growing bbs) and pad bbs
 if(ar), bbs=bbApply('squarify',bbs,0,ar); end
 if(any(pad~=0)), bbs=bbApply('resize',bbs,1+pad(2),1+pad(1)); end
