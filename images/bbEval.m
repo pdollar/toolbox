@@ -7,7 +7,9 @@ function varargout = bbEval( action, varargin )
 % individual subfunctions can be accessed by: "help bbEval>action".
 %
 % Evaluates detections in a single frame against ground truth data.
-%   [gt, dt] = evalRes( gt0, dt0, thr )
+%  [gt, dt] = bbEval( 'evalRes', gt0, dt0, thr )
+% Compute ROC or PR based on outputs of evalRes on multiple images.
+%  [xs,ys,ref] = bbEval( 'compRoc', gt, dt, roc, ref )
 % Computes (modified) overlap area between pairs of bbs.
 %   oa = bbEval( 'compOas', dt, gt, [ig] )
 % Optimized version of compOas for a single pair of bbs.
@@ -25,7 +27,8 @@ function varargout = bbEval( action, varargin )
 %
 % EXAMPLE
 %
-% See also bbApply, bbGt, bbEval>evalRes, bbEval>compOas, bbEval>compOa
+% See also bbApply, bbGt, bbEval>evalRes, bbEval>compOas, bbEval>compOa,
+% bbEval>compRoc
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -101,6 +104,54 @@ for d=1:nd
   if(dtm==1), assert(gt(g,5)==0); gt(g,5)=1; dt(d,6)=1; end
 end
 
+end
+
+function [xs,ys,ref] = compRoc( gt, dt, roc, ref )
+% Compute ROC or PR based on outputs of evalRes on multiple images.
+%
+% ROC="Receiver operating characteristic"; PR="Precision Recall"
+% Also computes result at reference point (ref):
+%  which for ROC curves is the *detection* rate at reference *FPPI*
+%  which for PR curves is the *precision* at reference *recall*
+% Note, FPPI="false positive per image"
+%
+% USAGE
+%  [xs,ys,ref] = bbEval( 'compRoc', gt, dt, roc, ref )
+%
+% INPUTS
+%  gt         - {1xn} first output of evalRes() for each image
+%  dt         - {1xn} second output of evalRes() for each image
+%  roc        - [1] if 1 compue ROC else compute PR
+%  ref        - [1/.1] reference point for ROC or PR curve
+%
+% OUTPUTS
+%  xs         - x coords for curve: ROC->FPPI; PR->recall
+%  ys         - y coords for curve: ROC->TP; PR->precision
+%  ref        - y value at reference point
+%
+% EXAMPLE
+%
+% See also bbEval, bbEval>evalRes
+
+% get additional parameters
+if(nargin<3 || isempty(roc)), roc=1; end
+if(nargin<4 || isempty(ref)), if(roc), ref=1; else ref=.1; end; end
+% convert to single matrix, discard ignore bbs
+nImg=length(gt); assert(length(dt)==nImg);
+gt=cat(1,gt{:}); gt=gt(gt(:,5)~=-1,:);
+dt=cat(1,dt{:}); dt=dt(dt(:,6)~=-1,:);
+% compute results
+if(size(dt,1)==0), xs=0; ys=0; ref=0; return; end
+np=size(gt,1); score=dt(:,5); tp=dt(:,6);
+[score, order]=sort(score,'descend'); tp=tp(order);
+fp=double(tp~=1); fp=cumsum(fp); tp=cumsum(tp);
+if( roc )
+  tp=tp/np; fppi=fp/nImg; xs=fppi; ys=tp;
+else
+  rec=tp/np; prec=tp./(fp+tp); xs=rec; ys=prec;
+end
+% reference point
+[d,ind]=min(abs(xs-ref)); ref=ys(ind);
 end
 
 function oa = compOas( dt, gt, ig )
