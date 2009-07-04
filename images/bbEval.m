@@ -10,6 +10,8 @@ function varargout = bbEval( action, varargin )
 %  [gt, dt] = bbEval( 'evalRes', gt0, dt0, thr )
 % Compute ROC or PR based on outputs of evalRes on multiple images.
 %  [xs,ys,ref] = bbEval( 'compRoc', gt, dt, roc, ref )
+% Extract true or false positives or negatives for visualization.
+%  IS = bbEval( 'cropRes', gt, dt, names, type, dims, n )
 % Computes (modified) overlap area between pairs of bbs.
 %   oa = bbEval( 'compOas', dt, gt, [ig] )
 % Optimized version of compOas for a single pair of bbs.
@@ -152,6 +154,54 @@ else
 end
 % reference point
 [d,ind]=min(abs(xs-ref)); ref=ys(ind);
+end
+
+function IS = cropRes( gt, dt, names, type, dims, n )
+% Extract true or false positives or negatives for visualization.
+%
+% USAGE
+%  IS = bbEval( 'cropRes', gt, dt, names, type, dims, n )
+%
+% INPUTS
+%  gt         - {1xn} first output of evalRes() for each image
+%  dt         - {1xn} second output of evalRes() for each image
+%  names      - {1xn} name of each image
+%  type       - one of: 'fp', 'fn', 'tp', 'dt'
+%  dims       - target dimensions for extracted windows
+%  n          - max number of windows to extract
+%
+% OUTPUTS
+%  IS         - [dimsxn] extracted image windows
+%
+% EXAMPLE
+%
+% See also bbEval, bbEval>evalRes
+
+% crop patches either in gt or dt according to type
+switch type
+  case 'fn', bbs=gt; keep=@(bbs) bbs(:,5)==0;
+  case 'fp', bbs=dt; keep=@(bbs) bbs(:,6)==0;
+  case 'tp', bbs=dt; keep=@(bbs) bbs(:,6)==1;
+  case 'dt', bbs=dt; keep=@(bbs) bbs(:,6)>=0;
+  otherwise, error('unknown type: %s',type);
+end; N=length(bbs);
+% create ids that will map each bb to correct name
+ms=zeros(1,N); for i=1:N, ms(i)=size(bbs{i},1); end; cms=[0 cumsum(ms)];
+ids=zeros(1,sum(ms)); for i=1:N, ids(cms(i)+1:cms(i+1))=i; end
+% flatten bbs and keep relevent subset
+bbs=cat(1,bbs{:}); K=keep(bbs); bbs=bbs(K,:); ids=ids(K); n=min(n,sum(K));
+% reorder bbs appropriately
+if(strcmp(type,'fn')), ord=randperm(size(bbs,1));
+else [d,ord]=sort(bbs(:,5),'descend'); end
+bbs=bbs(ord(1:n),:); ids=ids(ord(1:n));
+% extract patches
+if(n==0), IS=[]; return; else IS=cell(1,n); end
+for i=1:N
+  locs=find(ids==i); if(isempty(locs)), continue; end
+  IS1=bbApply('crop',imread(names{i}),bbs(locs,1:4),'replicate',dims);
+  for j=1:length(locs), IS{locs(j)}=IS1{j}; end
+end; IS=cell2array(IS);
+
 end
 
 function oa = compOas( dt, gt, ig )
