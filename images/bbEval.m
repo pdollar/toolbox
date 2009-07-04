@@ -79,6 +79,8 @@ function [gt, dt] = evalRes( gt0, dt0, thr )
 % See also bbEval, bbEval>compOas
 
 % check / sort inputs
+if(isempty(gt0)), gt0=zeros(0,5); end
+if(isempty(dt0)), dt0=zeros(0,5); end
 assert( size(dt0,2)==5 ); nd=size(dt0,1);
 assert( size(gt0,2)==5 ); ng=size(gt0,1);
 [disc,ord]=sort(dt0(:,5),'descend'); dt0=dt0(ord,:);
@@ -163,7 +165,7 @@ function oa = compOa( dt, gt, ig )
 %  oa1 = bbEval('compOa',dt,gt,1)
 %
 % See also bbEval, bbEval>compOas
-w=min(dt(3)+dt(1),gt(3)+gt(1))-max(dt(1),gt(1)); if(w<=0), return; end
-h=min(dt(4)+dt(2),gt(4)+gt(2))-max(dt(2),gt(2)); if(h<=0), return; end
+w=min(dt(3)+dt(1),gt(3)+gt(1))-max(dt(1),gt(1)); if(w<=0),oa=0; return; end
+h=min(dt(4)+dt(2),gt(4)+gt(2))-max(dt(2),gt(2)); if(h<=0),oa=0; return; end
 i=w*h; if(ig),u=dt(3)*dt(4); else u=dt(3)*dt(4)+gt(3)*gt(4)-i; end; oa=i/u;
 end
