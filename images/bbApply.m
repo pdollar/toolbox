@@ -28,7 +28,7 @@ function varargout = bbApply( action, varargin )
 % Fix bb aspect ratios (without moving the bb centers).
 %   bbr = bbApply( 'squarify', bb, flag, [ar] )
 % Draw single or multiple bbs to image (calls rectangle()).
-%   hs = bbApply( 'draw', bb, col, [lw], [ls], [prop] )
+%   hs = bbApply( 'draw', bb, [col], [lw], [ls], [prop] )
 % Crop image regions from I encompassed by bbs.
 %   [patches, bbs] = bbApply('crop',I,bb,[padEl],[dims])
 % Convert bb relative to absolute coordinates and vice-versa.
@@ -262,11 +262,11 @@ function hs = draw( bb, col, lw, ls, prop )
 % coordinates (since pixel centers are located at integer locations).
 %
 % USAGE
-%  hs = bbApply( 'draw', bb, col, [lw], [ls], [prop] )
+%  hs = bbApply( 'draw', bb, [col], [lw], [ls], [prop] )
 %
 % INPUTS
 %  bb     - [nx4] input bbs
-%  col    - color for rectangle
+%  col    - ['g'] color for rectangle
 %  lw     - [2] LineWidth for rectangle
 %  ls     - ['-'] LineStyle for rectangle
 %  prop   - [] other properties for rectangle
@@ -278,6 +278,7 @@ function hs = draw( bb, col, lw, ls, prop )
 %  im(rand(3)); bbApply('draw',[1.5 1.5 1 1],'g')
 %
 % See also bbApply
+if(nargin<2 || isempty(col)), col='g'; end
 if(nargin<3 || isempty(lw)), lw=2; end
 if(nargin<4 || isempty(ls)), ls='-'; end
 if(nargin<5 || isempty(prop)), prop={}; end
