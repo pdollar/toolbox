@@ -48,6 +48,7 @@ dfs={'type','max','thr',0,'maxn',500,'radii',[.15 .15 1 1],'overlap',.5};
 assert(maxn>=2); assert(numel(overlap)==1);
 
 % discard bbs below threshold and run nms1
+if(isempty(bbs)), bbs=zeros(0,5); return; end
 kp=bbs(:,5)>thr; bbs=bbs(kp,:); if(size(bbs,1)<=1), return; end;
 bbs = nms1(bbs,type,thr,maxn,radii,overlap);
 
