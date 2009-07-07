@@ -26,8 +26,8 @@ function bbs = bbNms( bbs, varargin )
 % INPUTS
 %  bbs        - original bbs (must be of form [x y w h wt])
 %  varargin   - additional params (struct or name/value pairs)
-%   .type       - ['max'] 'max'=area of overlap criteria, 'ms'=mean-shift
-%   .thr        - [0] threshold below which to discard bbs
+%   .type       - ['max'] 'max', 'ms', or 'none'
+%   .thr        - [0|-inf] ('max'|'ms') threshold below which to discard
 %   .maxn       - [500] if n>maxn split and run recursively (see above)
 %   .radii      - [.15 .15 1 1] supression radii ('ms' only, see above)
 %   .overlap    - [.5] area of overlap for bbs ('max' only, see above)
@@ -37,18 +37,19 @@ function bbs = bbNms( bbs, varargin )
 %
 % EXAMPLE
 %  bbs=[0 0 1 1 1; .1 .1 1 1 1.1; 2 2 1 1 1];
-%  bbs1 = bbNms(bbs, 'thr',.5, 'type','max' )
+%  bbs1 = bbNms(bbs, 'type','max' )
 %  bbs2 = bbNms(bbs, 'thr',.5, 'type','ms')
 %
 % See also bbApply, nonMaxSuprList
 
 % get parameters
-dfs={'type','max','thr',0,'maxn',500,'radii',[.15 .15 1 1],'overlap',.5};
+dfs={'type','max','thr',[],'maxn',500,'radii',[.15 .15 1 1],'overlap',.5};
 [type,thr,maxn,radii,overlap]=getPrmDflt(varargin,dfs,1);
+if(isempty(thr)), if(strcmp(type,'ms')), thr=0; else thr=-inf; end; end
 assert(maxn>=2); assert(numel(overlap)==1);
 
 % discard bbs below threshold and run nms1
-if(isempty(bbs)), bbs=zeros(0,5); return; end
+if(isempty(bbs)), bbs=zeros(0,5); end; if(strcmp(type,'none')), return; end
 kp=bbs(:,5)>thr; bbs=bbs(kp,:); if(size(bbs,1)<=1), return; end;
 bbs = nms1(bbs,type,thr,maxn,radii,overlap);
 
