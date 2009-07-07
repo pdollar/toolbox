@@ -39,10 +39,6 @@ function varargout = bbApply( action, varargin )
 %   bbs = bbApply('frMask',M,bbw,bbh)
 % Create binary mask encoding bb centers (or extent).
 %   M = bbApply('toMask',bbs,w,h,[fill])
-% Mean shift non-maximal suppression (nms) of bbs w variable width kernel.
-%   bbs = bbApply('nms',bbs,thr,[radii],[maxn])
-% Non-maximal suppression (nms) of bbs using area of overlap criteria.
-%   bbs = bbApply('nmsMax',bbs,thr,[overlap],[maxn])
 %
 % USAGE
 %  varargout = bbApply( action, varargin );
@@ -59,7 +55,6 @@ function varargout = bbApply( action, varargin )
 % See also bbApply>area bbApply>shift bbApply>getCenter bbApply>intersect
 % bbApply>union bbApply>resize bbApply>squarify bbApply>draw bbApply>crop
 % bbApply>convert bbApply>random bbApply>frMask bbApply>toMask
-% bbApply>nms bbApply>nmsMax
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -504,151 +499,4 @@ else
     M(bb(2):bb(2)+bb(4)-1,bb(1):bb(1)+bb(3)-1)=1;
   end
 end
-end
-
-function bbs = nms( bbs, thr, radii, maxn )
-% Mean shift non-maximal suppression (nms) of bbs w variable width kernel.
-%
-% radii controls the amount of suppression. radii is a 4 element vector
-% containing the radius for each dimension (x,y,w,h). Typically the first
-% two elements should be the same, as should the last two. Distance between
-% w/h are computed in log2 space (ie w and w*2 are 1 unit apart), and the
-% radii should be set accordingly. radii should change depending on spatial
-% and scale stride of bbs.
-%
-% Mean shift is O(n^2) where n is the number of bbs. To speed things up for
-% large n, can divide data randomly into two sets, run nms on each, combine
-% and run nms on the result. If maxn is specified, will split the set if
-% n>maxn. Note that this is a heuristic and can change the results of nms.
-%
-% USAGE
-%  bbs = bbApply('nms',bbs,thr,[radii],[maxn])
-%
-% INPUTS
-%  bbs      - original bbs (must be of form [x y w h wt])
-%  thr      - threshold below which to discard bbs
-%  radii    - [.25 .25 1 1] supression radii (see above)
-%  maxn     - [1000] if n>maxn split and run nms recursively (see above)
-%
-% OUTPUTS
-%  bbs      - suppressed bbs
-%
-% EXAMPLE
-%  bbs=[0 0 1 1 1; .1 .1 1 1 1.1; 2 2 1 1 1];
-%  bbs1 = bbApply('nms',bbs,.1)
-%
-% See also bbApply, bbApply>nmsMax, nonMaxSuprList
-
-% remove all bbs that fall below threshold
-keep=bbs(:,5)>thr; bbs=bbs(keep,:); if(size(bbs,1)<=1), return; end;
-if(nargin<3 || isempty(radii)), radii=[.15 .15 1 1]; end
-if(nargin<4 || isempty(maxn)), maxn=1000; end
-
-% position = [x+w/2,y+h/2,log2(w),log2(h)], ws=weights-thr
-ws=bbs(:,5)-thr; w=bbs(:,3); h=bbs(:,4);
-ps=[bbs(:,1)+w/2 bbs(:,2)+h/2 log2(w) log2(h)];
-
-% perform actual nms
-[ps,ws]=nms1(ps,ws,radii,maxn);
-
-% convert back to bbs format and sort by weight
-w=pow2(ps(:,3)); h=pow2(ps(:,4));
-bbs=[ps(:,1)-w/2 ps(:,2)-h/2 w h ws+thr];
-[ws,ord]=sort(ws,'descend'); bbs=bbs(ord,:);
-
-  function [ps,ws]=nms1(ps,ws,radii,maxn)
-    % if too many split in two randomly and recurse
-    n=size(ps,1);
-    if( n>maxn )
-      ord=randperm(n); ps=ps(ord,:); ws=ws(ord); n2=floor(n/2); n3=n2+1;
-      ps0=ps(1:n2,:); ws0=ws(1:n2,:); [ps0,ws0]=nms1(ps0,ws0,radii,maxn);
-      ps1=ps(n3:n,:); ws1=ws(n3:n,:); [ps1,ws1]=nms1(ps1,ws1,radii,maxn);
-      ps=[ps0; ps1]; ws=[ws0; ws1]; n0=n; n=size(ps,1);
-      if(n<n0), [ps,ws]=nms1(ps,ws,radii,maxn); return; end
-    end
-    
-    % find modes starting from each element, then merge nodes that are same
-    ps1=zeros(n,4); ws1=zeros(n,1); stopThr=1e-2;
-    for i=1:n, [ps1(i,:) ws1(i,:)]=nms2(i); end
-    [ps,ws] = nonMaxSuprList(ps1,ws1,stopThr*100,[],[],2);
-    
-    function [p,w]=nms2(ind)
-      % variable bandwith kernel (analytically defined)
-      p=ps(ind,:); [n,m]=size(ps); onesN=ones(n,1);
-      h = [pow2(ps(:,3)) pow2(ps(:,4)) onesN onesN];
-      h = h .* radii(onesN,:); hInv=1./h;
-      while(1)
-        % compute (weighted) squared Euclidean distance to each neighbor
-        d=(ps-p(onesN,:)).*hInv; d=d.*d; d=sum(d,2);
-        % compute new mode
-        wMask=ws.*exp(-d); wMask=wMask/sum(wMask); p1=wMask'*ps;
-        % stopping criteria
-        diff=sum(abs(p1-p))/m; p=p1; if(diff<stopThr), break; end
-      end
-      w = sum(ws.*wMask);
-    end
-  end
-end
-
-function bbs = nmsMax( bbs, thr, overlap, maxn )
-% Non-maximal suppression (nms) of bbs using area of overlap criteria.
-%
-% For each pair of bounding boxes, if their overlap, defined by:
-%  overlap(bb1,bb2) = area(intersect(bb1,bb2))/area(union(bb1,bb2))
-% is greater than overlap, then the bb with the lower score is suppressed.
-% In the Pascal critieria two bbs are considered a match if overlap>=.5;
-%
-% Although efficient, this function is O(n^2). To speed things up for large
-% n, can divide data randomly into two sets, run nms on each, combine and
-% run nms on the result. If maxn is specified, will split the set if
-% n>maxn. Note that this is a heuristic and can change the results of nms.
-%
-% USAGE
-%  bbs = bbApply('nmsMax',bbs,thr,[overlap],[maxn])
-%
-% INPUTS
-%  bbs      - original bbs (must be of form [x y w h wt])
-%  thr      - threshold below which to discard bbs
-%  overlap  - [.5] area of overlap between bbs to be considered a match
-%  maxn     - [1000] if n>maxn split and run nms recursively (see above)
-%
-% OUTPUTS
-%  bbs      - suppressed bbs
-%
-% EXAMPLE
-%  bbs=[0 0 1 1 1; .1 .1 1 1 1.1; 2 2 1 1 1];
-%  bbs1 = bbApply('nmsMax',bbs,.5)
-%
-% See also bbApply, bbApply>nms
-
-if(nargin<3 || isempty(overlap)), overlap=.5; end
-if(nargin<4 || isempty(maxn)), maxn=1000; end
-kp=bbs(:,5)>thr; bbs=bbs(kp,:); if(size(bbs,1)<=1), return; end;
-assert(maxn>=2); assert(numel(overlap)==1);
-bbs=nmsMax1(bbs,overlap,maxn); % perform actual nms
-
-  function bbs = nmsMax1(bbs,overlap,maxn)
-    % if too many split in two randomly and recurse
-    if( size(bbs,1)>maxn )
-      n=size(bbs,1); bbs=bbs(randperm(n),:); n2=floor(n/2);
-      bbs0=nmsMax1(bbs(1:n2,:),overlap,maxn);
-      bbs1=nmsMax1(bbs(n2+1:n,:),overlap,maxn);
-      bbs=[bbs0; bbs1]; n0=n; n=size(bbs,1);
-      if(n<n0), bbs=nmsMax1(bbs,overlap,maxn); return; end
-    end
-    
-    % for each i suppress all j st j>i and overlap>.5
-    [score,ord]=sort(bbs(:,5),'descend'); bbs=bbs(ord,:);
-    n=size(bbs,1); kp=true(1,n); areas=bbs(:,3).*bbs(:,4);
-    xs=bbs(:,1); xe=bbs(:,1)+bbs(:,3); ys=bbs(:,2); ye=bbs(:,2)+bbs(:,4);
-    for i=1:n
-      for j=i+find( kp(i+1:n) )
-        iw=min(xe(i),xe(j))-max(xs(i),xs(j)); if(iw<=0), continue; end
-        ih=min(ye(i),ye(j))-max(ys(i),ys(j)); if(ih<=0), continue; end
-        o=iw*ih; o=o/(areas(i)+areas(j)-o); if(o>overlap), kp(j)=0; end
-      end
-    end
-    bbs=bbs(kp,:);
-  end
-
 end
