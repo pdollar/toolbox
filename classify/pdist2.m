@@ -123,6 +123,16 @@ Yt = Y';
 XX = sum(X.*X,2);
 YY = sum(Yt.*Yt,1);
 D = XX(:,ones(1,n)) + YY(ones(1,m),:) - 2*X*Yt;
+D = bsxfun(@sum,XX,YY) - 2*X*Yt;
+
+% function D = distEucSq( X, Y )
+%%%% old best code from the toolbox
+%  m = size(X,1); n = size(Y,1);
+%  Yt = Y';
+%  XX = sum(X.*X,2);
+%  YY = sum(Yt.*Yt,1);
+%  D = XX(:,ones(1,n)) + YY(ones(1,m),:) - 2*X*Yt;
+
 
 % function D = distEucSq( X, Y )
 %%%% code from Charles Elkan with variables renamed
