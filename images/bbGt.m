@@ -167,6 +167,7 @@ function [gtBbs,ids] = toGt( objs, prm )
 %   .aRng       - [0 inf] range of acceptable obj areas
 %   .arRng      - [0 inf] range of acceptable obj aspect ratios
 %   .vRng       - [0 inf] range of acceptable obj occlusion levels
+%   .ar         - [] standardize aspect ratios of bbs
 %
 % OUTPUTS
 %  gtBbs    - [n x 5] array containg ground truth bbs [x y w h ignore]
@@ -182,8 +183,9 @@ function [gtBbs,ids] = toGt( objs, prm )
 % See also bbGt
 
 r=[0 inf];
-dfs={'lbls',[],'ilbls',[],'hRng',r,'wRng',r,'aRng',r,'arRng',r,'vRng',r};
-[lbls,ilbls,hRng,wRng,aRng,arRng,vRng] = getPrmDflt(prm,dfs,1);
+dfs={'lbls',[],'ilbls',[],'hRng',r,'wRng',r,'aRng',r,'arRng',r,...
+  'vRng',r,'ar',[]};
+[lbls,ilbls,hRng,wRng,aRng,arRng,vRng,ar0] = getPrmDflt(prm,dfs,1);
 nObj=length(objs); keep=true(nObj,1); gtBbs=zeros(nObj,5);
 check = @(v,rng) v<rng(1) || v>rng(2); lbls=[lbls ilbls];
 for i=1:nObj, o=objs(i);
@@ -197,6 +199,7 @@ for i=1:nObj, o=objs(i);
   gtBbs(i,1:4)=o.bb; gtBbs(i,5)=ign;
 end
 ids=find(keep); gtBbs=gtBbs(keep,:);
+if(ar0), gtBbs=bbApply('squarify',gtBbs,0,ar0); end
 end
 
 function [bbs, patches] = sampleData( I, prm )
