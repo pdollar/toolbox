@@ -108,7 +108,7 @@ end
 
 end
 
-function [xs,ys,ref] = compRoc( gt, dt, roc, ref )
+function [xs,ys,score,ref] = compRoc( gt, dt, roc, ref )
 % Compute ROC or PR based on outputs of evalRes on multiple images.
 %
 % ROC="Receiver operating characteristic"; PR="Precision Recall"
@@ -118,7 +118,7 @@ function [xs,ys,ref] = compRoc( gt, dt, roc, ref )
 % Note, FPPI="false positive per image"
 %
 % USAGE
-%  [xs,ys,ref] = bbEval( 'compRoc', gt, dt, roc, ref )
+%  [xs,ys,score,ref] = bbEval( 'compRoc', gt, dt, roc, ref )
 %
 % INPUTS
 %  gt         - {1xn} first output of evalRes() for each image
@@ -129,6 +129,7 @@ function [xs,ys,ref] = compRoc( gt, dt, roc, ref )
 % OUTPUTS
 %  xs         - x coords for curve: ROC->FPPI; PR->recall
 %  ys         - y coords for curve: ROC->TP; PR->precision
+%  score      - score at each coord
 %  ref        - y value at reference point
 %
 % EXAMPLE
