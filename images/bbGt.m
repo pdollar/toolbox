@@ -235,13 +235,14 @@ function [bbs, IS] = sampleData( I, prm )
 % INPUTS
 %  I        - input image from which to sample
 %  prm      -
-%   .n          - [REQ] max number of bbs to sample
+%   .n          - [inf] max number of bbs to sample
 %   .bbs        - [REQ] candidate bbs from which to sample [x y w h ign]
 %   .ibbs       - [] bbs that should not be sampled [x y w h ign]
 %   .thr        - [.5] overlap threshold between bbs and ibbs
 %   .dims       - [] target bb aspect ratio [ar] or dims [w h]
 %   .pad        - [0] frac extra padding for each patch (or [padx pady])
 %   .padEl      - ['replicate'] how to pad at boundaries (see bbApply>crop)
+%   .flip       - [0] use left/right reflection of each bb
 %
 % OUTPUTS
 %  bbs      - actual sampled bbs
@@ -253,13 +254,14 @@ function [bbs, IS] = sampleData( I, prm )
 % bbApply>random, bbEval>compOas
 
 % get parameters
-dfs={'n','REQ', 'bbs','REQ', 'ibbs',[], 'thr',.5, 'dims',[], ...
-  'pad',0, 'padEl','replicate' };
-[n,bbs,ibbs,thr,dims,pad,padEl] = getPrmDflt( prm, dfs, 1 );
+dfs={'n',inf, 'bbs','REQ', 'ibbs',[], 'thr',.5, 'dims',[], ...
+  'pad',0, 'padEl','replicate', 'flip',0 };
+[n,bbs,ibbs,thr,dims,pad,padEl,flip] = getPrmDflt(prm,dfs,1);
 if(numel(dims)==2), ar=dims(1)/dims(2); else ar=dims; dims=[]; end
 if(numel(pad)==1), pad=[pad pad]; end; if(dims), dims=dims.*(1+pad); end
 % discard any candidate bbs that match the ignore bbs, sample to at most n
-if(size(bbs,2)==5), bbs=bbs(bbs(:,5)==0,:); end; m=size(bbs,1);
+if(size(bbs,2)==5), bbs=bbs(bbs(:,5)==0,:); end
+if(flip), n=n/2; end; m=size(bbs,1);
 if(isempty(ibbs)), if(m>n), bbs=bbs(randsample(m,n),:); end; else
   if(m>n), bbs=bbs(randperm(m),:); end; K=false(1,m); i=1;
   keep=@(i) all(bbEval('compOas',bbs(i,:),ibbs,ibbs(:,5))<thr);
@@ -270,5 +272,6 @@ if(ar), bbs=bbApply('squarify',bbs,0,ar); end
 if(any(pad~=0)), bbs=bbApply('resize',bbs,1+pad(2),1+pad(1)); end
 % crop IS, resizing if dims~=[]
 if(nargout==2), [IS,bbs]=bbApply('crop',I,bbs,padEl,dims); end
-
+if(flip), m=size(bbs,1); bbs=[bbs; bbs]; end; if(nargout==1), return; end
+if(flip), IS=[IS IS]; for i=1:m, IS{i}=flipdim(IS{i},2); end; end
 end
