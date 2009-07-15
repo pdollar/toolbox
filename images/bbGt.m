@@ -28,7 +28,7 @@ function varargout = bbGt( action, varargin )
 % Returns the ground truth bbs for purpose of evaluation.
 %   gtBbs = bbGt( 'toGt', objs, prm )
 % Sample pos or neg examples for training from an annotated image.
-%   [bbs, patches] = bbGt( 'sampleData', I, prm )
+%   [bbs, IS] = bbGt( 'sampleData', I, prm )
 %
 % USAGE
 %  varargout = bbGt( action, varargin );
@@ -202,7 +202,7 @@ ids=find(keep); gtBbs=gtBbs(keep,:);
 if(ar0), gtBbs=bbApply('squarify',gtBbs,0,ar0); end
 end
 
-function [bbs, patches] = sampleData( I, prm )
+function [bbs, IS] = sampleData( I, prm )
 % Sample pos or neg examples for training from an annotated image.
 %
 % An annotated image can contain both pos and neg examples of a given class
@@ -230,7 +230,7 @@ function [bbs, patches] = sampleData( I, prm )
 % resized to a fixed size. If dims==[], the bbs are not altered.
 %
 % USAGE
-%  [bbs, patches] = bbGt( 'sampleData', I, prm )
+%  [bbs, IS] = bbGt( 'sampleData', I, prm )
 %
 % INPUTS
 %  I        - input image from which to sample
@@ -245,7 +245,7 @@ function [bbs, patches] = sampleData( I, prm )
 %
 % OUTPUTS
 %  bbs      - actual sampled bbs
-%  patches  - [1xn] cell of cropped image regions
+%  IS       - [1xn] cell of cropped image regions
 %
 % EXAMPLE
 %
@@ -268,7 +268,7 @@ end
 % standardize aspect ratios (by growing bbs) and pad bbs
 if(ar), bbs=bbApply('squarify',bbs,0,ar); end
 if(any(pad~=0)), bbs=bbApply('resize',bbs,1+pad(2),1+pad(1)); end
-% crop patches, resizing if dims~=[]
-if(nargout==2), [patches,bbs]=bbApply('crop',I,bbs,padEl,dims); end
+% crop IS, resizing if dims~=[]
+if(nargout==2), [IS,bbs]=bbApply('crop',I,bbs,padEl,dims); end
 
 end
