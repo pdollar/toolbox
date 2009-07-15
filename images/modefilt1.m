@@ -1,14 +1,14 @@
 function y = modefilt1( x, s )
 % One-dimensional mode filtering.
 %
-% Applies an order 2*r+1 one-dimensional mode filter to vector x.  That is
-% each element of the output y(i) corresponds to the mode of
-% x(i-s/2:i+s/2). At boundary regions, y is calculated on smaller windows,
-% for example y(1) is calculated over x(1:1+s/2).  Note that for this
-% function to make sense x should take on only a number of discrete values.
-%
-% This function is modeled after medfilt1, which is part of the 'Signal
-% Processing Toolbox' and may not be available on all systems.
+% Applies a width s one-dimensional mode filter to vector x. That is each
+% element of the output y(j) corresponds to the mode of x(j-r:j+r), where
+% r~s/2. At boundary regions, y is calculated on smaller windows, for
+% example y(1) is calculated over x(1:1+r).  Note that for this function to
+% make sense x should take on only a small number of discrete values
+% (running time is actually proportional to number of unique values of x).
+% This function is modeled after medfilt1, which is part of Matlab's
+% 'Signal Processing Toolbox'.
 %
 % USAGE
 %  y = modefilt1( x, s )
@@ -21,33 +21,29 @@ function y = modefilt1( x, s )
 %  y   - filtered vector x
 %
 % EXAMPLE
-%  x=[0, 1, 0, 0, 0, 3, 0, 1, 3, 1, 2, 2, 0, 1]; s=4;
-%  ymedian = medfilt1( x, s ); % may not be available
-%  ymode   = modefilt1( x, s );
-%  [x; ymedian; ymode]
+%  x=[0 1 0 0 0 3 0 1 3 1 2 2 0 1]; s=3;
+%  xmedian = medfilt1( x, s ); % may not be available
+%  xmode = modefilt1( x, s );
+%  [x; xmedian; xmode]
 %
 % See also MEDFILT1
 %
-% Piotr's Image&Video Toolbox      Version 2.12
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
-[b,dis,inds] = unique(x(:)');
-m = length(b); n = length(x);
-if(m>256)
-  warning('modefilt1: x takes on large number of diff vals'); %#ok<WNTAG>
+% get unique values in x
+[vals,disc,inds]=unique(x(:)'); m=length(vals); n=length(x);
+if(m>256), warning('x takes on large number of diff vals'); end %#ok<WNTAG>
+
+% create quantized representation [H(i,j)==1 iff x(j)==vals(i)]
+H=zeros(m,n); H(sub2ind2([m,n],[inds; 1:n]'))=1;
+
+% create histogram [H(i,j) is count of x(j-r:j+r)==vals(i)]
+H=localSum(H,[0 s],'same');
+
+% compute mode for each j and map inds back to original vals
+[disc,inds]=max(H,[],1); y=vals(inds);
+
 end
-
-% create quantized representation
-A = zeros( m, n );
-Ainds = sub2ind2( [m,n], [inds; 1:n]' );
-A( Ainds ) = 1;
-
-% apply localSum (or smooth?)
-%A = gaussSmooth( A, [0 r/2-1], 'smooth' );
-A = localSum( A, [0 s], 'same' );
-
-% create y
-[vs,inds] = max( A,[],1 );
-y=b( inds );
