@@ -37,7 +37,7 @@ function varargout = seqWriterPlugin( cmd, h, varargin )
 %
 % See also SEQIO, SEQREADERPLUGIN
 %
-% Piotr's Image&Video Toolbox      Version 2.30
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -156,7 +156,7 @@ switch ext
   otherwise, assert(false);
 end
 % write timestamp
-if(nargin<7), ts=c/info.fps; end; s=floor(ts); ms=floor(mod(ts,1)*1000);
+if(nargin<7), ts=c/info.fps; end; s=floor(ts); ms=round(mod(ts,1)*1000);
 fwrite(fid,s,'int32'); fwrite(fid,ms,'uint16');
 % pad with zeros
 if(pad>0), fwrite(fid,zeros(1,pad),'uint8'); end
