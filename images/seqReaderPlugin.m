@@ -28,7 +28,7 @@ function varargout = seqReaderPlugin( cmd, h, varargin )
 %
 % See also SEQIO, SEQWRITERPLUGIN
 %
-% Piotr's Image&Video Toolbox      Version 2.30
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -115,7 +115,8 @@ end
 % compute frame rate from timestamps as stored fps may be incorrect
 n=min(100,n); if(n==1), return; end; ts=zeros(1,n);
 for f=1:n, ts(f)=getTimeStamp(f-1,fid,info); end
-dels=ts(2:end)-ts(1:end-1); info.fps=1/median(dels);
+ds=ts(2:end)-ts(1:end-1); ds=ds(abs(ds-median(ds))<.005);
+if(~isempty(ds)), info.fps=1/mean(ds); end
 end
 
 function [frame,v] = valid( frame, info )
