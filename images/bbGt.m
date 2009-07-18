@@ -168,6 +168,7 @@ function [gtBbs,ids] = toGt( objs, prm )
 %   .arRng      - [0 inf] range of acceptable obj aspect ratios
 %   .vRng       - [0 inf] range of acceptable obj occlusion levels
 %   .ar         - [] standardize aspect ratios of bbs
+%   .pad        - [0] frac extra padding for each patch (or [padx pady])
 %
 % OUTPUTS
 %  gtBbs    - [n x 5] array containg ground truth bbs [x y w h ignore]
@@ -184,8 +185,9 @@ function [gtBbs,ids] = toGt( objs, prm )
 
 r=[0 inf];
 dfs={'lbls',[],'ilbls',[],'hRng',r,'wRng',r,'aRng',r,'arRng',r,...
-  'vRng',r,'ar',[]};
-[lbls,ilbls,hRng,wRng,aRng,arRng,vRng,ar0] = getPrmDflt(prm,dfs,1);
+  'vRng',r,'ar',[],'pad',0};
+[lbls,ilbls,hRng,wRng,aRng,arRng,vRng,ar0,pad] = getPrmDflt(prm,dfs,1);
+if(numel(pad)==1), pad=[pad pad]; end;
 nObj=length(objs); keep=true(nObj,1); gtBbs=zeros(nObj,5);
 check = @(v,rng) v<rng(1) || v>rng(2); lbls=[lbls ilbls];
 for i=1:nObj, o=objs(i);
@@ -200,6 +202,7 @@ for i=1:nObj, o=objs(i);
 end
 ids=find(keep); gtBbs=gtBbs(keep,:);
 if(ar0), gtBbs=bbApply('squarify',gtBbs,0,ar0); end
+if(any(pad~=0)), gtBbs=bbApply('resize',gtBbs,1+pad(2),1+pad(1)); end
 end
 
 function [bbs, IS] = sampleData( I, prm )
@@ -269,10 +272,10 @@ if(isempty(ibbs)), if(m>n), bbs=bbs(randsample(m,n),:); end; else
   while(sum(K)<n && i<m), K(i)=keep(i); i=i+1; end; bbs=bbs(K,:);
 end
 % standardize aspect ratios (by growing bbs) and pad bbs
-if(ar && squarify), bbs=bbApply('squarify',bbs,0,ar); end
+if(~isempty(ar) && squarify), bbs=bbApply('squarify',bbs,0,ar); end
 if(any(pad~=0)), bbs=bbApply('resize',bbs,1+pad(2),1+pad(1)); end
 % crop IS, resizing if dims~=[]
-if(nargout==2), [IS,bbs]=bbApply('crop',I,bbs,padEl,dims); end
+if(nargout==2), [IS,bbs]=bbApply('crop',I,bbs,padEl,round(dims)); end
 if(flip), m=size(bbs,1); bbs=[bbs; bbs]; end; if(nargout==1), return; end
 if(flip), IS=[IS IS]; for i=1:m, IS{i}=flipdim(IS{i},2); end; end
 end
