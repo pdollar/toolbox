@@ -240,6 +240,7 @@ function [bbs, IS] = sampleData( I, prm )
 %   .ibbs       - [] bbs that should not be sampled [x y w h ign]
 %   .thr        - [.5] overlap threshold between bbs and ibbs
 %   .dims       - [] target bb aspect ratio [ar] or dims [w h]
+%   .squarify   - [1] if squarify expand bb to ar else stretch patch to ar
 %   .pad        - [0] frac extra padding for each patch (or [padx pady])
 %   .padEl      - ['replicate'] how to pad at boundaries (see bbApply>crop)
 %   .flip       - [0] use left/right reflection of each bb
@@ -255,8 +256,8 @@ function [bbs, IS] = sampleData( I, prm )
 
 % get parameters
 dfs={'n',inf, 'bbs','REQ', 'ibbs',[], 'thr',.5, 'dims',[], ...
-  'pad',0, 'padEl','replicate', 'flip',0 };
-[n,bbs,ibbs,thr,dims,pad,padEl,flip] = getPrmDflt(prm,dfs,1);
+  'squarify',1, 'pad',0, 'padEl','replicate', 'flip',0 };
+[n,bbs,ibbs,thr,dims,squarify,pad,padEl,flip] = getPrmDflt(prm,dfs,1);
 if(numel(dims)==2), ar=dims(1)/dims(2); else ar=dims; dims=[]; end
 if(numel(pad)==1), pad=[pad pad]; end; if(dims), dims=dims.*(1+pad); end
 % discard any candidate bbs that match the ignore bbs, sample to at most n
@@ -268,7 +269,7 @@ if(isempty(ibbs)), if(m>n), bbs=bbs(randsample(m,n),:); end; else
   while(sum(K)<n && i<m), K(i)=keep(i); i=i+1; end; bbs=bbs(K,:);
 end
 % standardize aspect ratios (by growing bbs) and pad bbs
-if(ar), bbs=bbApply('squarify',bbs,0,ar); end
+if(ar && squarify), bbs=bbApply('squarify',bbs,0,ar); end
 if(any(pad~=0)), bbs=bbApply('resize',bbs,1+pad(2),1+pad(1)); end
 % crop IS, resizing if dims~=[]
 if(nargout==2), [IS,bbs]=bbApply('crop',I,bbs,padEl,dims); end
