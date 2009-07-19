@@ -8,6 +8,7 @@ Version NEW
  -imResample can now take inputs of type uint8
  -generalized seqIo.m>to/frimgs
  -generalized bbApply>random
+ -seqIo.m: added case for making seq file from array of images
 
 Version 2.31 (03-Jun-09)
  -tweaked images/imrectLite.m 

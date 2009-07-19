@@ -61,6 +61,9 @@ function sobj = seqIo( fName, mode, varargin )
 % mode=='frimgs': Make seq file from images in dir/I[frame,5].ext:
 %  seqIo( fName, 'frimgs', dir, info, [skip] )
 %
+% mode=='frimgs': Make seq file from images in array IS:
+%  seqIo( fName, 'frimgs', IS, info )
+%
 % USAGE
 %  sobj = seqIo( fName, mode, varargin )
 %
@@ -130,7 +133,8 @@ elseif( strcmp(mode,'toimgs') )
   end
   sr.close();
   
-elseif( strcmp(mode,'frimgs') )
+elseif( strcmp(mode,'frimgs') && ischar(varargin{1}) )
+  % seqIo( fName, 'frimgs', dir, info, [skip] )
   d=varargin{1}; info=varargin{2}; assert(exist(d,'dir')==7);
   if(nargin==5), skip=varargin{3}; else skip=1; end
   sw=seqIo(fName,'w',info); info=sw.getinfo(); ext=['.' info.ext];
@@ -140,6 +144,15 @@ elseif( strcmp(mode,'frimgs') )
   end
   sw.close();
   if(frame==skip-1), warning('No images found.'); end %#ok<WNTAG>
+  
+elseif( strcmp(mode,'frimgs') )
+  % seqIo( fName, 'frimgs', IS, info )
+  IS=varargin{1}; info=varargin{2};
+  nd=ndims(IS); if(nd==2), nd=3; end; assert(nd<=4); nFrm=size(IS,nd);
+  info.height=size(IS,1); info.width=size(IS,2); sw=seqIo(fName,'w',info);
+  if(nd==3), for f=1:nFrm, sw.addframe(IS(:,:,f)); end; end
+  if(nd==4), for f=1:nFrm, sw.addframe(IS(:,:,:,f)); end; end
+  sw.close();
   
 else assert(0);
   
