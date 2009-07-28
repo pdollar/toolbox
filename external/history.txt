@@ -3,7 +3,7 @@ Version NEW
   -moved bbApply to /images (from /matlab)
   -added bbGt: routines for evaluating object detection results
   -added bbEval: data structure and routines for bb annotations
-  -added bbNms: Non-maximal suppression of bbs
+  -added bbNms: Non-maximal suppression of bbs (including 'cover')
  -Sped up pdist2.m for squared Euclidean case (thanks Vincent)
  -imResample can now take inputs of type uint8
  -generalized seqIo.m>to/frimgs

@@ -66,12 +66,13 @@ bbs = nms1(bbs,type,thr,maxn,radii,overlap);
     switch type
       case 'max', bbs = nmsMax(bbs,overlap);
       case 'ms', bbs = nmsMs(bbs,thr,radii);
+      case 'cover', bbs = nmsCover(bbs,overlap);
       otherwise, error('unknown type: %s',type);
     end
   end
 
   function bbs = nmsMax( bbs, overlap )
-    % for each i suppress all j st j>i and overlap>.5
+    % for each i suppress all j st j>i and area-overlap>overlap
     [score,ord]=sort(bbs(:,5),'descend'); bbs=bbs(ord,:);
     n=size(bbs,1); kp=true(1,n); areas=bbs(:,3).*bbs(:,4);
     xs=bbs(:,1); xe=bbs(:,1)+bbs(:,3); ys=bbs(:,2); ye=bbs(:,2)+bbs(:,4);
@@ -113,5 +114,26 @@ bbs = nms1(bbs,type,thr,maxn,radii,overlap);
       end
       w = sum(ws.*wMask);
     end
+  end
+
+  function bbs = nmsCover( bbs, overlap )
+    % construct n^2 neighbor matrix
+    n=size(bbs,1); N=sparse(1:n,1:n,.5); a=bbs(:,3).*bbs(:,4);
+    xs=bbs(:,1); xe=bbs(:,1)+bbs(:,3); ys=bbs(:,2); ye=bbs(:,2)+bbs(:,4);
+    for i=1:n
+      for j=i+1:n
+        iw=min(xe(i),xe(j))-max(xs(i),xs(j)); if(iw<=0), continue; end
+        ih=min(ye(i),ye(j))-max(ys(i),ys(j)); if(ih<=0), continue; end
+        o=iw*ih; o=o/(a(i)+a(j)-o); if(o>overlap), N(i,j)=1; end
+      end
+    end
+    % perform set cover operation (greedily choose next best)
+    N=N+N'; is=zeros(1,n); ss=zeros(1,n); n1=n; c=0;
+    while( n1>0 ), s0=0;
+      for i=1:n, s=sum(N(:,i).*bbs(:,5)); if(s>s0), i0=i; s0=s; end; end
+      N0=N(:,i0)==1; n1=n1-sum(N0); N(N0,:)=0; N(:,N0)=0;
+      c=c+1; is(c)=i0; ss(c)=sum(bbs(N0,5));
+    end
+    is=is(1:c); ss=ss(1:c); bbs=bbs(is,:); bbs(:,5)=ss;
   end
 end
