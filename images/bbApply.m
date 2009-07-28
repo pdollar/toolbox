@@ -266,7 +266,7 @@ function hs = draw( bb, col, lw, ls, prop )
 %
 % INPUTS
 %  bb     - [nx4] input bbs
-%  col    - ['g'] color for rectangle
+%  col    - ['g'] color for rectangle or nx1 or nx3 array of colors
 %  lw     - [2] LineWidth for rectangle
 %  ls     - ['-'] LineStyle for rectangle
 %  prop   - [] other properties for rectangle
@@ -283,8 +283,9 @@ if(nargin<3 || isempty(lw)), lw=2; end
 if(nargin<4 || isempty(ls)), ls='-'; end
 if(nargin<5 || isempty(prop)), prop={}; end
 [n,m]=size(bb); if(m==4), hs=zeros(1,n); else hs=zeros(1,2*n); end
+if(size(col,1)==1), col=repmat(col,n,1); end
 for b=1:n
-  hs(b) = rectangle( 'Position',bb(b,1:4), 'EdgeColor',col, ...
+  hs(b) = rectangle( 'Position',bb(b,1:4), 'EdgeColor',col(b,:), ...
     'LineWidth',lw, 'LineStyle',ls, prop{:});
   if(m==4), continue; end
   hs(b+n)=text( bb(b,1), bb(b,2), num2str(bb(b,5),4), 'FontSize',10, ...
