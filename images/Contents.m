@@ -49,6 +49,7 @@
 %   bbApply         - Functions for manipulating bounding boxes (bb).
 %   bbEval          - Routines for evaluating the Pascal criteria for object detection.
 %   bbGt            - Data structure for bounding box (bb) image annotations.
+%   bbNms           - Bounding box (bb) non-maximal suppression (nms).
 %
 % Miscellaneous:
 %   convnFast      - Fast convolution, replacement for both conv2 and convn.

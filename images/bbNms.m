@@ -1,19 +1,29 @@
 function bbs = bbNms( bbs, varargin )
-% Non-maximal suppression (nms) of bbs (mean-shift or maximum).
+% Bounding box (bb) non-maximal suppression (nms).
 %
-% type=='ms': Mean shift non-maximal suppression (nms) of bbs w variable
-% width kernel. radii controls the amount of suppression. radii is a 4
-% element vector containing the radius for each dimension (x,y,w,h).
-% Typically the first two elements should be the same, as should the last
-% two. Distance between w/h are computed in log2 space (ie w and w*2 are 1
-% unit apart), and the radii should be set accordingly. radii should change
-% depending on spatial and scale stride of bbs.
-%
-% type=='max': Non-maximal suppression (nms) of bbs using area of overlap
-% criteria. For each pair of bounding boxes, if their overlap, defined by:
+% type=='max': nms of bbs using area of overlap criteria. For each pair of
+% bbs, if their overlap, defined by:
 %  overlap(bb1,bb2) = area(intersect(bb1,bb2))/area(union(bb1,bb2))
 % is greater than overlap, then the bb with the lower score is suppressed.
 % In the Pascal critieria two bbs are considered a match if overlap>=.5;
+%
+% type=='maxg': Similar to 'max', except performs the nms in a greedy
+% fashion. Bbs are processed in order of decreasing score, and, unlike in
+% 'max' nms, once a bb is suppressed it can no longer suppress other bbs.
+%
+% type='cover': Perform nms by attempting to choose the smallest subset of
+% the bbs such that each remaining bb is within overlap of one of the
+% chosen bbs. The above reduces to the weighted set cover problem which is
+% NP but greedy optimization yields provably good solutions. The score of
+% each bb is set to the sum of the scores of the bbs it covers (the max can
+% also be used). In practice similar to 'maxg'.
+%
+% type=='ms': Mean shift nms of bbs with a variable width kernel. radii is
+% a 4 element vector (x,y,w,h) that controls the amount of suppression
+% along each dim. Typically the first two elements should be the same, as
+% should the last two. Distance between w/h are computed in log2 space (ie
+% w and w*2 are 1 unit apart), and the radii should be set accordingly.
+% radii may need to change depending on spatial and scale stride of bbs.
 %
 % Although efficient, this function is O(n^2). To speed things up for large
 % n, can divide data randomly into two sets, run nms on each, combine and
@@ -26,11 +36,11 @@ function bbs = bbNms( bbs, varargin )
 % INPUTS
 %  bbs        - original bbs (must be of form [x y w h wt])
 %  varargin   - additional params (struct or name/value pairs)
-%   .type       - ['max'] 'max', 'ms', or 'none'
-%   .thr        - [0|-inf] ('max'|'ms') threshold below which to discard
+%   .type       - ['max'] 'max', 'maxg', 'ms', 'cover', or 'none'
+%   .thr        - [-inf] threshold below which to discard (0 for 'ms')
 %   .maxn       - [500] if n>maxn split and run recursively (see above)
 %   .radii      - [.15 .15 1 1] supression radii ('ms' only, see above)
-%   .overlap    - [.5] area of overlap for bbs ('max' only, see above)
+%   .overlap    - [.5] area of overlap for bbs
 %
 % OUTPUTS
 %  bbs      - suppressed bbs
