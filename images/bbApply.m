@@ -29,6 +29,8 @@ function varargout = bbApply( action, varargin )
 %   bbr = bbApply( 'squarify', bb, flag, [ar] )
 % Draw single or multiple bbs to image (calls rectangle()).
 %   hs = bbApply( 'draw', bb, [col], [lw], [ls], [prop] )
+% Embed single or multiple bbs directly into image.
+%  I = bbApply( 'embed', I, bb, [col], [lw] )
 % Crop image regions from I encompassed by bbs.
 %   [patches, bbs] = bbApply('crop',I,bb,[padEl],[dims])
 % Convert bb relative to absolute coordinates and vice-versa.
@@ -277,7 +279,7 @@ function hs = draw( bb, col, lw, ls, prop )
 % EXAMPLE
 %  im(rand(3)); bbApply('draw',[1.5 1.5 1 1],'g')
 %
-% See also bbApply
+% See also bbApply, bbApply>embed
 if(nargin<2 || isempty(col)), col='g'; end
 if(nargin<3 || isempty(lw)), lw=2; end
 if(nargin<4 || isempty(ls)), ls='-'; end
@@ -290,6 +292,42 @@ for b=1:n
   if(m==4), continue; end
   hs(b+n)=text( bb(b,1), bb(b,2), num2str(bb(b,5),4), 'FontSize',10, ...
     'color','w', 'FontWeight','bold', 'VerticalAlignment','bottom' );
+end
+end
+
+function I = embed( I, bb, col, lw )
+% Embed single or multiple bbs directly into image.
+%
+% USAGE
+%  I = bbApply( 'embed', I, bb, [col], [lw] )
+%
+% INPUTS
+%  I      - input image
+%  bb     - [nx4] input bbs
+%  col    - [0 255 0] color for rectangle or nx3 array of colors
+%  lw     - [2] width for rectangle
+%
+% OUTPUT
+%  I      - output image
+%
+% EXAMPLE
+%  I=imread('cameraman.tif'); bb=[100 35 35 45];
+%  J=bbApply('embed',I,bb,[0 0 255],3); figure(1); im(J)
+%  K=bbApply('embed',J,bb,[0 255 0],1); figure(2); im(K)
+%
+% See also bbApply, bbApply>draw
+if(nargin<3 || isempty(col)), col=[0 255 0]; end
+if(nargin<4 || isempty(lw)), lw=2; end
+if( ndims(I)==2 ), I=repmat(I,[1 1 3]); end
+n=size(bb,1); bb=round(bb); bbI=[1 1 size(I,2) size(I,1)];
+if(size(col,1)==1), col=repmat(col,n,1); end
+for j=-floor((lw-1)/2):ceil((lw-1)/2)
+  bb1=[bb(:,1:2)-j bb(:,3:4)+2*j]; bb1=intersect(bb1,bbI);
+  x0=bb1(:,1); x1=x0+bb1(:,3)-1; y0=bb1(:,2); y1=y0+bb1(:,4)-1;
+  for b=1:n, if(all(bb1(b,:)==0)), continue; end
+    for c=1:3, I([y0(b) y1(b)],x0(b):x1(b),c)=col(b,c); end
+    for c=1:3, I(y0(b):y1(b),[x0(b) x1(b)],c)=col(b,c); end
+  end
 end
 end
 
