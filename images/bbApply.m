@@ -39,7 +39,7 @@ function varargout = bbApply( action, varargin )
 %   bb = bbApply('random',w,h,bbw,bbh,n)
 % Convert binary mask to bbs, assuming `on' pixels indicate bb centers.
 %   bbs = bbApply('frMask',M,bbw,bbh)
-% Create binary mask encoding bb centers (or extent).
+% Create weighted mask encoding bb centers (or extent).
 %   M = bbApply('toMask',bbs,w,h,[fill])
 %
 % USAGE
@@ -500,7 +500,7 @@ function bbs = frMask( M, bbw, bbh )
 %  bbs    - bounding boxes
 %
 % EXAMPLE
-%  w=20; h=10; bbw=5; bbh=8; M=uint8(rand(h,w)>0.95);
+%  w=20; h=10; bbw=5; bbh=8; M=double(rand(h,w)>0.95);
 %  bbs=bbApply('frMask',M,bbw,bbh); M2=bbApply('toMask',bbs,w,h);
 %  sum(abs(M(:)-M2(:)))
 %
@@ -512,7 +512,7 @@ bbs(:,2)=bbs(:,2)-floor(bbh/2);
 end
 
 function M = toMask( bbs, w, h, fill )
-% Create binary mask encoding bb centers (or extent).
+% Create weighted mask encoding bb centers (or extent).
 %
 % USAGE
 %  M = bbApply('toMask',bbs,w,h,[fill])
@@ -530,13 +530,14 @@ function M = toMask( bbs, w, h, fill )
 %
 % See also bbApply, bbApply>frMask
 if(nargin<4||isempty(fill)), fill=0; end
+if(size(bbs,2)==4), bbs(:,5)=1; end
+M=zeros(h,w); n=size(bbs,1);
 if( fill==0 )
-  M=zeros(h,w,'uint8'); cen=floor(getCenter(bbs));
-  M(sub2ind([h w],cen(:,2),cen(:,1)))=1;
+  p=floor(getCenter(bbs)); p=sub2ind([h w],p(:,2),p(:,1));
+  for i=1:n, M(p(i))=M(p(i))+bbs(i,5); end
 else
-  M=zeros(h,w,'uint8'); bbs=intersect(round(bbs),[1 1 w h]);
-  for i=1:size(bbs,1), bb=bbs(i,:);
-    M(bb(2):bb(2)+bb(4)-1,bb(1):bb(1)+bb(3)-1)=1;
-  end
+  bbs=[intersect(round(bbs),[1 1 w h]) bbs(:,5)]; n=size(bbs,1);
+  x0=bbs(:,1); x1=x0+bbs(:,3)-1; y0=bbs(:,2); y1=y0+bbs(:,4)-1;
+  for i=1:n, y=y0(i):y1(i); x=x0(i):x1(i); M(y,x)=M(y,x)+bbs(i,5); end
 end
 end
