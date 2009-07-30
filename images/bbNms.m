@@ -140,12 +140,12 @@ bbs = nms1(bbs,type,thr,maxn,radii,overlap);
       end
     end
     % perform set cover operation (greedily choose next best)
-    N=N+N'; is=zeros(1,n); ss=zeros(1,n); n1=n; c=0;
+    N=N+N'; bbs1=zeros(n,5); n1=n; c=0;
     while( n1>0 ), s0=0;
       for i=1:n, s=sum(N(:,i).*bbs(:,5)); if(s>s0), i0=i; s0=s; end; end
       N0=N(:,i0)==1; n1=n1-sum(N0); N(N0,:)=0; N(:,N0)=0;
-      c=c+1; is(c)=i0; ss(c)=sum(bbs(N0,5));
+      c=c+1; bbs1(c,1:4)=bbs(i0,1:4); bbs1(c,5)=sum(bbs(N0,5));
     end
-    is=is(1:c); ss=ss(1:c); bbs=bbs(is,:); bbs(:,5)=ss;
+    bbs=bbs1(1:c,:);
   end
 end
