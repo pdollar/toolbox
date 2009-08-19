@@ -28,7 +28,7 @@ function seqPlayer( fName, dispFunc )
 %
 % See also SEQIO
 %
-% Piotr's Image&Video Toolbox      Version 2.31
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -297,6 +297,9 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
     
     function vidOpen( f )
       if(nargin==1)
+        if(~exist(f,'file'))
+          errordlg(['File not found: ' f],'Error'); return;
+        end
         [d f]=fileparts(f); if(isempty(d)), d='./'; else d=[d '/']; end
       else
         [f,d]=uigetfile([dVid '/*.seq'],'Select video');
