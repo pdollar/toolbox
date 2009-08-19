@@ -17,3 +17,7 @@
 %   FbMake           - Various 1D/2D/3D filterbanks (hardcoded).
 %   FbReconstruct2d  - Use to see how much image information is preserved in filter outputs.
 %   FbVisualize      - Used to visualize a series of 1D/2D/3D filters. 
+%
+% Simple nonlinear filters:
+%   medfilt1m        - One-dimensional adaptive median filtering with missing values.
+%   modefilt1        - One-dimensional mode filtering.

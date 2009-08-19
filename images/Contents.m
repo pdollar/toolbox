@@ -66,4 +66,3 @@
 %   maskEllipse    - Creates a binary image of an ellipse.
 %   maskGaussians  - Divides a volume into softly overlapping gaussian windows.
 %   maskSphere     - Creates an 'image' of a n-dimensional hypersphere.
-%   modefilt1      - One-dimensional mode filtering.
