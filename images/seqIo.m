@@ -51,6 +51,9 @@ function sobj = seqIo( fName, mode, varargin )
 % getframe(), getinfo(), and seek(). Open with:
 %  sr = seqIo( {fName1,fName2}, 'rdual' )
 %
+% mode=='getinfo': Get info about seq file.
+%  info = seqIo( fName, 'getinfo' )
+%
 % mode=='crop': Crop subsequence from seq file:
 %  seqIo( fName, 'crop', tName, f0, f1 )
 %  seqIo( fName, 'crop', tName, frames )
@@ -106,7 +109,10 @@ elseif( strcmp(mode,'w') )
   
 elseif( strcmp(mode,'rdual') )
   sobj = seqReaderDual(fName{:});
-  
+
+elseif( strcmp(mode,'getinfo') )
+  sr=seqIo(fName,'r'); sobj=sr.getinfo(); sr.close();
+
 elseif( strcmp(mode,'crop') )
   tName=varargin{1}; fs=varargin{2}; ordered=0;
   if(nargin==5), fs=fs:varargin{3}; ordered=1; end; fs=fs(:)';
