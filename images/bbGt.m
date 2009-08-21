@@ -157,6 +157,7 @@ function vals = get( objs, name )
 % EXAMPLE
 %
 % See also bbGt, bbGt>set
+nObj=length(objs); if(nObj==0), vals=[]; return; end
 switch name
   case 'lbl', vals={objs.lbl}';
   case 'bb',  vals=reshape([objs.bb]',4,[])';
