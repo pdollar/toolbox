@@ -25,6 +25,10 @@ function varargout = bbGt( action, varargin )
 %   objs = bbGt( 'bbSave', objs, fName )
 % Load bb annotation from text file.
 %   objs = bbGt( 'bbLoad', fName )
+% Get object property 'name' (in a standard array).
+%   vals = bbGt( 'get', objs, name )
+% Set object property 'name' (with a standard array).
+%   objs = bbGt( 'set', objs, name, vals )
 % Returns the ground truth bbs for purpose of evaluation.
 %   gtBbs = bbGt( 'toGt', objs, prm )
 % Sample pos or neg examples for training from an annotated image.
@@ -42,8 +46,8 @@ function varargout = bbGt( action, varargin )
 %
 % EXAMPLE
 %
-% See also bbApply, bbGt>create, bbGt>bbSave, bbGt>bbLoad, bbGt>toGt,
-% bbGt>sampleData
+% See also bbApply, bbGt>create, bbGt>bbSave, bbGt>bbLoad, bbGt>get,
+% bbGt>set, bbGt>toGt, bbGt>sampleData
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -133,6 +137,60 @@ nObj=length(in{1}); O=ones(1,nObj); occ=mat2cell(in{6},O,1);
 bb=mat2cell([in{2:5}],O,4); bbv=mat2cell([in{7:10}],O,4);
 ign=mat2cell(in{11},O,1);
 objs=struct('lbl',in{1},'bb',bb,'occ',occ,'bbv',bbv,'ign',ign);
+end
+
+function vals = get( objs, name )
+% Get object property 'name' (in a standard array).
+%
+% USAGE
+%  vals = bbGt( 'get', objs, name )
+%
+% INPUTS
+%  objs   - [nx1] struct array of objects
+%  name   - property name ('lbl','bb','occ',etc.)
+%
+% OUTPUTS
+%  vals   - [nxk] array of n values (k=1 or 4)
+%
+% EXAMPLE
+%
+% See also bbGt, bbGt>set
+switch name
+  case 'lbl', vals={objs.lbl}';
+  case 'bb',  vals=reshape([objs.bb]',4,[])';
+  case 'occ', vals=[objs.occ]';
+  case 'bbv', vals=reshape([objs.bbv]',4,[])';
+  case 'ign', vals=[objs.ign]';
+  otherwise, error('unkown type %s',name);
+end
+end
+
+function objs = set( objs, name, vals )
+% Set object property 'name' (with a standard array).
+%
+% USAGE
+%  objs = bbGt( 'set', objs, name, vals )
+%
+% INPUTS
+%  objs   - [nx1] struct array of objects
+%  name   - property name ('lbl','bb','occ',etc.)
+%  vals   - [nxk] array of n values (k=1 or 4)
+%
+% OUTPUTS
+%  objs   - [nx1] struct array of updated objects
+%
+% EXAMPLE
+%
+% See also bbGt, bbGt>get
+nObj=length(objs);
+switch name
+  case 'lbl', for i=1:nObj, objs(i).lbl=vals{i}; end
+  case 'bb',  for i=1:nObj, objs(i).bb=vals(i,:); end
+  case 'occ', for i=1:nObj, objs(i).ooc=vals(i); end
+  case 'bbv', for i=1:nObj, objs(i).bbv=vals(i,:); end
+  case 'ign', for i=1:nObj, objs(i).ign=vals(i); end
+  otherwise, error('unkown type %s',name);
+end
 end
 
 function [gtBbs,ids] = toGt( objs, prm )
