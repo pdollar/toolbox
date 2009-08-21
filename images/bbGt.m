@@ -97,6 +97,8 @@ function objs = bbSave( objs, fName )
 % See also bbGt, bbGt>bbLoad
 vers=2; fid=fopen(fName,'w'); assert(fid>0);
 fprintf(fid,'%% bbGt version=%i\n',vers);
+objs=set(objs,'bb',round(get(objs,'bb')));
+objs=set(objs,'bbv',round(get(objs,'bbv')));
 for i=1:length(objs)
   o=objs(i); bb=o.bb; bbv=o.bbv;
   fprintf(fid,'%s %i %i %i %i %i %i %i %i %i %i\n',o.lbl,...
