@@ -160,7 +160,7 @@ elseif( strcmp(mode,'frimgs') )
   if(nd==4), for f=1:nFrm, sw.addframe(IS(:,:,:,f)); end; end
   sw.close();
   
-else assert(0);
+else error('seqIo: unknown mode: %s',mode);
   
 end
 
