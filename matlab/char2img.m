@@ -2,10 +2,11 @@ function masks = char2img( strings, h )
 % Convert ascii text to a binary image using pre-computed templates.
 %
 % Input strings can only contain standard characters (ascii character
-% 32-126). First time char2img() is called with a given height h, txt2img()
-% is used to create a template for each standard character. All subsequent
-% calls to to char2img() with the given height are very fast as the
-% pre-computed templates are used and no display/screen capture is needed.
+% 32-126). First time char2img() is ever called with a given height h,
+% txt2img() is used to create a template for each ascii character. All
+% subsequent calls to to char2img() with the given height are very fast as
+% the pre-computed templates are used and no display/screen capture is
+% needed.
 %
 % USAGE
 %  masks = char2img( strings, h )
