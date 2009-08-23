@@ -30,17 +30,18 @@ function masks = txt2img( strings, h, txtPrp )
 
 % set up blank figure to which to write text
 if(nargin<3 || isempty(txtPrp)), txtPrp={}; end
-txtPrp = [txtPrp 'units','pixels', 'position',[0 2], 'FontUnits', ...
+txtPrp = [txtPrp 'units','pixels', 'position',[2 2], 'FontUnits', ...
   'pixels', 'fontsize',h-2, 'VerticalAlignment','Bottom', 'string'];
 ss=get(0,'ScreenSize'); w=ss(3)-250;
-hf=figure(1); clf; imshow(ones([h-1 w]));
+hf=figure; clf; imshow(ones([h-1 w]));
 % write each string and use screen capture to save image
 if(~iscell(strings)), strings={strings}; end
 n=length(strings); masks=cell(1,n);
 for s=1:n
   ht=text(txtPrp{:},strings{s}); pos=get(ht,'Extent');
   if(pos(3)>w), error('string does not fit on screen'); end
-  M=getframe(gca); M=M.cdata; M=M(:,1:pos(3)); M=uint8(M>100);
+  M=getframe(gca); M=M.cdata; M=M(:,1:pos(3),1); M=uint8(M>100);
+  k=find(sum(M==0)>0); if(k), M=M(:,max(1,k(1)-1):min(end,k(end)+1)); end
   masks{s}=M; delete(ht);
 end; close(hf);
 end
