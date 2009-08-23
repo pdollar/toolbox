@@ -297,7 +297,7 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
     
     function vidOpen( f )
       if(nargin==1)
-        if(~exist(f,'file'))
+        if(~exist(f,'file') && ~exist([f '.seq'],'file'))
           errordlg(['File not found: ' f],'Error'); return;
         end
         [d f]=fileparts(f); if(isempty(d)), d='./'; else d=[d '/']; end
