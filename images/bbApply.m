@@ -336,16 +336,15 @@ for j=-floor((lw-1)/2):ceil((lw-1)/2)
     for c=1:3, I(y0(b):y1(b),[x0(b) x1(b)],c)=col(b,c); end
   end
 end
-% embed text displaying bb score
+% embed text displaying bb score (inside upper-left bb corner)
 if(size(bb,2)<5 || fh==0), return; end
 for b=1:n
   M=char2img(num2str(bb(b,5),4),fh); M=M{1}==0; [h,w]=size(M);
+  bb(b,1:4)=intersect(bb(b,1:4),bbI);
   y0=bb(b,2); y1=y0+h-1; x0=bb(b,1); x1=x0+w-1;
-  if( x0>1 && y0>1 && x1<size(I,2) && y1<size(I,2))
-    Ir=I(y0:y1,x0:x1,1); Ig=I(y0:y1,x0:x1,2); Ib=I(y0:y1,x0:x1,3);
-    Ir(M)=fcol(b,1); Ig(M)=fcol(b,2); Ib(M)=fcol(b,3);
-    I(y0:y1,x0:x1,:)=cat(3,Ir,Ig,Ib);
-  end
+  Ir=I(y0:y1,x0:x1,1); Ig=I(y0:y1,x0:x1,2); Ib=I(y0:y1,x0:x1,3);
+  Ir(M)=fcol(b,1); Ig(M)=fcol(b,2); Ib(M)=fcol(b,3);
+  I(y0:y1,x0:x1,:)=cat(3,Ir,Ig,Ib);
 end
 end
 
