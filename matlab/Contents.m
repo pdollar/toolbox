@@ -20,11 +20,13 @@
 %   c                 - clc - clear command window.
 %   cc                - close all, clc
 %   ccc               - clear, close all, clc, clear global
+%   char2img          - Convert ascii text to a binary image using pre-computed templates.
 %   figureResized     - Creates a figures that takes up certain area of screen.
 %   imLabel           - Improved method for labeling figure axes.
 %   plotEllipse       - Adds an ellipse to the current plot.
 %   plotGaussEllipses - Plots 2D ellipses derived from 2D Gaussians specified by mus & Cs.
 %   text2             - Wrapper for text.m that ensures displayed text fits in figure.
+%   txt2img           - Convert text string to a binary image.
 %
 % Miscellaneous:
 %   checkNumArgs      - Helper utility for checking numeric vector arguments.
