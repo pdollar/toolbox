@@ -1,4 +1,4 @@
-function masks = char2img( strings, h )
+function masks = char2img( strings, h, pad )
 % Convert ascii text to a binary image using pre-computed templates.
 %
 % Input strings can only contain standard characters (ascii character
@@ -9,11 +9,12 @@ function masks = char2img( strings, h )
 % needed.
 %
 % USAGE
-%  masks = char2img( strings, h )
+%  masks = char2img( strings, h, [pad] )
 %
 % INPUTS
 %  strings  - {1xn} text string or cell array of text strings to convert
 %  h        - font height in pixels
+%  pad      - [0] amount of extra padding between chars
 %
 % OUTPUTS
 %  masks    - {1xn} binary image masks of height h for each string
@@ -40,10 +41,14 @@ if(isempty(h0) || h0~=h)
     save(fName,'chars');
   end
 end
+% add padding to chars
+if(nargin<3 || isempty(pad)), pad=0; end
+charsPad=chars; pad=ones(h,pad,'uint8');
+for i=1:length(chars), charsPad{i}=[pad chars{i} pad]; end
 % create actual string using templates
 if(~iscell(strings)), strings={strings}; end
 n=length(strings); masks=cell(1,n);
 for s=1:n, str=strings{s};
   str(str<32 | str>126)=32; str=uint8(str-31);
-  M=[chars{str}]; masks{s}=M;
+  M=[charsPad{str}]; masks{s}=M;
 end
