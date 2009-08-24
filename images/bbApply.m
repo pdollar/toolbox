@@ -342,7 +342,7 @@ bb(:,1:4)=intersect(bb(:,1:4),bbI);
 for b=1:n
   M=char2img(num2str(bb(b,5),4),fh); M=M{1}==0; [h,w]=size(M);
   y0=bb(b,2); y1=y0+h-1; x0=bb(b,1); x1=x0+w-1;
-  if( x0>1 && y0>1 && x1<size(I,2) && y1<size(I,2))
+  if( x0>=1 && y0>=1 && x1<=size(I,2) && y1<=size(I,2))
     Ir=I(y0:y1,x0:x1,1); Ig=I(y0:y1,x0:x1,2); Ib=I(y0:y1,x0:x1,3);
     Ir(M)=fcol(b,1); Ig(M)=fcol(b,2); Ib(M)=fcol(b,3);
     I(y0:y1,x0:x1,:)=cat(3,Ir,Ig,Ib);
