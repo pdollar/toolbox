@@ -78,7 +78,16 @@ if checkExtra
     end
   end
 end
-toDo = find( ~isfield( prm, dfsField ) );
+if exist('OCTAVE_VERSION','builtin')
+  toDo=[];
+  for i = 1 : length(dfsField)
+    if ~isfield( prm, dfsField{i} );
+      toDo(end+1)=i;
+    end
+  end
+else
+  toDo = find( ~isfield( prm, dfsField ) );
+end
 if size(toDo,1)~=1; toDo = toDo'; end
 
 for i = toDo

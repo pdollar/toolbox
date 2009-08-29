@@ -4,9 +4,13 @@ function C = multiTimes( A, B, type )
 % type controls the matrix multiplication to perform (for each i):
 %  1    - C(:,:,i) = A(:,:,i)*B(:,:)
 %  1.1  - C(i,:,:) = A(:,:,i)*B(:,:)
+%  1.2  - C(i,:,:) = B(:,:)*A(:,:,i)
+%  2    - C(:,:,i) = A(:,:,i)*B(:,:,i)
 %  2.1  - C(:,:,i) = A(:,:,i)'*B(:,:,i)
+%  2.2  - C(:,:,i) = A(:,:,i)*B(:,:,i)'
 %  3    - C(:,i) = A(:,:,i)*B(:,i)
 %  3.1  - C(:,i) = A(:,:,i)'*B(:,i)
+%  4.1  - C(i) = tr(A(:,:,i)'*B(:,:,i))
 % Corresponding dimensions of A and B must match appropriately.
 %
 % USAGE
@@ -27,7 +31,7 @@ function C = multiTimes( A, B, type )
 %
 % See also BSXFUN, MTIMES
 %
-% Piotr's Image&Video Toolbox      Version 2.30
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -35,18 +39,33 @@ function C = multiTimes( A, B, type )
 ma = size(A,1); na = size(A,2); oa = size(A,3);
 mb = size(B,1); nb = size(B,2); ob = size(B,3);
 
+% just to simplify the reading
+if ma==mb; m = ma; end
+if na==nb; n = na; end
+if oa==ob; o = oa; end
+
 switch type
   case 1    % C(:,:,i) = A(:,:,i)*B(:,:)
     C = permute(reshape(reshape(permute(A,[1 3 2]),ma*oa,na)*B,...
       ma,oa,nb),[1 3 2]);
   case 1.1  % C(i,:,:) = A(:,:,i)*B(:,:)
     C = reshape(reshape(permute(A,[3 1 2]),ma*oa,na)*B,oa,ma,nb);
+  case 1.2  % C(i,:,:) = B(:,:)*A(:,:,i)
+    C = reshape(B*reshape(A,ma,na*oa),mb,na,oa);
+  case 2    % C(:,:,i) = A(:,:,i)*B(:,:,i)
+    C = reshape(sum(bsxfun(@times,reshape(A,...
+      [ma na 1 o]),reshape(B,[1 mb nb o])),2),[ma nb o]);
   case 2.1  % C(:,:,i) = A(:,:,i)'*B(:,:,i)
-    C=reshape(sum(bsxfun(@times,reshape(permute(A,[2,1,3]),...
-      [na ma 1 oa]),reshape(B,[1 mb nb ob])),2),[na nb oa]);
+    C = reshape(sum(bsxfun(@times,reshape(permute(A,[2,1,3]),...
+      [na ma 1 o]),reshape(B,[1 mb nb o])),2),[na nb o]);
+  case 2.2  % C(:,:,i) = A(:,:,i)*B(:,:,i)'
+    C = reshape(sum(bsxfun(@times,reshape(A,...
+      [ma na 1 o]),reshape(permute(B,[2,1,3]),[nb mb 1 o])),2),[ma mb o]);
   case 3    % C(:,i) = A(:,:,i)*B(:,i)
     C = reshape(sum(bsxfun(@times, A, reshape(B,[1 mb nb ])),2),ma,nb);
   case 3.1  % C(:,i) = A(:,:,i)'*B(:,i)
     C = reshape(sum(bsxfun(@times, permute(A,[2,1,3]), ...
       reshape(B,[1 mb nb ])),2),na,nb);
+  case 4.1  % C(i) = tr(A(:,:,i)'*B(:,:,i))
+    C = sum(reshape(permute(A,[2,1,3]),m*n,o).*reshape(permute(B,[2,1,3]),m*n,o),1);
 end

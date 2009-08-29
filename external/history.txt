@@ -1,4 +1,7 @@
 Version NEW
+ -Adds some compatibility with Octave
+ -Added new cases to multiTimes
+ -Added a sparse block matrix generation in spBlkDiag
  -Added "detection and bb support" to /images:
   -moved bbApply to /images (from /matlab)
   -added bbGt: routines for evaluating object detection results

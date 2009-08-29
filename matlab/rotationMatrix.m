@@ -134,8 +134,16 @@ end
 if all(sort(size(varargin{1}))==[1 3])
   if size(varargin{1},1) == 3; varargin{1}=varargin{1}'; end
   if nargin==1; th=norm(varargin{1}); else th=varargin{2}; end
-  tmp = makehgtform('axisrotate',varargin{1},th);
-  varargout{1} = tmp(1:3,1:3);
+  if exist('OCTAVE_VERSION','builtin')
+    % from http://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
+    z=varargin{1}; z=z/norm(z);
+    zcross=[ 0 -z(3) z(2); z(3) 0 -z(1); -z(2) z(1) 0 ];
+    varargout{1} = eye(3)+sin(th)*zcross+(1-cos(th))*(z'*z-eye(3));
+  else
+    tmp = makehgtform('axisrotate',varargin{1},th);
+    varargout{1} = tmp(1:3,1:3);
+  end
+  
   return
 end
 
