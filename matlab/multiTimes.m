@@ -4,7 +4,7 @@ function C = multiTimes( A, B, type )
 % type controls the matrix multiplication to perform (for each i):
 %  1    - C(:,:,i) = A(:,:,i)*B(:,:)
 %  1.1  - C(i,:,:) = A(:,:,i)*B(:,:)
-%  1.2  - C(i,:,:) = B(:,:)*A(:,:,i)
+%  1.2  - C(:,:,i) = A(:,:)*B(:,:,i)
 %  2    - C(:,:,i) = A(:,:,i)*B(:,:,i)
 %  2.1  - C(:,:,i) = A(:,:,i)'*B(:,:,i)
 %  2.2  - C(:,:,i) = A(:,:,i)*B(:,:,i)'
@@ -50,8 +50,8 @@ switch type
       ma,oa,nb),[1 3 2]);
   case 1.1  % C(i,:,:) = A(:,:,i)*B(:,:)
     C = reshape(reshape(permute(A,[3 1 2]),ma*oa,na)*B,oa,ma,nb);
-  case 1.2  % C(i,:,:) = B(:,:)*A(:,:,i)
-    C = reshape(B*reshape(A,ma,na*oa),mb,na,oa);
+  case 1.2  % C(:,:,i) = A(:,:)*B(:,:,i)
+    C = reshape(A*reshape(B,mb,nb*ob),ma,nb,ob);
   case 2    % C(:,:,i) = A(:,:,i)*B(:,:,i)
     C = reshape(sum(bsxfun(@times,reshape(A,...
       [ma na 1 o]),reshape(B,[1 mb nb o])),2),[ma nb o]);
@@ -60,7 +60,7 @@ switch type
       [na ma 1 o]),reshape(B,[1 mb nb o])),2),[na nb o]);
   case 2.2  % C(:,:,i) = A(:,:,i)*B(:,:,i)'
     C = reshape(sum(bsxfun(@times,reshape(A,...
-      [ma na 1 o]),reshape(permute(B,[2,1,3]),[nb mb 1 o])),2),[ma mb o]);
+      [ma na 1 o]),reshape(permute(B,[2,1,3]),[ 1 nb mb o])),2),[ma mb o]);
   case 3    % C(:,i) = A(:,:,i)*B(:,i)
     C = reshape(sum(bsxfun(@times, A, reshape(B,[1 mb nb ])),2),ma,nb);
   case 3.1  % C(:,i) = A(:,:,i)'*B(:,i)
