@@ -15,6 +15,7 @@ Version NEW
  -moved modefilt1.m form /image to /filters
  -added filters/medfilt1m.m: adaptive median filtering with missing values
  -added txt2img.m and char2img.m to /matlab: Convert text to binary image
+ -added windows 64-bit binaries
 
 Version 2.31 (03-Jun-09)
  -tweaked images/imrectLite.m 
