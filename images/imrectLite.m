@@ -45,7 +45,7 @@ function [hRect,api] = imrectLite( hParent, pos, lims, ar, varargin )
 %
 % See also IMRECT, RECTANGLE, PATCH
 %
-% Piotr's Image&Video Toolbox      Version 2.31
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -66,38 +66,32 @@ set( hFig, 'CurrentAxes', hAx );
 
 % create rectangle as well as patch objects
 if(isempty(pos)); vis='off'; else vis='on'; end
-hPatch = patch('FaceColor','None','EdgeColor','none');
-hRect = rectangle(varargin{:},'Visible',vis,'DeleteFcn',@deleteFcn);
-set(hRect,'ButtonDownFcn',{@btnDwn,0});
-set(hPatch,'ButtonDownFcn',{@btnDwn,0});
+hPatch = patch('FaceColor','none','EdgeColor','none');
+hRect = rectangle(varargin{:},'Visible',vis);
+set([hRect hPatch],'ButtonDownFcn',{@btnDwn,0},'DeleteFcn',@deleteFcn);
 
 % set / get position
-if( isempty(pos) || length(pos)==2 )
-  btnDwn( [], [], -1 );
-  waitfor( hFig, 'WindowButtonUpFcn', '' );
-else
-  setPos( pos );
+if(length(pos)==4), setPos(pos); else
+  btnDwn([],[],-1); waitfor(hFig,'WindowButtonUpFcn','');
 end
 
 % create api
-api = struct('hRect',hRect, 'getPos',@getPos, 'setPos',@setPos, ...
+api = struct('getPos',@getPos, 'setPos',@setPos, ...
   'setPosChnCb',@setPosChnCb, 'setPosSetCb',@setPosSetCb, ...
   'setPosLock',@setPosLock, 'setSizLock',@setSizLock, ...
   'setAr',@setAr, 'uistack',@uistack1 );
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  function pos = getPos()
-    if(isempty(hRect) || isempty(hPatch)); pos=[]; return; end;
-    pos = get(hRect,'Position');
-  end
-
   function pos = setPos( pos, varargin )
-    if(isempty(hRect) || isempty(hPatch)); return; end;
+    if(isempty(hRect) || isempty(hPatch)); return; end
+    % constrain position to fall within lims
     pos = constrainPos( pos, varargin{:} );
+    % compute rectangle vertices
     xs = pos([1 1 1 1]); xs(2:3)=xs(2:3)+pos(3);
     ys = pos([2 2 2 2]); ys(3:4)=ys(3:4)+pos(4);
     vert = [xs' ys' [1;1;1;1]]; face=1:4;
+    % draw objects
     set(hPatch,'Faces',face,'Vertices',vert);
     set(hRect,'Position',pos);
   end
@@ -148,20 +142,16 @@ api = struct('hRect',hRect, 'getPos',@getPos, 'setPos',@setPos, ...
         pos0(2)=pos0(2)-(h-pos0(4))/2; pos0(4)=h;
       end
       sgnSiz = [w h] .* (2*(pos(1:2)==anchor)-1);
-      pos = computePos( anchor, pos0, sgnSiz );
+      pos = shiftPos( anchor, pos0, sgnSiz );
     end
   end
 
-  function pos = computePos( anchor, pos0, sgnSiz )
-    pos = zeros(1,4);
-    for i=1:2
-      if( anchor(i)==0 )
-        pos(i)=pos0(i); pos(i+2)=pos0(i+2);
-      else
-        pos(i) = anchor(i);
-        pos(i+2) = max(minSiz,abs(sgnSiz(i)));
-        if(sgnSiz(i)<0); pos(i)=pos(i)-pos(i+2); end;
-      end
+  function pos = shiftPos( anchor, pos0, del )
+    % shift pos by del unless anchor(i)==0
+    pos = pos0;
+    for i=1:2, if(anchor(i)==0), continue; end
+      pos(i)=anchor(i); pos(i+2)=max(minSiz,abs(del(i)));
+      if(del(i)<0); pos(i)=pos(i)-pos(i+2); end;
     end
   end
 
@@ -187,31 +177,28 @@ api = struct('hRect',hRect, 'getPos',@getPos, 'setPos',@setPos, ...
   end
 
   function [anchor,cursor] = getAnchor( pnt, pos )
+    % anchor(i) is the x/y coordinate that is fixed, or 0 if dragging
     t = axisUnitsPerCentimeter()*.15;
     posE = pos(1:2)+pos(3:4);
     side=[0 0]; anchor=[0 0];
+    % side(i) -1=near lf/tp bnd; 0=in center; 1:near rt/bt bnd
     for i=1:2
-      % figure out which side we're on
-      if( pnt(i)<pos(i) )
-        side(i) = -1; % outside of left/top
-      elseif(pnt(i)>posE(i))
-        side(i) = 1; % outside of right/bot
+      if(pnt(i)<pos(i)), side(i)=-1; % outside of lf/tp
+      elseif(pnt(i)>posE(i)), side(i)=1; % outside of rt/bt
       else
         ti = min(t,pos(2+i)/4);
-        if( pnt(i)-pos(i)<ti )
-          side(i) = -1; % inside near left/top
-        elseif( posE(i)-pnt(i)< ti )
-          side(i) = 1; % inside near right/bot
+        if( pnt(i)-pos(i)<ti ), side(i)=-1; % inside near lf/tp
+        elseif( posE(i)-pnt(i)<ti ), side(i)=1; % inside near rt/bt
         end
       end
-      % anchor is opposite of side clicked
-      if(side(i)==-1)
-        anchor(i) = posE(i);
-      elseif(side(i)==1)
-        anchor(i) = pos(i);
+    end
+    % anchor is opposite of side clicked
+    for i=1:2
+      if(side(i)==-1), anchor(i)=posE(i);
+      elseif(side(i)==1), anchor(i)=pos(i);
       end
     end
-    % pick cursor accordingly
+    % pick cursor based on side
     switch(side(1)+side(2)*10)
       case -11; cursor='topl';
       case -10; cursor='top';
@@ -227,49 +214,31 @@ api = struct('hRect',hRect, 'getPos',@getPos, 'setPos',@setPos, ...
 
   function btnDwn( h, evnt, flag )
     if(isempty(hRect) || isempty(hPatch)); return; end;
-    if( posLock ); return; end;
-    if( sizLock ); flag=1; end;
-    if( flag==-1 )
-      % create new rectangle
-      if( isempty(pos) )
-        anchor = ginput(1);
-      else
-        anchor = pos(1:2);
-      end
-      pos0 = [anchor 1 1];
-      setPos( pos0 );
-      set(hRect,'Visible','on');
-      cursor='botr'; flag=0;
-    elseif( flag==0 )
-      % resize (or possibly drag) rectangle
-      pos0 = getPos();  pnt = getCurPnt();
-      [anchor,cursor] = getAnchor(pnt,pos0);
-      if( all(anchor==0) );
-        btnDwn(h,evnt,1); return;
-      end
-    elseif( flag==1 )
-      % move rectangle
-      anchor = getCurPnt();
-      pos0 = getPos();
-      cursor='fleur';
+    if(posLock); return; end; if(sizLock); flag=1; end;
+    if( flag==-1 ) % create new rectangle
+      if(isempty(pos)), anchor=ginput(1); else anchor=pos(1:2); end
+      pos = setPos( [anchor 1 1] );
+      set(hRect,'Visible','on'); cursor='botr'; flag=0;
+    elseif( flag==0 ) % resize (or possibly drag) rectangle
+      pnt=getCurPnt(); [anchor,cursor] = getAnchor(pnt,pos);
+      if(all(anchor==0)), btnDwn(h,evnt,1); return; end
+    elseif( flag==1 ) % move rectangle
+      anchor=getCurPnt(); cursor='fleur';
     else
       assert(false);
     end
     set( hFig, 'Pointer', cursor );
-    set( hFig, 'WindowButtonMotionFcn',{@drag,flag,anchor,pos0} );
+    set( hFig, 'WindowButtonMotionFcn',{@drag,flag,anchor,pos} );
     set( hFig, 'WindowButtonUpFcn', @stopDrag );
   end
 
   function drag( h, evnt, flag, anchor, pos0 ) %#ok<INUSL>
     if(isempty(hRect) || isempty(hPatch)); return; end;
-    pnt = getCurPnt();
-    del = pnt-anchor;
-    if( flag==1 )
-      pos = [pos0(1:2)+del pos0(3:4)];
-      pos = setPos( pos );
-    else
-      pos = computePos( anchor, pos0, del );
-      pos = setPos( pos, anchor, pos0 );
+    pnt = getCurPnt(); del = pnt-anchor;
+    if( flag==1 ) % shift rectangle by del
+      pos = setPos( [pos0(1:2)+del pos0(3:4)] );
+    else % resize rectangle
+      pos = setPos(shiftPos(anchor,pos0,del),anchor,pos0);
     end
     drawnow
     if(~isempty(posChnCb)); posChnCb(pos); end;
@@ -279,18 +248,20 @@ api = struct('hRect',hRect, 'getPos',@getPos, 'setPos',@setPos, ...
     set( hFig, 'WindowButtonMotionFcn','');
     set( hFig, 'WindowButtonUpFcn','');
     set( hFig, 'Pointer', 'arrow' );
-    if(~isempty(posSetCb)); posSetCb(getPos()); end;
+    if(~isempty(posSetCb)); posSetCb(pos); end;
   end
 
   function deleteFcn( h, evnt ) %#ok<INUSD>
-    [posChnCb,posSetCb,]=deal([]);
-    if(~isempty(hPatch) && ishandle(hPatch)); delete(hPatch); end;
+    [posChnCb,posSetCb]=deal([]); hs=[hPatch hRect];
+    for i=1:length(hs), if(ishandle(hs(i))); delete(hs(i)); end; end
     [hRect,hPatch]=deal([]);
   end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  function pos = setAr( ar1 ), ar=ar1; pos=setPos(getPos()); end
+  function pos0 = getPos(), pos0=pos; end
+
+  function pos0 = setAr( ar1 ), ar=ar1; pos0=setPos(pos); end
 
   function setPosChnCb( f ), posChnCb=f; end
 
