@@ -27,8 +27,8 @@ function [hRect,api] = imrectLite( hParent, pos, lims, ar, varargin )
 %  hRect      - handle to rectangle, use to alter color etc.
 %  api        - interface allowing access to created object
 %  .getPos()       - get position - returns 4 elt pos
-%  .setPos(pos)    - set position - returns new pos
-%  .setAr(ar)      - set aspect ratio , returns new pos
+%  .setPos(pos)    - set position (while respecting constraints)
+%  .setAr(ar)      - set aspect ratio to fixed value
 %  .setPosLock(b)  - if lock set (b==true), rectangle cannot change
 %  .setSizLock(b)  - if lock set (b==true), rectangle cannot change size
 %  .setPosChnCb(f) - whenever pos changes (even slightly), calls f(pos)
@@ -82,10 +82,10 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  function pos = setPos( pos, varargin )
+  function setPos( posNew, varargin )
     if(isempty(hRect) || isempty(hPatch)); return; end
     % constrain position to fall within lims
-    pos = constrainPos( pos, varargin{:} );
+    pos = constrainPos( posNew, varargin{:} );
     % compute rectangle vertices
     xs = pos([1 1 1 1]); xs(2:3)=xs(2:3)+pos(3);
     ys = pos([2 2 2 2]); ys(3:4)=ys(3:4)+pos(4);
@@ -198,7 +198,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
     if(posLock); return; end; if(sizLock); flag=1; end;
     if( flag==-1 ) % create new rectangle
       if(isempty(pos)), anchor=ginput(1); else anchor=pos(1:2); end
-      pos = setPos( [anchor 1 1] );
+      setPos( [anchor 1 1] );
       set(hRect,'Visible','on'); cursor='botr'; flag=0;
     elseif( flag==0 ) % resize (or possibly drag) rectangle
       pnt=getCurPnt(); [anchor,cursor] = getSide( pnt );
@@ -217,9 +217,9 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
     if(isempty(hRect) || isempty(hPatch)); return; end;
     pnt = getCurPnt(); del = pnt-anchor;
     if( flag==1 ) % shift rectangle by del
-      pos = setPos( [pos0(1:2)+del pos0(3:4)] );
+      setPos( [pos0(1:2)+del pos0(3:4)] );
     else % resize rectangle
-      pos = setPos(shiftPos(anchor,pos0,del),anchor,pos0);
+      setPos(shiftPos(anchor,pos0,del),anchor,pos0);
     end
     drawnow
     if(~isempty(posChnCb)); posChnCb(pos); end;
@@ -242,7 +242,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
 
   function pos0 = getPos(), pos0=pos; end
 
-  function pos0 = setAr( ar1 ), ar=ar1; pos0=setPos(pos); end
+  function setAr( ar1 ), ar=ar1; setPos(pos); end
 
   function setPosChnCb( f ), posChnCb=f; end
 

@@ -34,8 +34,9 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
 
   function R = rotateMatrix(t), c=cosd(t); s=sind(t); R=[c -s; s c]; end
 
-  function pos = setPos( pos )
+  function setPos( posNew )
     if(isempty(hBnds) || isempty(hPatch)); return; end
+    pos=posNew;
     % constrain position to fall within lims
     if( ~isempty(lims) )
       posStr=pos(1:2); posEnd=pos(1:2)+pos(3:4);
@@ -97,7 +98,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
     if(posLock); return; end; if(sizLock); flag=1; end;
     if( flag==-1 ) % create new rectangle
       if(isempty(pos)), anchor=ginput(1); else anchor=pos(1:2); end
-      pos = setPos( [anchor 1 1 0] );
+      setPos( [anchor 1 1 0] );
       set(hBnds,'Visible','on'); cursor='botr'; flag=0;
     elseif( flag==0 ) % resize (or possibly drag) rectangle
       pnt=getCurPnt(); [anchor,cursor] = getSide( pnt );
@@ -116,7 +117,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
     if(isempty(hBnds) || isempty(hPatch)); return; end;
     pnt = getCurPnt(); del = pnt-anchor;
     if( flag==1 ) % shift rectangle by del
-      pos = setPos( [pos0(1:2)+del pos0(3:5)] );
+      setPos( [pos0(1:2)+del pos0(3:5)] );
     else % resize in rectangle coordinate frame
       pos=pos0; rs=pos(3:4)/2; R=rotateMatrix(pos(5));
       pc=pos(1:2)+rs; p0=-rs; p1=rs; del=(pnt-pc)*R;
@@ -125,7 +126,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
       p0a=min(p0,p1); p1=max(p0,p1); p0=p0a;
       p0=p0*R'+pc; p1=p1*R'+pc;
       pc=(p1+p0)/2; p0=(p0-pc)*R; p1=(p1-pc)*R;
-      pos=setPos([pc+p0 p1-p0 pos0(5)]);
+      setPos([pc+p0 p1-p0 pos0(5)]);
     end
     drawnow
     if(~isempty(posChnCb)); posChnCb(pos); end;
