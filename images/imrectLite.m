@@ -56,8 +56,7 @@ if( nargin<2 ); pos=[]; end
 if( nargin<3 ); lims=[]; end
 if( nargin<4 || isempty(ar) ); ar=0; end
 [posChnCb,posSetCb]=deal([]);
-posLock=false;  sizLock=false;
-minSiz=1;
+posLock=false; sizLock=false; minSiz=1;
 
 % get figure and axes handles
 hAx = ancestor(hParent,'axes'); assert(~isempty(hAx));
@@ -176,40 +175,22 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
     d = sizInner/cms;
   end
 
-  function [anchor,cursor] = getAnchor( pnt, pos )
-    % anchor(i) is the x/y coordinate that is fixed, or 0 if dragging
-    t = axisUnitsPerCentimeter()*.15;
-    posE = pos(1:2)+pos(3:4);
-    side=[0 0]; anchor=[0 0];
-    % side(i) -1=near lf/tp bnd; 0=in center; 1:near rt/bt bnd
+  function [anchor,cursor] = getSide( pnt )
+    % get pnt in coordintates of center of rectangle
+    rs=pos(3:4)/2; pnt=pnt-pos(1:2)-rs;
+    % side(i) -1=near lf/tp bnd; 0=in center; +1:near rt/bt bnd
+    t = axisUnitsPerCentimeter()*.15; side=[0 0];
     for i=1:2
-      if(pnt(i)<pos(i)), side(i)=-1; % outside of lf/tp
-      elseif(pnt(i)>posE(i)), side(i)=1; % outside of rt/bt
-      else
-        ti = min(t,pos(2+i)/4);
-        if( pnt(i)-pos(i)<ti ), side(i)=-1; % inside near lf/tp
-        elseif( posE(i)-pnt(i)<ti ), side(i)=1; % inside near rt/bt
-        end
+      ti = min(t,rs(i)/2);
+      if( pnt(i)<-rs(i)+ti ), side(i)=-1; % near lf/tp boundary
+      elseif( pnt(i)>rs(i)-ti), side(i)=1; % near rt/bt boundary
       end
     end
-    % anchor is opposite of side clicked
-    for i=1:2
-      if(side(i)==-1), anchor(i)=posE(i);
-      elseif(side(i)==1), anchor(i)=pos(i);
-      end
-    end
-    % pick cursor based on side
-    switch(side(1)+side(2)*10)
-      case -11; cursor='topl';
-      case -10; cursor='top';
-      case -9;  cursor='topr';
-      case -1;  cursor='left';
-      case 0;   cursor='arrow';
-      case 1;   cursor='right';
-      case 9;   cursor='botl';
-      case 10;  cursor='bottom';
-      case 11;  cursor='botr';
-    end
+    % compute anchor in orig coord system(opposite of selected side)
+    anchor=-side.*rs+pos(1:2)+rs; anchor(side==0)=0;
+    % select cursor based on position
+    cs={'bottom','botr','right','topr','top','topl','left','botl'};
+    a=mod(round((atan2(side(1),side(2))/pi)*4),8)+1; cursor=cs{a};
   end
 
   function btnDwn( h, evnt, flag )
@@ -220,7 +201,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
       pos = setPos( [anchor 1 1] );
       set(hRect,'Visible','on'); cursor='botr'; flag=0;
     elseif( flag==0 ) % resize (or possibly drag) rectangle
-      pnt=getCurPnt(); [anchor,cursor] = getAnchor(pnt,pos);
+      pnt=getCurPnt(); [anchor,cursor] = getSide( pnt );
       if(all(anchor==0)), btnDwn(h,evnt,1); return; end
     elseif( flag==1 ) % move rectangle
       anchor=getCurPnt(); cursor='fleur';
