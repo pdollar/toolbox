@@ -3,8 +3,9 @@ function [hPatch,api] = imRectRot( varargin )
 % default arguments / globals
 dfs={ 'hParent',gca, 'pos',[], 'lims',[], 'showLims',0, 'ellipse',1,...
   'linePrp',{'color',[.7 .7 .7],'LineWidth',1}, ...
-  'ellPrp',{'color','g','LineWidth',2} };
-[hParent,pos,lims,showLims,ellipse,linePrp,ellPrp] = ...
+  'ellPrp',{'color','g','LineWidth',2}, ...
+  'circProp',{'Curvature',[1 1],'FaceColor','g','EdgeColor','g'} };
+[hParent,pos,lims,showLims,ellipse,linePrp,ellPrp,circProp] = ...
   getPrmDflt(varargin,dfs,1);
 if(length(lims)==4), lims=[lims 0]; end
 [posChnCb,posSetCb]=deal([]); posLock=false; sizLock=false;
@@ -17,13 +18,15 @@ if( showLims ), [disc,xs,ys]=rectToCorners(lims);
   for j=1:4, ids=mod([j-1 j],4)+1; line(xs(ids),ys(ids)); end
 end
 
-% create patch object as well as boundaries objects
-if(isempty(pos)); vis='off'; else vis='on'; end
-hPatch = patch('FaceColor','none','EdgeColor','none'); hBnds=[0 0 0 0];
-for j=1:4, hBnds(j)=line(linePrp{:},'Visible',vis); end
-hs=[hPatch hBnds]; hEll=[];
-set(hs,'ButtonDownFcn',{@btnDwn,0},'DeleteFcn',@deleteFcn);
+% create objects for display / interface
+if(isempty(pos)); vis='off'; else vis='on'; end; hold on;
+hPatch=patch('FaceColor','none','EdgeColor','none');
+hBnds=[0 0 0 0]; for j=1:4, hBnds(j)=line(linePrp{:},'Visible',vis); end
+hCntr=rectangle(circProp{:},'Visible',vis);
 ts=linspace(-180,180,50); circleXs=cosd(ts); circleYs=sind(ts);
+hEll=plot(circleXs,circleYs,ellPrp{:},'Visible',vis);
+hs=[hPatch hBnds hCntr hEll]; hold off;
+set(hs,'ButtonDownFcn',{@btnDwn,0},'DeleteFcn',@deleteFcn);
 
 % set initial position
 if(length(pos)==5), setPos(pos); else
@@ -83,16 +86,20 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
     pos=posNew; [pts,xs,ys]=rectToCorners(pos);
     vert=[xs ys ones(4,1)]; face=1:4;
     set(hPatch,'Faces',face,'Vertices',vert);
-    % draw rectangle boundaries
+    % draw ellipse
+    if(ellipse), [pc,rs]=rectInfo(posNew); th=pos(5);
+      xsEll = rs(1)*circleXs*cosd(-th)+rs(2)*circleYs*sind(-th)+pc(1);
+      ysEll = rs(2)*circleYs*cosd(-th)-rs(1)*circleXs*sind(-th)+pc(2);
+      set(hEll,'XData',xsEll,'YData',ysEll);
+    end
+    % draw rectangle boundaries and control circles
     for i=1:4, ids=mod([i-1 i],4)+1;
       set(hBnds(i),'Xdata',xs(ids),'Ydata',ys(ids));
     end
-    % draw ellipse
-    if(~ellipse), return; end; [pc,rs]=rectInfo(posNew); th=pos(5);
-    xs = rs(1)*circleXs*cosd(-th)+rs(2)*circleYs*sind(-th)+pc(1);
-    ys = rs(2)*circleYs*cosd(-th)-rs(1)*circleXs*sind(-th)+pc(2);
-    if(~isempty(hEll)); delete(hEll); end;
-    hold on; hEll=plot(xs,ys,ellPrp{:}); hold off;
+    x=mean(xs([1 2]),1); y=mean(ys([1 2]),1);
+    r=max(2,min([axisUnitsPerCentimeter()*.15,5,pos(3)/4,pos(4)/4]));
+    set(hCntr,'Position',[x-r y-r 2*r 2*r]);
+    drawnow
   end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -116,36 +123,36 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
     d = sizInner/cms;
   end
 
-  function [side,cursor] = getSide( pnt )
+  function [side,cursor,flag] = getSide( pnt0 )
     % get pnt in coordintates of center of rectangle
-    [pc,rs,R]=rectInfo(pos); pnt=(pnt-pc)*R; th=pos(5);
-    % side(i) -1=near lf/tp bnd; 0=in center; +1:near rt/bt bnd
-    t = axisUnitsPerCentimeter()*.15; side=[0 0];
+    [pc,rs,R]=rectInfo(pos); pnt=(pnt0-pc)*R; th=pos(5);
+    % side(i) -1=lf/tp bnd; 0=interior; +1:rt/bt bnd; 2=center
+    t = axisUnitsPerCentimeter()*.15; side=[0 0]; flag=0;
     for i=1:2
-      ti = min(t,rs(i)/2);
-      if( pnt(i)<-rs(i)+ti ), side(i)=-1; % near lf/tp boundary
+      ti = min(t,rs(i)/3);
+      if( abs(pnt(i))<ti ), side(i)=2; % near center
+      elseif( pnt(i)<-rs(i)+ti ), side(i)=-1; % near lf/tp boundary
       elseif( pnt(i)>rs(i)-ti), side(i)=1; % near rt/bt boundary
       end
     end
+    if(any(side==0) || all(side==2)), side(side==2)=0; end
+    if(any(side==2) && any(side~=[2 -1])), side(side==2)=0; end
+    if(all(side==0)), flag=1; side=pnt0; cursor='fleur'; return; end
+    if(any(side==2)), flag=2; cursor='crosshair'; return; end
     % select cursor based on position
     cs={'bottom','botr','right','topr','top','topl','left','botl'};
     a=mod(round((atan2(side(1),side(2))/pi-th/180)*4),8)+1; cursor=cs{a};
   end
 
-  function btnDwn( h, evnt, flag )
+  function btnDwn( h, evnt, flag ) %#ok<INUSL>
     if(isempty(hBnds) || isempty(hPatch)); return; end;
     if(posLock); return; end; if(sizLock); flag=1; end;
     if( flag==-1 ) % create new rectangle
       if(isempty(pos)), anchor=ginput(1); else anchor=pos(1:2); end
       setPos( [anchor 1 1 0] );
-      set(hBnds,'Visible','on'); cursor='botr'; flag=0;
-    elseif( flag==0 ) % resize (or possibly drag) rectangle
-      pnt=getCurPnt(); [anchor,cursor] = getSide( pnt );
-      if(all(anchor==0)), btnDwn(h,evnt,1); return; end
-    elseif( flag==1 ) % move rectangle
-      anchor=getCurPnt(); cursor='fleur';
-    else
-      assert(false);
+      set([hBnds hCntr hEll],'Visible','on'); cursor='botr'; flag=0;
+    else % resize, rotate or drag rectangle
+      pnt=getCurPnt(); [anchor,cursor,flag]=getSide( pnt );
     end
     set( hFig, 'Pointer', cursor );
     set( hFig, 'WindowButtonMotionFcn',{@drag,flag,anchor,pos} );
@@ -157,14 +164,18 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
     pnt = getCurPnt(); del = pnt-anchor;
     if( flag==1 ) % shift rectangle by del
       setPos( [pos0(1:2)+del pos0(3:5)] );
-    else % resize in rectangle coordinate frame
+    elseif( flag==0 ) % resize in rectangle coordinate frame
       [pc,rs,R]=rectInfo(pos0); p0=-rs; p1=rs; del=(pnt-pc)*R;
       for i=1:2, if(anchor(i)>0), p1(i)=del(i); end; end
       for i=1:2, if(anchor(i)<0), p0(i)=del(i); end; end
       p0a=min(p0,p1); p1=max(p0,p1); p0=p0a;
       setPos(cornersToRect(pos0,p0(1),p0(2),p1(1),p1(2)));
+    else % rotate rectangle
+      [pts,xs,ys]=rectToCorners(pos0);
+      p0=mean([xs([3 4]) ys([3 4])]); pc=(p0+pnt)/2; d=pnt-p0;
+      w=pos(3); h=sqrt(sum(d.^2)); th=atan2(d(1),-d(2))/pi*180;
+      setPos([pc(1)-w/2 pc(2)-h/2 w h th]);
     end
-    drawnow
     if(~isempty(posChnCb)); posChnCb(pos); end;
   end
 
@@ -176,9 +187,9 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
   end
 
   function deleteFcn( h, evnt ) %#ok<INUSD>
-    [posChnCb,posSetCb]=deal([]); hs=[hPatch hBnds hEll];
+    [posChnCb,posSetCb]=deal([]); hs=[hPatch hBnds hCntr hEll];
     for i=1:length(hs), if(ishandle(hs(i))); delete(hs(i)); end; end
-    [hBnds,hPatch,hEll]=deal([]);
+    [hBnds,hPatch,hCntr,hEll]=deal([]);
   end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
