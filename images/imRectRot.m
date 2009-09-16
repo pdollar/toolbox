@@ -6,7 +6,7 @@ if( nargin<2 ); pos=[]; end
 if( nargin<3 ); lims=[]; end
 if( nargin<4 ); linePrp={}; end
 [posChnCb,posSetCb]=deal([]);
-posLock=false; sizLock=false; minSiz=1;
+posLock=false; sizLock=false;
 
 % get figure and axes handles
 hAx = ancestor(hParent,'axes'); assert(~isempty(hAx));
@@ -34,22 +34,37 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
 
   function R = rotateMatrix(t), c=cosd(t); s=sind(t); R=[c -s; s c]; end
 
+  function [pts,xs,ys,pc] = rectToCorners( pos )
+    % return 4 rect corners in real world coords
+    rs=pos(3:4)/2; pc=pos(1:2)+rs; R=rotateMatrix(pos(5));
+    x0=-rs(1); x1=rs(1); y0=-rs(2); y1=rs(2);
+    pts=[x0 y0; x1 y0; x1 y1; x0 y1]*R'+pc(ones(4,1),:);
+    xs=pts(:,1); ys=pts(:,2);
+  end
+
+  function pos1 = cornersToRect( pos0, x0, y0, x1, y1 )
+    % compute pos from 4 corners given in rect coords
+    rs=pos0(3:4)/2; pc=pos0(1:2)+rs; R=rotateMatrix(pos(5));
+    p0=[x0 y0]*R'+pc; p1=[x1 y1]*R'+pc;
+    pc=(p1+p0)/2; p0=(p0-pc)*R; p1=(p1-pc)*R;
+    pos1 = [pc+p0 p1-p0 pos0(5)];
+  end
+
   function setPos( posNew )
     if(isempty(hBnds) || isempty(hPatch)); return; end
-    pos=posNew;
-    % constrain position to fall within lims
-    if( ~isempty(lims) )
-      posStr=pos(1:2); posEnd=pos(1:2)+pos(3:4);
-      posStr = min( max(posStr,lims(1:2)), lims(3:4)-minSiz );
-      posEnd = max( min(posEnd,lims(3:4)), posStr+minSiz );
-      pos = [posStr posEnd-posStr pos(5)];
+    [pts,xs,ys]=rectToCorners(posNew); L=lims;
+    % if corners fall outside lims don't use new pos
+    if( ~isempty(L) )
+      if( pos(5)==0 )
+        xs=min(max(xs,L(1)),L(3)); ys=min(max(ys,L(2)),L(4));
+        posNew=[xs(1) ys(1) xs(2)-xs(1) ys(3)-ys(1) 0];
+      else
+        valid=[xs>=L(1) xs<=L(3) ys>=L(2) ys<=L(4)];
+        if(~all(valid(:))), return; end
+      end
     end
-    % compute rectangle vertices
-    rx=pos(3)/2; ry=pos(4)/2; theta=pos(5);
-    pts=rotateMatrix(theta)*[-rx rx rx -rx; -ry -ry ry ry];
-    xs=pts(1,:)+pos(1)+rx; ys=pts(2,:)+pos(2)+ry;
     % draw objects
-    vert = [xs' ys' [1;1;1;1]]; face=1:4;
+    pos=posNew; vert=[xs ys ones(4,1)]; face=1:4;
     set(hPatch,'Faces',face,'Vertices',vert);
     set(hBnds(1),'Xdata',xs([1 2]),'Ydata',ys([1 2]));
     set(hBnds(2),'Xdata',xs([2 3]),'Ydata',ys([2 3]));
@@ -119,14 +134,12 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
     if( flag==1 ) % shift rectangle by del
       setPos( [pos0(1:2)+del pos0(3:5)] );
     else % resize in rectangle coordinate frame
-      pos=pos0; rs=pos(3:4)/2; R=rotateMatrix(pos(5));
-      pc=pos(1:2)+rs; p0=-rs; p1=rs; del=(pnt-pc)*R;
+      rs=pos0(3:4)/2; R=rotateMatrix(pos(5));
+      pc=pos0(1:2)+rs; p0=-rs; p1=rs; del=(pnt-pc)*R;
       for i=1:2, if(anchor(i)>0), p1(i)=del(i); end; end
       for i=1:2, if(anchor(i)<0), p0(i)=del(i); end; end
       p0a=min(p0,p1); p1=max(p0,p1); p0=p0a;
-      p0=p0*R'+pc; p1=p1*R'+pc;
-      pc=(p1+p0)/2; p0=(p0-pc)*R; p1=(p1-pc)*R;
-      setPos([pc+p0 p1-p0 pos0(5)]);
+      setPos(cornersToRect(pos0,p0(1),p0(2),p1(1),p1(2)));
     end
     drawnow
     if(~isempty(posChnCb)); posChnCb(pos); end;
