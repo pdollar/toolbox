@@ -1,25 +1,26 @@
-function [hPatch,api] = imRectRot( hParent, pos, lims, linePrp )
+function [hPatch,api] = imRectRot( varargin )
 
 % default arguments / globals
-if( nargin<1 || isempty(hParent) ); hParent=gca; end
-if( nargin<2 ); pos=[]; end
-if( nargin<3 ); lims=[]; end
-if( nargin<4 ); linePrp={}; end
-[posChnCb,posSetCb]=deal([]);
-posLock=false; sizLock=false;
+dfs={'hParent',gca,'pos',[],'lims',[],'lineProp',{},'showLims',0};
+[hParent,pos,lims,lineProp,showLims]=getPrmDflt(varargin,dfs,1);
+if(length(lims)==4), lims=[lims 0]; end
+[posChnCb,posSetCb]=deal([]); posLock=false; sizLock=false;
 
-% get figure and axes handles
+% get figure and axes handles, optionally show limits
 hAx = ancestor(hParent,'axes'); assert(~isempty(hAx));
 hFig = ancestor(hAx,'figure'); assert(~isempty(hFig));
 set( hFig, 'CurrentAxes', hAx );
+if( showLims ), [disc,xs,ys]=rectToCorners(lims);
+  for j=1:4, ids=mod([j-1 j],4)+1; line(xs(ids),ys(ids)); end
+end
 
 % create patch object as well as boundaries objects
 if(isempty(pos)); vis='off'; else vis='on'; end
 hPatch = patch('FaceColor','none','EdgeColor','none'); hBnds=[0 0 0 0];
-for j=1:4, hBnds(j)=line(linePrp{:},'Visible',vis); end
+for j=1:4, hBnds(j)=line(lineProp{:},'Visible',vis); end
 set([hBnds hPatch],'ButtonDownFcn',{@btnDwn,0},'DeleteFcn',@deleteFcn);
 
-% set / get position
+% set initial position
 if(length(pos)==5), setPos(pos); else
   btnDwn([],[],-1); waitfor(hFig,'WindowButtonUpFcn','');
 end
@@ -32,11 +33,15 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  function R = rotateMatrix(t), c=cosd(t); s=sind(t); R=[c -s; s c]; end
+  function [pc,rs,R] = rectInfo( pos0 )
+    % return rectangle center, radii, and rotation matrix
+    t=pos0(5); c=cosd(t); s=sind(t); R=[c -s; s c];
+    rs=pos0(3:4)/2; pc=pos0(1:2)+rs;
+  end
 
-  function [pts,xs,ys,pc] = rectToCorners( pos )
+  function [pts,xs,ys,pc] = rectToCorners( pos0 )
     % return 4 rect corners in real world coords
-    rs=pos(3:4)/2; pc=pos(1:2)+rs; R=rotateMatrix(pos(5));
+    [pc,rs,R]=rectInfo( pos0 );
     x0=-rs(1); x1=rs(1); y0=-rs(2); y1=rs(2);
     pts=[x0 y0; x1 y0; x1 y1; x0 y1]*R'+pc(ones(4,1),:);
     xs=pts(:,1); ys=pts(:,2);
@@ -44,33 +49,41 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
 
   function pos1 = cornersToRect( pos0, x0, y0, x1, y1 )
     % compute pos from 4 corners given in rect coords
-    rs=pos0(3:4)/2; pc=pos0(1:2)+rs; R=rotateMatrix(pos(5));
+    [pc,rs,R] = rectInfo( pos0 );
     p0=[x0 y0]*R'+pc; p1=[x1 y1]*R'+pc;
     pc=(p1+p0)/2; p0=(p0-pc)*R; p1=(p1-pc)*R;
     pos1 = [pc+p0 p1-p0 pos0(5)];
   end
 
   function setPos( posNew )
-    if(isempty(hBnds) || isempty(hPatch)); return; end
-    [pts,xs,ys]=rectToCorners(posNew); L=lims;
-    % if corners fall outside lims don't use new pos
+    if(isempty(hBnds) || isempty(hPatch)); return; end; L=lims;
+    % if corners fall outside lims don't use posNew
     if( ~isempty(L) )
-      if( pos(5)==0 )
-        xs=min(max(xs,L(1)),L(3)); ys=min(max(ys,L(2)),L(4));
-        posNew=[xs(1) ys(1) xs(2)-xs(1) ys(3)-ys(1) 0];
+      if( posNew(5)==lims(5) )
+        % lims and posNew at same orient (do everything in rect coords)
+        [pc,rs,R]=rectInfo(posNew); p0=-rs; p1=rs;
+        pts=(rectToCorners(L)-pc(ones(4,1),:))*R;
+        L0=[pts(1,1) pts(1,2)]; L1=[pts(2,1) pts(3,2)];
+        p0=min(max(p0,L0),L1); p1=max(min(p1,L1),p0);
+        posNew=cornersToRect(posNew,p0(1),p0(2),p1(1),p1(2));
       else
-        valid=[xs>=L(1) xs<=L(3) ys>=L(2) ys<=L(4)];
+        % lims and posNew at diff orient (do everything in lims coords)
+        [pc,rs,R]=rectInfo(L); p0=-rs; p1=rs;
+        p=(rectToCorners(posNew)-pc(ones(4,1),:))*R; xs=p(:,1); ys=p(:,2);
+        valid=[xs>=p0(1) xs<=p1(1) ys>=p0(2) ys<=p1(2)];
         if(~all(valid(:))), return; end
       end
     end
     % draw objects
-    pos=posNew; vert=[xs ys ones(4,1)]; face=1:4;
+    pos=posNew; [pts,xs,ys]=rectToCorners(pos);
+    vert=[xs ys ones(4,1)]; face=1:4;
     set(hPatch,'Faces',face,'Vertices',vert);
-    set(hBnds(1),'Xdata',xs([1 2]),'Ydata',ys([1 2]));
-    set(hBnds(2),'Xdata',xs([2 3]),'Ydata',ys([2 3]));
-    set(hBnds(3),'Xdata',xs([3 4]),'Ydata',ys([3 4]));
-    set(hBnds(4),'Xdata',xs([4 1]),'Ydata',ys([4 1]));
+    for i=1:4, ids=mod([i-1 i],4)+1;
+      set(hBnds(i),'Xdata',xs(ids),'Ydata',ys(ids));
+    end
   end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   function pnt = getCurPnt()
     pnt = get(hAx,'CurrentPoint');
@@ -93,8 +106,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
 
   function [side,cursor] = getSide( pnt )
     % get pnt in coordintates of center of rectangle
-    th=pos(5); R=rotateMatrix(th);
-    rs=pos(3:4)/2; pnt=(pnt-pos(1:2)-rs)*R;
+    [pc,rs,R]=rectInfo(pos); pnt=(pnt-pc)*R; th=pos(5);
     % side(i) -1=near lf/tp bnd; 0=in center; +1:near rt/bt bnd
     t = axisUnitsPerCentimeter()*.15; side=[0 0];
     for i=1:2
@@ -134,8 +146,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
     if( flag==1 ) % shift rectangle by del
       setPos( [pos0(1:2)+del pos0(3:5)] );
     else % resize in rectangle coordinate frame
-      rs=pos0(3:4)/2; R=rotateMatrix(pos(5));
-      pc=pos0(1:2)+rs; p0=-rs; p1=rs; del=(pnt-pc)*R;
+      [pc,rs,R]=rectInfo(pos0); p0=-rs; p1=rs; del=(pnt-pc)*R;
       for i=1:2, if(anchor(i)>0), p1(i)=del(i); end; end
       for i=1:2, if(anchor(i)<0), p0(i)=del(i); end; end
       p0a=min(p0,p1); p1=max(p0,p1); p0=p0a;
