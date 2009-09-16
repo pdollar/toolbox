@@ -1,37 +1,12 @@
 function [hPatch,api] = imRectRot( varargin )
 
-% default arguments / globals
-dfs={ 'hParent',gca, 'pos',[], 'lims',[], 'showLims',0, 'ellipse',1,...
-  'linePrp',{'color',[.7 .7 .7],'LineWidth',1}, ...
-  'ellPrp',{'color','g','LineWidth',2}, ...
-  'circProp',{'Curvature',[1 1],'FaceColor','g','EdgeColor','g'} };
-[hParent,pos,lims,showLims,ellipse,linePrp,ellPrp,circProp] = ...
-  getPrmDflt(varargin,dfs,1);
-if(length(lims)==4), lims=[lims 0]; end
-[posChnCb,posSetCb]=deal([]); posLock=false; sizLock=false;
+% global variables (shared by all functions below)
+[hParent,pos,lims,ellipse,linePrp,ellPrp,circProp,...
+  crXs,crYs,posChnCb,posSetCb,hAx,hFig,hPatch,hBnds,hCntr,hEll,...
+  posLock,sizLock] = deal([]);
 
-% get figure and axes handles, optionally show limits
-hAx = ancestor(hParent,'axes'); assert(~isempty(hAx));
-hFig = ancestor(hAx,'figure'); assert(~isempty(hFig));
-set( hFig, 'CurrentAxes', hAx );
-if( showLims ), [disc,xs,ys]=rectToCorners(lims);
-  for j=1:4, ids=mod([j-1 j],4)+1; line(xs(ids),ys(ids)); end
-end
-
-% create objects for display / interface
-if(isempty(pos)); vis='off'; else vis='on'; end; hold on;
-hPatch=patch('FaceColor','none','EdgeColor','none');
-hBnds=[0 0 0 0]; for j=1:4, hBnds(j)=line(linePrp{:},'Visible',vis); end
-hCntr=rectangle(circProp{:},'Visible',vis);
-ts=linspace(-180,180,50); circleXs=cosd(ts); circleYs=sind(ts);
-hEll=plot(circleXs,circleYs,ellPrp{:},'Visible',vis);
-hs=[hPatch hBnds hCntr hEll]; hold off;
-set(hs,'ButtonDownFcn',{@btnDwn,0},'DeleteFcn',@deleteFcn);
-
-% set initial position
-if(length(pos)==5), setPos(pos); else
-  btnDwn([],[],-1); waitfor(hFig,'WindowButtonUpFcn','');
-end
+% intitialize
+intitialize( varargin{:} );
 
 % create api
 api = struct('getPos',@getPos, 'setPos',@setPos, ...
@@ -40,6 +15,43 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
   'setAr',@setAr, 'uistack',@uistack1 );
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  function intitialize( varargin )
+    % get default arguments
+    dfs={ 'hParent',gca, 'pos',[], 'lims',[], 'showLims',0, 'ellipse',1,...
+      'linePrp',{'color',[.7 .7 .7],'LineWidth',1}, ...
+      'ellPrp',{'color','g','LineWidth',2}, ...
+      'circProp',{'Curvature',[1 1],'FaceColor','g','EdgeColor','g'} };
+    [hParent,pos,lims,showLims,ellipse,linePrp,ellPrp,circProp] = ...
+      getPrmDflt(varargin,dfs,1);
+    if(length(lims)==4), lims=[lims 0]; end
+    
+    % get figure and axes handles
+    hAx = ancestor(hParent,'axes'); assert(~isempty(hAx));
+    hFig = ancestor(hAx,'figure'); assert(~isempty(hFig));
+    set( hFig, 'CurrentAxes', hAx );
+    
+    % optionally display limits
+    if( showLims ), [disc,xs,ys]=rectToCorners(lims);
+      for j=1:4, ids=mod([j-1 j],4)+1; line(xs(ids),ys(ids)); end
+    end
+    
+    % create objects for display / interface
+    if(isempty(pos)); vis='off'; else vis='on'; end; hold on;
+    hPatch=patch('FaceColor','none','EdgeColor','none'); hBnds=[0 0 0 0];
+    for i=1:4, hBnds(i)=line(linePrp{:},'Visible',vis); end
+    hCntr=rectangle(circProp{:},'Visible',vis);
+    ts=linspace(-180,180,50); crXs=cosd(ts); crYs=sind(ts);
+    hEll=plot(crXs,crYs,ellPrp{:},'Visible',vis);
+    hs=[hPatch hBnds hCntr hEll]; hold off;
+    set(hs,'ButtonDownFcn',{@btnDwn,0},'DeleteFcn',@deleteFcn);
+    
+    % set or query initial position
+    posLock=0; sizLock=0;
+    if(length(pos)==5), setPos(pos); else
+      btnDwn([],[],-1); waitfor(hFig,'WindowButtonUpFcn','');
+    end
+  end
 
   function [pc,rs,R] = rectInfo( pos0 )
     % return rectangle center, radii, and rotation matrix
@@ -88,8 +100,8 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
     set(hPatch,'Faces',face,'Vertices',vert);
     % draw ellipse
     if(ellipse), [pc,rs]=rectInfo(posNew); th=pos(5);
-      xsEll = rs(1)*circleXs*cosd(-th)+rs(2)*circleYs*sind(-th)+pc(1);
-      ysEll = rs(2)*circleYs*cosd(-th)-rs(1)*circleXs*sind(-th)+pc(2);
+      xsEll = rs(1)*crXs*cosd(-th)+rs(2)*crYs*sind(-th)+pc(1);
+      ysEll = rs(2)*crYs*cosd(-th)-rs(1)*crXs*sind(-th)+pc(2);
       set(hEll,'XData',xsEll,'YData',ysEll);
     end
     % draw rectangle boundaries and control circles
@@ -102,25 +114,20 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
     drawnow
   end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
   function pnt = getCurPnt()
-    pnt = get(hAx,'CurrentPoint');
-    pnt = pnt([1,3]);
+    pnt=get(hAx,'CurrentPoint'); pnt=pnt([1 3]);
   end
 
   function d = axisUnitsPerCentimeter()
     % approximage absolute axes size
-    units=get(hAx,'units');
-    set(hAx,'units','centimeters');
-    cms = get(hAx,'Position');
-    cms = max(cms(3:4));
+    units=get(hAx,'units'); set(hAx,'units','centimeters');
+    cm=get(hAx,'Position'); cm=max(cm(3:4)); 
     set(hAx,'units',units);
     % axes size in axes units
     xLim=get(gca,'xLim'); yLim=get(gca,'yLim');
     sizInner = max([xLim(2)-xLim(1),yLim(2)-yLim(1)]);
-    % units per centemeter
-    d = sizInner/cms;
+    % units per centimeter
+    d = sizInner/cm;
   end
 
   function [side,cursor,flag] = getSide( pnt0 )
