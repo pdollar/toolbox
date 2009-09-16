@@ -1,8 +1,11 @@
 function [hPatch,api] = imRectRot( varargin )
 
 % default arguments / globals
-dfs={'hParent',gca,'pos',[],'lims',[],'lineProp',{},'showLims',0};
-[hParent,pos,lims,lineProp,showLims]=getPrmDflt(varargin,dfs,1);
+dfs={ 'hParent',gca, 'pos',[], 'lims',[], 'showLims',0, 'ellipse',1,...
+  'linePrp',{'color',[.7 .7 .7],'LineWidth',1}, ...
+  'ellPrp',{'color','g','LineWidth',2} };
+[hParent,pos,lims,showLims,ellipse,linePrp,ellPrp] = ...
+  getPrmDflt(varargin,dfs,1);
 if(length(lims)==4), lims=[lims 0]; end
 [posChnCb,posSetCb]=deal([]); posLock=false; sizLock=false;
 
@@ -17,8 +20,10 @@ end
 % create patch object as well as boundaries objects
 if(isempty(pos)); vis='off'; else vis='on'; end
 hPatch = patch('FaceColor','none','EdgeColor','none'); hBnds=[0 0 0 0];
-for j=1:4, hBnds(j)=line(lineProp{:},'Visible',vis); end
-set([hBnds hPatch],'ButtonDownFcn',{@btnDwn,0},'DeleteFcn',@deleteFcn);
+for j=1:4, hBnds(j)=line(linePrp{:},'Visible',vis); end
+hs=[hPatch hBnds]; hEll=[];
+set(hs,'ButtonDownFcn',{@btnDwn,0},'DeleteFcn',@deleteFcn);
+ts=linspace(-180,180,50); circleXs=cosd(ts); circleYs=sind(ts);
 
 % set initial position
 if(length(pos)==5), setPos(pos); else
@@ -74,13 +79,20 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
         if(~all(valid(:))), return; end
       end
     end
-    % draw objects
+    % create invisible patch to captures key presses
     pos=posNew; [pts,xs,ys]=rectToCorners(pos);
     vert=[xs ys ones(4,1)]; face=1:4;
     set(hPatch,'Faces',face,'Vertices',vert);
+    % draw rectangle boundaries
     for i=1:4, ids=mod([i-1 i],4)+1;
       set(hBnds(i),'Xdata',xs(ids),'Ydata',ys(ids));
     end
+    % draw ellipse
+    if(~ellipse), return; end; [pc,rs]=rectInfo(posNew); th=pos(5);
+    xs = rs(1)*circleXs*cosd(-th)+rs(2)*circleYs*sind(-th)+pc(1);
+    ys = rs(2)*circleYs*cosd(-th)-rs(1)*circleXs*sind(-th)+pc(2);
+    if(~isempty(hEll)); delete(hEll); end;
+    hold on; hEll=plot(xs,ys,ellPrp{:}); hold off;
   end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -164,9 +176,9 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
   end
 
   function deleteFcn( h, evnt ) %#ok<INUSD>
-    [posChnCb,posSetCb]=deal([]); hs=[hPatch hBnds];
+    [posChnCb,posSetCb]=deal([]); hs=[hPatch hBnds hEll];
     for i=1:length(hs), if(ishandle(hs(i))); delete(hs(i)); end; end
-    [hBnds,hPatch]=deal([]);
+    [hBnds,hPatch,hEll]=deal([]);
   end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
