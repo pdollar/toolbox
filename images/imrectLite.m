@@ -1,5 +1,5 @@
 function [hRect,api] = imrectLite( hParent, pos, lims, ar, varargin )
-% A 'lite' version of imrect (fast, bugfree, simple).
+% A 'lite' version of imrect [OBSOLETE: use imrectRot].
 %
 % There are significant problems using imrect in a larger GUI, mostly
 % due to the fact that imrect is such a heavy object.  This creates a
