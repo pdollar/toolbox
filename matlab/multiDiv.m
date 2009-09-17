@@ -55,8 +55,17 @@ switch type
   case 2.2  % C(:,:,i) = A(:,:,i)\B(:,:,i)'
   case 3    % C(:,i) = A(:,:,i)\B(:,i)
 	C = zeros(na,oa);
+	% get the initial indices
+	e=min(s+step,oa);
+	[ B, m0, n0, k0, rs, cs ] = spBlkDiag( AA(:,:,s+1:e) );
+	C(s*na+1:e*na)=B\BB(s*ma+1:e*ma)'; s=e;
+	% continue with the other blocks if necessary
     while (s<oa); e=min(s+step,oa);
-      C(s*na+1:e*na)=spBlkDiag(AA(:,:,s+1:e))\BB(s*ma+1:e*ma)'; s=e;
+	  if e==s+step
+		C(s*na+1:e*na)=spBlkDiag(AA(:,:,s+1:e), m0, n0, k0, rs, cs)\BB(s*ma+1:e*ma)'; s=e;
+	  else
+	    C(s*na+1:e*na)=spBlkDiag(AA(:,:,s+1:e))\BB(s*ma+1:e*ma)'; s=e;
+	  end
     end
   case 3.1  % C(:,i) = A(:,:,i)'\B(:,i)
 end
