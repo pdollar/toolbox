@@ -1,9 +1,8 @@
 function [hPatch,api] = imRectRot( varargin )
 
 % global variables (shared by all functions below)
-[hParent,pos,lims,ellipse,linePrp,ellPrp,circProp,...
-  crXs,crYs,posChnCb,posSetCb,hAx,hFig,hPatch,hBnds,hCntr,hEll,...
-  posLock,sizLock] = deal([]);
+[hParent,pos,lims,crXs,crYs,posChnCb,posSetCb,posLock,sizLock,...
+  hAx,hFig,hPatch,hBnds,hCntr,hEll] = deal([]);
 
 % intitialize
 intitialize( varargin{:} );
@@ -18,13 +17,10 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
 
   function intitialize( varargin )
     % get default arguments
-    dfs={ 'hParent',gca, 'pos',[], 'lims',[], 'showLims',0, 'ellipse',1,...
-      'linePrp',{'color',[.7 .7 .7],'LineWidth',1}, ...
-      'ellPrp',{'color','g','LineWidth',2}, ...
-      'circProp',{'Curvature',[1 1],'FaceColor','g','EdgeColor','g'} };
-    [hParent,pos,lims,showLims,ellipse,linePrp,ellPrp,circProp] = ...
+    dfs={'hParent',gca, 'pos',[], 'lims',[], 'showLims',0,...
+      'ellipse',1, 'rotate',1, 'color','g', 'colorc','b', 'lw',2 };
+    [hParent,pos,lims,showLims,ellipse,rotate,color,colorc,lw] = ...
       getPrmDflt(varargin,dfs,1);
-    if(length(lims)==4), lims=[lims 0]; end
     
     % get figure and axes handles
     hAx = ancestor(hParent,'axes'); assert(~isempty(hAx));
@@ -36,14 +32,29 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
       for j=1:4, ids=mod([j-1 j],4)+1; line(xs(ids),ys(ids)); end
     end
     
-    % create objects for display / interface
-    if(isempty(pos)); vis='off'; else vis='on'; end; hold on;
-    hPatch=patch('FaceColor','none','EdgeColor','none'); hBnds=[0 0 0 0];
+    % create objects for rectangle display/interface
+    if( ellipse ), linePrp={'color',[.7 .7 .7],'LineWidth',1};
+    else linePrp={'color',color,'LineWidth',lw}; end
+    if(isempty(pos)); vis='off'; else vis='on'; end;
+    hPatch=patch('FaceColor','none','EdgeColor','none');
     for i=1:4, hBnds(i)=line(linePrp{:},'Visible',vis); end
-    hCntr=rectangle(circProp{:},'Visible',vis);
-    ts=linspace(-180,180,50); crXs=cosd(ts); crYs=sind(ts);
-    hEll=plot(crXs,crYs,ellPrp{:},'Visible',vis);
-    hs=[hPatch hBnds hCntr hEll]; hold off;
+    
+    % create objects for ellipse display/interface
+    if( ellipse )
+      ellPrp={'LineWidth',lw,'color',color};
+      ts=linspace(-180,180,50); crXs=cosd(ts); crYs=sind(ts);
+      hold on; hEll=plot(crXs,crYs,ellPrp{:},'Visible',vis); hold off;
+    end
+    
+    % create objects for rotation display/interface
+    if( rotate )
+      circPrp={'Curvature',[1 1],'FaceColor',color,'EdgeColor',color};
+      for i=1:4, hCntr(i)=rectangle(circPrp{:},'Visible',vis); end
+      set(hCntr(1),'LineWidth',lw,'FaceColor',colorc);
+    end
+    
+    % set callbacks on all objects
+    hs=[hPatch hBnds hCntr hEll];
     set(hs,'ButtonDownFcn',{@btnDwn,0},'DeleteFcn',@deleteFcn);
     
     % set or query initial position
@@ -99,18 +110,20 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
     vert=[xs ys ones(4,1)]; face=1:4;
     set(hPatch,'Faces',face,'Vertices',vert);
     % draw ellipse
-    if(ellipse), [pc,rs]=rectInfo(posNew); th=pos(5);
+    if(~isempty(hEll)), [pc,rs]=rectInfo(posNew); th=pos(5);
       xsEll = rs(1)*crXs*cosd(-th)+rs(2)*crYs*sind(-th)+pc(1);
       ysEll = rs(2)*crYs*cosd(-th)-rs(1)*crXs*sind(-th)+pc(2);
       set(hEll,'XData',xsEll,'YData',ysEll);
     end
     % draw rectangle boundaries and control circles
+    r=max(2,min([axisUnitsPerCentimeter()*.15,5,pos(3:4)/4]));
     for i=1:4, ids=mod([i-1 i],4)+1;
       set(hBnds(i),'Xdata',xs(ids),'Ydata',ys(ids));
+      if(~isempty(hCntr)), x=mean(xs(ids)); y=mean(ys(ids));
+        set(hCntr(i),'Position',[x-r y-r 2*r 2*r]);
+      end
     end
-    x=mean(xs([1 2]),1); y=mean(ys([1 2]),1);
-    r=max(2,min([axisUnitsPerCentimeter()*.15,5,pos(3)/4,pos(4)/4]));
-    set(hCntr,'Position',[x-r y-r 2*r 2*r]);
+    % update display
     drawnow
   end
 
@@ -121,7 +134,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
   function d = axisUnitsPerCentimeter()
     % approximage absolute axes size
     units=get(hAx,'units'); set(hAx,'units','centimeters');
-    cm=get(hAx,'Position'); cm=max(cm(3:4)); 
+    cm=get(hAx,'Position'); cm=max(cm(3:4));
     set(hAx,'units',units);
     % axes size in axes units
     xLim=get(gca,'xLim'); yLim=get(gca,'yLim');
