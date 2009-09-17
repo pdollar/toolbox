@@ -10,7 +10,7 @@ function C = multiTimes( A, B, type )
 %  2.2  - C(:,:,i) = A(:,:,i)*B(:,:,i)'
 %  3    - C(:,i) = A(:,:,i)*B(:,i)
 %  3.1  - C(:,i) = A(:,:,i)'*B(:,i)
-%  4.1  - C(i) = tr(A(:,:,i)'*B(:,:,i))
+%  4.1  - C(i) = trace(A(:,:,i)'*B(:,:,i))
 % Corresponding dimensions of A and B must match appropriately.
 %
 % USAGE
@@ -40,9 +40,9 @@ ma = size(A,1); na = size(A,2); oa = size(A,3);
 mb = size(B,1); nb = size(B,2); ob = size(B,3);
 
 % just to simplify the reading
-if ma==mb; m = ma; end
-if na==nb; n = na; end
-if oa==ob; o = oa; end
+if( ma==mb ); m = ma; end
+if( na==nb ); n = na; end
+if( oa==ob ); o = oa; end
 
 switch type
   case 1    % C(:,:,i) = A(:,:,i)*B(:,:)
@@ -60,12 +60,15 @@ switch type
       [na ma 1 o]),reshape(B,[1 mb nb o])),2),[na nb o]);
   case 2.2  % C(:,:,i) = A(:,:,i)*B(:,:,i)'
     C = reshape(sum(bsxfun(@times,reshape(A,...
-      [ma na 1 o]),reshape(permute(B,[2,1,3]),[ 1 nb mb o])),2),[ma mb o]);
+      [ma na 1 o]),reshape(permute(B,[2,1,3]),[1 nb mb o])),2),[ma mb o]);
   case 3    % C(:,i) = A(:,:,i)*B(:,i)
     C = reshape(sum(bsxfun(@times, A, reshape(B,[1 mb nb ])),2),ma,nb);
   case 3.1  % C(:,i) = A(:,:,i)'*B(:,i)
     C = reshape(sum(bsxfun(@times, permute(A,[2,1,3]), ...
       reshape(B,[1 mb nb ])),2),na,nb);
   case 4.1  % C(i) = tr(A(:,:,i)'*B(:,:,i))
-    C = sum(reshape(permute(A,[2,1,3]),m*n,o).*reshape(permute(B,[2,1,3]),m*n,o),1);
+    C = sum(reshape(permute(A,[2,1,3]),m*n,o)...
+      .*reshape(permute(B,[2,1,3]),m*n,o),1);
+  otherwise
+    error('unknown type: %f',type);
 end
