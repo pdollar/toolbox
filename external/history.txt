@@ -1,4 +1,5 @@
 Version NEW
+ -added matlab/multiDiv.m (similar to multiTimes but for division)
  -added images/imRectRot.m: draggable, resizable, rotatable rect or ellipse
  -fixed some compatibility issues with Octave
  -added new cases to multiTimes
