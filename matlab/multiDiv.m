@@ -25,9 +25,10 @@ function C = multiDiv( A, B, type )
 %  C         - result of the division
 %
 % EXAMPLE
-%  n=10000; A=randn(2,2,n); B=randn(2);
-%  tic, C1=multiDiv(A,B,1); toc
-%  tic, C2=zeros(size(A)); for i=1:n, C2(:,:,i)=A(:,:,i)\B; end; toc
+%  n=30000; A=randn(2,2,n); B=randn(2,n);
+%  tic, C1=multiDiv(A,B,3); toc
+%  tic, C2=zeros(size(C1)); for i=1:n, C2(:,i)=A(:,:,i)\B(:,i); end; toc
+%  norm(C1-C2,'fro')
 %
 % See also BSXFUN, MULTITIMES
 %
