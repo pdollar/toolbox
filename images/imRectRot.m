@@ -1,4 +1,79 @@
 function [hPatch,api] = imRectRot( varargin )
+% Create a draggable, resizable, rotatable rectangle or ellipse.
+%
+% The 'ellipse' param determines if the displayed object is a rectangle or
+% ellipse. The object is identical in both cases, only the display changes.
+% The created object may be queried or controlled programatically by using
+% the returned api.
+%
+% The 'rotate' param determines overall behavior of the created object. If
+% rotate=0, the resulting object (rect or ellipse) is axis aligned. In
+% terms of the graphical interface it is identical to Matlab's imrect (can
+% drag by clicking in interior or resize by clicking on edges), although it
+% is much less cpu intensive. If rotate>0, the resulting object is
+% rotatable. In addition to the interface for a non-rotatable object, four
+% control points are present, one at the center of each edge. Three of
+% these have color given by the 'color' flag, the last has color 'colorc'.
+% The odd colored control point is used to display orientation. Dragging
+% this control point or the one opposite changes orientation, dragging the
+% remaining two resizes the object symmetrically. Finally, when creating a
+% rotatable object, the first drag determines the major axes (height) of
+% the object, with the width set to height*rotate (hence the rotate param
+% also determines aspect ratio of newly created objects). Using this
+% control scheme, an object can be naturally specified with two drags: the
+% first is used to draw the major axes, the second to adjust the width.
+%
+% Position is represented by [x y w h theta], where [x,y] give the top/left
+% corner of the rect PRIOR to rotation, [w,h] are the width and height, and
+% theta is the angle in degrees. The final rect is given by first placing
+% the rect at [x,y], then rotating it by theta around it's center. The
+% advantage of this is that if theta=0, the first four elements are
+% identical to the standard rect representation. The disadvantage is that
+% [x,y] need not lie in the interior of the rect after rotation.
+%
+% USAGE
+%  [h,api] = imRectRot( varargin )
+%
+% INPUTS
+%  varargin   - parameters (struct or name/value pairs)
+%   .hParent    - [gca] object parent, typically an axes object
+%   .ellipse    - [0] if true display ellipse otherwise display rectangle
+%   .rotate     - [1] determines if object is axis aligned
+%   .pos        - [] initial pos vector [x y w h theta] or [] or [x y]
+%   .lims       - [] rectangle defining valid region for object placement
+%   .showLims   - [0] draw rectangle representing lims
+%   .color      - ['g'] color for the displayed object
+%   .colorc     - ['b'] color for the control point displaying orientation
+%   .lw         - [2] 'LineWidth' property for the displayed object
+%
+% OUTPUTS
+%  h          - handle used to delete object
+%  api        - interface allowing access to created object
+%  .getPos()       - get position - returns 5 elt pos
+%  .setPos(pos)    - set position (while respecting constraints)
+%  .setPosLock(b)  - if lock set (b==true), object cannot change
+%  .setSizLock(b)  - if lock set (b==true), object cannot change size
+%  .setPosChnCb(f) - whenever pos changes (even slightly), calls f(pos)
+%  .setPosSetCb(f) - whenever pos finished changing, calls f(pos)
+%  .uistack(...)   - calls 'uistack( [objectHandles], ... )', see uistack
+%
+% EXAMPLE - interactively place simple axis aligned rectangle
+%  figure(1), imshow peppers.png;
+%  [h,api]=imRectRot('rotate',0);
+%  api.setPosChnCb( @(pos) disp(num2str(pos)) );
+%
+% EXAMPLE - create rotatable ellpise that falls inside image
+%  figure(1); I=imread('cameraman.tif'); imshow(I); siz=size(I);
+%  [h,api]=imRectRot('pos',[60 60 40 40 45],'lims',[1 1 siz(1:2)-2 0],...
+%    'showLims',1,'ellipse',1,'rotate',1,'color','w','colorc','y'  );
+%  api.setPosSetCb( @(pos) disp(num2str(pos)) );
+%
+% See also IMRECT, RECTANGLE, PATCH
+%
+% Piotr's Image&Video Toolbox      Version NEW
+% Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Please email me if you find bugs, or have suggestions or questions!
+% Licensed under the Lesser GPL [see external/lgpl.txt]
 
 % global variables (shared by all functions below)
 [hParent,pos,lims,rotate,crXs,crYs,posChnCb,posSetCb,posLock,sizLock,...
@@ -16,9 +91,9 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
 
   function intitialize( varargin )
     % get default arguments
-    dfs={'hParent',gca, 'pos',[], 'lims',[], 'showLims',0,...
-      'ellipse',1, 'rotate',1, 'color','g', 'colorc','b', 'lw',2 };
-    [hParent,pos,lims,showLims,ellipse,rotate,color,colorc,lw] = ...
+    dfs={'hParent',gca, 'ellipse',0, 'rotate',1, 'pos',[], 'lims',[], ...
+      'showLims',0, 'color','g', 'colorc','b', 'lw',2 };
+    [hParent,ellipse,rotate,pos,lims,showLims,color,colorc,lw] = ...
       getPrmDflt(varargin,dfs,1);
     
     % get figure and axes handles
@@ -35,8 +110,10 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
     if( ellipse ), linePrp={'color',[.7 .7 .7],'LineWidth',1};
     else linePrp={'color',color,'LineWidth',lw}; end
     if(isempty(pos)); vis='off'; else vis='on'; end;
-    hPatch=patch('FaceColor','none','EdgeColor','none');
     for i=1:4, hBnds(i)=line(linePrp{:},'Visible',vis); end
+    
+    % create transparent patch to capture clicks in object interior
+    hPatch=patch('FaceColor','none','EdgeColor','none');
     
     % create objects for ellipse display/interface
     if( ellipse )
