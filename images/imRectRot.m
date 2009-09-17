@@ -150,15 +150,16 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
     t = axisUnitsPerCentimeter()*.15; side=[0 0]; flag=0;
     for i=1:2
       ti = min(t,rs(i)/3);
-      if( abs(pnt(i))<ti ), side(i)=2; % near center
+      if( abs(pnt(i))<ti && ~isempty(hCntr)), side(i)=2; % near center
       elseif( pnt(i)<-rs(i)+ti ), side(i)=-1; % near lf/tp boundary
       elseif( pnt(i)>rs(i)-ti), side(i)=1; % near rt/bt boundary
       end
     end
+    % flag: 0=resize; 1=drag; 2=rotate; 3=symmetric-resize
     if(any(side==0) || all(side==2)), side(side==2)=0; end
-    if(any(side==2) && any(side~=[2 -1])), side(side==2)=0; end
     if(all(side==0)), flag=1; side=pnt0; cursor='fleur'; return; end
-    if(any(side==2)), flag=2; cursor='crosshair'; return; end
+    if(side(1)==2), flag=2; cursor='crosshair'; return; end
+    if(side(2)==2), flag=3; side(2)=0; end
     % select cursor based on position
     cs={'bottom','botr','right','topr','top','topl','left','botl'};
     a=mod(round((atan2(side(1),side(2))/pi-th/180)*4),8)+1; cursor=cs{a};
@@ -181,18 +182,21 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
 
   function drag( h, evnt, flag, anchor, pos0 ) %#ok<INUSL>
     if(isempty(hBnds) || isempty(hPatch)); return; end;
-    pnt = getCurPnt(); del = pnt-anchor;
-    if( flag==1 ) % shift rectangle by del
-      setPos( [pos0(1:2)+del pos0(3:5)] );
-    elseif( flag==0 ) % resize in rectangle coordinate frame
-      [pc,rs,R]=rectInfo(pos0); p0=-rs; p1=rs; del=(pnt-pc)*R;
-      for i=1:2, if(anchor(i)>0), p1(i)=del(i); end; end
-      for i=1:2, if(anchor(i)<0), p0(i)=del(i); end; end
-      p0a=min(p0,p1); p1=max(p0,p1); p0=p0a;
+    pnt = getCurPnt();
+    if( flag==1 ) % shift rectangle by del=pnt-anchor
+      setPos( [pos0(1:2)+(pnt-anchor) pos0(3:5)] );
+    elseif( flag==0 || flag==3 ) % resize in rectangle coordinate frame
+      [pc,rs,R]=rectInfo(pos0); p0=-rs; p1=rs; pnt=(pnt-pc)*R;
+      if( flag==3 ), p0(1)=-pnt(1); p1(1)=pnt(1); else
+        for i=1:2, if(anchor(i)>0), p1(i)=pnt(i); end; end
+        for i=1:2, if(anchor(i)<0), p0(i)=pnt(i); end; end
+      end; p0a=min(p0,p1); p1=max(p0,p1); p0=p0a;
       setPos(cornersToRect(pos0,p0(1),p0(2),p1(1),p1(2)));
-    else % rotate rectangle
+    elseif( flag==2) % rotate rectangle
       [pts,xs,ys]=rectToCorners(pos0);
-      p0=mean([xs([3 4]) ys([3 4])]); pc=(p0+pnt)/2; d=pnt-p0;
+      if(anchor(2)==-1), ids=[3 4]; else ids=[1 2]; end
+      p0=mean([xs(ids) ys(ids)]); pc=(p0+pnt)/2;
+      if(anchor(2)==-1), d=pnt-p0; else d=p0-pnt; end
       w=pos(3); h=sqrt(sum(d.^2)); th=atan2(d(1),-d(2))/pi*180;
       setPos([pc(1)-w/2 pc(2)-h/2 w h th]);
     end
@@ -226,7 +230,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
 
   function uistack1( varargin )
     if(isempty(hBnds) || isempty(hPatch)); return; end;
-    uistack( [hBnds hPatch], varargin{:} );
+    uistack( [hBnds hPatch hCntr hEll], varargin{:} );
   end
 
 end
