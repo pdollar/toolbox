@@ -1,17 +1,16 @@
 function [hPatch,api] = imRectRot( varargin )
 
 % global variables (shared by all functions below)
-[hParent,pos,lims,crXs,crYs,posChnCb,posSetCb,posLock,sizLock,...
+[hParent,pos,lims,rotate,crXs,crYs,posChnCb,posSetCb,posLock,sizLock,...
   hAx,hFig,hPatch,hBnds,hCntr,hEll] = deal([]);
 
 % intitialize
 intitialize( varargin{:} );
 
 % create api
-api = struct('getPos',@getPos, 'setPos',@setPos, ...
+api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
   'setPosChnCb',@setPosChnCb, 'setPosSetCb',@setPosSetCb, ...
-  'setPosLock',@setPosLock, 'setSizLock',@setSizLock, ...
-  'setAr',@setAr, 'uistack',@uistack1 );
+  'setPosLock',@setPosLock, 'setSizLock',@setSizLock );
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -28,7 +27,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
     set( hFig, 'CurrentAxes', hAx );
     
     % optionally display limits
-    if( showLims ), [disc,xs,ys]=rectToCorners(lims);
+    if(showLims && ~isempty(lims)), [disc,xs,ys]=rectToCorners(lims);
       for j=1:4, ids=mod([j-1 j],4)+1; line(xs(ids),ys(ids)); end
     end
     
@@ -170,8 +169,10 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
     if(posLock); return; end; if(sizLock); flag=1; end;
     if( flag==-1 ) % create new rectangle
       if(isempty(pos)), anchor=ginput(1); else anchor=pos(1:2); end
-      setPos( [anchor 1 1 0] );
-      set([hBnds hCntr hEll],'Visible','on'); cursor='botr'; flag=0;
+      pos=[anchor 1 1 0]; setPos(pos);
+      set([hBnds hCntr hEll],'Visible','on');
+      if(rotate), cursor='crosshair'; flag=4;
+      else cursor='botr'; flag=0; end
     else % resize, rotate or drag rectangle
       pnt=getCurPnt(); [anchor,cursor,flag]=getSide( pnt );
     end
@@ -192,12 +193,13 @@ api = struct('getPos',@getPos, 'setPos',@setPos, ...
         for i=1:2, if(anchor(i)<0), p0(i)=pnt(i); end; end
       end; p0a=min(p0,p1); p1=max(p0,p1); p0=p0a;
       setPos(cornersToRect(pos0,p0(1),p0(2),p1(1),p1(2)));
-    elseif( flag==2) % rotate rectangle
+    elseif( flag==2 || flag==4 ) % rotate rectangle
       [pts,xs,ys]=rectToCorners(pos0);
       if(anchor(2)==-1), ids=[3 4]; else ids=[1 2]; end
       p0=mean([xs(ids) ys(ids)]); pc=(p0+pnt)/2;
       if(anchor(2)==-1), d=pnt-p0; else d=p0-pnt; end
-      w=pos(3); h=sqrt(sum(d.^2)); th=atan2(d(1),-d(2))/pi*180;
+      h=sqrt(sum(d.^2)); th=atan2(d(1),-d(2))/pi*180;
+      if(flag==2), w=pos(3); else w=h*rotate; end
       setPos([pc(1)-w/2 pc(2)-h/2 w h th]);
     end
     if(~isempty(posChnCb)); posChnCb(pos); end;
