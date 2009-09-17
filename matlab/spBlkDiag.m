@@ -1,36 +1,37 @@
-function [ B, m, n, k, rs, cs ] = spBlkDiag( A, m0, n0, k0, rs, cs )
-% Creates a sparse block diagonal matrix from a 3D array
-% 
-% If A is too big to create a big sparse matrix, it is nice to call
-% this function with submatrices of (e.g. A(:,:,1:10)).
-% In this case, the temporary indices should be stored and resent
-% to spBlkDiag for efficiency purposes.
-% Most users probably just need to call B = spBlkDiag( A )
+function [B, m, n, k, rs, cs] = spBlkDiag( A, m0, n0, k0, rs, cs )
+% Creates a sparse block diagonal matrix from a 3D array.
+%
+% Given an [mxnxk] matrix A, construct a sparse block diagonal matrix B of
+% dims [m*k x n*k], containing k blocks of size mxn each, where each block
+% i is taken from A(:,:,i).
+%
+% When computing B, a time consuming step is to compute a series of indices
+% (rs,cs). These indices are fixed for given dims of A and can be re-used.
+% spBlkDiag's additional inputs/outputs can be used to cache these indices.
 %
 % USAGE
-%  B = spBlkDiag( A )
-%  [ B, m, n, k, rs, cs ] = spBlkDiag( A, m0, n0, k0, rs, cs )
+%  [B, m, n, k, rs, cs] = spBlkDiag( A, [m0], [n0], [k0], [rs], [cs] )
 %
 % INPUTS
-%  A       - [ m x n x k ] matrix containing the k blocks to diagonalize
-%  m0      - previous first dimension of A
-%  n0      - previous second dimension of A
-%  k0      - previous third dimension of A
-%  rs      - previous list of row indices
-%  cs      - previous list of column indices
+%  A       - [m x n x k] input matrix of k mxn blocks
+%  m0      - cached 1st dim of A
+%  n0      - cached 2nd dim of A
+%  k0      - cached 3rd dim of A
+%  rs      - cached list of row indices
+%  cs      - cached list of col indices
 %
 % OUTPUT
-%  B       - [ m*k x n*k ] sparse matrix containing the k blocks
-%  m       - new first dimension of A
-%  n       - new second dimension of A
-%  k       - new third dimension of A
+%  B       - [m*k x n*k] sparse block diagonal matrix with k mxn blocks
+%  m       - new 1st dim of A
+%  n       - new 2nd dim of A
+%  k       - new 3rd dim of A
 %  rs      - new list of row indices
-%  cs      - new list of column indices
+%  cs      - new list of col indices
 %
 % EXAMPLE
-%  spBlkDiag(rang(3,4,2));
+%  A=rand(3,4,2); B=spBlkDiag(A); full(B)
 %
-% See also 
+% See also SPARSE, BLKDIAG
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -40,7 +41,7 @@ function [ B, m, n, k, rs, cs ] = spBlkDiag( A, m0, n0, k0, rs, cs )
 [m,n,k]=size(A);
 
 % compute the indices of the elements in the sparse matrix
-if (nargin==1 || isempty(m0) || m~=m0 || n~=n0 || k~=k0 )
+if( nargin<6 || isempty(m0) || m~=m0 || n~=n0 || k~=k0 )
   ds=(1:m)'; rs=reshape(1:m*k,m,k); rs=rs(ds(:,ones(1,n)),:); rs=rs(:);
   cs=1:n*k; cs=cs(ones(m,1),:); cs=cs(:);
 end
