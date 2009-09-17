@@ -1,17 +1,17 @@
 Version NEW
- -Adds some compatibility with Octave
- -Added new cases to multiTimes
- -Added a sparse block matrix generation in spBlkDiag
- -Added "detection and bb support" to /images:
+ -added images/imRectRot.m: draggable, resizable, rotatable rect or ellipse
+ -fixed some compatibility issues with Octave
+ -added new cases to multiTimes
+ -added a sparse block matrix generation in spBlkDiag
+ -added "detection and bb support" to /images:
   -moved bbApply to /images (from /matlab)
+  -generalized bbApply>random
   -added bbGt: routines for evaluating object detection results
   -added bbEval: data structure and routines for bb annotations
   -added bbNms: Non-maximal suppression of bbs (including 'cover')
- -Sped up pdist2.m for squared Euclidean case (thanks Vincent)
- -imResample can now take inputs of type uint8
- -generalized seqIo.m>to/frimgs
- -generalized bbApply>random
- -seqIo.m: added case for making seq file from array of images
+ -sped up pdist2.m for squared Euclidean case (thanks Vincent)
+ -images/imResample.m can now take inputs of type uint8
+ -seqIo.m: generalized to/frimgs
  -moved modefilt1.m form /image to /filters
  -added filters/medfilt1m.m: adaptive median filtering with missing values
  -added txt2img.m and char2img.m to /matlab: Convert text to binary image
