@@ -51,6 +51,11 @@ function bbs = bbNms( bbs, varargin )
 %  bbs2 = bbNms(bbs, 'thr',.5, 'type','ms')
 %
 % See also bbApply, nonMaxSuprList
+%
+% Piotr's Image&Video Toolbox      Version 2.35
+% Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Please email me if you find bugs, or have suggestions or questions!
+% Licensed under the Lesser GPL [see external/lgpl.txt]
 
 % get parameters
 dfs={'type','max','thr',[],'maxn',500,'radii',[.15 .15 1 1],'overlap',.5};
