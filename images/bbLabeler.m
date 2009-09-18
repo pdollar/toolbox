@@ -228,15 +228,18 @@ imgApi.setImgDir(imgDir);
     function objSetBb( bb, objId )
       curObj=objId; o=objs(objId); bb=round(bb); objs(objId).bb=bb(1:4);
       if(any(bb(3:4)<minSiz)), objDel(); return; end;
-      if(o.occ), objSetBbv(o.bbv,objId); else objsDraw(); end
+      if(o.occ), objSetBbv(o.bbv,objId,o.bb); else objsDraw(); end
     end
     
-    function objSetBbv( bbv, objId )
+    function objSetBbv( bbv, objId, bbPrv )
       curObj=objId; o=objs(objId); bbv=round(bbv(1:4));
-      if(~o.occ), bbv=[0 0 0 0]; else
-        bbv = bbApply( 'intersect', bbv, o.bb );
-        if(any(bbv(3:4)<minSiz)), bbv=o.bb; end
+      if(~o.occ), objs(objId).bbv=[0 0 0 0]; objsDraw(); return; end
+      if(nargin==3)
+        bbv=[(bbv(1:2)-bbPrv(1:2))./bbPrv(3:4) bbv(3:4)./bbPrv(3:4)];
+        bbv=[(bbv(1:2).*o.bb(3:4))+o.bb(1:2) bbv(3:4).*o.bb(3:4)];
       end
+      bbv = bbApply( 'intersect', bbv, o.bb );
+      if(any(bbv(3:4)<minSiz)), bbv=o.bb; end
       objs(objId).bbv=bbv; objsDraw();
     end
     
