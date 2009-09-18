@@ -161,10 +161,8 @@ imgApi.setImgDir(imgDir);
     % variables
     [resNm,objs,nObj,hsObj,curObj,lims] = deal([]);
     
-    % display properties for rectangles
-    rpCur = {'LineWidth',2,'LineStyle',':','EdgeColor'};
-    rpAll = {'LineWidth',2,'LineStyle','-','EdgeColor'};
-    rpOcc = {'LineWidth',1,'LineStyle','-','EdgeColor','y'};
+    % default display properties for rectangles
+    rpDef=struct('ellipse',0,'rotate',0,'hParent',hAx,'lw',2,'ls','-');
     
     % callbacks
     set(pTop.hDel,'Callback',@(h,evnt) objDel());
@@ -189,6 +187,7 @@ imgApi.setImgDir(imgDir);
     function openAnn()
       % try to load annotation, prepare for new image
       assert(nObj==0); lims=[get(gca,'xLim'); get(gca,'yLim')];
+      lims=[lims(:); 0]'; lims(3:4)=lims(3:4)-lims(1:2);
       resNm=[resDir '/' imgFiles{imgInd} '.txt'];
       if(exist(resNm,'file')), objs=bbGt('bbLoad',resNm); end
       nObj=length(objs); objsDraw();
@@ -198,10 +197,9 @@ imgApi.setImgDir(imgDir);
       delete(hsObj); hsObj=zeros(1,nObj);
       % display regular bbs
       for id=1:nObj
-        o=objs(id); if(curObj==id), rp=rpCur; else rp=rpAll; end
-        color=colors{strcmp(o.lbl,objTypes)};
-        if(o.ign), rp=[{'FaceColor','k'},rp]; end %#ok<AGROW>
-        [hsObj(id),rectApi] = imrectLite(hAx,o.bb,lims,0,rp{:},color);
+        o=objs(id); rp=rpDef; rp.color=colors{strcmp(o.lbl,objTypes)};
+        if(curObj==id), rp.ls=':'; end; if(o.ign), rp.cross=2; end;
+        rp.pos=[o.bb 0]; rp.lims=lims; [hsObj(id),rectApi]=imRectRot(rp);
         rectApi.setPosSetCb(@(bb) objSetBb(bb,id));
         rectApi.setPosChnCb(@(bb) objChnBb(bb,id));
         if(id==curObj), rectApiCur=rectApi; end
@@ -209,9 +207,9 @@ imgApi.setImgDir(imgDir);
       if(curObj>0), rectApiCur.uistack('top'); end
       % display occluded bbs
       for id=1:nObj
-        o=objs(id); if(~o.occ), continue; end
-        limsv = [o.bb(1) o.bb(1)+o.bb(3); o.bb(2) o.bb(2)+o.bb(4)];
-        [hObj,rectApi] = imrectLite(hAx,o.bbv,limsv,0,rpOcc{:});
+        o=objs(id); if(~o.occ), continue; end; rp=rpDef;
+        rp.color='y'; rp.lw=1; rp.pos=[o.bbv 0]; rp.lims=[o.bb 0];
+        [hObj,rectApi] = imRectRot( rp );
         rectApi.setPosSetCb(@(bbv) objSetBbv(bbv,id));
         hsObj=[hsObj hObj]; %#ok<AGROW>
       end
@@ -228,13 +226,13 @@ imgApi.setImgDir(imgDir);
     end
     
     function objSetBb( bb, objId )
-      curObj=objId; o=objs(objId); bb=round(bb); objs(objId).bb=bb;
+      curObj=objId; o=objs(objId); bb=round(bb); objs(objId).bb=bb(1:4);
       if(any(bb(3:4)<minSiz)), objDel(); return; end;
       if(o.occ), objSetBbv(o.bbv,objId); else objsDraw(); end
     end
     
     function objSetBbv( bbv, objId )
-      curObj=objId; o=objs(objId); bbv=round(bbv);
+      curObj=objId; o=objs(objId); bbv=round(bbv(1:4));
       if(~o.occ), bbv=[0 0 0 0]; else
         bbv = bbApply( 'intersect', bbv, o.bb );
         if(any(bbv(3:4)<minSiz)), bbv=o.bb; end
@@ -250,13 +248,13 @@ imgApi.setImgDir(imgDir);
     function objNew()
       curObj=0; objsDraw();
       pnt=get(hAx,'CurrentPoint'); pnt=pnt([1,3]); curObj=0;
-      lblId=get(pTop.hLbl,'Value'); rp=[rpCur colors(lblId)];
-      [hR,rectApi] = imrectLite(hAx,pnt,lims,[],rp{:});
+      lblId=get(pTop.hLbl,'Value'); rp=rpDef; rp.color=colors{lblId};
+      rp.ls=':'; rp.pos=pnt; rp.lims=lims; [hObj,rectApi]=imRectRot(rp);
       lbl=objTypes{lblId}; bb=round(rectApi.getPos());
       if( ~isempty(bb) && all(bb(3:4)>=minSiz) )
-        obj=bbGt('create'); obj.lbl=lbl; obj.bb=bb;
+        obj=bbGt('create'); obj.lbl=lbl; obj.bb=bb(1:4);
         objs=[objs; obj]; nObj=nObj+1; curObj=nObj;
-      end; delete(hR); objsDraw();
+      end; delete(hObj); objsDraw();
     end
     
     function objDel()
