@@ -33,7 +33,7 @@ function varargout = getPrmDflt( prm, dfs, checkExtra )
 %
 % See also INPUTPARSER
 %
-% Piotr's Image&Video Toolbox      Version 2.20
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -78,11 +78,12 @@ if checkExtra
     end
   end
 end
+
 if exist('OCTAVE_VERSION','builtin')
   toDo=[];
   for i = 1 : length(dfsField)
     if ~isfield( prm, dfsField{i} );
-      toDo(end+1)=i;
+      toDo(end+1)=i; %#ok<AGROW>
     end
   end
 else

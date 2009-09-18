@@ -88,7 +88,7 @@ function varargout=rotationMatrix(varargin)
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 2.10
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -114,7 +114,7 @@ if all(size(varargin{1})==[3 3]) && nargout==2
   else
     theta = acos(real( d(1,1) ));
   end
-
+  
   %now resolve sign ambiguity
   epsilon = ones(3)*.000001;
   dif = R-rotationMatrix(u,theta);
