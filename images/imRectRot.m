@@ -45,6 +45,7 @@ function [hPatch,api] = imRectRot( varargin )
 %   .color      - ['g'] color for the displayed object
 %   .colorc     - ['b'] color for the control point displaying orientation
 %   .lw         - [2] 'LineWidth' property for the displayed object
+%   .ls         - ['-'] 'LineStyle' property for the displayed object
 %
 % OUTPUTS
 %  h          - handle used to delete object
@@ -92,8 +93,8 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
   function intitialize( varargin )
     % get default arguments
     dfs={'hParent',gca, 'ellipse',0, 'rotate',1, 'pos',[], 'lims',[], ...
-      'showLims',0, 'color','g', 'colorc','b', 'lw',2 };
-    [hParent,ellipse,rotate,pos,lims,showLims,color,colorc,lw] = ...
+      'showLims',0, 'color','g', 'colorc','b', 'lw',2, 'ls','-' };
+    [hParent,ellipse,rotate,pos,lims,showLims,color,colorc,lw,ls] = ...
       getPrmDflt(varargin,dfs,1);
     
     % get figure and axes handles
@@ -108,7 +109,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
     
     % create objects for rectangle display/interface
     if( ellipse ), linePrp={'color',[.7 .7 .7],'LineWidth',1};
-    else linePrp={'color',color,'LineWidth',lw}; end
+    else linePrp={'color',color,'LineWidth',lw,'LineStyle',ls}; end
     if(isempty(pos)); vis='off'; else vis='on'; end;
     for i=1:4, hBnds(i)=line(linePrp{:},'Visible',vis); end
     
@@ -117,7 +118,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
     
     % create objects for ellipse display/interface
     if( ellipse )
-      ellPrp={'LineWidth',lw,'color',color};
+      ellPrp={'color',color,'LineWidth',lw,'LineStyle',ls};
       ts=linspace(-180,180,50); crXs=cosd(ts); crYs=sind(ts);
       hold on; hEll=plot(crXs,crYs,ellPrp{:},'Visible',vis); hold off;
     end
