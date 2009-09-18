@@ -46,6 +46,7 @@ function [hPatch,api] = imRectRot( varargin )
 %   .colorc     - ['b'] color for the control point displaying orientation
 %   .lw         - [2] 'LineWidth' property for the displayed object
 %   .ls         - ['-'] 'LineStyle' property for the displayed object
+%   .cross      - [0] if 1 show diagonal, if 2 show cross
 %
 % OUTPUTS
 %  h          - handle used to delete object
@@ -93,8 +94,8 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
   function intitialize( varargin )
     % get default arguments
     dfs={'hParent',gca, 'ellipse',0, 'rotate',1, 'pos',[], 'lims',[], ...
-      'showLims',0, 'color','g', 'colorc','b', 'lw',2, 'ls','-' };
-    [hParent,ellipse,rotate,pos,lims,showLims,color,colorc,lw,ls] = ...
+      'showLims',0,'color','g','colorc','b','lw',2,'ls','-','cross',0};
+    [hParent,ellipse,rotate,pos,lims,showLims,color,colorc,lw,ls,cross]=...
       getPrmDflt(varargin,dfs,1);
     
     % get figure and axes handles
@@ -111,7 +112,8 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
     if( ellipse ), linePrp={'color',[.7 .7 .7],'LineWidth',1};
     else linePrp={'color',color,'LineWidth',lw,'LineStyle',ls}; end
     if(isempty(pos)); vis='off'; else vis='on'; end;
-    for i=1:4, hBnds(i)=line(linePrp{:},'Visible',vis); end
+    assert(cross==0 || cross==1 || cross==2);
+    for i=1:4+cross, hBnds(i)=line(linePrp{:},'Visible',vis); end
     
     % create transparent patch to capture clicks in object interior
     hPatch=patch('FaceColor','none','EdgeColor','none');
@@ -194,9 +196,10 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
     end
     % draw rectangle boundaries and control circles
     r=max(2,min([axisUnitsPerCentimeter()*.15,5,pos(3:4)/4]));
-    for i=1:4, ids=mod([i-1 i],4)+1;
+    for i=1:length(hBnds), ids=mod([i-1 i],4)+1;
+      if(i==5), ids=[1 3]; elseif(i==6), ids=[2 4]; end
       set(hBnds(i),'Xdata',xs(ids),'Ydata',ys(ids));
-      if(~isempty(hCntr)), x=mean(xs(ids)); y=mean(ys(ids));
+      if(~isempty(hCntr) && i<=4), x=mean(xs(ids)); y=mean(ys(ids));
         set(hCntr(i),'Position',[x-r y-r 2*r 2*r]);
       end
     end
