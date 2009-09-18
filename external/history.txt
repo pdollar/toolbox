@@ -1,23 +1,21 @@
-Version NEW
+Version 2.35 (17-Sep-09)
+ -tested w Matlab 2009b (some mlint errors due to new tilde ~ operator)
+ -added windows 64-bit binaries
  -added matlab/multiDiv.m (similar to multiTimes but for division)
  -added images/imRectRot.m: draggable, resizable, rotatable rect or ellipse
- -fixed some compatibility issues with Octave
- -added new cases to multiTimes
- -added a sparse block matrix generation in spBlkDiag
- -added "detection and bb support" to /images:
-  -moved bbApply to /images (from /matlab)
-  -generalized bbApply>random
-  -added bbGt: routines for evaluating object detection results
-  -added bbEval: data structure and routines for bb annotations
-  -added bbNms: Non-maximal suppression of bbs (including 'cover')
- -sped up pdist2.m for squared Euclidean case (thanks Vincent)
+ -tuned images/imRectLite.m, however, now OBSOLETE (see imRectRot.m)
+ -fixed some compatibility issues w Octave (rotationMatrix and getPrmDft)
+ -added new cases to matlab/multiTimes.m
+ -added matlab/spBlkDiag.m: sparse block matrix generation
+ -moved bbApply.m to /images (from /matlab), generalized bbApply>random
+ -added images/bbNms.m: Non-maximal suppression of bbs (including 'cover')
+ -sped up classify/pdist2.m for squared Euclidean case (thanks Vincent)
  -images/imResample.m can now take inputs of type uint8
- -seqIo.m: generalized to/frimgs
+ -seqIo.m: generalized to/frimgs, tweaked seq*Plugins, seqPlayer.m
  -moved modefilt1.m form /image to /filters
  -added filters/medfilt1m.m: adaptive median filtering with missing values
  -added txt2img.m and char2img.m to /matlab: Convert text to binary image
- -added windows 64-bit binaries
-
+ 
 Version 2.31 (03-Jun-09)
  -tweaked images/imrectLite.m 
  -generalized matlab/bbApply>squarify and bbApply>toMask
