@@ -136,7 +136,7 @@ bbs = nms1(bbs,type,thr,maxn,radii,overlap);
       for j=i+1:n
         iw=min(xe(i),xe(j))-max(xs(i),xs(j)); if(iw<=0), continue; end
         ih=min(ye(i),ye(j))-max(ys(i),ys(j)); if(ih<=0), continue; end
-        o=iw*ih; o=o/(a(i)+a(j)-o); if(o>overlap), N(i,j)=1; end
+        o=iw*ih; o=o/(a(i)+a(j)-o); if(o>overlap), N(i,j)=1; end%#ok<SPRIX>
       end
     end
     % perform set cover operation (greedily choose next best)
