@@ -75,15 +75,21 @@
  getframe(), getinfo(), and seek(). Open with:
   sr = seqIo( {fName1,fName2}, 'rdual' )
 
+ mode=='getinfo': Get info about seq file.
+  info = seqIo( fName, 'getinfo' )
+
  mode=='crop': Crop subsequence from seq file:
   seqIo( fName, 'crop', tName, f0, f1 )
   seqIo( fName, 'crop', tName, frames )
 
  mode=='toimgs': Extract images from seq file to dir/I[frame,5].ext:
-  seqIo( fName, 'toimgs', dir )
+  seqIo( fName, 'toimgs', dir, [skip] )
 
  mode=='frimgs': Make seq file from images in dir/I[frame,5].ext:
-  seqIo( fName, 'frimgs', info, dir )
+  seqIo( fName, 'frimgs', dir, info, [skip] )
+
+ mode=='frimgs': Make seq file from images in array IS:
+  seqIo( fName, 'frimgs', IS, info )
 
  USAGE
   sobj = seqIo( fName, mode, varargin )
@@ -100,7 +106,7 @@
 
  See also <a href="seqPlayer.html" class="code" title="function seqPlayer( fName, dispFunc )">SEQPLAYER</a>, <a href="seqReaderPlugin.html" class="code" title="function varargout = seqReaderPlugin( cmd, h, varargin )">SEQREADERPLUGIN</a>, <a href="seqWriterPlugin.html" class="code" title="function varargout = seqWriterPlugin( cmd, h, varargin )">SEQWRITERPLUGIN</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.31
+ Piotr's Image&amp;Video Toolbox      Version 2.35
  Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>

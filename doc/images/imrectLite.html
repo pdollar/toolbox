@@ -4,7 +4,7 @@
 <head>
   <title>Description of imrectLite</title>
   <meta name="keywords" content="imrectLite">
-  <meta name="description" content="A 'lite' version of imrect (fast, bugfree, simple).">
+  <meta name="description" content="A 'lite' version of imrect [OBSOLETE: use imrectRot].">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -17,13 +17,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>A 'lite' version of imrect (fast, bugfree, simple).</strong></div>
+<div class="box"><strong>A 'lite' version of imrect [OBSOLETE: use imrectRot].</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [hRect,api] = imrectLite( hParent, pos, lims, ar, varargin ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> A 'lite' version of imrect (fast, bugfree, simple).
+<div class="fragment"><pre class="comment"> A 'lite' version of imrect [OBSOLETE: use imrectRot].
 
  There are significant problems using imrect in a larger GUI, mostly
  due to the fact that imrect is such a heavy object.  This creates a
@@ -51,8 +51,8 @@
   hRect      - handle to rectangle, use to alter color etc.
   api        - interface allowing access to created object
   .getPos()       - get position - returns 4 elt pos
-  .setPos(pos)    - set position - returns new pos
-  .setAr(ar)      - set aspect ratio , returns new pos
+  .setPos(pos)    - set position (while respecting constraints)
+  .setAr(ar)      - set aspect ratio to fixed value
   .setPosLock(b)  - if lock set (b==true), rectangle cannot change
   .setSizLock(b)  - if lock set (b==true), rectangle cannot change size
   .setPosChnCb(f) - whenever pos changes (even slightly), calls f(pos)
@@ -69,7 +69,7 @@
 
  See also IMRECT, RECTANGLE, PATCH
 
- Piotr's Image&amp;Video Toolbox      Version 2.31
+ Piotr's Image&amp;Video Toolbox      Version 2.35
  Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>

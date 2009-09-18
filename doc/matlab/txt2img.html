@@ -2,9 +2,9 @@
                 "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
 <head>
-  <title>Description of ind2sub2</title>
-  <meta name="keywords" content="ind2sub2">
-  <meta name="description" content="Improved version of ind2sub.">
+  <title>Description of txt2img</title>
+  <meta name="keywords" content="txt2img">
+  <meta name="description" content="Convert text string to a binary image.">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -13,40 +13,42 @@
 <body>
 <a name="_top"></a>
 <!-- menu.html matlab -->
-<h1>ind2sub2
+<h1>txt2img
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>Improved version of ind2sub.</strong></div>
+<div class="box"><strong>Convert text string to a binary image.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function sub = ind2sub2( siz, ind ) </strong></div>
+<div class="box"><strong>function masks = txt2img( strings, h, txtPrp ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> Improved version of ind2sub.
+<div class="fragment"><pre class="comment"> Convert text string to a binary image.
 
- Almost the same as ind2sub, except always returns only a single output
- that contains all the index locations.  Also handles multiple linear
- indicies at the same time. See help for ind2sub for more info.
+ For each input string, creates a binary matrix of dimensions [hxw] that
+ when displayed as an image shows the string. See example for usage.
+ First, uses text() to display the text using Matlab's display
+ functionality. Next uses getframe() to capture the screen and crops the
+ resulting image appropriately.
 
  USAGE
-  sub = ind2sub2( siz, ind )
+  masks = txt2img( strings, h, [txtPrp] )
 
  INPUTS
-  siz     - size of array into which ind is an index
-  ind     - linear index (or vector of indicies) into given array
+  strings  - {1xn} text string or cell array of text strings to convert
+  h        - font height in pixels
+  txtPrp   - [] additional properites for call to &quot;text&quot;
 
  OUTPUTS
-  sub     - sub(i,:) is the ith set of subscripts into the array.
+  masks    - {1xn} binary image masks of height h for each string
 
  EXAMPLE
-  sub = ind2sub2( [10,10], 20 )         % 10 2
-  sub = ind2sub2( [10,10], [20 19] )    % 10 2; 9 2
+  masks=txt2img('hello world',100); im(masks{1})
 
- See also IND2SUB, <a href="sub2ind2.html" class="code" title="function ind = sub2ind2( siz, sub )">SUB2IND2</a>
+ See also <a href="char2img.html" class="code" title="function masks = char2img( strings, h, pad )">CHAR2IMG</a>, GETFRAME, TEXT
 
- Piotr's Image&amp;Video Toolbox      Version 2.0
- Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 2.35
+ Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
 
@@ -57,7 +59,7 @@ This function calls:
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="../images/bbApply.html" class="code" title="function varargout = bbApply( action, varargin )">bbApply</a>	Functions for manipulating bounding boxes (bb).</li><li><a href="../images/convnFast.html" class="code" title="function C = convnFast( A, B, shape )">convnFast</a>	Fast convolution, replacement for both conv2 and convn.</li><li><a href="../images/maskGaussians.html" class="code" title="function [masks,keepLocs] = maskGaussians( siz, M, width, offset, show )">maskGaussians</a>	Divides a volume into softly overlapping gaussian windows.</li><li><a href="../images/nonMaxSupr.html" class="code" title="function [subs,vals] = nonMaxSupr( I, radii, thresh, maxn )">nonMaxSupr</a>	Applies nonmaximal suppression on an image of arbitrary dimension.</li></ul>
+<li><a href="char2img.html" class="code" title="function masks = char2img( strings, h, pad )">char2img</a>	Convert ascii text to a binary image using pre-computed templates.</li></ul>
 <!-- crossreference -->
 
 

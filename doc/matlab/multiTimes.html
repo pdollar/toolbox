@@ -28,9 +28,13 @@
  type controls the matrix multiplication to perform (for each i):
   1    - C(:,:,i) = A(:,:,i)*B(:,:)
   1.1  - C(i,:,:) = A(:,:,i)*B(:,:)
+  1.2  - C(:,:,i) = A(:,:)*B(:,:,i)
+  2    - C(:,:,i) = A(:,:,i)*B(:,:,i)
   2.1  - C(:,:,i) = A(:,:,i)'*B(:,:,i)
+  2.2  - C(:,:,i) = A(:,:,i)*B(:,:,i)'
   3    - C(:,i) = A(:,:,i)*B(:,i)
   3.1  - C(:,i) = A(:,:,i)'*B(:,i)
+  4.1  - C(i) = trace(A(:,:,i)'*B(:,:,i))
  Corresponding dimensions of A and B must match appropriately.
 
  USAGE
@@ -51,7 +55,7 @@
 
  See also BSXFUN, MTIMES
 
- Piotr's Image&amp;Video Toolbox      Version 2.30
+ Piotr's Image&amp;Video Toolbox      Version 2.35
  Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>

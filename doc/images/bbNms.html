@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of bbNms</title>
+  <meta name="keywords" content="bbNms">
+  <meta name="description" content="Bounding box (bb) non-maximal suppression (nms).">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>bbNms
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Bounding box (bb) non-maximal suppression (nms).</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function bbs = bbNms( bbs, varargin ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Bounding box (bb) non-maximal suppression (nms).
+
+ type=='max': nms of bbs using area of overlap criteria. For each pair of
+ bbs, if their overlap, defined by:
+  overlap(bb1,bb2) = area(intersect(bb1,bb2))/area(union(bb1,bb2))
+ is greater than overlap, then the bb with the lower score is suppressed.
+ In the Pascal critieria two bbs are considered a match if overlap&gt;=.5;
+
+ type=='maxg': Similar to 'max', except performs the nms in a greedy
+ fashion. Bbs are processed in order of decreasing score, and, unlike in
+ 'max' nms, once a bb is suppressed it can no longer suppress other bbs.
+
+ type='cover': Perform nms by attempting to choose the smallest subset of
+ the bbs such that each remaining bb is within overlap of one of the
+ chosen bbs. The above reduces to the weighted set cover problem which is
+ NP but greedy optimization yields provably good solutions. The score of
+ each bb is set to the sum of the scores of the bbs it covers (the max can
+ also be used). In practice similar to 'maxg'.
+
+ type=='ms': Mean shift nms of bbs with a variable width kernel. radii is
+ a 4 element vector (x,y,w,h) that controls the amount of suppression
+ along each dim. Typically the first two elements should be the same, as
+ should the last two. Distance between w/h are computed in log2 space (ie
+ w and w*2 are 1 unit apart), and the radii should be set accordingly.
+ radii may need to change depending on spatial and scale stride of bbs.
+
+ Although efficient, this function is O(n^2). To speed things up for large
+ n, can divide data randomly into two sets, run nms on each, combine and
+ run nms on the result. If maxn is specified, will split the set if
+ n&gt;maxn. Note that this is a heuristic and can change the results of nms.
+
+ USAGE
+  bbs = bbNms( bbs, [varargin] )
+
+ INPUTS
+  bbs        - original bbs (must be of form [x y w h wt])
+  varargin   - additional params (struct or name/value pairs)
+   .type       - ['max'] 'max', 'maxg', 'ms', 'cover', or 'none'
+   .thr        - [-inf] threshold below which to discard (0 for 'ms')
+   .maxn       - [500] if n&gt;maxn split and run recursively (see above)
+   .radii      - [.15 .15 1 1] supression radii ('ms' only, see above)
+   .overlap    - [.5] area of overlap for bbs
+
+ OUTPUTS
+  bbs      - suppressed bbs
+
+ EXAMPLE
+  bbs=[0 0 1 1 1; .1 .1 1 1 1.1; 2 2 1 1 1];
+  bbs1 = bbNms(bbs, 'type','max' )
+  bbs2 = bbNms(bbs, 'thr',.5, 'type','ms')
+
+ See also <a href="bbApply.html" class="code" title="function varargout = bbApply( action, varargin )">bbApply</a>, <a href="nonMaxSuprList.html" class="code" title="function [subs,vals,keep] = nonMaxSuprList( subs, vals, radii,thresh, maxn, flag)">nonMaxSuprList</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="nonMaxSuprList.html" class="code" title="function [subs,vals,keep] = nonMaxSuprList( subs, vals, radii,thresh, maxn, flag)">nonMaxSuprList</a>	Applies nonmaximal suppression to a list.</li><li><a href="../matlab/c.html" class="code" title="">c</a>	clc - clear command window.</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+
+<!-- Start of Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-4884268-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+<!-- end of Google Analytics Code -->
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

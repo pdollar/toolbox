@@ -12,7 +12,7 @@
 </head>
 <body>
 <a name="_top"></a>
-<!-- menu.html matlab -->
+<!-- menu.html images -->
 <h1>bbApply
 </h1>
 
@@ -34,9 +34,37 @@
  bbApply contains a number of utility functions for working with bbs. The
  format for accessing the various utility functions is:
   outputs = bbApply( 'action', inputs );
- The list of functions and help for each is given in the &quot;See also&quot;
- section. Also, help on individual subfunctions can be accessed by:
-  help bbApply&gt;action;
+ The list of functions and help for each is given below. Also, help on
+ individual subfunctions can be accessed by: &quot;help bbApply&gt;action&quot;.
+
+ Compute area of bbs.
+   bb = bbApply( 'area', bb )
+ Shift center of bbs.
+   bb = bbApply( 'shift', bb, xdel, ydel )
+ Get center of bbs.
+   cen = bbApply( 'getCenter', bb )
+ Get bb at intersection of bb1 and bb2 (may be empty).
+   bb = bbApply( 'intersect', bb1, bb2 )
+ Get bb that is union of bb1 and bb2 (smallest bb containing both).
+   bb = bbApply( 'union', bb1, bb2 )
+ Resize the bbs (without moving their centers).
+   bbr = bbApply( 'resize', bb, hr, wr, [ar] )
+ Fix bb aspect ratios (without moving the bb centers).
+   bbr = bbApply( 'squarify', bb, flag, [ar] )
+ Draw single or multiple bbs to image (calls rectangle()).
+   hs = bbApply( 'draw', bb, [col], [lw], [ls], [prop] )
+ Embed single or multiple bbs directly into image.
+  I = bbApply( 'embed', I, bb, [varargin] )
+ Crop image regions from I encompassed by bbs.
+   [patches, bbs] = bbApply('crop',I,bb,[padEl],[dims])
+ Convert bb relative to absolute coordinates and vice-versa.
+   bb = bbApply( 'convert', bb, bbRef, isAbs )
+ Uniformly generate n (integer) bbs constrained between [1,w]x[1,h].
+   bb = bbApply('random',w,h,bbw,bbh,n)
+ Convert binary mask to bbs, assuming `on' pixels indicate bb centers.
+   bbs = bbApply('frMask',M,bbw,bbh)
+ Create weighted mask encoding bb centers (or extent).
+   M = bbApply('toMask',bbs,w,h,[fill])
 
  USAGE
   varargout = bbApply( action, varargin );
@@ -53,9 +81,8 @@
  See also bbApply&gt;area bbApply&gt;shift bbApply&gt;getCenter bbApply&gt;intersect
  bbApply&gt;union bbApply&gt;resize bbApply&gt;squarify bbApply&gt;draw bbApply&gt;crop
  bbApply&gt;convert bbApply&gt;random bbApply&gt;frMask bbApply&gt;toMask
- bbApply&gt;nms bbApply&gt;nmsMax
 
- Piotr's Image&amp;Video Toolbox      Version 2.31
+ Piotr's Image&amp;Video Toolbox      Version 2.35
  Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
@@ -64,7 +91,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="../images/nonMaxSuprList.html" class="code" title="function [subs,vals,keep] = nonMaxSuprList( subs, vals, radii,thresh, maxn, flag)">nonMaxSuprList</a>	Applies nonmaximal suppression to a list.</li><li><a href="arrayCrop.html" class="code" title="function I = arrayCrop( I, strLocs, endLocs, padEl )">arrayCrop</a>	Used to crop a rectangular region from an n dimensional array.</li><li><a href="ind2sub2.html" class="code" title="function sub = ind2sub2( siz, ind )">ind2sub2</a>	Improved version of ind2sub.</li><li><a href="randint2.html" class="code" title="function R = randint2( m, n, range )">randint2</a>	Faster but restricted version of randint.</li></ul>
+<li><a href="imResample.html" class="code" title="">imResample</a>	Fast bilinear image downsampling/upsampling.</li><li><a href="../matlab/arrayCrop.html" class="code" title="function I = arrayCrop( I, strLocs, endLocs, padEl )">arrayCrop</a>	Used to crop a rectangular region from an n dimensional array.</li><li><a href="../matlab/c.html" class="code" title="">c</a>	clc - clear command window.</li><li><a href="../matlab/char2img.html" class="code" title="function masks = char2img( strings, h, pad )">char2img</a>	Convert ascii text to a binary image using pre-computed templates.</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li><li><a href="../matlab/ind2sub2.html" class="code" title="function sub = ind2sub2( siz, ind )">ind2sub2</a>	Improved version of ind2sub.</li><li><a href="../matlab/randint2.html" class="code" title="function R = randint2( m, n, range )">randint2</a>	Faster but restricted version of randint.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>

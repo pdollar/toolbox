@@ -2,9 +2,9 @@
                 "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
 <head>
-  <title>Description of ind2sub2</title>
-  <meta name="keywords" content="ind2sub2">
-  <meta name="description" content="Improved version of ind2sub.">
+  <title>Description of multiDiv</title>
+  <meta name="keywords" content="multiDiv">
+  <meta name="description" content="Matrix divide each submatrix of two 3D arrays without looping.">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -13,40 +13,44 @@
 <body>
 <a name="_top"></a>
 <!-- menu.html matlab -->
-<h1>ind2sub2
+<h1>multiDiv
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>Improved version of ind2sub.</strong></div>
+<div class="box"><strong>Matrix divide each submatrix of two 3D arrays without looping.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function sub = ind2sub2( siz, ind ) </strong></div>
+<div class="box"><strong>function C = multiDiv( A, B, type ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> Improved version of ind2sub.
+<div class="fragment"><pre class="comment"> Matrix divide each submatrix of two 3D arrays without looping.
 
- Almost the same as ind2sub, except always returns only a single output
- that contains all the index locations.  Also handles multiple linear
- indicies at the same time. See help for ind2sub for more info.
+ type controls the matrix multiplication to perform (for each i):
+  3    - C(:,i) = A(:,:,i)\B(:,i)
+ Corresponding dimensions of A and B must match appropriately.
+ Other cases (see multiTimes.m) are not yet implemented.
 
  USAGE
-  sub = ind2sub2( siz, ind )
+  C = multiDiv( A, B, type )
 
  INPUTS
-  siz     - size of array into which ind is an index
-  ind     - linear index (or vector of indicies) into given array
+  A         - [ma x na x oa] matrix
+  B         - [mb x nb x ob] matrix
+  type      - division type (see above)
 
  OUTPUTS
-  sub     - sub(i,:) is the ith set of subscripts into the array.
+  C         - result of the division
 
  EXAMPLE
-  sub = ind2sub2( [10,10], 20 )         % 10 2
-  sub = ind2sub2( [10,10], [20 19] )    % 10 2; 9 2
+  n=30000; A=randn(2,2,n); B=randn(2,n);
+  tic, C1=multiDiv(A,B,3); toc
+  tic, C2=zeros(size(C1)); for i=1:n, C2(:,i)=A(:,:,i)\B(:,i); end; toc
+  norm(C1-C2,'fro')
 
- See also IND2SUB, <a href="sub2ind2.html" class="code" title="function ind = sub2ind2( siz, sub )">SUB2IND2</a>
+ See also <a href="multiTimes.html" class="code" title="function C = multiTimes( A, B, type )">MULTITIMES</a>, <a href="spBlkDiag.html" class="code" title="function [B,inds] = spBlkDiag( A, inds )">SPBLKDIAG</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.0
- Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 2.35
+ Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
 
@@ -54,10 +58,10 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-</ul>
+<li><a href="spBlkDiag.html" class="code" title="function [B,inds] = spBlkDiag( A, inds )">spBlkDiag</a>	Creates a sparse block diagonal matrix from a 3D array.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="../images/bbApply.html" class="code" title="function varargout = bbApply( action, varargin )">bbApply</a>	Functions for manipulating bounding boxes (bb).</li><li><a href="../images/convnFast.html" class="code" title="function C = convnFast( A, B, shape )">convnFast</a>	Fast convolution, replacement for both conv2 and convn.</li><li><a href="../images/maskGaussians.html" class="code" title="function [masks,keepLocs] = maskGaussians( siz, M, width, offset, show )">maskGaussians</a>	Divides a volume into softly overlapping gaussian windows.</li><li><a href="../images/nonMaxSupr.html" class="code" title="function [subs,vals] = nonMaxSupr( I, radii, thresh, maxn )">nonMaxSupr</a>	Applies nonmaximal suppression on an image of arbitrary dimension.</li></ul>
+</ul>
 <!-- crossreference -->
 
 
