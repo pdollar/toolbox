@@ -200,8 +200,6 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
         set(hCntr(i),'Position',[x-r y-r 2*r 2*r]);
       end
     end
-    % update display
-    drawnow
   end
 
   function pnt = getCurPnt()
@@ -281,6 +279,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
       setPos([pc(1)-w/2 pc(2)-h/2 w h th]);
     end
     if(~isempty(posChnCb)); posChnCb(pos); end;
+    drawnow; % update display
   end
 
   function stopDrag( h, evnt ) %#ok<INUSD>
