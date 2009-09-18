@@ -195,7 +195,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
       set(hEll,'XData',xsEll,'YData',ysEll);
     end
     % draw rectangle boundaries and control circles
-    r=max(2,min([axisUnitsPerCentimeter()*.15,5,pos(3:4)/4]));
+    r=max(2,min([axisUnitsPerCentimeter()*.15,10,pos(3:4)/4]));
     for i=1:length(hBnds), ids=mod([i-1 i],4)+1;
       if(i==5), ids=[1 3]; elseif(i==6), ids=[2 4]; end
       set(hBnds(i),'Xdata',xs(ids),'Ydata',ys(ids));
