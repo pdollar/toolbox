@@ -1,6 +1,5 @@
 Version NEW
- -added images/bbGt.m: routines for evaluating object detection results
- -added images/bbEval.m: data structure and routines for bb annotations
+ -added images/bbGt.m: bb data struct, evaluation and sampling routines.
  -added images/bbLabeler.m: Bounding box labeler for static images.
 
 Version 2.35 (17-Sep-09)

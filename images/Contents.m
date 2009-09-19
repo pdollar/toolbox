@@ -47,8 +47,7 @@
 %
 % Detection and bb support:
 %   bbApply         - Functions for manipulating bounding boxes (bb).
-%   bbEval          - Routines for evaluating the Pascal criteria for object detection.
-%   bbGt            - Data structure for bounding box (bb) image annotations.
+%   bbGt            - Bounding box (bb) annotations struct, evaluation and sampling routines.
 %   bbLabeler       - Bounding box or ellipse labeler for static images.
 %   bbNms           - Bounding box (bb) non-maximal suppression (nms).
 %
