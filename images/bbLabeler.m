@@ -1,10 +1,11 @@
-function bbLabeler( imgDir, resDir )
+function bbLabeler( objTypes, imgDir, resDir )
 % Bounding box labeler for static images.
 %
 % USAGE
-%  bbLabeler( [imgDir], [resDir] )
+%  bbLabeler( [objTypes], [imgDir], [resDir] )
 %
 % INPUTS
+%  objTypes - ['object'] list of object types to annotate
 %  imgDir   - [pwd] directory with images
 %  resDir   - [imgDir] directory with annotations
 %
@@ -21,10 +22,11 @@ function bbLabeler( imgDir, resDir )
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 %#ok<*INUSL,*INUSD>
-if(nargin<1 || isempty(imgDir)), imgDir=pwd; end
-if(nargin<2 || isempty(resDir)), resDir=imgDir; end
+if(nargin<1 || isempty(objTypes)), objTypes='object'; end
+if(nargin<2 || isempty(imgDir)), imgDir=pwd; end
+if(nargin<3 || isempty(resDir)), resDir=imgDir; end
 if(~exist(resDir,'dir')), mkdir(resDir); end
-objTypes={'person','ignore'}; colors={'g','k'}; minSiz=[8 16];
+colors='gcmrkgcmrkgcmrkgcmrkgcmrkgcmrkgcmrk'; minSiz=[12 12];
 [hFig,hAx,pTop,imgInd,imgFiles,rotate,ellipse] = deal([]);
 makeLayout(); imgApi=imgMakeApi(); objApi=objMakeApi();
 imgApi.setImgDir(imgDir); rotate=0; ellipse=0;
@@ -197,16 +199,17 @@ imgApi.setImgDir(imgDir); rotate=0; ellipse=0;
       lims=[lims(:); 0]'; lims(3:4)=lims(3:4)-lims(1:2);
       resNm=[resDir '/' imgFiles{imgInd} '.txt'];
       if(exist(resNm,'file')), objs=bbGt('bbLoad',resNm); end
-      nObj=length(objs); objsDraw();
+      objTypes=unique([objTypes bbGt('get',objs,'lbl')']);
+      set(pTop.hLbl,'String',objTypes); nObj=length(objs); objsDraw();
     end
     
     function objsDraw()
       delete(hsObj); hsObj=zeros(1,nObj);
       % display regular bbs
       for id=1:nObj
-        o=objs(id); color=colors{strcmp(o.lbl,objTypes)};
+        o=objs(id); color=colors(strcmp(o.lbl,objTypes));
         rp=struct('ellipse',ellipse,'rotate',rotate,'hParent',hAx,...
-          'lw',1,'ls','-','pos',[o.bb o.ang],'lims',lims,'color',color);
+          'lw',2,'ls','-','pos',[o.bb o.ang],'lims',lims,'color',color);
         if(o.ign), rp.cross=2; end; if(curObj==id), rp.ls=':'; end
         [hsObj(id),rectApi]=imRectRot(rp);
         rectApi.setPosSetCb(@(bb) objSetBb(bb,id));
@@ -260,8 +263,8 @@ imgApi.setImgDir(imgDir); rotate=0; ellipse=0;
     
     function objNew()
       curObj=0; objsDraw(); pnt=get(hAx,'CurrentPoint');
-      pnt=pnt([1,3]); lblId=get(pTop.hLbl,'Value'); color=colors{lblId};
-      rp=struct('ellipse',ellipse,'rotate',rotate,'hParent',hAx,...
+      pnt=pnt([1,3]); lblId=get(pTop.hLbl,'Value'); color=colors(lblId);
+      rp=struct('ellipse',ellipse,'rotate',rotate/2,'hParent',hAx,...
         'lw',2,'ls',':','pos',pnt,'lims',lims,'color',color);
       [hObj,rectApi]=imRectRot(rp);
       lbl=objTypes{lblId}; bb=round(rectApi.getPos());
