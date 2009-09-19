@@ -1,5 +1,7 @@
 function bbLabeler( objTypes, imgDir, resDir )
-% Bounding box labeler for static images.
+% Bounding box or ellipse labeler for static images.
+%
+% Launch and click "?" icon for more info.
 %
 % USAGE
 %  bbLabeler( [objTypes], [imgDir], [resDir] )
@@ -14,7 +16,7 @@ function bbLabeler( objTypes, imgDir, resDir )
 % EXAMPLE
 %  bbLabeler
 %
-% See also
+% See also BBGT
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -120,6 +122,7 @@ imgApi.setImgDir(imgDir); rotate=0; ellipse=0;
         ' * click on existing bb: select bb'
         ' * click/drag center of existing bb: move bb'
         ' * click/drag edge of existing bb: resize bb'
+        ' * clck/drag control points: rotate/resize bb'
         ''
         'Other controls:'
         ' * d-key or del-key or X-icon: delete selected bb'
@@ -127,8 +130,8 @@ imgApi.setImgDir(imgDir); rotate=0; ellipse=0;
         ' * i-key or ign-icon: toggle ignore for bb'
         ' * e-key or ellipse-icon: toggle bb ellipse/rect display'
         ' * r-key or rotation-icon: toggle bb rotation control'
-        ' * left-arrow or <<-icon: toggle selected bb'
-        ' * right-arrow or >>-icon: toggle selected bb'
+        ' * left-arrow or <<-icon: select previous bb'
+        ' * right-arrow or >>-icon: select next bb'
         ' * up/down-arrow a-key/z-key or dropbox: select bb label' };
       hHelp = figure('NumberTitle','off', 'Toolbar','auto', ...
         'Color','k', 'MenuBar','none', 'Visible','on', ...

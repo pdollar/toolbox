@@ -49,7 +49,7 @@
 %   bbApply         - Functions for manipulating bounding boxes (bb).
 %   bbEval          - Routines for evaluating the Pascal criteria for object detection.
 %   bbGt            - Data structure for bounding box (bb) image annotations.
-%   bbLabeler       - Bounding box labeler for static images.
+%   bbLabeler       - Bounding box or ellipse labeler for static images.
 %   bbNms           - Bounding box (bb) non-maximal suppression (nms).
 %
 % Miscellaneous:
