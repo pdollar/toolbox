@@ -25,9 +25,9 @@ if(nargin<1 || isempty(imgDir)), imgDir=pwd; end
 if(nargin<2 || isempty(resDir)), resDir=imgDir; end
 if(~exist(resDir,'dir')), mkdir(resDir); end
 objTypes={'person','ignore'}; colors={'g','k'}; minSiz=[8 16];
-[hFig,hAx,pTop,imgInd,imgFiles] = deal([]);
+[hFig,hAx,pTop,imgInd,imgFiles,rotate,ellipse] = deal([]);
 makeLayout(); imgApi=imgMakeApi(); objApi=objMakeApi();
-imgApi.setImgDir(imgDir);
+imgApi.setImgDir(imgDir); rotate=0; ellipse=0;
 
   function makeLayout()
     % common properties
@@ -66,6 +66,8 @@ imgApi.setImgDir(imgDir);
     pTop.hNxt=uicontrol(pTop.h,btnPrp{:},st,'>>');
     pTop.hOcc=uicontrol(pTop.h,chbPrp{:},st,'occ');
     pTop.hIgn=uicontrol(pTop.h,chbPrp{:},st,'ign');
+    pTop.hEll=uicontrol(pTop.h,chbPrp{:},st,'ellipse');
+    pTop.hRot=uicontrol(pTop.h,chbPrp{:},st,'rotate');
     pTop.hDims=uicontrol(pTop.h,txtPrp{:},'Center',st,'');
     pTop.hNum=uicontrol(pTop.h,txtPrp{:},'Center',st,'n=0');
     pTop.hHelp=uicontrol(pTop.h,btnPrp{:},fs,12,st,'?');
@@ -95,9 +97,11 @@ imgApi.setImgDir(imgDir);
       set(pTop.hLbl,ps,[x 2 80 21]); x=x+80;
       set(pTop.hNxt,ps,[x 2 24 20]); x=x+24+5;
       set(pTop.hDims,ps,[x 5 60 14]); x=x+60;
-      set(pTop.hOcc,ps,[x 12 50 12]);
-      set(pTop.hIgn,ps,[x 0 50 12]); x=x+55;
-      set(pTop.hNum,ps,[x 5 20 14]); x=x+20+100;
+      set(pTop.hOcc,ps,[x 12 40 12]);
+      set(pTop.hIgn,ps,[x 0 40 12]); x=x+45;
+      set(pTop.hEll,ps,[x 12 50 12]);
+      set(pTop.hRot,ps,[x 0 50 12]); x=x+65;
+      set(pTop.hNum,ps,[x 5 20 14]); x=x+20+80;
       set(pTop.hHelp,ps,[x 2 20 20]);
     end
     
@@ -119,6 +123,8 @@ imgApi.setImgDir(imgDir);
         ' * d-key or del-key or X-icon: delete selected bb'
         ' * o-key or occ-icon: toggle occlusion for bb'
         ' * i-key or ign-icon: toggle ignore for bb'
+        ' * e-key or ellipse-icon: toggle bb ellipse/rect display'
+        ' * r-key or rotation-icon: toggle bb rotation control'
         ' * left-arrow or <<-icon: toggle selected bb'
         ' * right-arrow or >>-icon: toggle selected bb'
         ' * up/down-arrow a-key/z-key or dropbox: select bb label' };
@@ -145,6 +151,8 @@ imgApi.setImgDir(imgDir);
     if(char==31 || char==122), objApi.objChangeType(+1); end  % down or z
     if(char==111), objApi.objSetVal('occ',0); end  % 'o'
     if(char==105), objApi.objSetVal('ign',0); end  % 'i'
+    if(char==101), objApi.objSetVal('ell',0); end  % 'e'
+    if(char==114), objApi.objSetVal('rot',0); end  % 'r'
   end
 
   function mousePress( h, evnt )
@@ -161,9 +169,6 @@ imgApi.setImgDir(imgDir);
     % variables
     [resNm,objs,nObj,hsObj,curObj,lims] = deal([]);
     
-    % default display properties for rectangles
-    rpDef=struct('ellipse',0,'rotate',0,'hParent',hAx,'lw',2,'ls','-');
-    
     % callbacks
     set(pTop.hDel,'Callback',@(h,evnt) objDel());
     set(pTop.hPrv,'Callback',@(h,evnt) objToggle(-1));
@@ -171,6 +176,8 @@ imgApi.setImgDir(imgDir);
     set(pTop.hLbl,'Callback',@(h,evnt) objSetType());
     set(pTop.hOcc,'Callback',@(h,evnt) objSetVal('occ',1));
     set(pTop.hIgn,'Callback',@(h,evnt) objSetVal('ign',1));
+    set(pTop.hEll,'Callback',@(h,evnt) objSetVal('ell',1));
+    set(pTop.hRot,'Callback',@(h,evnt) objSetVal('rot',1));
     
     % create api
     api = struct( 'closeAnn',@closeAnn, 'openAnn',@openAnn, ...
@@ -197,9 +204,11 @@ imgApi.setImgDir(imgDir);
       delete(hsObj); hsObj=zeros(1,nObj);
       % display regular bbs
       for id=1:nObj
-        o=objs(id); rp=rpDef; rp.color=colors{strcmp(o.lbl,objTypes)};
-        if(o.ign), rp.cross=2; end; rp.pos=[o.bb o.ang]; rp.lims=lims;
-        if(curObj==id), rp.ls=':'; end; [hsObj(id),rectApi]=imRectRot(rp);
+        o=objs(id); color=colors{strcmp(o.lbl,objTypes)};
+        rp=struct('ellipse',ellipse,'rotate',rotate,'hParent',hAx,...
+          'lw',1,'ls','-','pos',[o.bb o.ang],'lims',lims,'color',color);
+        if(o.ign), rp.cross=2; end; if(curObj==id), rp.ls=':'; end
+        [hsObj(id),rectApi]=imRectRot(rp);
         rectApi.setPosSetCb(@(bb) objSetBb(bb,id));
         rectApi.setPosChnCb(@(bb) objChnBb(bb,id));
         if(id==curObj), rectApiCur=rectApi; end
@@ -207,9 +216,10 @@ imgApi.setImgDir(imgDir);
       if(curObj>0), rectApiCur.uistack('top'); end
       % display occluded bbs
       for id=1:nObj
-        o=objs(id); ang=o.ang; if(~o.occ), continue; end; rp=rpDef;
-        rp.color='y'; rp.lw=1; rp.pos=[o.bbv ang]; rp.lims=[o.bb ang];
-        rp.rotate=0; [hObj,rectApi] = imRectRot( rp );
+        o=objs(id); ang=o.ang; if(~o.occ), continue; end
+        rp=struct('ellipse',ellipse,'rotate',0,'hParent',hAx,'lw',1,...
+          'ls','-','pos',[o.bbv ang],'lims',[o.bb ang],'color','y');
+        [hObj,rectApi] = imRectRot( rp );
         rectApi.setPosSetCb(@(bbv) objSetBbv(bbv,id));
         hsObj=[hsObj hObj]; %#ok<AGROW>
       end
@@ -249,10 +259,11 @@ imgApi.setImgDir(imgDir);
     end
     
     function objNew()
-      curObj=0; objsDraw();
-      pnt=get(hAx,'CurrentPoint'); pnt=pnt([1,3]); curObj=0;
-      lblId=get(pTop.hLbl,'Value'); rp=rpDef; rp.color=colors{lblId};
-      rp.ls=':'; rp.pos=pnt; rp.lims=lims; [hObj,rectApi]=imRectRot(rp);
+      curObj=0; objsDraw(); pnt=get(hAx,'CurrentPoint');
+      pnt=pnt([1,3]); lblId=get(pTop.hLbl,'Value'); color=colors{lblId};
+      rp=struct('ellipse',ellipse,'rotate',rotate,'hParent',hAx,...
+        'lw',2,'ls',':','pos',pnt,'lims',lims,'color',color);
+      [hObj,rectApi]=imRectRot(rp);
       lbl=objTypes{lblId}; bb=round(rectApi.getPos());
       if( ~isempty(bb) && all(bb(3:4)>=minSiz) )
         obj=bbGt('create'); obj.lbl=lbl; obj.bb=bb(1:4); obj.ang=bb(5);
@@ -282,22 +293,22 @@ imgApi.setImgDir(imgDir);
     end
     
     function objSetVal( type, flag )
-      if(curObj==0), return; end
       if(strcmp(type,'occ'))
-        if( flag )
-          objs(curObj).occ=get(pTop.hOcc,'Value');
-        else
-          objs(curObj).occ=1-objs(curObj).occ;
-        end
-        objSetBbv(objs(curObj).bb,curObj);
+        if(curObj==0), return; end
+        occ = get(pTop.hOcc,'Value'); if(~flag), occ=1-occ; end
+        objs(curObj).occ=occ; objSetBbv(objs(curObj).bb,curObj); return;
       elseif(strcmp(type,'ign'))
-        if( flag )
-          objs(curObj).ign=get(pTop.hIgn,'Value');
-        else
-          objs(curObj).ign=1-objs(curObj).ign;
-        end
-        objsDraw();
+        if(curObj==0), return; end
+        ign = get(pTop.hIgn,'Value'); if(~flag), ign=1-ign; end
+        objs(curObj).ign=ign;
+      elseif(strcmp(type,'ell'))
+        ellipse = get(pTop.hEll,'Value');
+        if(~flag), ellipse=1-ellipse; set(pTop.hEll,'Value',ellipse); end
+      elseif(strcmp(type,'rot'))
+        rotate = get(pTop.hRot,'Value');
+        if(~flag), rotate=1-rotate; set(pTop.hRot,'Value',rotate); end
       end
+      objsDraw();
     end
   end
 
