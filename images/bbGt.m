@@ -13,6 +13,7 @@ function varargout = bbGt( action, varargin )
 %  occ  - 0/1 value indicating if bb is occluded
 %  bbv  - [l t w h]: bb indicating visible region (may be [0 0 0 0])
 %  ign  - 0/1 value indicating bb was marked as ignore
+%  ang  - [0-360] orientation of bb in degrees
 %
 % bbGt contains a number of utility functions, accessed using:
 %  outputs = bbGt( 'action', inputs );
@@ -75,8 +76,8 @@ function objs = create( n )
 %  objs = bbGt('create')
 %
 % See also bbGt
-objs=struct('lbl','','bb',[0 0 0 0],'occ',0,'bbv',[0 0 0 0],'ign',0);
-if(nargin<1), n=1; end; if(n~=1), objs=repmat(objs,n,1); end
+o=struct('lbl','','bb',[0 0 0 0],'occ',0,'bbv',[0 0 0 0],'ign',0,'ang',0);
+if(nargin<1), n=1; end; objs=repmat(o,n,1);
 end
 
 function objs = bbSave( objs, fName )
@@ -95,14 +96,15 @@ function objs = bbSave( objs, fName )
 % EXAMPLE
 %
 % See also bbGt, bbGt>bbLoad
-vers=2; fid=fopen(fName,'w'); assert(fid>0);
+vers=3; fid=fopen(fName,'w'); assert(fid>0);
 fprintf(fid,'%% bbGt version=%i\n',vers);
 objs=set(objs,'bb',round(get(objs,'bb')));
 objs=set(objs,'bbv',round(get(objs,'bbv')));
+objs=set(objs,'ang',round(get(objs,'ang')));
 for i=1:length(objs)
   o=objs(i); bb=o.bb; bbv=o.bbv;
-  fprintf(fid,'%s %i %i %i %i %i %i %i %i %i %i\n',o.lbl,...
-    bb(1),bb(2),bb(3),bb(4),o.occ,bbv(1),bbv(2),bbv(3),bbv(4),o.ign);
+  fprintf(fid,['%s' repmat(' %i',1,11) '\n'],o.lbl,...
+    bb,o.occ,bbv,o.ign,o.ang);
 end
 fclose(fid);
 end
@@ -125,20 +127,16 @@ function objs = bbLoad( fName )
 if(~exist(fName,'file')), error([fName ' not found']); end
 try v=textread(fName,'%% bbGt version=%d',1); catch, v=0; end %#ok<CTCH>
 if(isempty(v)), v=0; end; opts={'commentstyle','matlab'};
-switch v
-  case {0,1}
-    in=cell(1,10);
-    [in{:}]=textread(fName,['%s' repmat(' %d',1,9)],opts{:});
-    in{11} = zeros(length(in{1}),1);
-  case 2
-    in=cell(1,11);
-    [in{:}]=textread(fName,['%s' repmat(' %d',1,10)],opts{:});
-  otherwise, error('Unknown version %i.',v);
-end
+% if old ann version may have fewer fields m (initialize them to 0)
+if(all(v~=[0 1 2 3])), error('Unknown version %i.',v); end
+ms=[10 10 11 12]; m=ms(v+1); in=cell(1,m);
+[in{:}]=textread(fName,['%s' repmat(' %d',1,m-1)],opts{:});
+for i=m+1:12, in{i}=zeros(length(in{1}),1); end
+% create objs struct from read in fields
 nObj=length(in{1}); O=ones(1,nObj); occ=mat2cell(in{6},O,1);
 bb=mat2cell([in{2:5}],O,4); bbv=mat2cell([in{7:10}],O,4);
-ign=mat2cell(in{11},O,1);
-objs=struct('lbl',in{1},'bb',bb,'occ',occ,'bbv',bbv,'ign',ign);
+ign=mat2cell(in{11},O,1); ang=mat2cell(in{12},O,1);
+objs=struct('lbl',in{1},'bb',bb,'occ',occ,'bbv',bbv,'ign',ign,'ang',ang);
 end
 
 function vals = get( objs, name )
@@ -164,6 +162,7 @@ switch name
   case 'occ', vals=[objs.occ]';
   case 'bbv', vals=reshape([objs.bbv]',4,[])';
   case 'ign', vals=[objs.ign]';
+  case 'ang', vals=[objs.ang]';
   otherwise, error('unkown type %s',name);
 end
 end
@@ -192,6 +191,7 @@ switch name
   case 'occ', for i=1:nObj, objs(i).ooc=vals(i); end
   case 'bbv', for i=1:nObj, objs(i).bbv=vals(i,:); end
   case 'ign', for i=1:nObj, objs(i).ign=vals(i); end
+  case 'ang', for i=1:nObj, objs(i).ang=vals(i); end
   otherwise, error('unkown type %s',name);
 end
 end
