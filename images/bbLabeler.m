@@ -198,8 +198,8 @@ imgApi.setImgDir(imgDir);
       % display regular bbs
       for id=1:nObj
         o=objs(id); rp=rpDef; rp.color=colors{strcmp(o.lbl,objTypes)};
-        if(curObj==id), rp.ls=':'; end; if(o.ign), rp.cross=2; end;
-        rp.pos=[o.bb 0]; rp.lims=lims; [hsObj(id),rectApi]=imRectRot(rp);
+        if(o.ign), rp.cross=2; end; rp.pos=[o.bb o.ang]; rp.lims=lims;
+        if(curObj==id), rp.ls=':'; end; [hsObj(id),rectApi]=imRectRot(rp);
         rectApi.setPosSetCb(@(bb) objSetBb(bb,id));
         rectApi.setPosChnCb(@(bb) objChnBb(bb,id));
         if(id==curObj), rectApiCur=rectApi; end
@@ -207,9 +207,9 @@ imgApi.setImgDir(imgDir);
       if(curObj>0), rectApiCur.uistack('top'); end
       % display occluded bbs
       for id=1:nObj
-        o=objs(id); if(~o.occ), continue; end; rp=rpDef;
-        rp.color='y'; rp.lw=1; rp.pos=[o.bbv 0]; rp.lims=[o.bb 0];
-        [hObj,rectApi] = imRectRot( rp );
+        o=objs(id); ang=o.ang; if(~o.occ), continue; end; rp=rpDef;
+        rp.color='y'; rp.lw=1; rp.pos=[o.bbv ang]; rp.lims=[o.bb ang];
+        rp.rotate=0; [hObj,rectApi] = imRectRot( rp );
         rectApi.setPosSetCb(@(bbv) objSetBbv(bbv,id));
         hsObj=[hsObj hObj]; %#ok<AGROW>
       end
@@ -226,19 +226,19 @@ imgApi.setImgDir(imgDir);
     end
     
     function objSetBb( bb, objId )
-      curObj=objId; o=objs(objId); bb=round(bb); objs(objId).bb=bb(1:4);
+      curObj=objId; o=objs(objId); bb=round(bb); bbv=o.bbv;
       if(any(bb(3:4)<minSiz)), objDel(); return; end;
-      if(o.occ), objSetBbv(o.bbv,objId,o.bb); else objsDraw(); end
+      objs(objId).bb=bb(1:4); objs(objId).ang=bb(5);
+      if(~o.occ), objsDraw(); return; end
+      if( objs(objId).ang~=o.ang ), bbv=[0 0 0 0]; else
+        bbv=[(bbv(1:2)-o.bb(1:2))./o.bb(3:4) bbv(3:4)./o.bb(3:4)];
+        bbv=[(bbv(1:2).*bb(3:4))+bb(1:2) bbv(3:4).*bb(3:4)];
+      end; objSetBbv(bbv,objId);
     end
     
-    function objSetBbv( bbv, objId, bbPrv )
+    function objSetBbv( bbv, objId )
       curObj=objId; o=objs(objId); bbv=round(bbv(1:4));
       if(~o.occ), objs(objId).bbv=[0 0 0 0]; objsDraw(); return; end
-      if(nargin==3)
-        bbv=[(bbv(1:2)-bbPrv(1:2))./bbPrv(3:4) bbv(3:4)./bbPrv(3:4)];
-        bbv=[(bbv(1:2).*o.bb(3:4))+o.bb(1:2) bbv(3:4).*o.bb(3:4)];
-      end
-      bbv = bbApply( 'intersect', bbv, o.bb );
       if(any(bbv(3:4)<minSiz)), bbv=o.bb; end
       objs(objId).bbv=bbv; objsDraw();
     end
@@ -255,7 +255,7 @@ imgApi.setImgDir(imgDir);
       rp.ls=':'; rp.pos=pnt; rp.lims=lims; [hObj,rectApi]=imRectRot(rp);
       lbl=objTypes{lblId}; bb=round(rectApi.getPos());
       if( ~isempty(bb) && all(bb(3:4)>=minSiz) )
-        obj=bbGt('create'); obj.lbl=lbl; obj.bb=bb(1:4);
+        obj=bbGt('create'); obj.lbl=lbl; obj.bb=bb(1:4); obj.ang=bb(5);
         objs=[objs; obj]; nObj=nObj+1; curObj=nObj;
       end; delete(hObj); objsDraw();
     end
