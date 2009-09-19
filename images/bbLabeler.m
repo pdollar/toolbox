@@ -227,14 +227,13 @@ imgApi.setImgDir(imgDir); rotate=0; ellipse=0;
         hsObj=[hsObj hObj]; %#ok<AGROW>
       end
       % update gui info
-      if(curObj==0), lblId=1; dimsStr=''; occ=0; ign=0; en='off'; else
+      if(curObj==0), dimsStr=''; occ=0; ign=0; en='off'; else
         o=objs(curObj); occ=o.occ; ign=o.ign; en='on';
-        lblId=find(strcmp(o.lbl,objTypes));
+        set(pTop.hLbl,'Value',find(strcmp(o.lbl,objTypes)));
         dimsStr=sprintf('%i x %i',round(o.bb(3)),round(o.bb(4)));
       end
-      set([pTop.hIgn pTop.hOcc pTop.hLbl],'Enable',en);
+      set([pTop.hIgn pTop.hOcc],'Enable',en); set(pTop.hOcc,'Value',occ);
       set(pTop.hDims,'String',dimsStr); set(pTop.hIgn,'Value',ign);
-      set(pTop.hOcc,'Value',occ); set(pTop.hLbl,'Value',lblId);
       set(pTop.hNum,'String', ['n=' int2str(nObj)] );
     end
     
