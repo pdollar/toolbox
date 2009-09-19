@@ -7,7 +7,7 @@ function bbLabeler( objTypes, imgDir, resDir )
 %  bbLabeler( [objTypes], [imgDir], [resDir] )
 %
 % INPUTS
-%  objTypes - ['object'] list of object types to annotate
+%  objTypes - [{'object'}] list of object types to annotate
 %  imgDir   - [pwd] directory with images
 %  resDir   - [imgDir] directory with annotations
 %
@@ -24,7 +24,7 @@ function bbLabeler( objTypes, imgDir, resDir )
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 %#ok<*INUSL,*INUSD>
-if(nargin<1 || isempty(objTypes)), objTypes='object'; end
+if(nargin<1 || isempty(objTypes)), objTypes={'object'}; end
 if(nargin<2 || isempty(imgDir)), imgDir=pwd; end
 if(nargin<3 || isempty(resDir)), resDir=imgDir; end
 if(~exist(resDir,'dir')), mkdir(resDir); end
