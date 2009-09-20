@@ -615,8 +615,9 @@ if(crop), [IS,bbs]=bbApply('crop',I,bbs,padEl,dims); end
 nf=flip+1; nr=length(rots); bbs=reshape(repmat(bbs,1,nf*nr)',5,[])';
 if(~crop), return; end; IS=repmat(IS,nf*nr,1); IS=IS(:);
 for i=1:length(bbs)
-  I=IS{i}; f=mod(i+1,nf); r=rots(floor(mod(i-1,nr*nf)/nf)+1);
-  if(f), I=flipdim(I,2); end; I0=I; if(mod(r,1)==1), I=I'; end
+  I=IS{i}; f=mod(i+1,nf); if(f), I=flipdim(I,2); end
+  I0=I; r=rots(floor(mod(i-1,nr*nf)/nf)+1);
+  if(mod(r,2)==1), I=permute(I,[2 1 3]); end
   for k=1:size(I,3), I(:,:,k)=rot90(I0(:,:,k),r); end; IS{i}=I;
 end
 end
