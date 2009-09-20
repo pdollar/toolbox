@@ -71,8 +71,8 @@ function varargout = bbGt( action, varargin )
 % EXAMPLE
 %
 % See also bbApply, bbGt>create, bbGt>bbSave, bbGt>bbLoad, bbGt>get,
-% bbGt>set, bbGt>toGt, bbGt>evalRes, bbGt>compOas, bbGt>compOa,
-% bbGt>compRoc, bbGt>sampleData
+% bbGt>set, bbGt>toGt, bbGt>evalRes, bbGt>compRoc, bbGt>cropRes,
+% bbGt>compOas, bbGt>compOa, bbGt>sampleData
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -231,14 +231,16 @@ function [gtBbs,ids] = toGt( objs, prm )
 % returned object, the ignore flag is set to 1 if obj.ign==1 or any object
 % property is outside of the specified range (details below). The ignore
 % flag is used during evaluation so that objects with certain properties
-% (such as very small or heavily occluded objects) can be excluded.
+% (such as very small or heavily occluded objects) can be excluded. For
+% oriented bbs, the extent of the bb is returned instead, where the extent
+% is the smallest axis aligned bb containing the oriented bb.
 %
-% The range for each property is a two element vector, [0 inf] by default,
-% and a property value v is inside the range if v>=rng(1) && v<=rng(2).
-% Tested properties include the height (h), width (w), area (a), aspect
-% ratio (ar), and fraction visible (v). The last property is computed as
-% the visible object area divided by the total area, except if o.occ==0, in
-% which case v=1, or all(o.bbv==o.bb), which indicates the object may be
+% The range for each property is a two element vector, [0 inf] by default;
+% a property value v is inside the range if v>=rng(1) && v<=rng(2). Tested
+% properties include height (h), width (w), area (a), aspect ratio (ar),
+% orienation (o), and fraction visible (v). The last property is computed
+% as the visible object area divided by the total area, except if o.occ==0,
+% in which case v=1, or all(o.bbv==o.bb), which indicates the object may be
 % barely visible, in which case v=0 (note that v~=1 in this case).
 %
 % USAGE
@@ -253,6 +255,7 @@ function [gtBbs,ids] = toGt( objs, prm )
 %   .wRng       - [0 inf] range of acceptable obj widths
 %   .aRng       - [0 inf] range of acceptable obj areas
 %   .arRng      - [0 inf] range of acceptable obj aspect ratios
+%   .oRng       - [0 inf] range of acceptable obj orientations (angles)
 %   .vRng       - [0 inf] range of acceptable obj occlusion levels
 %   .ar         - [] standardize aspect ratios of bbs
 %   .pad        - [0] frac extra padding for each patch (or [padx pady])
@@ -272,24 +275,33 @@ function [gtBbs,ids] = toGt( objs, prm )
 
 r=[0 inf];
 dfs={'lbls',[],'ilbls',[],'hRng',r,'wRng',r,'aRng',r,'arRng',r,...
-  'vRng',r,'ar',[],'pad',0};
-[lbls,ilbls,hRng,wRng,aRng,arRng,vRng,ar0,pad] = getPrmDflt(prm,dfs,1);
+  'oRng',r,'vRng',r,'ar',[],'pad',0};
+[lbls,ilbls,hRng,wRng,aRng,arRng,oRng,vRng,ar0,pad]=getPrmDflt(prm,dfs,1);
 if(numel(pad)==1), pad=[pad pad]; end;
 nObj=length(objs); keep=true(nObj,1); gtBbs=zeros(nObj,5);
-check = @(v,rng) v<rng(1) || v>rng(2); lbls=[lbls ilbls];
+chk = @(v,rng) v<rng(1) || v>rng(2); lbls=[lbls ilbls];
 for i=1:nObj, o=objs(i);
   if(~isempty(lbls) && ~any(strcmp(o.lbl,lbls))), keep(i)=0; continue; end
-  bb=o.bb; bbv=o.bbv; w=bb(3); h=bb(4); a=w*h; ar=w/h;
+  bb=o.bb; bbv=o.bbv; w=bb(3); h=bb(4); a=w*h; ar=w/h; ang=mod(o.ang,360);
   if(~o.occ || all(bbv==0)), v=1; elseif(all(bbv==bb)), v=0; else
     v=bbv(3)*bbv(4)/a;
   end
-  ign = o.ign || any(strcmp(o.lbl,ilbls)) || check(h,hRng) || ...
-    check(w,wRng) || check(a,aRng) || check(ar,arRng) || check(v,vRng );
-  gtBbs(i,1:4)=o.bb; gtBbs(i,5)=ign;
+  ign = o.ign || any(strcmp(o.lbl,ilbls)) || chk(h,hRng) || chk(w,wRng) ...
+    || chk(a,aRng) || chk(ar,arRng) || chk(ang,oRng) || chk(v,vRng);
+  gtBbs(i,1:4)=bbExtent(o.bb,ang); gtBbs(i,5)=ign;
 end
 ids=find(keep); gtBbs=gtBbs(keep,:);
 if(ar0), gtBbs=bbApply('squarify',gtBbs,0,ar0); end
 if(any(pad~=0)), gtBbs=bbApply('resize',gtBbs,1+pad(2),1+pad(1)); end
+
+  function bb = bbExtent( bb, ang )
+    % get bb that fully contains given oriented bb
+    if(~ang), return; end; c=cosd(ang); s=sind(ang); R=[c -s; s c];
+    rs=bb(3:4)/2; x0=-rs(1); x1=rs(1); y0=-rs(2); y1=rs(2); pc=bb(1:2)+rs;
+    p=[x0 y0; x1 y0; x1 y1; x0 y1]*R'+pc(ones(4,1),:);
+    x0=min(p(:,1)); x1=max(p(:,1)); y0=min(p(:,2)); y1=max(p(:,2));
+    bb=[x0 y0 x1-x0 y1-y0];
+  end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
