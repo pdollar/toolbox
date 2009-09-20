@@ -598,7 +598,7 @@ dfs={'n',inf, 'bbs','REQ', 'ibbs',[], 'thr',.5, 'dims',[], ...
 if(numel(dims)==2), ar=dims(1)/dims(2); else ar=dims; dims=[]; end
 if(numel(pad)==1), pad=[pad pad]; end; if(dims), dims=dims.*(1+pad); end
 % discard any candidate bbs that match the ignore bbs, sample to at most n
-if(size(bbs,2)==5), bbs=bbs(bbs(:,5)==0,:); end
+nd=size(bbs,2); if(nd==5), bbs=bbs(bbs(:,5)==0,:); end
 if(flip), n=n/2; end; n=n/length(rots); m=size(bbs,1);
 if(isempty(ibbs)), if(m>n), bbs=bbs(randsample(m,n),:); end; else
   if(m>n), bbs=bbs(randperm(m),:); end; K=false(1,m); i=1;
@@ -612,7 +612,7 @@ if(any(pad~=0)), bbs=bbApply('resize',bbs,1+pad(2),1+pad(1)); end
 crop=nargout==2; dims=round(dims);
 if(crop), [IS,bbs]=bbApply('crop',I,bbs,padEl,dims); end
 % finally create flipped and rotated versions of each croppted patch
-nf=flip+1; nr=length(rots); bbs=reshape(repmat(bbs,1,nf*nr)',5,[])';
+nf=flip+1; nr=length(rots); bbs=reshape(repmat(bbs,1,nf*nr)',nd,[])';
 if(~crop), return; end; IS=repmat(IS,nf*nr,1); IS=IS(:);
 for i=1:length(bbs)
   I=IS{i}; f=mod(i+1,nf); if(f), I=flipdim(I,2); end
