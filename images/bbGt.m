@@ -579,7 +579,8 @@ function [bbs, IS] = sampleData( I, prm )
 %   .squarify   - [1] if squarify expand bb to ar else stretch patch to ar
 %   .pad        - [0] frac extra padding for each patch (or [padx pady])
 %   .padEl      - ['replicate'] how to pad at boundaries (see bbApply>crop)
-%   .flip       - [0] use left/right reflection of each bb
+%   .flip       - [0] if true use left/right reflection of each bb
+%   .rots       - [0] specify 90 degree rotations of each bb (e.g. 0:3)
 %
 % OUTPUTS
 %  bbs      - actual sampled bbs
@@ -592,13 +593,13 @@ function [bbs, IS] = sampleData( I, prm )
 
 % get parameters
 dfs={'n',inf, 'bbs','REQ', 'ibbs',[], 'thr',.5, 'dims',[], ...
-  'squarify',1, 'pad',0, 'padEl','replicate', 'flip',0 };
-[n,bbs,ibbs,thr,dims,squarify,pad,padEl,flip] = getPrmDflt(prm,dfs,1);
+  'squarify',1, 'pad',0, 'padEl','replicate', 'flip',0, 'rots',0 };
+[n,bbs,ibbs,thr,dims,squarify,pad,padEl,flip,rots]=getPrmDflt(prm,dfs,1);
 if(numel(dims)==2), ar=dims(1)/dims(2); else ar=dims; dims=[]; end
 if(numel(pad)==1), pad=[pad pad]; end; if(dims), dims=dims.*(1+pad); end
 % discard any candidate bbs that match the ignore bbs, sample to at most n
 if(size(bbs,2)==5), bbs=bbs(bbs(:,5)==0,:); end
-if(flip), n=n/2; end; m=size(bbs,1);
+if(flip), n=n/2; end; n=n/length(rots); m=size(bbs,1);
 if(isempty(ibbs)), if(m>n), bbs=bbs(randsample(m,n),:); end; else
   if(m>n), bbs=bbs(randperm(m),:); end; K=false(1,m); i=1;
   keep=@(i) all(compOas(bbs(i,:),ibbs,ibbs(:,5))<thr);
@@ -608,7 +609,14 @@ end
 if(~isempty(ar) && squarify), bbs=bbApply('squarify',bbs,0,ar); end
 if(any(pad~=0)), bbs=bbApply('resize',bbs,1+pad(2),1+pad(1)); end
 % crop IS, resizing if dims~=[]
-if(nargout==2), [IS,bbs]=bbApply('crop',I,bbs,padEl,round(dims)); end
-if(flip), m=size(bbs,1); bbs=[bbs; bbs]; end; if(nargout==1), return; end
-if(flip), IS=[IS IS]; for i=1:m, IS{i}=flipdim(IS{i},2); end; end
+crop=nargout==2; dims=round(dims);
+if(crop), [IS,bbs]=bbApply('crop',I,bbs,padEl,dims); end
+% finally create flipped and rotated versions of each croppted patch
+nf=flip+1; nr=length(rots); bbs=reshape(repmat(bbs,1,nf*nr)',5,[])';
+if(~crop), return; end; IS=repmat(IS,nf*nr,1); IS=IS(:);
+for i=1:length(bbs)
+  I=IS{i}; f=mod(i+1,nf); r=rots(floor(mod(i-1,nr*nf)/nf)+1);
+  if(f), I=flipdim(I,2); end; I0=I; if(mod(r,1)==1), I=I'; end
+  for k=1:size(I,3), I(:,:,k)=rot90(I0(:,:,k),r); end; IS{i}=I;
+end
 end
