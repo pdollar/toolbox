@@ -67,6 +67,9 @@ function sobj = seqIo( fName, mode, varargin )
 % mode=='frimgs': Make seq file from images in array IS:
 %  seqIo( fName, 'frimgs', IS, info )
 %
+% mode='convert': Convert fName to tName applying imgFun(I) to each frame.
+%  seqIo( fName, 'convert', tName, imgFun, [info], [skip] )
+%
 % USAGE
 %  sobj = seqIo( fName, mode, varargin )
 %
@@ -82,7 +85,7 @@ function sobj = seqIo( fName, mode, varargin )
 %
 % See also SEQPLAYER, SEQREADERPLUGIN, SEQWRITERPLUGIN
 %
-% Piotr's Image&Video Toolbox      Version 2.35
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -92,6 +95,7 @@ swp=@seqWriterPlugin;
 
 mode=lower(mode);
 if( strcmp(mode,'r') )
+  % sr = seqIo(fName,'r')
   s = srp( 'open', int32(-1), fName );
   sobj = struct( 'close',@() srp('close',s), ...
     'getframe',@() srp('getframe',s), ...
@@ -101,6 +105,7 @@ if( strcmp(mode,'r') )
     'step',@(d) srp('step',s,d));
   
 elseif( strcmp(mode,'w') )
+  % sw = seqIo(fName,'w',info)
   s = swp( 'open', int32(-1), fName, varargin{1} );
   sobj = struct( 'close',@() swp('close',s), ...
     'addframe',@(varargin) swp('addframe',s,varargin{:}), ...
@@ -109,11 +114,14 @@ elseif( strcmp(mode,'w') )
   
 elseif( strcmp(mode,'rdual') )
   sobj = seqReaderDual(fName{:});
-
+  
 elseif( strcmp(mode,'getinfo') )
+  % info = seqIo( fName, 'getinfo' )
   sr=seqIo(fName,'r'); sobj=sr.getinfo(); sr.close();
-
+  
 elseif( strcmp(mode,'crop') )
+  % seqIo( fName, 'crop', tName, f0, f1 )
+  % seqIo( fName, 'crop', tName, frames )
   tName=varargin{1}; fs=varargin{2}; ordered=0;
   if(nargin==5), fs=fs:varargin{3}; ordered=1; end; fs=fs(:)';
   sr=seqIo(fName,'r'); info=sr.getinfo();
@@ -130,6 +138,7 @@ elseif( strcmp(mode,'crop') )
   sw.close(); sr.close();
   
 elseif( strcmp(mode,'toimgs') )
+  % seqIo( fName, 'toimgs', dir, [skip] )
   d=varargin{1}; if(~exist(d,'dir')), mkdir(d); end
   if(nargin==4), skip=varargin{2}; else skip=1; end
   sr=seqIo(fName,'r'); info=sr.getinfo(); ext=['.' info.ext];
@@ -160,7 +169,20 @@ elseif( strcmp(mode,'frimgs') )
   if(nd==4), for f=1:nFrm, sw.addframe(IS(:,:,:,f)); end; end
   sw.close();
   
-else error('seqIo: unknown mode: %s',mode);
+elseif( strcmp(mode,'convert') )
+  % seqIo( fName, 'convert', tName, imgFun, [info], [skip] )
+  tName=varargin{1}; imgFun=varargin{2}; assert(~strcmp(tName,fName));
+  if(nargin>=5), info=varargin{3}; else info=[]; end;
+  if(nargin>=6), skip=varargin{4}; else skip=1; end; init=0;
+  sr=seqIo(fName,'r'); if(isempty(info)), info=sr.getinfo(); end
+  for frame = skip-1:skip:info.numFrames-1
+    sr.seek(frame); I=sr.getframe(); I=imgFun(I);
+    if(~init), init=1; siz=size(I);
+      info.width=siz(2); info.height=siz(1); sw=seqIo(tName,'w',info);
+    end; sw.addframe(I);
+  end
+  if(init), sw.close(); else warning('No images found.'); end %#ok<WNTAG>
+  sr.close();
   
 end
 

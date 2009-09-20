@@ -1,4 +1,6 @@
 Version NEW
+ -images/imRectRot.m: additional display options and minor tweaks
+ -images/seqIo.m: added case for converting seq files and extra commenting
  -added images/bbGt.m: bb data struct, evaluation and sampling routines.
  -added images/bbLabeler.m: Bounding box labeler for static images.
 
