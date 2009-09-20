@@ -72,7 +72,7 @@ function [hPatch,api] = imRectRot( varargin )
 %
 % See also IMRECT, RECTANGLE, PATCH
 %
-% Piotr's Image&Video Toolbox      Version 2.35
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
