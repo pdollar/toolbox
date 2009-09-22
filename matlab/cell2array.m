@@ -25,14 +25,14 @@ function Y = cell2array( X, padEl )
 %
 % See also MAT2CELL2, CELL2MAT
 %
-% Piotr's Image&Video Toolbox      Version 2.0
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 if(~iscell(X)); error('X must be a cell array'); end
 if(iscell(X{1})); error('X must contain regular arrays'); end
-n = numel(X);  nd = ndims(X{1});
+n = numel(X); nd = ndims(X{1});
 for i=2:n
   if(ndims(X{i})~=nd); error('all elem of X must have same dims'); end
 end
@@ -48,7 +48,7 @@ end
 
 %%% construct Y
 inds=cell(1,nd);  for d=1:nd; inds{d} = 1:maxsiz(d); end
-Y = X{i}(1);  Y = repmat( Y, [maxsiz n] );
+Y = zeros( [maxsiz n], class(X{1}) );
 if( all(maxsiz==minsiz) )
   for i=1:n; Y( inds{:}, i ) = X{i}; end
 else
