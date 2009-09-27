@@ -32,7 +32,6 @@ mex([dir 'assignToBins1.c'],        opts{:} );
 mex([dir 'histc2c.c'],              opts{:} );
 mex([dir 'ktHistcRgb_c.c'],         opts{:} );
 mex([dir 'ktComputeW_c.c'],         opts{:} );
-mex([dir 'maskEllipse1.c'],         opts{:} );
 mex([dir 'nlfiltersep_max.c'],      opts{:} );
 mex([dir 'nlfiltersep_sum.c'],      opts{:} );
 mex([dir 'nlfiltersep_blocksum.c'], opts{:} );

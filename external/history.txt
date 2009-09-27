@@ -3,6 +3,7 @@ Version NEW
  -images/seqIo.m: added case for converting seq files and extra commenting
  -added images/bbGt.m: bb data struct, evaluation and sampling routines.
  -added images/bbLabeler.m: Bounding box labeler for static images.
+ -images/maskEllipse.m: faster, simpler, minor bus fix, all in matlab now
 
 Version 2.35 (17-Sep-09)
  -tested w Matlab 2009b (some mlint errors due to new tilde ~ operator)

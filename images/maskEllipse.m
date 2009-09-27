@@ -38,7 +38,7 @@ function mask = maskEllipse( mrows, ncols, varargin )
 %
 % See also PLOTELLIPSE, GAUSS2ELLIPSE, MASKCIRCLE, MASKGAUSSIANS, IMMLGAUSS
 %
-% Piotr's Image&Video Toolbox      Version 2.0
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -55,11 +55,23 @@ else
   error( ['Incorrect number of input arguments: ' int2str(nargin)] );
 end;
 
-% get indicies of locations inside ellipse
-[n, locs] = maskEllipse1( crow, ccol, ra, rb, phi, mrows, ncols );
+% compute the leftmost and rightmost points of the ellipse
+raCos=ra*cos(pi-phi); rbCos=rb*cos(pi-phi);
+raSin=ra*sin(pi-phi); rbSin=rb*sin(pi-phi);
+d = sqrt(raCos*raCos + rbSin*rbSin);
+cRad = abs(raCos*raCos/d + rbSin*rbSin/d);
+c0 = max( ceil(ccol-cRad), 1 );
+c1 = min( floor(ccol+cRad), ncols );
+B = rbSin / raCos; B2=B*B;
 
-% create binary mask
-locs = double( locs(1:n,:) );
-inds = locs(:,1) + (mrows)*(locs(:,2)-1);
+% compute and add the top/bottom points for each c
 mask = zeros( mrows, ncols );
-mask( inds ) = 1;
+for c=c0:c1
+  A=(c-ccol)/raCos; C=sqrt(max(0,B2-A*A+1));
+  r0 = crow - raSin*(A-B*C)/(B2+1) + rbCos*(A*B+C)/(B2+1);
+  r1 = crow - raSin*(A+B*C)/(B2+1) + rbCos*(A*B-C)/(B2+1);
+  if(r0>r1), tmp=r0; r0=r1; r1=tmp; end
+  r0 = max( ceil(r0-.0001), 1 );
+  r1 = min( floor(r1+.0001), mrows );
+  mask( r0:r1, c ) = 1;
+end
