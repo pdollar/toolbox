@@ -46,11 +46,12 @@ unsigned int getInterior(int* pnts, int mRows, int nCols, double cenRow, double 
 		A = (col-cenCol)/(a*cosTh);
 		B = b/a*tanTh;
 		C = pow(B,2)-pow(A,2)+1;
-		if(C < 0){ mexErrMsgTxt("inside of sqrt less than 0!"); return 0; }
+		if(C < -.000001){ mexErrMsgTxt("inside of sqrt less than 0!"); return 0; }
+		C = sqrt(max(C,0));
 
 		/* calculate start and end of row */
-		rowsmall = cenRow - a * sinTh * (A-B*sqrt(C))/(B*B+1) + b * cosTh * (A*B+sqrt(C))/(B*B+1);
-		rowbig = cenRow - a * sinTh * (A+B*sqrt(C))/(B*B+1) + b * cosTh * (A*B-sqrt(C))/(B*B+1);
+		rowsmall = cenRow - a * sinTh * (A-B*C)/(B*B+1) + b * cosTh * (A*B+C)/(B*B+1);
+		rowbig = cenRow - a * sinTh * (A+B*C)/(B*B+1) + b * cosTh * (A*B-C)/(B*B+1);
 		if (rowsmall>rowbig) {temp=rowsmall; rowsmall=rowbig; rowbig=temp; }
 		rowsmall = ceil(rowsmall-.0001); rowbig = floor(rowbig+.0001);
 		if(rowsmall < 1) rowsmall = 1; if(rowbig > mRows) rowbig = mRows;
