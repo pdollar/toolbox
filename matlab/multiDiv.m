@@ -2,6 +2,7 @@ function C = multiDiv( A, B, type )
 % Matrix divide each submatrix of two 3D arrays without looping.
 %
 % type controls the matrix multiplication to perform (for each i):
+%  1    - C(:,:,i) = A(:,:,i)\B(:,:)
 %  2    - C(:,:,i) = A(:,:,i)\B(:,:,i)
 %  3    - C(:,i) = A(:,:,i)\B(:,i)
 % Corresponding dimensions of A and B must match appropriately.
@@ -18,6 +19,13 @@ function C = multiDiv( A, B, type )
 % OUTPUTS
 %  C         - result of the division
 %
+%
+% EXAMPLE [case 1]
+%  n=10000; A=randn(3,3,n); B=eye(3,3);
+%  tic, C1=multiDiv(A,B,1); toc
+%  tic, C2=C1; for i=1:n, C2(:,:,i)=A(:,:,i)\B; end; toc
+%  tic, C3=C1; for i=1:n, C3(:,:,i)=inv(A(:,:,i)); end; toc
+%  sum(abs(C1(:)-C2(:))), sum(abs(C1(:)-C3(:)))
 %
 % EXAMPLE [case 2]
 %  n=10000; A=randn(3,3,n); B=randn(3,10,n);
@@ -43,14 +51,15 @@ mb = size(B,1); nb = size(B,2); ob = size(B,3); %#ok<NASGU>
 step=max(ceil(100000/ma/na),1);
 
 switch type
-  case 2    % C(:,:,i) = A(:,:,i)\B(:,:,i)
+  case {1,2} % C(:,:,i) = A(:,:,i)\B(:,:,i) or A(:,:,i)\B(:,:)
     C=zeros(na,nb,oa); inds=[]; s=0;
     while( s<oa ), e=min(s+step,oa);
       [A1,inds] = spBlkDiag(A(:,:,s+1:e),inds);
-      B1 = reshape(permute(B(:,:,s+1:e),[1 3 2]),[],nb);
+      if(type==1), B0=B(:,:,ones(e-s,1)); else B0=B(:,:,s+1:e); end
+      B1 = reshape(permute(B0,[1 3 2]),[],nb);
       C(:,:,s+1:e) = permute(reshape(A1\B1,[na e-s nb]),[1 3 2]); s=e;
     end
-  case 3    % C(:,i) = A(:,:,i)\B(:,i)
+  case 3     % C(:,i) = A(:,:,i)\B(:,i)
     C=zeros(na,oa); inds=[]; s=0;
     while( s<oa ), e=min(s+step,oa);
       [A1,inds] = spBlkDiag(A(:,:,s+1:e),inds);
