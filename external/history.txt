@@ -1,6 +1,7 @@
 Version NEW
  -images/imRectRot.m: additional display options and minor tweaks
  -images/seqIo.m: added case for converting seq files and extra commenting
+ -matlab/multiDiv.m: added extra cases
  -added images/bbGt.m: bb data struct, evaluation and sampling routines.
  -added images/bbLabeler.m: Bounding box labeler for static images.
  -images/maskEllipse.m: faster, simpler, minor bus fix, all in matlab now
