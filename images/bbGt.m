@@ -614,7 +614,7 @@ if(crop), [IS,bbs]=bbApply('crop',I,bbs,padEl,dims); end
 % finally create flipped and rotated versions of each croppted patch
 nf=flip+1; nr=length(rots); bbs=reshape(repmat(bbs,1,nf*nr)',nd,[])';
 if(~crop), return; end; IS=repmat(IS,nf*nr,1); IS=IS(:);
-for i=1:length(bbs)
+for i=1:size(bbs,1)
   I=IS{i}; f=mod(i+1,nf); if(f), I=flipdim(I,2); end
   I0=I; r=rots(floor(mod(i-1,nr*nf)/nf)+1);
   if(mod(r,2)==1), I=permute(I,[2 1 3]); end
