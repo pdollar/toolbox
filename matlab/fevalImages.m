@@ -76,7 +76,7 @@ if( nargin<=3 ) % no convention followed
   dirCont = dir(srcDir); dirCont = dirCont(3:end);
   filenames = {dirCont.name}; n = length(dirCont);
 else % strict convention followed
-  if( nargin<8 || isempty(nDigits) )
+  if( nargin<8 || isempty(nDigits) || isunix)
     dirCont = dir([srcDir name '*.' ext]);
   else
     dirCont = dir([srcDir name repmat('?',[1 nDigits]) '.' ext '*' ]);
