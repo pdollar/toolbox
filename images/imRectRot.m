@@ -138,7 +138,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
     
     % set or query initial position
     posLock=0; sizLock=0;
-    if(length(pos)==5), setPos(pos); else
+    if(length(pos)==5), setPos(pos,1); else
       btnDwn([],[],-1); waitfor(hFig,'WindowButtonUpFcn','');
     end
   end
@@ -165,10 +165,10 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
     pos1 = [pc+p0 p1-p0 pos0(5)];
   end
 
-  function setPos( posNew )
+  function setPos( posNew, ignoreLims )
     if(isempty(hBnds) || isempty(hPatch)); return; end; L=lims;
     % if corners fall outside lims don't use posNew
-    if( ~isempty(L) )
+    if( ~isempty(L) && (nargin<2 || ~ignoreLims) )
       if( posNew(5)==lims(5) )
         % lims and posNew at same orient (do everything in rect coords)
         [pc,rs,R]=rectInfo(posNew); p0=-rs; p1=rs;
