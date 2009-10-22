@@ -29,9 +29,9 @@ if(nargin<2 || isempty(imgDir)), imgDir=pwd; end
 if(nargin<3 || isempty(resDir)), resDir=imgDir; end
 if(~exist(resDir,'dir')), mkdir(resDir); end
 colors='gcmrkgcmrkgcmrkgcmrkgcmrkgcmrkgcmrk'; minSiz=[12 12];
-[hFig,hAx,pTop,imgInd,imgFiles,rotate,ellipse] = deal([]);
+[hFig,hAx,pTop,imgInd,imgFiles,rotate,ellipse,useLims] = deal([]);
 makeLayout(); imgApi=imgMakeApi(); objApi=objMakeApi();
-imgApi.setImgDir(imgDir); rotate=0; ellipse=0;
+imgApi.setImgDir(imgDir); rotate=0; ellipse=0; useLims=0;
 
   function makeLayout()
     % common properties
@@ -72,6 +72,7 @@ imgApi.setImgDir(imgDir); rotate=0; ellipse=0;
     pTop.hIgn=uicontrol(pTop.h,chbPrp{:},st,'ign');
     pTop.hEll=uicontrol(pTop.h,chbPrp{:},st,'ellipse');
     pTop.hRot=uicontrol(pTop.h,chbPrp{:},st,'rotate');
+    pTop.hLim=uicontrol(pTop.h,chbPrp{:},st,'lims');
     pTop.hDims=uicontrol(pTop.h,txtPrp{:},'Center',st,'');
     pTop.hNum=uicontrol(pTop.h,txtPrp{:},'Center',st,'n=0');
     pTop.hHelp=uicontrol(pTop.h,btnPrp{:},fs,12,st,'?');
@@ -95,7 +96,7 @@ imgApi.setImgDir(imgDir); rotate=0; ellipse=0;
       x=max(0,(wd-wdTop)/2);
       set(pTop.hImgLbl,ps,[x 5 35 14]); x=x+35;
       set(pTop.hImgInd,ps,[x 5 40 15]); x=x+40;
-      set(pTop.hImgNum,ps,[x 5 40 14]); x=x+60;
+      set(pTop.hImgNum,ps,[x 5 40 14]); x=x+50;
       set(pTop.hDel,ps,[x 2 20 20]); x=x+20+5;
       set(pTop.hPrv,ps,[x 2 24 20]); x=x+24;
       set(pTop.hLbl,ps,[x 2 80 21]); x=x+80;
@@ -104,8 +105,9 @@ imgApi.setImgDir(imgDir); rotate=0; ellipse=0;
       set(pTop.hOcc,ps,[x 12 40 12]);
       set(pTop.hIgn,ps,[x 0 40 12]); x=x+45;
       set(pTop.hEll,ps,[x 12 50 12]);
-      set(pTop.hRot,ps,[x 0 50 12]); x=x+65;
-      set(pTop.hNum,ps,[x 5 20 14]); x=x+20+80;
+      set(pTop.hRot,ps,[x 0 50 12]); x=x+55;
+      set(pTop.hLim,ps,[x 12 45 12]); x=x+55;
+      set(pTop.hNum,ps,[x 5 20 14]); x=x+20+45;
       set(pTop.hHelp,ps,[x 2 20 20]);
     end
     
@@ -130,6 +132,7 @@ imgApi.setImgDir(imgDir); rotate=0; ellipse=0;
         ' * i-key or ign-icon: toggle ignore for bb'
         ' * e-key or ellipse-icon: toggle bb ellipse/rect display'
         ' * r-key or rotation-icon: toggle bb rotation control'
+        ' * l-key or lims-icon: toggle bb limits on/off'
         ' * left-arrow or <<-icon: select previous bb'
         ' * right-arrow or >>-icon: select next bb'
         ' * up/down-arrow a-key/z-key or dropbox: select bb label' };
@@ -158,6 +161,7 @@ imgApi.setImgDir(imgDir); rotate=0; ellipse=0;
     if(char==105), objApi.objSetVal('ign',0); end  % 'i'
     if(char==101), objApi.objSetVal('ell',0); end  % 'e'
     if(char==114), objApi.objSetVal('rot',0); end  % 'r'
+    if(char==108), objApi.objSetVal('lim',0); end  % 'l'
   end
 
   function mousePress( h, evnt )
@@ -183,6 +187,7 @@ imgApi.setImgDir(imgDir); rotate=0; ellipse=0;
     set(pTop.hIgn,'Callback',@(h,evnt) objSetVal('ign',1));
     set(pTop.hEll,'Callback',@(h,evnt) objSetVal('ell',1));
     set(pTop.hRot,'Callback',@(h,evnt) objSetVal('rot',1));
+    set(pTop.hLim,'Callback',@(h,evnt) objSetVal('lim',1));
     
     % create api
     api = struct( 'closeAnn',@closeAnn, 'openAnn',@openAnn, ...
@@ -212,7 +217,8 @@ imgApi.setImgDir(imgDir); rotate=0; ellipse=0;
       for id=1:nObj
         o=objs(id); color=colors(strcmp(o.lbl,objTypes));
         rp=struct('ellipse',ellipse,'rotate',rotate,'hParent',hAx,...
-          'lw',2,'ls','-','pos',[o.bb o.ang],'lims',lims,'color',color);
+          'lw',2,'ls','-','pos',[o.bb o.ang],'color',color);
+        if(~useLims), rp.lims=[]; else rp.lims=lims; end
         if(o.ign), rp.cross=2; end; if(curObj==id), rp.ls=':'; end
         [hsObj(id),rectApi]=imRectRot(rp);
         rectApi.setPosSetCb(@(bb) objSetBb(bb,id));
@@ -267,7 +273,8 @@ imgApi.setImgDir(imgDir); rotate=0; ellipse=0;
       curObj=0; objsDraw(); pnt=get(hAx,'CurrentPoint');
       pnt=pnt([1,3]); lblId=get(pTop.hLbl,'Value'); color=colors(lblId);
       rp=struct('ellipse',ellipse,'rotate',rotate/2,'hParent',hAx,...
-        'lw',2,'ls',':','pos',pnt,'lims',lims,'color',color);
+        'lw',2,'ls',':','pos',pnt,'color',color);
+      if(~useLims), rp.lims=[]; else rp.lims=lims; end
       [hObj,rectApi]=imRectRot(rp);
       lbl=objTypes{lblId}; bb=round(rectApi.getPos());
       if( ~isempty(bb) && all(bb(3:4)>=minSiz) )
@@ -312,6 +319,9 @@ imgApi.setImgDir(imgDir); rotate=0; ellipse=0;
       elseif(strcmp(type,'rot'))
         rotate = get(pTop.hRot,'Value');
         if(~flag), rotate=1-rotate; set(pTop.hRot,'Value',rotate); end
+      elseif(strcmp(type,'lim'))
+        useLims = get(pTop.hLim,'Value');
+        if(~flag), useLims=1-useLims; set(pTop.hLim,'Value',useLims); end
       end
       objsDraw();
     end
