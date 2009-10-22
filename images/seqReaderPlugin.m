@@ -28,7 +28,7 @@ function varargout = seqReaderPlugin( cmd, h, varargin )
 %
 % See also SEQIO, SEQWRITERPLUGIN
 %
-% Piotr's Image&Video Toolbox      Version 2.35
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -103,12 +103,13 @@ if(strcmp(ext,'png')), getImgFile( 'png' ); end
 tNm=sprintf('tmp_%s_%09i.%s',tNm,round((t+rand)/2*1e9),ext);
 % compute seek info for compressed images
 if(~strcmp(ext,'raw'))
-  oName=[fName '-seek.mat'];
+  oName=[fName '-seek.mat']; if(n==0), n=10^7; end
   if(exist(oName,'file')==2), load(oName); info.seek=seek; else %#ok<NODEF>
     disp('loading seek info...'); seek=zeros(n,1,'uint32'); seek(1)=1024;
     for i=2:n
-      seek(i)=seek(i-1)+fread(fid,1,'uint32')+16; fseek(fid,seek(i),'bof');
-    end
+      s=seek(i-1)+fread(fid,1,'uint32')+16; valid=fseek(fid,s,'bof')==0;
+      if(valid), seek(i)=s; else n=i-1; seek=seek(1:n); break; end
+    end; if(info.numFrames==0), info.numFrames=n; end
     try save(oName,'seek'); catch; end; info.seek=seek; %#ok<CTCH>
   end
 end
