@@ -9,9 +9,9 @@ function varargout = seqReaderPlugin( cmd, h, varargin )
 %  [I,ts] =srp('getframeb',h) % Get current frame with no decoding.
 %  info = srp('getinfo',h)    % Return struct with info about video.
 %  [I,ts] =srp('getnext',h)   % Shortcut for 'next' followed by 'getframe'.
-%  out = srp('next',h)        % Go to next frame (out=-1 on fail).
-%  out = srp('seek',h,frame)  % Go to specified frame (out=-1 on fail).
-%  out = srp('step',h,delta)  % Go to current frame+delta (out=-1 on fail).
+%  out = srp('next',h)        % Go to next frame (out=0 on fail).
+%  out = srp('seek',h,frame)  % Go to specified frame (out=0 on fail).
+%  out = srp('step',h,delta)  % Go to current frame+delta (out=0 on fail).
 %
 % USAGE
 %  varargout = seqReaderPlugin( cmd, h, varargin )
@@ -40,10 +40,11 @@ nIn=nargin-2; in=varargin; o2=[]; cmd=lower(cmd);
 
 % open seq file
 if(strcmp(cmd,'open'))
-  chk(nIn,1); h=length(hs)+1; hs(h)=h1; varargout={h1}; h1=h1+1;
+  chk(nIn,1,2); h=length(hs)+1; hs(h)=h1; varargout={h1}; h1=h1+1;
   [pth name]=fileparts(in{1}); if(isempty(pth)), pth='.'; end
+  if(nIn==1), info=[]; else info=in{2}; end
   fName=[pth filesep name]; cs(h)=-1;
-  [infos{h},fids(h),tNms{h}]=open(fName); return;
+  [infos{h},fids(h),tNms{h}]=open(fName,info); return;
 end
 
 % Get the handle for this instance
@@ -86,10 +87,11 @@ tName = [fileparts(mfilename('fullpath')) s 'private' s fName];
 if(~exist(tName,'file')), copyfile(sName,tName); end
 end
 
-function [info, fid, tNm] = open( fName )
+function [info, fid, tNm] = open( fName, info )
 % open video for reading, get header
 assert(exist([fName '.seq'],'file')==2); fid=fopen([fName '.seq'],'r','l');
-info=readHeader( fid ); n=info.numFrames;
+if(isempty(info)), info=readHeader(fid); else
+  info.numFrames=0; fseek(fid,1024,'bof'); end
 switch(info.imageFormat)
   case {100,200}, ext='raw';
   case {102,201}, ext='jpg';
@@ -102,8 +104,8 @@ if(strcmp(ext,'png')), getImgFile( 'png' ); end
 [tNm tNm]=fileparts(fName); t=clock; t=mod(t(end),1);
 tNm=sprintf('tmp_%s_%09i.%s',tNm,round((t+rand)/2*1e9),ext);
 % compute seek info for compressed images
-if(~strcmp(ext,'raw'))
-  oName=[fName '-seek.mat']; if(n==0), n=10^7; end
+if(strcmp(ext,'raw')), assert(info.numFrames>0); else
+  oName=[fName '-seek.mat']; n=info.numFrames; if(n==0), n=10^7; end
   if(exist(oName,'file')==2), load(oName); info.seek=seek; else %#ok<NODEF>
     disp('loading seek info...'); seek=zeros(n,1,'uint32'); seek(1)=1024;
     for i=2:n
@@ -114,7 +116,7 @@ if(~strcmp(ext,'raw'))
   end
 end
 % compute frame rate from timestamps as stored fps may be incorrect
-n=min(100,n); if(n==1), return; end; ts=zeros(1,n);
+n=min(100,info.numFrames); if(n==1), return; end; ts=zeros(1,n);
 for f=1:n, ts(f)=getTimeStamp(f-1,fid,info); end
 ds=ts(2:end)-ts(1:end-1); ds=ds(abs(ds-median(ds))<.005);
 if(~isempty(ds)), info.fps=1/mean(ds); end
