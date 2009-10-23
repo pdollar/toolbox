@@ -70,6 +70,9 @@ function sobj = seqIo( fName, mode, varargin )
 % mode='convert': Convert fName to tName applying imgFun(I) to each frame.
 %  seqIo( fName, 'convert', tName, imgFun, [info], [skip] )
 %
+% mode='header': Replace header of seq file w provided info.
+%  seqIo(fName,'header',info)
+%
 % USAGE
 %  sobj = seqIo( fName, mode, varargin )
 %
@@ -183,6 +186,19 @@ elseif( strcmp(mode,'convert') )
   end
   if(init), sw.close(); else warning('No images found.'); end %#ok<WNTAG>
   sr.close();
+  
+elseif( strcmp(mode,'header') )
+  % seqIo(fName,'header',info)
+  [d,n]=fileparts(fName); fName=[d '/' n];
+  oName=[fName '-' datestr(now,30)];
+  if(exist([fName '-seek.mat'],'file')); delete([fName '-seek.mat']); end
+  movefile([fName '.seq'],[oName '.seq'],'f');
+  hr = srp( 'open', int32(-1), oName, varargin{1} );
+  info = seqReaderPlugin('getinfo',hr);
+  hw = swp( 'open', int32(-1), fName, info );
+  for frame = 0:info.numFrames-1, srp('next',hr);
+    [I,ts]=srp('getframeb',hr); swp('addframeb',hw,I,ts); end
+  srp('close',hr); swp('close',hw);
   
 end
 
