@@ -199,7 +199,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
     for i=1:length(hBnds), ids=mod([i-1 i],4)+1;
       if(i==5), ids=[1 3]; elseif(i==6), ids=[2 4]; end
       set(hBnds(i),'Xdata',xs(ids),'Ydata',ys(ids));
-      if(~isempty(hCntr) && i<=4), x=mean(xs(ids)); y=mean(ys(ids));
+      if(rotate && i<=4), x=mean(xs(ids)); y=mean(ys(ids));
         set(hCntr(i),'Position',[x-r y-r 2*r 2*r]);
       end
     end
@@ -228,15 +228,16 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
     t = axisUnitsPerCentimeter()*.15; side=[0 0]; flag=0;
     for i=1:2
       ti = min(t,rs(i)/3);
-      if( abs(pnt(i))<ti && ~isempty(hCntr)), side(i)=2; % near center
+      if( abs(pnt(i))<ti && rotate ), side(i)=2; % near center
       elseif( pnt(i)<-rs(i)+ti ), side(i)=-1; % near lf/tp boundary
       elseif( pnt(i)>rs(i)-ti), side(i)=1; % near rt/bt boundary
       end
     end
     % flag: 0=resize; 1=drag; 2=rotate; 3=symmetric-resize
     if(any(side==0) || all(side==2)), side(side==2)=0; end
-    if(all(side==0)), flag=1; side=pnt0; cursor='fleur'; return; end
     if(side(1)==2), flag=2; cursor='crosshair'; return; end
+    if(sizLock), side=[0 0]; end
+    if(all(side==0)), flag=1; side=pnt0; cursor='fleur'; return; end
     if(side(2)==2), flag=3; side(2)=0; end
     % select cursor based on position
     cs={'bottom','botr','right','topr','top','topl','left','botl'};
@@ -244,8 +245,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
   end
 
   function btnDwn( h, evnt, flag ) %#ok<INUSL>
-    if(isempty(hBnds) || isempty(hPatch)); return; end;
-    if(posLock); return; end; if(sizLock); flag=1; end;
+    if(isempty(hBnds) || isempty(hPatch) || posLock), return; end
     if( flag==-1 ) % create new rectangle
       if(isempty(pos)), anchor=ginput(1); else anchor=pos(1:2); end
       pos=[anchor 1 1 0]; setPos(pos);
