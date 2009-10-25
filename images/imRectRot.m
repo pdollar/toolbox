@@ -56,6 +56,7 @@ function [hPatch,api] = imRectRot( varargin )
 %  .setPosLock(b)  - if lock set (b==true), object cannot change
 %  .setSizLock(b)  - if lock set (b==true), object cannot change size
 %  .setDrgLock(b)  - if lock set (b==true), object cannot be dragged
+%  .setSidLock(lk) - [4x1] set locks for each side (lf/tr/tp/bt)
 %  .setPosChnCb(f) - whenever pos changes (even slightly), calls f(pos)
 %  .setPosSetCb(f) - whenever pos finished changing, calls f(pos)
 %  .uistack(...)   - calls 'uistack( [objectHandles], ... )', see uistack
@@ -80,7 +81,7 @@ function [hPatch,api] = imRectRot( varargin )
 
 % global variables (shared by all functions below)
 [hParent,pos,lims,rotate,crXs,crYs,posChnCb,posSetCb,posLock,sizLock,...
-  dgrLock,hAx,hFig,hPatch,hBnds,hCntr,hEll] = deal([]);
+  dgrLock,sidLock,hAx,hFig,hPatch,hBnds,hCntr,hEll] = deal([]);
 
 % intitialize
 intitialize( varargin{:} );
@@ -89,7 +90,7 @@ intitialize( varargin{:} );
 api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
   'setPosChnCb',@setPosChnCb, 'setPosSetCb',@setPosSetCb, ...
   'setPosLock',@setPosLock, 'setSizLock',@setSizLock, ...
-  'setDrgLock',@setDrgLock );
+  'setDrgLock',@setDrgLock, 'setSidLock',@setSidLock );
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -139,7 +140,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
     set(hs,'ButtonDownFcn',{@btnDwn,0},'DeleteFcn',@deleteFcn);
     
     % set or query initial position
-    posLock=0; sizLock=0; dgrLock=0;
+    posLock=0; sizLock=0; dgrLock=0; sidLock=[0 0 0 0];
     if(length(pos)==5), setPos(pos,1); else
       btnDwn([],[],-1); waitfor(hFig,'WindowButtonUpFcn','');
     end
@@ -236,6 +237,8 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
       end
     end
     % flag: -1: none, 0=resize; 1=drag; 2=rotate; 3=symmetric-resize
+    if((sidLock(1)&&side(1)==-1)||(sidLock(2)&&side(1)==1)), side(1)=0; end
+    if((sidLock(3)&&side(2)==-1)||(sidLock(4)&&side(2)==1)), side(2)=0; end
     if(any(side==0) || all(side==2)), side(side==2)=0; end
     if(side(1)==2), flag=2; cursor='crosshair'; return; end
     if(sizLock), side=[0 0]; end
@@ -315,6 +318,8 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
   function setSizLock( b ), sizLock=b; end
 
   function setDrgLock( b ), dgrLock=b; end
+
+  function setSidLock( lk ), sidLock=lk; end
 
   function uistack1( varargin )
     if(isempty(hBnds) || isempty(hPatch)); return; end;
