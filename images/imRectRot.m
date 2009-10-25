@@ -55,6 +55,7 @@ function [hPatch,api] = imRectRot( varargin )
 %  .setPos(pos)    - set position (while respecting constraints)
 %  .setPosLock(b)  - if lock set (b==true), object cannot change
 %  .setSizLock(b)  - if lock set (b==true), object cannot change size
+%  .setDrgLock(b)  - if lock set (b==true), object cannot be dragged
 %  .setPosChnCb(f) - whenever pos changes (even slightly), calls f(pos)
 %  .setPosSetCb(f) - whenever pos finished changing, calls f(pos)
 %  .uistack(...)   - calls 'uistack( [objectHandles], ... )', see uistack
@@ -79,7 +80,7 @@ function [hPatch,api] = imRectRot( varargin )
 
 % global variables (shared by all functions below)
 [hParent,pos,lims,rotate,crXs,crYs,posChnCb,posSetCb,posLock,sizLock,...
-  hAx,hFig,hPatch,hBnds,hCntr,hEll] = deal([]);
+  dgrLock,hAx,hFig,hPatch,hBnds,hCntr,hEll] = deal([]);
 
 % intitialize
 intitialize( varargin{:} );
@@ -87,7 +88,8 @@ intitialize( varargin{:} );
 % create api
 api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
   'setPosChnCb',@setPosChnCb, 'setPosSetCb',@setPosSetCb, ...
-  'setPosLock',@setPosLock, 'setSizLock',@setSizLock );
+  'setPosLock',@setPosLock, 'setSizLock',@setSizLock, ...
+  'setDrgLock',@setDrgLock );
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -137,7 +139,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
     set(hs,'ButtonDownFcn',{@btnDwn,0},'DeleteFcn',@deleteFcn);
     
     % set or query initial position
-    posLock=0; sizLock=0;
+    posLock=0; sizLock=0; dgrLock=0;
     if(length(pos)==5), setPos(pos,1); else
       btnDwn([],[],-1); waitfor(hFig,'WindowButtonUpFcn','');
     end
@@ -233,10 +235,11 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
       elseif( pnt(i)>rs(i)-ti), side(i)=1; % near rt/bt boundary
       end
     end
-    % flag: 0=resize; 1=drag; 2=rotate; 3=symmetric-resize
+    % flag: -1: none, 0=resize; 1=drag; 2=rotate; 3=symmetric-resize
     if(any(side==0) || all(side==2)), side(side==2)=0; end
     if(side(1)==2), flag=2; cursor='crosshair'; return; end
     if(sizLock), side=[0 0]; end
+    if(all(side==0) && dgrLock), cursor=''; flag=-1; return; end
     if(all(side==0)), flag=1; side=pnt0; cursor='fleur'; return; end
     if(side(2)==2), flag=3; side(2)=0; end
     % select cursor based on position
@@ -254,6 +257,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
       else cursor='botr'; flag=0; end
     else % resize, rotate or drag rectangle
       pnt=getCurPnt(); [anchor,cursor,flag]=getSide( pnt );
+      if(flag==-1), return; end
     end
     set( hFig, 'Pointer', cursor );
     set( hFig, 'WindowButtonMotionFcn',{@drag,flag,anchor,pos} );
@@ -309,6 +313,8 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
   function setPosLock( b ), posLock=b; end
 
   function setSizLock( b ), sizLock=b; end
+
+  function setDrgLock( b ), dgrLock=b; end
 
   function uistack1( varargin )
     if(isempty(hBnds) || isempty(hPatch)); return; end;
