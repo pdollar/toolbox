@@ -60,6 +60,7 @@ function [hPatch,api] = imRectRot( varargin )
 %  .setPosChnCb(f) - whenever pos changes (even slightly), calls f(pos)
 %  .setPosSetCb(f) - whenever pos finished changing, calls f(pos)
 %  .uistack(...)   - calls 'uistack( [objectHandles], ... )', see uistack
+%  .setStyle(...)  - set line style, width and color
 %
 % EXAMPLE - interactively place simple axis aligned rectangle
 %  figure(1), imshow peppers.png;
@@ -90,7 +91,8 @@ intitialize( varargin{:} );
 api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
   'setPosChnCb',@setPosChnCb, 'setPosSetCb',@setPosSetCb, ...
   'setPosLock',@setPosLock, 'setSizLock',@setSizLock, ...
-  'setDrgLock',@setDrgLock, 'setSidLock',@setSidLock );
+  'setDrgLock',@setDrgLock, 'setSidLock',@setSidLock, ...
+  'setStyle',@setStyle );
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -326,4 +328,8 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
     uistack( [hBnds hPatch hCntr hEll], varargin{:} );
   end
 
+  function setStyle( ls, lw, color )
+    if(isempty(hEll)), h=hBnds; else h=hEll; end
+    set(h,'LineStyle',ls,'LineWidth',lw,'color',color);
+  end
 end
