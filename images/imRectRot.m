@@ -200,7 +200,8 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
       set(hEll,'XData',xsEll,'YData',ysEll);
     end
     % draw rectangle boundaries and control circles
-    r=axisUnitsPerCentimeter(); r=max(r*.05,min([r*.6 10 pos(3:4)/4]));
+    r=axisUnitsPerCentimeter();
+    r=max( r*.1, min(mean(pos(3:4))/15,r) );
     for i=1:length(hBnds), ids=mod([i-1 i],4)+1;
       if(i==5), ids=[1 3]; elseif(i==6), ids=[2 4]; end
       set(hBnds(i),'Xdata',xs(ids),'Ydata',ys(ids));
@@ -321,7 +322,10 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
 
   function setDrgLock( b ), dgrLock=b; end
 
-  function setSidLock( lk ), sidLock=lk; end
+  function setSidLock( lk )
+    sidLock=lk; vis={'off','on'};
+    for i=1:4, set(hCntr(i),'Visible',vis{2-lk(i)}); end
+  end
 
   function uistack1( varargin )
     if(isempty(hBnds) || isempty(hPatch)); return; end;
