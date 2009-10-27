@@ -29,9 +29,9 @@ if(nargin<2 || isempty(imgDir)), imgDir=pwd; end
 if(nargin<3 || isempty(resDir)), resDir=imgDir; end
 if(~exist(resDir,'dir')), mkdir(resDir); end
 colors='gcmrkgcmrkgcmrkgcmrkgcmrkgcmrkgcmrk'; minSiz=[12 12];
-[hFig,hAx,pTop,imgInd,imgFiles,rotate,ellipse,useLims] = deal([]);
+[hFig,hAx,pTop,imgInd,imgFiles,rotate,ellipse,useLims,usePnts]=deal([]);
 makeLayout(); imgApi=imgMakeApi(); objApi=objMakeApi();
-rotate=0; ellipse=0; useLims=0; imgApi.setImgDir(imgDir);
+rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
 
   function makeLayout()
     % common properties
@@ -73,6 +73,7 @@ rotate=0; ellipse=0; useLims=0; imgApi.setImgDir(imgDir);
     pTop.hEll=uicontrol(pTop.h,chbPrp{:},st,'ellipse');
     pTop.hRot=uicontrol(pTop.h,chbPrp{:},st,'rotate');
     pTop.hLim=uicontrol(pTop.h,chbPrp{:},st,'lims');
+    pTop.hPnt=uicontrol(pTop.h,chbPrp{:},st,'pnts');
     pTop.hDims=uicontrol(pTop.h,txtPrp{:},'Center',st,'');
     pTop.hNum=uicontrol(pTop.h,txtPrp{:},'Center',st,'n=0');
     pTop.hHelp=uicontrol(pTop.h,btnPrp{:},fs,12,st,'?');
@@ -106,7 +107,8 @@ rotate=0; ellipse=0; useLims=0; imgApi.setImgDir(imgDir);
       set(pTop.hIgn,ps,[x 0 40 12]); x=x+45;
       set(pTop.hEll,ps,[x 12 50 12]);
       set(pTop.hRot,ps,[x 0 50 12]); x=x+55;
-      set(pTop.hLim,ps,[x 12 45 12]); x=x+55;
+      set(pTop.hLim,ps,[x 12 45 12]);
+      set(pTop.hPnt,ps,[x 0 45 12]); x=x+55;
       set(pTop.hNum,ps,[x 5 20 14]); x=x+20+45;
       set(pTop.hHelp,ps,[x 2 20 20]);
     end
@@ -133,6 +135,7 @@ rotate=0; ellipse=0; useLims=0; imgApi.setImgDir(imgDir);
         ' * e-key or ellipse-icon: toggle bb ellipse/rect display'
         ' * r-key or rotation-icon: toggle bb rotation control'
         ' * l-key or lims-icon: toggle bb limits on/off'
+        ' * p-key or pnts-icon: toggle pnt creation on/off'
         ' * left-arrow or <<-icon: select previous bb'
         ' * right-arrow or >>-icon: select next bb'
         ' * up/down-arrow a-key/z-key or dropbox: select bb label' };
@@ -162,12 +165,14 @@ rotate=0; ellipse=0; useLims=0; imgApi.setImgDir(imgDir);
     if(char==101), objApi.objSetVal('ell',0); end  % 'e'
     if(char==114), objApi.objSetVal('rot',0); end  % 'r'
     if(char==108), objApi.objSetVal('lim',0); end  % 'l'
+    if(char==112), objApi.objSetVal('pnt',0); end  % 'p'
   end
 
   function mousePress( h, evnt )
     sType = get(hFig,'SelectionType');
     %disp(['mouse pressed: ' sType]);
     if( strcmp(sType,'open') )
+      if( usePnts ), return; end
       imgApi.setImg(imgInd+1); % double click
     elseif( strcmp(sType,'normal') )
       objApi.objNew(); % single click
@@ -188,6 +193,7 @@ rotate=0; ellipse=0; useLims=0; imgApi.setImgDir(imgDir);
     set(pTop.hEll,'Callback',@(h,evnt) objSetVal('ell',1));
     set(pTop.hRot,'Callback',@(h,evnt) objSetVal('rot',1));
     set(pTop.hLim,'Callback',@(h,evnt) objSetVal('lim',1));
+    set(pTop.hPnt,'Callback',@(h,evnt) objSetVal('pnt',1));
     
     % create api
     api = struct( 'closeAnn',@closeAnn, 'openAnn',@openAnn, ...
@@ -277,7 +283,10 @@ rotate=0; ellipse=0; useLims=0; imgApi.setImgDir(imgDir);
       if(~useLims), rp.lims=[]; else rp.lims=lims; end
       [hObj,rectApi]=imRectRot(rp);
       lbl=objTypes{lblId}; bb=round(rectApi.getPos());
-      if( ~isempty(bb) && all(bb(3:4)>=minSiz) )
+      if( usePnts && all(bb(3:4)<minSiz) )
+        bb(1:2)=bb(:,1:2)+bb(:,3:4)/2-minSiz/2; bb(3:4)=minSiz;
+      end
+      if( usePnts || all(bb(3:4)>=minSiz) )
         obj=bbGt('create'); obj.lbl=lbl; obj.bb=bb(1:4); obj.ang=bb(5);
         objs=[objs; obj]; nObj=nObj+1; curObj=nObj;
       end; delete(hObj); objsDraw();
@@ -322,6 +331,9 @@ rotate=0; ellipse=0; useLims=0; imgApi.setImgDir(imgDir);
       elseif(strcmp(type,'lim'))
         useLims = get(pTop.hLim,'Value');
         if(~flag), useLims=1-useLims; set(pTop.hLim,'Value',useLims); end
+      elseif(strcmp(type,'pnt'))
+        usePnts = get(pTop.hPnt,'Value');
+        if(~flag), usePnts=1-usePnts; set(pTop.hPnt,'Value',usePnts); end
       end
       objsDraw();
     end
