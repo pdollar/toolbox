@@ -60,9 +60,9 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
       bg,[.7 .7 .7],fs,10}];
     chbPrp = {'Style','checkbox',bg,[.1 .1 .1],fg,'w'};
     pTop.h = uipanel(pnlProp{:},'Parent',hFig);
-    pTop.hImgLbl=uicontrol(pTop.h,txtPrp{:},'Left',st,'image:');
     pTop.hImgInd=uicontrol(pTop.h,edtPrp{:},'Right',st,'0');
-    pTop.hImgNum=uicontrol(pTop.h,txtPrp{:},'Left',st,'/0');
+    pTop.hImgNum=uicontrol(pTop.h,edtPrp{:},'Left',st,'/0',...
+      'Enable','inactive');
     pTop.hLbl = uicontrol( pTop.h,'Style','popupmenu',units{:},...
       st,objTypes,'Value',1);
     pTop.hDel=uicontrol(pTop.h,btnPrp{:},fs,11,fg,[.5 0 0],st,'X');
@@ -88,29 +88,28 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
     
     function figResized( h, evnt )
       % overall layout
-      pos=get(hFig,ps); pad=8; htTop=24; wdTop=590;
+      pos=get(hFig,ps); pad=8; htTop=30; wdTop=590;
       wd=pos(3)-2*pad; ht=pos(4)-2*pad-htTop;
       x=(pos(3)-wd)/2; y=pad;
       set(hAx,ps,[x y wd ht]); y=y+ht;
       set(pTop.h,ps,[x y wd htTop]);
       % position stuff in top panel
-      x=max(0,(wd-wdTop)/2);
-      set(pTop.hImgLbl,ps,[x 5 35 14]); x=x+35;
-      set(pTop.hImgInd,ps,[x 5 40 15]); x=x+40;
-      set(pTop.hImgNum,ps,[x 5 40 14]); x=x+50;
-      set(pTop.hDel,ps,[x 2 20 20]); x=x+20+5;
-      set(pTop.hPrv,ps,[x 2 24 20]); x=x+24;
-      set(pTop.hLbl,ps,[x 2 80 21]); x=x+80;
-      set(pTop.hNxt,ps,[x 2 24 20]); x=x+24+5;
-      set(pTop.hDims,ps,[x 5 60 14]); x=x+60;
-      set(pTop.hOcc,ps,[x 12 40 12]);
-      set(pTop.hIgn,ps,[x 0 40 12]); x=x+45;
-      set(pTop.hEll,ps,[x 12 50 12]);
-      set(pTop.hRot,ps,[x 0 50 12]); x=x+55;
-      set(pTop.hLim,ps,[x 12 45 12]);
-      set(pTop.hPnt,ps,[x 0 45 12]); x=x+55;
-      set(pTop.hNum,ps,[x 5 20 14]); x=x+20+45;
-      set(pTop.hHelp,ps,[x 2 20 20]);
+      x=max(2,(wd-wdTop)/2);
+      set(pTop.hImgInd,ps,[x 4 40 22]); x=x+42;
+      set(pTop.hImgNum,ps,[x 4 40 22]); x=x+50;
+      set(pTop.hDel,ps,[x 5 20 20]); x=x+20+5;
+      set(pTop.hPrv,ps,[x 5 24 20]); x=x+25;
+      set(pTop.hLbl,ps,[x 5 80 21]); x=x+81;
+      set(pTop.hNxt,ps,[x 5 24 20]); x=x+25+5;
+      set(pTop.hDims,ps,[x 5 60 20]); x=x+62;
+      set(pTop.hOcc,ps,[x 15 45 13]);
+      set(pTop.hIgn,ps,[x 2 45 13]); x=x+50;
+      set(pTop.hEll,ps,[x 15 55 13]);
+      set(pTop.hRot,ps,[x 2 55 13]); x=x+60;
+      set(pTop.hLim,ps,[x 15 45 13]);
+      set(pTop.hPnt,ps,[x 2 45 13]); x=x+60;
+      set(pTop.hNum,ps,[x 5 20 20]); x=x+20+45;
+      set(pTop.hHelp,ps,[x 5 20 20]);
     end
     
     function helpWindow( h, evnt )
