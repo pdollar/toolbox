@@ -31,7 +31,7 @@ if(~exist(resDir,'dir')), mkdir(resDir); end
 colors='gcmrkgcmrkgcmrkgcmrkgcmrkgcmrkgcmrk'; minSiz=[12 12];
 [hFig,hAx,pTop,imgInd,imgFiles,rotate,ellipse,useLims] = deal([]);
 makeLayout(); imgApi=imgMakeApi(); objApi=objMakeApi();
-imgApi.setImgDir(imgDir); rotate=0; ellipse=0; useLims=0;
+rotate=0; ellipse=0; useLims=0; imgApi.setImgDir(imgDir);
 
   function makeLayout()
     % common properties
