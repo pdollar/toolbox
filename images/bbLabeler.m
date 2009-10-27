@@ -54,17 +54,17 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
     
     % top panel
     pnlProp = [units {bg,[.1 .1 .1],'BorderType','none'}];
-    txtPrp = {'Style','text',bg,[.1 .1 .1],fg,'w',ha};
-    edtPrp = {'Style','edit',bg,[.1 .1 .1],fg,'w',ha};
+    txtPrp = {'Style','text',bg,[.1 .1 .1],fs,8,fg,'w',ha};
+    edtPrp = {'Style','edit',bg,[.1 .1 .1],fs,8,fg,'w',ha};
     btnPrp = [units,{'Style','pushbutton','FontWeight','bold',...
       bg,[.7 .7 .7],fs,10}];
-    chbPrp = {'Style','checkbox',bg,[.1 .1 .1],fg,'w'};
+    chbPrp = {'Style','checkbox',bg,[.1 .1 .1],fs,8,fg,'w'};
     pTop.h = uipanel(pnlProp{:},'Parent',hFig);
     pTop.hImgInd=uicontrol(pTop.h,edtPrp{:},'Right',st,'0');
     pTop.hImgNum=uicontrol(pTop.h,edtPrp{:},'Left',st,'/0',...
       'Enable','inactive');
     pTop.hLbl = uicontrol( pTop.h,'Style','popupmenu',units{:},...
-      st,objTypes,'Value',1);
+      st,objTypes,fs,8,'Value',1);
     pTop.hDel=uicontrol(pTop.h,btnPrp{:},fs,11,fg,[.5 0 0],st,'X');
     pTop.hPrv=uicontrol(pTop.h,btnPrp{:},st,'<<');
     pTop.hNxt=uicontrol(pTop.h,btnPrp{:},st,'>>');
@@ -95,7 +95,7 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
       set(pTop.h,ps,[x y wd htTop]);
       % position stuff in top panel
       x=max(2,(wd-wdTop)/2);
-      set(pTop.hImgInd,ps,[x 4 40 22]); x=x+42;
+      set(pTop.hImgInd,ps,[x 4 40 22]); x=x+40;
       set(pTop.hImgNum,ps,[x 4 40 22]); x=x+50;
       set(pTop.hDel,ps,[x 5 20 20]); x=x+20+5;
       set(pTop.hPrv,ps,[x 5 24 20]); x=x+25;
