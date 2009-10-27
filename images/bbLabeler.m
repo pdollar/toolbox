@@ -108,7 +108,7 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
       set(pTop.hRot,ps,[x 2 55 13]); x=x+60;
       set(pTop.hLim,ps,[x 15 45 13]);
       set(pTop.hPnt,ps,[x 2 45 13]); x=x+60;
-      set(pTop.hNum,ps,[x 5 20 20]); x=x+20+45;
+      set(pTop.hNum,ps,[x 5 20 20]); x=x+20+50;
       set(pTop.hHelp,ps,[x 5 20 20]);
     end
     
