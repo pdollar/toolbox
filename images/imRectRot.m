@@ -56,7 +56,7 @@ function [hPatch,api] = imRectRot( varargin )
 %  .setPosLock(b)  - if lock set (b==true), object cannot change
 %  .setSizLock(b)  - if lock set (b==true), object cannot change size
 %  .setDrgLock(b)  - if lock set (b==true), object cannot be dragged
-%  .setSidLock(lk) - [4x1] set locks for each side (lf/tr/tp/bt)
+%  .setSidLock(lk) - [4x1] set locks for each side (tp/rt/bt/lf)
 %  .setPosChnCb(f) - whenever pos changes (even slightly), calls f(pos)
 %  .setPosSetCb(f) - whenever pos finished changing, calls f(pos)
 %  .uistack(...)   - calls 'uistack( [objectHandles], ... )', see uistack
@@ -200,7 +200,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
       set(hEll,'XData',xsEll,'YData',ysEll);
     end
     % draw rectangle boundaries and control circles
-    r=max(2,min([axisUnitsPerCentimeter()*.15,10,pos(3:4)/4]));
+    r=axisUnitsPerCentimeter(); r=max(r*.05,min([r*.6 10 pos(3:4)/4]));
     for i=1:length(hBnds), ids=mod([i-1 i],4)+1;
       if(i==5), ids=[1 3]; elseif(i==6), ids=[2 4]; end
       set(hBnds(i),'Xdata',xs(ids),'Ydata',ys(ids));
@@ -239,8 +239,8 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
       end
     end
     % flag: -1: none, 0=resize; 1=drag; 2=rotate; 3=symmetric-resize
-    if((sidLock(1)&&side(1)==-1)||(sidLock(2)&&side(1)==1)), side(1)=0; end
-    if((sidLock(3)&&side(2)==-1)||(sidLock(4)&&side(2)==1)), side(2)=0; end
+    if((sidLock(4)&&side(1)==-1)||(sidLock(2)&&side(1)==1)), side(1)=0; end
+    if((sidLock(1)&&side(2)==-1)||(sidLock(3)&&side(2)==1)), side(2)=0; end
     if(any(side==0) || all(side==2)), side(side==2)=0; end
     if(side(1)==2), flag=2; cursor='crosshair'; return; end
     if(sizLock), side=[0 0]; end
