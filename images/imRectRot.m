@@ -231,7 +231,8 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
     % get pnt in coordintates of center of rectangle
     [pc,rs,R]=rectInfo(pos); pnt=(pnt0-pc)*R; th=pos(5);
     % side(i) -1=lf/tp bnd; 0=interior; +1:rt/bt bnd; 2=center
-    t = axisUnitsPerCentimeter()*.15; side=[0 0]; flag=0;
+    t = axisUnitsPerCentimeter(); side=[0 0]; flag=0;
+    t = max( t*.1, min(mean(pos(3:4))/15,t) );
     for i=1:2
       ti = min(t,rs(i)/3);
       if( abs(pnt(i))<ti && rotate ), side(i)=2; % near center
