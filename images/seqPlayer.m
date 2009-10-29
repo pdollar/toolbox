@@ -28,7 +28,7 @@ function seqPlayer( fName, dispFunc )
 %
 % See also SEQIO
 %
-% Piotr's Image&Video Toolbox      Version 2.35
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -75,8 +75,8 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
     
     % top panel
     pnlProp = [units {bg,[.1 .1 .1],'BorderType','none'}];
-    txtPrp = {'Style','text',bg,[.1 .1 .1],fg,'w',ha};
-    edtPrp = {'Style','edit',bg,[.1 .1 .1],fg,'w',ha};
+    txtPrp = {'Style','text',fs,8,bg,[.1 .1 .1],fg,'w',ha};
+    edtPrp = {'Style','edit',fs,8,bg,[.1 .1 .1],fg,'w',ha};
     pTop.h = uipanel(pnlProp{:},'Parent',hFig);
     pTop.hFrmLbl=uicontrol(pTop.h,txtPrp{:},'Left',st,'frame:');
     pTop.hFrmInd=uicontrol(pTop.h,edtPrp{:},'Right');
