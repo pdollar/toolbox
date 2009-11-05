@@ -298,7 +298,7 @@ for b=1:n
   if(m==6), c=col(bb(b,6),:); else c=col(b,:); end
   hs(b) = rectangle( 'Position',bb(b,1:4), 'EdgeColor',c, ...
     'LineWidth',lw, 'LineStyle',ls, prop{:});
-  if(m==4), continue; end
+  if(m==4 || all(bb(:,5)==0)), continue; end
   hs(b+n)=text( bb(b,1), bb(b,2), num2str(bb(b,5),4), 'FontSize',10, ...
     'color','w', 'FontWeight','bold', 'VerticalAlignment','bottom' );
 end
@@ -533,8 +533,8 @@ function bbs = frMask( M, bbw, bbh )
 %  sum(abs(M(:)-M2(:)))
 %
 % See also bbApply, bbApply>toMask
-pos=ind2sub2(size(M),find(M));
-bbs=[fliplr(pos) pos]; bbs(:,3)=bbw; bbs(:,4)=bbh;
+pos=ind2sub2(size(M),find(M>0));
+bbs=[fliplr(pos) pos]; bbs(:,3)=bbw; bbs(:,4)=bbh; bbs(:,5)=M(M>0);
 bbs(:,1)=bbs(:,1)-floor(bbw/2);
 bbs(:,2)=bbs(:,2)-floor(bbh/2);
 end
