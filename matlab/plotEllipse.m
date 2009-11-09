@@ -1,8 +1,8 @@
-function [h,hc] = plotEllipse( cRow, cCol, ra, rb, phi, color, nPnts )
+function [h,hc,hl] = plotEllipse( cRow, cCol, ra, rb, phi, color, nPnts )
 % Adds an ellipse to the current plot.
 %
 % USAGE
-%  [h,hc] = plotEllipse( cRow, cCol, ra, rb, phi, [color], [nPnts] )
+%  [h,hc,hl] = plotEllipse( cRow, cCol, ra, rb, phi, [color], [nPnts] )
 %
 % INPUTS
 %  cRow    - the row location of the center of the ellipse
@@ -16,6 +16,7 @@ function [h,hc] = plotEllipse( cRow, cCol, ra, rb, phi, color, nPnts )
 % OUTPUT
 %  h       - handle to ellipse
 %  hc      - handle to ellipse center
+%  hl      - handle to ellipse orient
 %
 % EXAMPLE
 %  plotEllipse( 3, 2, 1, 5, pi/6, 'g');
@@ -36,7 +37,9 @@ ts = linspace(-pi,pi,nPnts+1);  cts = cos(ts); sts = sin(ts);
 h = plot( ra*cts*cos(-phi) + rb*sts*sin(-phi) + cCol, ...
   rb*sts*cos(-phi) - ra*cts*sin(-phi) + cRow, 'Color', color );
 
-% plot center point
+% plot center point and line indicating orientation
 washeld = ishold; if(~washeld); hold('on'); end
 hc = plot( cCol, cRow, 'k+' ); set( hc, 'Color', color );
+hl = plot( [cCol cCol+cos(-phi)*ra], [cRow cRow-sin(-phi)*ra], color );
 if(~washeld); hold('off'); end
+end
