@@ -58,7 +58,7 @@ function varargout = bbApply( action, varargin )
 % bbApply>union bbApply>resize bbApply>squarify bbApply>draw bbApply>crop
 % bbApply>convert bbApply>random bbApply>frMask bbApply>toMask
 %
-% Piotr's Image&Video Toolbox      Version 2.35
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -283,14 +283,14 @@ function hs = draw( bb, col, lw, ls, prop )
 [n,m]=size(bb); if(m==4), hs=zeros(1,n); else hs=zeros(1,2*n); end
 nClf=1; if(m==6), nClf=max(bb(:,6)); end
 
-if(nargin<2 || isempty(col)), 
-  if(m<6), col='g'; else col=hsv(nClf); end 
+if(nargin<2 || isempty(col)),
+  if(m<6), col='g'; else col=hsv(nClf); end
 end
 if(nargin<3 || isempty(lw)), lw=2; end
 if(nargin<4 || isempty(ls)), ls='-'; end
 if(nargin<5 || isempty(prop)), prop={}; end
 
-if(size(col,1)==1), 
+if(size(col,1)==1),
   if(m==6), col=repmat(col,nClf,1); else
     col=repmat(col,n,1); end
 end

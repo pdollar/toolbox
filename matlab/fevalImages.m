@@ -57,7 +57,7 @@ function X = fevalImages( fHandle, prms, srcDir, name, ext, ...
 %
 % See also FEVALARRAYS, IMWRITE2, PERSISTENT, TICSTATUS
 %
-% Piotr's Image&Video Toolbox      Version 2.0
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -76,7 +76,7 @@ if( nargin<=3 ) % no convention followed
   dirCont = dir(srcDir); dirCont = dirCont(3:end);
   filenames = {dirCont.name}; n = length(dirCont);
 else % strict convention followed
-  if( nargin<8 || isempty(nDigits) || isunix)
+  if( nargin<8 || isempty(nDigits) || isunix )
     dirCont = dir([srcDir name '*.' ext]);
   else
     dirCont = dir([srcDir name repmat('?',[1 nDigits]) '.' ext '*' ]);
@@ -109,7 +109,7 @@ for i=1:n
       error( ['Unable to read image: ' srcDir name nstr '.' ext] );
     end;
   end
-
+  
   % apply fHandle to I
   x = feval( fHandle, I, prms{:} );
   if (i==1)
