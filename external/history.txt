@@ -1,8 +1,11 @@
 Version NEW
- -images/imRectRot.m: additional display options and minor tweaks
- -images/seqIo.m: added case for converting seq files and extra commenting
+ -images/seqIo.m, seqReaderPlugin.m: seq conversion and new header support
+ -images/imRectRot.m: additional display options and numerous tweaks
  -matlab/multiDiv.m: added extra cases
  -images/maskEllipse.m: faster, simpler, minor bus fix, all in matlab now
+ -images/bbApply.m: numerous tweaks [need to look over]
+ -minor: plotEllipse.m, fevalImages.m, cell2array.m, bbNms.m, seqPlayer.m
+ 
  -added images/poseGt.m: pose data struct.
  -added images/poseLabeler.m: Pose labeler for static images.
  -added images/bbGt.m: bb data struct, evaluation and sampling routines.
