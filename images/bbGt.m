@@ -603,7 +603,7 @@ if(flip), n=n/2; end; n=n/length(rots); m=size(bbs,1);
 if(isempty(ibbs)), if(m>n), bbs=bbs(randsample(m,n),:); end; else
   if(m>n), bbs=bbs(randperm(m),:); end; K=false(1,m); i=1;
   keep=@(i) all(compOas(bbs(i,:),ibbs,ibbs(:,5))<thr);
-  while(sum(K)<n && i<m), K(i)=keep(i); i=i+1; end; bbs=bbs(K,:);
+  while(sum(K)<n && i<=m), K(i)=keep(i); i=i+1; end; bbs=bbs(K,:);
 end
 % standardize aspect ratios (by growing bbs) and pad bbs
 if(~isempty(ar) && squarify), bbs=bbApply('squarify',bbs,0,ar); end
