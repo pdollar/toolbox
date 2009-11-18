@@ -21,7 +21,7 @@ function [h,hc,hl] = plotEllipse( cRow, cCol, ra, rb, phi, color, nPnts )
 % EXAMPLE
 %  plotEllipse( 3, 2, 1, 5, pi/6, 'g');
 %
-% See also PLOTGAUSSELLIPSES
+% See also plotGaussEllipses
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -35,11 +35,13 @@ if(nargin<7 || isempty(nPnts)); nPnts = 100; end
 % plot ellipse (rotate a scaled circle):
 ts = linspace(-pi,pi,nPnts+1);  cts = cos(ts); sts = sin(ts);
 h = plot( ra*cts*cos(-phi) + rb*sts*sin(-phi) + cCol, ...
-  rb*sts*cos(-phi) - ra*cts*sin(-phi) + cRow, 'Color', color );
+  rb*sts*cos(-phi) - ra*cts*sin(-phi) + cRow );
 
 % plot center point and line indicating orientation
 washeld = ishold; if(~washeld); hold('on'); end
-hc = plot( cCol, cRow, 'k+' ); set( hc, 'Color', color );
-hl = plot( [cCol cCol+cos(-phi)*ra], [cRow cRow-sin(-phi)*ra], color );
-if(~washeld); hold('off'); end
+hc = plot( cCol, cRow, 'k+' );
+hl = plot( [cCol cCol+cos(-phi)*ra], [cRow cRow-sin(-phi)*ra] );
+set([h hc hl],'Color',color);
+if(~washeld); hold('off'); end;
+
 end
