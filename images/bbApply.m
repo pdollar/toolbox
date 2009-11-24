@@ -282,20 +282,21 @@ function hs = draw( bb, col, lw, ls, prop )
 % See also bbApply, bbApply>embed
 [n,m]=size(bb); if(m==4), hs=zeros(1,n); else hs=zeros(1,2*n); end
 nClf=1; if(m==6), nClf=max(bb(:,6)); end
+if(n<1), return; end
 
 if(nargin<2 || isempty(col)),
-  if(m<6), col='g'; else col=hsv(nClf); end
+  if(m<6 || nClf==1), col='g'; else col=hsv(nClf); end
 end
 if(nargin<3 || isempty(lw)), lw=2; end
 if(nargin<4 || isempty(ls)), ls='-'; end
 if(nargin<5 || isempty(prop)), prop={}; end
 
 if(size(col,1)==1),
-  if(m==6), col=repmat(col,nClf,1); else
+  if(m==6 && nClf>1), col=repmat(col,nClf,1); else
     col=repmat(col,n,1); end
 end
 for b=1:n
-  if(m==6), c=col(bb(b,6),:); else c=col(b,:); end
+  if(m==6 && nClf>1), c=col(bb(b,6),:); else c=col(b,:); end
   hs(b) = rectangle( 'Position',bb(b,1:4), 'EdgeColor',c, ...
     'LineWidth',lw, 'LineStyle',ls, prop{:});
   if(m==4 || all(bb(:,5)==0)), continue; end
@@ -533,7 +534,7 @@ function bbs = frMask( M, bbw, bbh )
 %  sum(abs(M(:)-M2(:)))
 %
 % See also bbApply, bbApply>toMask
-pos=ind2sub2(size(M),find(M>0));
+pos=ind2sub2(size(M),find(M>0)); if(isempty(pos)), bbs=[]; return; end
 bbs=[fliplr(pos) pos]; bbs(:,5)=M(M>0);
 bbs(:,1)=bbs(:,1)-floor(bbw/2); bbs(:,3)=bbw;
 bbs(:,2)=bbs(:,2)-floor(bbh/2); bbs(:,4)=bbh;
