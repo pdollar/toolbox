@@ -28,7 +28,7 @@ function varargout = bbApply( action, varargin )
 % Fix bb aspect ratios (without moving the bb centers).
 %   bbr = bbApply( 'squarify', bb, flag, [ar] )
 % Draw single or multiple bbs to image (calls rectangle()).
-%   hs = bbApply( 'draw', bb, [col], [lw], [ls], [prop] )
+%   hs = bbApply( 'draw', bb, [col], [lw], [ls], [prop], [ids] )
 % Embed single or multiple bbs directly into image.
 %  I = bbApply( 'embed', I, bb, [varargin] )
 % Crop image regions from I encompassed by bbs.
@@ -257,52 +257,46 @@ for i=1:size(bb,1)
 end
 end
 
-function hs = draw( bb, col, lw, ls, prop )
+function hs = draw( bb, col, lw, ls, prop, ids )
 % Draw single or multiple bbs to image (calls rectangle()).
 %
 % To draw bbs aligned with pixel boundaries, subtract .5 from the x and y
 % coordinates (since pixel centers are located at integer locations).
 %
 % USAGE
-%  hs = bbApply( 'draw', bb, [col], [lw], [ls], [prop] )
+%  hs = bbApply( 'draw', bb, [col], [lw], [ls], [prop], [ids] )
 %
 % INPUTS
-%  bb     - [nx4] or [nx5] input bbs, or [nx6] for multiple clfs
-%  col    - ['g'] color for rectangle or nx1, nx3 or nxnClf array of colors
+%  bb     - [nx4] standard bbs or [nx5] weighted bbs
+%  col    - ['g'] color or [kx1] array of colors
 %  lw     - [2] LineWidth for rectangle
 %  ls     - ['-'] LineStyle for rectangle
 %  prop   - [] other properties for rectangle
+%  ids    - [ones(1,n)] id in [1,k] for each bb into colors array
 %
 % OUTPUT
-%  hs     - [nx1] handles to drawn rectangles
+%  hs     - [nx1] handles to drawn rectangles (and labels)
 %
 % EXAMPLE
-%  im(rand(3)); bbApply('draw',[1.5 1.5 1 1],'g')
+%  im(rand(3)); bbApply('draw',[1.5 1.5 1 1 .5],'g');
 %
-% See also bbApply, bbApply>embed
-[n,m]=size(bb); if(m==4), hs=zeros(1,n); else hs=zeros(1,2*n); end
-nClf=1; if(m==6), nClf=max(bb(:,6)); end
-if(n<1), return; end
-
-if(nargin<2 || isempty(col)),
-  if(m<6 || nClf==1), col='g'; else col=hsv(nClf); end
-end
+% See also bbApply, bbApply>embed, rectangle
+[n,m]=size(bb); if(n==0), return; end
+if(nargin<2 || isempty(col)), col=[]; end
 if(nargin<3 || isempty(lw)), lw=2; end
 if(nargin<4 || isempty(ls)), ls='-'; end
 if(nargin<5 || isempty(prop)), prop={}; end
-
-if(size(col,1)==1),
-  if(m==6 && nClf>1), col=repmat(col,nClf,1); else
-    col=repmat(col,n,1); end
-end
-for b=1:n
-  if(m==6 && nClf>1), c=col(bb(b,6),:); else c=col(b,:); end
-  hs(b) = rectangle( 'Position',bb(b,1:4), 'EdgeColor',c, ...
-    'LineWidth',lw, 'LineStyle',ls, prop{:});
-  if(m==4 || all(bb(:,5)==0)), continue; end
-  hs(b+n)=text( bb(b,1), bb(b,2), num2str(bb(b,5),4), 'FontSize',10, ...
-    'color','w', 'FontWeight','bold', 'VerticalAlignment','bottom' );
-end
+if(nargin<6 || isempty(ids)), ids=ones(1,n); end
+% prepare display properties
+prop=['LineWidth' lw 'LineStyle' ls prop 'EdgeColor'];
+tProp={'FontSize',10,'color','w','FontWeight','bold',...
+  'VerticalAlignment','bottom'}; k=max(ids);
+if(isempty(col)), if(k==1), col='g'; else col=hsv(k); end; end
+if(size(col,1)<k), ids=ones(1,n); end; hs=zeros(1,n);
+% draw rectangles and optionally labels
+for b=1:n, hs(b)=rectangle('Position',bb(b,1:4),prop{:},col(ids(b),:)); end
+if(m==4), return; end; hs=[hs zeros(1,n)];
+for b=1:n, hs(b+n)=text(bb(b,1),bb(b,2),num2str(bb(b,5),4),tProp{:}); end
 end
 
 function I = embed( I, bb, varargin )
@@ -534,7 +528,7 @@ function bbs = frMask( M, bbw, bbh )
 %  sum(abs(M(:)-M2(:)))
 %
 % See also bbApply, bbApply>toMask
-pos=ind2sub2(size(M),find(M>0)); if(isempty(pos)), bbs=[]; return; end
+pos=ind2sub2(size(M),find(M>0));
 bbs=[fliplr(pos) pos]; bbs(:,5)=M(M>0);
 bbs(:,1)=bbs(:,1)-floor(bbw/2); bbs(:,3)=bbw;
 bbs(:,2)=bbs(:,2)-floor(bbh/2); bbs(:,4)=bbh;
