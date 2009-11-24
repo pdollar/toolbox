@@ -39,10 +39,10 @@ function varargout = bbGt( action, varargin )
 %   vals = bbGt( 'get', objs, name )
 % Set object property 'name' (with a standard array).
 %   objs = bbGt( 'set', objs, name, vals )
-% Returns filtered ground truth bbs for purpose of evaluation.
-%   gtBbs = bbGt( 'toGt', objs, prm )
 %
 %%% (2) Routines for evaluating the Pascal criteria for object detection.
+% Returns filtered ground truth bbs for purpose of evaluation.
+%   gtBbs = bbGt( 'toGt', objs, prm )
 % Evaluates detections in a single frame against ground truth data.
 %  [gt, dt] = bbGt( 'evalRes', gt0, dt0, thr )
 % Compute ROC or PR based on outputs of evalRes on multiple images.
@@ -222,6 +222,8 @@ switch name
 end
 end
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 function [gtBbs,ids] = toGt( objs, prm )
 % Returns filtered ground truth bbs for purpose of evaluation.
 %
@@ -303,8 +305,6 @@ if(any(pad~=0)), gtBbs=bbApply('resize',gtBbs,1+pad(2),1+pad(1)); end
     bb=[x0 y0 x1-x0 y1-y0];
   end
 end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function [gt, dt] = evalRes( gt0, dt0, thr )
 % Evaluates detections in a single frame against ground truth data.
