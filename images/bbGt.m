@@ -70,8 +70,8 @@ function varargout = bbGt( action, varargin )
 %
 % EXAMPLE
 %
-% See also bbApply, bbGt>create, bbGt>bbSave, bbGt>bbLoad, bbGt>get,
-% bbGt>set, bbGt>toGt, bbGt>evalRes, bbGt>compRoc, bbGt>cropRes,
+% See also bbApply, bbLabeler, bbGt>create, bbGt>bbSave, bbGt>bbLoad,
+% bbGt>get, bbGt>set, bbGt>toGt, bbGt>evalRes, bbGt>compRoc, bbGt>cropRes,
 % bbGt>compOas, bbGt>compOa, bbGt>sampleData
 %
 % Piotr's Image&Video Toolbox      Version NEW
