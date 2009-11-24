@@ -1,4 +1,3 @@
--look over bbApply.m
 -remove classify/clf* code update description of classify/
 -eventually switch to better svm code [OR  remove clf code]
 -add links to good toolboxes (Vincent's, VideoIO, Lightspeed)

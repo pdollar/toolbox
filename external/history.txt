@@ -3,7 +3,7 @@ Version NEW
  -images/imRectRot.m: additional display options and numerous tweaks
  -matlab/multiDiv.m: added extra cases
  -images/maskEllipse.m: faster, simpler, minor bus fix, all in matlab now
- -images/bbApply.m: numerous tweaks [need to look over]
+ -images/bbApply.m: numerous tweaks
  -minor: plotEllipse.m, fevalImages.m, cell2array.m, bbNms.m, seqPlayer.m
  
  -added images/poseGt.m: pose data struct.
