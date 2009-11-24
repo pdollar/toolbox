@@ -33,9 +33,9 @@
   [I,ts] =srp('getframeb',h) % Get current frame with no decoding.
   info = srp('getinfo',h)    % Return struct with info about video.
   [I,ts] =srp('getnext',h)   % Shortcut for 'next' followed by 'getframe'.
-  out = srp('next',h)        % Go to next frame (out=-1 on fail).
-  out = srp('seek',h,frame)  % Go to specified frame (out=-1 on fail).
-  out = srp('step',h,delta)  % Go to current frame+delta (out=-1 on fail).
+  out = srp('next',h)        % Go to next frame (out=0 on fail).
+  out = srp('seek',h,frame)  % Go to specified frame (out=0 on fail).
+  out = srp('step',h,delta)  % Go to current frame+delta (out=0 on fail).
 
  USAGE
   varargout = seqReaderPlugin( cmd, h, varargin )
@@ -52,7 +52,7 @@
 
  See also <a href="seqIo.html" class="code" title="function sobj = seqIo( fName, mode, varargin )">SEQIO</a>, <a href="seqWriterPlugin.html" class="code" title="function varargout = seqWriterPlugin( cmd, h, varargin )">SEQWRITERPLUGIN</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.35
+ Piotr's Image&amp;Video Toolbox      Version 2.40
  Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>

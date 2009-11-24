@@ -20,35 +20,34 @@
 <div class="box"><strong>Creates a binary image of an ellipse.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function mask = maskEllipse( mrows, ncols, varargin ) </strong></div>
+<div class="box"><strong>function mask = maskEllipse( mRows, nCols, varargin ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment"> Creates a binary image of an ellipse.
 
- Creats a binary image of size (mrows x ncols), with all pixels off except
- inside of the specified ellipse.  The ellipse is given by 5 parameters, a
- semimajor axis of ra, a semminor axis of radius rb, angle phi (in
- radians), centered at (crow,ccol).An alternative method of specifying the
- ellipse parameters is in terms of the parameters of a 2d gaussian.  For
- more information on how a gaussian relates to an ellipse see
- gauss2ellipse.
+ Creates a binary image of size (mRows x nCols), with all pixels set to 0
+ outside the ellipse and 1 inside.  The ellipse is given by 5 parameters,
+ a semimajor axis of ra, a semminor axis of radius rb, angle phi (in
+ radians), and center (cRow,cCol). An alternative method of specifying the
+ ellipse parameters is in terms of a 2D Gaussian. For more info on how a
+ Gaussian relates to an ellipse see gauss2ellipse.
 
  USAGE
-  mask = maskEllipse( mrows, ncols, crow, ccol, ra, rb, phi )
-  mask = maskEllipse( mrows, ncols, mu, C, [rad] )
+  mask = maskEllipse( mRows, nCols, cRow, cCol, ra, rb, phi )
+  mask = maskEllipse( mRows, nCols, mu, C, [rad] )
 
  INPUTS [version 1]
-  mrows   - number of rows in mask
-  ncols   - number of columns in mask
-  crow    - the row location of the center of the ellipse
-  ccol    - the column location of the center of the ellipse
+  mRows   - number of rows in mask
+  nCols   - number of columns in mask
+  cRow    - the row location of the center of the ellipse
+  cCol    - the column location of the center of the ellipse
   ra      - semi-major axis length (in pixels) of the ellipse
   rb      - semi-minor axis length (in pixels) of the ellipse
   phi     - rotation angle (in radians) of semimajor axis to x-axis
 
  INPUTS [version 2]
-  mrows   - number of rows in mask
-  ncols   - number of columns in mask
+  mRows   - number of rows in mask
+  nCols   - number of columns in mask
   mu      - 1x2 vector representing the center of the ellipse
   C       - 2x2 cov matrix
   rad     - [2] Number of std to create the ellipse to
@@ -62,8 +61,8 @@
 
  See also PLOTELLIPSE, GAUSS2ELLIPSE, <a href="maskCircle.html" class="code" title="function mask = maskCircle( angleStart, angleSiz, r, nSamples )">MASKCIRCLE</a>, <a href="maskGaussians.html" class="code" title="function [masks,keepLocs] = maskGaussians( siz, M, width, offset, show )">MASKGAUSSIANS</a>, <a href="imMlGauss.html" class="code" title="function varargout = imMlGauss( G, symmFlag, show )">IMMLGAUSS</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.0
- Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 2.40
+ Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
 
@@ -71,7 +70,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="../matlab/gauss2ellipse.html" class="code" title="function [cRow, cCol, ra, rb, phi] = gauss2ellipse( mu, C, rad )">gauss2ellipse</a>	Creates an ellipse representing the 2D Gaussian distribution.</li></ul>
+<li><a href="../matlab/c.html" class="code" title="">c</a>	clc - clear command window.</li><li><a href="../matlab/gauss2ellipse.html" class="code" title="function [cRow, cCol, ra, rb, phi] = gauss2ellipse( mu, C, rad )">gauss2ellipse</a>	Creates an ellipse representing the 2D Gaussian distribution.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>

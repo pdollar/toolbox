@@ -20,13 +20,13 @@
 <div class="box"><strong>Adds an ellipse to the current plot.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function h = plotEllipse( cRow, cCol, ra, rb, phi, color, nPnts ) </strong></div>
+<div class="box"><strong>function [h,hc,hl] = plotEllipse( cRow, cCol, ra, rb, phi, color, nPnts ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment"> Adds an ellipse to the current plot.
 
  USAGE
-  h = plotEllipse( cRow, cCol, ra, rb, phi, [color], [nPnts] )
+  [h,hc,hl] = plotEllipse( cRow, cCol, ra, rb, phi, [color], [nPnts] )
 
  INPUTS
   cRow    - the row location of the center of the ellipse
@@ -39,13 +39,15 @@
 
  OUTPUT
   h       - handle to ellipse
+  hc      - handle to ellipse center
+  hl      - handle to ellipse orient
 
  EXAMPLE
   plotEllipse( 3, 2, 1, 5, pi/6, 'g');
 
- See also <a href="plotGaussEllipses.html" class="code" title="function hs = plotGaussEllipses( mus, Cs, rad )">PLOTGAUSSELLIPSES</a>
+ See also <a href="plotGaussEllipses.html" class="code" title="function hs = plotGaussEllipses( mus, Cs, rad )">plotGaussEllipses</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.35
+ Piotr's Image&amp;Video Toolbox      Version 2.40
  Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>

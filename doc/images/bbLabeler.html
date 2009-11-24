@@ -2,9 +2,9 @@
                 "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
 <head>
-  <title>Description of seqPlayer</title>
-  <meta name="keywords" content="seqPlayer">
-  <meta name="description" content="Simple GUI to play seq files.">
+  <title>Description of bbLabeler</title>
+  <meta name="keywords" content="bbLabeler">
+  <meta name="description" content="Bounding box or ellipse labeler for static images.">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -13,44 +13,34 @@
 <body>
 <a name="_top"></a>
 <!-- menu.html images -->
-<h1>seqPlayer
+<h1>bbLabeler
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>Simple GUI to play seq files.</strong></div>
+<div class="box"><strong>Bounding box or ellipse labeler for static images.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function seqPlayer( fName, dispFunc ) </strong></div>
+<div class="box"><strong>function bbLabeler( objTypes, imgDir, resDir ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> Simple GUI to play seq files.
+<div class="fragment"><pre class="comment"> Bounding box or ellipse labeler for static images.
 
- Use arrow keys to play the video. Controls are as follows:
- (1) If stopped: [L] play backward, [R] play forward
- (2) If playing forward: [L] halve speed, [R] double speed, [U/D] stop
- (3) If playing backward: [L] double speed, [R] halve speed,[U/D] stop
- You can explicitly enter a frame or use the slider to jump in the video.
-
- One can pass in a function handle dispFunc, where &quot;hs=dispFunc(frame)&quot;
- performs additional custom display for the given frame (and returns the
- handles for any created objects).
+ Launch and click &quot;?&quot; icon for more info.
 
  USAGE
-  seqPlayer( [fName], [dispFunc] )
+  bbLabeler( [objTypes], [imgDir], [resDir] )
 
  INPUTS
-  fName    - optional seq file to load
-  dispFunc - allow custom display per frame
+  objTypes - [{'object'}] list of object types to annotate
+  imgDir   - [pwd] directory with images
+  resDir   - [imgDir] directory with annotations
 
  OUTPUTS
 
  EXAMPLE
-  load images; [h,w,n]=size(video);
-  info=struct('height',h,'width',w,'codec','monojpg','fps',20);
-  sw=seqIo('video','w',info); for t=1:n, sw.addframe(video(:,:,t)); end
-  sw.close(); seqPlayer('video');
+  bbLabeler
 
- See also <a href="seqIo.html" class="code" title="function sobj = seqIo( fName, mode, varargin )">SEQIO</a>
+ See also <a href="bbGt.html" class="code" title="function varargout = bbGt( action, varargin )">BBGT</a>
 
  Piotr's Image&amp;Video Toolbox      Version 2.40
  Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -61,7 +51,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="seqIo.html" class="code" title="function sobj = seqIo( fName, mode, varargin )">seqIo</a>	Wrapper for reading/writing seq files.</li><li><a href="../matlab/c.html" class="code" title="">c</a>	clc - clear command window.</li></ul>
+<li><a href="bbGt.html" class="code" title="function varargout = bbGt( action, varargin )">bbGt</a>	Bounding box (bb) annotations struct, evaluation and sampling routines.</li><li><a href="imRectRot.html" class="code" title="function [hPatch,api] = imRectRot( varargin )">imRectRot</a>	Create a draggable, resizable, rotatable rectangle or ellipse.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>

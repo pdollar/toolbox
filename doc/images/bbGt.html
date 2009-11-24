@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of bbGt</title>
+  <meta name="keywords" content="bbGt">
+  <meta name="description" content="Bounding box (bb) annotations struct, evaluation and sampling routines.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>bbGt
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Bounding box (bb) annotations struct, evaluation and sampling routines.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function varargout = bbGt( action, varargin ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Bounding box (bb) annotations struct, evaluation and sampling routines.
+
+ bbGt gives acces to three types of routines:
+ (1) Data structure for storing bb image annotations.
+ (2) Routines for evaluating the Pascal criteria for object detection.
+ (3) Routines for sampling training examples from a labeled image.
+
+ The bb annotation stores bb for objects of interest with additional
+ information per object, such as occlusion information. The underlying
+ data structure is simply a Matlab stuct array, one struct per object.
+ This annotation format is an alternative to the annotation format used
+ for the PASCAL object challenges.
+
+ Each object struct has the following fields:
+  lbl  - a string label describing object type (eg: 'pedestrian')
+  bb   - [l t w h]: bb indicating predicted object extent
+  occ  - 0/1 value indicating if bb is occluded
+  bbv  - [l t w h]: bb indicating visible region (may be [0 0 0 0])
+  ign  - 0/1 value indicating bb was marked as ignore
+  ang  - [0-360] orientation of bb in degrees
+
+ Note: although orientation (angle) is stored for each bb, for now it is
+ not being used during evaluation or sampling.
+
+ bbGt contains a number of utility functions, accessed using:
+  outputs = bbGt( 'action', inputs );
+ The list of functions and help for each is given below. Also, help on
+ individual subfunctions can be accessed by: &quot;help bbGt&gt;action&quot;.
+
+%% (1) Data structure for storing bb image annotations.
+ Create annotation of n empty objects.
+   objs = bbGt( 'create', [n] );
+ Save bb annotation to text file.
+   objs = bbGt( 'bbSave', objs, fName )
+ Load bb annotation from text file.
+   objs = bbGt( 'bbLoad', fName )
+ Get object property 'name' (in a standard array).
+   vals = bbGt( 'get', objs, name )
+ Set object property 'name' (with a standard array).
+   objs = bbGt( 'set', objs, name, vals )
+
+%% (2) Routines for evaluating the Pascal criteria for object detection.
+ Returns filtered ground truth bbs for purpose of evaluation.
+   gtBbs = bbGt( 'toGt', objs, prm )
+ Evaluates detections in a single frame against ground truth data.
+  [gt, dt] = bbGt( 'evalRes', gt0, dt0, thr )
+ Compute ROC or PR based on outputs of evalRes on multiple images.
+  [xs,ys,ref] = bbGt( 'compRoc', gt, dt, roc, ref )
+ Extract true or false positives or negatives for visualization.
+  IS = bbGt( 'cropRes', gt, dt, names, type, dims, n )
+ Computes (modified) overlap area between pairs of bbs.
+   oa = bbGt( 'compOas', dt, gt, [ig] )
+ Optimized version of compOas for a single pair of bbs.
+   oa = bbGt( 'compOa', dt, gt, ig )
+
+%% (3) Routines for sampling training examples from a labeled image.
+ Sample pos or neg examples for training from an annotated image.
+   [bbs, IS] = bbGt( 'sampleData', I, prm )
+
+ USAGE
+  varargout = bbGt( action, varargin );
+
+ INPUTS
+  action     - string specifying action
+  varargin   - depends on action, see above
+
+ OUTPUTS
+  varargout  - depends on action, see above
+
+ EXAMPLE
+
+ See also <a href="bbApply.html" class="code" title="function varargout = bbApply( action, varargin )">bbApply</a>, <a href="bbLabeler.html" class="code" title="function bbLabeler( objTypes, imgDir, resDir )">bbLabeler</a>, bbGt&gt;create, bbGt&gt;bbSave, bbGt&gt;bbLoad,
+ bbGt&gt;get, bbGt&gt;set, bbGt&gt;toGt, bbGt&gt;evalRes, bbGt&gt;compRoc, bbGt&gt;cropRes,
+ bbGt&gt;compOas, bbGt&gt;compOa, bbGt&gt;sampleData
+
+ Piotr's Image&amp;Video Toolbox      Version 2.40
+ Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Please email me if you find bugs, or have suggestions or questions!
+ Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="bbApply.html" class="code" title="function varargout = bbApply( action, varargin )">bbApply</a>	Functions for manipulating bounding boxes (bb).</li><li><a href="../matlab/c.html" class="code" title="">c</a>	clc - clear command window.</li><li><a href="../matlab/cell2array.html" class="code" title="function Y = cell2array( X, padEl )">cell2array</a>	Flattens a cell array of regular arrays into a regular array.</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="bbLabeler.html" class="code" title="function bbLabeler( objTypes, imgDir, resDir )">bbLabeler</a>	Bounding box or ellipse labeler for static images.</li></ul>
+<!-- crossreference -->
+
+
+
+
+<!-- Start of Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-4884268-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+<!-- end of Google Analytics Code -->
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

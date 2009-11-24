@@ -69,6 +69,8 @@
    .color      - ['g'] color for the displayed object
    .colorc     - ['b'] color for the control point displaying orientation
    .lw         - [2] 'LineWidth' property for the displayed object
+   .ls         - ['-'] 'LineStyle' property for the displayed object
+   .cross      - [0] if 1 show diagonal, if 2 show cross
 
  OUTPUTS
   h          - handle used to delete object
@@ -77,9 +79,12 @@
   .setPos(pos)    - set position (while respecting constraints)
   .setPosLock(b)  - if lock set (b==true), object cannot change
   .setSizLock(b)  - if lock set (b==true), object cannot change size
+  .setDrgLock(b)  - if lock set (b==true), object cannot be dragged
+  .setSidLock(lk) - [4x1] set locks for each side (tp/rt/bt/lf)
   .setPosChnCb(f) - whenever pos changes (even slightly), calls f(pos)
   .setPosSetCb(f) - whenever pos finished changing, calls f(pos)
   .uistack(...)   - calls 'uistack( [objectHandles], ... )', see uistack
+  .setStyle(...)  - set line style (ls), width (lw), color and colorc
 
  EXAMPLE - interactively place simple axis aligned rectangle
   figure(1), imshow peppers.png;
@@ -94,7 +99,7 @@
 
  See also IMRECT, RECTANGLE, PATCH
 
- Piotr's Image&amp;Video Toolbox      Version 2.35
+ Piotr's Image&amp;Video Toolbox      Version 2.40
  Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
@@ -106,7 +111,7 @@ This function calls:
 <li><a href="../matlab/c.html" class="code" title="">c</a>	clc - clear command window.</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-</ul>
+<li><a href="bbLabeler.html" class="code" title="function bbLabeler( objTypes, imgDir, resDir )">bbLabeler</a>	Bounding box or ellipse labeler for static images.</li></ul>
 <!-- crossreference -->
 
 

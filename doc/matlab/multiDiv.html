@@ -26,6 +26,8 @@
 <div class="fragment"><pre class="comment"> Matrix divide each submatrix of two 3D arrays without looping.
 
  type controls the matrix multiplication to perform (for each i):
+  1    - C(:,:,i) = A(:,:,i)\B(:,:)
+  2    - C(:,:,i) = A(:,:,i)\B(:,:,i)
   3    - C(:,i) = A(:,:,i)\B(:,i)
  Corresponding dimensions of A and B must match appropriately.
  Other cases (see multiTimes.m) are not yet implemented.
@@ -41,15 +43,29 @@
  OUTPUTS
   C         - result of the division
 
- EXAMPLE
+
+ EXAMPLE [case 1]
+  n=10000; A=randn(3,3,n); B=eye(3,3);
+  tic, C1=multiDiv(A,B,1); toc
+  tic, C2=C1; for i=1:n, C2(:,:,i)=A(:,:,i)\B; end; toc
+  tic, C3=C1; for i=1:n, C3(:,:,i)=inv(A(:,:,i)); end; toc
+  sum(abs(C1(:)-C2(:))), sum(abs(C1(:)-C3(:)))
+
+ EXAMPLE [case 2]
+  n=10000; A=randn(3,3,n); B=randn(3,10,n);
+  tic, C1=multiDiv(A,B,2); toc
+  tic, C2=C1; for i=1:n, C2(:,:,i)=A(:,:,i)\B(:,:,i); end; toc
+  sum(abs(C1(:)-C2(:)))
+
+ EXAMPLE [case 3]
   n=30000; A=randn(2,2,n); B=randn(2,n);
   tic, C1=multiDiv(A,B,3); toc
-  tic, C2=zeros(size(C1)); for i=1:n, C2(:,i)=A(:,:,i)\B(:,i); end; toc
-  norm(C1-C2,'fro')
+  tic, C2=C1; for i=1:n, C2(:,i)=A(:,:,i)\B(:,i); end; toc
+  sum(abs(C1(:)-C2(:)))
 
  See also <a href="multiTimes.html" class="code" title="function C = multiTimes( A, B, type )">MULTITIMES</a>, <a href="spBlkDiag.html" class="code" title="function [B,inds] = spBlkDiag( A, inds )">SPBLKDIAG</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.35
+ Piotr's Image&amp;Video Toolbox      Version 2.40
  Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>

@@ -70,8 +70,10 @@
    <a href="seqWriterPlugin.html" class="code" title="function varargout = seqWriterPlugin( cmd, h, varargin )">seqWriterPlugin</a> - Plugin for <a href="seqIo.html" class="code" title="function sobj = seqIo( fName, mode, varargin )">seqIo</a> and videoIO to allow writing of seq files.
    <a href="seqPlayer.html" class="code" title="function seqPlayer( fName, dispFunc )">seqPlayer</a>       - Simple GUI to play seq files.
 
- Detection and bb support:
+ Object bounding box and pose ground truth support.
    <a href="bbApply.html" class="code" title="function varargout = bbApply( action, varargin )">bbApply</a>         - Functions for manipulating bounding boxes (bb).
+   <a href="bbGt.html" class="code" title="function varargout = bbGt( action, varargin )">bbGt</a>            - Bounding box (bb) annotations struct, evaluation and sampling routines.
+   <a href="bbLabeler.html" class="code" title="function bbLabeler( objTypes, imgDir, resDir )">bbLabeler</a>       - Bounding box or ellipse labeler for static images.
    <a href="bbNms.html" class="code" title="function bbs = bbNms( bbs, varargin )">bbNms</a>           - Bounding box (bb) non-maximal suppression (nms).
 
  Miscellaneous:
@@ -87,7 +89,7 @@
    <a href="kernelTracker.html" class="code" title="function [allRct, allSim, allIc] = kernelTracker( I, prm )">kernelTracker</a>   - Kernel Tracker from Comaniciu, Ramesh and Meer PAMI 2003.
    <a href="localSum.html" class="code" title="function I = localSum( I, dims, shape )">localSum</a>        - Fast routine for box filtering.
    <a href="maskCircle.html" class="code" title="function mask = maskCircle( angleStart, angleSiz, r, nSamples )">maskCircle</a>      - Creates an image of a 'pie slice' of a circle.
-   <a href="maskEllipse.html" class="code" title="function mask = maskEllipse( mrows, ncols, varargin )">maskEllipse</a>     - Creates a binary image of an ellipse.
+   <a href="maskEllipse.html" class="code" title="function mask = maskEllipse( mRows, nCols, varargin )">maskEllipse</a>     - Creates a binary image of an ellipse.
    <a href="maskGaussians.html" class="code" title="function [masks,keepLocs] = maskGaussians( siz, M, width, offset, show )">maskGaussians</a>   - Divides a volume into softly overlapping gaussian windows.
    <a href="maskSphere.html" class="code" title="function mask = maskSphere( d, r, show )">maskSphere</a>      - Creates an 'image' of a n-dimensional hypersphere.</pre></div>
 
