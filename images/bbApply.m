@@ -528,15 +528,15 @@ function bbs = frMask( M, bbw, bbh )
 %  bbs    - bounding boxes
 %
 % EXAMPLE
-%  w=20; h=10; bbw=5; bbh=8; M=double(rand(h,w)>0.95);
+%  w=20; h=10; bbw=5; bbh=8; M=double(rand(h,w)); M(M<.95)=0;
 %  bbs=bbApply('frMask',M,bbw,bbh); M2=bbApply('toMask',bbs,w,h);
 %  sum(abs(M(:)-M2(:)))
 %
 % See also bbApply, bbApply>toMask
 pos=ind2sub2(size(M),find(M>0));
-bbs=[fliplr(pos) pos]; bbs(:,3)=bbw; bbs(:,4)=bbh; bbs(:,5)=M(M>0);
-bbs(:,1)=bbs(:,1)-floor(bbw/2);
-bbs(:,2)=bbs(:,2)-floor(bbh/2);
+bbs=[fliplr(pos) pos]; bbs(:,5)=M(M>0);
+bbs(:,1)=bbs(:,1)-floor(bbw/2); bbs(:,3)=bbw;
+bbs(:,2)=bbs(:,2)-floor(bbh/2); bbs(:,4)=bbh;
 end
 
 function M = toMask( bbs, w, h, fill )
