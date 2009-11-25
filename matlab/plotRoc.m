@@ -1,4 +1,4 @@
-function h = plotRoc( D, varargin )
+function [h,det] = plotRoc( D, varargin )
 % Function for display of rocs (receiver operator characteristic curves).
 %
 % Displays nice clearly visible curves. Consistent usage ensures uniform
@@ -10,7 +10,7 @@ function h = plotRoc( D, varargin )
 % error bars.
 %
 % USAGE
-%  h = plotRoc( D, prm )
+%  [h,det] = plotRoc( D, prm )
 %
 % INPUTS
 %  D    - [nx2] n data points along roc (falsePos/truePos)
@@ -25,6 +25,8 @@ function h = plotRoc( D, varargin )
 %   .nMarker  [5] number of markers (regularly spaced) to display
 %   .lims     [0 1 0 1] axes limits
 %   .smooth   [0] if T compute lower envelop of roc to smooth staircase
+%   .fpTarget [-1] if positive, will also return detection rate at the
+%             specified fp rate and plot a vertical line at that fp
 %
 % OUTPUTS
 %  h    - plot handle for use in legend only
@@ -38,15 +40,16 @@ function h = plotRoc( D, varargin )
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 2.30
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 % get params
-[ color lineSt lineWd logx logy marker mrkrSiz nMarker lims smooth  ] = ...
-  getPrmDflt( varargin, {'color' 'g' 'lineSt' '-' 'lineWd' 4 'logx' 0 ...
-  'logy' 0 'marker' '' 'mrkrSiz' 12 'nMarker' 5 'lims' []  'smooth' 0 } );
+[ color lineSt lineWd logx logy marker mrkrSiz nMarker lims smooth  ...
+  fpTarget] = getPrmDflt( varargin, {'color' 'g' 'lineSt' '-' ...
+  'lineWd' 4 'logx' 0 'logy' 0 'marker' '' 'mrkrSiz' 12 'nMarker' 5 ...
+  'lims' [] 'smooth' 0 'fpTarget', -1} );
 
 if( isempty(lims) ); lims=[logx*1e-5 1 logy*1e-5 1]; end
 
@@ -68,6 +71,10 @@ if(~isempty(marker))
 end
 if(nD>1), DQs=std(squeeze(DQ(:,2,:)),0,2);
   errorbar(DQm(:,1),DQm(:,2),DQs,'.',prmClr{:}); %(4)
+end
+if(fpTarget>0)
+  [d,i]=max(D1(:,1)<1e-4); det=D1(i,2); 
+  plot([fpTarget fpTarget],[lims(3) lims(4)],'b-');
 end
 
 % set log axes
