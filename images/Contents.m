@@ -45,13 +45,11 @@
 %   seqWriterPlugin - Plugin for seqIo and videoIO to allow writing of seq files.
 %   seqPlayer       - Simple GUI to play seq files.
 %
-% Object bounding box and pose ground truth support.
+% Object bounding box utilities and labeling tools.
 %   bbApply         - Functions for manipulating bounding boxes (bb).
 %   bbGt            - Bounding box (bb) annotations struct, evaluation and sampling routines.
 %   bbLabeler       - Bounding box or ellipse labeler for static images.
 %   bbNms           - Bounding box (bb) non-maximal suppression (nms).
-%   poseGt          - Object pose annotations struct.
-%   poseLabeler     - Pose labeler for static images.
 %
 % Miscellaneous:
 %   convnFast       - Fast convolution, replacement for both conv2 and convn.

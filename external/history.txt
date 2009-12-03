@@ -1,6 +1,5 @@
 Version NEW
- -added images/poseGt.m: Object pose annotations struct.
- -added images/poseLabeler.m: Pose labeler for static images.
+ -minor: plotRoc.m
 
 Version 2.40 (24-Nov-09)
  -added images/bbLabeler.m: Bounding box or ellipse labeler for static images.
