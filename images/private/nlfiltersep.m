@@ -72,11 +72,11 @@ else
   if(strcmp(shape,'full'))
     I = padarray(I,rs2,0,'pre');
     I = padarray(I,rs1,0,'post');
-  end; siz=size(I);
+  end
   
   % Apply filter along first dimension of I then shift dimensions
   for d=1:nd
-    if( dims(d)>0 )
+    if( dims(d)>0 ), siz=size(I);
       I = reshape(feval(fun,I,rs1(d),rs2(d),params{:}),siz);
     end
     I = shiftdim( I, 1 );
