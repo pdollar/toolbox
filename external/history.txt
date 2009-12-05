@@ -1,4 +1,5 @@
 Version NEW
+ -nlfiltersep.m: simpler/faster 'block' case (deleted nlfiltersep_blocksum.*).
  -minor: plotRoc.m
 
 Version 2.40 (24-Nov-09)
