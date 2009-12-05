@@ -1,5 +1,6 @@
 Version NEW
  -nlfiltersep.m: simpler/faster 'block' case (deleted nlfiltersep_blocksum.*).
+ -localSum.m: extra options to compute local mins/maxes
  -minor: plotRoc.m
 
 Version 2.40 (24-Nov-09)
