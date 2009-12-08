@@ -44,7 +44,7 @@ if(strcmp(type,'distr') && ~exist('controller.m','file'))
   warning(['distributed queuing not installed,' ...
     ' switching to type=''local''.']); type='local';  %#ok<WNTAG>
 end
-nJob = length( jobs );
+nJob=length(jobs); if(nJob==0), return; end
 switch type
   case 'local'
     % run jobs locally using single computational thread
