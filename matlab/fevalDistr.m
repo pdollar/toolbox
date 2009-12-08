@@ -2,7 +2,7 @@ function out = fevalDistr( funNm, jobs, varargin )
 % Run simple jobs locally or in distributed fashion using queue.
 %
 % Runs "feval(funNm,jobs{i}{:})" for each job either locally or across
-% cluster. Distibuted queuing system must be installed separately. If
+% cluster. Distributed queuing system must be installed separately. If
 % queuing system is not installed, this function can still be called with
 % either the 'local' or 'pafor' options. jobs should be a cell array of
 % length nJob. Each job itself should be a cell array of parameters to pass
@@ -13,7 +13,8 @@ function out = fevalDistr( funNm, jobs, varargin )
 % If using type='local', jobs are executed using simple for loop. If using
 % type='parfor', the for loop is a parfor loop, make sure to setup matlab
 % workers first using "matlabpool open nWorkers". If type='distr' attempts
-% to use the distributed cluster code (must be installed separately).
+% to use the distributed cluster code (must be installed separately);
+% defaults to 'local' if cluster code not found.
 %
 % USAGE
 %  out = fevalDistr( funNm, jobs, [varargin] )
