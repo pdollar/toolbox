@@ -15,21 +15,21 @@ function [h,det] = plotRoc( D, varargin )
 % INPUTS
 %  D    - [nx2] n data points along roc (falsePos/truePos)
 %  prm  - [] param struct
-%   .color    ['g'] color for curve
-%   .lineSt   ['-'] linestyle (see LineSpec)
-%   .lineWd   [4] curve width
-%   .logx     [0] use logarithmic scale for x-axis
-%   .logy     [0] use logarithmic scale for y-axis
-%   .marker   [''] marker type (see LineSpec)
-%   .mrkrSiz  [12] marker size
-%   .nMarker  [5] number of markers (regularly spaced) to display
-%   .lims     [0 1 0 1] axes limits
-%   .smooth   [0] if T compute lower envelop of roc to smooth staircase
-%   .fpTarget [-1] if positive, will also return detection rate at the
-%             specified fp rate and plot a vertical line at that fp
+%   .color    - ['g'] color for curve
+%   .lineSt   - ['-'] linestyle (see LineSpec)
+%   .lineWd   - [4] curve width
+%   .logx     - [0] use logarithmic scale for x-axis
+%   .logy     - [0] use logarithmic scale for y-axis
+%   .marker   - [''] marker type (see LineSpec)
+%   .mrkrSiz  - [12] marker size
+%   .nMarker  - [5] number of markers (regularly spaced) to display
+%   .lims     - [0 1 0 1] axes limits
+%   .smooth   - [0] if T compute lower envelop of roc to smooth staircase
+%   .fpTarget - [-1] if>0 plot line and return detection rate at given fp
 %
 % OUTPUTS
 %  h    - plot handle for use in legend only
+%  det  - detection rate at fpTarget (if fpTar specified)
 %
 % EXAMPLE
 %  k=2; x=0:.0001:1; data1 = [1-x; (1-x.^k).^(1/k)]';
@@ -50,7 +50,6 @@ function [h,det] = plotRoc( D, varargin )
   fpTarget] = getPrmDflt( varargin, {'color' 'g' 'lineSt' '-' ...
   'lineWd' 4 'logx' 0 'logy' 0 'marker' '' 'mrkrSiz' 12 'nMarker' 5 ...
   'lims' [] 'smooth' 0 'fpTarget', -1} );
-
 if( isempty(lims) ); lims=[logx*1e-5 1 logy*1e-5 1]; end
 
 % flip to plot miss rate, optionally 'nicefy' roc
@@ -72,8 +71,10 @@ end
 if(nD>1), DQs=std(squeeze(DQ(:,2,:)),0,2);
   errorbar(DQm(:,1),DQm(:,2),DQs,'.',prmClr{:}); %(4)
 end
-if(fpTarget>0)
-  [d,i]=max(D1(:,1)<1e-4); det=D1(i,2); 
+
+% plot line at given fp rate
+if(fpTarget==0), det=-1; else
+  [d,i]=max(D1(:,1)<fpTarget); det=D1(i,2);
   plot([fpTarget fpTarget],[lims(3) lims(4)],'b-');
 end
 
