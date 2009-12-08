@@ -2,7 +2,7 @@ Version NEW
  -hog.cpp: added very efficient HOG feature computation code
  -nlfiltersep.m: simpler/faster 'block' case (deleted nlfiltersep_blocksum.*).
  -localSum.m: extra options to compute local mins/maxes
- -minor: plotRoc.m
+ -minor: plotRoc.m, toolboxCompile.m
 
 Version 2.40 (24-Nov-09)
  -added images/bbLabeler.m: Bounding box or ellipse labeler for static images.

@@ -1,7 +1,5 @@
 % Compiles all the private routines
 %
-% assumes located in toolbox root directory
-%
 % USAGE
 %  toolboxCompile
 %
@@ -13,12 +11,13 @@
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 2.40
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 disp('Compiling.......................................');
+savepwd=pwd; cd(fileparts(mfilename('fullpath'))); cd('../');
 
 % general compile options
 opts0 = {'-outdir'};
@@ -34,22 +33,20 @@ mex([dir 'ktHistcRgb_c.c'],         opts{:} );
 mex([dir 'ktComputeW_c.c'],         opts{:} );
 mex([dir 'nlfiltersep_max.c'],      opts{:} );
 mex([dir 'nlfiltersep_sum.c'],      opts{:} );
-mex([dir 'nlfiltersep_blocksum.c'], opts{:} );
 
 dir='images/private/'; opts=[opts0 'images/'];
 mex([dir 'imResample.c'],         opts{:} );
 
 try
   % requires c++ compiler
+  dir='images/private/'; opts=[opts0 'images/'];
+  mex([dir 'hog.cpp'], opts{:} );
   dir='matlab/private/'; opts=[opts0 'matlab' '-output' 'dijkstra'];
   mex([dir 'fibheap.cpp'],[dir 'dijkstra.cpp'], opts{:} );
 catch ME
-  fprintf(['Dijkstra''s shortest path algorithm compile failed,\n' ...
-    'most likely due to lack of a C++ compiler.\n' ...
+  fprintf(['C++ mex failed, likely due to lack of a C++ compiler.\n' ...
     'Run ''mex -setup'' to specify a C++ compiler if available.\n'...
-    'Or, on LINUX specify a specific C++ compiler using, e.g.:\n' ...
-    'mex CXX=g++-4.1 CC=g++-4.1 LD=g++-4.1 ' ...
-    'dijkstra.cpp fibheap.cpp fibheap.h\n']);
+    'Or, on LINUX specify a specific C++ explicitly (see opts above).\n']);
 end
 
-disp('..................................Done Compiling');
+cd(savepwd); disp('..................................Done Compiling');
