@@ -37,7 +37,7 @@
 %
 % EXAMPLE
 %  I=double(imread('cameraman.tif')); figure(1); im(I)
-%  tic, H=hog(I,8,9); toc, V=drawHog(H,25); figure(2); im(V)
+%  tic, H=hog(I,8,9); toc, V=hogDraw(H,25); figure(2); im(V)
 %
 % See also hogDraw
 %
