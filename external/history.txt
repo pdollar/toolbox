@@ -1,5 +1,5 @@
 Version NEW
- -hog.cpp: added very efficient HOG feature computation code
+ -hog.cpp, hogDraw.m: added very efficient HOG feature computation code
  -fevalDistr.m: wrapper for distributed cluster code (must be installed separately)
  -nlfiltersep.m: simpler/faster 'block' case (deleted nlfiltersep_blocksum.*).
  -localSum.m: extra options to compute local mins/maxes

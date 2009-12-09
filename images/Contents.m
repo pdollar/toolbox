@@ -51,11 +51,18 @@
 %   bbLabeler       - Bounding box or ellipse labeler for static images.
 %   bbNms           - Bounding box (bb) non-maximal suppression (nms).
 %
+% Binary mask creation.
+%   maskCircle      - Creates an image of a 'pie slice' of a circle.
+%   maskEllipse     - Creates a binary image of an ellipse.
+%   maskGaussians   - Divides a volume into softly overlapping gaussian windows.
+%   maskSphere      - Creates an 'image' of a n-dimensional hypersphere.
+%
 % Miscellaneous:
 %   convnFast       - Fast convolution, replacement for both conv2 and convn.
 %   diffTracker     - Fast, robust estimation of translational offset between a pair of images.
 %   gaussSmooth     - Applies Gaussian smoothing to a (multidimensional) image.
 %   hog             - Efficiently compute histogram of oriented gradient (HOG) features.
+%   hogDraw         - Create visualization of hog descriptor.
 %   imMlGauss       - Calculates max likelihood params of Gaussian that gave rise to image G.
 %   imrectLite      - A 'lite' version of imrect [OBSOLETE: use imrectRot].
 %   imRectRot       - Create a draggable, resizable, rotatable rectangle or ellipse.
@@ -64,7 +71,3 @@
 %   jitterVideo     - Creates multiple, slightly jittered versions of a video.
 %   kernelTracker   - Kernel Tracker from Comaniciu, Ramesh and Meer PAMI 2003.
 %   localSum        - Fast routine for box filtering.
-%   maskCircle      - Creates an image of a 'pie slice' of a circle.
-%   maskEllipse     - Creates a binary image of an ellipse.
-%   maskGaussians   - Divides a volume into softly overlapping gaussian windows.
-%   maskSphere      - Creates an 'image' of a n-dimensional hypersphere.

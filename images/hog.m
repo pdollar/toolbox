@@ -36,7 +36,10 @@
 %  H        - [m/sBin-2 n/sBin-2 oBin*4] computed hog features
 %
 % EXAMPLE
-%  I=double(imread('cameraman.tif')); tic, H=hog(I,8,9); toc
+%  I=double(imread('cameraman.tif')); figure(1); im(I)
+%  tic, H=hog(I,8,9); toc, V=drawHog(H,25); figure(2); im(V)
+%
+% See also hogDraw
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
