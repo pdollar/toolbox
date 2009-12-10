@@ -25,6 +25,7 @@ function out = fevalDistr( funNm, jobs, varargin )
 %  varargin   - additional params (struct or name/value pairs)
 %   .type       - ['local'], 'parfor' or 'distr'
 %   .pLaunch    - [] parameter to controller('launchQueue',pLaunch{:})
+%   .group      - [1] send jobs in batches (only relevant if type='distr')
 %
 % OUTPUTS
 %  out        - 1 if jobs completed successfully
@@ -38,8 +39,8 @@ function out = fevalDistr( funNm, jobs, varargin )
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
-dfs={'type','local','pLaunch',[]};
-[type,pLaunch]=getPrmDflt(varargin,dfs,1);
+dfs={'type','local','pLaunch',[],'group',1};
+[type,pLaunch,group]=getPrmDflt(varargin,dfs,1);
 if(strcmp(type,'distr') && ~exist('controller.m','file'))
   warning(['distributed queuing not installed,' ...
     ' switching to type=''local''.']); type='local';  %#ok<WNTAG>
@@ -55,6 +56,12 @@ switch type
   case 'distr'
     % run jobs using queuing system
     controller('launchQueue',pLaunch{:});
+    if( group>1 )
+      nJobGrp=ceil(nJob/group); jobsGrp=cell(1,nJobGrp); k=0;
+      for i=1:nJobGrp, k1=min(nJob,k+group);
+        jobsGrp{i}={funNm,jobs(k+1:k1),'type','local'}; k=k1; end
+      nJob=nJobGrp; jobs=jobsGrp; funNm='fevalDistr';
+    end
     jids=controller('jobsAdd',nJob,funNm,jobs);
     disp('Sent jobs...'); tid=ticStatus('collecting jobs'); k=0;
     while( 1 )
