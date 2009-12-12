@@ -45,11 +45,12 @@ if(strcmp(type,'distr') && ~exist('controller.m','file'))
   warning(['distributed queuing not installed,' ...
     ' switching to type=''local''.']); type='local';  %#ok<WNTAG>
 end
-nJob=length(jobs); if(nJob==0), return; end
+nJob=length(jobs); if(nJob==0), out=1; return; end
 switch type
   case 'local'
     % run jobs locally using single computational thread
-    for i=1:nJob, feval(funNm,jobs{i}{:}); end; out=1;
+    tid=ticStatus('collecting jobs'); out=1;
+    for i=1:nJob, feval(funNm,jobs{i}{:}); tocStatus(tid,i/nJob); end
   case 'parfor'
     % run jobs locally using multiple computational threads
     parfor i=1:nJob, feval(funNm,jobs{i}{:}); end; out=1;
