@@ -62,18 +62,16 @@ hold on; axis(lims);
 prmMrkr = {'MarkerSize',mrkrSiz,'MarkerFaceColor',color};
 prmClr={'Color',color}; prmPlot = [prmClr,{'LineWidth',lineWd}];
 h = plot( 2, 0, [lineSt marker], prmMrkr{:}, prmPlot{:} ); %(1)
-if(nD==1), D1=D{j}; else D1=mean(quantizeRoc(D,100,logx,lims),3); end
+if(nD==1), D1=D{1}; else D1=mean(quantizeRoc(D,100,logx,lims),3); end
 plot( D1(:,1), D1(:,2), lineSt, prmPlot{:} ); %(2)
 DQ = quantizeRoc( D, nMarker, logx, lims ); DQm=mean(DQ,3);
 if(~isempty(marker))
-  plot(DQm(:,1),DQm(:,2),marker,prmClr{:},prmMrkr{:} ); %(3)
-end
+  plot(DQm(:,1),DQm(:,2),marker,prmClr{:},prmMrkr{:} ); end %(3)
 if(nD>1), DQs=std(squeeze(DQ(:,2,:)),0,2);
-  errorbar(DQm(:,1),DQm(:,2),DQs,'.',prmClr{:}); %(4)
-end
+  errorbar(DQm(:,1),DQm(:,2),DQs,'.',prmClr{:}); end %(4)
 
 % plot line at given fp rate
-if(fpTarget==0), det=-1; else
+if(fpTarget<=0), det=-1; else
   [d,i]=max(D1(:,1)<fpTarget); det=D1(i,2);
   plot([fpTarget fpTarget],[lims(3) lims(4)],'b-');
 end
@@ -111,13 +109,12 @@ DQ = [locs' ones(length(locs),1)];
 loc=1; D=[1 0; D; 0 1]; D=max(0,min(D,1));
 for i=length(locs):-1:1
   fpCur = DQ(i,1);
-  while( loc<size(D,1) && D(loc,1)>=fpCur )
-    loc = loc+1;
-  end
+  while( loc<size(D,1) && D(loc,1)>=fpCur ), loc=loc+1; end
   dN=D(loc,:); if(loc==1); dP=D(loc,:); else dP=D(loc-1,:); end
   distP=dP(1)-fpCur; distN=fpCur-dN(1); r=distN/(distP+distN);
   DQ(i,2) = r*dP(2) + (1-r)*dN(2);
 end
+DQ = flipud(DQ);
 end
 
 function D1 = smoothRoc( D )
