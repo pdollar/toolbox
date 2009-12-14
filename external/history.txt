@@ -1,4 +1,5 @@
 Version NEW
+ -bbApply.m>frMask: added threshold parameter
  -hog.cpp, hogDraw.m: added very efficient HOG feature computation code
  -fevalDistr.m: wrapper for distributed cluster code (must be installed separately)
  -nlfiltersep.m: simpler/faster 'block' case (deleted nlfiltersep_blocksum.*).

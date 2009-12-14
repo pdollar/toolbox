@@ -58,7 +58,7 @@ function varargout = bbApply( action, varargin )
 % bbApply>union bbApply>resize bbApply>squarify bbApply>draw bbApply>crop
 % bbApply>convert bbApply>random bbApply>frMask bbApply>toMask
 %
-% Piotr's Image&Video Toolbox      Version 2.40
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -508,8 +508,9 @@ bb=[x y w h];
   end
 end
 
-function bbs = frMask( M, bbw, bbh )
-% Convert binary mask to bbs, assuming `on' pixels indicate bb centers.
+function bbs = frMask( M, bbw, bbh, thr )
+% Convert weighted mask to bbs, assuming `on' pixels (that are above 
+% threshold) indicate bb centers.
 %
 % USAGE
 %  bbs = bbApply('frMask',M,bbw,bbh)
@@ -518,6 +519,7 @@ function bbs = frMask( M, bbw, bbh )
 %  M      - mask
 %  bbw    - bb target width
 %  bbh    - bb target height
+%  thr    - [0] threshold the weights before extracting bbs
 %
 % OUTPUTS
 %  bbs    - bounding boxes
@@ -528,8 +530,9 @@ function bbs = frMask( M, bbw, bbh )
 %  sum(abs(M(:)-M2(:)))
 %
 % See also bbApply, bbApply>toMask
-pos=ind2sub2(size(M),find(M>0));
-bbs=[fliplr(pos) pos]; bbs(:,5)=M(M>0);
+if(nargin<4), thr=0; end
+pos=ind2sub2(size(M),find(M>thr));
+bbs=[fliplr(pos) pos]; bbs(:,5)=M(M>thr);
 bbs(:,1)=bbs(:,1)-floor(bbw/2); bbs(:,3)=bbw;
 bbs(:,2)=bbs(:,2)-floor(bbh/2); bbs(:,4)=bbh;
 end
