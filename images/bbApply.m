@@ -281,7 +281,7 @@ function hs = draw( bb, col, lw, ls, prop, ids )
 %  im(rand(3)); bbApply('draw',[1.5 1.5 1 1 .5],'g');
 %
 % See also bbApply, bbApply>embed, rectangle
-[n,m]=size(bb); if(n==0), return; end
+[n,m]=size(bb); if(n==0), hs=[]; return; end
 if(nargin<2 || isempty(col)), col=[]; end
 if(nargin<3 || isempty(lw)), lw=2; end
 if(nargin<4 || isempty(ls)), ls='-'; end

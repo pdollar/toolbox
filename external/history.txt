@@ -1,4 +1,5 @@
 Version NEW
+ -bbApply.m>draw: minor fix for the case of empty input
  -bbApply.m>frMask: added threshold parameter
  -hog.cpp, hogDraw.m: added very efficient HOG feature computation code
  -fevalDistr.m: wrapper for distributed cluster code (must be installed separately)
