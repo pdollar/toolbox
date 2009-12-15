@@ -45,6 +45,8 @@ function varargout = bbGt( action, varargin )
 %   gtBbs = bbGt( 'toGt', objs, prm )
 % Evaluates detections in a single frame against ground truth data.
 %  [gt, dt] = bbGt( 'evalRes', gt0, dt0, thr )
+% Run evaluation evalRes for each ground truth/detection result in dirs.
+%  [gts, dts] = evalResDir( gtDir, dtDir, [varargin] )
 % Compute ROC or PR based on outputs of evalRes on multiple images.
 %  [xs,ys,ref] = bbGt( 'compRoc', gt, dt, roc, ref )
 % Extract true or false positives or negatives for visualization.
@@ -74,7 +76,7 @@ function varargout = bbGt( action, varargin )
 % bbGt>get, bbGt>set, bbGt>toGt, bbGt>evalRes, bbGt>compRoc, bbGt>cropRes,
 % bbGt>compOas, bbGt>compOa, bbGt>sampleData
 %
-% Piotr's Image&Video Toolbox      Version 2.40
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -368,6 +370,71 @@ for d=1:nd
   end; g=maxg;
   if(dtm==-1), assert(gt(g,5)==-1); dt(d,6)=-1; end
   if(dtm==1), assert(gt(g,5)==0); gt(g,5)=1; dt(d,6)=1; end
+end
+
+end
+
+function [gt, dt] = evalResDir( gtDir, dtDir, varargin )
+% Run evaluation evalRes for each ground truth/detection result in dirs.
+%
+% Loads each ground truth annotation in gtDir and the corresponding
+% detection in gtDir, and call evalRes() on the pair. The detection should
+% just be a text file with each row containing 5 numbers which represent a
+% bounding box (left/top/width/height/detection score). The text file may
+% be empty in the case of no detections, but it must exist.
+%
+% Prior to calling evalRes(), the ground truth annotation is passed through
+% bbGt>toGt() with the parameters pGt. See bbGt>toGt() for more info. The
+% detections are optionally resized before comparing against the ground
+% truth. The resizing is important as some detectors return bbs that are
+% padded. For example, if a detector returns a bounding box of size 128x64
+% around objects of size 100x43 (as is typical for some pedestrian
+% detectors on the INRIA pedestrian database), the resize parameters should
+% be {100/128, 43/64, 0}, see bbApply>resize() for more info. Finally nms
+% is optionally applied to the detections (if pNms are specified), see
+% bbNms() for more info. 
+% 
+% USAGE
+%  [gts, dts] = evalResDir( gtDir, dtDir, [varargin] )
+%
+% INPUTS
+%  gtDir        - location of ground truth
+%  dtDir        - location of detections
+%  varargin     - additional params (struct or name/value pairs)
+%   .thr          - [.5] threshold for evalRes()
+%   .pGt          - {} params for bbGt>toGt
+%   .resize       - {} parameters for bbApply('resize')
+%   .pNms         - ['type','none'] params non maximal suppresion
+%
+% OUTPUTS
+%  gt           - {1xn} first output of evalRes() for each image
+%  dt           - {1xn} second output of evalRes() for each image
+%
+% EXAMPLE
+%
+% See also bbGt, bbGt>evalRes, bbGt>toGt, bbNms, bbGt>compRoc,
+% bbApply>resize
+
+dfs={'thr',.5,'pGt',{},'resize',{},'pNms',struct('type','none')};
+[thr,pGt,resize,pNms] = getPrmDflt(varargin,dfs,1);
+% get files in ground truth directory
+files=dir([gtDir '/*.txt']); files={files.name};
+n=length(files); gt=cell(1,n); dt=cell(1,n);
+ticId=ticStatus('evaluating');
+for i=1:n
+  % load detections results and process appropriately
+  dtNm=[dtDir '/' files{i}];
+  if(~exist(dtNm,'file')), dtNm=[dtDir '/' files{i}(1:end-8) '.txt']; end
+  dt1=load(dtNm,'-ascii');
+  if(numel(dt1)==0), dt1=zeros(0,5); end; dt1=dt1(:,1:5);
+  if(~isempty(resize)), dt1=bbApply('resize',dt1,resize{:}); end
+  dt1=bbNms(dt1,pNms);
+  % load ground truth and prepare for evaluation
+  gtNm=[gtDir '/' files{i}];
+  gt1 = bbGt('toGt',bbGt('bbLoad',gtNm),pGt);
+  % run evaluation and store result
+  [gt1,dt1] = bbGt('evalRes',gt1,dt1,thr);
+  gt{i}=gt1; dt{i}=dt1; tocStatus(ticId,i/n);
 end
 
 end
