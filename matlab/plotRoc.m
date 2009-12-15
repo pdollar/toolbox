@@ -72,6 +72,7 @@ if(nD>1), DQs=std(squeeze(DQ(:,2,:)),0,2);
 
 % plot line at given fp rate
 if(fpTarget<=0), det=-1; else
+  if(D1(1,2)>D1(end,2)), D1=flipud(D1); end
   [d,i]=max(D1(:,1)<fpTarget); det=D1(i,2);
   plot([fpTarget fpTarget],[lims(3) lims(4)],'b-');
 end
