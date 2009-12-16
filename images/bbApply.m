@@ -509,8 +509,10 @@ bb=[x y w h];
 end
 
 function bbs = frMask( M, bbw, bbh, thr )
-% Convert weighted mask to bbs, assuming `on' pixels (that are above 
-% threshold) indicate bb centers.
+% Convert weighted mask to bbs.
+%
+% In given mask, `on' pixels (that are above threshold) indicate bb 
+% centers.
 %
 % USAGE
 %  bbs = bbApply('frMask',M,bbw,bbh)
