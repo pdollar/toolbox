@@ -37,8 +37,8 @@ function varargout = bbApply( action, varargin )
 %   bb = bbApply( 'convert', bb, bbRef, isAbs )
 % Uniformly generate n (integer) bbs constrained between [1,w]x[1,h].
 %   bb = bbApply('random',w,h,bbw,bbh,n)
-% Convert binary mask to bbs, assuming `on' pixels indicate bb centers.
-%   bbs = bbApply('frMask',M,bbw,bbh)
+% Convert weighted mask to bbs.
+%   bbs = bbApply('frMask',M,bbw,bbh,[thr])
 % Create weighted mask encoding bb centers (or extent).
 %   M = bbApply('toMask',bbs,w,h,[fill])
 %
@@ -515,7 +515,7 @@ function bbs = frMask( M, bbw, bbh, thr )
 % centers.
 %
 % USAGE
-%  bbs = bbApply('frMask',M,bbw,bbh)
+%  bbs = bbApply('frMask',M,bbw,bbh,[thr])
 %
 % INPUTS
 %  M      - mask
