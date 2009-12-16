@@ -420,7 +420,7 @@ dfs={'thr',.5,'pGt',{},'resize',{},'pNms',struct('type','none')};
 % get files in ground truth directory
 files=dir([gtDir '/*.txt']); files={files.name};
 n=length(files); gt=cell(1,n); dt=cell(1,n);
-ticId=ticStatus('evaluating');
+assert(n>0); ticId=ticStatus('evaluating');
 for i=1:n
   % load detections results and process appropriately
   dtNm=[dtDir '/' files{i}];
