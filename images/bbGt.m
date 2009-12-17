@@ -46,7 +46,7 @@ function varargout = bbGt( action, varargin )
 % Evaluates detections in a single frame against ground truth data.
 %  [gt, dt] = bbGt( 'evalRes', gt0, dt0, thr )
 % Run evaluation evalRes for each ground truth/detection result in dirs.
-%  [gts, dts] = evalResDir( gtDir, dtDir, [varargin] )
+%  [gt,dt,files] = evalResDir( gtDir, dtDir, [varargin] )
 % Compute ROC or PR based on outputs of evalRes on multiple images.
 %  [xs,ys,ref] = bbGt( 'compRoc', gt, dt, roc, ref )
 % Extract true or false positives or negatives for visualization.
@@ -374,7 +374,7 @@ end
 
 end
 
-function [gt, dt] = evalResDir( gtDir, dtDir, varargin )
+function [gt,dt,files] = evalResDir( gtDir, dtDir, varargin )
 % Run evaluation evalRes for each ground truth/detection result in dirs.
 %
 % Loads each ground truth annotation in gtDir and the corresponding
@@ -392,10 +392,10 @@ function [gt, dt] = evalResDir( gtDir, dtDir, varargin )
 % detectors on the INRIA pedestrian database), the resize parameters should
 % be {100/128, 43/64, 0}, see bbApply>resize() for more info. Finally nms
 % is optionally applied to the detections (if pNms are specified), see
-% bbNms() for more info. 
-% 
+% bbNms() for more info.
+%
 % USAGE
-%  [gts, dts] = evalResDir( gtDir, dtDir, [varargin] )
+%  [gt,dt,files] = evalResDir( gtDir, dtDir, [varargin] )
 %
 % INPUTS
 %  gtDir        - location of ground truth
@@ -405,22 +405,27 @@ function [gt, dt] = evalResDir( gtDir, dtDir, varargin )
 %   .pGt          - {} params for bbGt>toGt
 %   .resize       - {} parameters for bbApply('resize')
 %   .pNms         - ['type','none'] params non maximal suppresion
+%   .filter       - ['*.txt'] filter for ground truth annotations
+%   .f0           - [1] first ground truth file to use
+%   .f1           - [inf] last ground truth file to use
 %
 % OUTPUTS
 %  gt           - {1xn} first output of evalRes() for each image
 %  dt           - {1xn} second output of evalRes() for each image
-%
+%  files        - {1xn} name of each dt result
+% 
 % EXAMPLE
 %
 % See also bbGt, bbGt>evalRes, bbGt>toGt, bbNms, bbGt>compRoc,
 % bbApply>resize
 
-dfs={'thr',.5,'pGt',{},'resize',{},'pNms',struct('type','none')};
-[thr,pGt,resize,pNms] = getPrmDflt(varargin,dfs,1);
+dfs={'thr',.5,'pGt',{},'resize',{},'pNms',struct('type','none'),...
+  'filter','*.txt','f0',1,'f1',inf};
+[thr,pGt,resize,pNms,filter,f0,f1] = getPrmDflt(varargin,dfs,1);
 % get files in ground truth directory
-files=dir([gtDir '/*.txt']); files={files.name};
-n=length(files); gt=cell(1,n); dt=cell(1,n);
-assert(n>0); ticId=ticStatus('evaluating');
+files=dir([gtDir '/' filter]); files={files.name};
+files=files(f0:min(f1,end)); n=length(files); assert(n>0);
+gt=cell(1,n); dt=cell(1,n); ticId=ticStatus('evaluating');
 for i=1:n
   % load detections results and process appropriately
   dtNm=[dtDir '/' files{i}];
