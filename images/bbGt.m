@@ -50,7 +50,7 @@ function varargout = bbGt( action, varargin )
 % Compute ROC or PR based on outputs of evalRes on multiple images.
 %  [xs,ys,ref] = bbGt( 'compRoc', gt, dt, roc, ref )
 % Extract true or false positives or negatives for visualization.
-%  IS = bbGt( 'cropRes', gt, dt, names, type, dims, n )
+%  [IS,scores] = bbGt( 'cropRes', gt, dt, names, type, dims, n )
 % Computes (modified) overlap area between pairs of bbs.
 %   oa = bbGt( 'compOas', dt, gt, [ig] )
 % Optimized version of compOas for a single pair of bbs.
@@ -413,7 +413,7 @@ function [gt,dt,files] = evalResDir( gtDir, dtDir, varargin )
 %  gt           - {1xn} first output of evalRes() for each image
 %  dt           - {1xn} second output of evalRes() for each image
 %  files        - {1xn} name of each dt result
-% 
+%
 % EXAMPLE
 %
 % See also bbGt, bbGt>evalRes, bbGt>toGt, bbNms, bbGt>compRoc,
@@ -493,11 +493,11 @@ end
 [d,ind]=min(abs(xs-ref)); ref=ys(ind);
 end
 
-function IS = cropRes( gt, dt, names, type, dims, n )
+function [IS,scores] = cropRes( gt, dt, names, type, dims, n )
 % Extract true or false positives or negatives for visualization.
 %
 % USAGE
-%  IS = bbGt( 'cropRes', gt, dt, names, type, dims, n )
+%  [IS,scores] = bbGt( 'cropRes', gt, dt, names, type, dims, n )
 %
 % INPUTS
 %  gt         - {1xn} first output of evalRes() for each image
@@ -509,6 +509,7 @@ function IS = cropRes( gt, dt, names, type, dims, n )
 %
 % OUTPUTS
 %  IS         - [dimsxn] extracted image windows
+%  scores     - [1xn] detection score for each bb unless 'fn'
 %
 % EXAMPLE
 %
@@ -532,11 +533,11 @@ if(strcmp(type,'fn')), ord=randperm(size(bbs,1));
 else [d,ord]=sort(bbs(:,5),'descend'); end
 bbs=bbs(ord(1:n),:); ids=ids(ord(1:n));
 % extract patches
-if(n==0), IS=[]; return; else IS=cell(1,n); end
+if(n==0), IS=[]; scores=[]; return; end; IS=cell(1,n); scores=zeros(1,n);
 for i=1:N
   locs=find(ids==i); if(isempty(locs)), continue; end
   IS1=bbApply('crop',imread(names{i}),bbs(locs,1:4),'replicate',dims);
-  for j=1:length(locs), IS{locs(j)}=IS1{j}; end
+  for j=1:length(locs), IS{locs(j)}=IS1{j}; end; scores(locs)=bbs(locs,5);
 end; IS=cell2array(IS);
 
 end
