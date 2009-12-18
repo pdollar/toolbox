@@ -18,7 +18,7 @@ function bbLabeler( objTypes, imgDir, resDir )
 %
 % See also BBGT
 %
-% Piotr's Image&Video Toolbox      Version 2.40
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -88,7 +88,7 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
     
     function figResized( h, evnt )
       % overall layout
-      pos=get(hFig,ps); pad=8; htTop=30; wdTop=590;
+      pos=get(hFig,ps); pad=8; htTop=30; wdTop=600;
       wd=pos(3)-2*pad; ht=pos(4)-2*pad-htTop;
       x=(pos(3)-wd)/2; y=pad;
       set(hAx,ps,[x y wd ht]); y=y+ht;
@@ -108,7 +108,7 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
       set(pTop.hRot,ps,[x 2 55 13]); x=x+60;
       set(pTop.hLim,ps,[x 15 45 13]);
       set(pTop.hPnt,ps,[x 2 45 13]); x=x+60;
-      set(pTop.hNum,ps,[x 5 20 20]); x=x+20+50;
+      set(pTop.hNum,ps,[x 5 30 20]); x=x+30+50;
       set(pTop.hHelp,ps,[x 5 20 20]);
     end
     
