@@ -44,7 +44,7 @@ function varargout = bbGt( action, varargin )
 % Returns filtered ground truth bbs for purpose of evaluation.
 %   gtBbs = bbGt( 'toGt', objs, prm )
 % Evaluates detections in a single frame against ground truth data.
-%  [gt, dt] = bbGt( 'evalRes', gt0, dt0, thr )
+%  [gt, dt] = bbGt( 'evalRes', gt0, dt0, [thr], [mul] )
 % Run evaluation evalRes for each ground truth/detection result in dirs.
 %  [gt,dt,files] = evalResDir( gtDir, dtDir, [varargin] )
 % Compute ROC or PR based on outputs of evalRes on multiple images.
@@ -308,7 +308,7 @@ if(any(pad~=0)), gtBbs=bbApply('resize',gtBbs,1+pad(2),1+pad(1)); end
   end
 end
 
-function [gt, dt] = evalRes( gt0, dt0, thr )
+function [gt, dt] = evalRes( gt0, dt0, thr, mul )
 % Evaluates detections in a single frame against ground truth data.
 %
 % Uses modified Pascal criteria that allows for "ignore" regions. The
@@ -334,12 +334,13 @@ function [gt, dt] = evalRes( gt0, dt0, thr )
 %  for dt: -1=ignore,  0=fp [unmatched],  1=tp [matched]
 %
 % USAGE
-%  [gt, dt] = bbGt( 'evalRes', gt0, dt0, thr )
+%  [gt, dt] = bbGt( 'evalRes', gt0, dt0, [thr], [mul] )
 %
 % INPUTS
 %  gt0  - [mx5] ground truth array with rows [x y w h ignore]
 %  dt0  - [nx5] detection results array with rows [x y w h score]
-%  thr  - the threshold on oa for comparing two bbs
+%  thr  - [.5] the threshold on oa for comparing two bbs
+%  mul  - [0] if true allow multiple matches to each gt
 %
 % OUTPUTS
 %  gt   - [mx5] ground truth results [x y w h match]
@@ -350,6 +351,8 @@ function [gt, dt] = evalRes( gt0, dt0, thr )
 % See also bbGt, bbGt>compOas
 
 % check / sort inputs
+if(nargin<3 || isempty(thr)), thr=.5; end
+if(nargin<4 || isempty(mul)), mul=0; end
 if(isempty(gt0)), gt0=zeros(0,5); end
 if(isempty(dt0)), dt0=zeros(0,5); end
 assert( size(dt0,2)==5 ); nd=size(dt0,1);
@@ -362,13 +365,13 @@ gt=gt0; gt(:,5)=-gt(:,5); dt=dt0; dt=[dt zeros(nd,1)];
 for d=1:nd
   dtm=0; maxOa=thr; maxg=0;
   for g=1:ng
-    gtm=gt(g,5); if(gtm==1), continue; end
-    if( dtm==1 && gtm==-1 ), break; end
+    gtm=gt(g,5); if(~mul && gtm==1), continue; end
+    if( dtm~=0 && gtm==-1 ), break; end
     oa = compOa(dt(d,1:4),gt(g,1:4),gtm==-1);
     if(oa<maxOa), continue; end
     maxOa=oa; maxg=g; if(gtm==0), dtm=1; else dtm=-1; end
   end; g=maxg;
-  if(dtm==-1), assert(gt(g,5)==-1); dt(d,6)=-1; end
+  if(dtm==-1), assert(mul || gt(g,5)==-1); dt(d,6)=-1; end
   if(dtm==1), assert(gt(g,5)==0); gt(g,5)=1; dt(d,6)=1; end
 end
 
@@ -402,6 +405,7 @@ function [gt,dt,files] = evalResDir( gtDir, dtDir, varargin )
 %  dtDir        - location of detections
 %  varargin     - additional params (struct or name/value pairs)
 %   .thr          - [.5] threshold for evalRes()
+%   .mul          - [0] multiple match flag for evalRes()
 %   .pGt          - {} params for bbGt>toGt
 %   .resize       - {} parameters for bbApply('resize')
 %   .pNms         - ['type','none'] params non maximal suppresion
@@ -419,9 +423,9 @@ function [gt,dt,files] = evalResDir( gtDir, dtDir, varargin )
 % See also bbGt, bbGt>evalRes, bbGt>toGt, bbNms, bbGt>compRoc,
 % bbApply>resize
 
-dfs={'thr',.5,'pGt',{},'resize',{},'pNms',struct('type','none'),...
-  'filter','*.txt','f0',1,'f1',inf};
-[thr,pGt,resize,pNms,filter,f0,f1] = getPrmDflt(varargin,dfs,1);
+dfs={'thr',.5,'mul',0,'pGt',{},'resize',{},...
+  'pNms',struct('type','none'),'filter','*.txt','f0',1,'f1',inf};
+[thr,mul,pGt,resize,pNms,filter,f0,f1] = getPrmDflt(varargin,dfs,1);
 % get files in ground truth directory
 files=dir([gtDir '/' filter]); files={files.name};
 files=files(f0:min(f1,end)); n=length(files); assert(n>0);
@@ -438,7 +442,7 @@ for i=1:n
   gtNm=[gtDir '/' files{i}];
   gt1 = bbGt('toGt',bbGt('bbLoad',gtNm),pGt);
   % run evaluation and store result
-  [gt1,dt1] = bbGt('evalRes',gt1,dt1,thr);
+  [gt1,dt1] = bbGt('evalRes',gt1,dt1,thr,mul);
   gt{i}=gt1; dt{i}=dt1; tocStatus(ticId,i/n);
 end
 
