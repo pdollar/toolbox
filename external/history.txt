@@ -4,6 +4,7 @@ Version NEW
  -bbGt.m: added evalResDir() for evaluating Pascal detection criteria
  -nlfiltersep.m: simpler/faster 'block' case (deleted nlfiltersep_blocksum.*).
  -localSum.m: extra options to compute local mins/maxes
+ -seqIo.m/seqReaderPlugin.m: 'getts': return timestamps for all frames
  -minor: plotRoc.m, toolboxCompile.m, bbApply.m, bbLabeler.m
 
 Version 2.40 (24-Nov-09)

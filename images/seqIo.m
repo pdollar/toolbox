@@ -26,6 +26,7 @@ function sobj = seqIo( fName, mode, varargin )
 %  sr.close();            % Close seq file (sr is useless after).
 %  [I,ts]=sr.getframe();  % Get current frame (returns [] if invalid).
 %  [I,ts]=sr.getframeb(); % Get current frame with no decoding.
+%  ts = sr.getts();       % Return timestamps for all frames.
 %  info = sr.getinfo();   % Return struct with info about video.
 %  [I,ts]=sr.getnext();   % Shortcut for next() followed by getframe().
 %  out = sr.next();       % Go to next frame (out=-1 on fail).
@@ -88,7 +89,7 @@ function sobj = seqIo( fName, mode, varargin )
 %
 % See also SEQPLAYER, SEQREADERPLUGIN, SEQWRITERPLUGIN
 %
-% Piotr's Image&Video Toolbox      Version 2.40
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -102,7 +103,7 @@ if( strcmp(mode,'r') )
   s = srp( 'open', int32(-1), fName );
   sobj = struct( 'close',@() srp('close',s), ...
     'getframe',@() srp('getframe',s), ...
-    'getframeb',@() srp('getframeb',s), ...
+    'getframeb',@() srp('getframeb',s), 'getts',@() srp('getts',s), ...
     'getinfo',@() srp('getinfo',s), 'getnext',@() srp('getnext',s), ...
     'next',@() srp('next',s), 'seek',@(f) srp('seek',s,f), ...
     'step',@(d) srp('step',s,d));

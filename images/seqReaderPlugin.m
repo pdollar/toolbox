@@ -7,6 +7,7 @@ function varargout = seqReaderPlugin( cmd, h, varargin )
 %  h = srp('close',h);        % Close seq file (output h is -1).
 %  [I,ts] =srp('getframe',h)  % Get current frame (returns [] if invalid).
 %  [I,ts] =srp('getframeb',h) % Get current frame with no decoding.
+%  ts = srp('getts',h)        % Return timestamps for all frames.
 %  info = srp('getinfo',h)    % Return struct with info about video.
 %  [I,ts] =srp('getnext',h)   % Shortcut for 'next' followed by 'getframe'.
 %  out = srp('next',h)        % Go to next frame (out=0 on fail).
@@ -62,6 +63,7 @@ end
 switch( cmd )
   case 'getframe',  chk(nIn,0); [o1,o2]=getFrame(c,fid,info,tNm,1);
   case 'getframeb', chk(nIn,0); [o1,o2]=getFrame(c,fid,info,tNm,0);
+  case 'getts',     chk(nIn,0); o1=getTs(0:info.numFrames-1,fid,info);
   case 'getinfo',   chk(nIn,0); o1=info;
   case 'getnext',   chk(nIn,0); c=c+1; [o1,o2]=getFrame(c,fid,info,tNm,1);
   case 'next',      chk(nIn,0); [c,o1]=valid(c+1,info);
@@ -117,7 +119,7 @@ if(strcmp(ext,'raw')), assert(info.numFrames>0); else
 end
 % compute frame rate from timestamps as stored fps may be incorrect
 n=min(100,info.numFrames); if(n==1), return; end
-ts = getTimeStamps( 0:(n-1), fid, info );
+ts = getTs( 0:(n-1), fid, info );
 ds=ts(2:end)-ts(1:end-1); ds=ds(abs(ds-median(ds))<.005);
 if(~isempty(ds)), info.fps=1/mean(ds); end
 end
@@ -165,7 +167,7 @@ end
 if(nargout==2), ts=fread(fid,1,'uint32')+fread(fid,1,'uint16')/1000; end
 end
 
-function ts = getTimeStamps( frames, fid, info )
+function ts = getTs( frames, fid, info )
 % get timestamps (ts) at which frames were recorded
 n=length(frames); ts=nan(1,n);
 for i=1:n, frame=frames(i);
