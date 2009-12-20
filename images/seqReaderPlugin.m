@@ -28,7 +28,7 @@ function varargout = seqReaderPlugin( cmd, h, varargin )
 %
 % See also SEQIO, SEQWRITERPLUGIN
 %
-% Piotr's Image&Video Toolbox      Version 2.40
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -116,8 +116,8 @@ if(strcmp(ext,'raw')), assert(info.numFrames>0); else
   end
 end
 % compute frame rate from timestamps as stored fps may be incorrect
-n=min(100,info.numFrames); if(n==1), return; end; ts=zeros(1,n);
-for f=1:n, ts(f)=getTimeStamp(f-1,fid,info); end
+n=min(100,info.numFrames); if(n==1), return; end
+ts = getTimeStamps( 0:(n-1), fid, info );
 ds=ts(2:end)-ts(1:end-1); ds=ds(abs(ds-median(ds))<.005);
 if(~isempty(ds)), info.fps=1/mean(ds); end
 end
@@ -165,18 +165,21 @@ end
 if(nargout==2), ts=fread(fid,1,'uint32')+fread(fid,1,'uint16')/1000; end
 end
 
-function ts = getTimeStamp( frame, fid, info )
-% get timestamp (ts) at which frame was recorded
-if(frame<0 || frame>=info.numFrames), ts=[]; return; end
-switch info.ext
-  case 'raw' % uncompressed
-    fseek(fid,1024+frame*info.trueImageSize+info.imageSizeBytes,'bof');
-  case {'jpg','png'} % compressed
-    fseek(fid,info.seek(frame+1),'bof');
-    fseek(fid,fread(fid,1,'uint32')-4,'cof');
-  otherwise, assert(false);
+function ts = getTimeStamps( frames, fid, info )
+% get timestamps (ts) at which frames were recorded
+n=length(frames); ts=nan(1,n);
+for i=1:n, frame=frames(i);
+  if(frame<0 || frame>=info.numFrames), continue; end
+  switch info.ext
+    case 'raw' % uncompressed
+      fseek(fid,1024+frame*info.trueImageSize+info.imageSizeBytes,'bof');
+    case {'jpg','png'} % compressed
+      fseek(fid,info.seek(frame+1),'bof');
+      fseek(fid,fread(fid,1,'uint32')-4,'cof');
+    otherwise, assert(false);
+  end
+  ts(i)=fread(fid,1,'uint32')+fread(fid,1,'uint16')/1000;
 end
-ts=fread(fid,1,'uint32')+fread(fid,1,'uint16')/1000;
 end
 
 function info = readHeader( fid )
