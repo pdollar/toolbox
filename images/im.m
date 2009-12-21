@@ -1,46 +1,38 @@
-function im( I, range, extraInf )
+function varargout = im( I, range, extraInf )
 % Function for displaying grayscale images.
 %
-% Handy function for showing a grayscale image with a colorbar and
-% interactive pixel info tool.
+% Handy function for showing a grayscale or color image with a colorbar.
 %
 % USAGE
-%  im( I, [range], [extraInf] )
+%  h = im( I, [range], [extraInf] )
 %
 % INPUTS
-%  I        - image in a valid format
+%  I        - image in a valid format for imagesc
 %  range    - [] minval/maxval for imagesc
-%  extraInf - [1] if 1 then a colorbar is shown as well as impixelinfo
+%  extraInf - [1] if 1 then colorbar is shown as well as tick marks
+%
+% OUTPUTS
+%  h        - handle for image graphics object
 %
 % EXAMPLE
 %  load clown; im( X )
 %
-% See also IMSHOW, IMVIEW, IMPIXELINFO, IMTOOL
+% See also imshow, imview, impixelinfo, imtool, imagesc
 %
-% Piotr's Image&Video Toolbox      Version 2.02
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
-
 if( nargin<1 || isempty(I)); I=0; end;
-if( nargin<2 || isempty(range))
-  imagesc(I);
-else
-  imagesc(I,range)
-end
+if( nargin<2 || isempty(range)), range=[]; end
 if( nargin<3 || isempty(extraInf)); extraInf=1; end;
-
-colormap(gray);
-title(inputname(1));
-axis('image');
-
-% info about image pixels - removed impixelinfo for 2007b
-if( extraInf )
-  %impixelinfo;
-  colorbar;
-else
-  set(gca,'XTick',[]);
-  set(gca,'YTick',[]);
+% display image using imagesc
+if(isempty(range)), h=imagesc(I); else h=imagesc(I,range); end
+% set basic and optional properties
+colormap(gray); title(inputname(1)); axis('image');
+if( extraInf ), colorbar; else set(gca,'XTick',[],'YTick',[]); end
+% output h only if output argument explicitly requested
+if(nargout>0), varargout={h}; end
 end
 
 % whitebg('black'); set(gcf,'color', [0 0 0]); %black background
