@@ -409,14 +409,14 @@ function [gt,dt,files] = evalResDir( gtDir, dtDir, varargin )
 %   .pGt          - {} params for bbGt>toGt
 %   .resize       - {} parameters for bbApply('resize')
 %   .pNms         - ['type','none'] params non maximal suppresion
-%   .filter       - ['*.txt'] filter for ground truth annotations
 %   .f0           - [1] first ground truth file to use
 %   .f1           - [inf] last ground truth file to use
+%   .imDir        - [gtDir] directory containing images
 %
 % OUTPUTS
 %  gt           - {1xn} first output of evalRes() for each image
 %  dt           - {1xn} second output of evalRes() for each image
-%  files        - {1xn} name of each dt result
+%  files        - {1xn} names of corresponding images (possibly w/o ext)
 %
 % EXAMPLE
 %
@@ -424,10 +424,11 @@ function [gt,dt,files] = evalResDir( gtDir, dtDir, varargin )
 % bbApply>resize
 
 dfs={'thr',.5,'mul',0,'pGt',{},'resize',{},...
-  'pNms',struct('type','none'),'filter','*.txt','f0',1,'f1',inf};
-[thr,mul,pGt,resize,pNms,filter,f0,f1] = getPrmDflt(varargin,dfs,1);
+  'pNms',struct('type','none'),'f0',1,'f1',inf,'imDir',''};
+[thr,mul,pGt,resize,pNms,f0,f1,imDir]=getPrmDflt(varargin,dfs,1);
+if(isempty(imDir)), imDir=gtDir; end
 % get files in ground truth directory
-files=dir([gtDir '/' filter]); files={files.name};
+files=dir([gtDir '/*.txt']); files={files.name};
 files=files(f0:min(f1,end)); n=length(files); assert(n>0);
 gt=cell(1,n); dt=cell(1,n); ticId=ticStatus('evaluating');
 for i=1:n
@@ -441,6 +442,8 @@ for i=1:n
   % load ground truth and prepare for evaluation
   gtNm=[gtDir '/' files{i}];
   gt1 = bbGt('toGt',bbGt('bbLoad',gtNm),pGt);
+  % name of corresponding image
+  files{i} = [imDir '/' files{i}(1:end-4)];
   % run evaluation and store result
   [gt1,dt1] = bbGt('evalRes',gt1,dt1,thr,mul);
   gt{i}=gt1; dt{i}=dt1; tocStatus(ticId,i/n);
