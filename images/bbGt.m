@@ -45,8 +45,10 @@ function varargout = bbGt( action, varargin )
 %   gtBbs = bbGt( 'toGt', objs, prm )
 % Evaluates detections in a single frame against ground truth data.
 %  [gt, dt] = bbGt( 'evalRes', gt0, dt0, [thr], [mul] )
+% Display evaluation results for given image.
+%  [hs,hImg] = bbGt( 'showRes' I, gt, dt, varargin )
 % Run evaluation evalRes for each ground truth/detection result in dirs.
-%  [gt,dt,files] = evalResDir( gtDir, dtDir, [varargin] )
+%  [gt,dt,files] = bbGt( 'evalResDir', gtDir, dtDir, [varargin] )
 % Compute ROC or PR based on outputs of evalRes on multiple images.
 %  [xs,ys,ref] = bbGt( 'compRoc', gt, dt, roc, ref )
 % Extract true or false positives or negatives for visualization.
@@ -73,8 +75,9 @@ function varargout = bbGt( action, varargin )
 % EXAMPLE
 %
 % See also bbApply, bbLabeler, bbGt>create, bbGt>bbSave, bbGt>bbLoad,
-% bbGt>get, bbGt>set, bbGt>toGt, bbGt>evalRes, bbGt>compRoc, bbGt>cropRes,
-% bbGt>compOas, bbGt>compOa, bbGt>sampleData
+% bbGt>get, bbGt>set, bbGt>toGt, bbGt>evalRes, bbGt>showRes,
+% bbGt>evalResDir, bbGt>compRoc, bbGt>cropRes, bbGt>compOas, bbGt>compOa,
+% bbGt>sampleData
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -377,6 +380,58 @@ end
 
 end
 
+function [hs,hImg] = showRes( I, gt, dt, varargin )
+% Display evaluation results for given image.
+%
+% USAGE
+%  [hs,hImg] = bbGt( 'showRes', I, gt, dt, [varargin] )
+%
+% INPUTS
+%  I          - image to display, image filename, or []
+%  gt         - first output of evalRes()
+%  dt         - second output of evalRes()
+%  varargin   - additional params (struct or name/value pairs)
+%   .evShow     - [1] if true show results of evaluation
+%   .gtShow     - [1] if true show ground truth
+%   .dtShow     - [1] if true show detections
+%   .cols       - ['krg'] colors for ignore/mistake/correct
+%   .gtLs       - ['-'] line style for gt bbs
+%   .dtLs       - ['--'] line style for dt bbs
+%   .lw         - [3] line width
+%
+% OUTPUTS
+%  hs         - handles to bbs and text labels
+%  hImg       - handle for image graphics object
+%
+% EXAMPLE
+%
+% See also bbGt, bbGt>evalRes, bbGt>toGt
+dfs={'evShow',1,'gtShow',1,'dtShow',1,'cols','krg',...
+  'gtLs','-','dtLs','--','lw',3};
+[evShow,gtShow,dtShow,cols,gtLs,dtLs,lw]=getPrmDflt(varargin,dfs,1);
+% optionally display image
+if(ischar(I)), I=imread(I); end
+if(~isempty(I)), hImg=im(I,[],0); title(''); end
+% display bbs with or w/o color coding based on output of evalRes
+hold on; hs=cell(1,1000); k=0;
+if( evShow )
+  if( gtShow )
+    for i=1:size(gt,1), k=k+1;
+      hs{k}=bbApply('draw',gt(i,1:4),cols(gt(i,5)+2),lw,gtLs);
+    end
+  end
+  if( dtShow )
+    for i=1:size(dt,1), k=k+1;
+      hs{k}=bbApply('draw',dt(i,1:5),cols(dt(i,6)+2),lw,dtLs);
+    end
+  end
+else
+  if(gtShow), k=k+1; hs{k}=bbApply('draw',gt(:,1:4),cols(3),lw,gtLs); end
+  if(dtShow), k=k+1; hs{k}=bbApply('draw',dt(:,1:5),cols(3),lw,dtLs); end
+end
+hs=[hs{:}]; hold off;
+end
+
 function [gt,dt,files] = evalResDir( gtDir, dtDir, varargin )
 % Run evaluation evalRes for each ground truth/detection result in dirs.
 %
@@ -398,7 +453,7 @@ function [gt,dt,files] = evalResDir( gtDir, dtDir, varargin )
 % bbNms() for more info.
 %
 % USAGE
-%  [gt,dt,files] = evalResDir( gtDir, dtDir, [varargin] )
+%  [gt,dt,files] = bbGt( 'evalResDir', gtDir, dtDir, [varargin] )
 %
 % INPUTS
 %  gtDir        - location of ground truth
