@@ -52,7 +52,7 @@ function varargout = bbGt( action, varargin )
 % Compute ROC or PR based on outputs of evalRes on multiple images.
 %  [xs,ys,ref] = bbGt( 'compRoc', gt, dt, roc, ref )
 % Extract true or false positives or negatives for visualization.
-%  [Is,scores] = bbGt( 'cropRes', gt, dt, files, varargin )
+%  [Is,scores,imgIds] = bbGt( 'cropRes', gt, dt, files, varargin )
 % Computes (modified) overlap area between pairs of bbs.
 %   oa = bbGt( 'compOas', dt, gt, [ig] )
 % Optimized version of compOas for a single pair of bbs.
@@ -555,11 +555,11 @@ end
 [d,ind]=min(abs(xs-ref)); ref=ys(ind);
 end
 
-function [Is,scores] = cropRes( gt, dt, files, varargin )
+function [Is,scores,imgIds] = cropRes( gt, dt, files, varargin )
 % Extract true or false positives or negatives for visualization.
 %
 % USAGE
-%  [Is,scores] = bbGt( 'cropRes', gt, dt, files, varargin )
+%  [Is,scores,imgIds] = bbGt( 'cropRes', gt, dt, files, varargin )
 %
 % INPUTS
 %  gt         - {1xN} first output of evalRes() for each image
@@ -575,6 +575,7 @@ function [Is,scores] = cropRes( gt, dt, files, varargin )
 % OUTPUTS
 %  Is         - [dimsxn] extracted image windows
 %  scores     - [1xn] detection score for each bb unless 'fn'
+%  imgIds     - [1xn] image id for each cropped window
 %
 % EXAMPLE
 %
@@ -600,11 +601,13 @@ if(strcmp(type,'fn')), ord=randperm(size(bbs,1));
 else [d,ord]=sort(bbs(:,5),'descend'); end
 bbs=bbs(ord(1:n),:); ids=ids(ord(1:n));
 % extract patches from each image
-if(n==0), Is=[]; return; end; Is=cell(1,n); scores=zeros(1,n);
+if(n==0), Is=[]; scores=[]; imgIds=[]; return; end;
+Is=cell(1,n); scores=zeros(1,n); imgIds=zeros(1,n);
 for i=1:N
   locs=find(ids==i); if(isempty(locs)), continue; end
   Is1=bbApply('crop',imread(files{i}),bbs(locs,1:4),'replicate',dims);
-  for j=1:length(locs), Is{locs(j)}=Is1{j}; end; scores(locs)=bbs(locs,5);
+  for j=1:length(locs), Is{locs(j)}=Is1{j}; end;
+  scores(locs)=bbs(locs,5); imgIds(locs)=i;
 end; Is=cell2array(Is);
 % optionally display
 if(~show), return; end; figure(show); clf;
