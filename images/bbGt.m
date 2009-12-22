@@ -52,7 +52,7 @@ function varargout = bbGt( action, varargin )
 % Compute ROC or PR based on outputs of evalRes on multiple images.
 %  [xs,ys,ref] = bbGt( 'compRoc', gt, dt, roc, ref )
 % Extract true or false positives or negatives for visualization.
-%  [IS,scores] = bbGt( 'cropRes', gt, dt, names, type, dims, n )
+%  [Is,scores] = bbGt( 'cropRes', gt, dt, files, varargin )
 % Computes (modified) overlap area between pairs of bbs.
 %   oa = bbGt( 'compOas', dt, gt, [ig] )
 % Optimized version of compOas for a single pair of bbs.
@@ -555,28 +555,33 @@ end
 [d,ind]=min(abs(xs-ref)); ref=ys(ind);
 end
 
-function [IS,scores] = cropRes( gt, dt, names, type, dims, n )
+function [Is,scores] = cropRes( gt, dt, files, varargin )
 % Extract true or false positives or negatives for visualization.
 %
 % USAGE
-%  [IS,scores] = bbGt( 'cropRes', gt, dt, names, type, dims, n )
+%  [Is,scores] = bbGt( 'cropRes', gt, dt, files, varargin )
 %
 % INPUTS
-%  gt         - {1xn} first output of evalRes() for each image
-%  dt         - {1xn} second output of evalRes() for each image
-%  names      - {1xn} name of each image
-%  type       - one of: 'fp', 'fn', 'tp', 'dt'
-%  dims       - target dimensions for extracted windows
-%  n          - max number of windows to extract
+%  gt         - {1xN} first output of evalRes() for each image
+%  dt         - {1xN} second output of evalRes() for each image
+%  files      - {1xN} name of each image
+%  varargin   - additional params (struct or name/value pairs)
+%   .dims       - ['REQ'] target dimensions for extracted windows
+%   .type       - ['fp'] one of: 'fp', 'fn', 'tp', 'dt'
+%   .n          - [100] max number of windows to extract
+%   .show       - [1] figure for displaying results (or 0)
+%   .fStr       - ['%0.1f'] label{i}=num2str(score(i),fStr)
 %
 % OUTPUTS
-%  IS         - [dimsxn] extracted image windows
+%  Is         - [dimsxn] extracted image windows
 %  scores     - [1xn] detection score for each bb unless 'fn'
 %
 % EXAMPLE
 %
 % See also bbGt, bbGt>evalRes
-
+dfs={'dims','REQ','type','fp','n',100,'show',1,'fStr','%0.1f'};
+[dims,type,n,show,fStr]=getPrmDflt(varargin,dfs,1);
+N=length(files); assert(length(gt)==N && length(dt)==N);
 % crop patches either in gt or dt according to type
 switch type
   case 'fn', bbs=gt; keep=@(bbs) bbs(:,5)==0;
@@ -584,7 +589,7 @@ switch type
   case 'tp', bbs=dt; keep=@(bbs) bbs(:,6)==1;
   case 'dt', bbs=dt; keep=@(bbs) bbs(:,6)>=0;
   otherwise, error('unknown type: %s',type);
-end; N=length(bbs);
+end
 % create ids that will map each bb to correct name
 ms=zeros(1,N); for i=1:N, ms(i)=size(bbs{i},1); end; cms=[0 cumsum(ms)];
 ids=zeros(1,sum(ms)); for i=1:N, ids(cms(i)+1:cms(i+1))=i; end
@@ -594,14 +599,20 @@ bbs=cat(1,bbs{:}); K=keep(bbs); bbs=bbs(K,:); ids=ids(K); n=min(n,sum(K));
 if(strcmp(type,'fn')), ord=randperm(size(bbs,1));
 else [d,ord]=sort(bbs(:,5),'descend'); end
 bbs=bbs(ord(1:n),:); ids=ids(ord(1:n));
-% extract patches
-if(n==0), IS=[]; scores=[]; return; end; IS=cell(1,n); scores=zeros(1,n);
+% extract patches from each image
+if(n==0), Is=[]; return; end; Is=cell(1,n); scores=zeros(1,n);
 for i=1:N
   locs=find(ids==i); if(isempty(locs)), continue; end
-  IS1=bbApply('crop',imread(names{i}),bbs(locs,1:4),'replicate',dims);
-  for j=1:length(locs), IS{locs(j)}=IS1{j}; end; scores(locs)=bbs(locs,5);
-end; IS=cell2array(IS);
-
+  Is1=bbApply('crop',imread(files{i}),bbs(locs,1:4),'replicate',dims);
+  for j=1:length(locs), Is{locs(j)}=Is1{j}; end; scores(locs)=bbs(locs,5);
+end; Is=cell2array(Is);
+% optionally display
+if(~show), return; end; figure(show); clf;
+pMnt={'hasChn',size(Is1{1},3)>1};
+if(~isempty(fStr) && ~strcmp(type,'fn'))
+  lbls=cell(1,n); for i=1:n, lbls{i}=num2str(scores(i),fStr); end
+  pMnt=[pMnt 'labels' {lbls}];
+end; montage2(Is,pMnt); title(type);
 end
 
 function oa = compOas( dt, gt, ig )
