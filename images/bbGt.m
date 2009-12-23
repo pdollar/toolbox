@@ -597,8 +597,8 @@ ids=zeros(1,sum(ms)); for i=1:N, ids(cms(i)+1:cms(i+1))=i; end
 % flatten bbs and keep relevent subset
 bbs=cat(1,bbs{:}); K=keep(bbs); bbs=bbs(K,:); ids=ids(K); n=min(n,sum(K));
 % reorder bbs appropriately
-if(strcmp(type,'fn')), ord=randperm(size(bbs,1));
-else [d,ord]=sort(bbs(:,5),'descend'); end
+if(~strcmp(type,'fn')), [d,ord]=sort(bbs(:,5),'descend'); else
+  if(size(bbs,1)<n), ord=randperm(size(bbs,1)); else ord=1:n; end; end
 bbs=bbs(ord(1:n),:); ids=ids(ord(1:n));
 % extract patches from each image
 if(n==0), Is=[]; scores=[]; imgIds=[]; return; end;
