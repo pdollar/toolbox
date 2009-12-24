@@ -567,6 +567,7 @@ function [Is,scores,imgIds] = cropRes( gt, dt, files, varargin )
 %  files      - {1xN} name of each image
 %  varargin   - additional params (struct or name/value pairs)
 %   .dims       - ['REQ'] target dimensions for extracted windows
+%   .pad        - [0] padding amount for cropping
 %   .type       - ['fp'] one of: 'fp', 'fn', 'tp', 'dt'
 %   .n          - [100] max number of windows to extract
 %   .show       - [1] figure for displaying results (or 0)
@@ -580,8 +581,8 @@ function [Is,scores,imgIds] = cropRes( gt, dt, files, varargin )
 % EXAMPLE
 %
 % See also bbGt, bbGt>evalRes
-dfs={'dims','REQ','type','fp','n',100,'show',1,'fStr','%0.1f'};
-[dims,type,n,show,fStr]=getPrmDflt(varargin,dfs,1);
+dfs={'dims','REQ','pad',0,'type','fp','n',100,'show',1,'fStr','%0.1f'};
+[dims,pad,type,n,show,fStr]=getPrmDflt(varargin,dfs,1);
 N=length(files); assert(length(gt)==N && length(dt)==N);
 % crop patches either in gt or dt according to type
 switch type
@@ -603,9 +604,11 @@ bbs=bbs(ord(1:n),:); ids=ids(ord(1:n));
 % extract patches from each image
 if(n==0), Is=[]; scores=[]; imgIds=[]; return; end;
 Is=cell(1,n); scores=zeros(1,n); imgIds=zeros(1,n);
+tDim=(dims+2*pad); rs=tDim./dims;
 for i=1:N
   locs=find(ids==i); if(isempty(locs)), continue; end
-  Is1=bbApply('crop',imread(files{i}),bbs(locs,1:4),'replicate',dims);
+  bbs1=bbApply('resize',bbs(locs,1:4),rs(1),rs(2));
+  Is1=bbApply('crop',imread(files{i}),bbs1,'replicate',[tDim(2) tDim(1)]);
   for j=1:length(locs), Is{locs(j)}=Is1{j}; end;
   scores(locs)=bbs(locs,5); imgIds(locs)=i;
 end; Is=cell2array(Is);

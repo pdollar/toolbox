@@ -2,6 +2,7 @@ Version NEW
  -hog.cpp, hogDraw.m: added very efficient HOG feature computation code
  -fevalDistr.m: wrapper for distributed cluster code (must be installed separately)
  -bbGt.m: added evalResDir() for evaluating Pascal detection criteria
+ -bbGt.m: added pad param to the cropRes function
  -nlfiltersep.m: simpler/faster 'block' case (deleted nlfiltersep_blocksum.*).
  -localSum.m: extra options to compute local mins/maxes
  -seqIo.m/seqReaderPlugin.m: 'getts': return timestamps for all frames
