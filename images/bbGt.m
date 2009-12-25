@@ -604,11 +604,11 @@ bbs=bbs(ord(1:n),:); ids=ids(ord(1:n));
 % extract patches from each image
 if(n==0), Is=[]; scores=[]; imgIds=[]; return; end;
 Is=cell(1,n); scores=zeros(1,n); imgIds=zeros(1,n);
-tDim=(dims+2*pad); rs=tDim./dims;
+if(any(pad>0)), dims1=dims+2*pad; rs=dims1./dims; dims=dims1; end
+if(any(pad>0)), bbs=bbApply('resize',bbs,rs(1),rs(2)); end
 for i=1:N
   locs=find(ids==i); if(isempty(locs)), continue; end
-  bbs1=bbApply('resize',bbs(locs,1:4),rs(1),rs(2));
-  Is1=bbApply('crop',imread(files{i}),bbs1,'replicate',[tDim(2) tDim(1)]);
+  Is1=bbApply('crop',imread(files{i}),bbs(locs,1:4),'replicate',dims);
   for j=1:length(locs), Is{locs(j)}=Is1{j}; end;
   scores(locs)=bbs(locs,5); imgIds(locs)=i;
 end; Is=cell2array(Is);
