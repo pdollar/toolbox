@@ -30,6 +30,13 @@ function bbs = bbNms( bbs, varargin )
 % run nms on the result. If maxn is specified, will split the set if
 % n>maxn. Note that this is a heuristic and can change the results of nms.
 %
+% Finally, the bbs are optionally resized before performing nms. The
+% resizing is important as some detectors return bbs that are padded. For
+% example, if a detector returns a bounding box of size 128x64 around
+% objects of size 100x43 (as is typical for some pedestrian detectors on
+% the INRIA pedestrian database), the resize parameters should be {100/128,
+% 43/64, 0}, see bbApply>resize() for more info.
+%
 % USAGE
 %  bbs = bbNms( bbs, [varargin] )
 %
@@ -41,6 +48,7 @@ function bbs = bbNms( bbs, varargin )
 %   .maxn       - [500] if n>maxn split and run recursively (see above)
 %   .radii      - [.15 .15 1 1] supression radii ('ms' only, see above)
 %   .overlap    - [.5] area of overlap for bbs
+%   .resize     - {} parameters for bbApply('resize')
 %
 % OUTPUTS
 %  bbs      - suppressed bbs
@@ -52,20 +60,22 @@ function bbs = bbNms( bbs, varargin )
 %
 % See also bbApply, nonMaxSuprList
 %
-% Piotr's Image&Video Toolbox      Version 2.35
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 % get parameters
-dfs={'type','max','thr',[],'maxn',500,'radii',[.15 .15 1 1],'overlap',.5};
-[type,thr,maxn,radii,overlap]=getPrmDflt(varargin,dfs,1);
+dfs={'type','max','thr',[],'maxn',500,'radii',[.15 .15 1 1],...
+  'overlap',.5,'resize',{}};
+[type,thr,maxn,radii,overlap,resize]=getPrmDflt(varargin,dfs,1);
 if(isempty(thr)), if(strcmp(type,'ms')), thr=0; else thr=-inf; end; end
 assert(maxn>=2); assert(numel(overlap)==1);
 
 % discard bbs below threshold and run nms1
 if(isempty(bbs)), bbs=zeros(0,5); end; if(strcmp(type,'none')), return; end
-kp=bbs(:,5)>thr; bbs=bbs(kp,:); if(size(bbs,1)<=1), return; end;
+kp=bbs(:,5)>thr; bbs=bbs(kp,:); if(isempty(bbs)), return; end
+if(~isempty(resize)), bbs=bbApply('resize',bbs,resize{:}); end
 bbs = nms1(bbs,type,thr,maxn,radii,overlap);
 
   function bbs = nms1( bbs, type, thr, maxn, radii, overlap )

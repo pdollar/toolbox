@@ -2,11 +2,10 @@ Version NEW
  -hog.cpp, hogDraw.m: added very efficient HOG feature computation code
  -fevalDistr.m: wrapper for distributed cluster code (must be installed separately)
  -bbGt.m: added evalResDir() for evaluating Pascal detection criteria
- -bbGt.m: added pad param to the cropRes function
  -nlfiltersep.m: simpler/faster 'block' case (deleted nlfiltersep_blocksum.*).
  -localSum.m: extra options to compute local mins/maxes
  -seqIo.m/seqReaderPlugin.m: 'getts': return timestamps for all frames
- -minor: plotRoc.m, toolboxCompile.m, bbApply.m, bbLabeler.m, im.m
+ -minor: plotRoc.m, toolboxCompile.m, bbApply.m, bbLabeler.m, im.m, bbNms.m
 
 Version 2.40 (24-Nov-09)
  -added images/bbLabeler.m: Bounding box or ellipse labeler for static images.
