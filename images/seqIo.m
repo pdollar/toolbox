@@ -176,17 +176,15 @@ elseif( strcmp(mode,'frimgs') )
 elseif( strcmp(mode,'convert') )
   % seqIo( fName, 'convert', tName, imgFun, [info], [skip] )
   tName=varargin{1}; imgFun=varargin{2}; assert(~strcmp(tName,fName));
-  if(nargin>=5), info=varargin{3}; else info=[]; end;
-  if(nargin>=6), skip=varargin{4}; else skip=1; end; init=0;
+  if(nargin>=5), info=varargin{3}; else info=[]; end
+  if(nargin>=6), skip=varargin{4}; else skip=1; end
   sr=seqIo(fName,'r'); if(isempty(info)), info=sr.getinfo(); end
+  I=sr.getnext(); info.width=size(I,2); info.height=size(I,1);
+  sw=seqIo(tName,'w',info);
   for frame = skip-1:skip:info.numFrames-1
-    sr.seek(frame); I=sr.getframe(); I=imgFun(I);
-    if(~init), init=1; siz=size(I);
-      info.width=siz(2); info.height=siz(1); sw=seqIo(tName,'w',info);
-    end; sw.addframe(I);
+    sr.seek(frame); [I,ts]=sr.getframe(); I=imgFun(I); sw.addframe(I,ts);
   end
-  if(init), sw.close(); else warning('No images found.'); end %#ok<WNTAG>
-  sr.close();
+  sw.close(); sr.close();
   
 elseif( strcmp(mode,'header') )
   % seqIo(fName,'header',info)
