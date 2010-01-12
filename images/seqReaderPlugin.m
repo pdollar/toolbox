@@ -91,7 +91,9 @@ end
 
 function [info, fid, tNm] = open( fName, info )
 % open video for reading, get header
-assert(exist([fName '.seq'],'file')==2); fid=fopen([fName '.seq'],'r','l');
+if(exist([fName '.seq'],'file')==0)
+  error('seq file not found: %s.seq',fName); end
+fid=fopen([fName '.seq'],'r','l');
 if(isempty(info)), info=readHeader(fid); else
   info.numFrames=0; fseek(fid,1024,'bof'); end
 switch(info.imageFormat)
