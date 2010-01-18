@@ -80,9 +80,9 @@ assert(maxn>=2); assert(numel(overlap)==1);
 if(isempty(bbs)), bbs=zeros(0,5); end; if(strcmp(type,'none')), return; end
 kp=bbs(:,5)>thr; bbs=bbs(kp,:); if(isempty(bbs)), return; end
 if(~isempty(resize)), bbs=bbApply('resize',bbs,resize{:}); end
-bbs = nms1(bbs,type,thr,maxn,radii,overlap,ovrDnm);
+bbs = nms1(bbs,type,thr,maxn,radii,overlap);
 
-  function bbs = nms1( bbs, type, thr, maxn, radii, overlap, ovrDnm )
+  function bbs = nms1( bbs, type, thr, maxn, radii, overlap )
     % if big split in two, recurse, merge, then run on merged
     if( size(bbs,1)>maxn )
       n=size(bbs,1); bbs=bbs(randperm(n),:); n2=floor(n/2);
