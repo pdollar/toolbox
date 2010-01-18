@@ -5,7 +5,8 @@ function bbs = bbNms( bbs, varargin )
 % bbs, if their overlap, defined by:
 %  overlap(bb1,bb2) = area(intersect(bb1,bb2))/area(union(bb1,bb2))
 % is greater than overlap, then the bb with the lower score is suppressed.
-% In the Pascal critieria two bbs are considered a match if overlap>=.5;
+% In the Pascal critieria two bbs are considered a match if overlap>=.5. If
+% ovrDnm='min', the 'union' in the above formula is replaced with 'min'.
 %
 % type=='maxg': Similar to 'max', except performs the nms in a greedy
 % fashion. Bbs are processed in order of decreasing score, and, unlike in
@@ -48,6 +49,7 @@ function bbs = bbNms( bbs, varargin )
 %   .maxn       - [500] if n>maxn split and run recursively (see above)
 %   .radii      - [.15 .15 1 1] supression radii ('ms' only, see above)
 %   .overlap    - [.5] area of overlap for bbs
+%   .ovrDnm     - ['union'] area of overlap denominator ('union' or 'min')
 %   .resize     - {} parameters for bbApply('resize')
 %
 % OUTPUTS
@@ -60,25 +62,27 @@ function bbs = bbNms( bbs, varargin )
 %
 % See also bbApply, nonMaxSuprList
 %
-% Piotr's Image&Video Toolbox      Version 2.41
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 % get parameters
 dfs={'type','max','thr',[],'maxn',500,'radii',[.15 .15 1 1],...
-  'overlap',.5,'resize',{}};
-[type,thr,maxn,radii,overlap,resize]=getPrmDflt(varargin,dfs,1);
+  'overlap',.5,'ovrDnm','union','resize',{}};
+[type,thr,maxn,radii,overlap,ovrDnm,resize]=getPrmDflt(varargin,dfs,1);
 if(isempty(thr)), if(strcmp(type,'ms')), thr=0; else thr=-inf; end; end
+if(strcmp(ovrDnm,'union')), ovrDnm=1; elseif(strcmp(ovrDnm,'min')),
+  ovrDnm=0; else assert(false); end
 assert(maxn>=2); assert(numel(overlap)==1);
 
 % discard bbs below threshold and run nms1
 if(isempty(bbs)), bbs=zeros(0,5); end; if(strcmp(type,'none')), return; end
 kp=bbs(:,5)>thr; bbs=bbs(kp,:); if(isempty(bbs)), return; end
 if(~isempty(resize)), bbs=bbApply('resize',bbs,resize{:}); end
-bbs = nms1(bbs,type,thr,maxn,radii,overlap);
+bbs = nms1(bbs,type,thr,maxn,radii,overlap,ovrDnm);
 
-  function bbs = nms1( bbs, type, thr, maxn, radii, overlap )
+  function bbs = nms1( bbs, type, thr, maxn, radii, overlap, ovrDnm )
     % if big split in two, recurse, merge, then run on merged
     if( size(bbs,1)>maxn )
       n=size(bbs,1); bbs=bbs(randperm(n),:); n2=floor(n/2);
@@ -89,25 +93,26 @@ bbs = nms1(bbs,type,thr,maxn,radii,overlap);
     end
     % run actual nms on given bbs
     switch type
-      case 'max', bbs = nmsMax(bbs,overlap,0);
-      case 'maxg', bbs = nmsMax(bbs,overlap,1);
+      case 'max', bbs = nmsMax(bbs,overlap,0,ovrDnm);
+      case 'maxg', bbs = nmsMax(bbs,overlap,1,ovrDnm);
       case 'ms', bbs = nmsMs(bbs,thr,radii);
       case 'cover', bbs = nmsCover(bbs,overlap);
       otherwise, error('unknown type: %s',type);
     end
   end
 
-  function bbs = nmsMax( bbs, overlap, greedy )
+  function bbs = nmsMax( bbs, overlap, greedy, ovrDnm )
     % for each i suppress all j st j>i and area-overlap>overlap
     [score,ord]=sort(bbs(:,5),'descend'); bbs=bbs(ord,:);
-    n=size(bbs,1); kp=true(1,n); areas=bbs(:,3).*bbs(:,4);
+    n=size(bbs,1); kp=true(1,n); as=bbs(:,3).*bbs(:,4);
     xs=bbs(:,1); xe=bbs(:,1)+bbs(:,3); ys=bbs(:,2); ye=bbs(:,2)+bbs(:,4);
     for i=1:n
       if(greedy && ~kp(i)), continue; end
       for j=i+find( kp(i+1:n) )
         iw=min(xe(i),xe(j))-max(xs(i),xs(j)); if(iw<=0), continue; end
         ih=min(ye(i),ye(j))-max(ys(i),ys(j)); if(ih<=0), continue; end
-        o=iw*ih; o=o/(areas(i)+areas(j)-o); if(o>overlap), kp(j)=0; end
+        o=iw*ih; if(ovrDnm), u=as(i)+as(j)-o; else u=min(as(i),as(j)); end
+        o=o/u; if(o>overlap), kp(j)=0; end
       end
     end
     bbs=bbs(kp,:);
