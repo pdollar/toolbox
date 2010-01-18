@@ -20,7 +20,7 @@
 <div class="box"><strong>Function for display of rocs (receiver operator characteristic curves).</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function h = plotRoc( D, varargin ) </strong></div>
+<div class="box"><strong>function [h,det] = plotRoc( D, varargin ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment"> Function for display of rocs (receiver operator characteristic curves).
@@ -34,24 +34,26 @@
  error bars.
 
  USAGE
-  h = plotRoc( D, prm )
+  [h,det] = plotRoc( D, prm )
 
  INPUTS
   D    - [nx2] n data points along roc (falsePos/truePos)
   prm  - [] param struct
-   .color    ['g'] color for curve
-   .lineSt   ['-'] linestyle (see LineSpec)
-   .lineWd   [4] curve width
-   .logx     [0] use logarithmic scale for x-axis
-   .logy     [0] use logarithmic scale for y-axis
-   .marker   [''] marker type (see LineSpec)
-   .mrkrSiz  [12] marker size
-   .nMarker  [5] number of markers (regularly spaced) to display
-   .lims     [0 1 0 1] axes limits
-   .smooth   [0] if T compute lower envelop of roc to smooth staircase
+   .color    - ['g'] color for curve
+   .lineSt   - ['-'] linestyle (see LineSpec)
+   .lineWd   - [4] curve width
+   .logx     - [0] use logarithmic scale for x-axis
+   .logy     - [0] use logarithmic scale for y-axis
+   .marker   - [''] marker type (see LineSpec)
+   .mrkrSiz  - [12] marker size
+   .nMarker  - [5] number of markers (regularly spaced) to display
+   .lims     - [0 1 0 1] axes limits
+   .smooth   - [0] if T compute lower envelop of roc to smooth staircase
+   .fpTarget - [-1] if&gt;0 plot line and return detection rate at given fp
 
  OUTPUTS
   h    - plot handle for use in legend only
+  det  - detection rate at fpTarget (if fpTar specified)
 
  EXAMPLE
   k=2; x=0:.0001:1; data1 = [1-x; (1-x.^k).^(1/k)]';
@@ -62,7 +64,7 @@
 
  See also
 
- Piotr's Image&amp;Video Toolbox      Version 2.30
+ Piotr's Image&amp;Video Toolbox      Version 2.41
  Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>

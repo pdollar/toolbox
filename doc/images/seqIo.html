@@ -50,6 +50,7 @@
   sr.close();            % Close seq file (sr is useless after).
   [I,ts]=sr.getframe();  % Get current frame (returns [] if invalid).
   [I,ts]=sr.getframeb(); % Get current frame with no decoding.
+  ts = sr.getts();       % Return timestamps for all frames.
   info = sr.getinfo();   % Return struct with info about video.
   [I,ts]=sr.getnext();   % Shortcut for next() followed by getframe().
   out = sr.next();       % Go to next frame (out=-1 on fail).
@@ -112,7 +113,7 @@
 
  See also <a href="seqPlayer.html" class="code" title="function seqPlayer( fName, dispFunc )">SEQPLAYER</a>, <a href="seqReaderPlugin.html" class="code" title="function varargout = seqReaderPlugin( cmd, h, varargin )">SEQREADERPLUGIN</a>, <a href="seqWriterPlugin.html" class="code" title="function varargout = seqWriterPlugin( cmd, h, varargin )">SEQWRITERPLUGIN</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.40
+ Piotr's Image&amp;Video Toolbox      Version 2.41
  Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>

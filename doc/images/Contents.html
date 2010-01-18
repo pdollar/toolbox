@@ -28,7 +28,7 @@
 
  Display:
    <a href="clusterMontage.html" class="code" title="function IC = clusterMontage( I, IDX, nElem, pad )">clusterMontage</a>  - Used for visualization of clusters of images and videos.
-   <a href="im.html" class="code" title="function im( I, range, extraInf )">im</a>              - Function for displaying grayscale images.
+   <a href="im.html" class="code" title="function varargout = im( I, range, extraInf )">im</a>              - Function for displaying grayscale images.
    <a href="filmStrip.html" class="code" title="function F = filmStrip( I, overlap, delta, border )">filmStrip</a>       - Used to display R stacks of T images as a &quot;filmstrip&quot;.
    <a href="makeGif.html" class="code" title="function makeGif( M, fileName, prm )">makeGif</a>         - Writes a matlab movie to an animated GIF.
    <a href="montage2.html" class="code" title="function varargout = montage2( IS, prm )">montage2</a>        - Used to display collections of images and videos.
@@ -70,16 +70,24 @@
    <a href="seqWriterPlugin.html" class="code" title="function varargout = seqWriterPlugin( cmd, h, varargin )">seqWriterPlugin</a> - Plugin for <a href="seqIo.html" class="code" title="function sobj = seqIo( fName, mode, varargin )">seqIo</a> and videoIO to allow writing of seq files.
    <a href="seqPlayer.html" class="code" title="function seqPlayer( fName, dispFunc )">seqPlayer</a>       - Simple GUI to play seq files.
 
- Object bounding box and pose ground truth support.
+ Object bounding box utilities and labeling tools.
    <a href="bbApply.html" class="code" title="function varargout = bbApply( action, varargin )">bbApply</a>         - Functions for manipulating bounding boxes (bb).
    <a href="bbGt.html" class="code" title="function varargout = bbGt( action, varargin )">bbGt</a>            - Bounding box (bb) annotations struct, evaluation and sampling routines.
    <a href="bbLabeler.html" class="code" title="function bbLabeler( objTypes, imgDir, resDir )">bbLabeler</a>       - Bounding box or ellipse labeler for static images.
    <a href="bbNms.html" class="code" title="function bbs = bbNms( bbs, varargin )">bbNms</a>           - Bounding box (bb) non-maximal suppression (nms).
 
+ Binary mask creation.
+   <a href="maskCircle.html" class="code" title="function mask = maskCircle( angleStart, angleSiz, r, nSamples )">maskCircle</a>      - Creates an image of a 'pie slice' of a circle.
+   <a href="maskEllipse.html" class="code" title="function mask = maskEllipse( mRows, nCols, varargin )">maskEllipse</a>     - Creates a binary image of an ellipse.
+   <a href="maskGaussians.html" class="code" title="function [masks,keepLocs] = maskGaussians( siz, M, width, offset, show )">maskGaussians</a>   - Divides a volume into softly overlapping gaussian windows.
+   <a href="maskSphere.html" class="code" title="function mask = maskSphere( d, r, show )">maskSphere</a>      - Creates an 'image' of a n-dimensional hypersphere.
+
  Miscellaneous:
    <a href="convnFast.html" class="code" title="function C = convnFast( A, B, shape )">convnFast</a>       - Fast convolution, replacement for both conv2 and convn.
    <a href="diffTracker.html" class="code" title="function [delta,err] = diffTracker( I0, I1, sigma )">diffTracker</a>     - Fast, robust estimation of translational offset between a pair of images.
    <a href="gaussSmooth.html" class="code" title="function [L,filters] = gaussSmooth( I, sigmas, shape, radius )">gaussSmooth</a>     - Applies Gaussian smoothing to a (multidimensional) image.
+   <a href="hog.html" class="code" title="">hog</a>             - Efficiently compute histogram of oriented gradient (HOG) features.
+   <a href="hogDraw.html" class="code" title="function V = hogDraw( H, w )">hogDraw</a>         - Create visualization of <a href="hog.html" class="code" title="">hog</a> descriptor.
    <a href="imMlGauss.html" class="code" title="function varargout = imMlGauss( G, symmFlag, show )">imMlGauss</a>       - Calculates max likelihood params of Gaussian that gave rise to image G.
    <a href="imrectLite.html" class="code" title="function [hRect,api] = imrectLite( hParent, pos, lims, ar, varargin )">imrectLite</a>      - A 'lite' version of imrect [OBSOLETE: use imrectRot].
    <a href="imRectRot.html" class="code" title="function [hPatch,api] = imRectRot( varargin )">imRectRot</a>       - Create a draggable, resizable, rotatable rectangle or ellipse.
@@ -87,11 +95,7 @@
    <a href="jitterImage.html" class="code" title="function IJ = jitterImage( I, nphis, maxphi, ntrans, maxtrans,jsiz, reflFlag, scales )">jitterImage</a>     - Creates multiple, slightly jittered versions of an image.
    <a href="jitterVideo.html" class="code" title="function IS = jitterVideo( I, nphis, maxphi, ntrans, maxtrans,nttrans, maxttrans, jsiz )">jitterVideo</a>     - Creates multiple, slightly jittered versions of a video.
    <a href="kernelTracker.html" class="code" title="function [allRct, allSim, allIc] = kernelTracker( I, prm )">kernelTracker</a>   - Kernel Tracker from Comaniciu, Ramesh and Meer PAMI 2003.
-   <a href="localSum.html" class="code" title="function I = localSum( I, dims, shape )">localSum</a>        - Fast routine for box filtering.
-   <a href="maskCircle.html" class="code" title="function mask = maskCircle( angleStart, angleSiz, r, nSamples )">maskCircle</a>      - Creates an image of a 'pie slice' of a circle.
-   <a href="maskEllipse.html" class="code" title="function mask = maskEllipse( mRows, nCols, varargin )">maskEllipse</a>     - Creates a binary image of an ellipse.
-   <a href="maskGaussians.html" class="code" title="function [masks,keepLocs] = maskGaussians( siz, M, width, offset, show )">maskGaussians</a>   - Divides a volume into softly overlapping gaussian windows.
-   <a href="maskSphere.html" class="code" title="function mask = maskSphere( d, r, show )">maskSphere</a>      - Creates an 'image' of a n-dimensional hypersphere.</pre></div>
+   <a href="localSum.html" class="code" title="function I = localSum( I, dims, shape, op )">localSum</a>        - Fast routine for box filtering.</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>

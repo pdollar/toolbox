@@ -2,9 +2,9 @@
                 "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
 <head>
-  <title>Description of FbApply2d</title>
-  <meta name="keywords" content="FbApply2d">
-  <meta name="description" content="Applies each of the filters in the filterbank FB to the image I.">
+  <title>Description of hogDraw</title>
+  <meta name="keywords" content="hogDraw">
+  <meta name="description" content="Create visualization of hog descriptor.">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -12,42 +12,35 @@
 </head>
 <body>
 <a name="_top"></a>
-<!-- menu.html filters -->
-<h1>FbApply2d
+<!-- menu.html images -->
+<h1>hogDraw
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>Applies each of the filters in the filterbank FB to the image I.</strong></div>
+<div class="box"><strong>Create visualization of hog descriptor.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function FR = FbApply2d( I, FB, shape, show ) </strong></div>
+<div class="box"><strong>function V = hogDraw( H, w ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> Applies each of the filters in the filterbank FB to the image I.
-
- To apply to a stack of images:
-  IFS = fevalArrays( images, @FbApply2d, FB, 'valid' );
+<div class="fragment"><pre class="comment"> Create visualization of hog descriptor.
 
  USAGE
-  FR = FbApply2d( I, FB, [shape], [show] )
+  V = hogDraw( H, [w] )
 
  INPUTS
-  I       - 2D input array
-  FB      - filterbank - MxNxK set of K filters each of size MxN
-  shape   - ['full'] option for conv2 'full', 'same', 'valid'
-  show    - [0] first figure to use for optional display
+  H          - [m n oBin*4] computed hog features
+  w          - [15] width for each glyph
 
  OUTPUTS
-  FR      - 3D set of filtered images
+  V          - [m*w n*w] visualization of hog features
 
  EXAMPLE
-  load trees;  X=imresize(X,.5);  load FbDoG.mat;
-  FR = FbApply2d( X, FB, 'same', 1 );
 
- See also CONV2, <a href="FbMake.html" class="code" title="function FB = FbMake( dim, flag, show )">FBMAKE</a>
+ See also <a href="hog.html" class="code" title="">hog</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.0
- Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 2.41
+ Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
 
@@ -55,10 +48,10 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="../images/im.html" class="code" title="function varargout = im( I, range, extraInf )">im</a>	Function for displaying grayscale images.</li><li><a href="../images/montage2.html" class="code" title="function varargout = montage2( IS, prm )">montage2</a>	Used to display collections of images and videos.</li></ul>
+<li><a href="../matlab/c.html" class="code" title="">c</a>	clc - clear command window.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="FbReconstruct2d.html" class="code" title="function I2 = FbReconstruct2d( I, FB, patch )">FbReconstruct2d</a>	Use to see how much image information is preserved in filter outputs.</li></ul>
+</ul>
 <!-- crossreference -->
 
 

@@ -54,6 +54,13 @@
  run nms on the result. If maxn is specified, will split the set if
  n&gt;maxn. Note that this is a heuristic and can change the results of nms.
 
+ Finally, the bbs are optionally resized before performing nms. The
+ resizing is important as some detectors return bbs that are padded. For
+ example, if a detector returns a bounding box of size 128x64 around
+ objects of size 100x43 (as is typical for some pedestrian detectors on
+ the INRIA pedestrian database), the resize parameters should be {100/128,
+ 43/64, 0}, see bbApply&gt;resize() for more info.
+
  USAGE
   bbs = bbNms( bbs, [varargin] )
 
@@ -65,6 +72,7 @@
    .maxn       - [500] if n&gt;maxn split and run recursively (see above)
    .radii      - [.15 .15 1 1] supression radii ('ms' only, see above)
    .overlap    - [.5] area of overlap for bbs
+   .resize     - {} parameters for bbApply('resize')
 
  OUTPUTS
   bbs      - suppressed bbs
@@ -76,7 +84,7 @@
 
  See also <a href="bbApply.html" class="code" title="function varargout = bbApply( action, varargin )">bbApply</a>, <a href="nonMaxSuprList.html" class="code" title="function [subs,vals,keep] = nonMaxSuprList( subs, vals, radii,thresh, maxn, flag)">nonMaxSuprList</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.35
+ Piotr's Image&amp;Video Toolbox      Version 2.41
  Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
@@ -85,10 +93,10 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="nonMaxSuprList.html" class="code" title="function [subs,vals,keep] = nonMaxSuprList( subs, vals, radii,thresh, maxn, flag)">nonMaxSuprList</a>	Applies nonmaximal suppression to a list.</li><li><a href="../matlab/c.html" class="code" title="">c</a>	clc - clear command window.</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li></ul>
+<li><a href="bbApply.html" class="code" title="function varargout = bbApply( action, varargin )">bbApply</a>	Functions for manipulating bounding boxes (bb).</li><li><a href="nonMaxSuprList.html" class="code" title="function [subs,vals,keep] = nonMaxSuprList( subs, vals, radii,thresh, maxn, flag)">nonMaxSuprList</a>	Applies nonmaximal suppression to a list.</li><li><a href="../matlab/c.html" class="code" title="">c</a>	clc - clear command window.</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-</ul>
+<li><a href="bbGt.html" class="code" title="function varargout = bbGt( action, varargin )">bbGt</a>	Bounding box (bb) annotations struct, evaluation and sampling routines.</li></ul>
 <!-- crossreference -->
 
 
