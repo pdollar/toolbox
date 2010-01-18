@@ -1,4 +1,4 @@
-Version NEW
+Version 2.41 (18-Jan-10)
  -hog.cpp, hogDraw.m: added very efficient HOG feature computation code
  -fevalDistr.m: wrapper for distributed cluster code (must be installed separately)
  -bbGt.m: added evalResDir() for evaluating Pascal detection criteria

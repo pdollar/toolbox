@@ -11,7 +11,7 @@
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version NEW
+% Piotr's Image&Video Toolbox      Version 2.41
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]

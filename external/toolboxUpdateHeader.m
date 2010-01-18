@@ -14,18 +14,19 @@ function toolboxUpdateHeader
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 2.40
+% Piotr's Image&Video Toolbox      Version 2.41
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 header={
-  '% Piotr''s Image&Video Toolbox      Version 2.40'; ...
+  '% Piotr''s Image&Video Toolbox      Version 2.41'; ...
   '% Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]'; ...
   '% Please email me if you find bugs, or have suggestions or questions!'; ...
   '% Licensed under the Lesser GPL [see external/lgpl.txt]'};
 
-% must start in /toolbox base directory  - cd( 'c:/code/toolbox' );
+% must start in /toolbox base directory
+cd(fileparts(mfilename('fullpath'))); cd('../');
 dirs={ 'classify', 'classify/private', 'filters', 'images', ...
   'images/private', 'matlab', 'external' };
 
