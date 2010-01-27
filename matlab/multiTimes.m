@@ -67,8 +67,7 @@ switch type
     C = reshape(sum(bsxfun(@times, permute(A,[2,1,3]), ...
       reshape(B,[1 mb nb ])),2),na,nb);
   case 4.1  % C(i) = tr(A(:,:,i)'*B(:,:,i))
-    C = sum(reshape(permute(A,[2,1,3]),m*n,o)...
-      .*reshape(permute(B,[2,1,3]),m*n,o),1);
+    C = reshape(sum(sum(A.*B,1),2),1,o);
   otherwise
     error('unknown type: %f',type);
 end
