@@ -28,7 +28,7 @@ function seqPlayer( fName, dispFunc )
 %
 % See also SEQIO
 %
-% Piotr's Image&Video Toolbox      Version 2.40
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -330,10 +330,10 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
     
     function audOpen( d, f )
       if(nargin<2), [f,d]=uigetfile([dVid '/*.wav'],'Select audio'); end
+      if(f==0), return; end
       [d f]=fileparts([d f]); if(isempty(d)), d='.'; end; d(end+1)='/';
-      if(f==0), return; end; f=[d f];
       try
-        [y,fs,nb]=wavread(f); dispApi.setAud(y,fs,nb);
+        f=[d f]; [y,fs,nb]=wavread(f); dispApi.setAud(y,fs,nb);
       catch er
         errordlg(['Failed to load: ' f '. ' er.message],'Error');
       end
