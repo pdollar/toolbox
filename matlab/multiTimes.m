@@ -31,7 +31,7 @@ function C = multiTimes( A, B, type )
 %
 % See also BSXFUN, MTIMES
 %
-% Piotr's Image&Video Toolbox      Version 2.35
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -40,8 +40,8 @@ ma = size(A,1); na = size(A,2); oa = size(A,3);
 mb = size(B,1); nb = size(B,2); ob = size(B,3);
 
 % just to simplify the reading
-if( ma==mb ); m = ma; end
-if( na==nb ); n = na; end
+%if( ma==mb ); m = ma; end
+%if( na==nb ); n = na; end
 if( oa==ob ); o = oa; end
 
 switch type
