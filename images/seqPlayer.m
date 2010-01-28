@@ -194,7 +194,7 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
       if(looping), return; end; looping=1;
       while( 1 )
         % exit if appropriate, or if vid not loaded do nothing
-        if(~isstruct(sr)), looping=0; return; end
+        if(~isstruct(sr) || ~isstruct(info)), looping=0; return; end
         
         % stop playing video if at begin/end
         if((speed>0&&curInd==nFrame-1) || (speed<0&&curInd==0))
@@ -261,12 +261,13 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
         f=str2double(get(pTop.hFrmInd,'String'));
         if(isnan(f)), requestUpdate(); return; else f=f-1; end
       end
-      setFrame(f,0); requestUpdate();
+      setFrame(f,0);
     end
     
     function setFrame( curInd1, speed1 )
       curInd=max(0,min(curInd1,nFrame-1));
       if( speed~=speed1 ), setSpeed(speed1); end
+      requestUpdate();
     end
     
     function requestUpdate(), needUpdate=true; dispLoop(); end
