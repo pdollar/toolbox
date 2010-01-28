@@ -15,7 +15,7 @@ function seqPlayer( fName, dispFunc )
 %  seqPlayer( [fName], [dispFunc] )
 %
 % INPUTS
-%  fName    - optional seq file to load
+%  fName    - optional seq file to load at start
 %  dispFunc - allow custom display per frame
 %
 % OUTPUTS
@@ -157,13 +157,13 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
     set(pMid.hLf, 'Callback',@(h,evnt) setSpeedCb(-1));
     set(pMid.hRt, 'Callback',@(h,evnt) setSpeedCb(+1));
     
-    function setVid( vr1 )
+    function setVid( sr1 )
       % reset local variables
       if(isstruct(sr)), sr=sr.close(); end
       if(~isempty(hs)), delete(hs); hs=[]; end
       [sr, audio, info, nFrame, speed, curInd, hs, ...
         hImg, needUpdate, prevTime, looping ]=deal([]);
-      sr=vr1; nFrame=0; looping=0; speed=-1; setFrame( 0, 0 );
+      sr=sr1; nFrame=0; looping=0; speed=-1; setFrame( 0, 0 );
       % update GUI
       if(~isstruct(sr)), cla(pMid.hAx); else
         info=sr.getinfo(); nFrame=info.numFrames;
@@ -298,8 +298,7 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
     function vidOpen( f )
       if(nargin==1)
         if(~exist(f,'file') && ~exist([f '.seq'],'file'))
-          errordlg(['File not found: ' f],'Error'); return;
-        end
+          errordlg(['File not found: ' f],'Error'); return; end
         [d f]=fileparts(f); if(isempty(d)), d='./'; else d=[d '/']; end
       else
         [f,d]=uigetfile([dVid '/*.seq'],'Select video');
