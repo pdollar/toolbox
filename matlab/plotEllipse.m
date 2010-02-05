@@ -1,8 +1,8 @@
-function [h,hc,hl] = plotEllipse( cRow, cCol, ra, rb, phi, color, nPnts )
+function [h,hc,hl] = plotEllipse(cRow,cCol,ra,rb,phi,color,nPnts,lw,ls)
 % Adds an ellipse to the current plot.
 %
 % USAGE
-%  [h,hc,hl] = plotEllipse( cRow, cCol, ra, rb, phi, [color], [nPnts] )
+%  [h,hc,hl] = plotEllipse(cRow,cCol,ra,rb,phi,[color],[nPnts],[lw],[ls])
 %
 % INPUTS
 %  cRow    - the row location of the center of the ellipse
@@ -12,7 +12,9 @@ function [h,hc,hl] = plotEllipse( cRow, cCol, ra, rb, phi, color, nPnts )
 %  phi     - rotation angle (radians) of semimajor axis from x-axis
 %  color   - ['b'] color for ellipse
 %  nPnts   - [100] number of points used to draw each ellipse
-%
+%  lw      - [1] line width
+%  ls      - ['-'] line style
+% 
 % OUTPUT
 %  h       - handle to ellipse
 %  hc      - handle to ellipse center
@@ -23,14 +25,16 @@ function [h,hc,hl] = plotEllipse( cRow, cCol, ra, rb, phi, color, nPnts )
 %
 % See also plotGaussEllipses
 %
-% Piotr's Image&Video Toolbox      Version 2.40
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
-error(nargchk( 5, 7, nargin ));
+error(nargchk( 5, 9, nargin ));
 if(nargin<6 || isempty(color)); color = 'b'; end
 if(nargin<7 || isempty(nPnts)); nPnts = 100; end
+if(nargin<8 || isempty(nPnts)); lw = 1; end
+if(nargin<9 || isempty(ls)); ls = '-'; end
 
 % plot ellipse (rotate a scaled circle):
 ts = linspace(-pi,pi,nPnts+1);  cts = cos(ts); sts = sin(ts);
@@ -41,7 +45,7 @@ h = plot( ra*cts*cos(-phi) + rb*sts*sin(-phi) + cCol, ...
 washeld = ishold; if(~washeld); hold('on'); end
 hc = plot( cCol, cRow, 'k+' );
 hl = plot( [cCol cCol+cos(-phi)*ra], [cRow cRow-sin(-phi)*ra] );
-set([h hc hl],'Color',color);
+set([h hc hl],'Color',color,'LineWidth',lw,'LineStyle',ls);
 if(~washeld); hold('off'); end;
 
 end
