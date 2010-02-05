@@ -1,6 +1,6 @@
 Version NEW
  -bbNms.m: added ovrDnm parameter
- -minor: multiTimes.m, seqPlayer.m
+ -minor: multiTimes.m, seqPlayer.m, plotEllipse.m, bbGt.m
 
 Version 2.41 (18-Jan-10)
  -hog.cpp, hogDraw.m: added very efficient HOG feature computation code

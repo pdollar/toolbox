@@ -39,6 +39,8 @@ function varargout = bbGt( action, varargin )
 %   vals = bbGt( 'get', objs, name )
 % Set object property 'name' (with a standard array).
 %   objs = bbGt( 'set', objs, name, vals )
+% Draw an ellipse for each labeled object.
+%   hs = draw( objs, varargin )
 %
 %%% (2) Routines for evaluating the Pascal criteria for object detection.
 % Returns filtered ground truth bbs for purpose of evaluation.
@@ -75,11 +77,11 @@ function varargout = bbGt( action, varargin )
 % EXAMPLE
 %
 % See also bbApply, bbLabeler, bbGt>create, bbGt>bbSave, bbGt>bbLoad,
-% bbGt>get, bbGt>set, bbGt>toGt, bbGt>evalRes, bbGt>showRes,
+% bbGt>get, bbGt>set, bbGt>draw, bbGt>toGt, bbGt>evalRes, bbGt>showRes,
 % bbGt>evalResDir, bbGt>compRoc, bbGt>cropRes, bbGt>compOas, bbGt>compOa,
 % bbGt>sampleData
 %
-% Piotr's Image&Video Toolbox      Version 2.41
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -225,6 +227,39 @@ switch name
   case 'ang', for i=1:nObj, objs(i).ang=vals(i); end
   otherwise, error('unkown type %s',name);
 end
+end
+
+function hs = draw( objs, varargin )
+% Draw an ellipse for each labeled object.
+%
+% USAGE
+%  objs = bbGt( 'draw', objs, prm )
+%
+% INPUTS
+%  objs       - [nx1] struct array of objects
+%  varargin   - additional params (struct or name/value pairs)
+%   .col        - ['g'] color or [kx1] array of colors
+%   .lw         - [2] line width
+%   .ls         - ['-'] line style
+%
+% OUTPUTS
+%  hs     - [nx1] handles to drawn graphic objects
+%
+% EXAMPLE
+%
+% See also bbGt
+dfs={'col',[],'lw',2,'ls','-'};
+[col,lw,ls]=getPrmDflt(varargin,dfs,1);
+n=length(objs); hold on; hs=zeros(n,4);
+if(isempty(col)), if(n==1), col='g'; else col=hsv(n); end; end
+tProp={'FontSize',10,'color','w','FontWeight','bold',...
+  'VerticalAlignment','bottom'};
+for i=1:n
+  bb=objs(i).bb; ci=col(i,:);
+  hs(i,1)=text(bb(1),bb(2),objs(i).lbl,tProp{:});
+  x=bbApply('getCenter',bb); r=bb(3:4)/2; a=objs(i).ang/180*pi-pi/2;
+  [hs(i,2),hs(i,3),hs(i,4)]=plotEllipse(x(2),x(1),r(2),r(1),a,ci,[],lw,ls);
+end; hold off;
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
