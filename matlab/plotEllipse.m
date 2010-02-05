@@ -14,7 +14,7 @@ function [h,hc,hl] = plotEllipse(cRow,cCol,ra,rb,phi,color,nPnts,lw,ls)
 %  nPnts   - [100] number of points used to draw each ellipse
 %  lw      - [1] line width
 %  ls      - ['-'] line style
-% 
+%
 % OUTPUT
 %  h       - handle to ellipse
 %  hc      - handle to ellipse center
