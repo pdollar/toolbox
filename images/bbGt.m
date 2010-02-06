@@ -273,9 +273,15 @@ function [gtBbs,ids] = toGt( objs, prm )
 % returned object, the ignore flag is set to 1 if obj.ign==1 or any object
 % property is outside of the specified range (details below). The ignore
 % flag is used during evaluation so that objects with certain properties
-% (such as very small or heavily occluded objects) can be excluded. For
-% oriented bbs, the extent of the bb is returned instead, where the extent
-% is the smallest axis aligned bb containing the oriented bb.
+% (such as very small or heavily occluded objects) can be excluded.
+%
+% For oriented bbs, the extent of the bb is returned instead, where the
+% extent is the smallest axis aligned bb containing the oriented bb. If the
+% oriented bb was labeled as a rectangle as opposed to an ellipse, the
+% tightest bb will usually increase slightly in size due to the corners of
+% the rectangle sticking out beyond the ellipse bounds. The 'ellipse' flag
+% controls how an oriented bb is converted to a regular bb. Specifically,
+% set ellipse=1 if an ellipse tightly delineates the object and 0 ow.
 %
 % The range for each property is a two element vector, [0 inf] by default;
 % a property value v is inside the range if v>=rng(1) && v<=rng(2). Tested
@@ -301,6 +307,7 @@ function [gtBbs,ids] = toGt( objs, prm )
 %   .vRng       - [0 inf] range of acceptable obj occlusion levels
 %   .ar         - [] standardize aspect ratios of bbs
 %   .pad        - [0] frac extra padding for each patch (or [padx pady])
+%   .ellipse    - [1] controls how oriented bb is converted to regular bb
 %
 % OUTPUTS
 %  gtBbs    - [n x 5] array containg ground truth bbs [x y w h ignore]
@@ -317,8 +324,9 @@ function [gtBbs,ids] = toGt( objs, prm )
 
 r=[0 inf];
 dfs={'lbls',[],'ilbls',[],'hRng',r,'wRng',r,'aRng',r,'arRng',r,...
-  'oRng',r,'vRng',r,'ar',[],'pad',0};
-[lbls,ilbls,hRng,wRng,aRng,arRng,oRng,vRng,ar0,pad]=getPrmDflt(prm,dfs,1);
+  'oRng',r,'vRng',r,'ar',[],'pad',0,'ellipse',1};
+[lbls,ilbls,hRng,wRng,aRng,arRng,oRng,vRng,ar0,pad,ellipse] = ...
+  getPrmDflt(prm,dfs,1);
 if(numel(pad)==1), pad=[pad pad]; end;
 nObj=length(objs); keep=true(nObj,1); gtBbs=zeros(nObj,5);
 chk = @(v,rng) v<rng(1) || v>rng(2); lbls=[lbls ilbls];
@@ -330,19 +338,27 @@ for i=1:nObj, o=objs(i);
   end
   ign = o.ign || any(strcmp(o.lbl,ilbls)) || chk(h,hRng) || chk(w,wRng) ...
     || chk(a,aRng) || chk(ar,arRng) || chk(ang,oRng) || chk(v,vRng);
-  gtBbs(i,1:4)=bbExtent(o.bb,ang); gtBbs(i,5)=ign;
+  gtBbs(i,1:4)=bbExtent(o.bb,ang,ellipse); gtBbs(i,5)=ign;
 end
 ids=find(keep); gtBbs=gtBbs(keep,:);
 if(ar0), gtBbs=bbApply('squarify',gtBbs,0,ar0); end
 if(any(pad~=0)), gtBbs=bbApply('resize',gtBbs,1+pad(2),1+pad(1)); end
 
-  function bb = bbExtent( bb, ang )
+  function bb = bbExtent( bb, ang, ellipse )
     % get bb that fully contains given oriented bb
-    if(~ang), return; end; c=cosd(ang); s=sind(ang); R=[c -s; s c];
-    rs=bb(3:4)/2; x0=-rs(1); x1=rs(1); y0=-rs(2); y1=rs(2); pc=bb(1:2)+rs;
-    p=[x0 y0; x1 y0; x1 y1; x0 y1]*R'+pc(ones(4,1),:);
-    x0=min(p(:,1)); x1=max(p(:,1)); y0=min(p(:,2)); y1=max(p(:,2));
-    bb=[x0 y0 x1-x0 y1-y0];
+    if(~ang), return; end
+    if( ellipse ) % get bb that encompases ellipse (tighter)
+      x=bbApply('getCenter',bb); a=bb(4)/2; b=bb(3)/2; ang=ang-90;
+      rx=(a*cosd(ang))^2+(b*sind(ang))^2; rx=abs(rx/sqrt(rx));
+      ry=(a*sind(ang))^2+(b*cosd(ang))^2; ry=abs(ry/sqrt(ry));
+      bb=[x(1)-rx x(2)-ry 2*rx 2*ry];
+    else % get bb that encompases rectangle (looser)
+      c=cosd(ang); s=sind(ang); R=[c -s; s c]; rs=bb(3:4)/2;
+      x0=-rs(1); x1=rs(1); y0=-rs(2); y1=rs(2); pc=bb(1:2)+rs;
+      p=[x0 y0; x1 y0; x1 y1; x0 y1]*R'+pc(ones(4,1),:);
+      x0=min(p(:,1)); x1=max(p(:,1)); y0=min(p(:,2)); y1=max(p(:,2));
+      bb=[x0 y0 x1-x0 y1-y0];
+    end
   end
 end
 
