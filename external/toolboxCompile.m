@@ -11,7 +11,7 @@
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 2.41
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -33,16 +33,14 @@ mex([dir 'ktHistcRgb_c.c'],         opts{:} );
 mex([dir 'ktComputeW_c.c'],         opts{:} );
 mex([dir 'nlfiltersep_max.c'],      opts{:} );
 mex([dir 'nlfiltersep_sum.c'],      opts{:} );
-
-dir='images/private/'; opts=[opts0 'images/'];
-mex([dir 'imResample.c'],         opts{:} );
+mex([dir 'imResample1.c'],          opts{:} );
 
 try
   % requires c++ compiler
-  dir='images/private/'; opts=[opts0 'images/'];
-  mex([dir 'hog.cpp'], opts{:} );
-  dir='matlab/private/'; opts=[opts0 'matlab' '-output' 'dijkstra'];
-  mex([dir 'fibheap.cpp'],[dir 'dijkstra.cpp'], opts{:} );
+  dir='images/private/'; opts=[opts0 dir];
+  mex([dir 'hog1.cpp'], opts{:} );
+  dir='matlab/private/'; opts=[opts0 dir '-output' 'dijkstra1'];
+  mex([dir 'fibheap.cpp'],[dir 'dijkstra1.cpp'], opts{:} );
 catch ME
   fprintf(['C++ mex failed, likely due to lack of a C++ compiler.\n' ...
     'Run ''mex -setup'' to specify a C++ compiler if available.\n'...

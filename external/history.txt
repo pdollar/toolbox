@@ -1,8 +1,8 @@
 Version NEW
  -bbNms.m: added ovrDnm parameter
  -bbGt.m: fixed toGt() to work for ellipses, added draw()
- -minor: multiTimes.m, seqPlayer.m, plotEllipse.m, randSample.m
- -Matlab wrappers and moved mex to /private: imResample, hog, dijkstra
+ -minor: toolboxCompile, multiTimes, seqPlayer, plotEllipse, randSample
+ -using Matlab wrappers and moved mex to /private: imResample, hog, dijkstra
 
 Version 2.41 (18-Jan-10)
  -hog.cpp, hogDraw.m: added very efficient HOG feature computation code
