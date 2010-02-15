@@ -1,3 +1,4 @@
+function H = hog( I, varargin )
 % Efficiently compute histogram of oriented gradient (HOG) features.
 %
 % Code to compute HOG features as described in "Histograms of Oriented
@@ -41,7 +42,9 @@
 %
 % See also hogDraw
 %
-% Piotr's Image&Video Toolbox      Version 2.41
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
+
+H = hog1( I, varargin{:} );
