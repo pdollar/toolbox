@@ -1,4 +1,4 @@
-function B = imResample2( A, varargin )
+function B = imResample( A, varargin )
 % Fast bilinear image downsampling/upsampling.
 %
 % Gives similar results to imresize with the bilinear option and
