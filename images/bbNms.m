@@ -96,7 +96,7 @@ bbs = nms1(bbs,type,thr,maxn,radii,overlap);
       case 'max', bbs = nmsMax(bbs,overlap,0,ovrDnm);
       case 'maxg', bbs = nmsMax(bbs,overlap,1,ovrDnm);
       case 'ms', bbs = nmsMs(bbs,thr,radii);
-      case 'cover', bbs = nmsCover(bbs,overlap);
+      case 'cover', bbs = nmsCover(bbs,overlap,ovrDnm);
       otherwise, error('unknown type: %s',type);
     end
   end
@@ -148,15 +148,16 @@ bbs = nms1(bbs,type,thr,maxn,radii,overlap);
     end
   end
 
-  function bbs = nmsCover( bbs, overlap )
+  function bbs = nmsCover( bbs, overlap, ovrDnm )
     % construct n^2 neighbor matrix
-    n=size(bbs,1); N=sparse(1:n,1:n,.5); a=bbs(:,3).*bbs(:,4);
+    n=size(bbs,1); N=sparse(1:n,1:n,.5); as=bbs(:,3).*bbs(:,4);
     xs=bbs(:,1); xe=bbs(:,1)+bbs(:,3); ys=bbs(:,2); ye=bbs(:,2)+bbs(:,4);
     for i=1:n
       for j=i+1:n
         iw=min(xe(i),xe(j))-max(xs(i),xs(j)); if(iw<=0), continue; end
         ih=min(ye(i),ye(j))-max(ys(i),ys(j)); if(ih<=0), continue; end
-        o=iw*ih; o=o/(a(i)+a(j)-o); if(o>overlap), N(i,j)=1; end%#ok<SPRIX>
+        o=iw*ih; if(ovrDnm), u=as(i)+as(j)-o; else u=min(as(i),as(j)); end
+        o=o/u; if(o>overlap), N(i,j)=1; end %#ok<SPRIX>
       end
     end
     % perform set cover operation (greedily choose next best)
