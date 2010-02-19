@@ -36,10 +36,11 @@ function IJ = jitterImage( I, varargin )
 %   .mTrn        - [0] max value for translation
 %   .jsiz        - [] Final size of each image in IJ
 %   .flip        - [0] if true then also adds reflection of each image
-%   .scales      - [1 1] nScale x 2 array of vert/horiz scalings
+%   .scls        - [1 1] nScl x 2 array of vert/horiz scalings
+%   .method      - ['linear'] interpolation method for imtransform2
 %
 % OUTPUTS
-%  IJ          - MxNxR or MxNxKxR set of images, R=(nTrn^2*nPhi*nScale)
+%  IJ          - MxNxR or MxNxKxR set of images, R=(nTrn^2*nPhi*nScl)
 %
 % EXAMPLE
 %  load trees; I=imresize(ind2gray(X,map),[41 41]); clear X caption map
@@ -50,7 +51,7 @@ function IJ = jitterImage( I, varargin )
 %  % creates 45 images of both rot and slight trans
 %  IJ = jitterImage(I,'nPhi',5,'mPhi',10,'nTrn',3,'mTrn',2); montage2(IJ)
 %  % additionally create multiple scaled versions
-%  IJ = jitterImage(I,'scales',[1 1; 2 1; 1 2; 2 2]); montage2(IJ)
+%  IJ = jitterImage(I,'scls',[1 1; 2 1; 1 2; 2 2]); montage2(IJ)
 %
 % See also jitterVideo, imtransform2
 %
@@ -73,8 +74,8 @@ function IJ = jitterImage( I, varargin )
 % get additional parameters
 nd=ndims(I); siz=size(I);
 dfs={'nPhi',0, 'mPhi',0, 'nTrn',0, 'mTrn',0, 'jsiz',siz(1:2),...
-  'flip',0, 'scales',[1 1]};
-[nPhi,mPhi,nTrn,mTrn,jsiz,flip,scales]=getPrmDflt(varargin,dfs,1);
+  'flip',0, 'scls',[1 1], 'method','linear'};
+[nPhi,mPhi,nTrn,mTrn,jsiz,flip,scls,method]=getPrmDflt(varargin,dfs,1);
 if(nPhi<=1), mPhi=0; nPhi=1; end; if(nTrn<=1), mTrn=0; nTrn=1; end
 if((nd~=2 && nd~=3) || length(jsiz)~=2), error('I must be 2D or 3D'); end
 
@@ -85,45 +86,37 @@ dY=dY(:)'; dX=dX(:)';
 
 % I must be big enough to support given ops so grow I if necessary
 siz1=jsiz+2*max(dX); if(nPhi>1), siz1=sqrt(2)*siz1+1; end
-siz1=[siz1(1)*max(scales(:,1)) siz1(2)*max(scales(:,2))];
+siz1=[siz1(1)*max(scls(:,1)) siz1(2)*max(scls(:,2))];
 pad=(siz1-siz(1:2))/2; pad=max([ceil(pad) 0],0);
 if(any(pad>0)), I=padarray(I,pad,'replicate','both'); end
 
 % now for each image jitter it
 if( nd==2 )
-  IJ = jitterImage1(I,jsiz,phis,dX,dY,scales,flip);
+  IJ = jitterImage1(I,method,jsiz,phis,dX,dY,scls,flip);
 elseif( nd==3 )
-  IJ = fevalArrays(I,@jitterImage1,jsiz,phis,dX,dY,scales,flip);
+  IJ = fevalArrays(I,@jitterImage1,method,jsiz,phis,dX,dY,scls,flip);
   IJ = reshape(IJ,size(IJ,1),size(IJ,2),[]);
 end
 end
 
-function IJ = jitterImage1( I, jsiz, phis, dX, dY, scales, flip )
-% this function does the work for SCALE
-method = 'linear';
-nScale = size(scales,1);
-if( nScale==1 ) % if single scaling
-  if( ~all(scales==1) )
-    S=[scales(1,1) 0; 0 scales(1,2)]; H=[S [0;0]; 0 0 1];
-    I = imtransform2( I, H, method, 'crop' );
+function IJ = jitterImage1( I, method, jsiz, phis, dX, dY, scls, flip )
+% this function does the work for SCALE and FLIPPING
+nScl=size(scls,1);
+for i=1:nScl
+  if(i==2), IJ=repmat(IJ,[1 1 1 nScl]); end
+  if(all(scls(i,:)==1)), I1=I; else
+    S=[scls(i,1) 0; 0 scls(i,2)]; H=[S [0;0]; 0 0 1];
+    I1 = imtransform2(I,H,method,'crop');
   end
-  IJ = jitterImage2( I, jsiz, phis, dX, dY );
-else % multiple scales
-  IJ = repmat( I(1), [size(I) nScale] );
-  for i=1:nScale
-    S=[scales(i,1) 0; 0 scales(i,2)]; H=[S [0;0]; 0 0 1];
-    IJ(:,:,i) = imtransform2( I, H, method, 'crop' );
-  end
-  IJ = fevalArrays( IJ, @jitterImage2, jsiz, phis, dX, dY );
-  IJ = reshape( IJ, size(IJ,1), size(IJ,2), [] );
+  I1 = jitterImage2(I1,method,jsiz,phis,dX,dY);
+  if(i==1), IJ=I1; continue; else IJ(:,:,:,i)=I1; end
 end
-% add reflection if flip
-if( flip ), IJ = cat(3,IJ,flipdim(IJ,2)); end
+IJ = reshape(IJ,jsiz(1),jsiz(2),[]);
+if(flip), IJ=cat(3,IJ,IJ(:,end:-1:1,:)); end
 end
 
-function IJ = jitterImage2( I, jsiz, phis, dX, dY )
+function IJ = jitterImage2( I, method, jsiz, phis, dX, dY )
 % this function does the work for ROT/TRANS
-method = 'linear';
 nTrn = length(dX); nPhi = length(phis); nOps = nTrn*nPhi;
 siz = size(I);   deltas = (siz - jsiz)/2;
 % get each of the transformations.
