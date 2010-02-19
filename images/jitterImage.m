@@ -71,22 +71,20 @@ function IJ = jitterImage( I, varargin )
 
 
 % get additional parameters
-nd = ndims(I); siz = size(I);
+nd=ndims(I); siz=size(I);
 dfs={'nPhi',0, 'mPhi',0, 'nTrn',0, 'mTrn',0, 'jsiz',siz(1:2),...
   'flip',0, 'scales',[1 1]};
 [nPhi,mPhi,nTrn,mTrn,jsiz,flip,scales]=getPrmDflt(varargin,dfs,1);
 if(nPhi<=1), mPhi=0; nPhi=1; end; if(nTrn<=1), mTrn=0; nTrn=1; end
 if((nd~=2 && nd~=3) || length(jsiz)~=2), error('I must be 2D or 3D'); end
 
-% build trans / phis
-trans=linspace(-mTrn,mTrn,nTrn); nTrn=length(trans);
-trans=trans(ones(1,nTrn),:);
-transX=trans(:)'; transY=trans'; transY=transY(:)';
-trans=[ transX; transY ];
-phis=linspace(-mPhi,mPhi,nPhi)/180 * pi;
+% build translations and phis
+phis=linspace(-mPhi,mPhi,nPhi)/180*pi;
+trn=linspace(-mTrn,mTrn,nTrn); [dX,dY]=meshgrid(trn,trn);
+dY=dY(:)'; dX=dX(:)';
 
 % I must be big enough to support given ops. So grow I if necessary.
-needSiz = jsiz + 2*max(trans(1,:)); % size needed for translation
+needSiz = jsiz + 2*max(dX); % size needed for translation
 if( nPhi>1 ); needSiz = sqrt(2)*needSiz+1; end
 if( size(scales,1)>1 ) % size needed for scaling
   needSiz = [needSiz(1)*max(scales(:,1)) needSiz(2)*max(scales(:,2))];
@@ -102,16 +100,16 @@ end
 
 % now for each image jitter it
 if( nd==2 )
-  IJ = jitterImage1(I,jsiz,phis,trans,scales,flip);
+  IJ = jitterImage1(I,jsiz,phis,dX,dY,scales,flip);
 elseif( nd==3 )
-  IJ = fevalArrays(I,@jitterImage1,jsiz,phis,trans,scales,flip);
+  IJ = fevalArrays(I,@jitterImage1,jsiz,phis,dX,dY,scales,flip);
   IJ = reshape(IJ,size(IJ,1),size(IJ,2),[]);
 else
   error('Only defined for 2 or 3 dimensional I');
 end
 end
 
-function IJ = jitterImage1( I, jsiz, phis, trans, scales, flip )
+function IJ = jitterImage1( I, jsiz, phis, dX, dY, scales, flip )
 % this function does the work for SCALE
 method = 'linear';
 nScale = size(scales,1);
@@ -120,28 +118,28 @@ if( nScale==1 ) % if single scaling
     S=[scales(1,1) 0; 0 scales(1,2)]; H=[S [0;0]; 0 0 1];
     I = imtransform2( I, H, method, 'crop' );
   end
-  IJ = jitterImage2( I, jsiz, phis, trans );
+  IJ = jitterImage2( I, jsiz, phis, dX, dY );
 else % multiple scales
   IJ = repmat( I(1), [size(I) nScale] );
   for i=1:nScale
     S=[scales(i,1) 0; 0 scales(i,2)]; H=[S [0;0]; 0 0 1];
     IJ(:,:,i) = imtransform2( I, H, method, 'crop' );
   end
-  IJ = fevalArrays( IJ, @jitterImage2, jsiz, phis, trans );
+  IJ = fevalArrays( IJ, @jitterImage2, jsiz, phis, dX, dY );
   IJ = reshape( IJ, size(IJ,1), size(IJ,2), [] );
 end
 % add reflection if flip
 if( flip ), IJ = cat(3,IJ,flipdim(IJ,2)); end
 end
 
-function IJ = jitterImage2( I, jsiz, phis, trans )
+function IJ = jitterImage2( I, jsiz, phis, dX, dY )
 % this function does the work for ROT/TRANS
 method = 'linear';
-nTrn = size(trans,2); nPhi = length(phis); nOps = nTrn*nPhi;
+nTrn = length(dX); nPhi = length(phis); nOps = nTrn*nPhi;
 siz = size(I);   deltas = (siz - jsiz)/2;
 % get each of the transformations.
 index = 1;
-if( all(mod(trans,1))==0) % all integer translations [optimized for speed]
+if( all(mod(dX,1))==0) % all integer translations [optimized for speed]
   startr = floor(deltas(1)+1); endr = floor(siz(1)-deltas(1));
   startc = floor(deltas(2)+1); endc = floor(siz(2)-deltas(2));
   IJ = repmat( I(1), [jsiz(1), jsiz(2), nOps] );
@@ -151,8 +149,8 @@ if( all(mod(trans,1))==0) % all integer translations [optimized for speed]
       H = [R [0;0]; 0 0 1];
       IR = imtransform2( I, H, method, 'crop' );
     end
-    for tran=1:nTrn
-      I2 = IR( (startr:endr)-trans(1,tran), (startc:endc)-trans(2,tran) );
+    for t=1:nTrn
+      I2 = IR( (startr:endr)-dX(t), (startc:endc)-dY(t) );
       IJ(:,:,index) = I2; index = index+1;
     end
   end
@@ -160,8 +158,8 @@ else % arbitrary translations
   IJ = repmat( I(1), [siz(1), siz(2), nOps] );
   for phi=phis
     R = rotationMatrix( phi );
-    for tran=1:nTrn
-      H = [R trans(:,tran); 0 0 1];
+    for t=1:nTrn
+      H = [R dX(t) dY(t); 0 0 1];
       I2 = imtransform2( I, H, method, 'crop' );
       IJ(:,:,index) = I2; index = index+1;
     end
