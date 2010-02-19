@@ -117,33 +117,32 @@ end
 
 function IJ = jitterImage2( I, method, jsiz, phis, dX, dY )
 % this function does the work for ROT/TRANS
-nTrn = length(dX); nPhi = length(phis); nOps = nTrn*nPhi;
-siz = size(I);   deltas = (siz - jsiz)/2;
+nTrn=length(dX); nPhi=length(phis); nOps=nTrn*nPhi;
+siz=size(I); dels=(siz-jsiz)/2;
 % get each of the transformations.
 index = 1;
 if( all(mod(dX,1))==0) % all integer translations [optimized for speed]
-  startr = floor(deltas(1)+1); endr = floor(siz(1)-deltas(1));
-  startc = floor(deltas(2)+1); endc = floor(siz(2)-deltas(2));
-  IJ = repmat( I(1), [jsiz(1), jsiz(2), nOps] );
+  r0=floor(dels(1)+1); r1=floor(siz(1)-dels(1));
+  c0=floor(dels(2)+1); c1=floor(siz(2)-dels(2));
+  IJ = repmat( I(1), [jsiz(1) jsiz(2) nOps] );
   for phi=phis
     if( phi==0); IR = I; else
-      R = rotationMatrix( phi );
-      H = [R [0;0]; 0 0 1];
+      H = [rotationMatrix(phi) [0;0]; 0 0 1];
       IR = imtransform2( I, H, method, 'crop' );
     end
     for t=1:nTrn
-      I2 = IR( (startr:endr)-dX(t), (startc:endc)-dY(t) );
-      IJ(:,:,index) = I2; index = index+1;
+      I2 = IR( (r0:r1)-dX(t), (c0:c1)-dY(t) );
+      IJ(:,:,index) = I2; index=index+1;
     end
   end
 else % arbitrary translations
-  IJ = repmat( I(1), [siz(1), siz(2), nOps] );
+  IJ = repmat( I(1), [siz(1) siz(2) nOps] );
   for phi=phis
     R = rotationMatrix( phi );
     for t=1:nTrn
       H = [R dX(t) dY(t); 0 0 1];
       I2 = imtransform2( I, H, method, 'crop' );
-      IJ(:,:,index) = I2; index = index+1;
+      IJ(:,:,index) = I2; index=index+1;
     end
   end
   IJ = arrayToDims( IJ, [jsiz, nOps] );
