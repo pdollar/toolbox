@@ -12,7 +12,7 @@ function IJ = jitterImage( I, varargin )
 % set will come from I. However, if this is not the case then I may need to
 % be padded first. The way this is done is with padarray with the
 % 'replicate' method. If jsiz is not specified, it is set to be the size of
-% the original image. A warning appears if the image needs to be grown.
+% the original image.
 %
 % Rotations and translations are specified by giving a range and a maximum
 % value for each. For example, if mPhi=10 and nPhi=5, then the actual
@@ -83,20 +83,11 @@ phis=linspace(-mPhi,mPhi,nPhi)/180*pi;
 trn=linspace(-mTrn,mTrn,nTrn); [dX,dY]=meshgrid(trn,trn);
 dY=dY(:)'; dX=dX(:)';
 
-% I must be big enough to support given ops. So grow I if necessary.
-needSiz = jsiz + 2*max(dX); % size needed for translation
-if( nPhi>1 ); needSiz = sqrt(2)*needSiz+1; end
-if( size(scales,1)>1 ) % size needed for scaling
-  needSiz = [needSiz(1)*max(scales(:,1)) needSiz(2)*max(scales(:,2))];
-end
-needSiz = ceil(needSiz);
-if( ndims(I)==3 ); needSiz = [needSiz siz(3)]; end
-deltasGrow = ceil( max( (needSiz - size(I))/2, 0 ) );
-if( any(deltasGrow>0) )
-  I = padarray(I,deltasGrow,'replicate','both');
-  warning(['jitterImage: Not enough image data - growing image need: [' ...
-    int2str(needSiz) '] have: [' int2str(siz(1:2)) ']']);%#ok<WNTAG>
-end
+% I must be big enough to support given ops so grow I if necessary
+siz1=jsiz+2*max(dX); if(nPhi>1), siz1=sqrt(2)*siz1+1; end
+siz1=[siz1(1)*max(scales(:,1)) siz1(2)*max(scales(:,2))];
+pad=(siz1-siz(1:2))/2; pad=max([ceil(pad) 0],0);
+if(any(pad>0)), I=padarray(I,pad,'replicate','both'); end
 
 % now for each image jitter it
 if( nd==2 )
@@ -104,8 +95,6 @@ if( nd==2 )
 elseif( nd==3 )
   IJ = fevalArrays(I,@jitterImage1,jsiz,phis,dX,dY,scales,flip);
   IJ = reshape(IJ,size(IJ,1),size(IJ,2),[]);
-else
-  error('Only defined for 2 or 3 dimensional I');
 end
 end
 
