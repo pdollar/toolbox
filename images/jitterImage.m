@@ -2,33 +2,25 @@ function IJ = jitterImage( I, varargin )
 % Creates multiple, slightly jittered versions of an image.
 %
 % Takes an image I, and generates a number of images that are copies of the
-% original image with slight translation, rotation and scaling applied. The
-% original image also appears in the final set. If the input image is
-% actually a MxNxK stack of images then applies op to each image in stack
-% and returns an MxNxKxR where R=(nTrn*nTrn*nPhi) set of images.
-%
-% The parameter jsiz controls the size of the cropped images. If jsiz gives
-% a size that's sufficiently smaller than I then all data in the the final
-% set will come from I. However, if this is not the case then I may need to
-% be padded first. The way this is done is with padarray with the
-% 'replicate' method. If jsiz is not specified, it is set to be the size of
-% the original image.
-%
-% Rotations and translations are specified by giving a range and a maximum
-% value for each. For example, if mPhi=10 and nPhi=5, then the actual
-% rotations applied are linspace(-mPhi,mPhi,nPhi) = [-10 -5 0 5 10].
+% original image with slight translation, rotation and scaling applied. If
+% the input image is actually an MxNxK stack of images then applies op to
+% each image. Rotations and translations are specified by giving a range
+% and a max value for each. For example, if mPhi=10 and nPhi=5, then the
+% actual rotations applied are linspace(-mPhi,mPhi,nPhi)=[-10 -5 0 5 10].
 % Likewise if mTrn=3 and nTrn=3 then the translations are [-3 0 3]. Each
-% translation is applied in the x direction as well as the y direction.
-% Each combination of rotation, translation in x, and translation in y is
-% used (for example phi=5, transx=-3, transy=0), so the total number of
-% images generated is R=nTrn*nTrn*nPhi). This function works faster if all
-% of the translation end up being integer valued.
+% tran is applied in the x direction as well as the y direction. Each
+% combination of rotation, tran in x, tran in y and scale is used (for
+% example phi=5, transx=-3, transy=0), so the total number of images
+% generated is R=nTrn*nTrn*nPhi*nScl. Finally, jsiz controls the size of
+% the cropped images. If jsiz gives a size that's sufficiently smaller than
+% I then all data in the the final set will come from I. Otherwise, I must
+% be padded first (by calling padarray with the 'replicate' option).
 %
 % USAGE
 %  function IJ = jitterImage( I, varargin )
 %
 % INPUTS
-%  I          - image (MxN) or images (MxNxK), must have odd dims
+%  I          - image (MxN) or set of K images (MxNxK)
 %  varargin   - additional params (struct or name/value pairs)
 %   .maxn        - [inf] maximum jitters to generate (prior to flip)
 %   .nPhi        - [0] number of rotations
@@ -42,14 +34,14 @@ function IJ = jitterImage( I, varargin )
 %   .hasChn      - [0] if true I is MxNxC or MxNxCxK
 %
 % OUTPUTS
-%  IJ          - MxNxRxK or MxNxCxKxR set of images, R=(nTrn^2*nPhi*nScl)
+%  IJ          - MxNxKxR or MxNxCxKxR set of images, R=(nTrn^2*nPhi*nScl)
 %
 % EXAMPLE
 %  load trees; I=imresize(ind2gray(X,map),[41 41]); clear X caption map
 %  % creates 7^2*2 images of slight trans with reflection (but no rotation)
-%  IJ = jitterImage(I,'nTrn',7,'mTrn',3, 'flip',1); montage2(IJ)
+%  IJ = jitterImage(I,'nTrn',7,'mTrn',3,'maxn',10); montage2(IJ)
 %  % creates 5 images of slight rotations (no translations)
-%  IJ = jitterImage(I,'nPhi',5,'mPhi',25,'flip',0); montage2(IJ)
+%  IJ = jitterImage(I,'nPhi',5,'mPhi',25,'flip',1); montage2(IJ)
 %  % creates 45 images of both rot and slight trans
 %  IJ = jitterImage(I,'nPhi',5,'mPhi',10,'nTrn',3,'mTrn',2); montage2(IJ)
 %  % additionally create multiple scaled versions
@@ -59,7 +51,7 @@ function IJ = jitterImage( I, varargin )
 %  IJ=jitterImage(I,'nPhi',5,'mPhi',25,'hasChn',1);
 %  montage2(uint8(IJ),{'hasChn',1})
 %
-% See also jitterVideo, imtransform2
+% See also imtransform2
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -74,12 +66,9 @@ dfs={'maxn',inf, 'nPhi',0, 'mPhi',0, 'nTrn',0, 'mTrn',0, 'flip',0, ...
   getPrmDflt(varargin,dfs,1);
 if(nPhi<=1), mPhi=0; nPhi=1; end; if(nTrn<=1), mTrn=0; nTrn=1; end
 
-% build translations and phis
-phis=linspace(-mPhi,mPhi,nPhi)/180*pi;
-trn=linspace(-mTrn,mTrn,nTrn); [dX,dY]=meshgrid(trn,trn);
-dY=dY(:)'; dX=dX(:)';
-
 % I must be big enough to support given ops so grow I if necessary
+trn=linspace(-mTrn,mTrn,nTrn); [dX,dY]=meshgrid(trn,trn);
+dY=dY(:)'; dX=dX(:)'; phis=linspace(-mPhi,mPhi,nPhi)/180*pi;
 siz1=jsiz+2*max(dX); if(nPhi>1), siz1=sqrt(2)*siz1+1; end
 siz1=[siz1(1)*max(scls(:,1)) siz1(2)*max(scls(:,2))];
 pad=(siz1-siz(1:2))/2; pad=max([ceil(pad) 0],0);
@@ -92,6 +81,7 @@ if(hasChn), nd=3; jsiz=[jsiz siz(3)]; else nd=2; end
 n=size(I,nd+1); IJ=zeros([jsiz nOps n],class(I));
 is=repmat({':'},1,nd); prm={method,maxn,jsiz,phis,dX,dY,scls,flip};
 for i=1:n, IJ(is{:},:,i)=jitterImage1(I(is{:},i),prm{:}); end
+
 end
 
 function IJ = jitterImage1( I,method,maxn,jsiz,phis,dX,dY,scls,flip )
@@ -103,7 +93,7 @@ for s=1:nScl, S=[scls(s,1) 0; 0 scls(s,2)];
     for t=1:nTrn, k=k+1; HS(:,:,k)=[S*R [dX(t); dY(t)]; 0 0 1]; end
   end
 end
-% apply each transformation to image I
+% apply each transformation HS(:,:,i) to image I
 if(nOps>maxn), HS=HS(:,:,randSample(nOps,maxn)); nOps=maxn; end
 siz=size(I); nd=ndims(I); nCh=size(I,3);
 I1=I; p=(siz-jsiz)/2; IJ=zeros([jsiz nOps],class(I));
