@@ -30,6 +30,7 @@ function IJ = jitterImage( I, varargin )
 % INPUTS
 %  I          - BW image (MxN) or images (MxNxK), must have odd dims
 %  varargin   - additional params (struct or name/value pairs)
+%   .maxn        - [inf] maximum jitters to generate (prior to flip)
 %   .nPhi        - [0] number of rotations
 %   .mPhi        - [0] max value for rotation
 %   .nTrn        - [0] number of translations
@@ -70,9 +71,10 @@ function IJ = jitterImage( I, varargin )
 
 % get additional parameters
 nd=ndims(I); siz=size(I);
-dfs={'nPhi',0, 'mPhi',0, 'nTrn',0, 'mTrn',0, 'jsiz',siz(1:2),...
-  'flip',0, 'scls',[1 1], 'method','linear'};
-[nPhi,mPhi,nTrn,mTrn,jsiz,flip,scls,method]=getPrmDflt(varargin,dfs,1);
+dfs={'maxn',inf, 'nPhi',0, 'mPhi',0, 'nTrn',0, 'mTrn',0, ...
+  'jsiz',siz(1:2), 'flip',0, 'scls',[1 1], 'method','linear'};
+[maxn,nPhi,mPhi,nTrn,mTrn,jsiz,flip,scls,method] = ...
+  getPrmDflt(varargin,dfs,1);
 if(nPhi<=1), mPhi=0; nPhi=1; end; if(nTrn<=1), mTrn=0; nTrn=1; end
 if((nd~=2 && nd~=3) || length(jsiz)~=2), error('I must be 2D or 3D'); end
 
@@ -89,14 +91,14 @@ if(any(pad>0)), I=padarray(I,pad,'replicate','both'); end
 
 % now for each image jitter it
 if( nd==2 )
-  IJ = jitterImage1(I,method,jsiz,phis,dX,dY,scls,flip);
+  IJ = jitterImage1(I,method,maxn,jsiz,phis,dX,dY,scls,flip);
 elseif( nd==3 )
-  IJ = fevalArrays(I,@jitterImage1,method,jsiz,phis,dX,dY,scls,flip);
+  IJ = fevalArrays(I,@jitterImage1,method,maxn,jsiz,phis,dX,dY,scls,flip);
   IJ = reshape(IJ,size(IJ,1),size(IJ,2),[]);
 end
 end
 
-function IJ = jitterImage1( I, method, jsiz, phis, dX, dY, scls, flip )
+function IJ = jitterImage1( I,method,maxn,jsiz,phis,dX,dY,scls,flip )
 % generate list of transformations (HS)
 nScl=size(scls,1); nTrn=length(dX); nPhi=length(phis); k=0;
 nOps=nTrn*nPhi*nScl; HS=zeros(3,3,nOps);
@@ -108,6 +110,7 @@ for s=1:nScl, S=[scls(s,1) 0; 0 scls(s,2)];
   end
 end
 % apply transformations (special case for all integer translation)
+if(nOps>maxn), HS=HS(:,:,randSample(nOps,maxn)); nOps=maxn; end
 siz=size(I); IJ=zeros([jsiz nOps],class(I)); I1=I; p=(siz-jsiz)/2;
 for i=1:nOps, H=HS(:,:,i); d=H(1:2,3)';
   if( all(all(H(1:2,1:2)==eye(2))) && all(mod(d,1)==0) )
