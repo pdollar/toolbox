@@ -60,8 +60,6 @@ function IJ = jitterImage( I, varargin )
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
-% NOTE: CODE HAS BECOME REALLY MESSY :-(
-
 % Eigenanalysis of IJ can be informative:
 %   I = double(I);
 %   IJ = jitterImage( I, 111, 10, 0, 0 );
@@ -69,7 +67,6 @@ function IJ = jitterImage( I, varargin )
 %   [ U, mu, variances ] = pca( IJ );
 %   ks = 0:min(11,size(U,2));   % should need about 4
 %   pcaVisualize( U, mu, variances, IJ, [], ks );
-
 
 % get additional parameters
 nd=ndims(I); siz=size(I);
@@ -100,51 +97,26 @@ end
 end
 
 function IJ = jitterImage1( I, method, jsiz, phis, dX, dY, scls, flip )
-% this function does the work for SCALE and FLIPPING
-nScl=size(scls,1);
-for i=1:nScl
-  if(i==2), IJ=repmat(IJ,[1 1 1 nScl]); end
-  if(all(scls(i,:)==1)), I1=I; else
-    S=[scls(i,1) 0; 0 scls(i,2)]; H=[S [0;0]; 0 0 1];
+% generate list of transformations (HS)
+nScl=size(scls,1); nTrn=length(dX); nPhi=length(phis); k=0;
+nOps=nTrn*nPhi*nScl; HS=zeros(3,3,nOps);
+for s=1:nScl, S=[scls(s,1) 0; 0 scls(s,2)];
+  for p=1:nPhi, R=rotationMatrix(phis(p));
+    for t=1:nTrn
+      k=k+1; HS(:,:,k)=[S*R [dX(t); dY(t)]; 0 0 1];
+    end
+  end
+end
+% apply transformations (special case for all integer translation)
+siz=size(I); IJ=zeros([jsiz nOps],class(I)); I1=I; p=(siz-jsiz)/2;
+for i=1:nOps, H=HS(:,:,i); d=H(1:2,3)';
+  if( all(all(H(1:2,1:2)==eye(2))) && all(mod(d,1)==0) )
+    s=max(1-d,1); e=min(siz-d,siz); s1=2-min(1-d,1); e1=e-s+s1;
+    I1(s1(1):e1(1),s1(2):e1(2)) = I(s(1):e(1),s(2):e(2));
+  else
     I1 = imtransform2(I,H,method,'crop');
   end
-  I1 = jitterImage2(I1,method,jsiz,phis,dX,dY);
-  if(i==1), IJ=I1; continue; else IJ(:,:,:,i)=I1; end
+  IJ(:,:,i) = I1(p(1)+1:end-p(1),p(2)+1:end-p(2));
 end
-IJ = reshape(IJ,jsiz(1),jsiz(2),[]);
 if(flip), IJ=cat(3,IJ,IJ(:,end:-1:1,:)); end
-end
-
-function IJ = jitterImage2( I, method, jsiz, phis, dX, dY )
-% this function does the work for ROT/TRANS
-nTrn=length(dX); nPhi=length(phis); nOps=nTrn*nPhi;
-siz=size(I); dels=(siz-jsiz)/2;
-% get each of the transformations.
-index = 1;
-if( all(mod(dX,1))==0) % all integer translations [optimized for speed]
-  r0=floor(dels(1)+1); r1=floor(siz(1)-dels(1));
-  c0=floor(dels(2)+1); c1=floor(siz(2)-dels(2));
-  IJ = repmat( I(1), [jsiz(1) jsiz(2) nOps] );
-  for phi=phis
-    if( phi==0); IR = I; else
-      H = [rotationMatrix(phi) [0;0]; 0 0 1];
-      IR = imtransform2( I, H, method, 'crop' );
-    end
-    for t=1:nTrn
-      I2 = IR( (r0:r1)-dX(t), (c0:c1)-dY(t) );
-      IJ(:,:,index) = I2; index=index+1;
-    end
-  end
-else % arbitrary translations
-  IJ = repmat( I(1), [siz(1) siz(2) nOps] );
-  for phi=phis
-    R = rotationMatrix( phi );
-    for t=1:nTrn
-      H = [R dX(t) dY(t); 0 0 1];
-      I2 = imtransform2( I, H, method, 'crop' );
-      IJ(:,:,index) = I2; index=index+1;
-    end
-  end
-  IJ = arrayToDims( IJ, [jsiz, nOps] );
-end
 end
