@@ -1,4 +1,5 @@
 Version NEW
+ -jitterImage.m: major overhaul (also removed jitterVideo.m as it was broken)
  -bbNms.m: added ovrDnm parameter
  -bbGt.m: fixed toGt() to work for ellipses, added draw()
  -minor: toolboxCompile, multiTimes, seqPlayer, plotEllipse, randSample
