@@ -85,43 +85,40 @@ siz1=[siz1(1)*max(scls(:,1)) siz1(2)*max(scls(:,2))];
 pad=(siz1-siz(1:2))/2; pad=max([ceil(pad) 0],0);
 if(any(pad>0)), I=padarray(I,pad,'replicate','both'); end
 
-% now for each image jitter it
+% jitter each image
 nScl=size(scls,1); nTrn=length(dX); nPhi=length(phis);
 nOps=min(maxn,nTrn*nPhi*nScl); if(flip), nOps=nOps*2; end
 if(hasChn), nd=3; jsiz=[jsiz siz(3)]; else nd=2; end
 n=size(I,nd+1); IJ=zeros([jsiz nOps n],class(I));
-prm={method,maxn,jsiz,phis,dX,dY,scls,flip};
-if( hasChn )
-  for i=1:n, IJ(:,:,:,:,i) = jitterImage1(I(:,:,:,i),prm{:}); end
-else
-  for i=1:n, IJ(:,:,:,i) = jitterImage1(I(:,:,i),prm{:}); end
-end
+is=repmat({':'},1,nd); prm={method,maxn,jsiz,phis,dX,dY,scls,flip};
+for i=1:n, IJ(is{:},:,i)=jitterImage1(I(is{:},i),prm{:}); end
 end
 
 function IJ = jitterImage1( I,method,maxn,jsiz,phis,dX,dY,scls,flip )
 % generate list of transformations (HS)
-nScl=size(scls,1); nTrn=length(dX); nPhi=length(phis); k=0;
-nOps=nTrn*nPhi*nScl; HS=zeros(3,3,nOps);
+nScl=size(scls,1); nTrn=length(dX); nPhi=length(phis);
+nOps=nTrn*nPhi*nScl; HS=zeros(3,3,nOps); k=0;
 for s=1:nScl, S=[scls(s,1) 0; 0 scls(s,2)];
   for p=1:nPhi, R=rotationMatrix(phis(p));
-    for t=1:nTrn
-      k=k+1; HS(:,:,k)=[S*R [dX(t); dY(t)]; 0 0 1];
-    end
+    for t=1:nTrn, k=k+1; HS(:,:,k)=[S*R [dX(t); dY(t)]; 0 0 1]; end
   end
 end
-% apply transformations (special case for all integer translation)
+% apply each transformation to image I
 if(nOps>maxn), HS=HS(:,:,randSample(nOps,maxn)); nOps=maxn; end
-siz=size(I); nd=ndims(I); nCh=size(I,3); siz2=siz(1:2);
+siz=size(I); nd=ndims(I); nCh=size(I,3);
 I1=I; p=(siz-jsiz)/2; IJ=zeros([jsiz nOps],class(I));
 for i=1:nOps, H=HS(:,:,i); d=H(1:2,3)';
   if( all(all(H(1:2,1:2)==eye(2))) && all(mod(d,1)==0) )
-    s=max(1-d,1); e=min(siz2-d,siz2); s1=2-min(1-d,1); e1=e-s+s1;
+    % handle transformation that's just an integer translation
+    s=max(1-d,1); e=min(siz(1:2)-d,siz(1:2)); s1=2-min(1-d,1); e1=e-s+s1;
     I1(s1(1):e1(1),s1(2):e1(2),:) = I(s(1):e(1),s(2):e(2),:);
-  else
+  else % handle general transformations
     for j=1:nCh, I1(:,:,j)=imtransform2(I(:,:,j),H,method,'crop'); end
   end
-  if(nd==2), IJ(:,:,i)=I1(p(1)+1:end-p(1),p(2)+1:end-p(2));
-  else IJ(:,:,:,i)=I1(p(1)+1:end-p(1),p(2)+1:end-p(2),:); end
+  % crop and store result
+  I2 = I1(p(1)+1:end-p(1),p(2)+1:end-p(2),:);
+  if(nd==2), IJ(:,:,i)=I2; else IJ(:,:,:,i)=I2;  end
 end
+% finally flip each resulting image
 if(flip), IJ=cat(nd+1,IJ,IJ(:,end:-1:1,:,:)); end
 end
