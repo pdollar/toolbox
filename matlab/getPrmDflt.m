@@ -41,69 +41,45 @@ function varargout = getPrmDflt( prm, dfs, checkExtra )
 if (mod(length(dfs),2)~=0); error('odd number of default parameters'); end
 if nargin<=2; checkExtra = 0; end
 
+% get the default values
+dfsField = dfs(1:2:end); dfsVal = dfs(2:2:end);
+
+% get the input parameters
 if iscell(prm)
   if length(prm)==1
     if ~isstruct(prm{1}); error('prm must be a struct or a cell');
-    else prm = prm{1};
+    else prmVal = struct2cell(prm{1}); prmField = fieldnames(prm{1});
     end
   else
     if(mod(length(prm),2)~=0); error('odd number of parameters in prm');
-    else prm = cell2struct( prm(2:2:end), prm(1:2:end), 2 );
+    else prmField = prm(1:2:end); prmVal = prm(2:2:end);
     end
   end
 else
   if(~isstruct(prm)); error('prm must be a struct or a cell'); end
-end
-
-if iscell(dfs)
-  if length(dfs)==1
-    if ~isstruct(dfs{1}); error('dfs must be a struct or a cell');
-    else dfsField = fieldnames( dfs{1} ); dfsVal = struct2cell( dfs{1} );
-    end
-  else
-    if(mod(length(dfs),2)~=0); error('odd number of parameters in dfs');
-    else dfsField = dfs(1:2:end); dfsVal = dfs(2:2:end);
-    end
-  end
-else
-  if(~isstruct(dfs)); error('dfs must be a struct or a cell'); end
-  dfsField = fieldnames( dfs ); dfsVal = struct2cell( dfs );
+  prmVal = struct2cell(prm); prmField = fieldnames(prm);
 end
 
 if checkExtra
-  prmName = fieldnames(prm);
-  for i = 1 : length(prmName)
-    if ~any(strcmp( prmName{i}, dfsField ))
-      error( [ 'parameter ' prmName{i} ' is not a valid parameter.' ] );
-    end
+  extraField=setdiff( prmField, dfsField );
+  if ~isempty(extraField)
+    error( [ 'parameter ' extraField{1} ' is not a valid parameter.' ] );
   end
 end
 
-if exist('OCTAVE_VERSION','builtin')
-  toDo=[];
-  for i = 1 : length(dfsField)
-    if ~isfield( prm, dfsField{i} );
-      toDo(end+1)=i; %#ok<AGROW>
-    end
-  end
-else
-  toDo = find( ~isfield( prm, dfsField ) );
-end
-if size(toDo,1)~=1; toDo = toDo'; end
+% update the values to return
+[ disc dfsInd prmInd ] = intersect(dfsField, prmField );
+dfsVal(dfsInd) = prmVal(prmInd);
 
-for i = toDo
-  if(strcmp('REQ',dfsVal{i}))
-    error(['Required field ''' dfsField{i} ''' not specified.'] );
-  else
-    prm.(dfsField{i}) = (dfsVal{i});
-  end
+% check for missing values
+cmpArray = strcmp('REQ',dfsVal);
+if any(cmpArray)
+  cmpArray = find(cmpArray);
+  error(['Required field ''' dfsField(cmpArray(1)) ''' not specified.'] );
 end
 
 if nargout==1
-  varargout(1) = {prm};
+  varargout(1) = {struct2cell(dfsField,dfsVal,2)};
 else
-  varargout=cell(1,nargout);
-  for i=1:nargout
-    varargout(i)={prm.(dfsField{i})};
-  end
+  varargout = dfsVal;
 end
