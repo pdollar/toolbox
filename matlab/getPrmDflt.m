@@ -60,16 +60,23 @@ else
   prmVal = struct2cell(prm); prmField = fieldnames(prm);
 end
 
+% update the values to return
+%[ disc dfsInd prmInd ] = intersect(dfsField, prmField );
+% the above is slow so for loop ...
 if checkExtra
-  extraField=setdiff( prmField, dfsField );
-  if ~isempty(extraField)
-    error( [ 'parameter ' extraField{1} ' is not a valid parameter.' ] );
+  for i=1:length(prmField)
+    ind = find(strcmp(prmField{i},dfsField));
+    if isempty(ind)
+      error( [ 'parameter ' prmField{1} ' is not a valid parameter.' ] );
+    else
+      dfsVal(ind) = prmVal(i);
+    end
+  end
+else
+  for i=1:length(prmField)
+    dfsVal(strcmp(prmField{i},dfsField)) = prmVal(i);
   end
 end
-
-% update the values to return
-[ disc dfsInd prmInd ] = intersect(dfsField, prmField );
-dfsVal(dfsInd) = prmVal(prmInd);
 
 % check for missing values
 cmpArray = strcmp('REQ',dfsVal);
