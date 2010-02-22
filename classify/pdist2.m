@@ -45,13 +45,19 @@ function D = pdist2( X, Y, metric )
 %  D        - [m x n] distance matrix
 %
 % EXAMPLE
+%  % simple example where points cluster well
 %  [X,IDX] = demoGenData(100,0,5,4,10,2,0);
 %  D = pdist2( X, X, 'sqeuclidean' );
 %  distMatrixShow( D, IDX );
+%  % comparison to pdist
+%  n=500; d=200; r=100; X=rand(n,d);
+%  tic, for i=1:r, D1 = pdist( X, 'euclidean' ); end, toc
+%  tic, for i=1:r, D2 = pdist2( X, X, 'euclidean' ); end, toc
+%  D1=squareform(D1); del=D1-D2; sum(abs(del(:)))
+% 
+% See also pdist, distMatrixShow
 %
-% See also PDIST, DISTMATRIXSHOW
-%
-% Piotr's Image&Video Toolbox      Version 2.35
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -74,28 +80,27 @@ switch metric
   otherwise
     error(['pdist2 - unknown metric: ' metric]);
 end
+end
 
 function D = distL1( X, Y )
-
 m = size(X,1);  n = size(Y,1);
 mOnes = ones(1,m); D = zeros(m,n);
 for i=1:n
   yi = Y(i,:);  yi = yi( mOnes, : );
   D(:,i) = sum( abs( X-yi),2 );
 end
+end
 
 function D = distCosine( X, Y )
-
 p=size(X,2);
 XX = sqrt(sum(X.*X,2)); X = X ./ XX(:,ones(1,p));
 YY = sqrt(sum(Y.*Y,2)); Y = Y ./ YY(:,ones(1,p));
 D = 1 - X*Y';
+end
 
 function D = distEmd( X, Y )
-
 Xcdf = cumsum(X,2);
 Ycdf = cumsum(Y,2);
-
 m = size(X,1);  n = size(Y,1);
 mOnes = ones(1,m); D = zeros(m,n);
 for i=1:n
@@ -103,10 +108,10 @@ for i=1:n
   ycdfRep = ycdf( mOnes, : );
   D(:,i) = sum(abs(Xcdf - ycdfRep),2);
 end
+end
 
 function D = distChiSq( X, Y )
-
-%%% supposedly it's possible to implement this without a loop!
+% note: supposedly it's possible to implement this without a loop!
 m = size(X,1);  n = size(Y,1);
 mOnes = ones(1,m); D = zeros(m,n);
 for i=1:n
@@ -115,24 +120,24 @@ for i=1:n
   D(:,i) = sum( d.^2 ./ (s+eps), 2 );
 end
 D = D/2;
+end
 
 function D = distEucSq( X, Y )
-
 Yt = Y';
 XX = sum(X.*X,2);
 YY = sum(Yt.*Yt,1);
 D = bsxfun(@plus,XX,YY) - 2*X*Yt;
+end
 
-% function D = distEucSq( X, Y )
 %%%% code from Charles Elkan with variables renamed
+% function D = distEucSq( X, Y )
 % m = size(X,1); n = size(Y,1);
 % D = sum(X.^2, 2) * ones(1,n) + ones(m,1) * sum(Y.^2, 2)' - 2.*X*Y';
-
+% end
 
 %%% LOOP METHOD - SLOW
 % [m p] = size(X);
 % [n p] = size(Y);
-%
 % D = zeros(m,n);
 % onesM = ones(m,1);
 % for i=1:n
@@ -141,13 +146,11 @@ D = bsxfun(@plus,XX,YY) - 2*X*Yt;
 %   D(:,i) = sum( d.*d, 2 );
 % end
 
-
-%%% PARALLEL METHOD THAT IS SUPER SLOW (slower then loop)!
+%%% PARALLEL METHOD THAT IS SUPER SLOW (slower than loop)!
 % % From "MATLAB array manipulation tips and tricks" by Peter J. Acklam
 % Xb = permute(X, [1 3 2]);
 % Yb = permute(Y, [3 1 2]);
 % D = sum( (Xb(:,ones(1,n),:) - Yb(ones(1,m),:,:)).^2, 3);
-
 
 %%% USELESS FOR EVEN VERY LARGE ARRAYS X=16000x1000!! and Y=100x1000
 % call recursively to save memory
@@ -167,7 +170,6 @@ D = bsxfun(@plus,XX,YY) - 2*X*Yt;
 %   end
 %   return;
 % end
-
 
 %%% L1 COMPUTATION WITH LOOP OVER p, FAST FOR SMALL p.
 % function D = distL1( X, Y )

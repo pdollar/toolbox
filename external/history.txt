@@ -2,7 +2,7 @@ Version NEW
  -jitterImage.m: major overhaul (also removed jitterVideo.m as it was broken)
  -bbNms.m: added ovrDnm parameter
  -bbGt.m: fixed toGt() to work for ellipses, added draw()
- -minor: toolboxCompile, multiTimes, seqPlayer, plotEllipse, randSample
+ -minor: toolboxCompile, multiTimes, seqPlayer, plotEllipse, randSample, pDist2
  -using Matlab wrappers and moved mex to /private: imResample, hog, dijkstra
 
 Version 2.41 (18-Jan-10)
