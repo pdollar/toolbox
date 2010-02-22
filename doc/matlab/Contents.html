@@ -49,14 +49,14 @@
    <a href="char2img.html" class="code" title="function masks = char2img( strings, h, pad )">char2img</a>          - Convert ascii text to a binary image using pre-computed templates.
    <a href="figureResized.html" class="code" title="function varargout = figureResized( screenratio, varargin )">figureResized</a>     - Creates a figures that takes up certain area of screen.
    <a href="imLabel.html" class="code" title="function imLabel( labels, position, S, pvPairs )">imLabel</a>           - Improved method for labeling figure axes.
-   <a href="plotEllipse.html" class="code" title="function [h,hc,hl] = plotEllipse( cRow, cCol, ra, rb, phi, color, nPnts )">plotEllipse</a>       - Adds an ellipse to the current plot.
+   <a href="plotEllipse.html" class="code" title="function [h,hc,hl] = plotEllipse(cRow,cCol,ra,rb,phi,color,nPnts,lw,ls)">plotEllipse</a>       - Adds an ellipse to the current plot.
    <a href="plotGaussEllipses.html" class="code" title="function hs = plotGaussEllipses( mus, Cs, rad )">plotGaussEllipses</a> - Plots 2D ellipses derived from 2D Gaussians specified by mus &amp; Cs.
    <a href="text2.html" class="code" title="function varargout = text2( varargin )">text2</a>             - Wrapper for text.m that ensures displayed text fits in figure.
    <a href="txt2img.html" class="code" title="function masks = txt2img( strings, h, txtPrp )">txt2img</a>           - Convert text string to a binary image.
 
  Miscellaneous:
    <a href="checkNumArgs.html" class="code" title="function [ x, er ] = checkNumArgs( x, siz, intFlag, signFlag )">checkNumArgs</a>      - Helper utility for checking numeric vector arguments.
-   <a href="dijkstra.html" class="code" title="">dijkstra</a>          - Runs Dijkstra's shortest path algorithm on a distance matrix.
+   <a href="dijkstra.html" class="code" title="function [D,P] = dijkstra( G, varargin )">dijkstra</a>          - Runs Dijkstra's shortest path algorithm on a distance matrix.
    <a href="dirSynch.html" class="code" title="function dirSynch( root1, root2, showOnly, flag, ignDate )">dirSynch</a>          - Synchronize two directory trees (or show differences between them).
    <a href="gauss2ellipse.html" class="code" title="function [cRow, cCol, ra, rb, phi] = gauss2ellipse( mu, C, rad )">gauss2ellipse</a>     - Creates an ellipse representing the 2D Gaussian distribution.
    <a href="getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>        - Helper to set default values (if not already set) of parameter struct.
@@ -69,7 +69,7 @@
    <a href="num2strs.html" class="code" title="function Y = num2strs( X, varargin )">num2strs</a>          - Applies num2str to each element of an array X.
    <a href="plotRoc.html" class="code" title="function [h,det] = plotRoc( D, varargin )">plotRoc</a>           - Function for display of rocs (receiver operator characteristic curves).
    <a href="randint2.html" class="code" title="function R = randint2( m, n, range )">randint2</a>          - Faster but restricted version of randint.
-   <a href="randSample.html" class="code" title="function r = randSample( n, k )">randSample</a>        - Generate values sampled uniformly without replacement from 1:n.
+   <a href="randSample.html" class="code" title="function r = randSample( n, k, isArray )">randSample</a>        - Generate values sampled uniformly without replacement from 1:n.
    <a href="rotationMatrix.html" class="code" title="function varargout=rotationMatrix(varargin)">rotationMatrix</a>    - Performs different operations dealing with a rotation matrix
    <a href="simpleCache.html" class="code" title="function varargout = simpleCache( op, cache, varargin )">simpleCache</a>       - A simple cache that can be used to store results of computations.
    <a href="spBlkDiag.html" class="code" title="function [B,inds] = spBlkDiag( A, inds )">spBlkDiag</a>         - Creates a sparse block diagonal matrix from a 3D array.

@@ -34,6 +34,8 @@
   2.2  - C(:,:,i) = A(:,:,i)*B(:,:,i)'
   3    - C(:,i) = A(:,:,i)*B(:,i)
   3.1  - C(:,i) = A(:,:,i)'*B(:,i)
+  3.2  - C(:,i) = A(:,i)'*B(:,:,i)
+  3.3  - C(:,i) = A(:)'*B(:,:,i)
   4.1  - C(i) = trace(A(:,:,i)'*B(:,:,i))
  Corresponding dimensions of A and B must match appropriately.
 
@@ -55,8 +57,8 @@
 
  See also BSXFUN, MTIMES
 
- Piotr's Image&amp;Video Toolbox      Version 2.35
- Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 2.42
+ Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
 

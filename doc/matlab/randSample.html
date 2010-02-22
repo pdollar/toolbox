@@ -20,7 +20,7 @@
 <div class="box"><strong>Generate values sampled uniformly without replacement from 1:n.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function r = randSample( n, k ) </strong></div>
+<div class="box"><strong>function r = randSample( n, k, isArray ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment"> Generate values sampled uniformly without replacement from 1:n.
@@ -31,11 +31,12 @@
  Statistics Toolbox.
 
  USAGE
-  r = randSample( n, k )
+  r = randSample( n, k, [isArray] )
 
  INPUTS
   n           - specifies sampling source (if array) or range (if scalar)
   k           - the number of samples to draw
+  isArray     - [0] if true treat n as an array (even if has single elt)
 
  OUTPUTS
   r           - k uniformly generated random samples
@@ -46,8 +47,8 @@
 
  See also RANDPERM
 
- Piotr's Image&amp;Video Toolbox      Version 2.31
- Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 2.42
+ Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
 
@@ -58,7 +59,7 @@ This function calls:
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="../classify/kmeans2.html" class="code" title="function [ IDX, C, d ] = kmeans2( X, k, prm )">kmeans2</a>	Fast version of kmeans clustering.</li><li><a href="../classify/pca.html" class="code" title="function [ U, mu, vars ] = pca( X )">pca</a>	Principal components analysis (alternative to princomp).</li><li><a href="../classify/rbfComputeBasis.html" class="code" title="function rbfBasis = rbfComputeBasis( X, k, cluster, scale, show )">rbfComputeBasis</a>	Get locations and sizes of radial basis functions for use in rbf network.</li><li><a href="../images/clusterMontage.html" class="code" title="function IC = clusterMontage( I, IDX, nElem, pad )">clusterMontage</a>	Used for visualization of clusters of images and videos.</li></ul>
+<li><a href="../classify/kmeans2.html" class="code" title="function [ IDX, C, d ] = kmeans2( X, k, prm )">kmeans2</a>	Fast version of kmeans clustering.</li><li><a href="../classify/pca.html" class="code" title="function [ U, mu, vars ] = pca( X )">pca</a>	Principal components analysis (alternative to princomp).</li><li><a href="../classify/rbfComputeBasis.html" class="code" title="function rbfBasis = rbfComputeBasis( X, k, cluster, scale, show )">rbfComputeBasis</a>	Get locations and sizes of radial basis functions for use in rbf network.</li><li><a href="../images/clusterMontage.html" class="code" title="function IC = clusterMontage( I, IDX, nElem, pad )">clusterMontage</a>	Used for visualization of clusters of images and videos.</li><li><a href="../images/jitterImage.html" class="code" title="function IJ = jitterImage( I, varargin )">jitterImage</a>	Creates multiple, slightly jittered versions of an image.</li></ul>
 <!-- crossreference -->
 
 

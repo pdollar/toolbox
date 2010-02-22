@@ -63,6 +63,8 @@
    vals = bbGt( 'get', objs, name )
  Set object property 'name' (with a standard array).
    objs = bbGt( 'set', objs, name, vals )
+ Draw an ellipse for each labeled object.
+   hs = draw( objs, varargin )
 
 %% (2) Routines for evaluating the Pascal criteria for object detection.
  Returns filtered ground truth bbs for purpose of evaluation.
@@ -99,12 +101,12 @@
  EXAMPLE
 
  See also <a href="bbApply.html" class="code" title="function varargout = bbApply( action, varargin )">bbApply</a>, <a href="bbLabeler.html" class="code" title="function bbLabeler( objTypes, imgDir, resDir )">bbLabeler</a>, bbGt&gt;create, bbGt&gt;bbSave, bbGt&gt;bbLoad,
- bbGt&gt;get, bbGt&gt;set, bbGt&gt;toGt, bbGt&gt;evalRes, bbGt&gt;showRes,
+ bbGt&gt;get, bbGt&gt;set, bbGt&gt;draw, bbGt&gt;toGt, bbGt&gt;evalRes, bbGt&gt;showRes,
  bbGt&gt;evalResDir, bbGt&gt;compRoc, bbGt&gt;cropRes, bbGt&gt;compOas, bbGt&gt;compOa,
  bbGt&gt;sampleData
 
- Piotr's Image&amp;Video Toolbox      Version 2.41
- Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 2.42
+ Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
 
@@ -112,7 +114,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="bbApply.html" class="code" title="function varargout = bbApply( action, varargin )">bbApply</a>	Functions for manipulating bounding boxes (bb).</li><li><a href="bbGt.html" class="code" title="function varargout = bbGt( action, varargin )">bbGt</a>	Bounding box (bb) annotations struct, evaluation and sampling routines.</li><li><a href="bbNms.html" class="code" title="function bbs = bbNms( bbs, varargin )">bbNms</a>	Bounding box (bb) non-maximal suppression (nms).</li><li><a href="im.html" class="code" title="function varargout = im( I, range, extraInf )">im</a>	Function for displaying grayscale images.</li><li><a href="montage2.html" class="code" title="function varargout = montage2( IS, prm )">montage2</a>	Used to display collections of images and videos.</li><li><a href="../matlab/c.html" class="code" title="">c</a>	clc - clear command window.</li><li><a href="../matlab/cell2array.html" class="code" title="function Y = cell2array( X, padEl )">cell2array</a>	Flattens a cell array of regular arrays into a regular array.</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li><li><a href="../matlab/ticStatus.html" class="code" title="function id = ticStatus( msg, updateFreq, updateMinT, erasePrev )">ticStatus</a>	Used to display the progress of a long process.</li><li><a href="../matlab/tocStatus.html" class="code" title="function tocStatus( id, fracDone )">tocStatus</a>	Used to display the progress of a long process.</li></ul>
+<li><a href="bbApply.html" class="code" title="function varargout = bbApply( action, varargin )">bbApply</a>	Functions for manipulating bounding boxes (bb).</li><li><a href="bbGt.html" class="code" title="function varargout = bbGt( action, varargin )">bbGt</a>	Bounding box (bb) annotations struct, evaluation and sampling routines.</li><li><a href="bbNms.html" class="code" title="function bbs = bbNms( bbs, varargin )">bbNms</a>	Bounding box (bb) non-maximal suppression (nms).</li><li><a href="im.html" class="code" title="function varargout = im( I, range, extraInf )">im</a>	Function for displaying grayscale images.</li><li><a href="montage2.html" class="code" title="function varargout = montage2( IS, prm )">montage2</a>	Used to display collections of images and videos.</li><li><a href="../matlab/c.html" class="code" title="">c</a>	clc - clear command window.</li><li><a href="../matlab/cell2array.html" class="code" title="function Y = cell2array( X, padEl )">cell2array</a>	Flattens a cell array of regular arrays into a regular array.</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li><li><a href="../matlab/plotEllipse.html" class="code" title="function [h,hc,hl] = plotEllipse(cRow,cCol,ra,rb,phi,color,nPnts,lw,ls)">plotEllipse</a>	Adds an ellipse to the current plot.</li><li><a href="../matlab/ticStatus.html" class="code" title="function id = ticStatus( msg, updateFreq, updateMinT, erasePrev )">ticStatus</a>	Used to display the progress of a long process.</li><li><a href="../matlab/tocStatus.html" class="code" title="function tocStatus( id, fracDone )">tocStatus</a>	Used to display the progress of a long process.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 <li><a href="bbGt.html" class="code" title="function varargout = bbGt( action, varargin )">bbGt</a>	Bounding box (bb) annotations struct, evaluation and sampling routines.</li><li><a href="bbLabeler.html" class="code" title="function bbLabeler( objTypes, imgDir, resDir )">bbLabeler</a>	Bounding box or ellipse labeler for static images.</li></ul>

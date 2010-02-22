@@ -20,71 +20,65 @@
 <div class="box"><strong>Creates multiple, slightly jittered versions of an image.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function IJ = jitterImage( I, nphis, maxphi, ntrans, maxtrans,jsiz, reflFlag, scales ) </strong></div>
+<div class="box"><strong>function IJ = jitterImage( I, varargin ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment"> Creates multiple, slightly jittered versions of an image.
 
  Takes an image I, and generates a number of images that are copies of the
- original image with slight translation and rotation applied.  The
- original image also appears in the final set.
-
- The parameter jsiz controls the size of the cropped images.  If jsiz
- gives a size that's substantially smaller than I then all data in the the
- final set will come from I. However, if this is not the case then I may
- need to be padded first.  The way this is done is with padarray with the
- 'replicate' method.  If jsiz is not specified, it is set to be the size
- of the original image. A warning appears if the image needs to be grown.
-
- Rotations and translations are specified by giving a range and a maximum
- value for each. For example, if maxphi=10 and nphis=5, then the actual
- rotations applied are [-10 -5 0 5 10]. Uses: linspace( -maxphi, maxphi,
- nphis ); Likewise if maxtrans=3 and ntrans=3 then the translations are
- [-3 0 3]. Each translation is applied in the x direction as well as the y
- direction.  Each combination of rotation, translation in x, and
- translation in y is used (for example phi=5, transx=-3, transy=0), so the
- total number of images generated is R=ntrans*ntrans*nphis).  This
- function works faster if all of the translation end up being integer
- valued.
-
- If the input image is actually a MxNxK stack of images then applies op to
- each image in stack and returns an MxNxKxR where R=(ntrans*ntrans*nphis)
- set of images.
+ original image with slight translation, rotation and scaling applied. If
+ the input image is actually an MxNxK stack of images then applies op to
+ each image. Rotations and translations are specified by giving a range
+ and a max value for each. For example, if mPhi=10 and nPhi=5, then the
+ actual rotations applied are linspace(-mPhi,mPhi,nPhi)=[-10 -5 0 5 10].
+ Likewise if mTrn=3 and nTrn=3 then the translations are [-3 0 3]. Each
+ tran is applied in the x direction as well as the y direction. Each
+ combination of rotation, tran in x, tran in y and scale is used (for
+ example phi=5, transx=-3, transy=0), so the total number of images
+ generated is R=nTrn*nTrn*nPhi*nScl. Finally, jsiz controls the size of
+ the cropped images. If jsiz gives a size that's sufficiently smaller than
+ I then all data in the the final set will come from I. Otherwise, I must
+ be padded first (by calling padarray with the 'replicate' option).
 
  USAGE
-  function IJ = jitterImage( I, nphis, maxphi, ntrans, maxtrans, ...
-                              [jsiz], [reflFlag], [scales] )
+  function IJ = jitterImage( I, varargin )
 
  INPUTS
-  I           - BW image (MxN) or images (MxNxK), must have odd dims
-  nphis       - number of rotations
-  maxphis     - max value for rotation
-  ntrans      - number of translations
-  maxtrans    - max value for translation
-  jsiz        - [] Final size of each image in IJ
-  reflFlag    - [0] if true then also adds reflection of each image
-  scales      - [1 1] nscalesx2 array of vert/horiz scalings
+  I          - image (MxN) or set of K images (MxNxK)
+  varargin   - additional params (struct or name/value pairs)
+   .maxn        - [inf] maximum jitters to generate (prior to flip)
+   .nPhi        - [0] number of rotations
+   .mPhi        - [0] max value for rotation
+   .nTrn        - [0] number of translations
+   .mTrn        - [0] max value for translation
+   .flip        - [0] if true then also adds reflection of each image
+   .jsiz        - [] Final size of each image in IJ
+   .scls        - [1 1] nScl x 2 array of vert/horiz scalings
+   .method      - ['linear'] interpolation method for imtransform2
+   .hasChn      - [0] if true I is MxNxC or MxNxCxK
 
  OUTPUTS
-  IJ          - MxNxR or MxNxKxR set of images where
-                R=(ntrans*ntrans*nphis*nscales)
+  IJ          - MxNxKxR or MxNxCxKxR set of images, R=(nTrn^2*nPhi*nScl)
 
  EXAMPLE
   load trees; I=imresize(ind2gray(X,map),[41 41]); clear X caption map
   % creates 7^2*2 images of slight trans with reflection (but no rotation)
-  IJ = jitterImage( I, 0, 0, 7, 3, [35 35], 1 ); montage2(IJ);
+  IJ = jitterImage(I,'nTrn',7,'mTrn',3,'maxn',10); montage2(IJ)
   % creates 5 images of slight rotations (no translations)
-  IJ = jitterImage( I, 5, 25, 0, 0, size(I) ); montage2(IJ);
+  IJ = jitterImage(I,'nPhi',5,'mPhi',25,'flip',1); montage2(IJ)
   % creates 45 images of both rot and slight trans
-  IJ = jitterImage( I, 5, 10, 3, 2 ); montage2(IJ);
+  IJ = jitterImage(I,'nPhi',5,'mPhi',10,'nTrn',3,'mTrn',2); montage2(IJ)
   % additionally create multiple scaled versions
-  IJ = jitterImage( I, 1, 0, 1, 0, [], [], [1 1; 2 1; 1 2; 2 2] );
-  montage2(IJ)
+  IJ = jitterImage(I,'scls',[1 1; 2 1; 1 2; 2 2]); montage2(IJ)
+  % example on color image (5 images of slight rotations)
+  I=imResample(imread('peppers.png'),100,100);
+  IJ=jitterImage(I,'nPhi',5,'mPhi',25,'hasChn',1);
+  montage2(uint8(IJ),{'hasChn',1})
 
- See also <a href="jitterVideo.html" class="code" title="function IS = jitterVideo( I, nphis, maxphi, ntrans, maxtrans,nttrans, maxttrans, jsiz )">JITTERVIDEO</a>
+ See also <a href="imtransform2.html" class="code" title="function IR = imtransform2( I, varargin )">imtransform2</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.0
- Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 2.42
+ Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
 
@@ -92,7 +86,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="imtransform2.html" class="code" title="function IR = imtransform2( I, varargin )">imtransform2</a>	Applies a general/special homography on an image I</li><li><a href="../matlab/arrayToDims.html" class="code" title="function IC = arrayToDims( I, dims, padEl )">arrayToDims</a>	Pads or crops I appropriately so that size(IC)==dims.</li><li><a href="../matlab/fevalArrays.html" class="code" title="function B = fevalArrays( A, fHandle, varargin )">fevalArrays</a>	Used to apply the same operation to a stack of array elements.</li><li><a href="../matlab/rotationMatrix.html" class="code" title="function varargout=rotationMatrix(varargin)">rotationMatrix</a>	Performs different operations dealing with a rotation matrix</li></ul>
+<li><a href="imtransform2.html" class="code" title="function IR = imtransform2( I, varargin )">imtransform2</a>	Applies a general/special homography on an image I</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li><li><a href="../matlab/randSample.html" class="code" title="function r = randSample( n, k, isArray )">randSample</a>	Generate values sampled uniformly without replacement from 1:n.</li><li><a href="../matlab/rotationMatrix.html" class="code" title="function varargout=rotationMatrix(varargin)">rotationMatrix</a>	Performs different operations dealing with a rotation matrix</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>
