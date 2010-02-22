@@ -41,9 +41,6 @@ function varargout = getPrmDflt( prm, dfs, checkExtra )
 if (mod(length(dfs),2)~=0); error('odd number of default parameters'); end
 if nargin<=2; checkExtra = 0; end
 
-% get the default values
-dfsField = dfs(1:2:end); dfsVal = dfs(2:2:end);
-
 % get the input parameters
 if iscell(prm)
   if length(prm)==1
@@ -60,9 +57,12 @@ else
   prmVal = struct2cell(prm); prmField = fieldnames(prm);
 end
 
+% get the default values
+dfsField = dfs(1:2:end); dfsVal = dfs(2:2:end);
+
 % update the values to return
 %[ disc dfsInd prmInd ] = intersect(dfsField, prmField );
-% the above is slow so for loop ...
+% the above is slow so for loop (faster as we know we arecomparing strings)
 if checkExtra
   for i=1:length(prmField)
     ind = find(strcmp(prmField{i},dfsField));
@@ -79,9 +79,9 @@ else
 end
 
 % check for missing values
-cmpArray = strcmp('REQ',dfsVal);
-if any(cmpArray)
-  cmpArray = find(cmpArray);
+if any(strcmp('REQ',dfsVal))
+  % cheap way of not saving the previous array
+  cmpArray = find(strcmp('REQ',dfsVal));
   error(['Required field ''' dfsField(cmpArray(1)) ''' not specified.'] );
 end
 
