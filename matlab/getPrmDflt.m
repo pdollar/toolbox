@@ -33,44 +33,31 @@ function varargout = getPrmDflt( prm, dfs, checkExtra )
 %
 % See also INPUTPARSER
 %
-% Piotr's Image&Video Toolbox      Version 2.35
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
-if (mod(length(dfs),2)~=0); error('odd number of default parameters'); end
-if nargin<=2; checkExtra = 0; end
+if( mod(length(dfs),2) ), error('odd number of default parameters'); end
+if nargin<=2, checkExtra = 0; end
 
-% get the input parameters
+% get the input parameters as two cell arrays: prmVal and prmField
+if iscell(prm) && length(prm)==1, prm=prm{1}; end
 if iscell(prm)
-  if length(prm)==1
-    if ~isstruct(prm{1}); error('prm must be a struct or a cell');
-    else prmVal = struct2cell(prm{1}); prmField = fieldnames(prm{1});
-    end
-  else
-    if(mod(length(prm),2)~=0); error('odd number of parameters in prm');
-    else prmField = prm(1:2:end); prmVal = prm(2:2:end);
-    end
-  end
+  if(mod(length(prm),2)), error('odd number of parameters in prm'); end
+  prmField = prm(1:2:end); prmVal = prm(2:2:end);
 else
-  if(~isstruct(prm)); error('prm must be a struct or a cell'); end
+  if(~isstruct(prm)), error('prm must be a struct or a cell'); end
   prmVal = struct2cell(prm); prmField = fieldnames(prm);
 end
 
-% get the default values
+% get and update default values using quick for loop
 dfsField = dfs(1:2:end); dfsVal = dfs(2:2:end);
-
-% update the values to return
-%[ disc dfsInd prmInd ] = intersect(dfsField, prmField );
-% the above is slow so for loop (faster as we know we arecomparing strings)
 if checkExtra
   for i=1:length(prmField)
-    ind = find(strcmp(prmField{i},dfsField));
-    if isempty(ind)
-      error( [ 'parameter ' prmField{1} ' is not a valid parameter.' ] );
-    else
-      dfsVal(ind) = prmVal(i);
-    end
+    j = find(strcmp(prmField{i},dfsField));
+    if isempty(j), error('parameter %s is not valid', prmField{i}); end
+    dfsVal(j) = prmVal(i);
   end
 else
   for i=1:length(prmField)
@@ -80,13 +67,13 @@ end
 
 % check for missing values
 if any(strcmp('REQ',dfsVal))
-  % cheap way of not saving the previous array
   cmpArray = find(strcmp('REQ',dfsVal));
   error(['Required field ''' dfsField(cmpArray(1)) ''' not specified.'] );
 end
 
+% set output
 if nargout==1
-  varargout(1) = {struct2cell(dfsField,dfsVal,2)};
+  varargout{1} = cell2struct( dfsVal, dfsField, 2 );
 else
   varargout = dfsVal;
 end
