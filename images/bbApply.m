@@ -58,7 +58,7 @@ function varargout = bbApply( action, varargin )
 % bbApply>union bbApply>resize bbApply>squarify bbApply>draw bbApply>crop
 % bbApply>convert bbApply>random bbApply>frMask bbApply>toMask
 %
-% Piotr's Image&Video Toolbox      Version 2.41
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -405,8 +405,8 @@ for i=1:n, [patches{i},bbs(i,1:4)]=crop1(bbs(i,1:4)); end
       if( ischar(padEl) )
         pt=max(0,1-lcsS(1)); pb=max(0,lcsE(1)-h);
         pl=max(0,1-lcsS(2)); pr=max(0,lcsE(2)-w);
-        lcsS=max(1,lcsS); lcsE=min(lcsE,[h w]);
-        patch = I(lcsS(1):lcsE(1),lcsS(2):lcsE(2),:);
+        lcsS1=max(1,lcsS); lcsE1=min(lcsE,[h w]);
+        patch = I(lcsS1(1):lcsE1(1),lcsS1(2):lcsE1(2),:);
         patch = padarray(patch,[pt pl],padEl,'pre');
         patch = padarray(patch,[pb pr],padEl,'post');
       else

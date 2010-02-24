@@ -1,3 +1,6 @@
+Version NEW
+ -bbApply.m: crop() correctly returns extent of cropped bbs
+
 Version 2.42 (22-Feb-10)
  -jitterImage.m: major overhaul (also removed jitterVideo.m as it was broken)
  -getPrmDflt.m: major rewrite (speedup and code cleanup)
