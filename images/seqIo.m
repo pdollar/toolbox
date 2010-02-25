@@ -89,7 +89,7 @@ function sobj = seqIo( fName, mode, varargin )
 %
 % See also SEQPLAYER, SEQREADERPLUGIN, SEQWRITERPLUGIN
 %
-% Piotr's Image&Video Toolbox      Version 2.41
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -198,7 +198,8 @@ elseif( strcmp(mode,'header') )
   for frame = 0:info.numFrames-1, srp('next',hr);
     [I,ts]=srp('getframeb',hr); swp('addframeb',hw,I,ts); end
   srp('close',hr); swp('close',hw);
-  
+else
+  error('seqIo unknown mode: ''%s''',mode);
 end
 
   function sobj = seqReaderDual( fName1, fName2 )
