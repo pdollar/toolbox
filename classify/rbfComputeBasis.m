@@ -89,8 +89,8 @@ var  = mean(vars);
 vars = max( vars, var/100 );
 
 %%% store results
-rbfBasis = struct("d", d, "k", k, "mu", mu, "vars", vars, "var", var, ...
-  "globalVar", 1, "constant", 0, "normalize", 0);
+rbfBasis = struct('d',d, 'k',k, 'mu',mu, 'vars',vars, 'var',var, ...
+  'globalVar',1, 'constant',0, 'normalize',0);
 
 %%% optionally display
 if( abs(show) )
