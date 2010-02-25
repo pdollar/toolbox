@@ -18,21 +18,20 @@ function r = randSample( n, k, isArray )
 %  r           - k uniformly generated random samples
 %
 % EXAMPLE
-%  r = randSample( 10, 5 );
-%  r = randSample( [ 5 6 8 9 32 45 ], 2 );
+%  r = randSample( 10, 5 )
+%  r = randSample( [ 5 6 8 9 32 45 ], 2 )
 %
-% See also RANDPERM
+% See also randperm
 %
-% Piotr's Image&Video Toolbox      Version 2.42
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
-if( nargin<3 || isempty(isArray) ), isArray=0; end
-if( length(n)==1 && isArray==0 )
-  if(k>n), error('Too many samples requested.'); end
-  rp = randperm(n); r = rp(1:k);
-else
-  if(k>length(n)), error('Too many samples requested.'); end
-  rp = randperm(length(n)); r = n(rp(1:k));
+if( nargin<3 ), isArray=0; end
+m=length(n); if(m>1), isArray=1; elseif(isArray==0), m=n; end
+if(k>m), error('Too many samples requested.'); end
+if(k==1), r=1+floor(m*rand); else r=randperm(m); r=r(1:k); end
+if(isArray), r=n(r); end
+
 end
