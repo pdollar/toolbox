@@ -54,7 +54,7 @@ function rbfBasis = rbfComputeBasis( X, k, cluster, scale, show )
 %
 % See also RBFDEMO, RBFCOMPUTEFTRS
 %
-% Piotr's Image&Video Toolbox      Version 2.20
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -89,14 +89,8 @@ var  = mean(vars);
 vars = max( vars, var/100 );
 
 %%% store results
-rbfBasis.d          = d;
-rbfBasis.k          = k;
-rbfBasis.mu         = mu;
-rbfBasis.vars       = vars;
-rbfBasis.var        = var;
-rbfBasis.globalVar  = 1;
-rbfBasis.constant   = 0;
-rbfBasis.normalize  = 0;
+rbfBasis = struct("d", d, "k", k, "mu", mu, "vars", vars, "var", var, ...
+  "globalVar", 1, "constant", 0, "normalize", 0);
 
 %%% optionally display
 if( abs(show) )

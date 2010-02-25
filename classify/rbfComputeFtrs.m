@@ -17,7 +17,7 @@ function Xrbf = rbfComputeFtrs( X, rbfBasis )
 %
 % See also RBFDEMO, RBFCOMPUTEBASIS
 %
-% Piotr's Image&Video Toolbox      Version 2.20
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -33,18 +33,17 @@ Xrbf = sum(bsxfun(@minus,reshape(X,[N 1 d]),reshape(mu,[1 k d])).^2,3);
 
 % compute gaussian response
 if( rbfBasis.globalVar )
-  Xrbf = exp( -Xrbf / (rbfBasis.var*2) );
+  Xrbf = exp( Xrbf / (-2*rbfBasis.var) );
 else
-  Xrbf = exp( -Xrbf ./ (rbfBasis.vars(ones(N,1),:)*2) );
+  Xrbf = exp( bsxfun(@rdivide, Xrbf, -2*rbfBasis.vars ) );
 end
 
 % add constant vector of ones as last feature
 if( rbfBasis.constant )
-  Xrbf = [Xrbf ones(N,1)]; k=k+1;
+  Xrbf(:,end+1) = 1;
 end
 
 % normalize rbfs to sum to 1
 if( rbfBasis.normalize )
-  onesK=ones(k,1); norm=sum(Xrbf,2);
-  Xrbf = Xrbf ./ norm(:,onesK);
+  Xrbf = bsxfun(@rdivide, Xrbf, sum(Xrbf,2));
 end
