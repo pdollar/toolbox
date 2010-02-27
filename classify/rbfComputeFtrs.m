@@ -22,14 +22,9 @@ function Xrbf = rbfComputeFtrs( X, rbfBasis )
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
-N = size(X,1);
-k = rbfBasis.k;
-mu = rbfBasis.mu';
-d = size(mu,2);
-
 % compute distance to each basis function
 % mu=[k x d]; onesK=[k x 1]; Xi=[1 x d];
-Xrbf = sum(bsxfun(@minus,reshape(X,[N 1 d]),reshape(mu,[1 k d])).^2,3);
+Xrbf = pdist2(X,rbfBasis.mu','sqeuclidean');
 
 % compute gaussian response
 if( rbfBasis.globalVar )
