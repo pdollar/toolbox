@@ -20,12 +20,14 @@ disp('Compiling.......................................');
 rd=fileparts(mfilename('fullpath')); rd=rd(1:end-9);
 
 % general compile options (can make architecture specific)
-opts = {'-output'};
+if exist('OCTAVE_VERSION','builtin') opts = {'-o'};
+else opts = {'-output'};
+end
 
 % compile c functions
 fs={'assignToBins1','histc2c','ktHistcRgb_c','ktComputeW_c',...
   'nlfiltersep_max','nlfiltersep_sum','imResample1','meanShift1'};
-ds=[repmat({'images'},1,7),'classify'];
+ds=[repmat({'images'},1,7),{'classify'}];
 for i=1:length(fs), mex([rd '/' ds{i} '/private/' fs{i} '.c'],...
     opts{:},[rd '/' ds{i} '/private/' fs{i} '.' mexext]); end
 
