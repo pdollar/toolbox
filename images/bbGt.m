@@ -81,7 +81,7 @@ function varargout = bbGt( action, varargin )
 % bbGt>evalResDir, bbGt>compRoc, bbGt>cropRes, bbGt>compOas, bbGt>compOa,
 % bbGt>sampleData
 %
-% Piotr's Image&Video Toolbox      Version 2.42
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -286,10 +286,11 @@ function [gtBbs,ids] = toGt( objs, prm )
 % The range for each property is a two element vector, [0 inf] by default;
 % a property value v is inside the range if v>=rng(1) && v<=rng(2). Tested
 % properties include height (h), width (w), area (a), aspect ratio (ar),
-% orienation (o), and fraction visible (v). The last property is computed
-% as the visible object area divided by the total area, except if o.occ==0,
-% in which case v=1, or all(o.bbv==o.bb), which indicates the object may be
-% barely visible, in which case v=0 (note that v~=1 in this case).
+% orienation (o), extent x-coordinate (x), extent y-coordinate (y), and
+% fraction visible (v). The last property is computed as the visible object
+% area divided by the total area, except if o.occ==0, in which case v=1, or
+% all(o.bbv==o.bb), which indicates the object may be barely visible, in
+% which case v=0 (note that v~=1 in this case).
 %
 % USAGE
 %  gtBbs = bbGt( 'toGt', objs, prm )
@@ -304,6 +305,8 @@ function [gtBbs,ids] = toGt( objs, prm )
 %   .aRng       - [0 inf] range of acceptable obj areas
 %   .arRng      - [0 inf] range of acceptable obj aspect ratios
 %   .oRng       - [0 inf] range of acceptable obj orientations (angles)
+%   .xRng       - [-inf inf] range of x coordinates of bb extent
+%   .yRng       - [-inf inf] range of y coordinates of bb extent
 %   .vRng       - [0 inf] range of acceptable obj occlusion levels
 %   .ar         - [] standardize aspect ratios of bbs
 %   .pad        - [0] frac extra padding for each patch (or [padx pady])
@@ -322,10 +325,10 @@ function [gtBbs,ids] = toGt( objs, prm )
 %
 % See also bbGt
 
-r=[0 inf];
+r=[0 inf]; r1=[-inf inf];
 dfs={'lbls',[],'ilbls',[],'hRng',r,'wRng',r,'aRng',r,'arRng',r,...
-  'oRng',r,'vRng',r,'ar',[],'pad',0,'ellipse',1};
-[lbls,ilbls,hRng,wRng,aRng,arRng,oRng,vRng,ar0,pad,ellipse] = ...
+  'oRng',r,'xRng',r1,'yRng',r1,'vRng',r,'ar',[],'pad',0,'ellipse',1};
+[lbls,ilbls,hRng,wRng,aRng,arRng,oRng,xRng,yRng,vRng,ar0,pad,ellipse] = ...
   getPrmDflt(prm,dfs,1);
 if(numel(pad)==1), pad=[pad pad]; end;
 nObj=length(objs); keep=true(nObj,1); gtBbs=zeros(nObj,5);
@@ -334,11 +337,13 @@ for i=1:nObj, o=objs(i);
   if(~isempty(lbls) && ~any(strcmp(o.lbl,lbls))), keep(i)=0; continue; end
   bb=o.bb; bbv=o.bbv; w=bb(3); h=bb(4); a=w*h; ar=w/h; ang=mod(o.ang,360);
   if(~o.occ || all(bbv==0)), v=1; elseif(all(bbv==bb)), v=0; else
-    v=bbv(3)*bbv(4)/a;
-  end
+    v=bbv(3)*bbv(4)/a; end
+  ex = bbExtent(o.bb,ang,ellipse);
   ign = o.ign || any(strcmp(o.lbl,ilbls)) || chk(h,hRng) || chk(w,wRng) ...
-    || chk(a,aRng) || chk(ar,arRng) || chk(ang,oRng) || chk(v,vRng);
-  gtBbs(i,1:4)=bbExtent(o.bb,ang,ellipse); gtBbs(i,5)=ign;
+    || chk(a,aRng) || chk(ar,arRng) || chk(ang,oRng) || chk(v,vRng) ...
+    || chk(ex(1),xRng) || chk(ex(1)+ex(3),xRng) ...
+    || chk(ex(2),yRng) || chk(ex(2)+ex(4),xRng);
+  gtBbs(i,1:4)=ex; gtBbs(i,5)=ign;
 end
 ids=find(keep); gtBbs=gtBbs(keep,:);
 if(ar0), gtBbs=bbApply('squarify',gtBbs,0,ar0); end
