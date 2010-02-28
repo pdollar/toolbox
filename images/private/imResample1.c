@@ -97,14 +97,14 @@ void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
 	/* convert to double if id!=mxDOUBLE_CLASS */
 	A1=mxGetData(prhs[0]); B1=mxGetData(plhs[0]);
-	if( id==mxDOUBLE_CLASS ) { A=A1; B=B1; } else {
-		A = mxMalloc( ns[0]*ns[1]*nCh*sizeof(double) );
-		B = mxCalloc( ms[0]*ms[1]*nCh,sizeof(double) );
+	if( id==mxDOUBLE_CLASS ) { A=(double*) A1; B=(double*) B1; } else {
+		A = (double*) mxMalloc( ns[0]*ns[1]*nCh*sizeof(double) );
+		B = (double*) mxCalloc( ms[0]*ms[1]*nCh,sizeof(double) );
 	}
 	if(id==mxUINT8_CLASS) for(i=0; i<ns[0]*ns[1]*nCh; i++) A[i]=(double) ((uchar*)A1)[i];
 
 	/* Perform rescaling */
-	T = mxCalloc(ms[0]*ns[1]*nCh, sizeof(double) );
+	T = (double*) mxCalloc(ms[0]*ns[1]*nCh, sizeof(double) );
 	resample( A, T, ns[0], ms[0], ns[1], nCh );
 	resample( T, B, ns[1], ms[1], ms[0], nCh );
 	mxFree(T);
