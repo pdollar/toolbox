@@ -22,6 +22,9 @@ rd=fileparts(mfilename('fullpath')); rd=rd(1:end-9);
 % general compile options (can make architecture specific)
 if exist('OCTAVE_VERSION','builtin') opts = {'-o'};
 else opts = {'-output'};
+  % if you get warnings on linux, you couldforce the gcc version this way
+  % opts = {'CXX=g++-4.1' 'CC=g++-4.1' 'LD=g++-4.1' '-l' ...
+  % 'mwlapack' '-l' 'mwblas' '-output' };
 end
 
 % compile c functions
