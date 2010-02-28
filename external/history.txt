@@ -1,7 +1,8 @@
 Version NEW
  -bbApply.m: crop() correctly returns extent of cropped bbs
  -bbGt>toGt(): additional options
- -minor: randSample, rbfComputeBasis, rbfComputeFtrs, seqIo
+ -toolboxCompile.m: rewrite
+ -minor: randSample, rbfComputeBasis, rbfComputeFtrs, seqIo, imResample1
 
 Version 2.42 (22-Feb-10)
  -jitterImage.m: major overhaul (also removed jitterVideo.m as it was broken)

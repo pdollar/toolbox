@@ -17,37 +17,27 @@
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 disp('Compiling.......................................');
-savepwd=pwd; cd(fileparts(mfilename('fullpath'))); cd('../');
+rd=fileparts(mfilename('fullpath')); rd=rd(1:end-9);
 
-% compile each file
-for filePath={'classify/private/meanShift1.c', ...
-  'images/private/assignToBins1.c', 'images/private/histc2c.c', ...
-  'images/private/ktHistcRgb_c.c', 'images/private/ktComputeW_c.c', ...
-  'images/private/nlfiltersep_max.c', ...
-  'images/private/nlfiltersep_sum.c', 'images/private/imResample1.c', ...
-  'images/private/hog1.cpp', { 'matlab/private/fibheap.cpp', ...
-  'matlab/private/dijkstra1.cpp'} }
-  if iscell(filePath{1}) filePath = filePath{1}; end
-  [fileDir, fileName]=fileparts(filePath{1});
-  switch computer
-    case 'PCWIN',
-      %windows
-      opts = {'-outdir' fileDir};
-    case {'GLNX86', 'GLNXA64'},
-      % matlab linux
-      opts = {'CXX=g++-4.1' 'CC=g++-4.1' 'LD=g++-4.1' '-l' ...
-        'mwlapack' '-l' 'mwblas' '-outdir' fileDir};
-    case {'i686-pc-linux-gnu', 'x86_64-pc-linux-gnu'},
-      % octave linux
-      opts = {'-o' [ fileDir '/' fileName '.mex' ]};
-    end
-  try
-    mex( filePath{:}, opts{:} );
-  catch
-    fprintf(['C++ mex failed, likely due to lack of a C++ compiler.\n' ...
-      'Run ''mex -setup'' to specify a C++ compiler if available.\n'...
-      'Or, on LINUX specify a specific C++ explicitly (see opts above).\n']);
-  end
+% general compile options (can make architecture specific)
+opts = {'-output'};
+
+% compile c functions
+fs={'assignToBins1','histc2c','ktHistcRgb_c','ktComputeW_c',...
+  'nlfiltersep_max','nlfiltersep_sum','imResample1','meanShift1'};
+ds=[repmat({'images'},1,7),'classify'];
+for i=1:length(fs), mex([rd '/' ds{i} '/private/' fs{i} '.c'],...
+    opts{:},[rd '/' ds{i} '/private/' fs{i} '.' mexext]); end
+
+% compile c++ functions
+try
+  f=[rd '/images/private/hog1']; mex([f '.cpp'],opts{:},[f '.' mexext]);
+  d=[rd '/matlab/private/']; mex([d 'fibheap.cpp'],[d 'dijkstra1.cpp'], ...
+    opts{:}, [d 'dijkstra1.' mexext]);
+catch ME
+  fprintf(['C++ mex failed, likely due to lack of a C++ compiler.\n' ...
+    'Run ''mex -setup'' to specify a C++ compiler if available.\n'...
+    'Or, one can specify a specific C++ explicitly (see mex help).\n']);
 end
 
-cd(savepwd); disp('..................................Done Compiling');
+disp('..................................Done Compiling');
