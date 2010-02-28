@@ -11,7 +11,7 @@
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 2.42
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -19,32 +19,35 @@
 disp('Compiling.......................................');
 savepwd=pwd; cd(fileparts(mfilename('fullpath'))); cd('../');
 
-% general compile options
-opts0 = {'-outdir'};
-%opts0=['CXX=g++-4.1' 'CC=g++-4.1' 'LD=g++-4.1' opts0];
-
-dir='classify/private/'; opts=[opts0 dir];
-mex([dir 'meanShift1.c'],           opts{:} );
-
-dir='images/private/'; opts=[opts0 dir];
-mex([dir 'assignToBins1.c'],        opts{:} );
-mex([dir 'histc2c.c'],              opts{:} );
-mex([dir 'ktHistcRgb_c.c'],         opts{:} );
-mex([dir 'ktComputeW_c.c'],         opts{:} );
-mex([dir 'nlfiltersep_max.c'],      opts{:} );
-mex([dir 'nlfiltersep_sum.c'],      opts{:} );
-mex([dir 'imResample1.c'],          opts{:} );
-
-try
-  % requires c++ compiler
-  dir='images/private/'; opts=[opts0 dir];
-  mex([dir 'hog1.cpp'], opts{:} );
-  dir='matlab/private/'; opts=[opts0 dir '-output' 'dijkstra1'];
-  mex([dir 'fibheap.cpp'],[dir 'dijkstra1.cpp'], opts{:} );
-catch ME
-  fprintf(['C++ mex failed, likely due to lack of a C++ compiler.\n' ...
-    'Run ''mex -setup'' to specify a C++ compiler if available.\n'...
-    'Or, on LINUX specify a specific C++ explicitly (see opts above).\n']);
+% compile each file
+for filePath={'classify/private/meanShift1.c', ...
+  'images/private/assignToBins1.c', 'images/private/histc2c.c', ...
+  'images/private/ktHistcRgb_c.c', 'images/private/ktComputeW_c.c', ...
+  'images/private/nlfiltersep_max.c', ...
+  'images/private/nlfiltersep_sum.c', 'images/private/imResample1.c', ...
+  'images/private/hog1.cpp', { 'matlab/private/fibheap.cpp', ...
+  'matlab/private/dijkstra1.cpp'} }
+  if iscell(filePath{1}) filePath = filePath{1}; end
+  [fileDir, fileName]=fileparts(filePath{1});
+  switch computer
+    case 'PCWIN',
+      %windows
+      opts = {'-outdir' fileDir};
+    case {'GLNX86', 'GLNXA64'},
+      % matlab linux
+      opts = {'CXX=g++-4.1' 'CC=g++-4.1' 'LD=g++-4.1' '-l' ...
+        'mwlapack' '-l' 'mwblas' '-outdir' fileDir};
+    case {'i686-pc-linux-gnu', 'x86_64-pc-linux-gnu'},
+      % octave linux
+      opts = {'-o' [ fileDir '/' fileName '.mex' ]};
+    end
+  try
+    mex( filePath{:}, opts{:} );
+  catch
+    fprintf(['C++ mex failed, likely due to lack of a C++ compiler.\n' ...
+      'Run ''mex -setup'' to specify a C++ compiler if available.\n'...
+      'Or, on LINUX specify a specific C++ explicitly (see opts above).\n']);
+  end
 end
 
 cd(savepwd); disp('..................................Done Compiling');
