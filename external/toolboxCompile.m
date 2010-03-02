@@ -20,7 +20,7 @@ disp('Compiling.......................................');
 rd=fileparts(mfilename('fullpath')); rd=rd(1:end-9);
 
 % general compile options (can make architecture specific)
-opts = {'-output' '-l' 'mwlapack'};
+opts = {'-l' 'mwlapack' '-output'};
 if(exist('OCTAVE_VERSION','builtin')), opts={'-o'}; end
 
 % if you get warnings on linux, you can set the gcc version using:
