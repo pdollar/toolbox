@@ -21,15 +21,16 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray * prhs[]) {
 	double *B = mxGetPr(prhs[1]);
 	const mwSize *dimArrayB = mxGetDimensions(prhs[1]);
 	int colB;
-	int nCase = *( (double * ) mxGetPr(prhs[2]) );
+	int nCase = (int) (*( (double * ) mxGetPr(prhs[2]) ));
 
 	switch (nCase) {
 		case 1:
-		case 2:
+		case 2: {
 			colB = dimArrayB[1];
 			const mwSize dimArrayX[3] = {colA, colB, nSet};
 			plhs[0] = mxCreateNumericArray(3, dimArrayX, mxDOUBLE_CLASS, mxREAL);
 			break;
+		}
 		case 3:
 			colB = 1;
 			fprintf(stderr,"%i %i %i %i\n",row, colA, colB, nSet);
