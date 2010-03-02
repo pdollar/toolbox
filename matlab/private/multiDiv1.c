@@ -1,3 +1,9 @@
+/***************************************************************************
+* Piotr's Image&Video Toolbox      Version NEW
+* Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
+* Please email me if you find bugs, or have suggestions or questions!
+* Licensed under the Lesser GPL [see external/lgpl.txt]
+***************************************************************************/
 #include "mex.h"
 #include <math.h>
 #include <string.h>
@@ -8,8 +14,8 @@
 #include "lapack.h"
 #else
 void dgels_(const char *trans, const int *M, const int *N, const int *nrhs,
-double *A, const int *lda, double *b, const int *ldb, double *work, const
-int * lwork, int *info);
+			double *A, const int *lda, double *b, const int *ldb, double *work, const
+			int * lwork, int *info);
 #endif
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray * prhs[]) {
@@ -30,7 +36,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray * prhs[]) {
 			const mwSize dimArrayX[3] = {colA, colB, nSet};
 			plhs[0] = mxCreateNumericArray(3, dimArrayX, mxDOUBLE_CLASS, mxREAL);
 			break;
-		}
+				}
 		case 3:
 			colB = 1;
 			plhs[0] = mxCreateDoubleMatrix(colA, nSet, mxREAL);
@@ -48,9 +54,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray * prhs[]) {
 	double *work = (double*)malloc( 10*sizeof(double) );
 	int lwork = -1;
 	dgels_( trans, &row, &colA, &colB, A,
-				&row, B, &row, work, &lwork, &info );
+		&row, B, &row, work, &lwork, &info );
 	lwork = (int) work[0];
-	
+
 	free(work);
 	work = (double*)malloc( lwork*sizeof(double) );
 
@@ -74,14 +80,14 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray * prhs[]) {
 		}
 		/* proceed with the least squares */
 		dgels_( trans, &row, &colA, &colB, ATmp,
-					&row, BTmp, &row, work, &lwork, &info );
+			&row, BTmp, &row, work, &lwork, &info );
 		/* copy back the result to X */
 		int j;
 		for(j=0; j<colB; ++j)
 			memcpy(X+i*(colA*colB) + j*colA, BTmp+j*row,
-				colA*sizeof(double));
+			colA*sizeof(double));
 	}
-	
+
 	/* free memory */
 	free(ATmp);
 	free(BTmp);
