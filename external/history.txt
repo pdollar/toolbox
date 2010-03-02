@@ -2,7 +2,6 @@ Version NEW
  -bbApply.m: crop() correctly returns extent of cropped bbs
  -bbGt>toGt(): additional options
  -toolboxCompile.m: rewrite
- -multiDiv: faster thanks to a mex-file
  -minor: randSample, rbfComputeBasis, rbfComputeFtrs, seqIo, imResample1
 
 Version 2.42 (22-Feb-10)

@@ -20,18 +20,17 @@ disp('Compiling.......................................');
 rd=fileparts(mfilename('fullpath')); rd=rd(1:end-9);
 
 % general compile options (can make architecture specific)
-opts = {'-l' 'mwlapack' '-output'};
+opts = {'-output'};
 if(exist('OCTAVE_VERSION','builtin')), opts={'-o'}; end
 
 % if you get warnings on linux, you can set the gcc version using:
-% opts = {'CXX=g++-4.1' 'CC=g++-4.1' 'LD=g++-4.1' ...
-%    '-l' 'mwblas' '-output' };
+% opts = {'CXX=g++-4.1' 'CC=g++-4.1' 'LD=g++-4.1' '-l' ...
+%   'mwlapack' '-l' 'mwblas' '-output' };
 
 % compile c functions
 fs={'assignToBins1','histc2c','ktHistcRgb_c','ktComputeW_c',...
-  'nlfiltersep_max','nlfiltersep_sum','imResample1','meanShift1',...
-  'multiDiv1'};
-ds=[repmat({'images'},1,7),{'classify'},{'matlab'}];
+  'nlfiltersep_max','nlfiltersep_sum','imResample1','meanShift1'};
+ds=[repmat({'images'},1,7),{'classify'}];
 for i=1:length(fs), mex([rd '/' ds{i} '/private/' fs{i} '.c'],...
     opts{:},[rd '/' ds{i} '/private/' fs{i} '.' mexext]); end
 
