@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 #ifdef MATLAB_MEX_FILE
-#include "blas.h"
+#include "lapack.h"
 #else
 void dgels_(const char *trans, const int *M, const int *N, const int *nrhs,
 double *A, const int *lda, double *b, const int *ldb, double *work, const
@@ -33,7 +33,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray * prhs[]) {
 		}
 		case 3:
 			colB = 1;
-			fprintf(stderr,"%i %i %i %i\n",row, colA, colB, nSet);
 			plhs[0] = mxCreateDoubleMatrix(colA, nSet, mxREAL);
 			break;
 	}
