@@ -20,12 +20,12 @@ disp('Compiling.......................................');
 rd=fileparts(mfilename('fullpath')); rd=rd(1:end-9);
 
 % general compile options (can make architecture specific)
-opts = {'-output'};
+opts = {'-output' '-l' 'mwlapack'};
 if(exist('OCTAVE_VERSION','builtin')), opts={'-o'}; end
 
 % if you get warnings on linux, you can set the gcc version using:
-% opts = {'CXX=g++-4.1' 'CC=g++-4.1' 'LD=g++-4.1' '-l' ...
-%   'mwlapack' '-l' 'mwblas' '-output' };
+% opts = {'CXX=g++-4.1' 'CC=g++-4.1' 'LD=g++-4.1' ...
+%    '-l' 'mwblas' '-output' };
 
 % compile c functions
 fs={'assignToBins1','histc2c','ktHistcRgb_c','ktComputeW_c',...
