@@ -28,7 +28,8 @@ if( length(TT_STATUS)<id || TT_FREE_IDS(id)==1 )
   error('MATLAB:tocStatus:callTicstatusFirst', ...
     'You must call TICSTATUS before calling TOCSTATUS.');
 end
-[fracDone,er] = checkNumArgs( fracDone, [1 1], -1, 1 ); error(er)
+[fracDone,er] = checkNumArgs( fracDone, [1 1], -1, 1 );
+if ~isempty(er), error(er); end
 if( fracDone>1 ); error(['fracDone: ' num2str(fracDone) ' > 1'] ); end;
 
 %%% get parameters
