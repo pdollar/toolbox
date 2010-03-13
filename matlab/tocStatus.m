@@ -16,7 +16,7 @@ function tocStatus( id, fracDone )
 %
 % See also TICSTATUS
 %
-% Piotr's Image&Video Toolbox      Version 2.0
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -29,7 +29,7 @@ if( length(TT_STATUS)<id || TT_FREE_IDS(id)==1 )
     'You must call TICSTATUS before calling TOCSTATUS.');
 end
 [fracDone,er] = checkNumArgs( fracDone, [1 1], -1, 1 );
-if ~isempty(er), error(er); end
+if(~isempty(er)), error(er); end
 if( fracDone>1 ); error(['fracDone: ' num2str(fracDone) ' > 1'] ); end;
 
 %%% get parameters
