@@ -28,7 +28,7 @@ function seqPlayer( fName, dispFunc )
 %
 % See also SEQIO
 %
-% Piotr's Image&Video Toolbox      Version 2.42
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -279,10 +279,10 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
 
   function api = menuMakeApi()
     % create api
-    fVid=deal([]); dVid='.';
+    fVid=deal([]);
     api=struct('vidClose',@vidClose,'vidOpen',@vidOpen,'audOpen',@audOpen);
-    set(menu.hVidOpn,'Callback',@(h,envt) vidOpen() );
-    set(menu.hVidsOpn,'Callback',@(h,envt) vidsOpen() );
+    set(menu.hVidOpn,'Callback',@(h,envt) vidOpen(1) );
+    set(menu.hVidsOpn,'Callback',@(h,envt) vidOpen(2) );
     set(menu.hVidCls,'Callback',@(h,envt) vidClose() );
     set(menu.hVidAud,'Callback',@(h,envt) audOpen() );
     
@@ -296,17 +296,22 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
       fVid=[]; dispApi.setVid([]); updateMenus();
     end
     
-    function vidOpen( f )
-      if(nargin==1)
-        if(~exist(f,'file') && ~exist([f '.seq'],'file'))
-          errordlg(['File not found: ' f],'Error'); return; end
-        [d f]=fileparts(f); if(isempty(d)), d='./'; else d=[d '/']; end
-      else
-        [f,d]=uigetfile([dVid '/*.seq'],'Select video');
+    function vidOpen( flag )
+      if(isempty(fVid)), d='.'; else d=fileparts(fVid); end
+      if(all(ischar(flag)))
+        [d f]=fileparts(flag); if(isempty(d)), d='.'; end;
+        d=[d '/']; f=[f '.seq']; flag=1;
+      elseif( flag==1 )
+        [f,d]=uigetfile('*.seq','Select video',[d '/*.seq']);
+      elseif( flag==2 )
+        [f,d]=uigetfile('*.seq','Select first video',[d '/*.seq']);
+        [f2,d2]=uigetfile('*.seq','Select second video',[d '/*.seq']);
+        if( f2==0 ), return; end
       end
-      if(f==0), return; end; vidClose(); dVid=d; fVid=f;
+      if( f==0 ), return; end; vidClose(); fVid=[d f];
       try
-        sr=seqIo([dVid fVid],'r');
+        if( flag==1 ), sr=seqIo(fVid,'r'); else
+          sr=seqIo({fVid,[d2 f2]},'rdual'); end
         dispApi.setVid(sr); updateMenus();
       catch er
         errordlg(['Failed to load: ' fVid '. ' er.message],'Error');
@@ -314,29 +319,15 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
       end
     end
     
-    function vidsOpen()
-      [f1,d1]=uigetfile([dVid '/*.seq'],'Select first video');
-      if( f1==0 ), return; end; dVid=d1;
-      [f2,d2]=uigetfile([d1 '/*.seq'],'Select second video');
-      if( f2==0 ), return; end; vidClose(); dVid=d1; fVid=f1;
+    function audOpen( fAud )
+      if( nargin==0 ), [f,d]=uigetfile('*.wav','Select audio',...
+          [fVid(1:end-3) 'wav']); if(f==0), return; end; fAud=[d f]; end
       try
-        sr=seqIo({[dVid fVid],[d2 f2]},'rdual');
-        dispApi.setVid(sr); updateMenus();
+        [y,fs,nb]=wavread(fAud); dispApi.setAud(y,fs,nb);
       catch er
-        errordlg(['Failed to load: ' fVid '. ' er.message],'Error');
-        fVid=[]; return;
+        errordlg(['Failed to load: ' fAud '. ' er.message],'Error');
       end
     end
     
-    function audOpen( d, f )
-      if(nargin<2), [f,d]=uigetfile([dVid '/*.wav'],'Select audio'); end
-      if(f==0), return; end
-      [d f]=fileparts([d f]); if(isempty(d)), d='.'; end; d(end+1)='/';
-      try
-        f=[d f]; [y,fs,nb]=wavread(f); dispApi.setAud(y,fs,nb);
-      catch er
-        errordlg(['Failed to load: ' f '. ' er.message],'Error');
-      end
-    end
   end
 end
