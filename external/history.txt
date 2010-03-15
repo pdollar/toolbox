@@ -1,6 +1,7 @@
 Version NEW
  -bbApply.m: crop() correctly returns extent of cropped bbs
  -bbGt>toGt(): additional options
+ -fevalDistr.m: jobs can return outputs (not limited to writing res to disk)
  -toolboxCompile.m: rewrite
  -minor: randSample, rbfComputeBasis, rbfComputeFtrs, seqIo, imResample1, ...
    tocStatus, seqPlayer
