@@ -1,7 +1,7 @@
 Version NEW
  -classify/clf*.m, nfoldxval.m, demoClassify.m: moved to external/deprecated,
    these functions were outdated, better code exists, will no longer support these
- -dispMatrixIm.m: code to display a Matrix with non-negative entries in image form.
+ -dispMatrixIm.m: code to display a Matrix with non-negative entries in image form
  -bbApply.m: crop() correctly returns extent of cropped bbs
  -bbGt>toGt(): additional options
  -fevalDistr.m: jobs can return outputs (not limited to writing res to disk)
