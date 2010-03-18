@@ -188,8 +188,8 @@ elseif( strcmp(mode,'convert') )
   
 elseif( strcmp(mode,'header') )
   % seqIo(fName,'header',info)
-  [d,n]=fileparts(fName); fName=[d '/' n];
-  oName=[fName '-' datestr(now,30)];
+  [d,n]=fileparts(fName); if(isempty(d)), d='.'; end
+  fName=[d '/' n]; oName=[fName '-' datestr(now,30)];
   if(exist([fName '-seek.mat'],'file')); delete([fName '-seek.mat']); end
   movefile([fName '.seq'],[oName '.seq'],'f');
   hr = srp( 'open', int32(-1), oName, varargin{1} );
