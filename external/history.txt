@@ -1,4 +1,6 @@
 Version NEW
+ -classify/clf*.m, nfoldxval.m, demoClassify.m: moved to external/deprecated,
+   these functions were outdated, better code exists, will no longer support these
  -bbApply.m: crop() correctly returns extent of cropped bbs
  -bbGt>toGt(): additional options
  -fevalDistr.m: jobs can return outputs (not limited to writing res to disk)
