@@ -1,4 +1,5 @@
 Version NEW
+ -classify/ferns*.m: fast random fern classification/regression code
  -dispMatrixIm.m: code to display a Matrix with non-negative entries in image form
  -fevalDistr.m: jobs can return outputs (not limited to writing res to disk)
  -bbApply.m: crop() correctly returns extent of cropped bbs
