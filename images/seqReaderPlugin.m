@@ -29,7 +29,7 @@ function varargout = seqReaderPlugin( cmd, h, varargin )
 %
 % See also SEQIO, SEQWRITERPLUGIN
 %
-% Piotr's Image&Video Toolbox      Version 2.41
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -153,8 +153,8 @@ switch ext
     if( decode )
       % write/read to/from temporary .jpg (not that much overhead)
       assert(I(1)==255 && I(2)==216 && I(end-1)==255 && I(end)==217); % JPG
-      fw=fopen(tNm,'w'); assert(fw~=-1); fwrite(fw,I); fclose(fw);
-      I=rjpg8c(tNm);
+      fw=fopen(tNm,'w'); if(fw==-1), error(['unable to write: ' tNm]); end
+      fwrite(fw,I); fclose(fw); I=rjpg8c(tNm);
     end
   case 'png'
     fseek(fid,info.seek(frame+1),'bof'); nBytes=fread(fid,1,'uint32');
@@ -190,9 +190,10 @@ function info = readHeader( fid )
 % see streampix manual for info on header
 fseek(fid,0,'bof');
 % first 4 bytes store OxFEED, next 24 store 'Norpix seq  '
-assert(strcmp(sprintf('%X',fread(fid,1,'uint32')),'FEED'));
-assert(strcmp(char(fread(fid,10,'uint16'))','Norpix seq')); %#ok<FREAD>
-fseek(fid,4,'cof');
+if( ~strcmp(sprintf('%X',fread(fid,1,'uint32')),'FEED') || ...
+    ~strcmp(char(fread(fid,10,'uint16'))','Norpix seq') ) %#ok<FREAD>
+  error('invalid header');
+end; fseek(fid,4,'cof');
 % next 8 bytes for version and header size (1024), then 512 for descr
 version=fread(fid,1,'int32'); assert(fread(fid,1,'uint32')==1024);
 descr=char(fread(fid,256,'uint16'))'; %#ok<FREAD>

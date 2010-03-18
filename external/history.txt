@@ -7,7 +7,7 @@ Version NEW
  -classify/clf*.m, nfoldxval.m, demoClassify.m: moved to external/deprecated,
    these functions were outdated, better code exists, will no longer support these
  -minor: randSample, rbfComputeBasis, rbfComputeFtrs, seqIo, imResample1, ...
-   tocStatus, seqPlayer, bbGt, confMatrixShow, textureMap
+   tocStatus, seqPlayer, bbGt, confMatrixShow, textureMap, seqReaderPlugin
 
 Version 2.42 (22-Feb-10)
  -jitterImage.m: major overhaul (also removed jitterVideo.m as it was broken)
