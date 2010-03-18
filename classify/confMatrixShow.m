@@ -23,9 +23,9 @@ function confMatrixShow( CM, types, pvPairs, nDigits, showCnts )
 %  confMatrixShow( CM, types, {'FontSize',20}, [], 0 )
 %  title('confusion matrix','FontSize',24);
 %
-% See also CONFMATRIX, IMLABEL
+% See also confMatrix, imLabel, dispMatrixIm
 %
-% Piotr's Image&Video Toolbox      Version 2.20
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -35,36 +35,18 @@ if( nargin<3 || isempty(pvPairs)); pvPairs = {'FontSize',20}; end
 if( nargin<4 || isempty(nDigits)); nDigits=2; end
 if( nargin<5 || isempty(showCnts)); showCnts=0; end
 if( nDigits<1 || nDigits>10 ); error('too few or too many digits'); end
-if( any(CM)<0 ); error( 'CM must have non-negative entries' ); end
+if( any(CM(:)<0) ); error( 'CM must have non-negative entries' ); end
 
-%%% normalize and convert to integer matrix
+% normalize and round appropriately
 cnts = sum(CM,2);
 CM = CM ./ repmat( cnts+eps, [1 size(CM,2)] );
-CM = round(CM*10^nDigits);
+CM = round(CM*10^nDigits) / 10^nDigits;
 
-%%% display as image
-clf; imagesc(10^nDigits-CM,[0,10^nDigits]);
-colormap gray; axis square;
-set(gca,'XTick',[]); set(gca,'YTick',[]);
+% display as image using dispMatrixIm
+dispMatrixIm(CM,'maxM',1,'maxLen',nDigits+1,'show0',0,...
+  'fStr','%f','invert',1); axis square;
 
-%%% now write text of actual confusion value
-nTypes = size(CM,1);
-txtAlign = {'VerticalAlignment','middle', 'HorizontalAlignment','center'};
-for i=1:nTypes
-  for j=1:nTypes
-    if( CM(i,j)>10^nDigits/2 ); color = 'w'; else color = 'k'; end
-    if( CM(i,j)==10^nDigits )
-      label = ['1.' repmat('0',[1 nDigits-1]) ];
-    elseif( CM(i,j)==0 )
-      label = '';
-    else
-      label = ['.' int2str2( CM(i,j),nDigits) ];
-    end
-    text(j,i,label,'color',color,txtAlign{:},pvPairs{:});
-  end;
-end
-
-%%% now add type labels
+% now add type labels
 if( ~isempty(types) )
   imLabel( types, 'left', 0, pvPairs );
   imLabel( types, 'bottom', -35, pvPairs );
