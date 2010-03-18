@@ -22,6 +22,7 @@
 %   cc                - close all, clc
 %   ccc               - clear, close all, clc, clear global
 %   char2img          - Convert ascii text to a binary image using pre-computed templates.
+%   dispMatrixIm      - Display a Matrix with non-negative entries in image form.
 %   figureResized     - Creates a figures that takes up certain area of screen.
 %   imLabel           - Improved method for labeling figure axes.
 %   plotEllipse       - Adds an ellipse to the current plot.
