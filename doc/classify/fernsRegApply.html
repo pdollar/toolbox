@@ -2,9 +2,9 @@
                 "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
 <head>
-  <title>Description of clfLdaTrain</title>
-  <meta name="keywords" content="clfLdaTrain">
-  <meta name="description" content="Train a Linear Discriminant Analysis (LDA) classifier.">
+  <title>Description of fernsRegApply</title>
+  <meta name="keywords" content="fernsRegApply">
+  <meta name="description" content="Apply learned fern regressor.">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -13,35 +13,36 @@
 <body>
 <a name="_top"></a>
 <!-- menu.html classify -->
-<h1>clfLdaTrain
+<h1>fernsRegApply
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>Train a Linear Discriminant Analysis (LDA) classifier.</strong></div>
+<div class="box"><strong>Apply learned fern regressor.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function clf = clfLdaTrain( clf, X, Y ) </strong></div>
+<div class="box"><strong>function [ys,ysCum] = fernsRegApply( data, ferns, inds ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> Train a Linear Discriminant Analysis (LDA) classifier.
+<div class="fragment"><pre class="comment"> Apply learned fern regressor.
 
  USAGE
-  clf = clfLdaTrain( clf, X, Y )
+  [ys,ysCum] = fernsRegApply( data, ferns, [inds] )
 
  INPUTS
-  clf     - model to be trained
-  X       - nxp data  array
-  Y       - nx1 array of labels (or cell array, see classify.m)
+  data     - [NxF] N length F binary feature vectors
+  ferns    - learned fern regression model
+  inds     - [NxM] cached inds (from previous call to fernsInds)
 
  OUTPUTS
-  clf     - a trained LDA model
+  ys       - [Nx1] predicted output values
+  ysCum    - [NxM] predicted output values after each regressor
 
  EXAMPLE
 
- See also <a href="clfLda.html" class="code" title="function clf = clfLda( p, type, prior )">CLFLDA</a>, <a href="clfLdaFwd.html" class="code" title="function Y = clfLdaFwd( clf, X )">CLFLDAFWD</a>
+ See also <a href="fernsRegTrain.html" class="code" title="function [ferns,ysPr] = fernsRegTrain( data, ys, varargin )">fernsRegTrain</a>, <a href="fernsInds.html" class="code" title="function inds = fernsInds( data, fids, thrs )">fernsInds</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.0
- Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 2.50
+ Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
 
@@ -49,10 +50,10 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-</ul>
+<li><a href="fernsInds.html" class="code" title="function inds = fernsInds( data, fids, thrs )">fernsInds</a>	Compute indices for each input by each fern.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="clfLda.html" class="code" title="function clf = clfLda( p, type, prior )">clfLda</a>	Create a Linear Discriminant Analysis (LDA) classifier.</li></ul>
+</ul>
 <!-- crossreference -->
 
 

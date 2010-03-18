@@ -2,9 +2,9 @@
                 "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
 <head>
-  <title>Description of clfDecTree</title>
-  <meta name="keywords" content="clfDecTree">
-  <meta name="description" content="Wrapper for treefit that makes decision trees compatible with nfoldxval.">
+  <title>Description of fernsClfApply</title>
+  <meta name="keywords" content="fernsClfApply">
+  <meta name="description" content="Apply learned fern classifier.">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -13,34 +13,36 @@
 <body>
 <a name="_top"></a>
 <!-- menu.html classify -->
-<h1>clfDecTree
+<h1>fernsClfApply
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>Wrapper for treefit that makes decision trees compatible with nfoldxval.</strong></div>
+<div class="box"><strong>Apply learned fern classifier.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function clf = clfDecTree( p, varargin ) </strong></div>
+<div class="box"><strong>function [hs,probs] = fernsClfApply( data, ferns, inds ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> Wrapper for treefit that makes decision trees compatible with nfoldxval.
+<div class="fragment"><pre class="comment"> Apply learned fern classifier.
 
  USAGE
-  clf = clfDecTree( p, varargin )
+  [hs,probs] = fernsClfApply( data, ferns, [inds] )
 
  INPUTS
-  p       - data dimension
-  varargin- params for treefit, ex: 'splitmin'',2,'priorprob',ones(1,n)/n
+  data     - [NxF] N length F binary feature vectors
+  ferns    - learned fern classification model
+  inds     - [NxM] cached inds (from previous call to fernsInds)
 
  OUTPUTS
-  clf     - model ready to be trained
+  hs       - [Nx1] predicted output labels
+  probs    - [NxH] predicted output label probabilities
 
  EXAMPLE
 
- See also <a href="nfoldxval.html" class="code" title="function CM=nfoldxval( data, IDX, clfInit, clfparams,types, ignoreT, fname, show )">NFOLDXVAL</a>, TREEFIT, <a href="clfDecTreeFwd.html" class="code" title="function Y = clfDecTreeFwd( clf, X )">CLFDECTREEFWD</a>, <a href="clfDecTreeTrain.html" class="code" title="function clf = clfDecTreeTrain( clf, X, Y )">CLFDECTREETRAIN</a>
+ See also <a href="fernsClfTrain.html" class="code" title="function [ferns,hsPr] = fernsClfTrain( data, hs, varargin )">fernsClfTrain</a>, <a href="fernsInds.html" class="code" title="function inds = fernsInds( data, fids, thrs )">fernsInds</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.0
- Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 2.50
+ Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
 
@@ -48,10 +50,10 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="clfDecTreeFwd.html" class="code" title="function Y = clfDecTreeFwd( clf, X )">clfDecTreeFwd</a>	Apply the decision tree to data X.</li><li><a href="clfDecTreeTrain.html" class="code" title="function clf = clfDecTreeTrain( clf, X, Y )">clfDecTreeTrain</a>	Train a decision tree classifier.</li></ul>
+<li><a href="fernsInds.html" class="code" title="function inds = fernsInds( data, fids, thrs )">fernsInds</a>	Compute indices for each input by each fern.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-</ul>
+<li><a href="fernsClfTrain.html" class="code" title="function [ferns,hsPr] = fernsClfTrain( data, hs, varargin )">fernsClfTrain</a>	Train random fern classifier.</li></ul>
 <!-- crossreference -->
 
 

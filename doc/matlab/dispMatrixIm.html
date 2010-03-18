@@ -2,9 +2,9 @@
                 "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
 <head>
-  <title>Description of confMatrixShow</title>
-  <meta name="keywords" content="confMatrixShow">
-  <meta name="description" content="Used to display a confusion matrix.">
+  <title>Description of dispMatrixIm</title>
+  <meta name="keywords" content="dispMatrixIm">
+  <meta name="description" content="Display a Matrix with non-negative entries in image form.">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -12,42 +12,41 @@
 </head>
 <body>
 <a name="_top"></a>
-<!-- menu.html classify -->
-<h1>confMatrixShow
+<!-- menu.html matlab -->
+<h1>dispMatrixIm
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>Used to display a confusion matrix.</strong></div>
+<div class="box"><strong>Display a Matrix with non-negative entries in image form.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function confMatrixShow( CM, types, pvPairs, nDigits, showCnts ) </strong></div>
+<div class="box"><strong>function dispMatrixIm( M, varargin ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> Used to display a confusion matrix.
-
- See confMatrix for general format and info on confusion matricies. This
- function normalizes the CM before displaying, hence all values range in
- [0,1] and rows sum to 1.
+<div class="fragment"><pre class="comment"> Display a Matrix with non-negative entries in image form.
 
  USAGE
-  confMatrixShow( CM, [types], [pvPairs], [nDigits], [showCnts] )
+  dispMatrixIm( M, [varargin] )
 
  INPUTS
-  CM          - [nTypes x nTypes] confusion array -- see confMatrix
-  types       - [] cell array of length nTypes of text labels
-  pvPairs     - [{'FontSize',20}] parameter / value list for text.m
-  nDigits     - [2] number of digits after decimal to display
-  showCnts    - [0] show total count per row to the right
+  M          - [m x n] arbitrary matrix with non-negative entries
+  varargin   - additional params (struct or name/value pairs)
+   .fStr       - ['%1.2f'] format for each element
+   .invert     - [0] if 1 display large values as dark
+   .show0      - [1] if false don't display values exactly equal to 0
+   .maxM       - [] maximum possible value im M (defines display range)
+   .maxLen     - [inf] maximum number of chars to display per element
+   .pvPairs    - [{'FontSize',20}] parameter / value list for text.m
 
  OUTPUTS
 
  EXAMPLE
-  CM = randint2(6,6,[1,100])+eye(6)*500;
-  types = { 'anger','disgust','fear','joy','sadness','surprise' };
-  confMatrixShow( CM, types, {'FontSize',20}, [], 0 )
-  title('confusion matrix','FontSize',24);
+  figure(1); dispMatrixIm(round(rand(5)*100),'fStr','%d','maxM',100)
+  figure(2); dispMatrixIm(rand(3,5),'fStr','%0.3f','invert',1)
+  imLabel({'a','b','c'},'left',0,{'FontSize',20});
+  imLabel({'1','2','3','4','5'},'bottom',0,{'FontSize',20});
 
- See also <a href="confMatrix.html" class="code" title="function CM = confMatrix( IDXtrue, IDXpred, ntypes )">confMatrix</a>, imLabel, dispMatrixIm
+ See also <a href="imLabel.html" class="code" title="function imLabel( labels, position, S, pvPairs )">imLabel</a>, confMatrixShow
 
  Piotr's Image&amp;Video Toolbox      Version 2.50
  Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -58,10 +57,10 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="../matlab/dispMatrixIm.html" class="code" title="function dispMatrixIm( M, varargin )">dispMatrixIm</a>	Display a Matrix with non-negative entries in image form.</li><li><a href="../matlab/imLabel.html" class="code" title="function imLabel( labels, position, S, pvPairs )">imLabel</a>	Improved method for labeling figure axes.</li><li><a href="../matlab/int2str2.html" class="code" title="function nstr = int2str2( n, nDigits )">int2str2</a>	Convert integer to string of given length; improved version of int2str.</li></ul>
+<li><a href="getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-</ul>
+<li><a href="../classify/confMatrixShow.html" class="code" title="function confMatrixShow( CM, types, pvPairs, nDigits, showCnts )">confMatrixShow</a>	Used to display a confusion matrix.</li></ul>
 <!-- crossreference -->
 
 

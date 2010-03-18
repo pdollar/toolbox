@@ -1,3 +1,14 @@
+Version 2.50 (18-Mar-10)
+ -classify/ferns*.m: fast random fern classification/regression code
+ -dispMatrixIm.m: code to display a Matrix with non-negative entries in image form
+ -fevalDistr.m: jobs can return outputs (not limited to writing res to disk)
+ -bbApply.m: crop() correctly returns extent of cropped bbs
+ -toolboxCompile.m: rewrite, standardized all c/c++ headers
+ -classify/clf*.m, nfoldxval.m, demoClassify.m: moved to external/deprecated,
+   these functions were outdated, better code exists, will no longer support these
+ -minor: randSample, rbfComputeBasis, rbfComputeFtrs, seqIo, imResample1, ...
+   tocStatus, seqPlayer, bbGt, confMatrixShow, textureMap, seqReaderPlugin
+
 Version 2.42 (22-Feb-10)
  -jitterImage.m: major overhaul (also removed jitterVideo.m as it was broken)
  -getPrmDflt.m: major rewrite (speedup and code cleanup)

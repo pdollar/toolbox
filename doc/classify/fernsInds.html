@@ -2,9 +2,9 @@
                 "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
 <head>
-  <title>Description of clfDecTreeFwd</title>
-  <meta name="keywords" content="clfDecTreeFwd">
-  <meta name="description" content="Apply the decision tree to data X.">
+  <title>Description of fernsInds</title>
+  <meta name="keywords" content="fernsInds">
+  <meta name="description" content="Compute indices for each input by each fern.">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -13,34 +13,35 @@
 <body>
 <a name="_top"></a>
 <!-- menu.html classify -->
-<h1>clfDecTreeFwd
+<h1>fernsInds
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>Apply the decision tree to data X.</strong></div>
+<div class="box"><strong>Compute indices for each input by each fern.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function Y = clfDecTreeFwd( clf, X ) </strong></div>
+<div class="box"><strong>function inds = fernsInds( data, fids, thrs ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> Apply the decision tree to data X.
+<div class="fragment"><pre class="comment"> Compute indices for each input by each fern.
 
  USAGE
-  Y = clfDecTreeFwd( clf, X )
+  inds = fernsInds( data, fids, thrs )
 
  INPUTS
-  clf     - trained model
-  X       - nxp data array
+  data     - [NxF] N length F binary feature vectors
+  fids     - [MxS] feature ids for each fern for each depth
+  thrs     - [MxS] threshold corresponding to each fid
 
  OUTPUTS
-  Y       - nx1 vector of labels predicted according to the clf
+  inds     - [NxM] computed indices for each input by each fern
 
  EXAMPLE
 
- See also <a href="clfDecTree.html" class="code" title="function clf = clfDecTree( p, varargin )">CLFDECTREE</a>
+ See also <a href="fernsClfTrain.html" class="code" title="function [ferns,hsPr] = fernsClfTrain( data, hs, varargin )">fernsClfTrain</a>, <a href="fernsClfApply.html" class="code" title="function [hs,probs] = fernsClfApply( data, ferns, inds )">fernsClfApply</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.0
- Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 2.50
+ Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
 
@@ -51,7 +52,7 @@ This function calls:
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="clfDecTree.html" class="code" title="function clf = clfDecTree( p, varargin )">clfDecTree</a>	Wrapper for treefit that makes decision trees compatible with nfoldxval.</li></ul>
+<li><a href="fernsClfApply.html" class="code" title="function [hs,probs] = fernsClfApply( data, ferns, inds )">fernsClfApply</a>	Apply learned fern classifier.</li><li><a href="fernsClfTrain.html" class="code" title="function [ferns,hsPr] = fernsClfTrain( data, hs, varargin )">fernsClfTrain</a>	Train random fern classifier.</li><li><a href="fernsRegApply.html" class="code" title="function [ys,ysCum] = fernsRegApply( data, ferns, inds )">fernsRegApply</a>	Apply learned fern regressor.</li><li><a href="fernsRegTrain.html" class="code" title="function [ferns,ysPr] = fernsRegTrain( data, ys, varargin )">fernsRegTrain</a>	Train boosted fern regressor.</li></ul>
 <!-- crossreference -->
 
 

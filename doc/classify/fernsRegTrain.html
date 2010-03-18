@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of fernsRegTrain</title>
+  <meta name="keywords" content="fernsRegTrain">
+  <meta name="description" content="Train boosted fern regressor.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html classify -->
+<h1>fernsRegTrain
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Train boosted fern regressor.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [ferns,ysPr] = fernsRegTrain( data, ys, varargin ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Train boosted fern regressor.
+
+ Boosted regression using random ferns as the weak regressor. See &quot;Greedy
+ function approximation: A gradient boosting machine&quot;, Friedman, Annals of
+ Statistics 2001, for more details on boosted regression.
+
+ A few notes on the parameters: 'type' should in general be set to 'res'
+ (the 'ave' version is an undocumented variant that only performs well
+ under limited conditions). 'loss' determines the loss function being
+ optimized, in general the 'L2' version is the most robust and effective.
+ 'reg' is a regularization term for the ferns, a low value such as .01 can
+ improve results. Setting the learning rate 'eta' is crucial in order to
+ achieve good performance, especially on noisy data. In general, eta
+ should decreased as M is increased.
+
+ Dimensions:
+  M - number ferns
+  R - number repeats
+  S - fern depth
+  N - number samples
+  F - number features
+
+ USAGE
+  [ferns,ysPr] = fernsRegTrain( data, hs, [varargin] )
+
+ INPUTS
+  data     - [NxF] N length F feature vectors
+  ys       - [Nx1] target output values
+  varargin - additional params (struct or name/value pairs)
+   .type     - ['res'] options include {'res','ave'}
+   .loss     - ['L2'] options include {'L1','L2','exp'}
+   .S        - [2] fern depth (ferns are exponential in S)
+   .M        - [50] number ferns (same as number phases)
+   .R        - [10] number repetitions per fern
+   .thrr     - [0 1] range for randomly generated thresholds
+   .reg      - [0.01] fern regularization term in [0,1]
+   .eta      - [1] learning rate in [0,1] (not used if type='ave')
+   .verbose  - [0] if true output info to display
+
+ OUTPUTS
+  ferns    - learned fern model w the following fields
+   .fids     - [MxS] feature ids for each fern for each depth
+   .thrs     - [MxS] threshold corresponding to each fid
+   .ysFern   - [2^SxM] stored values at fern leaves
+   .loss     - loss(ys,ysGt) computes loss of ys relateive to ysGt
+  ysPr     - [Nx1] predicted output values
+
+ EXAMPLE
+  %% generate toy data
+  N=1000; sig=.5; f=@(x) cos(x*pi*4)+(x+1).^2;
+  xs0=rand(N,1); ys0=f(xs0)+randn(N,1)*sig;
+  xs1=rand(N,1); ys1=f(xs1)+randn(N,1)*sig;
+  %% train and apply fern regressor
+  prm=struct('type','res','loss','L2','eta',.05,...
+    'thrr',[-1 1],'reg',.01,'S',2,'M',1000,'R',3,'verbose',0);
+  tic, [ferns,ysPr0] = fernsRegTrain(xs0,ys0,prm); toc
+  tic, ysPr1 = fernsRegApply( xs1, ferns ); toc
+  fprintf('errors train=%f test=%f\n',...
+    ferns.loss(ysPr0,ys0),ferns.loss(ysPr1,ys1));
+  %% visualize results
+  figure(1); clf; hold on; plot(xs0,ys0,'.b'); plot(xs0,ysPr0,'.r');
+  figure(2); clf; hold on; plot(xs1,ys1,'.b'); plot(xs1,ysPr1,'.r');
+
+ See also <a href="fernsRegApply.html" class="code" title="function [ys,ysCum] = fernsRegApply( data, ferns, inds )">fernsRegApply</a>, <a href="fernsInds.html" class="code" title="function inds = fernsInds( data, fids, thrs )">fernsInds</a>
+
+ Piotr's Image&amp;Video Toolbox      Version 2.50
+ Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Please email me if you find bugs, or have suggestions or questions!
+ Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="fernsInds.html" class="code" title="function inds = fernsInds( data, fids, thrs )">fernsInds</a>	Compute indices for each input by each fern.</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+
+<!-- Start of Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-4884268-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+<!-- end of Google Analytics Code -->
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

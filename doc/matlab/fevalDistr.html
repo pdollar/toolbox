@@ -20,19 +20,18 @@
 <div class="box"><strong>Run simple jobs locally or in distributed fashion using queue.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function out = fevalDistr( funNm, jobs, varargin ) </strong></div>
+<div class="box"><strong>function [out,res] = fevalDistr( funNm, jobs, varargin ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment"> Run simple jobs locally or in distributed fashion using queue.
 
- Runs &quot;feval(funNm,jobs{i}{:})&quot; for each job either locally or across
+ Runs &quot;r=feval(funNm,jobs{i}{:})&quot; for each job either locally or across
  cluster. Distributed queuing system must be installed separately. If
  queuing system is not installed, this function can still be called with
- either the 'local' or 'pafor' options. jobs should be a cell array of
- length nJob. Each job itself should be a cell array of parameters to pass
- to funNm. funNm must be a valid function in the path. The function funNm
- must return a dummy value, although this value will be ignored. Instead,
- typically funNm should write its results to disk.
+ either the 'local' or 'parfor' options. jobs should be a cell array of
+ length nJob. Each job should be a cell array of parameters to pass to
+ funNm. funNm must be a function in the path and must return a single
+ value (which may be a dummy value if funNm writes its results to disk).
 
  If using type='local', jobs are executed using simple for loop. If using
  type='parfor', the for loop is a parfor loop, make sure to setup matlab
@@ -41,7 +40,7 @@
  defaults to 'local' if cluster code not found.
 
  USAGE
-  out = fevalDistr( funNm, jobs, [varargin] )
+  [out,res] = fevalDistr( funNm, jobs, [varargin] )
 
  INPUTS
   funNm      - name of function that will process jobs
@@ -53,13 +52,20 @@
 
  OUTPUTS
   out        - 1 if jobs completed successfully
+  res        - [1xnJob] cell array containing results of each job
 
  EXAMPLE
+  n=16; jobs=cell(1,n); for i=1:n, jobs{i}={rand(500),ones(25)}; end
+  tic, [out,J] = fevalDistr('conv2',jobs,'type','local'); toc,
+  tic, [out,J] = fevalDistr('conv2',jobs,'type','parfor'); toc,
+  pDistr={'type','distr','pLaunch',{48,401:408}};
+  tic, [out,J] = fevalDistr('conv2',jobs,pDistr{:}); toc
+  figure(1); montage2(cell2array(J))
 
  See also controller, queue
 
- Piotr's Image&amp;Video Toolbox      Version 2.41
- Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 2.50
+ Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
 

@@ -36,8 +36,8 @@
 
  Calculating distances efficiently:
    <a href="distMatrixShow.html" class="code" title="function [D, Dsm] = distMatrixShow( D, IDX, show )">distMatrixShow</a>     - Useful visualization of a distance matrix of clustered points.
-   <a href="softMin.html" class="code" title="function M = softMin( D, sigma )">softMin</a>            - Calculates the <a href="softMin.html" class="code" title="function M = softMin( D, sigma )">softMin</a> of a vector.
    <a href="pdist2.html" class="code" title="function D = pdist2( X, Y, metric )">pdist2</a>             - Calculates the distance between sets of vectors.
+   <a href="softMin.html" class="code" title="function M = softMin( D, sigma )">softMin</a>            - Calculates the <a href="softMin.html" class="code" title="function M = softMin( D, sigma )">softMin</a> of a vector.
 
  Principal components analysis:
    <a href="pca.html" class="code" title="function [ U, mu, vars ] = pca( X )">pca</a>                - Principal components analysis (alternative to princomp).
@@ -46,29 +46,21 @@
    <a href="pcaVisualize.html" class="code" title="function varargout=pcaVisualize( U, mu, vars, X, index, ks, fname, show )">pcaVisualize</a>       - Visualization of quality of approximation of X given principal comp.
    <a href="visualizeData.html" class="code" title="function visualizeData( X, k, IDX, types, C )">visualizeData</a>      - Project high dim. data unto principal components (PCA) for visualization.
 
- Classification methods with a common interface:
-   <a href="demoClassify.html" class="code" title="function demoClassify">demoClassify</a>       - A demo used to test and demonstrate the usage of classifiers (clf*)
-   <a href="nfoldxval.html" class="code" title="function CM=nfoldxval( data, IDX, clfInit, clfparams,types, ignoreT, fname, show )">nfoldxval</a>          - Runs n-fold cross validation on data with a given classifier.
+ Confusion matrix display.
    <a href="confMatrix.html" class="code" title="function CM = confMatrix( IDXtrue, IDXpred, ntypes )">confMatrix</a>         - Generates a confusion matrix according to true and predicted data labels.
    <a href="confMatrixShow.html" class="code" title="function confMatrixShow( CM, types, pvPairs, nDigits, showCnts )">confMatrixShow</a>     - Used to display a confusion matrix.
-   <a href="clfDecTree.html" class="code" title="function clf = clfDecTree( p, varargin )">clfDecTree</a>         - Wrapper for treefit that makes decision trees compatible with <a href="nfoldxval.html" class="code" title="function CM=nfoldxval( data, IDX, clfInit, clfparams,types, ignoreT, fname, show )">nfoldxval</a>.
-   <a href="clfDecTreeFwd.html" class="code" title="function Y = clfDecTreeFwd( clf, X )">clfDecTreeFwd</a>      - Apply the decision tree to data X.
-   <a href="clfDecTreeTrain.html" class="code" title="function clf = clfDecTreeTrain( clf, X, Y )">clfDecTreeTrain</a>    - Train a decision tree classifier.
-   <a href="clfEcoc.html" class="code" title="function clf = clfEcoc(p,clfInit,clfparams,nclasses,use01targets)">clfEcoc</a>            - Wrapper for ecoc that makes ecoc compatible with <a href="nfoldxval.html" class="code" title="function CM=nfoldxval( data, IDX, clfInit, clfparams,types, ignoreT, fname, show )">nfoldxval</a>.
-   <a href="clfEcocCode.html" class="code" title="function [C,nbits] = clfEcocCode( k )">clfEcocCode</a>        - Generates optimal ECOC codes when 3&lt;=nclasses&lt;=7.
-   <a href="clfKnn.html" class="code" title="function clf = clfKnn( p, k, metric )">clfKnn</a>             - Create a k nearest neighbor classifier.
-   <a href="clfKnnDist.html" class="code" title="function IDXpred = clfKnnDist( D, IDX, k )">clfKnnDist</a>         - k-nearest neighbor classifier based on a distance matrix D.
-   <a href="clfKnnFwd.html" class="code" title="function Y = clfKnnFwd( clf, X )">clfKnnFwd</a>          - Apply a k-nearest neighbor classifier to X.
-   <a href="clfKnnTrain.html" class="code" title="function clf = clfKnnTrain( clf, X, Y )">clfKnnTrain</a>        - Train a k nearest neighbor classifier (memorization).
-   <a href="clfLda.html" class="code" title="function clf = clfLda( p, type, prior )">clfLda</a>             - Create a Linear Discriminant Analysis (LDA) classifier.
-   <a href="clfLdaFwd.html" class="code" title="function Y = clfLdaFwd( clf, X )">clfLdaFwd</a>          - Apply the Linear Discriminant Analysis (LDA) classifier to data X.
-   <a href="clfLdaTrain.html" class="code" title="function clf = clfLdaTrain( clf, X, Y )">clfLdaTrain</a>        - Train a Linear Discriminant Analysis (LDA) classifier.
-   <a href="clfSvm.html" class="code" title="function net = clfSvm(varargin)">clfSvm</a>             - Wrapper for svm that makes svm compatible with <a href="nfoldxval.html" class="code" title="function CM=nfoldxval( data, IDX, clfInit, clfparams,types, ignoreT, fname, show )">nfoldxval</a>.
 
  Radial Basis Functions (RBFs)
    <a href="rbfComputeBasis.html" class="code" title="function rbfBasis = rbfComputeBasis( X, k, cluster, scale, show )">rbfComputeBasis</a>    - Get locations and sizes of radial basis functions for use in rbf network.
    <a href="rbfComputeFtrs.html" class="code" title="function Xrbf = rbfComputeFtrs( X, rbfBasis )">rbfComputeFtrs</a>     - Evaluate features of X given a set of radial basis functions.
-   <a href="rbfDemo.html" class="code" title="function rbfDemo( dataType, noiseSig, scale, k, cluster, show )">rbfDemo</a>            - Demonstration of rbf networks for regression.</pre></div>
+   <a href="rbfDemo.html" class="code" title="function rbfDemo( dataType, noiseSig, scale, k, cluster, show )">rbfDemo</a>            - Demonstration of rbf networks for regression.
+
+ Fast random fern classification/regression code.
+   <a href="fernsClfApply.html" class="code" title="function [hs,probs] = fernsClfApply( data, ferns, inds )">fernsClfApply</a>      - Apply learned fern classifier.
+   <a href="fernsClfTrain.html" class="code" title="function [ferns,hsPr] = fernsClfTrain( data, hs, varargin )">fernsClfTrain</a>      - Train random fern classifier.
+   <a href="fernsInds.html" class="code" title="function inds = fernsInds( data, fids, thrs )">fernsInds</a>          - Compute indices for each input by each fern.
+   <a href="fernsRegApply.html" class="code" title="function [ys,ysCum] = fernsRegApply( data, ferns, inds )">fernsRegApply</a>      - Apply learned fern regressor.
+   <a href="fernsRegTrain.html" class="code" title="function [ferns,ysPr] = fernsRegTrain( data, ys, varargin )">fernsRegTrain</a>      - Train boosted fern regressor.</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
