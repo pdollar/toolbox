@@ -3,7 +3,7 @@ Version NEW
  -bbGt>toGt(): additional options
  -fevalDistr.m: jobs can return outputs (not limited to writing res to disk)
  -toolboxCompile.m: rewrite
- -standardized c/c++ headers: meanShift1.c, imResample1.c, dijkstra.cpp
+ -standardized c/c++ headers: meanShift1.c, imResample1.c, dijkstra.cpp, hog1.cpp
  -minor: randSample, rbfComputeBasis, rbfComputeFtrs, seqIo, imResample1, ...
    tocStatus, seqPlayer
 
