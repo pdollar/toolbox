@@ -29,3 +29,10 @@
 %   rbfComputeBasis    - Get locations and sizes of radial basis functions for use in rbf network.
 %   rbfComputeFtrs     - Evaluate features of X given a set of radial basis functions.
 %   rbfDemo            - Demonstration of rbf networks for regression.
+%
+% Fast random fern classification/regression code.
+%   fernsClfApply      - Apply learned fern classifier.
+%   fernsClfTrain      - Train random fern classifier.
+%   fernsInds          - Compute indices for each input by each fern.
+%   fernsRegApply      - Apply learned fern regressor.
+%   fernsRegTrain      - Train boosted fern regressor.
