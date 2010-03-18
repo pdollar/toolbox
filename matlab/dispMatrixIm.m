@@ -8,16 +8,17 @@ function dispMatrixIm( M, varargin )
 %  M          - [m x n] arbitrary matrix with non-negative entries
 %  varargin   - additional params (struct or name/value pairs)
 %   .fStr       - ['%1.2f'] format for each element
-%   .invert     - [1] if 1 display large values as dark
+%   .invert     - [0] if 1 display large values as dark
 %   .show0      - [1] if false don't display values exactly equal to 0
 %   .maxM       - [] maximum possible value im M (defines display range)
 %   .maxLen     - [inf] maximum number of chars to display per element
-%   .pvPairs    - [] parameter / value list for text.m
+%   .pvPairs    - [{'FontSize',20}] parameter / value list for text.m
 %
 % OUTPUTS
 %
 % EXAMPLE
-%  M=rand(3,5); dispMatrixIm(M,'fStr','%0.3f','invert',1)
+%  figure(1); dispMatrixIm(round(rand(5)*100),'fStr','%d','maxM',100)
+%  M=rand(3,5); figure(2); dispMatrixIm(M,'fStr','%0.3f','invert',1)
 %  imLabel({'a','b','c'},'left',0,{'FontSize',20});
 %  imLabel({'1','2','3','4','5'},'bottom',0,{'FontSize',20});
 %
@@ -29,7 +30,7 @@ function dispMatrixIm( M, varargin )
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 % get default parameters
-dfs={'fStr','%1.2f','invert',2,'show0',1,'maxM',[],...
+dfs={'fStr','%1.2f','invert',0,'show0',1,'maxM',[],...
   'maxLen','inf','pvPairs',{'FontSize',20}};
 [fStr,invert,show0,maxM,maxLen,pvPairs]=getPrmDflt(varargin,dfs,1);
 if( any(M(:)<0) ); error( 'M must have non-negative entries' ); end

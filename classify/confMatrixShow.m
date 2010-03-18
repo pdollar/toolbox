@@ -11,7 +11,7 @@ function confMatrixShow( CM, types, pvPairs, nDigits, showCnts )
 % INPUTS
 %  CM          - [nTypes x nTypes] confusion array -- see confMatrix
 %  types       - [] cell array of length nTypes of text labels
-%  pvPairs     - [] parameter / value list for text.m
+%  pvPairs     - [{'FontSize',20}] parameter / value list for text.m
 %  nDigits     - [2] number of digits after decimal to display
 %  showCnts    - [0] show total count per row to the right
 %
@@ -44,7 +44,7 @@ CM = round(CM*10^nDigits) / 10^nDigits;
 
 % display as image using dispMatrixIm
 dispMatrixIm(CM,'maxM',1,'maxLen',nDigits+1,'show0',0,...
-  'fStr','%f','invert',1); axis square;
+  'fStr','%f','invert',1,'pvPairs',pvPairs); axis square;
 
 % now add type labels
 if( ~isempty(types) )
