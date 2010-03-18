@@ -40,7 +40,7 @@ function [IR,boundX,boundY] = textureMap(I, rowDst, colDst, bbox, holeVal)
 %
 % See also IMTRANSFORM2
 %
-% Piotr's Image&Video Toolbox      Version 2.0
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -69,5 +69,5 @@ else
 end
 
 % Get values at colGrid and rowGrid
-IR = griddata( colDst, rowDst, I, colGrid, rowGrid );
+IR = griddata( colDst, rowDst, I, colGrid, rowGrid ); %#ok<FPARK>
 IR(isnan(IR)) = holeVal;
