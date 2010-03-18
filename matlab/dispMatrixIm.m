@@ -18,7 +18,7 @@ function dispMatrixIm( M, varargin )
 %
 % EXAMPLE
 %  figure(1); dispMatrixIm(round(rand(5)*100),'fStr','%d','maxM',100)
-%  M=rand(3,5); figure(2); dispMatrixIm(M,'fStr','%0.3f','invert',1)
+%  figure(2); dispMatrixIm(rand(3,5),'fStr','%0.3f','invert',1)
 %  imLabel({'a','b','c'},'left',0,{'FontSize',20});
 %  imLabel({'1','2','3','4','5'},'bottom',0,{'FontSize',20});
 %
