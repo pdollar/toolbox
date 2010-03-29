@@ -1,5 +1,6 @@
 Version NEW
  -updated description of classify/ directory on main page
+ -minor: imRectRot
 
 Version 2.50 (18-Mar-10)
  -classify/ferns*.m: fast random fern classification/regression code

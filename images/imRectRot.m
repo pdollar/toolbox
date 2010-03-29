@@ -75,7 +75,7 @@ function [hPatch,api] = imRectRot( varargin )
 %
 % See also IMRECT, RECTANGLE, PATCH
 %
-% Piotr's Image&Video Toolbox      Version 2.40
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -201,7 +201,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
     end
     % draw rectangle boundaries and control circles
     r=axisUnitsPerCentimeter();
-    r=max( r*.1, min(mean(pos(3:4))/15,r) );
+    r=max( r*.1, min(mean(pos(3:4))/10,r) );
     for i=1:length(hBnds), ids=mod([i-1 i],4)+1;
       if(i==5), ids=[1 3]; elseif(i==6), ids=[2 4]; end
       set(hBnds(i),'Xdata',xs(ids),'Ydata',ys(ids));
@@ -232,7 +232,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
     [pc,rs,R]=rectInfo(pos); pnt=(pnt0-pc)*R; th=pos(5);
     % side(i) -1=lf/tp bnd; 0=interior; +1:rt/bt bnd; 2=center
     t = axisUnitsPerCentimeter(); side=[0 0]; flag=0;
-    t = max( t*.1, min(mean(pos(3:4))/15,t) );
+    t = max( t*.1, min(mean(pos(3:4))/5,t) );
     for i=1:2
       ti = min(t,rs(i)/3);
       if( abs(pnt(i))<ti && rotate ), side(i)=2; % near center
