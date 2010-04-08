@@ -28,6 +28,8 @@ function out = seqIo( fName, action, varargin )
 %   info = seqIo( fName, 'getInfo' )
 % Crop sub-sequence from seq file.
 %   seqIo( fName, 'crop', tName, frames )
+% Extract images from seq file to target directory.
+%   seqIo( fName, 'toImgs', tDir, [skip], [f0], [f1] )
 %
 % USAGE
 %  out = seqIo( fName, action, varargin )
@@ -43,7 +45,7 @@ function out = seqIo( fName, action, varargin )
 % EXAMPLE
 %
 % See also seqIo>reader, seqIo>writer, seqIo>getInfo, seqIo>crop,
-% seqPlayer, seqReaderPlugin, seqWriterPlugin
+% seqIo>toImgs, seqPlayer, seqReaderPlugin, seqWriterPlugin
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -187,17 +189,35 @@ for f=frames
 end; sw.close(); sr.close();
 end
 
-function toImgs( fName, varargin )
-% action=='toimgs': Extract images from seq file to dir/I[frame,5].ext:
-%  seqIo( fName, 'toimgs', dir, [skip] )
-d=varargin{1}; if(~exist(d,'dir')), mkdir(d); end
-if(nargin==4), skip=varargin{2}; else skip=1; end
-sr=seqIo(fName,'r'); info=sr.getinfo(); ext=['.' info.ext];
-for frame = skip-1:skip:info.numFrames-1
-  f=[d '/I' int2str2(frame,5) ext]; sr.seek(frame);
-  I=sr.getframeb(); f=fopen(f,'w'); assert(f>0); fwrite(f,I); fclose(f);
-end
-sr.close();
+function toImgs( fName, tDir, skip, f0, f1 )
+% Extract images from seq file to target directory.
+%
+% USAGE
+%  seqIo( fName, 'toImgs', tDir, [skip], [f0], [f1] )
+%
+% INPUTS
+%  fName      - seq file name
+%  tDir       - target directory
+%  skip       - [1] skip between written frames
+%  f0         - [0] first frame to write
+%  f1         - [numFrames-1] last frame to write
+%
+% OUTPUTS
+%
+% EXAMPLE
+%
+% See also seqIo
+if(nargin<3 || isempty(skip)), skip=1; end
+if(nargin<4 || isempty(f0)), f0=0; end
+if(nargin<5 || isempty(f1)), f1=inf; end
+if(~exist(tDir,'dir')), mkdir(tDir); end
+sr=seqIo(fName,'r'); info=sr.getinfo();
+for frame = f0:skip:min(f1,info.numFrames-1)
+  f=[tDir '/I' int2str2(frame,5) '.' info.ext];
+  sr.seek(frame); I=sr.getframeb(); f=fopen(f,'w');
+  if(f<=0), sr.close(); assert(false); end
+  fwrite(f,I); fclose(f);
+end; sr.close();
 end
 
 function frImgs( fName, varargin )
