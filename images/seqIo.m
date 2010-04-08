@@ -32,6 +32,8 @@ function out = seqIo( fName, action, varargin )
 %   seqIo( fName, 'toImgs', tDir, [skip], [f0], [f1] )
 % Convert seq file by applying imgFun(I) to each frame I.
 %   seqIo( fName, 'convert', tName, imgFun, [info] )
+% Replace header of seq file with provided info.
+%   seqIo( fName, 'newHeader', info )
 %
 % USAGE
 %  out = seqIo( fName, action, varargin )
@@ -47,7 +49,8 @@ function out = seqIo( fName, action, varargin )
 % EXAMPLE
 %
 % See also seqIo>reader, seqIo>writer, seqIo>getInfo, seqIo>crop,
-% seqIo>toImgs, seqIo>convert, seqPlayer, seqReaderPlugin, seqWriterPlugin
+% seqIo>toImgs, seqIo>convert, seqIo>newHeader, seqPlayer, seqReaderPlugin,
+% seqWriterPlugin
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -62,7 +65,7 @@ switch lower(action)
   case 'toimgs', toImgs( fName, varargin{:} );
   case 'frimgs', frImgs( fName, varargin{:} );
   case 'convert', convert( fName, varargin{:} );
-  case 'header', header( fName, varargin{:} );
+  case 'newheader', newHeader( fName, varargin{:} );
   case 'rdual', out = readerDual( fName, varargin{:} );
   otherwise, error('seqIo unknown action: ''%s''',action);
 end
@@ -274,20 +277,32 @@ for f=1:n, [I,ts]=sr.getnext(); I=imgFun(I); sw.addframe(I,ts); end
 sw.close(); sr.close();
 end
 
-function header( fName, info )
-% action='header': Replace header of seq file w provided info.
-%  seqIo(fName,'header',info)
-srp=@seqReaderPlugin; swp=@seqWriterPlugin;
+function newHeader( fName, info )
+% Replace header of seq file with provided info.
+%
+% Can be used if the file fName has a corrupt header. Automatically tries
+% to computer number of frames in fName. No guarantees that it will work.
+%
+% USAGE
+%  seqIo( fName, 'newHeader', info )
+%
+% INPUTS
+%  fName      - seq file name
+%  info       - info for target seq file
+%
+% OUTPUTS
+%
+% EXAMPLE
+%
+% See also seqIo
 [d,n]=fileparts(fName); if(isempty(d)), d='.'; end
 fName=[d '/' n]; oName=[fName '-' datestr(now,30)];
 if(exist([fName '-seek.mat'],'file')); delete([fName '-seek.mat']); end
 movefile([fName '.seq'],[oName '.seq'],'f');
-hr = srp( 'open', int32(-1), oName, info );
-info = seqReaderPlugin('getinfo',hr);
-hw = swp( 'open', int32(-1), fName, info );
-for frame = 0:info.numFrames-1, srp('next',hr);
-  [I,ts]=srp('getframeb',hr); swp('addframeb',hw,I,ts); end
-srp('close',hr); swp('close',hw);
+srp=@seqReaderPlugin; hr=srp('open',int32(-1),oName,info);
+info=srp('getinfo',hr); sw=writer(fName,info); n=info.numFrames;
+for frame=1:n, srp('next',hr); [I,ts]=srp('getframeb',hr);
+  sw.addframeb(I,ts); end; srp('close',hr); sw.close();
 end
 
 function sobj = readerDual( fName1, fName2 )
