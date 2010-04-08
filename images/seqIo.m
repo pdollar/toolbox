@@ -1,4 +1,4 @@
-function sobj = seqIo( fName, action, varargin )
+function out = seqIo( fName, action, varargin )
 % Utilities for reading and writing seq files.
 %
 % A seq file is a series of concatentated image frames with a fixed size
@@ -16,7 +16,7 @@ function sobj = seqIo( fName, action, varargin )
 %
 % seqIo contains a number of utility functions for working with seq files.
 % The format for accessing the various utility functions is:
-%  sobj = seqIo( fName, 'action', inputs );
+%  out = seqIo( fName, 'action', inputs );
 % The list of functions and help for each is given below. Also, help on
 % individual subfunctions can be accessed by: "help seqIo>action".
 %
@@ -24,22 +24,24 @@ function sobj = seqIo( fName, action, varargin )
 %   sr = seqIo( fName, 'reader' )
 % Create interface sw for writing seq files.
 %   sw = seqIo( fName, 'writer', info )
+% Get info about seq file.
+%   info = seqIo( fName, 'getInfo' )
 %
 % USAGE
-%  sobj = seqIo( fName, action, varargin )
+%  out = seqIo( fName, action, varargin )
 %
 % INPUTS
 %  fName      - seq file to open
-%  action     - list of possible actions (see above)
-%  varargin   - additional input (varies according to cmd)
+%  action     - controls action (see above)
+%  varargin   - additional inputs (see above)
 %
 % OUTPUTS
-%  sobj       - object used to access seq file
+%  out       - depends on action (see above)
 %
 % EXAMPLE
 %
-% See also seqIo>reader, seqIo>writer, seqPlayer, seqReaderPlugin,
-% seqWriterPlugin
+% See also seqIo>reader, seqIo>writer, seqIo>getInfo, seqPlayer,
+% seqReaderPlugin, seqWriterPlugin
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -47,15 +49,15 @@ function sobj = seqIo( fName, action, varargin )
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 switch lower(action)
-  case {'reader','r'}, sobj = reader( fName, varargin{:} );
-  case {'writer','w'}, sobj = writer( fName, varargin{:} );
-  case 'rdual', sobj = readerDual( fName, varargin{:} );
-  case 'getinfo', sobj = getInfo( fName );
+  case {'reader','r'}, out = reader( fName, varargin{:} );
+  case {'writer','w'}, out = writer( fName, varargin{:} );
+  case 'getinfo', out = getInfo( fName );
   case 'crop', crop( fName, varargin{:} );
   case 'toimgs', toImgs( fName, varargin{:} );
   case 'frimgs', frImgs( fName, varargin{:} );
   case 'convert', convert( fName, varargin{:} );
   case 'header', header( fName, varargin{:} );
+  case 'rdual', out = readerDual( fName, varargin{:} );
   otherwise, error('seqIo unknown action: ''%s''',action);
 end
 end
@@ -135,42 +137,21 @@ sw = struct( 'close',@() w('close',s), 'getinfo',@() w('getinfo',s), ...
   'addframeb',@(varargin) w('addframeb',s,varargin{:}) );
 end
 
-function sobj = readerDual( fName1, fName2 )
-% action=='rdual': Wrapper for two videos of the same image dims and roughly
-% the same frame counts that are treated as a single IO object. getframe()
-% returns the concatentation of the two frames. For videos of different
-% frame counts, the first video serves as the "dominant" video and the
-% frame count of the second video is adjusted accordingly. Same general
-% usage as in action=='r', but the only supported operations are: close(),
-% getframe(), getinfo(), and seek(). Open with:
-%  sr = seqIo( {fName1,fName2}, 'rdual' )
-srp=@seqReaderPlugin;
-s1=srp('open',int32(-1),fName1); s2=srp('open',int32(-1),fName2);
-i1=srp('getinfo',s1); i2=srp('getinfo',s2);
-if( i1.width~=i2.width || i1.height~=i2.height )
-  close(); error('Mismatched videos');
-end
-sobj=struct('close',@close, 'getframe',@getframe, ...
-  'getinfo',@getinfo, 'seek',@seek );
-
-  function out=close(), out=srp('close',s1); srp('close',s2); end
-
-  function [I,t]=getframe()
-    [I1,t1]=srp('getframe',s1); [I2,t2]=srp('getframe',s2);
-    I=[I1 I2]; t=(t1+t2)/2;
-  end
-
-  function info=getinfo(), info=i1; info.width=i1.width+i2.width; end
-
-  function out=seek(f)
-    f2 = round( f/(i1.numFrames-1)*(i2.numFrames-1) );
-    out = srp('seek',s1,f) & srp('seek',s2,f2);
-  end
-end
-
 function info = getInfo( fName )
-% action=='getinfo': Get info about seq file.
-%  info = seqIo( fName, 'getinfo' )
+% Get info about seq file.
+%
+% USAGE
+%  info = seqIo( fName, 'getInfo' )
+%
+% INPUTS
+%  fName  - seq file name
+%
+% OUTPUTS
+%  info   - information struct
+%
+% EXAMPLE
+%
+% See also seqIo
 sr=seqIo(fName,'r'); info=sr.getinfo(); sr.close();
 end
 
@@ -263,4 +244,37 @@ hw = swp( 'open', int32(-1), fName, info );
 for frame = 0:info.numFrames-1, srp('next',hr);
   [I,ts]=srp('getframeb',hr); swp('addframeb',hw,I,ts); end
 srp('close',hr); swp('close',hw);
+end
+
+function sobj = readerDual( fName1, fName2 )
+% action=='rdual': Wrapper for two videos of the same image dims and roughly
+% the same frame counts that are treated as a single IO object. getframe()
+% returns the concatentation of the two frames. For videos of different
+% frame counts, the first video serves as the "dominant" video and the
+% frame count of the second video is adjusted accordingly. Same general
+% usage as in action=='r', but the only supported operations are: close(),
+% getframe(), getinfo(), and seek(). Open with:
+%  sr = seqIo( {fName1,fName2}, 'rdual' )
+srp=@seqReaderPlugin;
+s1=srp('open',int32(-1),fName1); s2=srp('open',int32(-1),fName2);
+i1=srp('getinfo',s1); i2=srp('getinfo',s2);
+if( i1.width~=i2.width || i1.height~=i2.height )
+  close(); error('Mismatched videos');
+end
+sobj=struct('close',@close, 'getframe',@getframe, ...
+  'getinfo',@getinfo, 'seek',@seek );
+
+  function out=close(), out=srp('close',s1); srp('close',s2); end
+
+  function [I,t]=getframe()
+    [I1,t1]=srp('getframe',s1); [I2,t2]=srp('getframe',s2);
+    I=[I1 I2]; t=(t1+t2)/2;
+  end
+
+  function info=getinfo(), info=i1; info.width=i1.width+i2.width; end
+
+  function out=seek(f)
+    f2 = round( f/(i1.numFrames-1)*(i2.numFrames-1) );
+    out = srp('seek',s1,f) & srp('seek',s2,f2);
+  end
 end
