@@ -1,5 +1,5 @@
-function sobj = seqIo( fName, mode, varargin )
-% Wrapper for reading/writing seq files.
+function sobj = seqIo( fName, action, varargin )
+% Utilities for reading and writing seq files.
 %
 % A seq file is a series of concatentated image frames with a fixed size
 % header. It is essentially the same as merging a directory of images into
@@ -8,78 +8,29 @@ function sobj = seqIo( fName, mode, varargin )
 % can be read on any operating system. The main drawback is that each frame
 % is encoded independently, resulting in increased file size. The advantage
 % over storing as a directory of images is that a single large file is
-% created. Currently, either uncompressed or jpg compressed frames are
-% supported. Should not be called directly, rather use with seqIo or
-% videoIO. The seq file format is modeled after the Norpix seq format (in
-% fact this reader can be used to read some Norpix seq files).
+% created. Currently, either uncompressed, jpg or png compressed frames
+% are supported. The seq file format is modeled after the Norpix seq format
+% (in fact this reader can be used to read some Norpix seq files). The
+% actual work of reading/writing seq files is done by seqReaderPlugin and
+% seqWriterPlugin (there is no need to call those functions directly).
 %
-% The actual work of reading/writing seq files is done by seqReaderPlugin
-% and seqWriterPlugin. These plugins were originally intended for use with
-% the videoIO Toolbox for Matlab written by Gerald Daley:
-%  http://sourceforge.net/projects/videoio/.
-% However, the plugins also work with seqIo.m (this function), and there is
-% no need to actually have videoIO installed to use seq files. In fact,
-% the plugins have not yet been tested with videoIO.
+% seqIo contains a number of utility functions for working with seq files.
+% The format for accessing the various utility functions is:
+%  sobj = seqIo( fName, 'action', inputs );
+% The list of functions and help for each is given below. Also, help on
+% individual subfunctions can be accessed by: "help seqIo>action".
 %
-% mode=='r': Serves as a wrapper for seqReaderPlugin, available actions:
-%  sr=seqIo(fName,'r')    % Create new sequence reader object.
-%  sr.close();            % Close seq file (sr is useless after).
-%  [I,ts]=sr.getframe();  % Get current frame (returns [] if invalid).
-%  [I,ts]=sr.getframeb(); % Get current frame with no decoding.
-%  ts = sr.getts();       % Return timestamps for all frames.
-%  info = sr.getinfo();   % Return struct with info about video.
-%  [I,ts]=sr.getnext();   % Shortcut for next() followed by getframe().
-%  out = sr.next();       % Go to next frame (out=-1 on fail).
-%  out = sr.seek(frame);  % Go to specified frame (out=-1 on fail).
-%  out = sr.step(delta);  % Go to current frame + delta (out=-1 on fail).
-% See seqReaderPlugin for more info about the individual actions.
-%
-% mode=='w': Serves as a wrapper for seqWriterPlugin, available actions:
-%  sw=seqIo(fName,'w',info) % Create new sequence writer object.
-%  sw.close();              % Close seq file (sw is useless after).
-%  sw.addframe(I,[ts]);     % Writes video frame (and timestamp)
-%  sw.addframeb(bytes);     % Writes video frame with no encoding.
-%  info = sw.getinfo();     % Return struct with info about video.
-% See seqWriterPlugin for more info about the individual actions and about
-% the parameter sturcutre 'info' used to create the writer.
-%
-% mode=='rdual': Wrapper for two videos of the same image dims and roughly
-% the same frame counts that are treated as a single IO object. getframe()
-% returns the concatentation of the two frames. For videos of different
-% frame counts, the first video serves as the "dominant" video and the
-% frame count of the second video is adjusted accordingly. Same general
-% usage as in mode=='r', but the only supported operations are: close(),
-% getframe(), getinfo(), and seek(). Open with:
-%  sr = seqIo( {fName1,fName2}, 'rdual' )
-%
-% mode=='getinfo': Get info about seq file.
-%  info = seqIo( fName, 'getinfo' )
-%
-% mode=='crop': Crop subsequence from seq file:
-%  seqIo( fName, 'crop', tName, f0, f1 )
-%  seqIo( fName, 'crop', tName, frames )
-%
-% mode=='toimgs': Extract images from seq file to dir/I[frame,5].ext:
-%  seqIo( fName, 'toimgs', dir, [skip] )
-%
-% mode=='frimgs': Make seq file from images in dir/I[frame,5].ext:
-%  seqIo( fName, 'frimgs', dir, info, [skip] )
-%
-% mode=='frimgs': Make seq file from images in array IS:
-%  seqIo( fName, 'frimgs', IS, info )
-%
-% mode='convert': Convert fName to tName applying imgFun(I) to each frame.
-%  seqIo( fName, 'convert', tName, imgFun, [info], [skip] )
-%
-% mode='header': Replace header of seq file w provided info.
-%  seqIo(fName,'header',info)
+% Create interface sr for reading seq files.
+%   sr = seqIo( fName, 'reader' )
+% Create interface sw for writing seq files.
+%   sw = seqIo( fName, 'writer', info )
 %
 % USAGE
-%  sobj = seqIo( fName, mode, varargin )
+%  sobj = seqIo( fName, action, varargin )
 %
 % INPUTS
 %  fName      - seq file to open
-%  mode       - 'r'=read, 'w'=write, for other modes see above
+%  action     - list of possible actions (see above)
 %  varargin   - additional input (varies according to cmd)
 %
 % OUTPUTS
@@ -87,41 +38,113 @@ function sobj = seqIo( fName, mode, varargin )
 %
 % EXAMPLE
 %
-% See also seqPlayer, seqReaderPlugin, seqWriterPlugin
+% See also seqIo>reader, seqIo>writer, seqPlayer, seqReaderPlugin,
+% seqWriterPlugin
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
-mode=lower(mode);
-switch mode
-  case 'r', sobj = reader( fName, varargin{:} );
+switch lower(action)
+  case {'reader','r'}, sobj = reader( fName, varargin{:} );
+  case {'writer','w'}, sobj = writer( fName, varargin{:} );
   case 'rdual', sobj = readerDual( fName, varargin{:} );
-  case 'w', sobj = writer( fName, varargin{:} );
   case 'getinfo', sobj = getInfo( fName );
   case 'crop', crop( fName, varargin{:} );
   case 'toimgs', toImgs( fName, varargin{:} );
   case 'frimgs', frImgs( fName, varargin{:} );
   case 'convert', convert( fName, varargin{:} );
   case 'header', header( fName, varargin{:} );
-  otherwise, error('seqIo unknown mode: ''%s''',mode);
+  otherwise, error('seqIo unknown action: ''%s''',action);
 end
 end
 
-function sobj = reader( fName, varargin )
-% sr = seqIo(fName,'r')
-srp = @seqReaderPlugin;
-s = srp( 'open', int32(-1), fName );
-sobj = struct( 'close',@() srp('close',s), ...
-  'getframe',@() srp('getframe',s), ...
-  'getframeb',@() srp('getframeb',s), 'getts',@() srp('getts',s), ...
-  'getinfo',@() srp('getinfo',s), 'getnext',@() srp('getnext',s), ...
-  'next',@() srp('next',s), 'seek',@(f) srp('seek',s,f), ...
-  'step',@(d) srp('step',s,d));
+function sr = reader( fName )
+% Create interface sr for reading seq files.
+%
+% Create interface sr to seq file with the following commands:
+%  sr.close();            % Close seq file (sr is useless after).
+%  [I,ts]=sr.getframe();  % Get current frame (returns [] if invalid).
+%  [I,ts]=sr.getframeb(); % Get current frame with no decoding.
+%  ts = sr.getts();       % Return timestamps for all frames.
+%  info = sr.getinfo();   % Return struct with info about video.
+%  [I,ts]=sr.getnext();   % Shortcut for next() followed by getframe().
+%  out = sr.next();       % Go to next frame (out=0 on fail).
+%  out = sr.seek(frame);  % Go to specified frame (out=0 on fail).
+%  out = sr.step(delta);  % Go to current frame+delta (out=0 on fail).
+%
+% USAGE
+%  sr = seqIo( fName, 'reader' )
+%
+% INPUTS
+%  fName  - seq file name
+%
+% OUTPUTS
+%  sr     - interface for reading seq file
+%
+% EXAMPLE
+%
+% See also seqIo, seqReaderPlugin
+r=@seqReaderPlugin; s=r('open',int32(-1),fName);
+sr = struct( 'close',@() r('close',s), 'getframe',@() r('getframe',s),...
+  'getframeb',@() r('getframeb',s), 'getts',@() r('getts',s), ...
+  'getinfo',@() r('getinfo',s), 'getnext',@() r('getnext',s), ...
+  'next',@() r('next',s), 'seek',@(f) r('seek',s,f), ...
+  'step',@(d) r('step',s,d));
+end
+
+function sw = writer( fName, info )
+% Create interface sw for writing seq files.
+%
+% Create interface sw to seq file with the following commands:
+%  sw.close();              % Close seq file (sw is useless after).
+%  sw.addframe(I,[ts]);     % Writes video frame (and timestamp)
+%  sw.addframeb(bytes);     % Writes video frame with no encoding.
+%  info = sw.getinfo();     % Return struct with info about video.
+%
+% The following params must be specified in struct 'info' upon opening:
+%  width          - frame width
+%  height         - frame height
+%  fps            - frames per second
+%  quality        - [80] compression quality (0 to 100)
+%  codec          - string representing codec, options include:
+%   'monoraw'/'imageFormat100'      - black/white uncompressed
+%   'raw'/'imageFormat200'          - color (BGR) uncompressed
+%   'monojpg'/'imageFormat102'      - black/white jpg compressed
+%   'jpg'/'imageFormat201'          - color jpg compressed
+%   'monopng'/'imageFormat001'      - black/white png compressed
+%   'png'/'imageFormat002'          - color png compressed
+%
+% USAGE
+%  sw = seqIo( fName, 'writer', info )
+%
+% INPUTS
+%  fName  - seq file name
+%  info   - see above
+%
+% OUTPUTS
+%  sw     - interface for writing seq file
+%
+% EXAMPLE
+%
+% See also seqIo, seqWriterPlugin
+w=@seqWriterPlugin; s=w('open',int32(-1),fName,info);
+sw = struct( 'close',@() w('close',s), 'getinfo',@() w('getinfo',s), ...
+  'addframe',@(varargin) w('addframe',s,varargin{:}), ...
+  'addframeb',@(varargin) w('addframeb',s,varargin{:}) );
 end
 
 function sobj = readerDual( fName1, fName2 )
+% action=='rdual': Wrapper for two videos of the same image dims and roughly
+% the same frame counts that are treated as a single IO object. getframe()
+% returns the concatentation of the two frames. For videos of different
+% frame counts, the first video serves as the "dominant" video and the
+% frame count of the second video is adjusted accordingly. Same general
+% usage as in action=='r', but the only supported operations are: close(),
+% getframe(), getinfo(), and seek(). Open with:
+%  sr = seqIo( {fName1,fName2}, 'rdual' )
+srp=@seqReaderPlugin;
 s1=srp('open',int32(-1),fName1); s2=srp('open',int32(-1),fName2);
 i1=srp('getinfo',s1); i2=srp('getinfo',s2);
 if( i1.width~=i2.width || i1.height~=i2.height )
@@ -145,24 +168,16 @@ sobj=struct('close',@close, 'getframe',@getframe, ...
   end
 end
 
-function sobj = writer( fName, varargin )
-% sw = seqIo(fName,'w',info)
-swp = @seqWriterPlugin;
-s = swp( 'open', int32(-1), fName, varargin{1} );
-sobj = struct( 'close',@() swp('close',s), ...
-  'addframe',@(varargin) swp('addframe',s,varargin{:}), ...
-  'addframeb',@(varargin) swp('addframeb',s,varargin{:}), ...
-  'getinfo',@() swp('getinfo',s) );
-end
-
 function info = getInfo( fName )
-% info = seqIo( fName, 'getinfo' )
+% action=='getinfo': Get info about seq file.
+%  info = seqIo( fName, 'getinfo' )
 sr=seqIo(fName,'r'); info=sr.getinfo(); sr.close();
 end
 
 function crop( fName, tName, varargin )
-% seqIo( fName, 'crop', tName, f0, f1 )
-% seqIo( fName, 'crop', tName, frames )
+% action=='crop': Crop subsequence from seq file:
+%  seqIo( fName, 'crop', tName, f0, f1 )
+%  seqIo( fName, 'crop', tName, frames )
 tName=varargin{1}; fs=varargin{2}; ordered=0;
 if(nargin==5), fs=fs:varargin{3}; ordered=1; end; fs=fs(:)';
 sr=seqIo(fName,'r'); info=sr.getinfo();
@@ -180,7 +195,8 @@ sw.close(); sr.close();
 end
 
 function toImgs( fName, varargin )
-% seqIo( fName, 'toimgs', dir, [skip] )
+% action=='toimgs': Extract images from seq file to dir/I[frame,5].ext:
+%  seqIo( fName, 'toimgs', dir, [skip] )
 d=varargin{1}; if(~exist(d,'dir')), mkdir(d); end
 if(nargin==4), skip=varargin{2}; else skip=1; end
 sr=seqIo(fName,'r'); info=sr.getinfo(); ext=['.' info.ext];
@@ -192,6 +208,10 @@ sr.close();
 end
 
 function frImgs( fName, varargin )
+% action=='frimgs': Make seq file from images in dir/I[frame,5].ext:
+%  seqIo( fName, 'frimgs', dir, info, [skip] )
+% action=='frimgs': Make seq file from images in array IS:
+%  seqIo( fName, 'frimgs', IS, info )
 if( ischar(varargin{1}) )
   % seqIo( fName, 'frimgs', dir, info, [skip] )
   d=varargin{1}; info=varargin{2}; assert(exist(d,'dir')==7);
@@ -215,6 +235,7 @@ end
 end
 
 function convert( fName, varargin )
+% action='convert': Convert fName to tName applying imgFun(I) to each frame.
 % seqIo( fName, 'convert', tName, imgFun, [info], [skip] )
 tName=varargin{1}; imgFun=varargin{2}; assert(~strcmp(tName,fName));
 if(nargin>=5), info=varargin{3}; else info=[]; end
@@ -229,7 +250,8 @@ sw.close(); sr.close();
 end
 
 function header( fName, info )
-% seqIo(fName,'header',info)
+% action='header': Replace header of seq file w provided info.
+%  seqIo(fName,'header',info)
 srp=@seqReaderPlugin; swp=@seqWriterPlugin;
 [d,n]=fileparts(fName); if(isempty(d)), d='.'; end
 fName=[d '/' n]; oName=[fName '-' datestr(now,30)];
