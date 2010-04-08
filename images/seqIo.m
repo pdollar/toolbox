@@ -30,6 +30,8 @@ function out = seqIo( fName, action, varargin )
 %   seqIo( fName, 'crop', tName, frames )
 % Extract images from seq file to target directory.
 %   seqIo( fName, 'toImgs', tDir, [skip], [f0], [f1] )
+% Convert seq file by applying imgFun(I) to each frame I.
+%   seqIo( fName, 'convert', tName, imgFun, [info] )
 %
 % USAGE
 %  out = seqIo( fName, action, varargin )
@@ -45,7 +47,7 @@ function out = seqIo( fName, action, varargin )
 % EXAMPLE
 %
 % See also seqIo>reader, seqIo>writer, seqIo>getInfo, seqIo>crop,
-% seqIo>toImgs, seqPlayer, seqReaderPlugin, seqWriterPlugin
+% seqIo>toImgs, seqIo>convert, seqPlayer, seqReaderPlugin, seqWriterPlugin
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -247,18 +249,28 @@ else
 end
 end
 
-function convert( fName, varargin )
-% action='convert': Convert fName to tName applying imgFun(I) to each frame.
-% seqIo( fName, 'convert', tName, imgFun, [info], [skip] )
-tName=varargin{1}; imgFun=varargin{2}; assert(~strcmp(tName,fName));
-if(nargin>=5), info=varargin{3}; else info=[]; end
-if(nargin>=6), skip=varargin{4}; else skip=1; end
-sr=seqIo(fName,'r'); if(isempty(info)), info=sr.getinfo(); end
-I=sr.getnext(); info.width=size(I,2); info.height=size(I,1);
-sw=seqIo(tName,'w',info);
-for frame = skip-1:skip:info.numFrames-1
-  sr.seek(frame); [I,ts]=sr.getframe(); I=imgFun(I); sw.addframe(I,ts);
-end
+function convert( fName, tName, imgFun, info )
+% Convert seq file by applying imgFun(I) to each frame I.
+%
+% USAGE
+%  seqIo( fName, 'convert', tName, imgFun, [info] )
+%
+% INPUTS
+%  fName      - seq file name
+%  tName      - converted seq file name
+%  imgFun     - function to apply to each image
+%  info       - info for target seq file
+%
+% OUTPUTS
+%
+% EXAMPLE
+%
+% See also seqIo
+assert(~strcmp(tName,fName)); sr=reader(fName); infor=sr.getinfo();
+if(nargin<4 || isempty(info)), info=infor; end
+info.width=infor.width; info.height=infor.height;
+sw=seqIo(tName,'w',info); n=infor.numFrames;
+for f=1:n, [I,ts]=sr.getnext(); I=imgFun(I); sw.addframe(I,ts); end
 sw.close(); sr.close();
 end
 
