@@ -26,6 +26,8 @@ function out = seqIo( fName, action, varargin )
 %   sw = seqIo( fName, 'writer', info )
 % Get info about seq file.
 %   info = seqIo( fName, 'getInfo' )
+% Crop sub-sequence from seq file.
+%   seqIo( fName, 'crop', tName, frames )
 %
 % USAGE
 %  out = seqIo( fName, action, varargin )
@@ -40,8 +42,8 @@ function out = seqIo( fName, action, varargin )
 %
 % EXAMPLE
 %
-% See also seqIo>reader, seqIo>writer, seqIo>getInfo, seqPlayer,
-% seqReaderPlugin, seqWriterPlugin
+% See also seqIo>reader, seqIo>writer, seqIo>getInfo, seqIo>crop,
+% seqPlayer, seqReaderPlugin, seqWriterPlugin
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -155,24 +157,34 @@ function info = getInfo( fName )
 sr=seqIo(fName,'r'); info=sr.getinfo(); sr.close();
 end
 
-function crop( fName, tName, varargin )
-% action=='crop': Crop subsequence from seq file:
-%  seqIo( fName, 'crop', tName, f0, f1 )
+function crop( fName, tName, frames )
+% Crop sub-sequence from seq file.
+%
+% Frame indices are 0 indexed. frames need not be consecutive and can
+% contain duplicates. An index of -1 indicates a blank (all 0) frame. If
+% contiguous subset of frames is cropped timestamps are preserved.
+%
+% USAGE
 %  seqIo( fName, 'crop', tName, frames )
-tName=varargin{1}; fs=varargin{2}; ordered=0;
-if(nargin==5), fs=fs:varargin{3}; ordered=1; end; fs=fs(:)';
-sr=seqIo(fName,'r'); info=sr.getinfo();
-sw=seqIo(tName,'w',info); pad=sr.getnext(); pad(:)=0;
-for f=fs
-  if( ordered )
-    sr.seek(f); [I,ts]=sr.getframeb(); sw.addframeb(I,ts);
-  elseif( f>=0 )
-    sr.seek(f); I=sr.getframeb(); sw.addframeb(I);
-  else
-    sw.addframe(pad);
-  end
-end
-sw.close(); sr.close();
+%
+% INPUTS
+%  fName      - seq file name
+%  tName      - cropped seq file name
+%  frames     - frame indices (0 indexed)
+%
+% OUTPUTS
+%
+% EXAMPLE
+%
+% See also seqIo
+sr=reader(fName); info=sr.getinfo(); sw=writer(tName,info);
+frames=frames(:)'; pad=sr.getnext(); pad(:)=0;
+ordered=all(frames(2:end)==frames(1:end-1)+1);
+for f=frames
+  if(f<0), sw.addframe(pad); continue; end
+  sr.seek(f); [I,ts]=sr.getframeb();
+  if(ordered), sw.addframeb(I,ts); else sw.addframeb(I); end
+end; sw.close(); sr.close();
 end
 
 function toImgs( fName, varargin )
