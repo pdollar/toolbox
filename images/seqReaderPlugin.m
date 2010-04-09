@@ -29,7 +29,7 @@ function varargout = seqReaderPlugin( cmd, h, varargin )
 %
 % See also SEQIO, SEQWRITERPLUGIN
 %
-% Piotr's Image&Video Toolbox      Version 2.50
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -64,7 +64,7 @@ switch( cmd )
   case 'getframe',  chk(nIn,0); [o1,o2]=getFrame(c,fid,info,tNm,1);
   case 'getframeb', chk(nIn,0); [o1,o2]=getFrame(c,fid,info,tNm,0);
   case 'getts',     chk(nIn,0); o1=getTs(0:info.numFrames-1,fid,info);
-  case 'getinfo',   chk(nIn,0); o1=info;
+  case 'getinfo',   chk(nIn,0); o1=info; o1.curFrame=c;
   case 'getnext',   chk(nIn,0); c=c+1; [o1,o2]=getFrame(c,fid,info,tNm,1);
   case 'next',      chk(nIn,0); [c,o1]=valid(c+1,info);
   case 'seek',      chk(nIn,1); [c,o1]=valid(in{1},info);
