@@ -165,7 +165,7 @@ function info = getInfo( fName )
 % EXAMPLE
 %
 % See also seqIo
-sr=seqIo(fName,'r'); info=sr.getinfo(); sr.close();
+sr=reader(fName); info=sr.getinfo(); sr.close();
 end
 
 function crop( fName, tName, frames )
@@ -220,7 +220,7 @@ if(nargin<3 || isempty(skip)), skip=1; end
 if(nargin<4 || isempty(f0)), f0=0; end
 if(nargin<5 || isempty(f1)), f1=inf; end
 if(~exist(tDir,'dir')), mkdir(tDir); end
-sr=seqIo(fName,'r'); info=sr.getinfo();
+sr=reader(fName); info=sr.getinfo();
 for frame = f0:skip:min(f1,info.numFrames-1)
   f=[tDir '/I' int2str2(frame,5) '.' info.ext];
   sr.seek(frame); I=sr.getframeb(); f=fopen(f,'w');
@@ -282,7 +282,7 @@ function convert( fName, tName, imgFun, info )
 %  fName      - seq file name
 %  tName      - converted seq file name
 %  imgFun     - function to apply to each image
-%  info       - info for target seq file
+%  info       - [] info for target seq file
 %
 % OUTPUTS
 %
@@ -292,7 +292,7 @@ function convert( fName, tName, imgFun, info )
 assert(~strcmp(tName,fName)); sr=reader(fName); infor=sr.getinfo();
 if(nargin<4 || isempty(info)), info=infor; end
 info.width=infor.width; info.height=infor.height;
-sw=seqIo(tName,'w',info); n=infor.numFrames;
+sw=writer(tName,info); n=infor.numFrames;
 for f=1:n, [I,ts]=sr.getnext(); I=imgFun(I); sw.addframe(I,ts); end
 sw.close(); sr.close();
 end
