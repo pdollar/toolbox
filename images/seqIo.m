@@ -30,6 +30,8 @@ function out = seqIo( fName, action, varargin )
 %   seqIo( fName, 'crop', tName, frames )
 % Extract images from seq file to target directory.
 %   seqIo( fName, 'toImgs', tDir, [skip], [f0], [f1] )
+% Make seq file from images in an array or source directory.
+%   seqIo( fName, 'frImgs', info, varargin )
 % Convert seq file by applying imgFun(I) to each frame I.
 %   seqIo( fName, 'convert', tName, imgFun, [info] )
 % Replace header of seq file with provided info.
@@ -51,8 +53,8 @@ function out = seqIo( fName, action, varargin )
 % EXAMPLE
 %
 % See also seqIo>reader, seqIo>writer, seqIo>getInfo, seqIo>crop,
-% seqIo>toImgs, seqIo>convert, seqIo>newHeader, seqIo>readerDual,
-% seqPlayer, seqReaderPlugin, seqWriterPlugin
+% seqIo>toImgs, seqIo>frImgs, seqIo>convert, seqIo>newHeader,
+% seqIo>readerDual, seqPlayer, seqReaderPlugin, seqWriterPlugin
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -227,29 +229,45 @@ for frame = f0:skip:min(f1,info.numFrames-1)
 end; sr.close();
 end
 
-function frImgs( fName, varargin )
-% action=='frimgs': Make seq file from images in dir/I[frame,5].ext:
-%  seqIo( fName, 'frimgs', dir, info, [skip] )
-% action=='frimgs': Make seq file from images in array IS:
-%  seqIo( fName, 'frimgs', IS, info )
-if( ischar(varargin{1}) )
-  % seqIo( fName, 'frimgs', dir, info, [skip] )
-  d=varargin{1}; info=varargin{2}; assert(exist(d,'dir')==7);
-  if(nargin==5), skip=varargin{3}; else skip=1; end
-  sw=seqIo(fName,'w',info); info=sw.getinfo(); ext=['.' info.ext];
-  for frame = skip-1:skip:1e5
-    f=[d '/I' int2str2(frame,5) ext]; if(~exist(f,'file')), break; end
-    f=fopen(f,'r'); assert(f>0); I=fread(f); fclose(f); sw.addframeb(I);
-  end
-  sw.close();
-  if(frame==skip-1), warning('No images found.'); end %#ok<WNTAG>
+function frImgs( fName, info, varargin )
+% Make seq file from images in an array or source directory.
+%
+% USAGE
+%  seqIo( fName, 'frImgs', info, varargin )
+%
+% INPUTS
+%  fName      - seq file name
+%  info       - defines codec, etc, see seqIo>writer
+%  varargin   - additional params (struct or name/value pairs)
+%   .Is         - [] if specified create seq from image array
+%   .sDir       - [] source directory
+%   .skip       - [1] skip between frames
+%   .name       - ['I'] base name of images
+%   .nDigits    - [5] number of digits for filename index
+%   .f0         - [0] first frame to read
+%   .f1         - [10^6] last frame to read
+%
+% OUTPUTS
+%
+% EXAMPLE
+%
+% See also seqIo, seqIo>writer
+dfs={'Is',[],'sDir',[],'skip',1,'name','I','nDigits',5,'f0',0,'f1',10^6};
+[Is,sDir,skip,name,nDigits,f0,f1] = getPrmDflt(varargin,dfs,1);
+if( isempty(Is) )
+  assert(exist(sDir,'dir')==7); sw=writer(fName,info); info=sw.getinfo();
+  frmStr=sprintf('%s/%s%%0%ii.%s',sDir,name,nDigits,info.ext);
+  for frame = f0:skip:f1
+    f=sprintf(frmStr,frame); if(~exist(f,'file')), break; end
+    f=fopen(f,'r');  if(f<=0), sw.close(); assert(false); end
+    I=fread(f); fclose(f); sw.addframeb(I);
+  end; sw.close();
+  if(frame==f0), warning('No images found.'); end %#ok<WNTAG>
 else
-  % seqIo( fName, 'frimgs', IS, info )
-  IS=varargin{1}; info=varargin{2};
-  nd=ndims(IS); if(nd==2), nd=3; end; assert(nd<=4); nFrm=size(IS,nd);
-  info.height=size(IS,1); info.width=size(IS,2); sw=seqIo(fName,'w',info);
-  if(nd==3), for f=1:nFrm, sw.addframe(IS(:,:,f)); end; end
-  if(nd==4), for f=1:nFrm, sw.addframe(IS(:,:,:,f)); end; end
+  nd=ndims(Is); if(nd==2), nd=3; end; assert(nd<=4); nFrm=size(Is,nd);
+  info.height=size(Is,1); info.width=size(Is,2); sw=writer(fName,info);
+  if(nd==3), for f=1:nFrm, sw.addframe(Is(:,:,f)); end; end
+  if(nd==4), for f=1:nFrm, sw.addframe(Is(:,:,:,f)); end; end
   sw.close();
 end
 end
