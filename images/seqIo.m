@@ -21,7 +21,7 @@ function out = seqIo( fName, action, varargin )
 % individual subfunctions can be accessed by: "help seqIo>action".
 %
 % Create interface sr for reading seq files.
-%   sr = seqIo( fName, 'reader' )
+%   sr = seqIo( fName, 'reader', [cache] )
 % Create interface sw for writing seq files.
 %   sw = seqIo( fName, 'writer', info )
 % Get info about seq file.
@@ -75,7 +75,7 @@ switch lower(action)
 end
 end
 
-function sr = reader( fName )
+function sr = reader( fName, cache )
 % Create interface sr for reading seq files.
 %
 % Create interface sr to seq file with the following commands:
@@ -89,11 +89,19 @@ function sr = reader( fName )
 %  out = sr.seek(frame);  % Go to specified frame (out=0 on fail).
 %  out = sr.step(delta);  % Go to current frame+delta (out=0 on fail).
 %
+% If cache>0, reader() will cache frames in memory, so that calls to
+% getframe() can avoid disk IO for cached frames (note that only frames
+% returned by getframe() are cached). This is useful if the same frames are
+% accessed repeatedly. When the cache is full, the frame in the cache
+% accessed least recently is discarded. Memory requirements are
+% proportional to cache size.
+%
 % USAGE
-%  sr = seqIo( fName, 'reader' )
+%  sr = seqIo( fName, 'reader', [cache] )
 %
 % INPUTS
 %  fName  - seq file name
+%  cache  - [0] size of cache
 %
 % OUTPUTS
 %  sr     - interface for reading seq file
@@ -101,12 +109,27 @@ function sr = reader( fName )
 % EXAMPLE
 %
 % See also seqIo, seqReaderPlugin
+if(nargin<2 || isempty(cache)), cache=0; end
+if( cache>0 ), [as fs Is ts inds]=deal([]); end
 r=@seqReaderPlugin; s=r('open',int32(-1),fName);
-sr = struct( 'close',@() r('close',s), 'getframe',@() r('getframe',s),...
+sr = struct( 'close',@() r('close',s), 'getframe',@getframe, ...
   'getframeb',@() r('getframeb',s), 'getts',@() r('getts',s), ...
   'getinfo',@() r('getinfo',s), 'getnext',@() r('getnext',s), ...
   'next',@() r('next',s), 'seek',@(f) r('seek',s,f), ...
   'step',@(d) r('step',s,d));
+
+  function [I,t] = getframe()
+    % if not using cache simply call 'getframe' and done
+    if(cache<=0), [I,t]=r('getframe',s); return; end
+    % if cache initialized and frame in cache perform lookup
+    f=r('getinfo',s); f=f.curFrame; i=find(f==fs,1);
+    if(i), as=as+1; as(i)=0; t=ts(i); I=Is(inds{:},i); return; end
+    % if image not in cache add (and possibly initialize)
+    [I,t]=r('getframe',s); if(0), fprintf('reading frame %i\n',f); end
+    if(isempty(Is)), Is=zeros([size(I) cache],class(I));
+      as=ones(1,cache); fs=-as; ts=as; inds=repmat({':'},1,ndims(I)); end
+    [d,i]=max(as); as(i)=0; fs(i)=f; ts(i)=t; Is(inds{:},i)=I;
+  end
 end
 
 function sw = writer( fName, info )
