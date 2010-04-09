@@ -37,7 +37,7 @@ function out = seqIo( fName, action, varargin )
 % Replace header of seq file with provided info.
 %   seqIo( fName, 'newHeader', info )
 % Create interface sr for reading dual seq files.
-%   sr = seqIo( fNames, 'readerDual' )
+%   sr = seqIo( fNames, 'readerDual', [cache] )
 %
 % USAGE
 %  out = seqIo( fName, action, varargin )
@@ -348,7 +348,7 @@ for frame=1:n, srp('next',hr); [I,ts]=srp('getframeb',hr);
   sw.addframeb(I,ts); end; srp('close',hr); sw.close();
 end
 
-function sr = readerDual( fNames )
+function sr = readerDual( fNames, cache )
 % Create interface sr for reading dual seq files.
 %
 % Wrapper for two seq files of the same image dims and roughly the same
@@ -360,10 +360,11 @@ function sr = readerDual( fNames )
 % getframe(), getinfo(), and seek().
 %
 % USAGE
-%  sr = seqIo( fNames, 'readerDual' )
+%  sr = seqIo( fNames, 'readerDual', [cache] )
 %
 % INPUTS
 %  fNames - two seq file names
+%  cache  - [0] size of cache (see seqIo>reader)
 %
 % OUTPUTS
 %  sr     - interface for reading seq file
@@ -371,8 +372,9 @@ function sr = readerDual( fNames )
 % EXAMPLE
 %
 % See also seqIo, seqIo>reader
-s1=reader(fNames{1}); i1=s1.getinfo();
-s2=reader(fNames{2}); i2=s2.getinfo();
+if(nargin<2 || isempty(cache)), cache=0; end
+s1=reader(fNames{1}, cache); i1=s1.getinfo();
+s2=reader(fNames{2}, cache); i2=s2.getinfo();
 info=i1; info.width=i1.width+i2.width;
 if( i1.width~=i2.width || i1.height~=i2.height )
   s1.close(); s2.close(); error('Mismatched videos'); end
