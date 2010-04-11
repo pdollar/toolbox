@@ -191,7 +191,7 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
     end
     
     function dispLoop()
-      if(looping), return; end; looping=1;
+      if(looping), return; end; looping=1; k=0;
       while( 1 )
         % exit if appropriate, or if vid not loaded do nothing
         if(~isstruct(sr) || ~isstruct(info)), looping=0; return; end
@@ -211,17 +211,17 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
         end
         
         % update display if necessary
-        if(~needUpdate), looping=0; return; else
-          sr.seek( round(curInd) ); I=sr.getframe();
-          if(~isempty(hs)), delete(hs); hs=[]; end
-          if(~isempty(dispFunc)), hs=dispFunc(round(curInd)); end
-          assert(~isempty(I)); set(hImg,'CData',I);
-          set(pMid.hSl,'Value',curInd);
-          set(pTop.hFrmInd,'String',int2str(round(curInd+1)));
-          c=round(curInd/info.fps); c1=floor(c/60); c2=mod(c,60);
-          set(pTop.hTmVal,'String',sprintf('%i:%02i',c1,c2));
-          needUpdate=false; drawnow();
-        end
+        k=k+1; if(0 && ~needUpdate), fprintf('%i draw events.\n',k); end
+        if(~needUpdate), looping=0; return; end
+        sr.seek( round(curInd) ); I=sr.getframe();
+        if(~isempty(hs)), delete(hs); hs=[]; end
+        if(~isempty(dispFunc)), hs=dispFunc(round(curInd)); end
+        assert(~isempty(I)); set(hImg,'CData',I);
+        set(pMid.hSl,'Value',curInd);
+        set(pTop.hFrmInd,'String',int2str(round(curInd+1)));
+        c=round(curInd/info.fps); c1=floor(c/60); c2=mod(c,60);
+        set(pTop.hTmVal,'String',sprintf('%i:%02i',c1,c2));
+        needUpdate=false; drawnow();
       end
     end
     
