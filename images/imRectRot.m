@@ -102,6 +102,8 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
       'showLims',0,'color','g','colorc','b','lw',2,'ls','-','cross',0};
     [hParent,ellipse,rotate,pos,lims,showLims,color,colorc,lw,ls,cross]=...
       getPrmDflt(varargin,dfs,1);
+    if(length(pos)==4), pos=[pos 0]; end
+    if(length(lims)==4), lims=[lims 0]; end
     
     % get figure and axes handles
     hAx = ancestor(hParent,'axes'); assert(~isempty(hAx));
