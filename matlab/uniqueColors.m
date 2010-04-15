@@ -1,4 +1,4 @@
-function clrs = uniqueColors( m, n, show )
+function clrs = uniqueColors( m, n, show, offset )
 % Generate m*n visually distinct RGB colors suitable for display.
 %
 % Useful when more than the 6 standard 'rgbcym' colors are needed for
@@ -9,12 +9,13 @@ function clrs = uniqueColors( m, n, show )
 % http://fob.po8.org/node/398, HOWTO: Picking "random colors".
 %
 % USAGE
-%  clrs = uniqueColors( m, n, [show] )
+%  clrs = uniqueColors( m, n, [show], [offset] )
 %
 % INPUTS
 %  m      - number of saturation levels
 %  n      - number of distinct hues to use
 %  show   - optional display of colors
+%  offset - [1] offset every other row of colors
 %
 % OUTPUTS
 %  clrs   - [m*n x 3] array of rgb colors
@@ -27,20 +28,21 @@ function clrs = uniqueColors( m, n, show )
 %  figure(2); clf; hold on; n=size(clrs,1);
 %  for i=1:n, plot(mod(i-1,6),i,'.','color',clrs(i,:)); end
 %
-% See also HSV2RGB
+% See also hsv2rgb, colormap, hsv, jet
 %
-% Piotr's Image&Video Toolbox      Version 2.20
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 if(nargin<3 || isempty(show)), show=0; end
+if(nargin<4 || isempty(offset)), offset=1; end
 
 % generate n evenly spaced HUE values
 H=0:1/n:1; H=H(ones(1,m),1:end-1);
 
 % stradle every other row of HUES to further differentiate them
-H(2:2:end,:)=mod(H(2:2:end,:)+1/n/2,1);
+if(offset), H(2:2:end,:)=mod(H(2:2:end,:)+1/n/2,1); end
 
 % generate m saturation levels starting (omit 0)
 S=linspace(0,1,m+1); S=repmat(S(:,end:-1:2)',1,n);
