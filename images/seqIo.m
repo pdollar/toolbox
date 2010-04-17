@@ -314,9 +314,10 @@ function convert( fName, tName, imgFun, info )
 % See also seqIo
 assert(~strcmp(tName,fName)); sr=reader(fName); infor=sr.getinfo();
 if(nargin<4 || isempty(info)), info=infor; end
-info.width=infor.width; info.height=infor.height;
-sw=writer(tName,info); n=infor.numFrames;
-for f=1:n, [I,ts]=sr.getnext(); I=imgFun(I); sw.addframe(I,ts); end
+info.width=infor.width; info.height=infor.height; n=infor.numFrames;
+sw=writer(tName,info); tid=ticStatus('converting seq');
+for f=1:n, [I,ts]=sr.getnext(); I=imgFun(I);
+  sw.addframe(I,ts); tocStatus(tid,f/n); end
 sw.close(); sr.close();
 end
 
