@@ -40,7 +40,7 @@
 %   optFlowLk       - Calculate optical flow using Lucas & Kanade.  Fast, parallel code.
 %
 % Seq files:
-%   seqIo           - Wrapper for reading/writing seq files.
+%   seqIo           - Utilities for reading and writing seq files.
 %   seqReaderPlugin - Plugin for seqIo and videoIO to allow reading of seq files.
 %   seqWriterPlugin - Plugin for seqIo and videoIO to allow writing of seq files.
 %   seqPlayer       - Simple GUI to play seq files.
