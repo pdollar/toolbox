@@ -111,10 +111,11 @@ tNm=sprintf('tmp_%s_%09i.%s',tNm,round((t+rand)/2*1e9),ext);
 if(strcmp(ext,'raw')), assert(info.numFrames>0); else
   oName=[fName '-seek.mat']; n=info.numFrames; if(n==0), n=10^7; end
   if(exist(oName,'file')==2), load(oName); info.seek=seek; else %#ok<NODEF>
-    disp('loading seek info...'); seek=zeros(n,1,'uint32'); seek(1)=1024;
+    tid=ticStatus('loading seek info',.1,5); seek=zeros(n,1); seek(1)=1024;
     for i=2:n
       s=seek(i-1)+fread(fid,1,'uint32')+16; valid=fseek(fid,s,'bof')==0;
-      if(valid), seek(i)=s; else n=i-1; seek=seek(1:n); break; end
+      if(valid), seek(i)=s; tocStatus(tid,i/n);
+      else n=i-1; seek=seek(1:n); tocStatus(tid,1); break; end
     end; if(info.numFrames==0), info.numFrames=n; end
     try save(oName,'seek'); catch; end; info.seek=seek; %#ok<CTCH>
   end
