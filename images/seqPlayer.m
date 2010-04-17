@@ -135,7 +135,7 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
       set(pTop.hTmVal,ps,[x 3 35 14]); x=x+40;
       set(pTop.hFrmLbl,ps,[x 3 35 14]); x=x+35;
       set(pTop.hFrmInd,ps,[x 3 40 16]); x=x+40;
-      set(pTop.hFrmNum,ps,[x 3 40 14]);
+      set(pTop.hFrmNum,ps,[x 3 50 14]);
       % update display
       if(~isempty(dispApi)); dispApi.requestUpdate(); end;
     end
