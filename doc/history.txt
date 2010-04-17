@@ -1,3 +1,8 @@
+Version 2.51 (17-Apr-10)
+ -seqIo.m: major rewrite: cleanup, commenting, new functionality, bug fixes
+ -updated description of classify/ directory on main page
+ -minor: seqWriterPlugin, seqReaderPlugin, seqPlayer, imRectRot, uniqueColors
+
 Version 2.50 (18-Mar-10)
  -classify/ferns*.m: fast random fern classification/regression code
  -dispMatrixIm.m: code to display a Matrix with non-negative entries in image form

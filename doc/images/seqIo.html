@@ -4,7 +4,7 @@
 <head>
   <title>Description of seqIo</title>
   <meta name="keywords" content="seqIo">
-  <meta name="description" content="Wrapper for reading/writing seq files.">
+  <meta name="description" content="Utilities for reading and writing seq files.">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -17,13 +17,13 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>Wrapper for reading/writing seq files.</strong></div>
+<div class="box"><strong>Utilities for reading and writing seq files.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function sobj = seqIo( fName, mode, varargin ) </strong></div>
+<div class="box"><strong>function out = seqIo( fName, action, varargin ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> Wrapper for reading/writing seq files.
+<div class="fragment"><pre class="comment"> Utilities for reading and writing seq files.
 
  A seq file is a series of concatentated image frames with a fixed size
  header. It is essentially the same as merging a directory of images into
@@ -32,88 +32,55 @@
  can be read on any operating system. The main drawback is that each frame
  is encoded independently, resulting in increased file size. The advantage
  over storing as a directory of images is that a single large file is
- created. Currently, either uncompressed or jpg compressed frames are
- supported. Should not be called directly, rather use with seqIo or
- videoIO. The seq file format is modeled after the Norpix seq format (in
- fact this reader can be used to read some Norpix seq files).
+ created. Currently, either uncompressed, jpg or png compressed frames
+ are supported. The seq file format is modeled after the Norpix seq format
+ (in fact this reader can be used to read some Norpix seq files). The
+ actual work of reading/writing seq files is done by seqReaderPlugin and
+ seqWriterPlugin (there is no need to call those functions directly).
 
- The actual work of reading/writing seq files is done by seqReaderPlugin
- and seqWriterPlugin. These plugins were originally intended for use with
- the videoIO Toolbox for Matlab written by Gerald Daley:
-  http://sourceforge.net/projects/videoio/.
- However, the plugins also work with seqIo.m (this function), and there is
- no need to actually have videoIO installed to use seq files. In fact,
- the plugins have not yet been tested with videoIO.
+ seqIo contains a number of utility functions for working with seq files.
+ The format for accessing the various utility functions is:
+  out = seqIo( fName, 'action', inputs );
+ The list of functions and help for each is given below. Also, help on
+ individual subfunctions can be accessed by: &quot;help seqIo&gt;action&quot;.
 
- mode=='r': Serves as a wrapper for seqReaderPlugin, available actions:
-  sr=seqIo(fName,'r')    % Create new sequence reader object.
-  sr.close();            % Close seq file (sr is useless after).
-  [I,ts]=sr.getframe();  % Get current frame (returns [] if invalid).
-  [I,ts]=sr.getframeb(); % Get current frame with no decoding.
-  ts = sr.getts();       % Return timestamps for all frames.
-  info = sr.getinfo();   % Return struct with info about video.
-  [I,ts]=sr.getnext();   % Shortcut for next() followed by getframe().
-  out = sr.next();       % Go to next frame (out=-1 on fail).
-  out = sr.seek(frame);  % Go to specified frame (out=-1 on fail).
-  out = sr.step(delta);  % Go to current frame + delta (out=-1 on fail).
- See seqReaderPlugin for more info about the individual actions.
-
- mode=='w': Serves as a wrapper for seqWriterPlugin, available actions:
-  sw=seqIo(fName,'w',info) % Create new sequence writer object.
-  sw.close();              % Close seq file (sw is useless after).
-  sw.addframe(I,[ts]);     % Writes video frame (and timestamp)
-  sw.addframeb(bytes);     % Writes video frame with no encoding.
-  info = sw.getinfo();     % Return struct with info about video.
- See seqWriterPlugin for more info about the individual actions and about
- the parameter sturcutre 'info' used to create the writer.
-
- mode=='rdual': Wrapper for two videos of the same image dims and roughly
- the same frame counts that are treated as a single IO object. getframe()
- returns the concatentation of the two frames. For videos of different
- frame counts, the first video serves as the &quot;dominant&quot; video and the
- frame count of the second video is adjusted accordingly. Same general
- usage as in mode=='r', but the only supported operations are: close(),
- getframe(), getinfo(), and seek(). Open with:
-  sr = seqIo( {fName1,fName2}, 'rdual' )
-
- mode=='getinfo': Get info about seq file.
-  info = seqIo( fName, 'getinfo' )
-
- mode=='crop': Crop subsequence from seq file:
-  seqIo( fName, 'crop', tName, f0, f1 )
-  seqIo( fName, 'crop', tName, frames )
-
- mode=='toimgs': Extract images from seq file to dir/I[frame,5].ext:
-  seqIo( fName, 'toimgs', dir, [skip] )
-
- mode=='frimgs': Make seq file from images in dir/I[frame,5].ext:
-  seqIo( fName, 'frimgs', dir, info, [skip] )
-
- mode=='frimgs': Make seq file from images in array IS:
-  seqIo( fName, 'frimgs', IS, info )
-
- mode='convert': Convert fName to tName applying imgFun(I) to each frame.
-  seqIo( fName, 'convert', tName, imgFun, [info], [skip] )
-
- mode='header': Replace header of seq file w provided info.
-  seqIo(fName,'header',info)
+ Create interface sr for reading seq files.
+   sr = seqIo( fName, 'reader', [cache] )
+ Create interface sw for writing seq files.
+   sw = seqIo( fName, 'writer', info )
+ Get info about seq file.
+   info = seqIo( fName, 'getInfo' )
+ Crop sub-sequence from seq file.
+   seqIo( fName, 'crop', tName, frames )
+ Extract images from seq file to target directory.
+   seqIo( fName, 'toImgs', tDir, [skip], [f0], [f1] )
+ Make seq file from images in an array or source directory.
+   seqIo( fName, 'frImgs', info, varargin )
+ Convert seq file by applying imgFun(I) to each frame I.
+   seqIo( fName, 'convert', tName, imgFun, [info] )
+ Replace header of seq file with provided info.
+   seqIo( fName, 'newHeader', info )
+ Create interface sr for reading dual seq files.
+   sr = seqIo( fNames, 'readerDual', [cache] )
 
  USAGE
-  sobj = seqIo( fName, mode, varargin )
+  out = seqIo( fName, action, varargin )
 
  INPUTS
   fName      - seq file to open
-  mode       - 'r'=read, 'w'=write, for other modes see above
-  varargin   - additional input (varies according to cmd)
+  action     - controls action (see above)
+  varargin   - additional inputs (see above)
 
  OUTPUTS
-  sobj       - object used to access seq file
+  out       - depends on action (see above)
 
  EXAMPLE
 
- See also <a href="seqPlayer.html" class="code" title="function seqPlayer( fName, dispFunc )">SEQPLAYER</a>, <a href="seqReaderPlugin.html" class="code" title="function varargout = seqReaderPlugin( cmd, h, varargin )">SEQREADERPLUGIN</a>, <a href="seqWriterPlugin.html" class="code" title="function varargout = seqWriterPlugin( cmd, h, varargin )">SEQWRITERPLUGIN</a>
+ See also seqIo&gt;reader, seqIo&gt;writer, seqIo&gt;getInfo, seqIo&gt;crop,
+ seqIo&gt;toImgs, seqIo&gt;frImgs, seqIo&gt;convert, seqIo&gt;newHeader,
+ seqIo&gt;readerDual, <a href="seqPlayer.html" class="code" title="function seqPlayer( fName, dispFunc )">seqPlayer</a>, <a href="seqReaderPlugin.html" class="code" title="function varargout = seqReaderPlugin( cmd, h, varargin )">seqReaderPlugin</a>, <a href="seqWriterPlugin.html" class="code" title="function varargout = seqWriterPlugin( cmd, h, varargin )">seqWriterPlugin</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.50
+ Piotr's Image&amp;Video Toolbox      Version 2.51
  Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
@@ -122,10 +89,10 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="seqIo.html" class="code" title="function sobj = seqIo( fName, mode, varargin )">seqIo</a>	Wrapper for reading/writing seq files.</li><li><a href="seqReaderPlugin.html" class="code" title="function varargout = seqReaderPlugin( cmd, h, varargin )">seqReaderPlugin</a>	Plugin for seqIo and videoIO to allow reading of seq files.</li><li><a href="seqWriterPlugin.html" class="code" title="function varargout = seqWriterPlugin( cmd, h, varargin )">seqWriterPlugin</a>	Plugin for seqIo and videoIO to allow writing of seq files.</li><li><a href="../matlab/int2str2.html" class="code" title="function nstr = int2str2( n, nDigits )">int2str2</a>	Convert integer to string of given length; improved version of int2str.</li></ul>
+<li><a href="seqReaderPlugin.html" class="code" title="function varargout = seqReaderPlugin( cmd, h, varargin )">seqReaderPlugin</a>	Plugin for seqIo and videoIO to allow reading of seq files.</li><li><a href="seqWriterPlugin.html" class="code" title="function varargout = seqWriterPlugin( cmd, h, varargin )">seqWriterPlugin</a>	Plugin for seqIo and videoIO to allow writing of seq files.</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li><li><a href="../matlab/int2str2.html" class="code" title="function nstr = int2str2( n, nDigits )">int2str2</a>	Convert integer to string of given length; improved version of int2str.</li><li><a href="../matlab/ticStatus.html" class="code" title="function id = ticStatus( msg, updateFreq, updateMinT, erasePrev )">ticStatus</a>	Used to display the progress of a long process.</li><li><a href="../matlab/tocStatus.html" class="code" title="function tocStatus( id, fracDone )">tocStatus</a>	Used to display the progress of a long process.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="seqIo.html" class="code" title="function sobj = seqIo( fName, mode, varargin )">seqIo</a>	Wrapper for reading/writing seq files.</li><li><a href="seqPlayer.html" class="code" title="function seqPlayer( fName, dispFunc )">seqPlayer</a>	Simple GUI to play seq files.</li></ul>
+<li><a href="seqPlayer.html" class="code" title="function seqPlayer( fName, dispFunc )">seqPlayer</a>	Simple GUI to play seq files.</li></ul>
 <!-- crossreference -->
 
 

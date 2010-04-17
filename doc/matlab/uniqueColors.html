@@ -20,7 +20,7 @@
 <div class="box"><strong>Generate m*n visually distinct RGB colors suitable for display.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function clrs = uniqueColors( m, n, show ) </strong></div>
+<div class="box"><strong>function clrs = uniqueColors( m, n, show, offset ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment"> Generate m*n visually distinct RGB colors suitable for display.
@@ -33,12 +33,13 @@
  http://fob.po8.org/node/398, HOWTO: Picking &quot;random colors&quot;.
 
  USAGE
-  clrs = uniqueColors( m, n, [show] )
+  clrs = uniqueColors( m, n, [show], [offset] )
 
  INPUTS
   m      - number of saturation levels
   n      - number of distinct hues to use
   show   - optional display of colors
+  offset - [1] offset every other row of colors
 
  OUTPUTS
   clrs   - [m*n x 3] array of rgb colors
@@ -51,10 +52,10 @@
   figure(2); clf; hold on; n=size(clrs,1);
   for i=1:n, plot(mod(i-1,6),i,'.','color',clrs(i,:)); end
 
- See also HSV2RGB
+ See also hsv2rgb, colormap, hsv, jet
 
- Piotr's Image&amp;Video Toolbox      Version 2.20
- Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 2.51
+ Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
 
