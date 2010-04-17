@@ -1,8 +1,7 @@
-Version NEW
- -seqIo.m: major rewrite: cleanup, commenting, new functionality
+Version 2.51 (17-Apr-10)
+ -seqIo.m: major rewrite: cleanup, commenting, new functionality, bug fixes
  -updated description of classify/ directory on main page
- -minor: imRectRot, seqPlayer, seqWriterPlugin, seqReaderPlugin, ...
-  uniqueColors
+ -minor: seqWriterPlugin, seqReaderPlugin, seqPlayer, imRectRot, uniqueColors
 
 Version 2.50 (18-Mar-10)
  -classify/ferns*.m: fast random fern classification/regression code
