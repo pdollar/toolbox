@@ -29,7 +29,7 @@ function varargout = seqReaderPlugin( cmd, h, varargin )
 %
 % See also SEQIO, SEQWRITERPLUGIN
 %
-% Piotr's Image&Video Toolbox      Version 2.51
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -154,7 +154,8 @@ switch ext
     if( decode )
       % write/read to/from temporary .jpg (not that much overhead)
       assert(I(1)==255 && I(2)==216 && I(end-1)==255 && I(end)==217); % JPG
-      fw=fopen(tNm,'w'); if(fw==-1), error(['unable to write: ' tNm]); end
+      for t=0:99, fw=fopen(tNm,'w'); if(fw>=0), break; end; pause(.01); end
+      if(fw==-1), error(['unable to write: ' tNm]); end
       fwrite(fw,I); fclose(fw); I=rjpg8c(tNm);
     end
   case 'png'
