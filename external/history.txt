@@ -1,4 +1,5 @@
 Version NEW
+ -pdist2: fix for numerical error causing negative d (thanks Lena Gorelick)
  -minor: seqReaderPlugin
 
 Version 2.51 (17-Apr-10)
