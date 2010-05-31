@@ -1,4 +1,4 @@
-function [ IDX, C, d ] = kmeans2( X, k, prm )
+function [ IDX, C, d ] = kmeans2( X, k, varargin )
 % Fast version of kmeans clustering.
 %
 % Cluster the N x p matrix X into k clusters using the kmeans algorithm. It
@@ -25,12 +25,12 @@ function [ IDX, C, d ] = kmeans2( X, k, prm )
 % that matlab's version of kmeans does not have outliers.
 %
 % USAGE
-%  [ IDX, C, d ] = kmeans2( X, k, [prm] )
+%  [ IDX, C, d ] = kmeans2( X, k, [varargin] )
 %
 % INPUTS
 %  X       - [n x p] matrix of n p-dim vectors.
 %  k       - maximum nuber of clusters (actual number may be smaller)
-%  prm     - parameters struct (all are optional)
+%  prm     - additional params (struct or name/value pairs)
 %   .k         - [] alternate way of specifying k (if not given above)
 %   .nTrial    - [1] number random restarts
 %   .maxIter   - [100] max number of iterations
@@ -50,17 +50,16 @@ function [ IDX, C, d ] = kmeans2( X, k, prm )
 %
 % See also DEMOCLUSTER
 %
-% Piotr's Image&Video Toolbox      Version 2.20
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 % get input args
 dfs = {'nTrial',1, 'maxIter',100, 'display',0, 'rndSeed',[],...
-  'outFrac',0, 'minCl',1, 'metric',[], 'k','REQ' };
-if(nargin<3 || isempty(prm)), prm=struct(); end
-if(~isempty(k)); dfs{end}=k; end;
-[nTrial,maxt,dsp,rndSeed,outFrac,minCl,metric,k] = getPrmDflt(prm,dfs);
+  'outFrac',0, 'minCl',1, 'metric',[], 'k',k };
+[nTrial,maxt,dsp,rndSeed,outFrac,minCl,metric,k]=getPrmDflt(varargin,dfs);
+assert(~isempty(k) && k>0);
 
 % error checking
 if(k<1); error('k must be greater than 1'); end
