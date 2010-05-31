@@ -42,7 +42,7 @@ function bbs = bbNms( bbs, varargin )
 %  bbs = bbNms( bbs, [varargin] )
 %
 % INPUTS
-%  bbs        - original bbs (must be of form [x y w h wt])
+%  bbs        - original bbs (must be of form [x y w h wt bbType])
 %  varargin   - additional params (struct or name/value pairs)
 %   .type       - ['max'] 'max', 'maxg', 'ms', 'cover', or 'none'
 %   .thr        - [-inf] threshold below which to discard (0 for 'ms')
@@ -51,6 +51,7 @@ function bbs = bbNms( bbs, varargin )
 %   .overlap    - [.5] area of overlap for bbs
 %   .ovrDnm     - ['union'] area of overlap denominator ('union' or 'min')
 %   .resize     - {} parameters for bbApply('resize')
+%   .separate   - [0] run nms separately on each bb type (bbType)
 %
 % OUTPUTS
 %  bbs      - suppressed bbs
@@ -62,15 +63,16 @@ function bbs = bbNms( bbs, varargin )
 %
 % See also bbApply, nonMaxSuprList
 %
-% Piotr's Image&Video Toolbox      Version 2.42
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 % get parameters
 dfs={'type','max','thr',[],'maxn',500,'radii',[.15 .15 1 1],...
-  'overlap',.5,'ovrDnm','union','resize',{}};
-[type,thr,maxn,radii,overlap,ovrDnm,resize]=getPrmDflt(varargin,dfs,1);
+  'overlap',.5,'ovrDnm','union','resize',{},'separate',0};
+[type,thr,maxn,radii,overlap,ovrDnm,resize,separate] = ...
+  getPrmDflt(varargin,dfs,1);
 if(isempty(thr)), if(strcmp(type,'ms')), thr=0; else thr=-inf; end; end
 if(strcmp(ovrDnm,'union')), ovrDnm=1; elseif(strcmp(ovrDnm,'min')),
   ovrDnm=0; else assert(false); end
@@ -80,7 +82,12 @@ assert(maxn>=2); assert(numel(overlap)==1);
 if(isempty(bbs)), bbs=zeros(0,5); end; if(strcmp(type,'none')), return; end
 kp=bbs(:,5)>thr; bbs=bbs(kp,:); if(isempty(bbs)), return; end
 if(~isempty(resize)), bbs=bbApply('resize',bbs,resize{:}); end
-bbs = nms1(bbs,type,thr,maxn,radii,overlap);
+pNms1={type,thr,maxn,radii,overlap};
+if(~separate || size(bbs,2)<6), bbs=nms1(bbs,pNms1{:}); else
+  ts=unique(bbs(:,6)); m=length(ts); bbs1=cell(1,m);
+  for t=1:m, bbs1{t}=nms1(bbs(bbs(:,6)==ts(t),:),pNms1{:}); end
+  bbs=cat(1,bbs1{:});
+end
 
   function bbs = nms1( bbs, type, thr, maxn, radii, overlap )
     % if big split in two, recurse, merge, then run on merged
