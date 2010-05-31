@@ -56,7 +56,7 @@ function out = seqIo( fName, action, varargin )
 % seqIo>toImgs, seqIo>frImgs, seqIo>convert, seqIo>newHeader,
 % seqIo>readerDual, seqPlayer, seqReaderPlugin, seqWriterPlugin
 %
-% Piotr's Image&Video Toolbox      Version 2.51
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -244,12 +244,13 @@ if(nargin<4 || isempty(f0)), f0=0; end
 if(nargin<5 || isempty(f1)), f1=inf; end
 if(~exist(tDir,'dir')), mkdir(tDir); end
 sr=reader(fName); info=sr.getinfo();
-for frame = f0:skip:min(f1,info.numFrames-1)
+f1=min(f1,info.numFrames-1); tid=ticStatus;
+for frame = f0:skip:f1
   f=[tDir '/I' int2str2(frame,5) '.' info.ext];
   sr.seek(frame); I=sr.getframeb(); f=fopen(f,'w');
   if(f<=0), sr.close(); assert(false); end
-  fwrite(f,I); fclose(f);
-end; sr.close();
+  fwrite(f,I); fclose(f); tocStatus(tid,frame/f1);
+end; sr.close(); if(frame<f1), tocStatus(tid,1); end
 end
 
 function frImgs( fName, info, varargin )
