@@ -39,6 +39,7 @@ function [ IDX, C, d ] = kmeans2( X, k, varargin )
 %   .outFrac   - [0] max frac points that can be treated as outliers
 %   .minCl     - [1] min cluster size (smaller clusters get eliminated)
 %   .metric    - [] metric for pdist2
+%   .C0        - [] initial cluster centers for first trial
 %
 % OUTPUTS
 %  IDX    - [n x 1] cluster membership (see above)
@@ -57,9 +58,9 @@ function [ IDX, C, d ] = kmeans2( X, k, varargin )
 
 % get input args
 dfs = {'nTrial',1, 'maxIter',100, 'display',0, 'rndSeed',[],...
-  'outFrac',0, 'minCl',1, 'metric',[], 'k',k };
-[nTrial,maxt,dsp,rndSeed,outFrac,minCl,metric,k]=getPrmDflt(varargin,dfs);
-assert(~isempty(k) && k>0);
+  'outFrac',0, 'minCl',1, 'metric',[], 'C0',[],'k',k };
+[nTrial,maxt,dsp,rndSeed,outFrac,minCl,metric,C0,k] = ...
+  getPrmDflt(varargin,dfs); assert(~isempty(k) && k>0);
 
 % error checking
 if(k<1); error('k must be greater than 1'); end
@@ -72,9 +73,9 @@ if(~isempty(rndSeed)); rand('state',rndSeed); end; %#ok<RAND>
 
 % run kmeans2main nTrial times
 bd=inf; t0=clock;
-for i=1:nTrial, t1=clock;
+for i=1:nTrial, t1=clock; if(i>1), C0=[]; end
   if(dsp), fprintf('kmeans2 iter %i/%i step: ',i,nTrial); end
-  [IDX,C,d]=kmeans2main(X,k,nOut,minCl,maxt,dsp,metric);
+  [IDX,C,d]=kmeans2main(X,k,nOut,minCl,maxt,dsp,metric,C0);
   if(sum(d)<sum(bd)), bIDX=IDX; bC=C; bd=d; end
   if(dsp), fprintf('  d=%f  t=%fs\n',sum(d),etime(clock,t1)); end
 end
@@ -88,12 +89,12 @@ IDX2=IDX; for i=1:k; IDX2(IDX==order(i))=i; end; IDX = IDX2;
 
 end
 
-function [IDX, C, d] = kmeans2main( X, k, nOut, minCl, maxt, dsp, metric )
+function [IDX,C,d] = kmeans2main( X, k, nOut, minCl, maxt, dsp, metric, C )
 
 % initialize cluster centers to be k random X points
 [N p] = size(X); k = min(k,N);
 IDX = ones(N,1); oldIDX = zeros(N,1);
-C = X(randSample(N,k),:); t = 0;
+if(isempty(C)), C = X(randSample(N,k),:); end; t=0;
 
 % MAIN LOOP: loop until the cluster assigments do not change
 if(dsp), nDg=ceil(log10(maxt-1)); fprintf(int2str2(0,nDg)); end

@@ -1,5 +1,6 @@
 Version NEW
  -pdist2: fix for numerical error causing negative d (thanks Lena Gorelick)
+ -kmeans2: ability to specify initial cluster centers for first trial
  -minor: seqReaderPlugin
 
 Version 2.51 (17-Apr-10)
