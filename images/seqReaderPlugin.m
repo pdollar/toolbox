@@ -163,8 +163,10 @@ switch ext
     I = fread(fid,nBytes-4,'*uint8');
     if( decode )
       % write/read to/from temporary .png (not that much overhead)
-      fw=fopen(tNm,'w'); assert(fw~=-1); fwrite(fw,I); fclose(fw);
-      I=png('read',tNm,[]); I=permute(I,ndims(I):-1:1);
+      for t=0:99, fw=fopen(tNm,'w'); if(fw>=0), break; end; pause(.01); end
+      if(fw==-1), error(['unable to write: ' tNm]); end
+      fwrite(fw,I); fclose(fw); I=png('read',tNm,[]);
+      I=permute(I,ndims(I):-1:1);
     end
   otherwise, assert(false);
 end
