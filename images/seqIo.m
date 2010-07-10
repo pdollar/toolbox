@@ -342,13 +342,13 @@ function newHeader( fName, info )
 %
 % See also seqIo
 [d,n]=fileparts(fName); if(isempty(d)), d='.'; end
-fName=[d '/' n]; oName=[fName '-' datestr(now,30)];
+fName=[d '/' n]; tName=[fName '-new' datestr(now,30)];
 if(exist([fName '-seek.mat'],'file')); delete([fName '-seek.mat']); end
-movefile([fName '.seq'],[oName '.seq'],'f');
-srp=@seqReaderPlugin; hr=srp('open',int32(-1),oName,info);
-info=srp('getinfo',hr); sw=writer(fName,info); n=info.numFrames;
-for frame=1:n, srp('next',hr); [I,ts]=srp('getframeb',hr);
-  sw.addframeb(I,ts); end; srp('close',hr); sw.close();
+srp=@seqReaderPlugin; hr=srp('open',int32(-1),fName,info); tid=ticStatus;
+info=srp('getinfo',hr); sw=writer(tName,info); n=info.numFrames;
+for f=1:n, srp('next',hr); [I,ts]=srp('getframeb',hr);
+  sw.addframeb(I,ts); tocStatus(tid,f/n); end
+srp('close',hr); sw.close();
 end
 
 function sr = readerDual( fNames, cache )
