@@ -80,6 +80,7 @@ switch metric
   otherwise
     error(['pdist2 - unknown metric: ' metric]);
 end
+D = max(0,D);
 end
 
 function D = distL1( X, Y )
@@ -126,7 +127,7 @@ function D = distEucSq( X, Y )
 Yt = Y';
 XX = sum(X.*X,2);
 YY = sum(Yt.*Yt,1);
-D = max(0,bsxfun(@plus,XX,YY)-2*X*Yt);
+D = bsxfun(@plus,XX,YY)-2*X*Yt;
 end
 
 %%%% code from Charles Elkan with variables renamed
