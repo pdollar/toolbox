@@ -11,7 +11,6 @@ function C = multiTimes( A, B, type )
 %  3    - C(:,i) = A(:,:,i)*B(:,i)
 %  3.1  - C(:,i) = A(:,:,i)'*B(:,i)
 %  3.2  - C(:,i) = A(:,i)'*B(:,:,i)
-%  3.3  - C(:,i) = A(:)'*B(:,:,i)
 %  4.1  - C(i) = trace(A(:,:,i)'*B(:,:,i))
 % Corresponding dimensions of A and B must match appropriately.
 %
@@ -70,8 +69,6 @@ switch type
       reshape(B,[1 mb nb ])),2),na,nb);
   case 3.2  % C(:,i) = A(:,i)'*B(:,:,i)
     C = reshape(sum(bsxfun(@times, reshape(A,ma,1,na), B),1), nb,na);
-  case 3.3  % C(:,i) = A(:)*B(:,:,i)
-    C = reshape(sum(bsxfun(@times, reshape(A,ma,1,1), B),1), nb,ob);
   case 4.1  % C(i) = tr(A(:,:,i)'*B(:,:,i))
     C = reshape(sum(sum(A.*B,1),2),1,o);
   otherwise
