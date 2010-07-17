@@ -193,6 +193,9 @@ end
 function info = readHeader( fid )
 % see streampix manual for info on header
 fseek(fid,0,'bof');
+% check that header is not all 0's (a common error)
+[tmp,n]=fread(fid,1024); if(n<1024), error('no header'); end
+if(all(tmp==0)), error('fully empty header'); end; fseek(fid,0,'bof');
 % first 4 bytes store OxFEED, next 24 store 'Norpix seq  '
 if( ~strcmp(sprintf('%X',fread(fid,1,'uint32')),'FEED') || ...
     ~strcmp(char(fread(fid,10,'uint16'))','Norpix seq') ) %#ok<FREAD>
