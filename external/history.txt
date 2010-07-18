@@ -1,7 +1,7 @@
 Version NEW
  -pdist2: fix for numerical error causing negative d (thanks Lena Gorelick)
  -kmeans2: ability to specify initial cluster centers for first trial
- -minor: seqIo, seqReaderPlugin, seqWriterPlugin, bbNms, multiTimes
+ -minor: seqPlayer, seqIo, seqReaderPlugin, seqWriterPlugin, bbNms, multiTimes
 
 Version 2.51 (17-Apr-10)
  -seqIo.m: major rewrite: cleanup, commenting, new functionality, bug fixes
