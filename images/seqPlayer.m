@@ -167,7 +167,7 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
       % update GUI
       if(~isstruct(sr)), cla(pMid.hAx); else
         info=sr.getinfo(); nFrame=info.numFrames;
-        sr.seek(0); s=1/(nFrame-1); ss={'SliderStep',[s,s]};
+        sr.seek(0); s=max(1e-6,1/(nFrame-1)); ss={'SliderStep',[s,s]};
         if(nFrame>1), set(pMid.hSl,'Max',nFrame-1,ss{:}); end
         hImg = imshow( zeros(info.height,info.width,'uint8') );
       end
@@ -231,7 +231,7 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
         setSpeed( 0 );
       elseif( speed==0 )
         setSpeed( flag ); prevTime=clock();
-      elseif( sign(speed)==flag && abs(speed)<256 )
+      elseif( sign(speed)==flag && abs(speed)<2^12 )
         setSpeed( speed*2 );
       elseif( sign(speed)~=flag && abs(speed)>1/8 )
         setSpeed( speed/2 );
