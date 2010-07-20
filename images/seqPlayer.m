@@ -132,7 +132,7 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
       set(pTop.hPlyLbl,ps,[x 3 40 14]); x=x+40;
       set(pTop.hPlySpd,ps,[x 3 40 14]); x=x+40;
       set(pTop.hTmLbl,ps,[x 3 30 14]); x=x+30;
-      set(pTop.hTmVal,ps,[x 3 35 14]); x=x+40;
+      set(pTop.hTmVal,ps,[x 3 45 14]); x=x+50;
       set(pTop.hFrmLbl,ps,[x 3 35 14]); x=x+35;
       set(pTop.hFrmInd,ps,[x 3 50 16]); x=x+50;
       set(pTop.hFrmNum,ps,[x 3 60 14]);
@@ -217,10 +217,11 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
         if(~isempty(hs)), delete(hs); hs=[]; end
         if(~isempty(dispFunc)), hs=dispFunc(round(curInd)); end
         assert(~isempty(I)); set(hImg,'CData',I);
-        set(pMid.hSl,'Value',curInd);
+        set(pMid.hSl,'Value',curInd); c=round(curInd/info.fps);
         set(pTop.hFrmInd,'String',int2str(round(curInd+1)));
-        c=round(curInd/info.fps); c1=floor(c/60); c2=mod(c,60);
-        set(pTop.hTmVal,'String',sprintf('%i:%02i',c1,c2));
+        c0=floor(c/3600); c=mod(c,3600); c1=floor(c/60); c2=mod(c,60);
+        if(~c0), set(pTop.hTmVal,'String',sprintf('%i:%02i',c1,c2)); else
+          set(pTop.hTmVal,'String',sprintf('%i:%02i:%02i',c0,c1,c2)); end
         needUpdate=false; drawnow();
       end
     end
