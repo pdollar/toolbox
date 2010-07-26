@@ -214,9 +214,10 @@ function crop( fName, tName, frames )
 sr=reader(fName); info=sr.getinfo(); sw=writer(tName,info);
 frames=frames(:)'; pad=sr.getnext(); pad(:)=0;
 ordered=all(frames(2:end)==frames(1:end-1)+1);
+n=length(frames); k=0; tid=ticStatus;
 for f=frames
   if(f<0), sw.addframe(pad); continue; end
-  sr.seek(f); [I,ts]=sr.getframeb();
+  sr.seek(f); [I,ts]=sr.getframeb(); k=k+1; tocStatus(tid,k/n);
   if(ordered), sw.addframeb(I,ts); else sw.addframeb(I); end
 end; sw.close(); sr.close();
 end
