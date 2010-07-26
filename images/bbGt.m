@@ -81,7 +81,7 @@ function varargout = bbGt( action, varargin )
 % bbGt>evalResDir, bbGt>compRoc, bbGt>cropRes, bbGt>compOas, bbGt>compOa,
 % bbGt>sampleData
 %
-% Piotr's Image&Video Toolbox      Version 2.50
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -693,7 +693,7 @@ function oa = compOas( dt, gt, ig )
 %  oa = bbGt( 'compOas', dt, gt, [ig] )
 %
 % INPUTS
-%  dt       - [nx4] detected bbs
+%  dt       - [mx4] detected bbs
 %  gt       - [nx4] gt bbs
 %  ig       - [nx1] 0/1 ignore flags (0 by default)
 %
