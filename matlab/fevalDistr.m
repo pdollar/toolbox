@@ -40,7 +40,7 @@ function [out,res] = fevalDistr( funNm, jobs, varargin )
 %
 % See also controller, queue
 %
-% Piotr's Image&Video Toolbox      Version 2.50
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -72,8 +72,8 @@ switch type
         jobsGrp{i}={funNm,jobs(k+1:k1),'type','local'}; k=k1; end
       nJob=nJobGrp; jobs=jobsGrp; funNm='fevalDistr';
     end
-    jids=controller('jobsAdd',nJob,funNm,jobs);
-    disp('Sent jobs...'); tid=ticStatus('collecting jobs'); k=0;
+    jids=controller('jobsAdd',nJob,funNm,jobs); k=0;
+    fprintf('Sent %i jobs...\n',nJob); tid=ticStatus('collecting jobs');
     while( 1 )
       jids1=controller('jobProbe',jids);
       if(isempty(jids1)), pause(.1); continue; end
