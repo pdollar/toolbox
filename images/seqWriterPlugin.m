@@ -112,6 +112,7 @@ end
 if(strcmp(ext,'jpg')), getImgFile( 'wjpg8c' ); end
 if(strcmp(ext,'png')), getImgFile( 'png' ); end
 info.imageFormat=frmt; info.ext=ext;
+if(any(strcmp(ext,{'jpg','png'}))), info.seek=1024; info.seekNm=t; end
 if(~isfield2(info,'quality')), info.quality=80; end
 info.imageBitDepth=8*nCh; info.imageBitDepthReal=8;
 nByte=info.width*info.height*nCh; info.imageSizeBytes=nByte;
@@ -158,6 +159,11 @@ switch ext
     fwrite(fid,numel(I)+4,'uint32'); fwrite(fid,I); pad=10;
   otherwise, assert(false);
 end
+% store seek info
+if(any(strcmp(ext,{'jpg','png'})))
+  if(length(info.seek)<c+1), info.seek=[info.seek; zeros(c,1)]; end
+  info.seek(c+1)=info.seek(c)+numel(I)+10+pad;
+end
 % write timestamp
 if(nargin<6),ts=(c-1)/info.fps; end; s=floor(ts); ms=round(mod(ts,1)*1000);
 fwrite(fid,s,'int32'); fwrite(fid,ms,'uint16'); info.numFrames=c;
@@ -181,4 +187,9 @@ vals=[info.width info.height info.imageBitDepth info.imageBitDepthReal ...
 fwrite(fid,vals,'uint32');
 % store frame rate and pad with 0's
 fwrite(fid,info.fps,'float64'); fwrite(fid,zeros(1,432),'uint8');
+% write seek info for compressed images to disk
+if(any(strcmp(info.ext,{'jpg','png'})))
+  seek=info.seek(1:info.numFrames); %#ok<NASGU>
+  try save(info.seekNm,'seek'); catch; end %#ok<CTCH>
+end
 end
