@@ -140,9 +140,8 @@ switch ext
     if( encode )
       % write/read to/from temporary .jpg (not that much overhead)
       p=struct('quality',info.quality,'comment',{{}},'mode','lossy');
-      p={I,tNm,p};
-      for t=0:99, try wjpg8c(p{:}); fr=fopen(tNm,'r'); assert(fr>0); break;
-        catch, pause(.01); fr=-1; end; end %#ok<CTCH>
+      for t=0:99, try wjpg8c(I,tNm,p{:}); fr=fopen(tNm,'r'); assert(fr>0);
+          break; catch, pause(.01); fr=-1; end; end %#ok<CTCH>
       if(fr<0), error(['write fail: ' tNm]); end; I=fread(fr); fclose(fr);
     end
     assert(I(1)==255 && I(2)==216 && I(end-1)==255 && I(end)==217); % JPG
@@ -152,8 +151,8 @@ switch ext
       % write/read to/from temporary .png (not that much overhead)
       p=cell(1,18); p{1}='write'; if(nCh==1), p{5}=0; else p{5}=2; end
       p{2}=I; p{4}=tNm; p{6}=8; p{9}='none'; p{17}=cell(0,2);
-      for t=0:99, try png(p{:}); fr=fopen(tNm,'r'); assert(fr>0); break;
-        catch, pause(.01); fr=-1; end; end %#ok<CTCH>
+      for t=0:99, try png(p{:}); fr=fopen(tNm,'r'); assert(fr>0); 
+          break; catch, pause(.01); fr=-1; end; end %#ok<CTCH>
       if(fr<0), error(['write fail: ' tNm]); end; I=fread(fr); fclose(fr);
     end
     fwrite(fid,numel(I)+4,'uint32'); fwrite(fid,I); pad=10;
