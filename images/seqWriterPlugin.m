@@ -123,7 +123,7 @@ end
 
 function info = addFrame( fid, info, tNm, encode, I, ts )
 % write frame
-nCh=info.imageBitDepth/8; ext=info.ext; c=info.numFrames;
+nCh=info.imageBitDepth/8; ext=info.ext; c=info.numFrames+1;
 if( encode )
   siz = [info.height info.width nCh];
   assert(size(I,1)==siz(1) && size(I,2)==siz(2) && size(I,3)==siz(3));
@@ -159,8 +159,8 @@ switch ext
   otherwise, assert(false);
 end
 % write timestamp
-if(nargin<7), ts=c/info.fps; end; s=floor(ts); ms=round(mod(ts,1)*1000);
-fwrite(fid,s,'int32'); fwrite(fid,ms,'uint16'); info.numFrames=c+1;
+if(nargin<6),ts=(c-1)/info.fps; end; s=floor(ts); ms=round(mod(ts,1)*1000);
+fwrite(fid,s,'int32'); fwrite(fid,ms,'uint16'); info.numFrames=c;
 % pad with zeros
 if(pad>0), fwrite(fid,zeros(1,pad),'uint8'); end
 end
