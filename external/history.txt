@@ -1,8 +1,8 @@
 Version NEW
+ -seq*.m: various optimizations for reading/writing/viewing seq files
  -pdist2: fix for numerical error causing negative d (thanks Lena Gorelick)
  -kmeans2: ability to specify initial cluster centers for first trial
- -minor: seqPlayer, seqIo, seqReaderPlugin, seqWriterPlugin, 
-  bbNms, bbGt, multiTimes, fevalDistr
+ -minor: bbNms, bbGt, multiTimes, fevalDistr
 
 Version 2.51 (17-Apr-10)
  -seqIo.m: major rewrite: cleanup, commenting, new functionality, bug fixes
