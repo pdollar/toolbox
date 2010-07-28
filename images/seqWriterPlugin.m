@@ -140,7 +140,7 @@ switch ext
     if( encode )
       % write/read to/from temporary .jpg (not that much overhead)
       p=struct('quality',info.quality,'comment',{{}},'mode','lossy');
-      for t=0:99, try wjpg8c(I,tNm,p{:}); fr=fopen(tNm,'r'); assert(fr>0);
+      for t=0:99, try wjpg8c(I,tNm,p); fr=fopen(tNm,'r'); assert(fr>0);
           break; catch, pause(.01); fr=-1; end; end %#ok<CTCH>
       if(fr<0), error(['write fail: ' tNm]); end; I=fread(fr); fclose(fr);
     end
