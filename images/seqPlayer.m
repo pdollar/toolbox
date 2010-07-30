@@ -94,6 +94,7 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
     menu.hVidOpn = uimenu(menu.hVid,'Label','Open');
     menu.hVidsOpn = uimenu(menu.hVid,'Label','Open dual');
     menu.hVidCls = uimenu(menu.hVid,'Label','Close');
+    menu.hVidInfo = uimenu(menu.hVid,'Label','Info');
     menu.hVidAud = uimenu(menu.hVid,'Label','Audio');
     
     % set hFig to visible upon completion
@@ -285,11 +286,12 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
     set(menu.hVidOpn,'Callback',@(h,envt) vidOpen(1) );
     set(menu.hVidsOpn,'Callback',@(h,envt) vidOpen(2) );
     set(menu.hVidCls,'Callback',@(h,envt) vidClose() );
+    set(menu.hVidInfo,'Callback',@(h,envt) vidInfo() );
     set(menu.hVidAud,'Callback',@(h,envt) audOpen() );
     
     function updateMenus()
       m=menu; if(isempty(fVid)), en='off'; else en='on'; end
-      set([m.hVidCls m.hVidAud],'Enable',en); nm='Seq Player';
+      set([m.hVidCls m.hVidInfo m.hVidAud],'Enable',en); nm='Seq Player';
       if(~isempty(fVid)), [d,nm1]=fileparts(fVid); nm=[nm ' - ' nm1]; end
       set(hFig,'Name',nm); dispApi.requestUpdate();
     end
@@ -319,6 +321,18 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
         errordlg(['Failed to load: ' fVid '. ' er.message],'Error');
         fVid=[]; return;
       end
+    end
+    
+    function vidInfo()
+      info=dispApi.getInfo(); txt=evalc('disp(info);'); %#ok<NASGU>
+      while(txt(end)==10), txt=txt(1:end-1); end; txt=[char([10 10]) txt];
+      pos=get(hFig,'Position'); pos(1:2)=pos(1:2)+100; pos(3:4)=[400 400];
+      h=figure('NumberTitle','off', 'Toolbar','auto', ...
+        'Color','k', 'MenuBar','none', 'Visible','on', ...
+        'Name','', 'Resize','off','Position',pos); pos(1:2)=0;
+      uicontrol(h,'Style','text','FontSize',10,'BackgroundColor','w',...
+        'HorizontalAlignment','left','Position',pos,'String',txt,...
+        'FontName','FixedWidth');
     end
     
     function audOpen( fAud )
