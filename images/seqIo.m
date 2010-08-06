@@ -329,7 +329,7 @@ function newHeader( fName, info )
 % Replace header of seq file with provided info.
 %
 % Can be used if the file fName has a corrupt header. Automatically tries
-% to computer number of frames in fName. No guarantees that it will work.
+% to compute number of frames in fName. No guarantees that it will work.
 %
 % USAGE
 %  seqIo( fName, 'newHeader', info )
