@@ -409,13 +409,15 @@ function [gt, dt] = evalRes( gt0, dt0, thr, mul )
 %
 % See also bbGt, bbGt>compOas
 
-% check / sort inputs
+% check inputs
 if(nargin<3 || isempty(thr)), thr=.5; end
 if(nargin<4 || isempty(mul)), mul=0; end
 if(isempty(gt0)), gt0=zeros(0,5); end
 if(isempty(dt0)), dt0=zeros(0,5); end
 assert( size(dt0,2)==5 ); nd=size(dt0,1);
 assert( size(gt0,2)==5 ); ng=size(gt0,1);
+
+% sort dt highest score first, sort gt ignore last
 [disc,ord]=sort(dt0(:,5),'descend'); dt0=dt0(ord,:);
 [disc,ord]=sort(gt0(:,5),'ascend'); gt0=gt0(ord,:);
 gt=gt0; gt(:,5)=-gt(:,5); dt=dt0; dt=[dt zeros(nd,1)];
@@ -424,12 +426,17 @@ gt=gt0; gt(:,5)=-gt(:,5); dt=dt0; dt=[dt zeros(nd,1)];
 for d=1:nd
   dtm=0; maxOa=thr; maxg=0;
   for g=1:ng
+    % if this gt already matched, continue to next gt
     gtm=gt(g,5); if(~mul && gtm==1), continue; end
+    % if dt already matched, and on ignore gt, nothing more to do
     if( dtm~=0 && gtm==-1 ), break; end
+    % compute overlap area, if better match made, continue to next gt
     oa = compOa(dt(d,1:4),gt(g,1:4),gtm==-1);
     if(oa<maxOa), continue; end
+    % match successful and best so far, store appropriately
     maxOa=oa; maxg=g; if(gtm==0), dtm=1; else dtm=-1; end
   end; g=maxg;
+  % store type of match for both dt and gt
   if(dtm==-1), assert(mul || gt(g,5)==-1); dt(d,6)=-1; end
   if(dtm==1), assert(gt(g,5)==0); gt(g,5)=1; dt(d,6)=1; end
 end
