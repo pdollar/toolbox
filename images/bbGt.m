@@ -424,21 +424,20 @@ gt=gt0; gt(:,5)=-gt(:,5); dt=dt0; dt=[dt zeros(nd,1)];
 
 % Attempt to match each (sorted) dt to each (sorted) gt
 for d=1:nd
-  dtm=0; maxOa=thr; maxg=0;
+  bstOa=thr; bstg=0; bstm=0; % info about best match so far
   for g=1:ng
     % if this gt already matched, continue to next gt
-    gtm=gt(g,5); if(~mul && gtm==1), continue; end
+    m=gt(g,5); if( m==1 && ~mul ), continue; end
     % if dt already matched, and on ignore gt, nothing more to do
-    if( dtm~=0 && gtm==-1 ), break; end
-    % compute overlap area, if better match made, continue to next gt
-    oa = compOa(dt(d,1:4),gt(g,1:4),gtm==-1);
-    if(oa<maxOa), continue; end
+    if( bstm~=0 && m==-1 ), break; end
+    % compute overlap area, continue to next gt unless better match made
+    oa=compOa(dt(d,1:4),gt(g,1:4),m==-1); if(oa<bstOa), continue; end
     % match successful and best so far, store appropriately
-    maxOa=oa; maxg=g; if(gtm==0), dtm=1; else dtm=-1; end
-  end; g=maxg;
+    bstOa=oa; bstg=g; if(m==0), bstm=1; else bstm=-1; end
+  end; g=bstg; m=bstm;
   % store type of match for both dt and gt
-  if(dtm==-1), assert(mul || gt(g,5)==-1); dt(d,6)=-1; end
-  if(dtm==1), assert(gt(g,5)==0); gt(g,5)=1; dt(d,6)=1; end
+  if(m==-1), assert(mul || gt(g,5)==m); dt(d,6)=m; end
+  if(m==1), assert(gt(g,5)==0); gt(g,5)=m; dt(d,6)=m; end
 end
 
 end
