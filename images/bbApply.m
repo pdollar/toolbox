@@ -184,12 +184,14 @@ end
 function bb = resize( bb, hr, wr, ar )
 % Resize the bbs (without moving their centers).
 %
-% The w/h of each bb is adjusted in the following order:
-%  if(hr~=0); h=h*hr; end;
-%  if(wr~=0); w=w*wr; end
-%  if(hr==0); h=w/ar; end
-%  if(wr==0); w=h*ar; end
-% Only one of hr/wr may be set to 0, and then only if ar>0.
+% If wr>0 or hr>0, the w/h of each bb is adjusted in the following order:
+%  if(hr~=0), h=h*hr; end
+%  if(wr~=0), w=w*wr; end
+%  if(hr==0), h=w/ar; end
+%  if(wr==0), w=h*ar; end
+% Only one of hr/wr may be set to 0, and then only if ar>0. If, however,
+% hr=wr=0 and ar>0 then resizes bbs such that areas and centers are
+% preserved but aspect ratio becomes ar.
 %
 % USAGE
 %  bb = bbApply( 'resize', bb, hr, wr, [ar] )
@@ -198,7 +200,7 @@ function bb = resize( bb, hr, wr, ar )
 %  bb     - [nx4] original bbs
 %  hr     - ratio by which to multiply height (or 0)
 %  wr     - ratio by which to multiply width (or 0)
-%  ar     - [0] aspect ratio to fix (or 0)
+%  ar     - [0] target aspect ratio (used only if hr=0 or wr=0)
 %
 % OUTPUT
 %  bb    - [nx4] the output resized bbs
@@ -208,7 +210,12 @@ function bb = resize( bb, hr, wr, ar )
 %
 % See also bbApply, bbApply>squarify
 if(nargin<4), ar=0; end; assert(size(bb,2)>=4);
-assert(hr>0||wr>0); assert((hr>0&&wr>0)||ar>0);
+assert((hr>0&&wr>0)||ar>0);
+% preserve area and center, set aspect ratio
+if(hr==0 && wr==0), a=sqrt(bb(:,3).*bb(:,4)); ar=sqrt(ar);
+  d=a*ar-bb(:,3); bb(:,1)=bb(:,1)-d/2; bb(:,3)=bb(:,3)+d;
+  d=a/ar-bb(:,4); bb(:,2)=bb(:,2)-d/2; bb(:,4)=bb(:,4)+d; return;
+end
 % possibly adjust h/w based on hr/wr
 if(hr~=0), d=(hr-1)*bb(:,4); bb(:,2)=bb(:,2)-d/2; bb(:,4)=bb(:,4)+d; end
 if(wr~=0), d=(wr-1)*bb(:,3); bb(:,1)=bb(:,1)-d/2; bb(:,3)=bb(:,3)+d; end
