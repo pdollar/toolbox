@@ -233,6 +233,7 @@ function bbr = squarify( bb, flag, ar )
 %  flag==1: shrink bb to given ar
 %  flag==2: use original w, alter h
 %  flag==3: use original h, alter w
+%  flag==4: preserve area, alter w and h
 % If ar==1 (the default), always converts bb to a square, hence the name.
 %
 % USAGE
@@ -251,11 +252,10 @@ function bbr = squarify( bb, flag, ar )
 %
 % See also bbApply, bbApply>resize
 if(nargin<3 || isempty(ar)), ar=1; end; bbr=bb;
-for i=1:size(bb,1)
-  p=bb(i,1:4);
+if(flag==4), bbr=resize(bb,0,0,ar); return; end
+for i=1:size(bb,1), p=bb(i,1:4);
   usew = (flag==0 && p(3)>p(4)*ar) || (flag==1 && p(3)<p(4)*ar) || flag==2;
-  if(usew), p=resize(p,0,1,ar); else p=resize(p,1,0,ar); end
-  bbr(i,1:4)=p;
+  if(usew), p=resize(p,0,1,ar); else p=resize(p,1,0,ar); end; bbr(i,1:4)=p;
 end
 end
 
