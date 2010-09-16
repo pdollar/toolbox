@@ -24,7 +24,7 @@ function varargout = bbApply( action, varargin )
 % Get bb that is union of bb1 and bb2 (smallest bb containing both).
 %   bb = bbApply( 'union', bb1, bb2 )
 % Resize the bbs (without moving their centers).
-%   bbr = bbApply( 'resize', bb, hr, wr, [ar] )
+%   bb = bbApply( 'resize', bb, hr, wr, [ar] )
 % Fix bb aspect ratios (without moving the bb centers).
 %   bbr = bbApply( 'squarify', bb, flag, [ar] )
 % Draw single or multiple bbs to image (calls rectangle()).
@@ -181,7 +181,7 @@ lcsS=min(bb1(:,1:2),bb2(:,1:2));
 bb=[lcsS lcsE-lcsS];
 end
 
-function bbr = resize( bb, hr, wr, ar )
+function bb = resize( bb, hr, wr, ar )
 % Resize the bbs (without moving their centers).
 %
 % The w/h of each bb is adjusted in the following order:
@@ -192,7 +192,7 @@ function bbr = resize( bb, hr, wr, ar )
 % Only one of hr/wr may be set to 0, and then only if ar>0.
 %
 % USAGE
-%  bbr = bbApply( 'resize', bb, hr, wr, [ar] )
+%  bb = bbApply( 'resize', bb, hr, wr, [ar] )
 %
 % INPUTS
 %  bb     - [nx4] original bbs
@@ -201,22 +201,20 @@ function bbr = resize( bb, hr, wr, ar )
 %  ar     - [0] aspect ratio to fix (or 0)
 %
 % OUTPUT
-%  bbr    - [nx4] the output resized bbs
+%  bb    - [nx4] the output resized bbs
 %
 % EXAMPLE
-%  bbr = bbApply('resize',[0 0 1 1],1.2,0,.5) % h'=1.2*h; w'=h'/2;
+%  bb = bbApply('resize',[0 0 1 1],1.2,0,.5) % h'=1.2*h; w'=h'/2;
 %
 % See also bbApply, bbApply>squarify
-if(nargin<4), ar=0; end
+if(nargin<4), ar=0; end; assert(size(bb,2)>=4);
 assert(hr>0||wr>0); assert((hr>0&&wr>0)||ar>0);
-assert(size(bb,2)>=4); b=bb;
 % possibly adjust h/w based on hr/wr
-if(hr~=0), dy=(hr-1)*b(:,4); b(:,2)=b(:,2)-dy/2; b(:,4)=b(:,4)+dy; end
-if(wr~=0), dx=(wr-1)*b(:,3); b(:,1)=b(:,1)-dx/2; b(:,3)=b(:,3)+dx; end
+if(hr~=0), d=(hr-1)*bb(:,4); bb(:,2)=bb(:,2)-d/2; bb(:,4)=bb(:,4)+d; end
+if(wr~=0), d=(wr-1)*bb(:,3); bb(:,1)=bb(:,1)-d/2; bb(:,3)=bb(:,3)+d; end
 % possibly adjust h/w based on ar and NEW h/w
-if(hr==0), dy=b(:,3)/ar-b(:,4); b(:,2)=b(:,2)-dy/2; b(:,4)=b(:,4)+dy; end
-if(wr==0), dx=b(:,4)*ar-b(:,3); b(:,1)=b(:,1)-dx/2; b(:,3)=b(:,3)+dx; end
-bbr=b;
+if(~hr), d=bb(:,3)/ar-bb(:,4); bb(:,2)=bb(:,2)-d/2; bb(:,4)=bb(:,4)+d; end
+if(~wr), d=bb(:,4)*ar-bb(:,3); bb(:,1)=bb(:,1)-d/2; bb(:,3)=bb(:,3)+d; end
 end
 
 function bbr = squarify( bb, flag, ar )
