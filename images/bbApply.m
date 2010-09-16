@@ -58,7 +58,7 @@ function varargout = bbApply( action, varargin )
 % bbApply>union bbApply>resize bbApply>squarify bbApply>draw bbApply>crop
 % bbApply>convert bbApply>random bbApply>frMask bbApply>toMask
 %
-% Piotr's Image&Video Toolbox      Version 2.50
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -209,17 +209,14 @@ function bbr = resize( bb, hr, wr, ar )
 % See also bbApply, bbApply>squarify
 if(nargin<4), ar=0; end
 assert(hr>0||wr>0); assert((hr>0&&wr>0)||ar>0);
-assert(size(bb,2)>=4); bbr=bb;
-for i=1:size(bb,1)
-  p=bb(i,1:4);
-  % possibly adjust h/w based on hr/wr
-  if(hr~=0), dy=(hr-1)*p(4); p(2)=p(2)-dy/2; p(4)=p(4)+dy; end
-  if(wr~=0), dx=(wr-1)*p(3); p(1)=p(1)-dx/2; p(3)=p(3)+dx; end
-  % possibly adjust h/w based on ar and NEW h/w
-  if(hr==0), dy=p(3)/ar-p(4); p(2)=p(2)-dy/2; p(4)=p(4)+dy; end
-  if(wr==0), dx=p(4)*ar-p(3); p(1)=p(1)-dx/2; p(3)=p(3)+dx; end
-  bbr(i,1:4)=p;
-end
+assert(size(bb,2)>=4); b=bb;
+% possibly adjust h/w based on hr/wr
+if(hr~=0), dy=(hr-1)*b(:,4); b(:,2)=b(:,2)-dy/2; b(:,4)=b(:,4)+dy; end
+if(wr~=0), dx=(wr-1)*b(:,3); b(:,1)=b(:,1)-dx/2; b(:,3)=b(:,3)+dx; end
+% possibly adjust h/w based on ar and NEW h/w
+if(hr==0), dy=b(:,3)/ar-b(:,4); b(:,2)=b(:,2)-dy/2; b(:,4)=b(:,4)+dy; end
+if(wr==0), dx=b(:,4)*ar-b(:,3); b(:,1)=b(:,1)-dx/2; b(:,3)=b(:,3)+dx; end
+bbr=b;
 end
 
 function bbr = squarify( bb, flag, ar )
