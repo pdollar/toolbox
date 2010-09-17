@@ -46,7 +46,7 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
     % create main figure
     hFig = figure('NumberTitle','off', 'Toolbar','auto', 'Color','k', ...
       'MenuBar','none', 'Visible','off', ps,figPos, 'Name',name );
-    set(hFig,'DeleteFcn',@(h,e)exitProg(),'ResizeFcn',@(h,e)figResized());
+    set(hFig,'DeleteFcn',@(h,e) exitProg,'ResizeFcn',@(h,e) figResized );
     
     % display axes
     hAx = axes(units{:},'Parent',hFig,'XTick',[],'YTick',[]); imshow(0);
@@ -79,8 +79,8 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
     
     % set the keyPressFcn for all focusable components (except popupmenus)
     set( hFig, 'keyPressFcn',@keyPress );
-    set( hFig, 'ButtonDownFcn',@(h,e) mousePress() );
-    set( pTop.hHelp,'CallBack',@(h,e) helpWindow() );
+    set( hFig, 'ButtonDownFcn',@(h,e) mousePress );
+    set( pTop.hHelp,'CallBack',@(h,e) helpWindow );
     
     % set hFig to visible upon completion
     set(hFig,'Visible','on'); drawnow;
@@ -354,7 +354,7 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
       if(imgInd<1), imgInd=1; end; if(imgInd>nImg), imgInd=nImg; end
       I=imread([imgDir '/' imgFiles{imgInd}]); hImg=imshow(I);
       set(pTop.hImgInd,'String',int2str(imgInd));
-      set(hImg,'ButtonDownFcn',@(h,e) mousePress()); objApi.openAnn();
+      set(hImg,'ButtonDownFcn',@(h,e) mousePress); objApi.openAnn();
     end
     
     function setImgCb()
