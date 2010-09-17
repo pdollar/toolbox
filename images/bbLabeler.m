@@ -16,7 +16,7 @@ function bbLabeler( objTypes, imgDir, resDir )
 % EXAMPLE
 %  bbLabeler
 %
-% See also BBGT
+% See also bbGt, imRectRot
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -177,6 +177,17 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
     end
   end
 
+  function mouseDrag()
+    if(isempty(imgInd)), return; end
+    persistent h; if(~all(ishandle(h))), h=[]; end
+    xs=get(gca,'xLim'); ys=get(gca,'yLim');
+    p=get(hAx,'CurrentPoint'); x=p(1); y=p(3);
+    if( x<xs(1)||x>xs(2)||y<ys(1)||y>ys(2) ), delete(h); return; end
+    if(isempty(h)), h=[line line];
+      set(h,'ButtonDownFcn',@(h,e) mousePress,'Color','k'); end
+    set(h,{'Xdata'},{[x x];xs},{'YData'},{ys,[y y]}');
+  end
+
   function api = objMakeApi()
     % variables
     [resNm,objs,nObj,hsObj,curObj,lims] = deal([]);
@@ -248,6 +259,7 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
       set([pTop.hIgn pTop.hOcc],'Enable',en); set(pTop.hOcc,'Value',occ);
       set(pTop.hDims,'String',dimsStr); set(pTop.hIgn,'Value',ign);
       set(pTop.hNum,'String', ['n=' int2str(nObj)] );
+      set(hFig,'WindowButtonMotionFcn',@(h,e) mouseDrag); mouseDrag();
     end
     
     function objSetBb( bb, objId )

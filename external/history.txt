@@ -1,6 +1,7 @@
 Version NEW
  -seq*.m: various optimizations for reading/writing/viewing seq files
  -pdist2: fix for numerical error causing negative d (thanks Lena Gorelick)
+ -bbLabler.m: tweaked GUI, image wide lines indicate cursor position
  -kmeans2: ability to specify initial cluster centers for first trial
  -minor: bbNms, bbGt, bbApply, multiTimes, fevalDistr
 
