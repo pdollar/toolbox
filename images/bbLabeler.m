@@ -18,12 +18,11 @@ function bbLabeler( objTypes, imgDir, resDir )
 %
 % See also BBGT
 %
-% Piotr's Image&Video Toolbox      Version 2.41
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
-%#ok<*INUSL,*INUSD>
 if(nargin<1 || isempty(objTypes)), objTypes={'object'}; end
 if(nargin<2 || isempty(imgDir)), imgDir=pwd; end
 if(nargin<3 || isempty(resDir)), resDir=imgDir; end
@@ -47,7 +46,7 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
     % create main figure
     hFig = figure('NumberTitle','off', 'Toolbar','auto', 'Color','k', ...
       'MenuBar','none', 'Visible','off', ps,figPos, 'Name',name );
-    set(hFig,'DeleteFcn',@exitProg,'ResizeFcn',@figResized);
+    set(hFig,'DeleteFcn',@(h,e)exitProg(),'ResizeFcn',@(h,e)figResized());
     
     % display axes
     hAx = axes(units{:},'Parent',hFig,'XTick',[],'YTick',[]); imshow(0);
@@ -80,13 +79,13 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
     
     % set the keyPressFcn for all focusable components (except popupmenus)
     set( hFig, 'keyPressFcn',@keyPress );
-    set( hFig, 'ButtonDownFcn',@mousePress );
-    set( pTop.hHelp,'CallBack',@helpWindow );
+    set( hFig, 'ButtonDownFcn',@(h,e) mousePress() );
+    set( pTop.hHelp,'CallBack',@(h,e) helpWindow() );
     
     % set hFig to visible upon completion
     set(hFig,'Visible','on'); drawnow;
     
-    function figResized( h, evnt )
+    function figResized()
       % overall layout
       pos=get(hFig,ps); pad=8; htTop=30; wdTop=600;
       wd=pos(3)-2*pad; ht=pos(4)-2*pad-htTop;
@@ -112,7 +111,7 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
       set(pTop.hHelp,ps,[x 5 20 20]);
     end
     
-    function helpWindow( h, evnt )
+    function helpWindow()
       helpTxt = {
         'Image Selection:'
         ' * spacebar: advance one image'
@@ -146,10 +145,10 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
         ps,pos, st,helpTxt );
     end
     
-    function exitProg(h,evnt), objApi.closeAnn(); end
+    function exitProg(), objApi.closeAnn(); end
   end
 
-  function keyPress( h, evnt )
+  function keyPress( h, evnt ) %#ok<INUSL>
     char=int8(evnt.Character); if(isempty(char)), char=0; end;
     ctrl=strcmp(evnt.Modifier,'control'); if(isempty(ctrl)),ctrl=0; end
     if(char==127 || char==100), objApi.objDel(); end % 'del' or 'd'
@@ -167,7 +166,7 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
     if(char==112), objApi.objSetVal('pnt',0); end  % 'p'
   end
 
-  function mousePress( h, evnt )
+  function mousePress()
     sType = get(hFig,'SelectionType');
     %disp(['mouse pressed: ' sType]);
     if( strcmp(sType,'open') )
@@ -269,7 +268,7 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
       objs(objId).bbv=bbv; objsDraw();
     end
     
-    function objChnBb( bb, objId )
+    function objChnBb( bb, objId ) %#ok<INUSD>
       dimsStr=sprintf('%i x %i',round(bb(3)),round(bb(4)));
       set( pTop.hDims, 'String', dimsStr );
     end
@@ -355,7 +354,7 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
       if(imgInd<1), imgInd=1; end; if(imgInd>nImg), imgInd=nImg; end
       I=imread([imgDir '/' imgFiles{imgInd}]); hImg=imshow(I);
       set(pTop.hImgInd,'String',int2str(imgInd));
-      set(hImg,'ButtonDownFcn',@mousePress); objApi.openAnn();
+      set(hImg,'ButtonDownFcn',@(h,e) mousePress()); objApi.openAnn();
     end
     
     function setImgCb()
