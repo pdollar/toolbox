@@ -3,7 +3,7 @@ Version NEW
  -pdist2: fix for numerical error causing negative d (thanks Lena Gorelick)
  -bbLabler.m: tweaked GUI, image wide lines indicate cursor position
  -kmeans2: ability to specify initial cluster centers for first trial
- -minor: bbNms, bbGt, bbApply, multiTimes, fevalDistr
+ -minor: bbNms, bbGt, bbApply, multiTimes, fevalDistr, plotRoc
 
 Version 2.51 (17-Apr-10)
  -seqIo.m: major rewrite: cleanup, commenting, new functionality, bug fixes

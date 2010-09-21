@@ -40,7 +40,7 @@ function [h,det] = plotRoc( D, varargin )
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 2.41
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -74,7 +74,7 @@ if(nD>1), DQs=std(squeeze(DQ(:,2,:)),0,2);
 if(fpTarget<=0), det=-1; else
   if(D1(1,2)>D1(end,2)), D1=flipud(D1); end
   [d,i]=max(D1(:,1)<fpTarget); det=D1(i,2);
-  plot([fpTarget fpTarget],[lims(3) lims(4)],'b-');
+  plot([fpTarget fpTarget],lims(3:4),'LineWidth',1,'Color',.7*[1 1 1]);
 end
 
 % set log axes
