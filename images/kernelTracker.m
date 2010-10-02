@@ -53,7 +53,7 @@ function [allRct, allSim, allIc] = kernelTracker( I, prm )
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 2.10
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -132,7 +132,7 @@ for frm = 1:nFrame
 
   else
     % otherwise just do meanshift once
-    [p,pos,Ic,bestSim]=kernelTracker1(Icur,q,pos1,kernel(2),nBit);
+    [p,pos,Ic,bestSim]=kernelTracker1(Icur,q,pos1,kernel(scale),nBit);
   end
 
   % record results
