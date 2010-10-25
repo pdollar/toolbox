@@ -20,7 +20,7 @@
 <div class="box"><strong>Fast version of kmeans clustering.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function [ IDX, C, d ] = kmeans2( X, k, prm ) </strong></div>
+<div class="box"><strong>function [ IDX, C, d ] = kmeans2( X, k, varargin ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment"> Fast version of kmeans clustering.
@@ -49,12 +49,12 @@
  that matlab's version of kmeans does not have outliers.
 
  USAGE
-  [ IDX, C, d ] = kmeans2( X, k, [prm] )
+  [ IDX, C, d ] = kmeans2( X, k, [varargin] )
 
  INPUTS
   X       - [n x p] matrix of n p-dim vectors.
   k       - maximum nuber of clusters (actual number may be smaller)
-  prm     - parameters struct (all are optional)
+  prm     - additional params (struct or name/value pairs)
    .k         - [] alternate way of specifying k (if not given above)
    .nTrial    - [1] number random restarts
    .maxIter   - [100] max number of iterations
@@ -63,6 +63,7 @@
    .outFrac   - [0] max frac points that can be treated as outliers
    .minCl     - [1] min cluster size (smaller clusters get eliminated)
    .metric    - [] metric for pdist2
+   .C0        - [] initial cluster centers for first trial
 
  OUTPUTS
   IDX    - [n x 1] cluster membership (see above)
@@ -74,8 +75,8 @@
 
  See also <a href="demoCluster.html" class="code" title="">DEMOCLUSTER</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.20
- Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 2.52
+ Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
 

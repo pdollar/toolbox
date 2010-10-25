@@ -1,3 +1,11 @@
+Version 2.52 (25-Oct-10)
+ -seq*.m: various optimizations for reading/writing/viewing seq files
+ -pdist2: fix for numerical error causing negative d (thanks Lena Gorelick)
+ -bbLabler.m: tweaked GUI, image wide lines indicate cursor position
+ -kmeans2: ability to specify initial cluster centers for first trial
+ -kernelTracker: minor bug fix for single scale case (thanks Juan Carlos Niebles)
+ -minor: bbNms, bbGt, bbApply, multiTimes, fevalDistr, plotRoc
+
 Version 2.51 (17-Apr-10)
  -seqIo.m: major rewrite: cleanup, commenting, new functionality, bug fixes
  -updated description of classify/ directory on main page
