@@ -1,8 +1,6 @@
 function toolboxUpdateHeader
 % Update the headers of all the files.
 %
-% Must start in /toolbox base directory
-%
 % USAGE
 %  toolboxUpdateHeader
 %
@@ -14,13 +12,13 @@ function toolboxUpdateHeader
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 2.51
+% Piotr's Image&Video Toolbox      Version 2.52
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 header={
-  '% Piotr''s Image&Video Toolbox      Version 2.51'; ...
+  '% Piotr''s Image&Video Toolbox      Version 2.52'; ...
   '% Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]'; ...
   '% Please email me if you find bugs, or have suggestions or questions!'; ...
   '% Licensed under the Lesser GPL [see external/lgpl.txt]'};
