@@ -45,15 +45,16 @@ function I = nlfiltersep( I, dims, shape, fun, varargin )
 %  Cm = nlfiltersep(I,[3 3],'block',@(x,d) max(x,[],d) ); % block maxes
 %  figure(1); im(I); figure(2); im(Cs); figure(3); im(Cm);
 %
-% See also NLFILTER
+% See also NLFILTER, LOCALSUM
 %
-% Piotr's Image&Video Toolbox      Version 2.41
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 params=varargin; nd=ndims(I); siz=size(I);
 [dims,er]=checkNumArgs(dims,size(siz),0,1); error(er);
+assert(any(strcmp(shape,{'same','valid','full','block'})));
 
 if(strcmp(shape,'block'))
   % trim I to have integer number of blocks
@@ -83,9 +84,5 @@ else
   end
   
   % crop to appropriate size
-  if(strcmp(shape,'valid'))
-    I = arrayCrop( I, rs1+1, size(I)-rs2 );
-  elseif(~strcmp(shape,'full') && ~strcmp(shape,'same'))
-    error('unknown shape');
-  end
+  if(strcmp(shape,'valid')), I=arrayCrop(I,rs1+1,size(I)-rs2); end
 end

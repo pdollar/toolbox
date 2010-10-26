@@ -1,5 +1,6 @@
 Version NEW
  -convOnes.m: added a fast special case of localSum.m
+ -minor: localSum, nlfiltersep
 
 Version 2.52 (25-Oct-10)
  -seq*.m: various optimizations for reading/writing/viewing seq files

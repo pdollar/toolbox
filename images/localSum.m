@@ -20,7 +20,7 @@ function I = localSum( I, dims, shape, op )
 %  C       - matrix of sums
 %
 % EXAMPLE - 1
-%  A = rand(500); dim=11; shape='same'; r=20;
+%  A=rand(500,500,1); dim=25; shape='same'; r=20;
 %  tic, for i=1:r, B = localSum(A,dim,shape); end; toc
 %  tic, for i=1:r, C = conv2(A,ones(dim),shape); end; toc
 %  diff=B-C; im(diff), sum(abs(diff(:)))
@@ -31,15 +31,17 @@ function I = localSum( I, dims, shape, op )
 %  I2=localSum(I,3,'block','max'); figure(3); im(I2); title('max')
 %  I3=localSum(I,3,'block','min'); figure(4); im(I3); title('min')
 %
-% See also IMSHRINK
+% See also IMSHRINK, CONVONES
 %
-% Piotr's Image&Video Toolbox      Version 2.41
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
-if( nargin<3 || isempty(shape));  shape='full'; end
-if( nargin<4 || isempty(op)); op='sum'; end
+if( nargin<3 || isempty(shape)), shape='full'; end
+if( nargin<4 || isempty(op)), op='sum'; end
+assert(any(strcmp(shape,{'same','valid','full','block'})));
+assert(any(strcmp(op,{'sum','max','min'})));
 
 if( nargin>=3 && strcmp(shape,'block') )
   switch op
