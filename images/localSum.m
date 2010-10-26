@@ -51,7 +51,7 @@ if( all(mod(dims,2)) && ndims(I)<=3 ...
   if(strcmp(shape,'valid') && any((2*r+1)>siz)); I=[]; return; end
   if(strcmp(shape,'full')), s=1+r; e=siz+r; T=I;
     I=zeros(siz+2*r); I(s(1):e(1),s(2):e(2),s(3):e(3))=T; end
-  I = convOnes1(I,r(1),r(2),r(3));
+  I = convOnes(I,r(1),r(2),r(3));
   if(strcmp(shape,'valid')), s=1+r; e=siz-r;
     I=I(s(1):e(1),s(2):e(2),s(3):e(3)); end
   return;
