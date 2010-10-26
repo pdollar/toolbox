@@ -1,3 +1,6 @@
+Version NEW
+ -convOnes.m: added a fast special case of localSum.m
+
 Version 2.52 (25-Oct-10)
  -seq*.m: various optimizations for reading/writing/viewing seq files
  -pdist2: fix for numerical error causing negative d (thanks Lena Gorelick)

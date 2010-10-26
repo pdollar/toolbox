@@ -59,6 +59,7 @@
 %
 % Linear filtering:
 %   convnFast       - Fast convolution, replacement for both conv2 and convn.
+%   convOnes        - Fast routine for box filtering with a ones filter.
 %   gaussSmooth     - Applies Gaussian smoothing to a (multidimensional) image.
 %   localSum        - Fast routine for box filtering.
 %
