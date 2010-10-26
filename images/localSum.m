@@ -20,9 +20,9 @@ function I = localSum( I, dims, shape, op )
 %  C       - matrix of sums
 %
 % EXAMPLE - 1
-%  A=rand(500,500,1); dim=25; shape='same'; r=20;
+%  A=rand(500,500,1); dim=25; f=ones(dim,1); shape='same'; r=20;
 %  tic, for i=1:r, B = localSum(A,dim,shape); end; toc
-%  tic, for i=1:r, C = conv2(A,ones(dim),shape); end; toc
+%  tic, for i=1:r, C = conv2(conv2(A,f,shape),f',shape); end; toc
 %  diff=B-C; im(diff), sum(abs(diff(:)))
 %
 % EXAMPLE - 2
