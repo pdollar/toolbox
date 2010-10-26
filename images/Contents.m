@@ -45,22 +45,25 @@
 %   seqWriterPlugin - Plugin for seqIo and videoIO to allow writing of seq files.
 %   seqPlayer       - Simple GUI to play seq files.
 %
-% Object bounding box utilities and labeling tools.
+% Object bounding box utilities and labeling tools:
 %   bbApply         - Functions for manipulating bounding boxes (bb).
 %   bbGt            - Bounding box (bb) annotations struct, evaluation and sampling routines.
 %   bbLabeler       - Bounding box or ellipse labeler for static images.
 %   bbNms           - Bounding box (bb) non-maximal suppression (nms).
 %
-% Binary mask creation.
+% Binary mask creation:
 %   maskCircle      - Creates an image of a 'pie slice' of a circle.
 %   maskEllipse     - Creates a binary image of an ellipse.
 %   maskGaussians   - Divides a volume into softly overlapping gaussian windows.
 %   maskSphere      - Creates an 'image' of a n-dimensional hypersphere.
 %
-% Miscellaneous:
+% Linear filtering:
 %   convnFast       - Fast convolution, replacement for both conv2 and convn.
-%   diffTracker     - Fast, robust estimation of translational offset between a pair of images.
 %   gaussSmooth     - Applies Gaussian smoothing to a (multidimensional) image.
+%   localSum        - Fast routine for box filtering.
+%
+% Miscellaneous:
+%   diffTracker     - Fast, robust estimation of translational offset between a pair of images.
 %   hog             - Efficiently compute histogram of oriented gradient (HOG) features.
 %   hogDraw         - Create visualization of hog descriptor.
 %   imMlGauss       - Calculates max likelihood params of Gaussian that gave rise to image G.
@@ -69,4 +72,3 @@
 %   imwrite2        - Similar to imwrite, except follows a strict naming convention.
 %   jitterImage     - Creates multiple, slightly jittered versions of an image.
 %   kernelTracker   - Kernel Tracker from Comaniciu, Ramesh and Meer PAMI 2003.
-%   localSum        - Fast routine for box filtering.
