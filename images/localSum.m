@@ -43,7 +43,7 @@ if( nargin<4 || isempty(op)), op='sum'; end
 assert(any(strcmp(shape,{'same','valid','full','block'})));
 assert(any(strcmp(op,{'sum','max','min'})));
 
-% special case where can compute using convOnes1
+% special case where can compute using convOnes
 if( all(mod(dims,2)) && ndims(I)<=3 ...
     && ~strcmp(shape,'block') && strcmp(op,'sum') )
   siz=size(I); if(length(siz)==2), siz=[siz(:)' 1]; end; r=(dims-1)/2;
