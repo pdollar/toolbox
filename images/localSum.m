@@ -31,7 +31,7 @@ function I = localSum( I, dims, shape, op )
 %  I2=localSum(I,3,'block','max'); figure(3); im(I2); title('max')
 %  I3=localSum(I,3,'block','min'); figure(4); im(I3); title('min')
 %
-% See also IMSHRINK, CONVONES
+% See also IMSHRINK
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
