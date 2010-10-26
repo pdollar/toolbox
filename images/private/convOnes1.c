@@ -37,27 +37,28 @@ void			convOnes( double *B, int ry, int rx, int rz, int h, int w, int d ) {
 void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   /* B=convOnes(A,ry,rx); or B=convOnes(A,ry,rx,rz); */
   int ry=0, rx=0, rz=0; int *ns, ms[3], nDims, i;
-  double *A, *B; mxClassID id;
+  void *A; double *B; mxClassID id;
   
   /* Error checking on arguments */
   if( nrhs<3 || nrhs>4) mexErrMsgTxt("Three or four input arguments required.");
   if( nlhs>1 ) mexErrMsgTxt("One output expected.");
   nDims=mxGetNumberOfDimensions(prhs[0]); id=mxGetClassID(prhs[0]);
-  if( (nDims!=2 && nDims!=3) || (id!=mxDOUBLE_CLASS) )
-    mexErrMsgTxt("A should be 2D or 3D double array.");  
+  if( (nDims!=2 && nDims!=3) || (id!=mxDOUBLE_CLASS && id!=mxUINT8_CLASS) )
+    mexErrMsgTxt("A should be 2D or 3D double or uint8 array.");
   ns = (int*) mxGetDimensions(prhs[0]); 
   ms[0]=ns[0]; ms[1]=ns[1]; ms[2]=(nDims==2) ? 1 : ns[2];
 
   /* extract inputs */
-  A = (double*) mxGetData(prhs[0]);
+  A = mxGetData(prhs[0]);
   ry = (int) mxGetScalar(prhs[1]);
   rx = (int) mxGetScalar(prhs[2]);
   if(nrhs>=4) rz = (int) mxGetScalar(prhs[3]);
 
   /* create output array */
-  plhs[0] = mxCreateNumericArray(3, ms, id, mxREAL);
-  B = (double*) mxGetData(plhs[0]);  
-  for(i=0; i<ms[0]*ms[1]*ms[2]; i++) B[i]=A[i];
+  plhs[0] = mxCreateNumericArray(3, ms, mxDOUBLE_CLASS, mxREAL);
+  B = (double*) mxGetData(plhs[0]);
+  if( id==mxDOUBLE_CLASS ) for(i=0; i<ms[0]*ms[1]*ms[2]; i++) B[i]=((double*)A)[i];
+  if( id==mxUINT8_CLASS ) for(i=0; i<ms[0]*ms[1]*ms[2]; i++) B[i]=((unsigned char*)A)[i];
 
   /* Perform ones convolution */
   convOnes( B, ry, rx, rz, ms[0], ms[1], ms[2] );
