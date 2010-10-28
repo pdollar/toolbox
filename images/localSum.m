@@ -46,8 +46,8 @@ assert(any(strcmp(op,{'sum','max','min'})));
 % special case where can compute using convOnes
 if( all(mod(dims,2)) && ndims(I)<=3 ...
     && ~strcmp(shape,'block') && strcmp(op,'sum') )
-  siz=size(I); if(length(siz)==2), siz=[siz(:)' 1]; end; r=(dims-1)/2;
-  if(length(r)==1), r=[r r 0]; end; if(length(r)==2), r=[r(:); 0]; end
+  siz=size(I); if(length(siz)==2), siz=[siz 1]; end; r=(dims(:)'-1)/2;
+  if(length(r)==1), r=[r r 0]; end; if(length(r)==2), r=[r 0]; end
   if(strcmp(shape,'valid') && any((2*r+1)>siz)); I=[]; return; end
   if(strcmp(shape,'full')), s=1+r; e=siz+r; T=I;
     I=zeros(siz+2*r); I(s(1):e(1),s(2):e(2),s(3):e(3))=T; end
