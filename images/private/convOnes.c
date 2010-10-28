@@ -14,21 +14,24 @@ void			convOnes( double *B, int ry, int rx, int rz, int h, int w, int d ) {
   /* convolve along y */
   if( ry>0 ) {  V=(double*) mxCalloc( h+ry2+1, sizeof(double) );
     for(k=0; k<d; k++) for(j=0; j<w; j++) { o=k*a+j*h;
-      for(i=0; i<h; i++) { V[i+ry]=B[o+i]; B[o+i]=0; if(i<=ry) B[o]+=V[i+ry]; }
+      for(i=0; i<h; i++) V[i+ry]=B[o+i];
+      B[o]=0; for(i=0; i<=ry; i++) B[o]+=V[i+ry];
       for(i=1; i<h; i++) B[o+i]=B[o+i-1]-V[i-1]+V[i+ry2];
     } mxFree(V);
   }
   /* convolve along x */
   if( rx>0 ) {  V=(double*) mxCalloc( w+rx2+1, sizeof(double) );
     for(k=0; k<d; k++) for(i=0; i<h; i++) { o=k*a+i;
-      for(j=0; j<w; j++) { V[j+rx]=B[o+j*h]; B[o+j*h]=0; if(j<=rx) B[o]+=V[j+rx]; }
+      for(j=0; j<w; j++) V[j+rx]=B[o+j*h];
+      B[o]=0; for(j=0; j<=rx; j++) B[o]+=V[j+rx];
       for(j=1; j<w; j++) B[o+j*h]=B[o+(j-1)*h]-V[j-1]+V[j+rx2];
     } mxFree(V);
   }
   /* convolve along z */
   if( rz>0 ) {  V=(double*) mxCalloc( d+rz2+1, sizeof(double) );
     for(j=0; j<w; j++) for(i=0; i<h; i++) { o=j*h+i;
-	  for(k=0; k<d; k++) { V[k+rz]=B[k*a+o]; B[k*a+o]=0; if(k<=rz) B[o]+=V[k+rz]; }
+      for(k=0; k<d; k++) V[k+rz]=B[k*a+o];
+      B[o]=0; for(k=0; k<=rz; k++) B[o]+=V[k+rz];
       for(k=1; k<d; k++) B[k*a+o]=B[(k-1)*a+o]-V[k-1]+V[k+rz2];
     } mxFree(V);
   }
