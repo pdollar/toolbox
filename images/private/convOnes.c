@@ -20,8 +20,7 @@ void			convOnes( double *A, double *B, int ry, int rx, int rz, int h, int w, int
     } mxFree(V); S=B;
   }
   /* convolve along x */
-  if( rx>0 ) {
-    V=mxCalloc( (w+rx2+1)*m, sizeof(double) );
+  if( rx>0 ) { V=(double*) mxCalloc( (w+rx2+1)*m, sizeof(double) );
     for(k=0; k<d; k++) for(i=0; i<h; i+=m) { m1=min(h-i,m); o=k*a+i;
       for(j=0; j<w; j++) for(c=0; c<m1; c++) V[m*(j+rx)+c]=S[o+j*h+c];
       for(c=0; c<m1; c++) B[o+c]=0; for(j=0; j<=rx; j++) for(c=0; c<m1; c++) B[o+c]+=V[m*(j+rx)+c];
@@ -29,11 +28,11 @@ void			convOnes( double *A, double *B, int ry, int rx, int rz, int h, int w, int
     } mxFree(V); S=B;
   }
   /* convolve along z */
-  if( rz>0 ) { V=(double*) mxCalloc( d+rz2+1, sizeof(double) );
-    for(j=0; j<w; j++) for(i=0; i<h; i++) { o=j*h+i;
-      for(k=0; k<d; k++) V[k+rz]=S[k*a+o];
-      B[o]=0; for(k=0; k<=rz; k++) B[o]+=V[k+rz];
-      for(k=1; k<d; k++) B[k*a+o]=B[(k-1)*a+o]-V[k-1]+V[k+rz2];
+  if( rz>0 ) { V=(double*) mxCalloc( (w+rx2+1)*m, sizeof(double) );
+    for(j=0; j<w; j++) for(i=0; i<h; i+=m) { m1=min(h-i,m); o=j*h+i;
+      for(k=0; k<d; k++) for(c=0; c<m1; c++) V[m*(k+rz)+c]=S[k*a+o+c];
+      for(c=0; c<m1; c++) B[o+c]=0; for(k=0; k<=rz; k++) for(c=0; c<m1; c++) B[o+c]+=V[m*(k+rz)+c];
+      for(k=1; k<d; k++) for(c=0; c<m1; c++) B[k*a+o+c]=B[(k-1)*a+o+c]-V[m*(k-1)+c]+V[m*(k+rz2)+c];
     } mxFree(V); S=B;
   }
 }
