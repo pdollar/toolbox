@@ -28,7 +28,7 @@ void			convOnes( double *A, double *B, int ry, int rx, int rz, int h, int w, int
     } mxFree(V); S=B;
   }
   /* convolve along z */
-  if( rz>0 ) { V=(double*) mxCalloc( (w+rx2+1)*m, sizeof(double) );
+  if( rz>0 ) { V=(double*) mxCalloc( (d+rz2+1)*m, sizeof(double) );
     for(j=0; j<w; j++) for(i=0; i<h; i+=m) { m1=min(h-i,m); o=j*h+i;
       for(k=0; k<d; k++) for(c=0; c<m1; c++) V[m*(k+rz)+c]=S[k*a+o+c];
       for(c=0; c<m1; c++) B[o+c]=0; for(k=0; k<=rz; k++) for(c=0; c<m1; c++) B[o+c]+=V[m*(k+rz)+c];
