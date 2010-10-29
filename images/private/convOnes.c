@@ -9,7 +9,7 @@
 
 void			convOnes( double *A, double *B, int ry, int rx, int rz, int h, int w, int d ) {
   /* convolve w ones mask (fast smooth) */
-  int i,j,k,o; double *V, *S; int ry2, rx2, rz2, a;
+  int i,j,k,o,c,m=32,m1; double *V, *S; int ry2, rx2, rz2, a;
   ry2=ry*2; rx2=rx*2; rz2=rz*2; a=w*h; S=A;
   /* convolve along y */
   if( ry>0 ) { V=(double*) mxCalloc( h+ry2+1, sizeof(double) );
@@ -20,11 +20,12 @@ void			convOnes( double *A, double *B, int ry, int rx, int rz, int h, int w, int
     } mxFree(V); S=B;
   }
   /* convolve along x */
-  if( rx>0 ) { V=(double*) mxCalloc( w+rx2+1, sizeof(double) );
-    for(k=0; k<d; k++) for(i=0; i<h; i++) { o=k*a+i;
-      for(j=0; j<w; j++) V[j+rx]=S[o+j*h];
-      B[o]=0; for(j=0; j<=rx; j++) B[o]+=V[j+rx];
-      for(j=1; j<w; j++) B[o+j*h]=B[o+(j-1)*h]-V[j-1]+V[j+rx2];
+  if( rx>0 ) {
+    V=mxCalloc( (w+rx2+1)*m, sizeof(double) );
+    for(k=0; k<d; k++) for(i=0; i<h; i+=m) { m1=min(h-i,m); o=k*a+i;
+      for(j=0; j<w; j++) for(c=0; c<m1; c++) V[m*(j+rx)+c]=S[o+j*h+c];
+      for(c=0; c<m1; c++) B[o+c]=0; for(j=0; j<=rx; j++) for(c=0; c<m1; c++) B[o+c]+=V[m*(j+rx)+c];
+      for(j=1; j<w; j++) for(c=0; c<m1; c++) B[o+j*h+c]=B[o+(j-1)*h+c]-V[m*(j-1)+c]+V[m*(j+rx2)+c];
     } mxFree(V); S=B;
   }
   /* convolve along z */
