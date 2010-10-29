@@ -1,5 +1,6 @@
 Version NEW
  -localSum: sped up case for 2D or 3D convolution w ones filter
+ -imResample: added case for fast nearest neighbor image resampling
  -minor: nlfiltersep
 
 Version 2.52 (25-Oct-10)
