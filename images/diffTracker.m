@@ -38,12 +38,21 @@ function [delta,err] = diffTracker( I0, I1, sig, ss )
 %  delta    - estimated dx/dy/ds
 %  err      - squared error of estimate
 %
-% EXAMPLE
+% EXAMPLE - translation only
 %  I = double(imread('cameraman.tif'))/255; dx=3; dy=5;
 %  I0=I(1+dy:end,1+dx:end); figure(1); im(I0);
 %  I1=I(1:end-dy,1:end-dx); figure(2); im(I1);
 %  tic, [delta,err] = diffTracker( I0, I1, 10 ), toc
 %
+% EXAMPLE - translation and scale
+%  I0 = double(imread('coins.png'))/255; dx=9; dy=-2; ds=1.10;
+%  H1 = [eye(2)*ds -[dy; dx]; 0 0 1];
+%  I1 = imtransform2(I0,H1,'bilinear','crop');
+%  tic, [ds,err] = diffTracker( I0, I1, 25, 1.05 ), toc
+%  H2 = [eye(2)*ds(3) -[ds(2); ds(1)]; 0 0 1];
+%  I2 = imtransform2(I0,H2,'bilinear','crop');
+%  figure(1); im(I0); figure(2); im(I1); figure(3); im(I2);
+% 
 % See also
 %
 % Piotr's Image&Video Toolbox      Version NEW
