@@ -66,6 +66,6 @@ dI1=I1(:)-I0(:); dIy=I0(:)-Ty(:); dIx=I0(:)-Tx(:);
 delta = -[dIx dIy] \ dI1;
 
 % compute squared error (if over certain threshold may wish to discard)
-err = sum((-[dIx dIy]*delta - dI1).^2) / length(dI1);
+if(nargout>1), err=sum((-[dIx dIy]*delta - dI1).^2) / length(dI1); end
 
 end
