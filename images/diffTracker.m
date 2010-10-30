@@ -1,4 +1,4 @@
-function [delta,err] = diffTracker( I0, I1, sigma )
+function [delta,err] = diffTracker( I0, I1, sig )
 % Fast, robust estimation of translational offset between a pair of images.
 %
 % Approximates the translational offset between two images by assuming the
@@ -27,12 +27,12 @@ function [delta,err] = diffTracker( I0, I1, sigma )
 %   CVPR, 2007.
 %
 % USAGE
-%  [delta,err] = diffTracker( I0, I1, sigma )
+%  [delta,err] = diffTracker( I0, I1, sig )
 %
 % INPUTS
 %  I0       - reference grayscale double image
 %  I1       - translated version of I0
-%  sigma    - amount of Gaussian spatial smoothing to apply
+%  sig      - amount of Gaussian spatial smoothing to apply
 %
 % OUTPUTS
 %  delta    - estimated dx/dy
@@ -46,14 +46,16 @@ function [delta,err] = diffTracker( I0, I1, sigma )
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 2.31
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 % smooth images, keep only valid region
-if( sigma>0 ), I0 = gaussSmooth( I0, sigma, 'valid' ); end
-if( sigma>0 ), I1 = gaussSmooth( I1, sigma, 'valid' ); end
+if( sig>0 ), f=filterGauss(2*ceil(sig*2.25)+1,[],sig^2);
+  I0 = conv2(conv2(I0,f','valid'),f,'valid');
+  I1 = conv2(conv2(I1,f','valid'),f,'valid');
+end
 
 % I0 translated by 1 pixel both in x and y, crop I0/I1 so dims match
 Ty = I0(2:end,1:end-1); Tx = I0(1:end-1,2:end);
