@@ -27,12 +27,12 @@ function [delta,err] = diffTracker( I0, I1, sig )
 %   CVPR, 2007.
 %
 % USAGE
-%  [delta,err] = diffTracker( I0, I1, sig )
+%  [delta,err] = diffTracker( I0, I1, [sig] )
 %
 % INPUTS
 %  I0       - reference grayscale double image
 %  I1       - translated version of I0
-%  sig      - amount of Gaussian spatial smoothing to apply
+%  sig      - [0] amount of Gaussian spatial smoothing to apply
 %
 % OUTPUTS
 %  delta    - estimated dx/dy
@@ -50,6 +50,9 @@ function [delta,err] = diffTracker( I0, I1, sig )
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
+
+% get inputs
+if(nargin<3 || isempty(sig)), sig=0; end
 
 % smooth images, keep only valid region
 if( sig>0 ), f=filterGauss(2*ceil(sig*2.25)+1,[],sig^2);
