@@ -39,7 +39,7 @@ function [delta,err] = diffTracker( I0, I1, sig )
 %  err      - squared error of estimate
 %
 % EXAMPLE
-%  I = imread('cameraman.tif'); dx=3; dy=5;
+%  I = double(imread('cameraman.tif'))/255; dx=3; dy=5;
 %  I0=I(1+dy:end,1+dx:end); figure(1); im(I0);
 %  I1=I(1:end-dy,1:end-dx); figure(2); im(I1);
 %  tic, [delta,err] = diffTracker( I0, I1, 10 ), toc
