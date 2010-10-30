@@ -1,4 +1,4 @@
-function [delta,err] = diffTracker( I0, I1, sig )
+function [delta,err] = diffTracker( I0, I1, sig, ss )
 % Fast, robust estimation of translational offset between a pair of images.
 %
 % Approximates the translational offset between two images by assuming the
@@ -27,15 +27,16 @@ function [delta,err] = diffTracker( I0, I1, sig )
 %   CVPR, 2007.
 %
 % USAGE
-%  [delta,err] = diffTracker( I0, I1, [sig] )
+%  [delta,err] = diffTracker( I0, I1, [sig], [ss] )
 %
 % INPUTS
 %  I0       - reference grayscale double image
 %  I1       - translated version of I0
 %  sig      - [0] amount of Gaussian spatial smoothing to apply
+%  ss       - [0] scale step for artificial scaling (if >1)
 %
 % OUTPUTS
-%  delta    - estimated dx/dy
+%  delta    - estimated dx/dy/ds
 %  err      - squared error of estimate
 %
 % EXAMPLE
@@ -53,6 +54,7 @@ function [delta,err] = diffTracker( I0, I1, sig )
 
 % get inputs
 if(nargin<3 || isempty(sig)), sig=0; end
+if(nargin<4 || isempty(ss)), ss=0; end
 
 % smooth images, keep only valid region
 if( sig>0 ), f=filterGauss(2*ceil(sig*2.25)+1,[],sig^2);
@@ -61,14 +63,19 @@ if( sig>0 ), f=filterGauss(2*ceil(sig*2.25)+1,[],sig^2);
 end
 
 % I0 translated by 1 pixel both in x and y, crop I0/I1 so dims match
+if(ss>1), Ts=arrayToDims(imResample(I0,ss),size(I0)); end
 Ty = I0(2:end,1:end-1); Tx = I0(1:end-1,2:end);
 I0 = I0(1:end-1,1:end-1); I1 = I1(1:end-1,1:end-1);
 
-% I1 = I0 + (I0-Tx)*dx + (I0-Ty)*dy, recover delta accordingly
+% I1 = I0 + (I0-Tx)*dx + (I0-Ty)*dy + (I0-Ts)*ds, recover delta accordingly
 dI1=I1(:)-I0(:); dIy=I0(:)-Ty(:); dIx=I0(:)-Tx(:);
-delta = -[dIx dIy] \ dI1;
+if(ss>1), Ts=Ts(1:end-1,1:end-1); dIs=I0(:)-Ts(:); else dIs=[]; end
+delta = -[dIx dIy dIs] \ dI1;
 
 % compute squared error (if over certain threshold may wish to discard)
-if(nargout>1), err=sum((-[dIx dIy]*delta - dI1).^2) / length(dI1); end
+if(nargout>1), err=sum((-[dIx dIy dIs]*delta - dI1).^2) / length(dI1); end
+
+% put scale delta into units independent of ss
+if(ss>1), delta(3)=ss^delta(3); end
 
 end
