@@ -63,7 +63,7 @@
 %   localSum        - Fast routine for box filtering.
 %
 % Miscellaneous:
-%   diffTracker     - Fast, robust estimation of translational offset between a pair of images.
+%   diffTracker     - Fast, robust estimation of translation/scale change between two images.
 %   hog             - Efficiently compute histogram of oriented gradient (HOG) features.
 %   hogDraw         - Create visualization of hog descriptor.
 %   imMlGauss       - Calculates max likelihood params of Gaussian that gave rise to image G.

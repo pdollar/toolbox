@@ -1,5 +1,5 @@
 function [delta,err] = diffTracker( I0, I1, sig, ss )
-% Fast, robust estimation of translational offset between a pair of images.
+% Fast, robust estimation of translation/scale change between two images.
 %
 % Approximates the translational offset between two images by assuming the
 % images lie on linear manifold. Specifically, assumes that if I0 and I1
@@ -9,17 +9,16 @@ function [delta,err] = diffTracker( I0, I1, sig, ss )
 % images. As such the input images typically need to be spatially smoothed
 % first, the amount of necessary smoothing will increase as the size of
 % translation increases (experiment for best results). The code is quite
-% fast, the bottleneck is the spatial smoothing. More accurate results can
-% be optained by iterating between estimating the translation and applying
-% the resulting translation.
+% fast, the bottleneck is the spatial smoothing.
 %
 % The actual computation is performed as follows. First we generate an
 % artificial translation of I0 by 1 pixel in x and y, and store the results
-% in Tx and Ty respectively. The linearity assumption then tells us that:
-%  I1 = I0 + (I0-Tx) * dx + (I0-Ty) * dy
-% Only dx and dy are unknown in the resulting overcomplete set of linear
-% equations, least squares is then used. The error of the estimate can be
-% used as a measure of the quality of the linear fit.
+% in Tx and Ty. Also, if ss>1, we generate an artificial scaling Ts of I0
+% by upsampling by a factor of ss. The linearity assumption tells us that:
+%  I1 = I0 + (I0-Tx) * dx + (I0-Ty) * dy +  (I0-Ts) * ds
+% Only dx, dy and possibly ds are unknown in the resulting overcomplete set
+% of linear equations, least squares is then used. The error of the
+% estimate can be used as a measure of the quality of the linear fit.
 %
 % This function was inspired by the beautiful work ok Yang et al.:
 %   H. Yang, M. Pollefeys, G. Welch, J. Frahm, and A. Ilie. Differential
