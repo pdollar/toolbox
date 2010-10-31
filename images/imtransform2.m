@@ -85,15 +85,14 @@ end
 function IR = imtransform2main( I, H, method, bbox, show )
 
 % check inputs
-if( nargin<3 || isempty(method)); method='linear'; end
-if( nargin<4 || isempty(bbox)); bbox='loose'; end
-if( nargin<5 || isempty(show)); show=0; end
-if( ndims(I)~=2 ); error('I must a MxN array'); end
-if( any(size(H)~=[3 3])); error('H must be 3x3'); end
-if( rank(H)~=3); error('H must be full rank.'); end
+if( nargin<3 || isempty(method)), method='linear'; end
+if( nargin<4 || isempty(bbox)), bbox='loose'; end
+if( nargin<5 || isempty(show)), show=0; end
+if( ndims(I)~=2 ), error('I must a MxN array'); end
+if( any(size(H)~=[3 3])), error('H must be 3x3'); end
+if( rank(H)~=3), error('H must be full rank.'); end
 if( ~any(strcmp(bbox,{'loose','crop'})));
-  error(['illegal value for bbox: ' bbox]);
-end
+  error(['illegal value for bbox: ' bbox]); end
 
 % set origin to be center of image
 sizI = size(I)+2;
@@ -130,7 +129,7 @@ else
   IR(isnan(IR)) = 0;
 end
 IR = arrayToDims( IR, sizIR-2 );
-if(~strcmp(classI,'double')); IR=feval(classI,IR ); end
+if(~strcmp(classI,'double')), IR=feval(classI,IR ); end
 
 % optionally show
 if( show )
