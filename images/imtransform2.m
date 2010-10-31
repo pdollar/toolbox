@@ -96,36 +96,35 @@ if( ~any(strcmp(bbox,{'loose','crop'})));
 
 % set origin to be center of image
 sizI = size(I)+2;
-rStr = (-sizI(1)+1)/2; rEnd = (sizI(1)-1)/2;
-cStr = (-sizI(2)+1)/2; cEnd = (sizI(2)-1)/2;
+r0 = (-sizI(1)+1)/2; r1 = (sizI(1)-1)/2;
+c0 = (-sizI(2)+1)/2; c1 = (sizI(2)-1)/2;
 
 % If 'loose' then get bounds of resulting image. To do this project the
-% original points accoring to the homography and see the bounds.  Note
+% original points accoring to the homography and see the bounds. Note
 % that since a homography maps a quadrilateral to a quadrilateral only
 % need to look at where the bounds of the quadrilateral are mapped to.
 if( strcmp(bbox,'loose') )
-  P = H * [rStr rEnd rStr rEnd; cStr cStr cEnd cEnd; 1 1 1 1];
-  rowDst = P(1,:)./P(3,:);  colDst=P(2,:)./P(3,:);
-  rStr = min(rowDst(:));  rEnd = max(rowDst(:));
-  cStr = min(colDst(:));  cEnd = max(colDst(:));
+  P = H * [r0 r1 r0 r1; c0 c0 c1 c1; 1 1 1 1];
+  rowDst = P(1,:)./P(3,:); colDst=P(2,:)./P(3,:);
+  r0 = min(rowDst(:)); r1 = max(rowDst(:));
+  c0 = min(colDst(:)); c1 = max(colDst(:));
 end
 
 % apply inverse homography on meshgrid in destination image
-[colGr,rowGr] = meshgrid(cStr:cEnd,rStr:rEnd); sizIR=size(colGr);
+[colGr,rowGr] = meshgrid(c0:c1,r0:r1); sizIR=size(colGr);
 P = H \ [rowGr(:)'; colGr(:)'; ones(1,prod(sizIR))];
-rows = reshape( P(1,:)./P(3,:), sizIR ) + (sizI(1)+1)/2;
-cols = reshape( P(2,:)./P(3,:), sizIR ) + (sizI(2)+1)/2;
+rs = reshape( P(1,:)./P(3,:), sizIR ) + (sizI(1)+1)/2;
+cs = reshape( P(2,:)./P(3,:), sizIR ) + (sizI(2)+1)/2;
 
 % now texture map results ('nearest' inlined for speed)
 classI = class( I ); T=I; I=zeros(sizI);
 I(:,[1 end])=eps; I([1 end],:)=eps; I(2:end-1,2:end-1)=T;
 if( strcmp(method,'nearest') )
-  rows=floor(rows+.5); rows=min( max(rows,1), sizI(1) );
-  cols=floor(cols+.5); cols=min( max(cols,1), sizI(2) );
-  locs = rows+(cols-1)*sizI(1);
-  IR = I( locs );
+  rs = min(max(floor(rs+.5),1),sizI(1));
+  cs = min(max(floor(cs+.5),1),sizI(2));
+  IR = I( rs+(cs-1)*sizI(1) );
 else
-  IR = interp2( I, cols, rows, method );
+  IR = interp2( I, cs, rs, method );
   IR(isnan(IR)) = 0;
 end
 IR = arrayToDims( IR, sizIR-2 );
@@ -133,7 +132,6 @@ if(~strcmp(classI,'double')), IR=feval(classI,IR ); end
 
 % optionally show
 if( show )
-  I = arrayToDims( I, size(I)-2 );
-  figure(show); clf; im(I);
+  figure(show); clf; im(I(2:end-1,2:end-1));
   figure(show+1); clf; im(IR);
 end
