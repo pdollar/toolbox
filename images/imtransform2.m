@@ -117,17 +117,17 @@ rs = reshape( P(1,:)./P(3,:), sizIR ) + (sizI(1)+1)/2;
 cs = reshape( P(2,:)./P(3,:), sizIR ) + (sizI(2)+1)/2;
 
 % now texture map results ('nearest' inlined for speed)
-classI = class( I ); T=I; I=zeros(sizI);
-I(:,[1 end])=eps; I([1 end],:)=eps; I(2:end-1,2:end-1)=T;
+classI=class(I); T=I; I=zeros(sizI); I(2:end-1,2:end-1)=T;
 if( strcmp(method,'nearest') )
   rs = min(max(floor(rs+.5),1),sizI(1));
   cs = min(max(floor(cs+.5),1),sizI(2));
   IR = I( rs+(cs-1)*sizI(1) );
 else
+  I(:,[1 end])=eps; I([1 end],:)=eps;
   IR = interp2( I, cs, rs, method );
   IR(isnan(IR)) = 0;
 end
-IR = arrayToDims( IR, sizIR-2 );
+IR = IR(2:end-1,2:end-1);
 if(~strcmp(classI,'double')), IR=feval(classI,IR ); end
 
 % optionally show
