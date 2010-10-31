@@ -1,20 +1,20 @@
-function IR = imtransform2( I, varargin )
+function R = imtransform2( I, varargin )
 % Applies a general/special homography on an image I
 %
 % Takes the center of the image as the origin, not the top left corner.
 % Also, the coordinate system is row/column format, so H must be also.
 %
 % The bounding box of the image is set by the BBOX argument, a string that
-% can be 'loose' (default) or 'crop'. When BBOX is 'loose', IR includes the
+% can be 'loose' (default) or 'crop'. When BBOX is 'loose', R includes the
 % whole transformed image, which generally is larger than I. When BBOX is
-% 'crop' IR is cropped to include only the central portion of the
+% 'crop' R is cropped to include only the central portion of the
 % transformed image and is the same size as I. The 'loose' flag is
 % currently inexact (because of some padding/cropping). Preserves I's type.
 %
 % USAGE
-%  IR = imtransform2( I, H, [method], [bbox], [show] )      % general hom
-%  IR = imtransform2( I, angle, [method], [bbox], [show] )  % rotation
-%  IR = imtransform2( I, dx, dy, [method], [bbox], [show] ) % translation
+%  R = imtransform2( I, H, [method], [bbox], [show] )      % general hom
+%  R = imtransform2( I, angle, [method], [bbox], [show] )  % rotation
+%  R = imtransform2( I, dx, dy, [method], [bbox], [show] ) % translation
 %
 % INPUTS - common
 %  I       - 2D image [converted to double]
@@ -33,18 +33,18 @@ function IR = imtransform2( I, varargin )
 %  dy      - y translation (up)
 %
 % OUTPUTS
-%  IR      - transformed image
+%  R       - transformed image
 %
 % EXAMPLE - general homography (rotation + translation)
 %  load trees; I=X;
 %  R = rotationMatrix( pi/4 ); T = [1; 3]; H = [R T; 0 0 1];
-%  IR = imtransform2( I, H, [], 'crop', 1 );
+%  R = imtransform2( I, H, [], 'crop', 1 );
 %
 % EXAMPLE - general homography (out of plane rotation)
 %  load trees; I=X;
-%  R = rotationMatrix( [0 1 0], pi/4 );  z=500;
+%  R = rotationMatrix( [0 1 0], pi/4 ); z=500;
 %  H = R; H(1:2,:)=H(1:2,:)*z; H(:,3)=H(:,3)*z;
-%  IR = imtransform2(I,H,'nearest','loose',1);
+%  R = imtransform2(I,H,'nearest','loose',1);
 %
 % EXAMPLE - rotation
 %  load trees;
@@ -70,19 +70,19 @@ if( nargin>1 && isscalar(varargin{1}) && ...
     (nargin==2 || ischar(varargin{2})) ) % rotation
   angle = varargin{1};  angle = angle /180 * pi;
   H = [rotationMatrix(angle) [0;0]; 0 0 1];
-  IR = imtransform2main( I, H, varargin{2:end} );
+  R = imtransform2main( I, H, varargin{2:end} );
   
 elseif( nargin>2 && isscalar(varargin{1}) ...
     && isscalar(varargin{2}) ) % translation
   dx=varargin{1}; dy=varargin{2};
   H = [eye(2) [dy; dx]; 0 0 1];
-  IR = imtransform2main( I, H, varargin{3:end} );
+  R = imtransform2main( I, H, varargin{3:end} );
   
 else % presumably a general homography
-  IR = imtransform2main( I, varargin{:} );
+  R = imtransform2main( I, varargin{:} );
 end
 
-function IR = imtransform2main( I, H, method, bbox, show )
+function R = imtransform2main( I, H, method, bbox, show )
 
 % check inputs
 if( nargin<3 || isempty(method)), method='linear'; end
@@ -111,27 +111,27 @@ if( strcmp(bbox,'loose') )
 end
 
 % apply inverse homography on meshgrid in destination image
-[colGr,rowGr] = meshgrid(c0:c1,r0:r1); sizIR=size(colGr);
-P = H \ [rowGr(:)'; colGr(:)'; ones(1,prod(sizIR))];
-rs = reshape( P(1,:)./P(3,:), sizIR ) + (sizI(1)+1)/2;
-cs = reshape( P(2,:)./P(3,:), sizIR ) + (sizI(2)+1)/2;
+[colGr,rowGr] = meshgrid(c0:c1,r0:r1); sizR=size(colGr);
+P = H \ [rowGr(:)'; colGr(:)'; ones(1,prod(sizR))];
+rs = reshape( P(1,:)./P(3,:), sizR ) + (sizI(1)+1)/2;
+cs = reshape( P(2,:)./P(3,:), sizR ) + (sizI(2)+1)/2;
 
 % now texture map results ('nearest' inlined for speed)
 classI=class(I); T=I; I=zeros(sizI); I(2:end-1,2:end-1)=T;
 if( strcmp(method,'nearest') )
   rs = min(max(floor(rs+.5),1),sizI(1));
   cs = min(max(floor(cs+.5),1),sizI(2));
-  IR = I( rs+(cs-1)*sizI(1) );
+  R = I( rs+(cs-1)*sizI(1) );
 else
   I(:,[1 end])=eps; I([1 end],:)=eps;
-  IR = interp2( I, cs, rs, method );
-  IR(isnan(IR)) = 0;
+  R = interp2( I, cs, rs, method );
+  R(isnan(R)) = 0;
 end
-IR = IR(2:end-1,2:end-1);
-if(~strcmp(classI,'double')), IR=feval(classI,IR ); end
+R = R(2:end-1,2:end-1);
+if(~strcmp(classI,'double')), R=feval(classI,R ); end
 
 % optionally show
 if( show )
   figure(show); clf; im(I(2:end-1,2:end-1));
-  figure(show+1); clf; im(IR);
+  figure(show+1); clf; im(R);
 end
