@@ -111,7 +111,8 @@ if( strcmp(bbox,'loose') )
 end
 
 % apply inverse homography on meshgrid in destination image
-[cs,rs] = meshgrid(c0:c1,r0:r1); sizJ=size(cs);
+sizJ=floor([r1-r0+1 c1-c0+1]); cs=c0:c1; rs=(r0:r1)';
+cs=cs(ones(1,sizJ(1)),:); rs=rs(:,ones(sizJ(2),1));
 P = H \ [rs(:)'; cs(:)'; ones(1,prod(sizJ))];
 rs = P(1,:)./P(3,:) + (sizI(1)+1)/2;
 cs = P(2,:)./P(3,:) + (sizI(2)+1)/2;
