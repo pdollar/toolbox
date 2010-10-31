@@ -36,27 +36,27 @@ function Y = imtransform2( I, varargin )
 %  Y       - transformed image
 %
 % EXAMPLE - general homography (rotation + translation)
-%  load trees; I=X;
-%  R = rotationMatrix( pi/4 ); T = [1; 3]; H = [R T; 0 0 1];
-%  Y = imtransform2( I, H, [], 'crop', 1 );
+%  load trees; I=X; method='linear';
+%  R = rotationMatrix(pi/4); T=[1; 3]; H=[R T; 0 0 1];
+%  Y = imtransform2(I,H,method,'crop',1);
 %
 % EXAMPLE - general homography (out of plane rotation)
-%  load trees; I=X;
-%  R = rotationMatrix( [0 1 0], pi/4 );  z=500;
+%  load trees; I=X; method='nearest';
+%  R = rotationMatrix([0 1 0],pi/4); z=500;
 %  H = R; H(1:2,:)=H(1:2,:)*z; H(:,3)=H(:,3)*z;
-%  Y = imtransform2(I,H,'nearest','loose',1);
+%  Y = imtransform2(I,H,method,'loose',1);
 %
 % EXAMPLE - rotation
-%  load trees;
-%  tic; X1 = imrotate( X, 55, 'bicubic', 'crop' ); toc,
-%  tic; X2 = imtransform2( X, 55, 'bicubic', 'crop' ); toc
-%  clf;  subplot(2,2,1); im(X); subplot(2,2,2); im(X1-X2);
-%  subplot(2,2,3); im(X1); subplot(2,2,4); im(X2);
+%  load trees; I=X; method='bicubic';
+%  tic; Y1 = imrotate(I,55,method,'crop'); toc
+%  tic; Y2 = imtransform2(I,55,method,'crop'); toc
+%  clf; subplot(2,2,1); im(I); subplot(2,2,2); im(Y1-Y2);
+%  subplot(2,2,3); im(Y1); subplot(2,2,4); im(Y2);
 %
 % EXAMPLE - translation
-%  load trees;
-%  XT = imtransform2(X,0,1.5,'bicubic','crop');
-%  figure(1); clf; im(X,[0 128]); figure(2); clf; im(XT,[0 128]);
+%  load trees; I=X; method='bicubic';
+%  Y = imtransform2(X,0,1.5,method,'crop');
+%  figure(1); clf; im(I,[0 128]); figure(2); clf; im(Y,[0 128]);
 %
 % See also TEXTUREMAP, INTERP2
 %
