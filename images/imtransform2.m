@@ -12,15 +12,16 @@ function J = imtransform2( I, varargin )
 % currently inexact (because of some padding/cropping). Preserves I's type.
 %
 % USAGE
-%  J = imtransform2( I, H, [method], [bbox], [show] )      % general hom
-%  J = imtransform2( I, angle, [method], [bbox], [show] )  % rotation
-%  J = imtransform2( I, dx, dy, [method], [bbox], [show] ) % translation
+%  J=imtransform2(I,H,[method],[bbox],[show],[pad])     % general hom
+%  J=imtransform2(I,angle,[method],[bbox],[show],[pad]) % rotation
+%  J=imtransform2(I,dx,dy,[method],[bbox],[show],[pad]) % translation
 %
 % INPUTS - common
 %  I       - 2D image [converted to double]
 %  method  - ['linear'] 'nearest', 'spline', 'cubic' (for interp2)
 %  bbox    - ['loose'] or 'crop'
 %  show    - [0] figure to use for optional display
+%  pad     - [0] padding value (scalar or 'replicate')
 %
 % INPUTS - specific to general homography
 %  H       - 3x3 nonsingular homography matrix
@@ -38,7 +39,7 @@ function J = imtransform2( I, varargin )
 % EXAMPLE - general homography (rotation + translation)
 %  load trees; I=X; method='linear';
 %  R = rotationMatrix(pi/4); T=[1; 3]; H=[R T; 0 0 1];
-%  J = imtransform2(I,H,method,'crop',1);
+%  J = imtransform2(I,H,method,'crop',1,'replicate');
 %
 % EXAMPLE - general homography (out of plane rotation)
 %  load trees; I=X; method='nearest';
@@ -82,12 +83,13 @@ else % presumably a general homography
   J = imtransform2main( I, varargin{:} );
 end
 
-function J = imtransform2main( I, H, method, bbox, show )
+function J = imtransform2main( I, H, method, bbox, show, pad )
 
 % check inputs
 if( nargin<3 || isempty(method)), method='linear'; end
 if( nargin<4 || isempty(bbox)), bbox='loose'; end
 if( nargin<5 || isempty(show)), show=0; end
+if( nargin<6 || isempty(pad)), pad=0; end
 if( ndims(I)~=2 ), error('I must a MxN array'); end
 if( any(size(H)~=[3 3])), error('H must be 3x3'); end
 if( rank(H)~=3), error('H must be full rank.'); end
@@ -96,7 +98,8 @@ if( ~any(strcmp(bbox,{'loose','crop'})));
 
 % pad I and convert to double, makes interpolation simpler
 classI=class(I); [m,n]=size(I); m=m+4; n=n+4;
-T=I; I=zeros(m,n); I(3:end-2,3:end-2)=T;
+if(~strcmp(classI,'double')), I=double(I); end
+I = padarray(I,[2,2],pad,'both');
 
 % set origin to be center of image
 r0 = (-m+1)/2; r1 = (m-1)/2;
