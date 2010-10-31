@@ -48,10 +48,10 @@ function J = imtransform2( I, varargin )
 %
 % EXAMPLE - rotation
 %  load trees; I=X; method='bicubic';
-%  tic; Y1 = imrotate(I,55,method,'crop'); toc
-%  tic; Y2 = imtransform2(I,55,method,'crop'); toc
-%  clf; subplot(2,2,1); im(I); subplot(2,2,2); im(Y1-Y2);
-%  subplot(2,2,3); im(Y1); subplot(2,2,4); im(Y2);
+%  tic; J1 = imrotate(I,55,method,'crop'); toc
+%  tic; J2 = imtransform2(I,55,method,'crop'); toc
+%  clf; subplot(2,2,1); im(I); subplot(2,2,2); im(J1-J2);
+%  subplot(2,2,3); im(J1); subplot(2,2,4); im(J2);
 %
 % EXAMPLE - translation
 %  load trees; I=X; method='bicubic';
@@ -111,10 +111,10 @@ if( strcmp(bbox,'loose') )
 end
 
 % apply inverse homography on meshgrid in destination image
-[colGr,rowGr] = meshgrid(c0:c1,r0:r1); sizJ=size(colGr);
-P = H \ [rowGr(:)'; colGr(:)'; ones(1,prod(sizJ))];
-rs = reshape( P(1,:)./P(3,:), sizJ ) + (sizI(1)+1)/2;
-cs = reshape( P(2,:)./P(3,:), sizJ ) + (sizI(2)+1)/2;
+[cs,rs] = meshgrid(c0:c1,r0:r1); sizJ=size(cs);
+P = H \ [rs(:)'; cs(:)'; ones(1,prod(sizJ))];
+rs = P(1,:)./P(3,:) + (sizI(1)+1)/2;
+cs = P(2,:)./P(3,:) + (sizI(2)+1)/2;
 
 % now texture map results ('nearest' inlined for speed)
 classI=class(I); T=I; I=zeros(sizI); I(2:end-1,2:end-1)=T;
@@ -127,7 +127,7 @@ else
   J = interp2( I, cs, rs, method );
   J(isnan(J)) = 0;
 end
-J = J(2:end-1,2:end-1);
+J=reshape(J,sizJ); J=J(2:end-1,2:end-1);
 if(~strcmp(classI,'double')), J=feval(classI,J ); end
 
 % optionally show
