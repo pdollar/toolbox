@@ -60,7 +60,7 @@ function IR = imtransform2( I, varargin )
 %
 % See also TEXTUREMAP, INTERP2
 %
-% Piotr's Image&Video Toolbox      Version 2.03
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -71,13 +71,13 @@ if( nargin>1 && isscalar(varargin{1}) && ...
   angle = varargin{1};  angle = angle /180 * pi;
   H = [rotationMatrix(angle) [0;0]; 0 0 1];
   IR = imtransform2main( I, H, varargin{2:end} );
-
+  
 elseif( nargin>2 && isscalar(varargin{1}) ...
     && isscalar(varargin{2}) ) % translation
   dx=varargin{1}; dy=varargin{2};
   H = [eye(2) [dy; dx]; 0 0 1];
   IR = imtransform2main( I, H, varargin{3:end} );
-
+  
 else % presumably a general homography
   IR = imtransform2main( I, varargin{:} );
 end
@@ -118,9 +118,8 @@ rows = reshape( P(1,:)./P(3,:), sizIR ) + (sizI(1)+1)/2;
 cols = reshape( P(2,:)./P(3,:), sizIR ) + (sizI(2)+1)/2;
 
 % now texture map results ('nearest' inlined for speed)
-classI = class( I );
-if(~strcmp(classI,'double')); I=double(I); end
-I = padarray(I,[1,1],eps,'both');
+classI = class( I ); T=I; I=zeros(sizI);
+I(:,[1 end])=eps; I([1 end],:)=eps; I(2:end-1,2:end-1)=T;
 if( strcmp(method,'nearest') )
   rows=floor(rows+.5); rows=min( max(rows,1), sizI(1) );
   cols=floor(cols+.5); cols=min( max(cols,1), sizI(2) );
