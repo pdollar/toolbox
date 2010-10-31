@@ -1,8 +1,9 @@
 Version NEW
  -localSum: sped up case for 2D or 3D convolution w ones filter
  -imResample: added case for fast nearest neighbor image resampling
+ -imtransform2: various optimization, including inline linear interp
  -diffTracker: added ability to find scale change between images
- -minor: nlfiltersep, imtransform2
+ -minor: nlfiltersep
 
 Version 2.52 (25-Oct-10)
  -seq*.m: various optimizations for reading/writing/viewing seq files
