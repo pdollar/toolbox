@@ -95,7 +95,7 @@ if( ~any(strcmp(bbox,{'loose','crop'})));
   error(['illegal value for bbox: ' bbox]); end
 
 % set origin to be center of image
-[m,n]=size(I); m=m+2; n=n+2;
+[m,n]=size(I); m=m+4; n=n+4;
 r0 = (-m+1)/2; r1 = (m-1)/2;
 c0 = (-n+1)/2; c1 = (n-1)/2;
 
@@ -117,21 +117,26 @@ P = H \ [rs(:)'; cs(:)'; ones(1,m1*n1)];
 rs = P(1,:)./P(3,:) + (m+1)/2;
 cs = P(2,:)./P(3,:) + (n+1)/2;
 
-% now texture map results ('nearest' inlined for speed)
-classI=class(I); T=I; I=zeros(m,n); I(2:end-1,2:end-1)=T;
+% now texture map results ('nearest','linear' inlined for speed)
+classI=class(I); T=I; I=zeros(m,n); I(3:end-2,3:end-2)=T;
 if( strcmp(method,'nearest') )
   rs = min(max(floor(rs+.5),1),m);
   cs = min(max(floor(cs+.5),1),n);
   J = I( rs+(cs-1)*m );
+elseif(strncmpi(method,'lin',3) || strncmpi(method,'bil',3))
+  rs=min(max(rs,2),m-1); wrs=rs-floor(rs);
+  cs=min(max(cs,2),n-1); wcs=cs-floor(cs);
+  ids = floor(rs)+floor(cs-1)*m;
+  J = (I(ids).*(1-wrs) + I(ids+1).*wrs).*(1-wcs) + ...
+    (I(ids+m).*(1-wrs) + I(ids+(m+1)).*wrs).*wcs;
 else
-  I(:,[1 end])=eps; I([1 end],:)=eps;
   J = interp2( I, cs, rs, method, 0 );
 end
-J=reshape(J,[m1 n1]); J=J(2:end-1,2:end-1);
+J=reshape(J,[m1 n1]); J=J(3:end-2,3:end-2);
 if(~strcmp(classI,'double')), J=feval(classI,J ); end
 
 % optionally show
 if( show )
-  figure(show); clf; im(I(2:end-1,2:end-1));
+  figure(show); clf; im(I(3:end-2,3:end-2));
   figure(show+1); clf; im(J);
 end
