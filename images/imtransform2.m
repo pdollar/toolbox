@@ -94,8 +94,11 @@ if( rank(H)~=3), error('H must be full rank.'); end
 if( ~any(strcmp(bbox,{'loose','crop'})));
   error(['illegal value for bbox: ' bbox]); end
 
+% pad I and convert to double, makes interpolation simpler
+classI=class(I); [m,n]=size(I); m=m+4; n=n+4;
+T=I; I=zeros(m,n); I(3:end-2,3:end-2)=T;
+
 % set origin to be center of image
-[m,n]=size(I); m=m+4; n=n+4;
 r0 = (-m+1)/2; r1 = (m-1)/2;
 c0 = (-n+1)/2; c1 = (n-1)/2;
 
@@ -118,7 +121,6 @@ rs = P(1,:)./P(3,:) + (m+1)/2;
 cs = P(2,:)./P(3,:) + (n+1)/2;
 
 % now texture map results ('nearest','linear' inlined for speed)
-classI=class(I); T=I; I=zeros(m,n); I(3:end-2,3:end-2)=T;
 if( strcmp(method,'nearest') )
   rs = min(max(floor(rs+.5),1),m);
   cs = min(max(floor(cs+.5),1),n);
