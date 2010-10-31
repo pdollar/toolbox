@@ -1,20 +1,20 @@
-function Y = imtransform2( I, varargin )
+function J = imtransform2( I, varargin )
 % Applies a general/special homography on an image I
 %
 % Takes the center of the image as the origin, not the top left corner.
 % Also, the coordinate system is row/column format, so H must be also.
 %
 % The bounding box of the image is set by the BBOX argument, a string that
-% can be 'loose' (default) or 'crop'. When BBOX is 'loose', Y includes the
+% can be 'loose' (default) or 'crop'. When BBOX is 'loose', J includes the
 % whole transformed image, which generally is larger than I. When BBOX is
-% 'crop' Y is cropped to include only the central portion of the
+% 'crop' J is cropped to include only the central portion of the
 % transformed image and is the same size as I. The 'loose' flag is
 % currently inexact (because of some padding/cropping). Preserves I's type.
 %
 % USAGE
-%  Y = imtransform2( I, H, [method], [bbox], [show] )      % general hom
-%  Y = imtransform2( I, angle, [method], [bbox], [show] )  % rotation
-%  Y = imtransform2( I, dx, dy, [method], [bbox], [show] ) % translation
+%  J = imtransform2( I, H, [method], [bbox], [show] )      % general hom
+%  J = imtransform2( I, angle, [method], [bbox], [show] )  % rotation
+%  J = imtransform2( I, dx, dy, [method], [bbox], [show] ) % translation
 %
 % INPUTS - common
 %  I       - 2D image [converted to double]
@@ -33,18 +33,18 @@ function Y = imtransform2( I, varargin )
 %  dy      - y translation (up)
 %
 % OUTPUTS
-%  Y       - transformed image
+%  J       - transformed image
 %
 % EXAMPLE - general homography (rotation + translation)
 %  load trees; I=X; method='linear';
 %  R = rotationMatrix(pi/4); T=[1; 3]; H=[R T; 0 0 1];
-%  Y = imtransform2(I,H,method,'crop',1);
+%  J = imtransform2(I,H,method,'crop',1);
 %
 % EXAMPLE - general homography (out of plane rotation)
 %  load trees; I=X; method='nearest';
 %  R = rotationMatrix([0 1 0],pi/4); z=500;
 %  H = R; H(1:2,:)=H(1:2,:)*z; H(:,3)=H(:,3)*z;
-%  Y = imtransform2(I,H,method,'loose',1);
+%  J = imtransform2(I,H,method,'loose',1);
 %
 % EXAMPLE - rotation
 %  load trees; I=X; method='bicubic';
@@ -55,8 +55,8 @@ function Y = imtransform2( I, varargin )
 %
 % EXAMPLE - translation
 %  load trees; I=X; method='bicubic';
-%  Y = imtransform2(X,0,1.5,method,'crop');
-%  figure(1); clf; im(I,[0 128]); figure(2); clf; im(Y,[0 128]);
+%  J = imtransform2(X,0,1.5,method,'crop');
+%  figure(1); clf; im(I,[0 128]); figure(2); clf; im(J,[0 128]);
 %
 % See also TEXTUREMAP, INTERP2
 %
@@ -70,19 +70,19 @@ if( nargin>1 && isscalar(varargin{1}) && ...
     (nargin==2 || ischar(varargin{2})) ) % rotation
   angle = varargin{1};  angle = angle /180 * pi;
   H = [rotationMatrix(angle) [0;0]; 0 0 1];
-  Y = imtransform2main( I, H, varargin{2:end} );
+  J = imtransform2main( I, H, varargin{2:end} );
   
 elseif( nargin>2 && isscalar(varargin{1}) ...
     && isscalar(varargin{2}) ) % translation
   dx=varargin{1}; dy=varargin{2};
   H = [eye(2) [dy; dx]; 0 0 1];
-  Y = imtransform2main( I, H, varargin{3:end} );
+  J = imtransform2main( I, H, varargin{3:end} );
   
 else % presumably a general homography
-  Y = imtransform2main( I, varargin{:} );
+  J = imtransform2main( I, varargin{:} );
 end
 
-function Y = imtransform2main( I, H, method, bbox, show )
+function J = imtransform2main( I, H, method, bbox, show )
 
 % check inputs
 if( nargin<3 || isempty(method)), method='linear'; end
@@ -111,27 +111,27 @@ if( strcmp(bbox,'loose') )
 end
 
 % apply inverse homography on meshgrid in destination image
-[colGr,rowGr] = meshgrid(c0:c1,r0:r1); sizY=size(colGr);
-P = H \ [rowGr(:)'; colGr(:)'; ones(1,prod(sizY))];
-rs = reshape( P(1,:)./P(3,:), sizY ) + (sizI(1)+1)/2;
-cs = reshape( P(2,:)./P(3,:), sizY ) + (sizI(2)+1)/2;
+[colGr,rowGr] = meshgrid(c0:c1,r0:r1); sizJ=size(colGr);
+P = H \ [rowGr(:)'; colGr(:)'; ones(1,prod(sizJ))];
+rs = reshape( P(1,:)./P(3,:), sizJ ) + (sizI(1)+1)/2;
+cs = reshape( P(2,:)./P(3,:), sizJ ) + (sizI(2)+1)/2;
 
 % now texture map results ('nearest' inlined for speed)
 classI=class(I); T=I; I=zeros(sizI); I(2:end-1,2:end-1)=T;
 if( strcmp(method,'nearest') )
   rs = min(max(floor(rs+.5),1),sizI(1));
   cs = min(max(floor(cs+.5),1),sizI(2));
-  Y = I( rs+(cs-1)*sizI(1) );
+  J = I( rs+(cs-1)*sizI(1) );
 else
   I(:,[1 end])=eps; I([1 end],:)=eps;
-  Y = interp2( I, cs, rs, method );
-  Y(isnan(Y)) = 0;
+  J = interp2( I, cs, rs, method );
+  J(isnan(J)) = 0;
 end
-Y = Y(2:end-1,2:end-1);
-if(~strcmp(classI,'double')), Y=feval(classI,Y ); end
+J = J(2:end-1,2:end-1);
+if(~strcmp(classI,'double')), J=feval(classI,J ); end
 
 % optionally show
 if( show )
   figure(show); clf; im(I(2:end-1,2:end-1));
-  figure(show+1); clf; im(Y);
+  figure(show+1); clf; im(J);
 end
