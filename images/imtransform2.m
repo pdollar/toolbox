@@ -111,9 +111,8 @@ c0 = (-n+1)/2; c1 = (n-1)/2;
 % need to look at where the bounds of the quadrilateral are mapped to.
 if( strcmp(bbox,'loose') )
   P = H * [r0 r1 r0 r1; c0 c0 c1 c1; 1 1 1 1];
-  rowDst = P(1,:)./P(3,:); colDst=P(2,:)./P(3,:);
-  r0 = min(rowDst(:)); r1 = max(rowDst(:));
-  c0 = min(colDst(:)); c1 = max(colDst(:));
+  rs=P(1,:)./P(3,:); r0=min(rs(:)); r1=max(rs(:));
+  cs=P(2,:)./P(3,:); c0=min(cs(:)); c1=max(cs(:));
 end
 
 % apply inverse homography on meshgrid in destination image
