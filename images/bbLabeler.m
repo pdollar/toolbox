@@ -154,10 +154,14 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
     if(c==127 || c==100), objApi.objDel(); end % 'del' or 'd'
     if(c==32 && ctrl ), imgApi.setImg(imgInd-1); end % ctrl-spacebar
     if(c==32 && ~ctrl), imgApi.setImg(imgInd+1); end % spacebar
-    if(c==28), objApi.objToggle(-1); end  % left arrow key
-    if(c==29), objApi.objToggle(+1); end  % right arrow key
-    if(c==30 || c==97),  objApi.objSetType(-1); end  % up or a
-    if(c==31 || c==122), objApi.objSetType(+1); end  % down or z
+    if(c==28 && ctrl), objApi.objShift(-1,0); end   % ctrl-lf
+    if(c==29 && ctrl), objApi.objShift(+1,0); end   % ctrl-rt
+    if(c==30 && ctrl), objApi.objShift(0,-1); end   % ctrl-up
+    if(c==31 && ctrl), objApi.objShift(0,+1); end   % ctrl-dn
+    if(c==28 && ~ctrl), objApi.objToggle(-1); end  % lf
+    if(c==29 && ~ctrl), objApi.objToggle(+1); end  % rt
+    if((c==30 && ~ctrl) || c==97),  objApi.objSetType(-1); end  % up or 'a'
+    if((c==31 && ~ctrl) || c==122), objApi.objSetType(+1); end  % dn or 'z'
     if(c==111), objApi.objSetVal('occ',0); end  % 'o'
     if(c==105), objApi.objSetVal('ign',0); end  % 'i'
     if(c==101), objApi.objSetVal('ell',0); end  % 'e'
@@ -207,7 +211,8 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
     % create api
     api = struct( 'closeAnn',@closeAnn, 'openAnn',@openAnn, ...
       'objNew',@objNew, 'objDel',@objDel, 'objToggle',@objToggle, ...
-      'objSetType',@objSetType, 'objSetVal',@objSetVal );
+      'objSetType',@objSetType, 'objSetVal',@objSetVal, ...
+      'objShift',@objShift );
     
     function closeAnn()
       % save annotation and then clear (also use to init)
@@ -342,6 +347,12 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
         usePnts = get(pTop.hPnt,'Value');
         if(~flag), usePnts=1-usePnts; set(pTop.hPnt,'Value',usePnts); end
       end
+      objsDraw();
+    end
+    
+    function objShift( x, y )
+      if(curObj==0), return; end
+      objs(curObj).bb(1:2)=objs(curObj).bb(1:2)+[x y];
       objsDraw();
     end
   end
