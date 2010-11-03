@@ -125,6 +125,7 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
         ' * click/drag center of existing bb: move bb'
         ' * click/drag edge of existing bb: resize bb'
         ' * clck/drag control points: rotate/resize bb'
+        ' * ctrl+arrow keys: shift selected bb'
         ''
         'Other controls:'
         ' * d-key or del-key or X-icon: delete selected bb'
