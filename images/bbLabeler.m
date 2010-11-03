@@ -18,7 +18,7 @@ function bbLabeler( objTypes, imgDir, resDir )
 %
 % See also bbGt, imRectRot
 %
-% Piotr's Image&Video Toolbox      Version 2.52
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -156,8 +156,8 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
     if(c==32 && ~ctrl), imgApi.setImg(imgInd+1); end % spacebar
     if(c==28), objApi.objToggle(-1); end  % left arrow key
     if(c==29), objApi.objToggle(+1); end  % right arrow key
-    if(c==30 || c==97),  objApi.objChangeType(-1); end  % up or a
-    if(c==31 || c==122), objApi.objChangeType(+1); end  % down or z
+    if(c==30 || c==97),  objApi.objSetType(-1); end  % up or a
+    if(c==31 || c==122), objApi.objSetType(+1); end  % down or z
     if(c==111), objApi.objSetVal('occ',0); end  % 'o'
     if(c==105), objApi.objSetVal('ign',0); end  % 'i'
     if(c==101), objApi.objSetVal('ell',0); end  % 'e'
@@ -207,7 +207,7 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
     % create api
     api = struct( 'closeAnn',@closeAnn, 'openAnn',@openAnn, ...
       'objNew',@objNew, 'objDel',@objDel, 'objToggle',@objToggle, ...
-      'objChangeType',@objChangeType, 'objSetVal',@objSetVal );
+      'objSetType',@objSetType, 'objSetVal',@objSetVal );
     
     function closeAnn()
       % save annotation and then clear (also use to init)
@@ -311,16 +311,13 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
       curObj=mod(curObj+del,nObj+1); objsDraw();
     end
     
-    function objSetType()
-      if(curObj==0), return; end
+    function objSetType( del )
       val = get(pTop.hLbl,'Value');
-      objs(curObj).lbl=objTypes{val}; objsDraw();
-    end
-    
-    function objChangeType( del )
-      val = get(pTop.hLbl,'Value');
-      val = max(1,min(val+del,length(objTypes)));
-      set(pTop.hLbl,'Value',val); objSetType();
+      if( nargin>0 && del~=0 )
+        val = max(1,min(val+del,length(objTypes)));
+        set(pTop.hLbl,'Value',val);
+      end
+      if(curObj), objs(curObj).lbl=objTypes{val}; objsDraw(); end
     end
     
     function objSetVal( type, flag )
