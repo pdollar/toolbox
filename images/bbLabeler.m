@@ -149,21 +149,21 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
   end
 
   function keyPress( h, evnt ) %#ok<INUSL>
-    char=int8(evnt.Character); if(isempty(char)), char=0; end;
+    c=int8(evnt.Character); if(isempty(c)), c=0; end;
     ctrl=strcmp(evnt.Modifier,'control'); if(isempty(ctrl)),ctrl=0; end
-    if(char==127 || char==100), objApi.objDel(); end % 'del' or 'd'
-    if(char==32 && ctrl), imgApi.setImg(imgInd-1); end % ctrl-spacebar
-    if(char==32 && ~ctrl), imgApi.setImg(imgInd+1); end % spacebar
-    if(char==28), objApi.objToggle(-1); end  % left arrow key
-    if(char==29), objApi.objToggle(+1); end  % right arrow key
-    if(char==30 || char==97), objApi.objChangeType(-1); end  % up or a
-    if(char==31 || char==122), objApi.objChangeType(+1); end  % down or z
-    if(char==111), objApi.objSetVal('occ',0); end  % 'o'
-    if(char==105), objApi.objSetVal('ign',0); end  % 'i'
-    if(char==101), objApi.objSetVal('ell',0); end  % 'e'
-    if(char==114), objApi.objSetVal('rot',0); end  % 'r'
-    if(char==108), objApi.objSetVal('lim',0); end  % 'l'
-    if(char==112), objApi.objSetVal('pnt',0); end  % 'p'
+    if(c==127 || c==100), objApi.objDel(); end % 'del' or 'd'
+    if(c==32 && ctrl ), imgApi.setImg(imgInd-1); end % ctrl-spacebar
+    if(c==32 && ~ctrl), imgApi.setImg(imgInd+1); end % spacebar
+    if(c==28), objApi.objToggle(-1); end  % left arrow key
+    if(c==29), objApi.objToggle(+1); end  % right arrow key
+    if(c==30 || c==97),  objApi.objChangeType(-1); end  % up or a
+    if(c==31 || c==122), objApi.objChangeType(+1); end  % down or z
+    if(c==111), objApi.objSetVal('occ',0); end  % 'o'
+    if(c==105), objApi.objSetVal('ign',0); end  % 'i'
+    if(c==101), objApi.objSetVal('ell',0); end  % 'e'
+    if(c==114), objApi.objSetVal('rot',0); end  % 'r'
+    if(c==108), objApi.objSetVal('lim',0); end  % 'l'
+    if(c==112), objApi.objSetVal('pnt',0); end  % 'p'
   end
 
   function mousePress()
