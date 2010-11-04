@@ -180,6 +180,8 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
     if(c==112), objApi.objSetVal('pnt',0); end  % 'p'
     if(c==115), objApi.objSetVal('shw',0); end  % 's'
     if(c==113), objApi.objSetVal('pan',0); end  % 'q'
+    if(c==43), zoom(1.1);   end % '+' key, zoom in
+    if(c==45), zoom(1/1.1); end % '-' key, zoom out
   end
 
   function mousePress()
@@ -374,6 +376,7 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
           set(hM.WindowListenerHandles,'Enable','off');
           set( hFig, 'keyPressFcn',@keyPress);
           set( hFig, 'WindowScrollWheelFcn',@(h,e) mouseWheel(e));
+          setptr(hFig,'hand'); %set(hFig,'Pointer','hand');
         end
       end
       objsDraw();
