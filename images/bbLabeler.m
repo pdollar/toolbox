@@ -41,7 +41,7 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
     % initial figures size / pos
     set(0,'Units','pixels');  ss = get(0,'ScreenSize');
     if( ss(3)<800 || ss(4)<600 ); error('screen too small'); end;
-    figPos = [(ss(3)-600)/2 (ss(4)-500)/2 600 500];
+    figPos = [(ss(3)-620)/2 (ss(4)-500)/2 620 500];
     
     % create main figure
     hFig = figure('NumberTitle','off', 'Toolbar','none', 'Color','k', ...
@@ -73,6 +73,8 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
     pTop.hRot=uicontrol(pTop.h,chbPrp{:},st,'rotate');
     pTop.hLim=uicontrol(pTop.h,chbPrp{:},st,'lims');
     pTop.hPnt=uicontrol(pTop.h,chbPrp{:},st,'pnts');
+    pTop.hShw=uicontrol(pTop.h,chbPrp{:},st,'show');
+    pTop.hPan=uicontrol(pTop.h,chbPrp{:},st,'pan');
     pTop.hDims=uicontrol(pTop.h,txtPrp{:},'Center',st,'');
     pTop.hNum=uicontrol(pTop.h,txtPrp{:},'Center',st,'n=0');
     pTop.hHelp=uicontrol(pTop.h,btnPrp{:},fs,12,st,'?');
@@ -87,7 +89,7 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
     
     function figResized()
       % overall layout
-      pos=get(hFig,ps); pad=8; htTop=30; wdTop=600;
+      pos=get(hFig,ps); pad=8; htTop=30; wdTop=620;
       wd=pos(3)-2*pad; ht=pos(4)-2*pad-htTop;
       x=(pos(3)-wd)/2; y=pad;
       set(hAx,ps,[x y wd ht]); y=y+ht;
@@ -106,8 +108,10 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
       set(pTop.hEll,ps,[x 15 55 13]);
       set(pTop.hRot,ps,[x 2 55 13]); x=x+60;
       set(pTop.hLim,ps,[x 15 45 13]);
-      set(pTop.hPnt,ps,[x 2 45 13]); x=x+60;
-      set(pTop.hNum,ps,[x 5 30 20]); x=x+30+50;
+      set(pTop.hPnt,ps,[x 2 45 13]); x=x+50;
+      set(pTop.hShw,ps,[x 15 55 13]);
+      set(pTop.hPan,ps,[x 2 55 13]); x=x+60;
+      set(pTop.hNum,ps,[x 5 30 20]); x=x+30+20;
       set(pTop.hHelp,ps,[x 5 20 20]);
     end
     
@@ -169,6 +173,8 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
     if(c==114), objApi.objSetVal('rot',0); end  % 'r'
     if(c==108), objApi.objSetVal('lim',0); end  % 'l'
     if(c==112), objApi.objSetVal('pnt',0); end  % 'p'
+    if(c==115), objApi.objSetVal('shw',0); end  % 's'
+    if(c==113), objApi.objSetVal('pan',0); end  % 'q'
   end
 
   function mousePress()
@@ -208,6 +214,8 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
     set(pTop.hRot,'Callback',@(h,evnt) objSetVal('rot',1));
     set(pTop.hLim,'Callback',@(h,evnt) objSetVal('lim',1));
     set(pTop.hPnt,'Callback',@(h,evnt) objSetVal('pnt',1));
+    set(pTop.hShw,'Callback',@(h,evnt) objSetVal('shw',1));
+    set(pTop.hPan,'Callback',@(h,evnt) objSetVal('pan',1));
     
     % create api
     api = struct( 'closeAnn',@closeAnn, 'openAnn',@openAnn, ...
@@ -347,6 +355,10 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
       elseif(strcmp(type,'pnt'))
         usePnts = get(pTop.hPnt,'Value');
         if(~flag), usePnts=1-usePnts; set(pTop.hPnt,'Value',usePnts); end
+      elseif(strcmp(type,'shw'))
+        disp('IMPLEMENT!');
+      elseif(strcmp(type,'pan'))
+        disp('IMPLEMENT!');
       end
       objsDraw();
     end
