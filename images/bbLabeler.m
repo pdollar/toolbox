@@ -184,8 +184,10 @@ usePnts=0; imgApi.setImgDir(imgDir);
     if(c==112), objApi.objSetVal('pnt',0); end  % 'p'
     if(c==104), objApi.objSetVal('hid',0); end  % 'h'
     if(c==113), objApi.objSetVal('pan',0); end  % 'q'
-    if(c==43), zoom(1.1);   end % '+' key, zoom in
-    if(c==45), zoom(1/1.1); end % '-' key, zoom out
+    if(c==43 && ~ctrl), zoom(1.1);   end % '+' key, zoom in
+    if(c==45 && ~ctrl), zoom(1/1.1); end % '-' key, zoom out
+    if(c==43 && ctrl), imgApi.adjContrast(+1); end % ctrl-'+', inc contrast
+    if(c==45 && ctrl), imgApi.adjContrast(-1); end % ctrl-'-', dec contrast
   end
 
   function mousePress()
@@ -400,9 +402,10 @@ usePnts=0; imgApi.setImgDir(imgDir);
   end
 
   function api = imgMakeApi()
-    nImg=deal([]);
+    [nImg,hImg,contrast,I]=deal([]);
     set(pTop.hImgInd,'Callback',@(h,evnt) setImgCb());
-    api = struct( 'setImgDir',@setImgDir, 'setImg',@setImg );
+    api = struct( 'setImgDir',@setImgDir, 'setImg',@setImg, ...
+      'adjContrast',@adjContrast );
     
     function setImgDir( imgDir1 )
       objApi.closeAnn(); imgDir=imgDir1;
@@ -411,11 +414,17 @@ usePnts=0; imgApi.setImgDir(imgDir);
       set(pTop.hImgNum,'String',['/' int2str(nImg)]);
     end
     
+    function adjContrast( del )
+      if(isempty(I)), return; end
+      contrast=max(.1,contrast+del/10);
+      set(hImg,'CData',I*contrast);
+    end
+    
     function setImg( imgInd1 )
       if(nImg==0), return; end; objApi.closeAnn(); imgInd=imgInd1;
       if(imgInd<1), imgInd=1; end; if(imgInd>nImg), imgInd=nImg; end
       I=imread([imgDir '/' imgFiles{imgInd}]); hImg=imshow(I);
-      set(pTop.hImgInd,'String',int2str(imgInd));
+      set(pTop.hImgInd,'String',int2str(imgInd)); contrast=1;
       set(hImg,'ButtonDownFcn',@(h,e) mousePress); objApi.openAnn();
     end
     
