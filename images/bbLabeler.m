@@ -317,7 +317,9 @@ usePnts=0; imgApi.setImgDir(imgDir);
     
     function objNew()
       curObj=0; objsDraw(); pnt=get(hAx,'CurrentPoint');
-      pnt=pnt([1,3]); lblId=get(pTop.hLbl,'Value'); color=colors(lblId);
+      pnt=pnt([1,3]); if( pnt(1)<lims(1) || pnt(1)>lims(3) || ...
+          pnt(2)<lims(2) || pnt(2)>lims(4)), return; end
+      lblId=get(pTop.hLbl,'Value'); color=colors(lblId);
       rp=struct('ellipse',ellipse,'rotate',rotate/2,'hParent',hAx,...
         'lw',2,'ls',':','pos',pnt,'color',color);
       if(~useLims), rp.lims=[]; else rp.lims=lims; end
