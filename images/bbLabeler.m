@@ -128,6 +128,11 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
         ' * double-click: advance one image'
         ' * can also directly enter image index'
         ''
+        'Zoom and Pan controls:'
+        ' * mouse wheel or +/- keys: zoom in and out'
+        ' * q-key or pan-icon: toggle pan mode'
+        ' * click/drag: pans image (while in pan mode)'
+        ''
         'bb modification with mouse:'
         ' * click/drag in blank region: create new bb'
         ' * click on existing bb: select bb'
@@ -147,10 +152,10 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
         ' * left-arrow or <<-icon: select previous bb'
         ' * right-arrow or >>-icon: select next bb'
         ' * up/down-arrow a-key/z-key or dropbox: select bb label' };
+      pos=get(0,'ScreenSize'); pos=[(pos(3)-400)/2 (pos(4)-500)/2 400 500];
       hHelp = figure('NumberTitle','off', 'Toolbar','auto', ...
         'Color','k', 'MenuBar','none', 'Visible','on', ...
-        'Name',[name ' help'], 'Resize','off');
-      pos=get(hHelp,ps); pos(1:2)=0;
+        'Name',[name ' help'], 'Resize','on', ps, pos ); pos(1:2)=0;
       uicontrol( hHelp, 'Style','text', ha,'Left', fs,10, bg,'w', ...
         ps,pos, st,helpTxt );
     end
