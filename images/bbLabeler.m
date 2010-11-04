@@ -28,10 +28,9 @@ if(nargin<2 || isempty(imgDir)), imgDir=pwd; end
 if(nargin<3 || isempty(resDir)), resDir=imgDir; end
 if(~exist(resDir,'dir')), mkdir(resDir); end
 colors='gcmrkgcmrkgcmrkgcmrkgcmrkgcmrkgcmrk'; minSiz=[12 12];
-[hFig,hPan,hAx,pTop,imgInd,imgFiles,rotate,ellipse,useLims,usePnts] ...
-  = deal([]);
+[hFig,hPan,hAx,pTop,imgInd,imgFiles,usePnts] = deal([]);
 makeLayout(); imgApi=imgMakeApi(); objApi=objMakeApi();
-rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
+usePnts=0; imgApi.setImgDir(imgDir);
 
   function makeLayout()
     % common properties
@@ -218,6 +217,7 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
   function api = objMakeApi()
     % variables
     [resNm,objs,nObj,hsObj,curObj,lims] = deal([]);
+    ellipse=0; rotate=0; useLims=0; 
     
     % callbacks
     set(pTop.hDel,'Callback',@(h,evnt) objDel());
