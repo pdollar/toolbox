@@ -28,7 +28,8 @@ if(nargin<2 || isempty(imgDir)), imgDir=pwd; end
 if(nargin<3 || isempty(resDir)), resDir=imgDir; end
 if(~exist(resDir,'dir')), mkdir(resDir); end
 colors='gcmrkgcmrkgcmrkgcmrkgcmrkgcmrkgcmrk'; minSiz=[12 12];
-[hFig,hAx,pTop,imgInd,imgFiles,rotate,ellipse,useLims,usePnts]=deal([]);
+[hFig,hPan,hAx,pTop,imgInd,imgFiles,rotate,ellipse,useLims,usePnts] ...
+  = deal([]);
 makeLayout(); imgApi=imgMakeApi(); objApi=objMakeApi();
 rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
 
@@ -81,11 +82,15 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
     
     % set the keyPressFcn for all focusable components (except popupmenus)
     set( hFig, 'keyPressFcn',@keyPress );
+    set( hFig, 'WindowScrollWheelFcn',@(h,e) mouseWheel(e));
     set( hFig, 'ButtonDownFcn',@(h,e) mousePress );
     set( pTop.hHelp,'CallBack',@(h,e) helpWindow );
     
     % set hFig to visible upon completion
     set(hFig,'Visible','on'); drawnow;
+    
+    % pan controls
+    hPan = pan( hFig );
     
     function figResized()
       % overall layout
@@ -186,6 +191,10 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
     elseif( strcmp(sType,'normal') )
       objApi.objNew(); % single click
     end
+  end
+
+  function mouseWheel( evnt )
+    if( evnt.VerticalScrollCount>0 ), zoom(1/1.1); else zoom(1.1); end
   end
 
   function mouseDrag()
@@ -358,7 +367,14 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
       elseif(strcmp(type,'shw'))
         disp('IMPLEMENT!');
       elseif(strcmp(type,'pan'))
-        disp('IMPLEMENT!');
+        enabled = get(pTop.hPan,'Value');
+        if(~flag), enabled=1-enabled; set(pTop.hPan,'Value',enabled); end
+        if(~enabled), set(hPan,'Enable','off'); else
+          set(hPan,'Enable','on'); hM=uigetmodemanager(hFig);
+          set(hM.WindowListenerHandles,'Enable','off');
+          set( hFig, 'keyPressFcn',@keyPress);
+          set( hFig, 'WindowScrollWheelFcn',@(h,e) mouseWheel(e));
+        end
       end
       objsDraw();
     end
