@@ -44,8 +44,8 @@ rotate=0; ellipse=0; useLims=0; usePnts=0; imgApi.setImgDir(imgDir);
     figPos = [(ss(3)-600)/2 (ss(4)-500)/2 600 500];
     
     % create main figure
-    hFig = figure('NumberTitle','off', 'Toolbar','auto', 'Color','k', ...
-      'MenuBar','none', 'Visible','off', ps,figPos, 'Name',name );
+    hFig = figure('NumberTitle','off', 'Toolbar','none', 'Color','k', ...
+      'MenuBar','none', 'Visible','off', ps,figPos, 'Name',[name resDir]);
     set(hFig,'DeleteFcn',@(h,e) exitProg,'ResizeFcn',@(h,e) figResized );
     
     % display axes
