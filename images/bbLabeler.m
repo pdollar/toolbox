@@ -73,7 +73,7 @@ usePnts=0; imgApi.setImgDir(imgDir);
     pTop.hRot=uicontrol(pTop.h,chbPrp{:},st,'rotate');
     pTop.hLim=uicontrol(pTop.h,chbPrp{:},st,'lims');
     pTop.hPnt=uicontrol(pTop.h,chbPrp{:},st,'pnts');
-    pTop.hShw=uicontrol(pTop.h,chbPrp{:},st,'show');
+    pTop.hHid=uicontrol(pTop.h,chbPrp{:},st,'hide');
     pTop.hPan=uicontrol(pTop.h,chbPrp{:},st,'pan');
     pTop.hDims=uicontrol(pTop.h,txtPrp{:},'Center',st,'');
     pTop.hNum=uicontrol(pTop.h,txtPrp{:},'Center',st,'n=0');
@@ -113,7 +113,7 @@ usePnts=0; imgApi.setImgDir(imgDir);
       set(pTop.hRot,ps,[x 2 55 13]); x=x+60;
       set(pTop.hLim,ps,[x 15 45 13]);
       set(pTop.hPnt,ps,[x 2 45 13]); x=x+50;
-      set(pTop.hShw,ps,[x 15 55 13]);
+      set(pTop.hHid,ps,[x 15 55 13]);
       set(pTop.hPan,ps,[x 2 55 13]); x=x+60;
       set(pTop.hNum,ps,[x 5 30 20]); x=x+30+20;
       set(pTop.hHelp,ps,[x 5 20 20]);
@@ -182,7 +182,7 @@ usePnts=0; imgApi.setImgDir(imgDir);
     if(c==114), objApi.objSetVal('rot',0); end  % 'r'
     if(c==108), objApi.objSetVal('lim',0); end  % 'l'
     if(c==112), objApi.objSetVal('pnt',0); end  % 'p'
-    if(c==115), objApi.objSetVal('shw',0); end  % 's'
+    if(c==104), objApi.objSetVal('hid',0); end  % 'h'
     if(c==113), objApi.objSetVal('pan',0); end  % 'q'
     if(c==43), zoom(1.1);   end % '+' key, zoom in
     if(c==45), zoom(1/1.1); end % '-' key, zoom out
@@ -217,7 +217,7 @@ usePnts=0; imgApi.setImgDir(imgDir);
   function api = objMakeApi()
     % variables
     [resNm,objs,nObj,hsObj,curObj,lims] = deal([]);
-    ellipse=0; rotate=0; useLims=0; 
+    ellipse=0; rotate=0; useLims=0; hide=0;
     
     % callbacks
     set(pTop.hDel,'Callback',@(h,evnt) objDel());
@@ -230,7 +230,7 @@ usePnts=0; imgApi.setImgDir(imgDir);
     set(pTop.hRot,'Callback',@(h,evnt) objSetVal('rot',1));
     set(pTop.hLim,'Callback',@(h,evnt) objSetVal('lim',1));
     set(pTop.hPnt,'Callback',@(h,evnt) objSetVal('pnt',1));
-    set(pTop.hShw,'Callback',@(h,evnt) objSetVal('shw',1));
+    set(pTop.hHid,'Callback',@(h,evnt) objSetVal('hid',1));
     set(pTop.hPan,'Callback',@(h,evnt) objSetVal('pan',1));
     
     % create api
@@ -257,7 +257,7 @@ usePnts=0; imgApi.setImgDir(imgDir);
     end
     
     function objsDraw()
-      delete(hsObj); hsObj=zeros(1,nObj);
+      delete(hsObj); if(hide), hsObj=[]; return; end; hsObj=zeros(1,nObj);
       % display regular bbs
       for id=1:nObj
         o=objs(id); color=colors(strcmp(o.lbl,objTypes));
@@ -316,8 +316,9 @@ usePnts=0; imgApi.setImgDir(imgDir);
     end
     
     function objNew()
-      curObj=0; objsDraw(); pnt=get(hAx,'CurrentPoint');
-      pnt=pnt([1,3]); if( pnt(1)<lims(1) || pnt(1)>lims(3) || ...
+      if(hide), return; end; curObj=0; objsDraw();
+      pnt=get(hAx,'CurrentPoint'); pnt=pnt([1,3]);
+      if( pnt(1)<lims(1) || pnt(1)>lims(3) || ...
           pnt(2)<lims(2) || pnt(2)>lims(4)), return; end
       lblId=get(pTop.hLbl,'Value'); color=colors(lblId);
       rp=struct('ellipse',ellipse,'rotate',rotate/2,'hParent',hAx,...
@@ -373,8 +374,10 @@ usePnts=0; imgApi.setImgDir(imgDir);
       elseif(strcmp(type,'pnt'))
         usePnts = get(pTop.hPnt,'Value');
         if(~flag), usePnts=1-usePnts; set(pTop.hPnt,'Value',usePnts); end
-      elseif(strcmp(type,'shw'))
-        disp('IMPLEMENT!');
+      elseif(strcmp(type,'hid'))
+        hide = get(pTop.hHid,'Value');
+        if(~flag), hide=1-hide; set(pTop.hHid,'Value',hide); end
+        if( hide ), curObj=0; end
       elseif(strcmp(type,'pan'))
         enabled = get(pTop.hPan,'Value');
         if(~flag), enabled=1-enabled; set(pTop.hPan,'Value',enabled); end
