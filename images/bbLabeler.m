@@ -150,8 +150,9 @@ usePnts=0; imgApi.setImgDir(imgDir);
         ' * p-key or pnts-icon: toggle pnt creation on/off'
         ' * left-arrow or <<-icon: select previous bb'
         ' * right-arrow or >>-icon: select next bb'
-        ' * up/down-arrow a-key/z-key or dropbox: select bb label' };
-      pos=get(0,'ScreenSize'); pos=[(pos(3)-400)/2 (pos(4)-500)/2 400 500];
+        ' * up/down-arrow a-key/z-key or dropbox: select bb label' 
+        ' * ctrl and +/- keys: increase/decrease contrast' };
+      pos=get(0,'ScreenSize'); pos=[(pos(3)-400)/2 (pos(4)-520)/2 400 520];
       hHelp = figure('NumberTitle','off', 'Toolbar','auto', ...
         'Color','k', 'MenuBar','none', 'Visible','on', ...
         'Name',[name ' help'], 'Resize','on', ps, pos ); pos(1:2)=0;
