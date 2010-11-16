@@ -29,7 +29,7 @@ function out = seqIo( fName, action, varargin )
 % Crop sub-sequence from seq file.
 %   seqIo( fName, 'crop', tName, frames )
 % Extract images from seq file to target directory.
-%   seqIo( fName, 'toImgs', tDir, [skip], [f0], [f1] )
+%   seqIo( fName, 'toImgs', tDir, [skip], [f0], [f1], [ext] )
 % Make seq file from images in an array or source directory.
 %   seqIo( fName, 'frImgs', info, varargin )
 % Convert seq file by applying imgFun(I) to each frame I.
@@ -56,7 +56,7 @@ function out = seqIo( fName, action, varargin )
 % seqIo>toImgs, seqIo>frImgs, seqIo>convert, seqIo>newHeader,
 % seqIo>readerDual, seqPlayer, seqReaderPlugin, seqWriterPlugin
 %
-% Piotr's Image&Video Toolbox      Version 2.52
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -223,11 +223,11 @@ for f=frames
 end; sw.close(); sr.close();
 end
 
-function toImgs( fName, tDir, skip, f0, f1 )
+function toImgs( fName, tDir, skip, f0, f1, ext )
 % Extract images from seq file to target directory.
 %
 % USAGE
-%  seqIo( fName, 'toImgs', tDir, [skip], [f0], [f1] )
+%  seqIo( fName, 'toImgs', tDir, [skip], [f0], [f1], [ext] )
 %
 % INPUTS
 %  fName      - seq file name
@@ -235,6 +235,7 @@ function toImgs( fName, tDir, skip, f0, f1 )
 %  skip       - [1] skip between written frames
 %  f0         - [0] first frame to write
 %  f1         - [numFrames-1] last frame to write
+%  ext        - [] optionally save as given type (slow, reconverts)
 %
 % OUTPUTS
 %
@@ -244,14 +245,17 @@ function toImgs( fName, tDir, skip, f0, f1 )
 if(nargin<3 || isempty(skip)), skip=1; end
 if(nargin<4 || isempty(f0)), f0=0; end
 if(nargin<5 || isempty(f1)), f1=inf; end
+if(nargin<6 || isempty(ext)), ext=''; end
 if(~exist(tDir,'dir')), mkdir(tDir); end
 sr=reader(fName); info=sr.getinfo();
 f1=min(f1,info.numFrames-1); tid=ticStatus;
 for frame = f0:skip:f1
-  f=[tDir '/I' int2str2(frame,5) '.' info.ext];
-  sr.seek(frame); I=sr.getframeb(); f=fopen(f,'w');
-  if(f<=0), sr.close(); assert(false); end
-  fwrite(f,I); fclose(f); tocStatus(tid,frame/f1);
+  f=[tDir '/I' int2str2(frame,5) '.']; sr.seek(frame);
+  if(~isempty(ext)), I=sr.getframe(); imwrite(I,[f ext]); else
+    I=sr.getframeb(); f=fopen([f  info.ext],'w');
+    if(f<=0), sr.close(); assert(false); end
+    fwrite(f,I); fclose(f);
+  end; tocStatus(tid,frame/f1);
 end; sr.close(); if(frame<f1), tocStatus(tid,1); end
 end
 
