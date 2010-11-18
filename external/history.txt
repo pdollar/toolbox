@@ -5,7 +5,7 @@ Version NEW
  -diffTracker: added ability to find scale change between images
  -bbLabeler: enhanced GUI, including zoom and pan control (thanks Boris Babenko)
  -added mac 64 bit intel binaries
- -minor: nlfiltersep, seqIo
+ -minor: nlfiltersep, seqIo, toolboxCompile
 
 Version 2.52 (25-Oct-10)
  -seq*.m: various optimizations for reading/writing/viewing seq files
