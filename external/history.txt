@@ -4,6 +4,7 @@ Version NEW
  -imtransform2: various optimization, including inline linear interp
  -diffTracker: added ability to find scale change between images
  -bbLabeler: enhanced GUI, including zoom and pan control (thanks Boris Babenko)
+ -added mac 64 bit intel binaries
  -minor: nlfiltersep, seqIo
 
 Version 2.52 (25-Oct-10)
