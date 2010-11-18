@@ -30,30 +30,32 @@
  pixel. Inspired by fast downsapmling routine resize.cpp by Deva Ramanan.
 
  USAGE
-  B = imResample( A, scale )
-  B = imResample( A, h, w )
+  B = imResample( A, scale, [method] )
+  B = imResample( A, h, w, [method] )
 
  INPUT [1]
   A        - input image (2D or 3D double or uint8 array)
   scale    - size(B)=size(A)*scale
+  method   - ['bilinear'] either 'bilinear' or 'nearest'
 
  INPUT [2]
   A        - input image (2D or 3D double or uint8 array)
   h        - height(B)=h
   w        - width(B)=w
+  method   - ['bilinear'] either 'bilinear' or 'nearest'
 
  OUPUT
    B       - resampled image
 
  EXAMPLE
-  I=double(imread('cameraman.tif')); n=100; s=.5;
-  tic, for i=1:n, I1=imresize(I,s,'bilinear','Antialiasing',0); end; toc
-  tic, for i=1:n, I2=imResample(I,s); end; toc
+  I=double(imread('cameraman.tif')); n=100; s=.5; method='bilinear';
+  tic, for i=1:n, I1=imresize(I,s,method,'Antialiasing',0); end; toc
+  tic, for i=1:n, I2=imResample(I,s,method); end; toc
   figure(1); im(I1); figure(2); im(I2); figure(3); im(abs(I1-I2));
 
  See also IMRESIZE
 
- Piotr's Image&amp;Video Toolbox      Version 2.42
+ Piotr's Image&amp;Video Toolbox      Version 2.53
  Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
@@ -65,7 +67,7 @@ This function calls:
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="bbApply.html" class="code" title="function varargout = bbApply( action, varargin )">bbApply</a>	Functions for manipulating bounding boxes (bb).</li></ul>
+<li><a href="bbApply.html" class="code" title="function varargout = bbApply( action, varargin )">bbApply</a>	Functions for manipulating bounding boxes (bb).</li><li><a href="diffTracker.html" class="code" title="function [delta,err] = diffTracker( I0, I1, sig, ss )">diffTracker</a>	Fast, robust estimation of translation/scale change between two images.</li></ul>
 <!-- crossreference -->
 
 

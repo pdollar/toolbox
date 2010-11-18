@@ -44,9 +44,9 @@
   C       - matrix of sums
 
  EXAMPLE - 1
-  A = rand(500); dim=11; shape='same'; r=20;
+  A=rand(500,500,1); dim=25; f=ones(dim,1); shape='same'; r=20;
   tic, for i=1:r, B = localSum(A,dim,shape); end; toc
-  tic, for i=1:r, C = conv2(A,ones(dim),shape); end; toc
+  tic, for i=1:r, C = conv2(conv2(A,f,shape),f',shape); end; toc
   diff=B-C; im(diff), sum(abs(diff(:)))
 
  EXAMPLE - 2
@@ -57,8 +57,8 @@
 
  See also <a href="imShrink.html" class="code" title="function I = imShrink( I, ratios )">IMSHRINK</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.41
- Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 2.53
+ Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
 
