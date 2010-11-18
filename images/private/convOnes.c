@@ -7,6 +7,10 @@
 #include <math.h>
 #include "mex.h"
 
+#ifndef min 
+ #define min(a,b) (((a)<(b)) ? (a) : (b))
+#endif
+
 void			convOnes( double *A, double *B, int ry, int rx, int rz, int h, int w, int d ) {
   /* convolve w ones mask (fast smooth) */
   int i,j,k,o,c,m=32,m1; double *V, *S; int ry2, rx2, rz2, a;
