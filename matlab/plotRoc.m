@@ -51,9 +51,10 @@ function [h,det] = plotRoc( D, varargin )
   'lims' [] 'smooth' 0 'fpTarget', -1} );
 if( isempty(lims) ); lims=[logx*1e-5 1 logy*1e-5 1]; end
 
-% flip to plot miss rate, optionally 'nicefy' roc
+% ensure descending fp rate, change to miss rate, optionally 'nicefy' roc
 if(~iscell(D)), D={D}; end; nD=length(D);
-for j=1:nD, D{j}(:,2)=max(eps,1-D{j}(:,2))+.001; end
+for j=1:nD, if(D{j}(1,2)<D{j}(end,2)), D{j}=flipud(D{j}); end; end
+for j=1:nD, D{j}(:,2)=1-D{j}(:,2); assert(all(D{j}(:,2)>=0)); end
 if(smooth); for j=1:nD, D{j}=smoothRoc(D{j}); end; end
 
 % plot: (1) h for legend only, (2) roc curves, (3) markers, (4) error bars
