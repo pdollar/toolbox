@@ -55,7 +55,7 @@ if( isempty(lims) ); lims=[logx*1e-5 1 logy*1e-5 1]; end
 if(~iscell(D)), D={D}; end; nD=length(D);
 for j=1:nD, if(D{j}(1,2)<D{j}(end,2)), D{j}=flipud(D{j}); end; end
 for j=1:nD, D{j}(:,2)=1-D{j}(:,2); assert(all(D{j}(:,2)>=0)); end
-if(smooth); for j=1:nD, D{j}=smoothRoc(D{j}); end; end
+if(smooth), for j=1:nD, D{j}=smoothRoc(D{j}); end; end
 
 % plot: (1) h for legend only, (2) roc curves, (3) markers, (4) error bars
 hold on; axis(lims);
@@ -95,24 +95,22 @@ end
 
 function DQ = quantizeRoc( D, nPnts, logx, lims )
 if(iscell(D))
+  % if is cell recursively quantize each element in D
   nD=length(D); DQ=zeros(nPnts,2,nD);
-  for j=1:nD, DQ(:,:,j)=quantizeRoc(D{j},nPnts,logx,lims); end
-  return;
+  for j=1:nD, DQ(:,:,j)=quantizeRoc(D{j},nPnts,logx,lims); end; return;
 end
 
-if( logx==1 )
-  locs = logspace(log10(lims(1)),log10(lims(2)),nPnts);
-else
-  locs = linspace(lims(1),lims(2),nPnts);
-end
-DQ = flipud([locs' ones(length(locs),1)]);
+% fp locations at which to estimate true positive location
+if(logx==1), fps=logspace(log10(lims(1)),log10(lims(2)),nPnts);
+else fps=linspace(lims(1),lims(2),nPnts); end; fps=flipud(fps');
 
-k=1; D=[D; 0 1];
-for i=1:length(locs)
-  fpTar=DQ(i,1); while(k<size(D,1) && D(k,1)>=fpTar), k=k+1; end
-  k0=max(k-1,1); fp0=D(k0,1); fp=D(k,1); assert(fp0>=fp);
-  if(fp0==fp), r=.5; else r=(fpTar-fp)/(fp0-fp); end
-  DQ(i,2) = r*D(k0,2) + (1-r)*D(k,2);
+% estimate miss rate at each target fp rate
+D=[D; 0 1]; DQ=zeros(nPnts,2); k=1; fp=D(k,1);
+for i=1:nPnts
+  while(k<size(D,1) && fp>=fps(i)), k=k+1; fp=D(k,1); end
+  k0=max(k-1,1); fp0=D(k0,1); assert(fp0>=fp);
+  if(fp0==fp), r=.5; else r=(fps(i)-fp)/(fp0-fp); end
+  DQ(i,1)=fps(i); DQ(i,2)=r*D(k0,2)+(1-r)*D(k,2);
 end
 
 end
