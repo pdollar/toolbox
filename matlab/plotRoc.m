@@ -62,9 +62,9 @@ hold on; axis(lims);
 prmMrkr = {'MarkerSize',mrkrSiz,'MarkerFaceColor',color};
 prmClr={'Color',color}; prmPlot = [prmClr,{'LineWidth',lineWd}];
 h = plot( 2, 0, [lineSt marker], prmMrkr{:}, prmPlot{:} ); %(1)
-if(nD==1), D1=D{1}; else D1=mean(quantizeRoc(D,100,logx,lims),3); end
+if(nD==1), D1=D{1}; else D1=mean(quantizeRocs(D,100,logx,lims),3); end
 plot( D1(:,1), D1(:,2), lineSt, prmPlot{:} ); %(2)
-DQ = quantizeRoc( D, nMarker, logx, lims ); DQm=mean(DQ,3);
+DQ = quantizeRocs( D, nMarker, logx, lims ); DQm=mean(DQ,3);
 if(~isempty(marker))
   plot(DQm(:,1),DQm(:,2),marker,prmClr{:},prmMrkr{:} ); end %(3)
 if(nD>1), DQs=std(squeeze(DQ(:,2,:)),0,2);
@@ -93,26 +93,19 @@ end
 
 end
 
-function DQ = quantizeRoc( D, nPnts, logx, lims )
-if(iscell(D))
-  % if is cell recursively quantize each element in D
-  nD=length(D); DQ=zeros(nPnts,2,nD);
-  for j=1:nD, DQ(:,:,j)=quantizeRoc(D{j},nPnts,logx,lims); end; return;
-end
-
-% fp locations at which to estimate true positive location
+function DQ = quantizeRocs( Ds, nPnts, logx, lims )
+% estimate miss rate at each target fp rate
+nD=length(Ds); DQ=zeros(nPnts,2,nD);
 if(logx==1), fps=logspace(log10(lims(1)),log10(lims(2)),nPnts);
 else fps=linspace(lims(1),lims(2),nPnts); end; fps=flipud(fps');
-
-% estimate miss rate at each target fp rate
-D=[D; 0 1]; DQ=zeros(nPnts,2); k=1; fp=D(k,1);
-for i=1:nPnts
-  while(k<size(D,1) && fp>=fps(i)), k=k+1; fp=D(k,1); end
-  k0=max(k-1,1); fp0=D(k0,1); assert(fp0>=fp);
-  if(fp0==fp), r=.5; else r=(fps(i)-fp)/(fp0-fp); end
-  DQ(i,1)=fps(i); DQ(i,2)=r*D(k0,2)+(1-r)*D(k,2);
+for j=1:nD, D=[Ds{j}; 0 1]; k=1; fp=D(k,1);
+  for i=1:nPnts
+    while( k<size(D,1) && fp>=fps(i) ), k=k+1; fp=D(k,1); end
+    k0=max(k-1,1); fp0=D(k0,1); assert(fp0>=fp);
+    if(fp0==fp), r=.5; else r=(fps(i)-fp)/(fp0-fp); end
+    DQ(i,1,j)=fps(i); DQ(i,2,j)=r*D(k0,2)+(1-r)*D(k,2);
+  end
 end
-
 end
 
 function D1 = smoothRoc( D )
