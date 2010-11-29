@@ -107,13 +107,12 @@ else
 end
 DQ = [locs' ones(length(locs),1)];
 
-loc=1; D=[1 0; D; 0 1]; D=max(0,min(D,1));
+k=1; D=[D; 0 1];
 for i=length(locs):-1:1
-  fpCur = DQ(i,1);
-  while( loc<size(D,1) && D(loc,1)>=fpCur ), loc=loc+1; end
-  dN=D(loc,:); if(loc==1); dP=D(loc,:); else dP=D(loc-1,:); end
-  distP=dP(1)-fpCur; distN=fpCur-dN(1); r=distN/(distP+distN);
-  DQ(i,2) = r*dP(2) + (1-r)*dN(2);
+  fpTar=DQ(i,1); while(k<size(D,1) && D(k,1)>=fpTar), k=k+1; end
+  k0=max(k-1,1); fp0=D(k0,1); fp=D(k,1); assert(fp0>=fp);
+  if(fp0==fp), r=.5; else r=(fpTar-fp)/(fp0-fp); end
+  DQ(i,2) = r*D(k0,2) + (1-r)*D(k,2);
 end
 DQ = flipud(DQ);
 end
