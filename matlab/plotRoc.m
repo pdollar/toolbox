@@ -71,8 +71,7 @@ if(nD>1), DQs=std(squeeze(DQ(:,2,:)),0,2);
   errorbar(DQm(:,1),DQm(:,2),DQs,'.',prmClr{:}); end %(4)
 
 % plot line at given fp rate
-if(fpTarget<=0), det=-1; else
-  if(D1(1,2)>D1(end,2)), D1=flipud(D1); end
+if( fpTarget<=0 ), det=-1; else
   [d,i]=max(D1(:,1)<fpTarget); det=D1(i,2);
   plot([fpTarget fpTarget],lims(3:4),'LineWidth',1,'Color',.7*[1 1 1]);
 end
