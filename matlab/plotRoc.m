@@ -1,13 +1,12 @@
 function [h,det] = plotRoc( D, varargin )
 % Function for display of rocs (receiver operator characteristic curves).
 %
-% Displays nice clearly visible curves. Consistent usage ensures uniform
-% look for rocs. The input D should have n rows, each of which is of the
-% form [false-positive rate true-positive rate]. D is generated, for
-% example, by scanning a detection threshold over n values from 0 (so first
-% entry in D is [1 1]) to 1 (so last entry is [0 0]). Alternatively D can
-% be a cell vector of rocs, in which case an average ROC will be shown with
-% error bars.
+% Display roc curves. Consistent usage ensures uniform look for rocs. The
+% input D should have n rows, each of which is of the form [false-positive
+% rate true-positive rate]. D is generated, for example, by scanning a
+% detection threshold over n values from 0 (so first entry in D is [1 1])
+% to 1 (so last entry is [0 0]). Alternatively D can be a cell vector of
+% rocs, in which case an average ROC will be shown with error bars.
 %
 % USAGE
 %  [h,det] = plotRoc( D, prm )
@@ -40,7 +39,7 @@ function [h,det] = plotRoc( D, varargin )
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 2.52
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
