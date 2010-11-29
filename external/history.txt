@@ -1,3 +1,6 @@
+Version NEW
+ -plotRoc: various minor fixes
+
 Version 2.53 (18-Nov-10)
  -localSum: sped up case for 2D or 3D convolution w ones filter
  -imResample: added case for fast nearest neighbor image resampling
