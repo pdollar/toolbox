@@ -105,16 +105,16 @@ if( logx==1 )
 else
   locs = linspace(lims(1),lims(2),nPnts);
 end
-DQ = [locs' ones(length(locs),1)];
+DQ = flipud([locs' ones(length(locs),1)]);
 
 k=1; D=[D; 0 1];
-for i=length(locs):-1:1
+for i=1:length(locs)
   fpTar=DQ(i,1); while(k<size(D,1) && D(k,1)>=fpTar), k=k+1; end
   k0=max(k-1,1); fp0=D(k0,1); fp=D(k,1); assert(fp0>=fp);
   if(fp0==fp), r=.5; else r=(fpTar-fp)/(fp0-fp); end
   DQ(i,2) = r*D(k0,2) + (1-r)*D(k,2);
 end
-DQ = flipud(DQ);
+
 end
 
 function D1 = smoothRoc( D )
