@@ -49,18 +49,25 @@ InterpInfo*		interpInfoUp( int ha, int hb, int *n ) {
   *n=hb; return ii;
 }
 
-void			resample( double *A, double *B, int ha, int hb, int w, int nCh ) {
+void			resample( double *A, double *B, int dim, int m0, int m1, int n, int nCh ) {
   /* resample every column in A, store in B, result is transposed */
-  int ch, x, y, n; double *a, *b; const bool downsample=(hb<=ha); InterpInfo *ii;
-  if(downsample) ii=interpInfoDn(ha, hb, &n); else ii=interpInfoUp(ha, hb, &n);
-  for(x=0; x<n; x++) ii[x].yb*=w; /* transpose B */
-  for(ch=0; ch<nCh; ch++) for(x=0; x<w; x++) {
-    a = A + ch*w*ha + x*ha;
-    b = B + ch*w*hb + x;
-    if( downsample )
-      for(y=0; y<n; y++) b[ii[y].yb]+=ii[y].wt0*a[ii[y].ya0];
-    else
-      for(y=0; y<n; y++) b[ii[y].yb]=a[ii[y].ya0]*ii[y].wt0+a[ii[y].ya1]*ii[y].wt1;
+  int ch, x, y, r; double *a, *a0, *a1, *b, *b0, wt0, wt1;
+  const bool downsample=(m1<m0); InterpInfo *ii;
+  if(downsample) ii=interpInfoDn(m0, m1, &r); else ii=interpInfoUp(m0, m1, &r);
+  if(dim==1) for(y=0; y<r; y++) { ii[y].yb*=n; ii[y].ya0*=n; ii[y].ya1*=n; }
+  for(ch=0; ch<nCh; ch++) {
+    a=A+ch*n*m0; b=B+ch*n*m1;
+    /* resample along rows */
+    if(dim==0) for(x=0; x<n; x++) {
+      a0=a+x*m0; b0=b+x*m1;
+      if( downsample ) for(y=0; y<r; y++) b0[ii[y].yb] += a0[ii[y].ya0]*ii[y].wt0;
+      else for(y=0; y<r; y++) b0[ii[y].yb] = a0[ii[y].ya0]*ii[y].wt0 + a0[ii[y].ya1]*ii[y].wt1;
+    /* resample along cols */
+    } else for(y=0; y<r; y++) {
+      a0=a+ii[y].ya0; a1=a+ii[y].ya1; b0=b+ii[y].yb; wt0=ii[y].wt0; wt1=ii[y].wt1;
+      if( downsample ) for(x=0; x<n; x++) b0[x] += a0[x]*wt0;
+      else for(x=0; x<n; x++) b0[x] = a0[x]*wt0 + a1[x]*wt1;
+    }
   }
   mxFree(ii);
 }
@@ -69,7 +76,7 @@ void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   /* B=imResample(A,scale) or B=imResample(A,h,w); */
   double input1=0, input2=0; int *ns, ms[3], nCh, nDims, i;
   double *A, *B, *T; void *A1, *B1; mxClassID id;
-  
+
   /* Error checking on arguments */
   if( nrhs<2 || nrhs>3) mexErrMsgTxt("Two or three inputs expected.");
   if( nlhs>1 ) mexErrMsgTxt("One output expected.");
@@ -77,7 +84,7 @@ void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   if( (nDims!=2 && nDims!=3) || (id!=mxDOUBLE_CLASS && id!=mxUINT8_CLASS) )
     mexErrMsgTxt("A should be 2D or 3D double or uint8 array.");
   input1=mxGetScalar(prhs[1]); if(nrhs>=3) input2=mxGetScalar(prhs[2]);
-  
+
   /* create output array */
   ns = (int*) mxGetDimensions(prhs[0]); nCh=(nDims==2) ? 1 : ns[2]; ms[2]=nCh;
   if( nrhs==2 ) {
@@ -86,7 +93,7 @@ void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     ms[0]=(int) input1; ms[1]=(int) input2;
   }
   plhs[0] = mxCreateNumericArray(3, ms, id, mxREAL);
-  
+
   /* convert to double if id!=mxDOUBLE_CLASS */
   A1=mxGetData(prhs[0]); B1=mxGetData(plhs[0]);
   if( id==mxDOUBLE_CLASS ) { A=(double*) A1; B=(double*) B1; } else {
@@ -94,13 +101,13 @@ void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     B = (double*) mxCalloc( ms[0]*ms[1]*nCh, sizeof(double) );
   }
   if(id==mxUINT8_CLASS) for(i=0; i<ns[0]*ns[1]*nCh; i++) A[i]=(double) ((uchar*)A1)[i];
-  
+
   /* Perform rescaling */
   T = (double*) mxCalloc(ms[0]*ns[1]*nCh, sizeof(double) );
-  resample( A, T, ns[0], ms[0], ns[1], nCh );
-  resample( T, B, ns[1], ms[1], ms[0], nCh );
+  resample( A, T, 0, ns[0], ms[0], ns[1], nCh );
+  resample( T, B, 1, ns[1], ms[1], ms[0], nCh );
   mxFree(T);
-  
+
   /* convert from double if id!=mxDOUBLE_CLASS */
   if(id==mxUINT8_CLASS) for(i=0; i<ms[0]*ms[1]*nCh; i++) ((uchar*)B1)[i]=(uchar) (B[i]+.5);
   if( id!=mxDOUBLE_CLASS ) { mxFree(A); mxFree(B); }
