@@ -1,5 +1,5 @@
 /**************************************************************************
- * Piotr's Image&Video Toolbox      Version 2.50
+ * Piotr's Image&Video Toolbox      Version NEW
  * Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
  * Please email me if you find bugs, or have suggestions or questions!
  * Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -50,23 +50,23 @@ InterpInfo*		interpInfoUp( int ha, int hb, int *n ) {
 }
 
 void			resample( double *A, double *B, int dim, int m0, int m1, int n, int nCh ) {
-  /* resample every column in A, store in B, result is transposed */
+  /* resample along dim in A, store in B */
   int ch, x, y, r; double *a, *a0, *a1, *b, *b0, wt0, wt1;
   const bool downsample=(m1<m0); InterpInfo *ii;
   if(downsample) ii=interpInfoDn(m0, m1, &r); else ii=interpInfoUp(m0, m1, &r);
   if(dim==1) for(y=0; y<r; y++) { ii[y].yb*=n; ii[y].ya0*=n; ii[y].ya1*=n; }
   for(ch=0; ch<nCh; ch++) {
     a=A+ch*n*m0; b=B+ch*n*m1;
-    /* resample along rows */
+	/* resample height m0->m1 (width n unchanged) */
     if(dim==0) for(x=0; x<n; x++) {
       a0=a+x*m0; b0=b+x*m1;
       if( downsample ) for(y=0; y<r; y++) b0[ii[y].yb] += a0[ii[y].ya0]*ii[y].wt0;
       else for(y=0; y<r; y++) b0[ii[y].yb] = a0[ii[y].ya0]*ii[y].wt0 + a0[ii[y].ya1]*ii[y].wt1;
-    /* resample along cols */
-    } else for(y=0; y<r; y++) {
-      a0=a+ii[y].ya0; a1=a+ii[y].ya1; b0=b+ii[y].yb; wt0=ii[y].wt0; wt1=ii[y].wt1;
-      if( downsample ) for(x=0; x<n; x++) b0[x] += a0[x]*wt0;
-      else for(x=0; x<n; x++) b0[x] = a0[x]*wt0 + a1[x]*wt1;
+    /* resample width m0->m1 (height n unchanged) */
+    } else for(x=0; x<r; x++) {
+      a0=a+ii[x].ya0; a1=a+ii[x].ya1; b0=b+ii[x].yb; wt0=ii[x].wt0; wt1=ii[x].wt1;
+      if( downsample ) for(y=0; y<n; y++) b0[y] += a0[y]*wt0;
+      else for(y=0; y<n; y++) b0[y] = a0[y]*wt0 + a1[y]*wt1;
     }
   }
   mxFree(ii);
