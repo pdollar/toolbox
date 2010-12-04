@@ -2,8 +2,11 @@ function B = imResample( A, varargin )
 % Fast bilinear image downsampling/upsampling.
 %
 % Gives similar results to imresize with the bilinear option and
-% antialiasing turned off, except sometimes the final dims are off by 1
-% pixel. Inspired by fast downsapmling routine resize.cpp by Deva Ramanan.
+% antialiasing turned off if scale is near 1, except sometimes the final
+% dims are off by 1 pixel. Inspired by fast downsapmling routine resize.cpp
+% by Deva Ramanan. Particularly efficient if downsampling by exact integer
+% value. For very small values of the scale imresize is faster but only
+% looks at subset of values of original image.
 %
 % USAGE
 %  B = imResample( A, scale, [method] )
@@ -24,14 +27,14 @@ function B = imResample( A, varargin )
 %   B       - resampled image
 %
 % EXAMPLE
-%  I=double(imread('cameraman.tif')); n=100; s=.5; method='bilinear';
+%  I=double(imread('cameraman.tif')); n=100; s=1/2; method='bilinear';
 %  tic, for i=1:n, I1=imresize(I,s,method,'Antialiasing',0); end; toc
 %  tic, for i=1:n, I2=imResample(I,s,method); end; toc
 %  figure(1); im(I1); figure(2); im(I2); figure(3); im(abs(I1-I2));
 %
 % See also IMRESIZE
 %
-% Piotr's Image&Video Toolbox      Version 2.53
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
