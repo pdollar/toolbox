@@ -72,9 +72,18 @@ void			resample( double *A, double *B, int dim, int m0, int m1, int n, int nCh )
   mxFree(ii);
 }
 
+void			resampleInt( double *A, double *B, int h0, int w0, int nCh, int r )
+{
+  /* resample by integer factor r (special case, more efficient than resample) */
+  int ch, i, j, i0, j0; double *a, *b; int h1=h0/r, w1=w0/r, h2, w2; double norm=1.0/r/r;
+  for(ch=0; ch<nCh; ch++) for(j=0; j<w1; j++) for(j0=0; j0<r; j0++) for(i0=0; i0<r; i0++) {
+      a=A+ch*w0*h0+(j0+j*r)*h0+i0; b=B+ch*w1*h1+j*h1; for(i=0; i<h1; i++) { *(b++)+=*a; a+=r; } }
+  for(i=0; i<h1*w1*nCh; i++) B[i]*=norm;
+}
+
 void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   /* B=imResample(A,scale) or B=imResample(A,h,w); */
-  double input1=0, input2=0; int *ns, ms[3], nCh, nDims, i;
+  double input1=0, input2=0; int *ns, ms[3], nCh, nDims, i, r;
   double *A, *B, *T; void *A1, *B1; mxClassID id;
 
   /* Error checking on arguments */
@@ -103,10 +112,14 @@ void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   if(id==mxUINT8_CLASS) for(i=0; i<ns[0]*ns[1]*nCh; i++) A[i]=(double) ((uchar*)A1)[i];
 
   /* Perform rescaling */
-  T = (double*) mxCalloc(ms[0]*ns[1]*nCh, sizeof(double) );
-  resample( A, T, 0, ns[0], ms[0], ns[1], nCh );
-  resample( T, B, 1, ns[1], ms[1], ms[0], nCh );
-  mxFree(T);
+  r=ns[0]/ms[0]; if(ms[0]*r==ns[0] && ms[1]*r==ns[1] ) {
+    resampleInt(A,B,ns[0],ns[1],nCh,r);
+  } else {
+    T = (double*) mxCalloc(ms[0]*ns[1]*nCh, sizeof(double) );
+    resample( A, T, 0, ns[0], ms[0], ns[1], nCh );
+    resample( T, B, 1, ns[1], ms[1], ms[0], nCh );
+    mxFree(T);
+  }
 
   /* convert from double if id!=mxDOUBLE_CLASS */
   if(id==mxUINT8_CLASS) for(i=0; i<ms[0]*ms[1]*nCh; i++) ((uchar*)B1)[i]=(uchar) (B[i]+.5);
