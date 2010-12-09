@@ -17,6 +17,7 @@ function varargout = getPrmDflt( prm, dfs, checkExtra )
 %  prm          - param struct or cell of form {'name1' v1 'name2' v2 ...}
 %  dfs          - cell of form {'name1' def1 'name2' def2 ...}
 %  checkExtra   - [0] if 1 throw error if prm contains params not in dfs
+%                 if -1 if prm contains params not in dfs adds them
 %
 % OUTPUTS (nargout==1)
 %  prm    - parameter struct with fields 'name1' through 'nameN' assigned
@@ -33,7 +34,7 @@ function varargout = getPrmDflt( prm, dfs, checkExtra )
 %
 % See also INPUTPARSER
 %
-% Piotr's Image&Video Toolbox      Version 2.42
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -53,10 +54,16 @@ end
 
 % get and update default values using quick for loop
 dfsField = dfs(1:2:end); dfsVal = dfs(2:2:end);
-if checkExtra
+if checkExtra>0
   for i=1:length(prmField)
     j = find(strcmp(prmField{i},dfsField));
     if isempty(j), error('parameter %s is not valid', prmField{i}); end
+    dfsVal(j) = prmVal(i);
+  end
+elseif checkExtra<0
+  for i=1:length(prmField)
+    j = find(strcmp(prmField{i},dfsField));
+    if isempty(j), j=length(dfsVal)+1; dfsField{j}=prmField{i}; end
     dfsVal(j) = prmVal(i);
   end
 else
@@ -68,7 +75,7 @@ end
 % check for missing values
 if any(strcmp('REQ',dfsVal))
   cmpArray = find(strcmp('REQ',dfsVal));
-  error(['Required field ''' dfsField(cmpArray(1)) ''' not specified.'] );
+  error(['Required field ''' dfsField{cmpArray(1)} ''' not specified.'] );
 end
 
 % set output

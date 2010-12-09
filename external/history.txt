@@ -1,6 +1,7 @@
 Version NEW
  -plotRoc: various minor fixes
  -imResample: optimized
+ -minor: getPrmDflt()
 
 Version 2.53 (18-Nov-10)
  -localSum: sped up case for 2D or 3D convolution w ones filter
