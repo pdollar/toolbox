@@ -30,7 +30,7 @@ function out = seqIo( fName, action, varargin )
 %   seqIo( fName, 'crop', tName, frames )
 % Extract images from seq file to target directory.
 %   seqIo( fName, 'toImgs', tDir, [skip], [f0], [f1], [ext] )
-% Make seq file from images in an array or source directory.
+% Make seq file from images in an array, source directory or avi file.
 %   seqIo( fName, 'frImgs', info, varargin )
 % Convert seq file by applying imgFun(I) to each frame I.
 %   seqIo( fName, 'convert', tName, imgFun, [info] )
@@ -56,7 +56,7 @@ function out = seqIo( fName, action, varargin )
 % seqIo>toImgs, seqIo>frImgs, seqIo>convert, seqIo>newHeader,
 % seqIo>readerDual, seqPlayer, seqReaderPlugin, seqWriterPlugin
 %
-% Piotr's Image&Video Toolbox      Version 2.53
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -260,7 +260,7 @@ end; sr.close(); if(frame<f1), tocStatus(tid,1); end
 end
 
 function frImgs( fName, info, varargin )
-% Make seq file from images in an array or source directory.
+% Make seq file from images in an array, source directory or avi file.
 %
 % USAGE
 %  seqIo( fName, 'frImgs', info, varargin )
@@ -269,6 +269,7 @@ function frImgs( fName, info, varargin )
 %  fName      - seq file name
 %  info       - defines codec, etc, see seqIo>writer
 %  varargin   - additional params (struct or name/value pairs)
+%   .aviName    - [] if specified create seq from avi file
 %   .Is         - [] if specified create seq from image array
 %   .sDir       - [] source directory
 %   .skip       - [1] skip between frames
@@ -282,9 +283,16 @@ function frImgs( fName, info, varargin )
 % EXAMPLE
 %
 % See also seqIo, seqIo>writer
-dfs={'Is',[],'sDir',[],'skip',1,'name','I','nDigits',5,'f0',0,'f1',10^6};
-[Is,sDir,skip,name,nDigits,f0,f1] = getPrmDflt(varargin,dfs,1);
-if( isempty(Is) )
+dfs={'aviName','','Is',[],'sDir',[],'skip',1,'name','I',...
+  'nDigits',5,'f0',0,'f1',10^6};
+[aviName,Is,sDir,skip,name,nDigits,f0,f1] ...
+  = getPrmDflt(varargin,dfs,1);
+if(~isempty(aviName))
+  V = mmreader(aviName); nFrm=V.NumberOfFrames;
+  info.height=V.Height; info.width=V.Width; info.fps=V.FrameRate;
+  sw=writer(fName,info); for f=1:nFrm, sw.addframe(read(V,f)); end
+  sw.close();
+elseif( isempty(Is) )
   assert(exist(sDir,'dir')==7); sw=writer(fName,info); info=sw.getinfo();
   frmStr=sprintf('%s/%s%%0%ii.%s',sDir,name,nDigits,info.ext);
   for frame = f0:skip:f1
