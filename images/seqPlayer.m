@@ -28,7 +28,7 @@ function seqPlayer( fName, dispFunc )
 %
 % See also SEQIO
 %
-% Piotr's Image&Video Toolbox      Version 2.52
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -115,7 +115,7 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
       if(isempty(info)), ar=4/3; else ar=info.width/info.height; end
       % enforce minimum size (min width=500+pad*2)
       pos=get(hFig,ps); pad=8; htSl=20; htTop=20;
-      mWd=500+pad*2; mHt=500/ar+htSl+htTop+pad*2;
+      mWd=500+pad*2; mHt=round(500/ar+htSl+htTop+pad*2);
       persistent posPrv;
       if(pos(3)<mWd || pos(4)<mHt && ~isempty(posPrv))
         set(hFig,ps,[posPrv(1:2) mWd mHt]); figResized(); return;
