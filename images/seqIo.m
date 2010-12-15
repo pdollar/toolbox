@@ -65,11 +65,11 @@ switch lower(action)
   case {'reader','r'}, out = reader( fName, varargin{:} );
   case {'writer','w'}, out = writer( fName, varargin{:} );
   case 'getinfo', out = getInfo( fName );
-  case 'crop', crop( fName, varargin{:} );
-  case 'toimgs', toImgs( fName, varargin{:} );
-  case 'frimgs', frImgs( fName, varargin{:} );
-  case 'convert', convert( fName, varargin{:} );
-  case 'newheader', newHeader( fName, varargin{:} );
+  case 'crop', crop( fName, varargin{:} ); out=1;
+  case 'toimgs', toImgs( fName, varargin{:} ); out=1;
+  case 'frimgs', frImgs( fName, varargin{:} ); out=1;
+  case 'convert', convert( fName, varargin{:} ); out=1;
+  case 'newheader', newHeader( fName, varargin{:} ); out=1;
   case {'readerdual','rdual'}, out=readerDual(fName,varargin{:});
   otherwise, error('seqIo unknown action: ''%s''',action);
 end
