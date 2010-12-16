@@ -33,7 +33,7 @@ function out = seqIo( fName, action, varargin )
 % Make seq file from images in an array, source directory or avi file.
 %   seqIo( fName, 'frImgs', info, varargin )
 % Convert seq file by applying imgFun(I) to each frame I.
-%   seqIo( fName, 'convert', tName, imgFun, [info] )
+%   seqIo( fName, 'convert', tName, imgFun, varargin )
 % Replace header of seq file with provided info.
 %   seqIo( fName, 'newHeader', info )
 % Create interface sr for reading dual seq files.
@@ -310,31 +310,38 @@ else
 end
 end
 
-function convert( fName, tName, imgFun, info )
+function convert( fName, tName, imgFun, varargin )
 % Convert seq file by applying imgFun(I) to each frame I.
 %
 % USAGE
-%  seqIo( fName, 'convert', tName, imgFun, [info] )
+%  seqIo( fName, 'convert', tName, imgFun, varargin )
 %
 % INPUTS
 %  fName      - seq file name
 %  tName      - converted seq file name
 %  imgFun     - function to apply to each image
-%  info       - [] info for target seq file
+%  varargin   - additional params (struct or name/value pairs)
+%   .info       - [] info for target seq file
+%   .skip       - [1] skip between frames
+%   .f0         - [0] first frame to read
+%   .f1         - [inf] last frame to read
 %
 % OUTPUTS
 %
 % EXAMPLE
 %
 % See also seqIo
+dfs={'info',[],'skip',1,'f0',0,'f1',inf};
+[info,skip,f0,f1]=getPrmDflt(varargin,dfs,1);
 assert(~strcmp(tName,fName)); sr=reader(fName); infor=sr.getinfo();
-if(nargin<4 || isempty(info)), info=infor; end
-n=infor.numFrames; [I,ts]=sr.getnext(); I=imgFun(I);
-info.width=size(I,2); info.height=size(I,1);
+if(isempty(info)), info=infor; end; n=infor.numFrames; f1=min(f1,n-1);
+I=sr.getnext(); I=imgFun(I); info.width=size(I,2); info.height=size(I,1);
 sw=writer(tName,info); tid=ticStatus('converting seq');
-for f=1:n, if(f>1), [I,ts]=sr.getnext(); I=imgFun(I); end
-  sw.addframe(I,ts); tocStatus(tid,f/n); end
-sw.close(); sr.close();
+frames=f0:skip:f1; n=length(frames); k=0;
+for f=frames, sr.seek(f); [I,ts]=sr.getframe(); I=imgFun(I);
+  if(skip==1), sw.addframe(I,ts); else sw.addframe(I); end
+  k=k+1; tocStatus(tid,k/n);
+end; sw.close(); sr.close();
 end
 
 function newHeader( fName, info )
