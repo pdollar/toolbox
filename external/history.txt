@@ -1,6 +1,7 @@
 Version NEW
  -plotRoc: various minor fixes
  -imResample: optimized
+ -mexw64: updated windows 64 bit binaries
  -minor: getPrmDflt(), seqIo, seqPlayer
 
 Version 2.53 (18-Nov-10)

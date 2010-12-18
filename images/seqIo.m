@@ -341,7 +341,8 @@ frames=f0:skip:f1; n=length(frames); k=0;
 for f=frames, sr.seek(f); [I,ts]=sr.getframe(); I=imgFun(I);
   if(skip==1), sw.addframe(I,ts); else sw.addframe(I); end
   k=k+1; tocStatus(tid,k/n);
-end; sw.close(); sr.close();
+end; 
+sw.close(); sr.close();
 end
 
 function newHeader( fName, info )
