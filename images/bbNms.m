@@ -63,7 +63,7 @@ function bbs = bbNms( bbs, varargin )
 %
 % See also bbApply, nonMaxSuprList
 %
-% Piotr's Image&Video Toolbox      Version 2.52
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -113,16 +113,15 @@ end
     [score,ord]=sort(bbs(:,5),'descend'); bbs=bbs(ord,:);
     n=size(bbs,1); kp=true(1,n); as=bbs(:,3).*bbs(:,4);
     xs=bbs(:,1); xe=bbs(:,1)+bbs(:,3); ys=bbs(:,2); ye=bbs(:,2)+bbs(:,4);
-    for i=1:n
-      if(greedy && ~kp(i)), continue; end
-      for j=i+find( kp(i+1:n) )
+    for i=1:n, if(greedy && ~kp(i)), continue; end
+      for j=(i+1):n, if(kp(j)==0), continue; end
         iw=min(xe(i),xe(j))-max(xs(i),xs(j)); if(iw<=0), continue; end
         ih=min(ye(i),ye(j))-max(ys(i),ys(j)); if(ih<=0), continue; end
         o=iw*ih; if(ovrDnm), u=as(i)+as(j)-o; else u=min(as(i),as(j)); end
         o=o/u; if(o>overlap), kp(j)=0; end
       end
     end
-    bbs=bbs(kp,:);
+    bbs=bbs(kp>0,:);
   end
 
   function bbs = nmsMs( bbs, thr, radii )

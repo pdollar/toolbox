@@ -1,4 +1,5 @@
 Version NEW
+ -bbNms: large speedup (thanks Boris Babenko)
  -plotRoc: various minor fixes
  -imResample: optimized
  -mexw64: updated windows 64 bit binaries
