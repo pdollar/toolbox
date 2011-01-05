@@ -157,20 +157,19 @@ end
 
   function bbs = nmsCover( bbs, overlap, ovrDnm )
     % construct n^2 neighbor matrix
-    n=size(bbs,1); N=sparse(1:n,1:n,.5); as=bbs(:,3).*bbs(:,4);
+    n=size(bbs,1); N=eye(n)*.5; as=bbs(:,3).*bbs(:,4);
     xs=bbs(:,1); xe=bbs(:,1)+bbs(:,3); ys=bbs(:,2); ye=bbs(:,2)+bbs(:,4);
     for i=1:n
       for j=i+1:n
         iw=min(xe(i),xe(j))-max(xs(i),xs(j)); if(iw<=0), continue; end
         ih=min(ye(i),ye(j))-max(ys(i),ys(j)); if(ih<=0), continue; end
         o=iw*ih; if(ovrDnm), u=as(i)+as(j)-o; else u=min(as(i),as(j)); end
-        o=o/u; if(o>overlap), N(i,j)=1; end %#ok<SPRIX>
+        o=o/u; if(o>overlap), N(i,j)=1; end
       end
     end
     % perform set cover operation (greedily choose next best)
     N=N+N'; bbs1=zeros(n,5); n1=n; c=0;
-    while( n1>0 ), s0=0;
-      for i=1:n, s=sum(N(:,i).*bbs(:,5)); if(s>s0), i0=i; s0=s; end; end
+    while( n1>0 ), [s,i0]=max(N*bbs(:,5));
       N0=N(:,i0)==1; n1=n1-sum(N0); N(N0,:)=0; N(:,N0)=0;
       c=c+1; bbs1(c,1:4)=bbs(i0,1:4); bbs1(c,5)=sum(bbs(N0,5));
     end
