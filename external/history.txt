@@ -1,5 +1,5 @@
 Version NEW
- -bbNms: large speedup (thanks Boris Babenko)
+ -bbNms: large speedups (thanks Boris Babenko), changed how maxn works
  -plotRoc: various minor fixes
  -imResample: optimized
  -mexw64: updated windows 64 bit binaries

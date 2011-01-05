@@ -26,10 +26,12 @@ function bbs = bbNms( bbs, varargin )
 % w and w*2 are 1 unit apart), and the radii should be set accordingly.
 % radii may need to change depending on spatial and scale stride of bbs.
 %
-% Although efficient, this function is O(n^2). To speed things up for large
-% n, can divide data randomly into two sets, run nms on each, combine and
-% run nms on the result. If maxn is specified, will split the set if
-% n>maxn. Note that this is a heuristic and can change the results of nms.
+% Although efficient, nms is O(n^2). To speed things up for large n, can
+% divide data into two parts (according to x or y coordinate), run nms on
+% each part, combine and run nms on the result. If maxn is specified, will
+% split the data in half if n>maxn. Note that this is a heuristic and can
+% change the results of nms. Moreover, setting maxn too small will cause an
+% increase in overall performance time.
 %
 % Finally, the bbs are optionally resized before performing nms. The
 % resizing is important as some detectors return bbs that are padded. For
@@ -46,7 +48,7 @@ function bbs = bbNms( bbs, varargin )
 %  varargin   - additional params (struct or name/value pairs)
 %   .type       - ['max'] 'max', 'maxg', 'ms', 'cover', or 'none'
 %   .thr        - [-inf] threshold below which to discard (0 for 'ms')
-%   .maxn       - [500] if n>maxn split and run recursively (see above)
+%   .maxn       - [inf] if n>maxn split and run recursively (see above)
 %   .radii      - [.15 .15 1 1] supression radii ('ms' only, see above)
 %   .overlap    - [.5] area of overlap for bbs
 %   .ovrDnm     - ['union'] area of overlap denominator ('union' or 'min')
@@ -69,7 +71,7 @@ function bbs = bbNms( bbs, varargin )
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 % get parameters
-dfs={'type','max','thr',[],'maxn',500,'radii',[.15 .15 1 1],...
+dfs={'type','max','thr',[],'maxn',inf,'radii',[.15 .15 1 1],...
   'overlap',.5,'ovrDnm','union','resize',{},'separate',0};
 [type,thr,maxn,radii,overlap,ovrDnm,resize,separate] = ...
   getPrmDflt(varargin,dfs,1);
@@ -82,21 +84,20 @@ assert(maxn>=2); assert(numel(overlap)==1);
 if(isempty(bbs)), bbs=zeros(0,5); end; if(strcmp(type,'none')), return; end
 kp=bbs(:,5)>thr; bbs=bbs(kp,:); if(isempty(bbs)), return; end
 if(~isempty(resize)), bbs=bbApply('resize',bbs,resize{:}); end
-pNms1={type,thr,maxn,radii,overlap};
+pNms1={type,thr,maxn,radii,overlap,0};
 if(~separate || size(bbs,2)<6), bbs=nms1(bbs,pNms1{:}); else
   ts=unique(bbs(:,6)); m=length(ts); bbs1=cell(1,m);
   for t=1:m, bbs1{t}=nms1(bbs(bbs(:,6)==ts(t),:),pNms1{:}); end
   bbs=cat(1,bbs1{:});
 end
 
-  function bbs = nms1( bbs, type, thr, maxn, radii, overlap )
+  function bbs = nms1( bbs, type, thr, maxn, radii, overlap, isy )
     % if big split in two, recurse, merge, then run on merged
     if( size(bbs,1)>maxn )
-      n=size(bbs,1); bbs=bbs(randperm(n),:); n2=floor(n/2);
-      bbs0=nms1(bbs(1:n2,:),type,thr,maxn,radii,overlap);
-      bbs1=nms1(bbs(n2+1:n,:),type,thr,maxn,radii,overlap);
-      bbs=[bbs0; bbs1]; n0=n; n=size(bbs,1);
-      if(n<n0), bbs=nms1(bbs,type,thr,maxn,radii,overlap); return; end
+      n2=floor(size(bbs,1)/2); [d,ord]=sort(bbs(:,1+isy)+bbs(:,3+isy)/2);
+      bbs0=nms1(bbs(ord(1:n2),:),type,thr,maxn,radii,overlap,~isy);
+      bbs1=nms1(bbs(ord(n2+1:end),:),type,thr,maxn,radii,overlap,~isy);
+      bbs=[bbs0; bbs1];
     end
     % run actual nms on given bbs
     switch type
