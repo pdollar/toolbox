@@ -293,11 +293,19 @@ dfs={'aviName','','Is',[],'sDir',[],'skip',1,'name','I',...
 [aviName,Is,sDir,skip,name,nDigits,f0,f1] ...
   = getPrmDflt(varargin,dfs,1);
 if(~isempty(aviName))
-  V = mmreader(aviName); nFrm=V.NumberOfFrames;
-  info.height=V.Height; info.width=V.Width; info.fps=V.FrameRate;
-  sw=writer(fName,info); tid=ticStatus('creating seq from avi');
-  for f=1:nFrm, sw.addframe(read(V,f)); tocStatus(tid,f/nFrm); end
-  sw.close();
+  if(exist('mmread.m','file')==2) % use external mmread function
+    V = mmread(aviName); n=V.nrFramesTotal;
+    info.height=V.height; info.width=V.width; info.fps=V.rate;
+    sw=writer(fName,info); tid=ticStatus('creating seq from avi');
+    for f=1:n, sw.addframe(V.frames(f).cdata); tocStatus(tid,f/n); end
+    sw.close();
+  else % use matlab mmreader function
+    V = mmreader(aviName); n=V.NumberOfFrames;
+    info.height=V.Height; info.width=V.Width; info.fps=V.FrameRate;
+    sw=writer(fName,info); tid=ticStatus('creating seq from avi');
+    for f=1:n, sw.addframe(read(V,f)); tocStatus(tid,f/n); end
+    sw.close();
+  end
 elseif( isempty(Is) )
   assert(exist(sDir,'dir')==7); sw=writer(fName,info); info=sw.getinfo();
   frmStr=sprintf('%s/%s%%0%ii.%s',sDir,name,nDigits,info.ext);
