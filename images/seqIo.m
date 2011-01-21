@@ -30,7 +30,7 @@ function out = seqIo( fName, action, varargin )
 %   seqIo( fName, 'crop', tName, frames )
 % Extract images from seq file to target directory.
 %   seqIo( fName, 'toImgs', tDir, [skip], [f0], [f1], [ext] )
-% Make seq file from images in an array, source directory or avi file.
+% Create seq file from an array or directory of images or from an AVI file.
 %   seqIo( fName, 'frImgs', info, varargin )
 % Convert seq file by applying imgFun(I) to each frame I.
 %   seqIo( fName, 'convert', tName, imgFun, varargin )
@@ -261,7 +261,11 @@ end; sr.close(); if(frame<f1), tocStatus(tid,1); end
 end
 
 function frImgs( fName, info, varargin )
-% Make seq file from images in an array, source directory or avi file.
+% Create seq file from an array or directory of images or from an AVI file.
+%
+% For info, only codec (e.g., 'jpg') and fps must be specified while width
+% and height and determined automatically. If converting from AVI, fps is
+% also determined automatically.
 %
 % USAGE
 %  seqIo( fName, 'frImgs', info, varargin )
