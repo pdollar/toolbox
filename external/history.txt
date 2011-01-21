@@ -1,9 +1,10 @@
 Version NEW
  -bbNms: large speedups (thanks Boris Babenko), changed how maxn works
+ -seqIo: convert from avi (thanks Xavier Burgos-Artizzu), various tweaks
  -plotRoc: various minor fixes
  -imResample: optimized
  -mexw64: updated windows 64 bit binaries
- -minor: getPrmDflt(), seqIo, seqPlayer
+ -minor: getPrmDflt(), seqPlayer
 
 Version 2.53 (18-Nov-10)
  -localSum: sped up case for 2D or 3D convolution w ones filter
