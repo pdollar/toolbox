@@ -300,7 +300,13 @@ if(~isempty(aviName))
     for f=1:n, sw.addframe(V.frames(f).cdata); tocStatus(tid,f/n); end
     sw.close();
   else % use matlab mmreader function
-    V = mmreader(aviName); n=V.NumberOfFrames;
+    emsg=['mmreader.m failed to load video. In general mmreader.m is ' ...
+      'known to have many issues, especially on Linux. I suggest ' ...
+      'installing the similarly named mmread toolbox from Micah ' ...
+      'Richert, available at Matlab Central. If mmread is installed, ' ...
+      ' seqIo will automatically use mmread instead of mmreader.'];
+    try V=mmreader(aviName); catch  %#ok<CTCH>
+      error('piotr:seqIo:frImgs',emsg); end; n=V.NumberOfFrames;
     info.height=V.Height; info.width=V.Width; info.fps=V.FrameRate;
     sw=writer(fName,info); tid=ticStatus('creating seq from avi');
     for f=1:n, sw.addframe(read(V,f)); tocStatus(tid,f/n); end
