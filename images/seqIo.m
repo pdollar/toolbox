@@ -294,7 +294,7 @@ dfs={'aviName','','Is',[],'sDir',[],'skip',1,'name','I',...
   = getPrmDflt(varargin,dfs,1);
 if(~isempty(aviName))
   if(exist('mmread.m','file')==2) % use external mmread function
-    V = mmread(aviName); n=V.nrFramesTotal;
+    aviName=which(aviName); V=mmread(aviName); n=V.nrFramesTotal;
     info.height=V.height; info.width=V.width; info.fps=V.rate;
     sw=writer(fName,info); tid=ticStatus('creating seq from avi');
     for f=1:n, sw.addframe(V.frames(f).cdata); tocStatus(tid,f/n); end
