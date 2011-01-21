@@ -248,16 +248,16 @@ if(nargin<4 || isempty(f0)), f0=0; end
 if(nargin<5 || isempty(f1)), f1=inf; end
 if(nargin<6 || isempty(ext)), ext=''; end
 if(~exist(tDir,'dir')), mkdir(tDir); end
-sr=reader(fName); info=sr.getinfo();
-f1=min(f1,info.numFrames-1); tid=ticStatus;
-for frame = f0:skip:f1
+sr=reader(fName); info=sr.getinfo(); f1=min(f1,info.numFrames-1);
+frames=f0:skip:f1; n=length(frames); tid=ticStatus; k=0;
+for frame=frames
   f=[tDir '/I' int2str2(frame,5) '.']; sr.seek(frame);
   if(~isempty(ext)), I=sr.getframe(); imwrite(I,[f ext]); else
     I=sr.getframeb(); f=fopen([f  info.ext],'w');
     if(f<=0), sr.close(); assert(false); end
     fwrite(f,I); fclose(f);
-  end; tocStatus(tid,frame/f1);
-end; sr.close(); if(frame<f1), tocStatus(tid,1); end
+  end; k=k+1; tocStatus(tid,k/n);
+end; sr.close();
 end
 
 function frImgs( fName, info, varargin )
