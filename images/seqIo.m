@@ -213,7 +213,8 @@ function crop( fName, tName, frames )
 % See also seqIo
 sr=reader(fName); info=sr.getinfo(); sw=writer(tName,info);
 frames=frames(:)'; pad=sr.getnext(); pad(:)=0;
-assert(all(frames>=0) && all(frames<info.numFrames));
+kp=frames>=0 & frames<info.numFrames; if(~all(kp)), frames=frames(kp);
+  warning('piotr:seqIo:crop','%i out of bounds frames',sum(~kp)); end
 ordered=all(frames(2:end)==frames(1:end-1)+1);
 n=length(frames); k=0; tid=ticStatus;
 for f=frames
