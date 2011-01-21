@@ -28,8 +28,8 @@ function out = seqIo( fName, action, varargin )
 %   info = seqIo( fName, 'getInfo' )
 % Crop sub-sequence from seq file.
 %   seqIo( fName, 'crop', tName, frames )
-% Extract images from seq file to target directory.
-%   seqIo( fName, 'toImgs', tDir, [skip], [f0], [f1], [ext] )
+% Extract images from seq file to target directory or array.
+%   Is = seqIo( fName, 'toImgs', [tDir], [skip], [f0], [f1], [ext] )
 % Create seq file from an array or directory of images or from an AVI file.
 %   seqIo( fName, 'frImgs', info, varargin )
 % Convert seq file by applying imgFun(I) to each frame I.
@@ -66,7 +66,7 @@ switch lower(action)
   case {'writer','w'}, out = writer( fName, varargin{:} );
   case 'getinfo', out = getInfo( fName );
   case 'crop', crop( fName, varargin{:} ); out=1;
-  case 'toimgs', toImgs( fName, varargin{:} ); out=1;
+  case 'toimgs', out = toImgs( fName, varargin{:} );
   case 'frimgs', frImgs( fName, varargin{:} ); out=1;
   case 'convert', convert( fName, varargin{:} ); out=1;
   case 'newheader', newHeader( fName, varargin{:} ); out=1;
@@ -224,21 +224,22 @@ for f=frames
 end; sw.close(); sr.close();
 end
 
-function toImgs( fName, tDir, skip, f0, f1, ext )
-% Extract images from seq file to target directory.
+function Is = toImgs( fName, tDir, skip, f0, f1, ext )
+% Extract images from seq file to target directory or array.
 %
 % USAGE
-%  seqIo( fName, 'toImgs', tDir, [skip], [f0], [f1], [ext] )
+%  Is = seqIo( fName, 'toImgs', [tDir], [skip], [f0], [f1], [ext] )
 %
 % INPUTS
 %  fName      - seq file name
-%  tDir       - target directory
+%  tDir       - [] target directory (if empty extract images to array)
 %  skip       - [1] skip between written frames
 %  f0         - [0] first frame to write
 %  f1         - [numFrames-1] last frame to write
 %  ext        - [] optionally save as given type (slow, reconverts)
 %
 % OUTPUTS
+%  Is         - if isempty(tDir) outputs image array (else Is=[])
 %
 % EXAMPLE
 %
@@ -247,9 +248,18 @@ if(nargin<3 || isempty(skip)), skip=1; end
 if(nargin<4 || isempty(f0)), f0=0; end
 if(nargin<5 || isempty(f1)), f1=inf; end
 if(nargin<6 || isempty(ext)), ext=''; end
-if(~exist(tDir,'dir')), mkdir(tDir); end
 sr=reader(fName); info=sr.getinfo(); f1=min(f1,info.numFrames-1);
 frames=f0:skip:f1; n=length(frames); tid=ticStatus; k=0;
+% output images to array
+if(isempty(tDir))
+  I=sr.getnext(); d=ndims(I); assert(d==2 || d==3);
+  try Is=zeros([size(I) n],class(I)); catch e; sr.close(); throw(e); end
+  for k=1:n, sr.seek(frames(k)); I=sr.getframe(); tocStatus(tid,k/n);
+    if(d==2), Is(:,:,k)=I; else Is(:,:,:,k)=I; end; end
+  sr.close(); return;
+end
+% output images to directory
+if(~exist(tDir,'dir')), mkdir(tDir); end; Is=[];
 for frame=frames
   f=[tDir '/I' int2str2(frame,5) '.']; sr.seek(frame);
   if(~isempty(ext)), I=sr.getframe(); imwrite(I,[f ext]); else
