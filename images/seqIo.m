@@ -295,7 +295,8 @@ dfs={'aviName','','Is',[],'sDir',[],'skip',1,'name','I',...
 if(~isempty(aviName))
   V = mmreader(aviName); nFrm=V.NumberOfFrames;
   info.height=V.Height; info.width=V.Width; info.fps=V.FrameRate;
-  sw=writer(fName,info); for f=1:nFrm, sw.addframe(read(V,f)); end
+  sw=writer(fName,info); tid=ticStatus('creating seq from avi');
+  for f=1:nFrm, sw.addframe(read(V,f)); tocStatus(tid,f/nFrm); end
   sw.close();
 elseif( isempty(Is) )
   assert(exist(sDir,'dir')==7); sw=writer(fName,info); info=sw.getinfo();
