@@ -304,7 +304,10 @@ dfs={'aviName','','Is',[],'sDir',[],'skip',1,'name','I',...
   = getPrmDflt(varargin,dfs,1);
 if(~isempty(aviName))
   if(exist('mmread.m','file')==2) % use external mmread function
-    aviName=which(aviName); V=mmread(aviName); n=V.nrFramesTotal;
+    %  mmread requires full pathname, which is obtained via 'which'. But,
+    % 'which' can fail (maltab bug), so best to just pass in full pathname
+    t=which(aviName); if(~isempty(t)), aviName=t; end
+    V=mmread(aviName); n=V.nrFramesTotal;
     info.height=V.height; info.width=V.width; info.fps=V.rate;
     sw=writer(fName,info); tid=ticStatus('creating seq from avi');
     for f=1:n, sw.addframe(V.frames(f).cdata); tocStatus(tid,f/n); end
@@ -315,7 +318,7 @@ if(~isempty(aviName))
       'installing the similarly named mmread toolbox from Micah ' ...
       'Richert, available at Matlab Central. If mmread is installed, ' ...
       'seqIo will automatically use mmread instead of mmreader.'];
-    try V=mmreader(aviName); catch  %#ok<CTCH>
+    try V=mmreader(aviName); catch %#ok<CTCH>
       error('piotr:seqIo:frImgs',emsg); end; n=V.NumberOfFrames;
     info.height=V.Height; info.width=V.Width; info.fps=V.FrameRate;
     sw=writer(fName,info); tid=ticStatus('creating seq from avi');
