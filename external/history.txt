@@ -1,6 +1,7 @@
 Version NEW
- -bbNms: large speedups (thanks Boris Babenko), changed how maxn works
+ -behaviorAnnotator: added video behavior annotation tool to toolbox.
  -seqIo: convert from avi (thanks Xavier Burgos-Artizzu), various tweaks
+ -bbNms: large speedups (thanks Boris Babenko), changed how maxn works
  -plotRoc: various minor fixes
  -imResample: optimized
  -mexw64: updated windows 64 bit binaries
