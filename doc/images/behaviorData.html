@@ -1,0 +1,151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of behaviorData</title>
+  <meta name="keywords" content="behaviorData">
+  <meta name="description" content="Retrieve and manipulate behavior annotation of a video.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>behaviorData
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Retrieve and manipulate behavior annotation of a video.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function A = behaviorData( action, fName, nFrame1 ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Retrieve and manipulate behavior annotation of a video.
+
+ Overview: A behavior annotation assigns every frame of a video to one of
+ k behaviors. Each consecutive set of frames is a single behavior
+ instance, the video is divided into n such behavior instances each with
+ its own type. Such a delineation is considered a single stream. To allow
+ labeling of overlapping behaviors or simultaneous labeling of behaviors
+ for multiple subjects, multiple streams can be used.
+
+ Construction: Calling behaviorData(action,fName,nFrame) creates or loads
+ an object A that is used to represent a behavior annotation. The 'action'
+ flag controls whether to 'load' a previously saved annotation or to
+ 'create' a new annotation. If constructing a new annotation, two
+ parameters control the annotation created: a configuration file (fName)
+ with the number of streams to use and the behavior list (see below) and
+ the number of frames in the video (nFrame). If loading a new annotation,
+ fName should point to the name of a previously saved annotation (with
+ either a .bAnn or .txt extension), nFrame is not needed. The .txt format
+ may be preferred as it is human readable (although slightly larger file
+ sizes may result). After creation, A is manipulated using object oriented
+ syntax, for example A.nFrame() returns the number of frames of the
+ underlying video (more details below).
+
+ Config file: should be a text file listing possible behavior types along
+ with a single character for each that will serve as a shortcut key. The
+ first line should be &quot;nStream [val]&quot; where [val] is the number of
+ annotation streams. Each following line should be the behavior name
+ followed by a character representing the key. Additionally, the first
+ behavior serves as the default behavior initially assigned to the entire
+ video, and should be named accordingly. Below is an example config file:
+   nStream 2
+   other o
+   eating e
+   grooming g
+   drinking d
+   sleeping s
+
+ Representation: An annotation of a single stream can be represented as
+ n+1 boundaries (bnds) delineating the starts of each behavior, with the
+ last bnd being the number of frames, and n integer types representing the
+ type of each behavior. For example, bnds=[0 100 nFrame] and types=[1 2]
+ would indicate frames 0-99 have type 1 and 100-(nFrame-1) have type 2.
+ Each type must have value in 1 to k, and the associated behavior name of
+ each type can be retrieved from a string cell array containing the k
+ names. Note that consecutive behaviors of the same type are merged.
+
+ Save, recreate, merge:
+  save(fName)        - save to file (.bAnn or .txt)
+  recreate(cName)    - specify new configuration file
+  merge(fName)       - load second annotation, merge streams
+
+ Inspect (always inspect current stream):
+  n1 = n()           - number of behavior instances
+  k1 = k()           - number of behavior types
+  nFrame1 = nFrame() - number of frames in underlying video
+  nStrm1 = nStrm()   - number of annotation streams
+  types = getTypes() - length n vector of integer types
+  bnds = getBnds()   - length n+1 vector of frame boundaries
+  names = getNames() - length k cell vector of behavior names
+  keys = getKeys()   - length k char vector of key shortcuts
+  type = getType(id) - type of behavior for id-th instance
+  name = getName(id) - name of behavior for id-th instance
+  frm = getStart(id) - start frame for id-th instance
+  frm = getEnd(id)   - end frame for id-th instance
+  id = getId(frm)    - id of behavior at given frame (1&lt;=id&lt;=n)
+  ids = getIds(type) - all ids for behavior of given type
+  lbl = getLbls()    - get per frame labeling - [1 x nFrame]
+
+ Alter (always alter current stream):
+  setStrm(strm)      - set current stream
+  setType(id,type)   - change type of given behavior
+  move(id,frame)     - move behavior start (must remain between prev/next)
+  add(type, frame)   - add behavior with start at given frame
+  delete(id)         - delete behavior by extending prev behavior
+  crop(fr0,fr1)      - crop annotation to given range
+  insert(frs)        - extend annotation by inserting frames
+  setLbls(lbl)       - set per frame labeling - [1 x nFrame]
+
+ USAGE
+  A = behaviorData( action, fName, nFrame )
+
+ INPUTS
+  action   - 'load' or 'create'
+  fName    - location of annotation or config file
+  nFrame   - number of frames if creating video
+
+ OUTPUTS
+  A        - annotation structure
+
+ EXAMPLE
+
+ See also <a href="behaviorAnnotator.html" class="code" title="function behaviorAnnotator( fName, aName, tName )">behaviorAnnotator</a>
+
+ Piotr's Image&amp;Video Toolbox      Version 2.60
+ Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Please email me if you find bugs, or have suggestions or questions!
+ Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="behaviorAnnotator.html" class="code" title="function behaviorAnnotator( fName, aName, tName )">behaviorAnnotator</a>	Caltech Behavior Annotator.</li></ul>
+<!-- crossreference -->
+
+
+
+
+<!-- Start of Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-4884268-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+<!-- end of Google Analytics Code -->
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

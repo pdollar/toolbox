@@ -50,10 +50,12 @@
  w and w*2 are 1 unit apart), and the radii should be set accordingly.
  radii may need to change depending on spatial and scale stride of bbs.
 
- Although efficient, this function is O(n^2). To speed things up for large
- n, can divide data randomly into two sets, run nms on each, combine and
- run nms on the result. If maxn is specified, will split the set if
- n&gt;maxn. Note that this is a heuristic and can change the results of nms.
+ Although efficient, nms is O(n^2). To speed things up for large n, can
+ divide data into two parts (according to x or y coordinate), run nms on
+ each part, combine and run nms on the result. If maxn is specified, will
+ split the data in half if n&gt;maxn. Note that this is a heuristic and can
+ change the results of nms. Moreover, setting maxn too small will cause an
+ increase in overall performance time.
 
  Finally, the bbs are optionally resized before performing nms. The
  resizing is important as some detectors return bbs that are padded. For
@@ -70,7 +72,7 @@
   varargin   - additional params (struct or name/value pairs)
    .type       - ['max'] 'max', 'maxg', 'ms', 'cover', or 'none'
    .thr        - [-inf] threshold below which to discard (0 for 'ms')
-   .maxn       - [500] if n&gt;maxn split and run recursively (see above)
+   .maxn       - [inf] if n&gt;maxn split and run recursively (see above)
    .radii      - [.15 .15 1 1] supression radii ('ms' only, see above)
    .overlap    - [.5] area of overlap for bbs
    .ovrDnm     - ['union'] area of overlap denominator ('union' or 'min')
@@ -87,7 +89,7 @@
 
  See also <a href="bbApply.html" class="code" title="function varargout = bbApply( action, varargin )">bbApply</a>, <a href="nonMaxSuprList.html" class="code" title="function [subs,vals,keep] = nonMaxSuprList( subs, vals, radii,thresh, maxn, flag)">nonMaxSuprList</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.52
+ Piotr's Image&amp;Video Toolbox      Version 2.60
  Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>

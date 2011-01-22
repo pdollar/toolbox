@@ -52,12 +52,12 @@
    info = seqIo( fName, 'getInfo' )
  Crop sub-sequence from seq file.
    seqIo( fName, 'crop', tName, frames )
- Extract images from seq file to target directory.
-   seqIo( fName, 'toImgs', tDir, [skip], [f0], [f1], [ext] )
- Make seq file from images in an array or source directory.
+ Extract images from seq file to target directory or array.
+   Is = seqIo( fName, 'toImgs', [tDir], [skip], [f0], [f1], [ext] )
+ Create seq file from an array or directory of images or from an AVI file.
    seqIo( fName, 'frImgs', info, varargin )
  Convert seq file by applying imgFun(I) to each frame I.
-   seqIo( fName, 'convert', tName, imgFun, [info] )
+   seqIo( fName, 'convert', tName, imgFun, varargin )
  Replace header of seq file with provided info.
    seqIo( fName, 'newHeader', info )
  Create interface sr for reading dual seq files.
@@ -80,7 +80,7 @@
  seqIo&gt;toImgs, seqIo&gt;frImgs, seqIo&gt;convert, seqIo&gt;newHeader,
  seqIo&gt;readerDual, <a href="seqPlayer.html" class="code" title="function seqPlayer( fName, dispFunc )">seqPlayer</a>, <a href="seqReaderPlugin.html" class="code" title="function varargout = seqReaderPlugin( cmd, h, varargin )">seqReaderPlugin</a>, <a href="seqWriterPlugin.html" class="code" title="function varargout = seqWriterPlugin( cmd, h, varargin )">seqWriterPlugin</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.53
+ Piotr's Image&amp;Video Toolbox      Version 2.60
  Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
@@ -92,7 +92,7 @@ This function calls:
 <li><a href="seqReaderPlugin.html" class="code" title="function varargout = seqReaderPlugin( cmd, h, varargin )">seqReaderPlugin</a>	Plugin for seqIo and videoIO to allow reading of seq files.</li><li><a href="seqWriterPlugin.html" class="code" title="function varargout = seqWriterPlugin( cmd, h, varargin )">seqWriterPlugin</a>	Plugin for seqIo and videoIO to allow writing of seq files.</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li><li><a href="../matlab/int2str2.html" class="code" title="function nstr = int2str2( n, nDigits )">int2str2</a>	Convert integer to string of given length; improved version of int2str.</li><li><a href="../matlab/ticStatus.html" class="code" title="function id = ticStatus( msg, updateFreq, updateMinT, erasePrev )">ticStatus</a>	Used to display the progress of a long process.</li><li><a href="../matlab/tocStatus.html" class="code" title="function tocStatus( id, fracDone )">tocStatus</a>	Used to display the progress of a long process.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="seqPlayer.html" class="code" title="function seqPlayer( fName, dispFunc )">seqPlayer</a>	Simple GUI to play seq files.</li></ul>
+<li><a href="behaviorAnnotator.html" class="code" title="function behaviorAnnotator( fName, aName, tName )">behaviorAnnotator</a>	Caltech Behavior Annotator.</li><li><a href="seqPlayer.html" class="code" title="function seqPlayer( fName, dispFunc )">seqPlayer</a>	Simple GUI to play seq files.</li></ul>
 <!-- crossreference -->
 
 
