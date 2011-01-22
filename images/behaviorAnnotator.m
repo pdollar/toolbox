@@ -1,6 +1,13 @@
 function behaviorAnnotator( fName, aName, tName )
 % Caltech Behavior Annotator.
 %
+% Can only be used to annotated seq files. To annotate other types of video
+% files, they need to be converted to seq files first. For example, to
+% convert an avi file into an seq file, use the following command:
+%  seqIo([seqName],'frImgs',struct('codec','jpg'),'aviName',[aviName])
+% Where [seqName] denotes the name of the seq you want to save to and
+% [aviName] is the avi file. See seqIo and seqIo>frimgs for more details.
+%
 % Use arrow keys to play the video. Controls are as follows:
 % (1) If stopped: [L] play backward, [R] play forward
 % (2) If playing forward: [L] halve speed, [R] double speed, [U/D] stop
@@ -20,7 +27,7 @@ function behaviorAnnotator( fName, aName, tName )
 % EXAMPLE
 %  behaviorAnnotator
 %
-% See also behaviorData
+% See also behaviorData, seqIo
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
