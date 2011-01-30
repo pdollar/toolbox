@@ -97,13 +97,12 @@ if( ~any(strcmp(bbox,{'loose','crop'})));
   error(['illegal value for bbox: ' bbox]); end
 
 % pad I and convert to double, makes interpolation simpler
-classI=class(I); [m,n]=size(I); m=m+4; n=n+4;
-if(~strcmp(classI,'double')), I=double(I); end
-I = padarray(I,[2,2],pad,'both');
+classI=class(I); if(~strcmp(classI,'double')), I=double(I); end
+I=padarray(I,[2,2],pad,'both');
 
 % set origin to be center of image
-r0 = (-m+1)/2; r1 = (m-1)/2;
-c0 = (-n+1)/2; c1 = (n-1)/2;
+m = size(I,1); r0 = (-m+1)/2; r1 = (m-1)/2;
+n = size(I,2); c0 = (-n+1)/2; c1 = (n-1)/2;
 
 % If 'loose' then get bounds of resulting image. To do this project the
 % original points accoring to the homography and see the bounds. Note
