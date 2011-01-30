@@ -95,6 +95,8 @@ if( any(size(H)~=[3 3])), error('H must be 3x3'); end
 if( rank(H)~=3), error('H must be full rank.'); end
 if( ~any(strcmp(bbox,{'loose','crop'})));
   error(['illegal value for bbox: ' bbox]); end
+if(strncmpi(method,'lin',3) || strncmpi(method,'bil',3))
+  method='linear'; end
 
 % pad I and convert to double, makes interpolation simpler
 classI=class(I); if(~strcmp(classI,'double')), I=double(I); end
@@ -122,12 +124,12 @@ if(all(H(3,1:2)==0)), P=Hi(1:2,:)*vs; else
   P=Hi*vs; P(1,:)=P(1,:)./P(3,:); P(2,:)=P(2,:)./P(3,:); end
 rs=P(1,:)+(m+1)/2; cs=P(2,:)+(n+1)/2;
 
-% now texture map results ('nearest','linear' inlined for speed)
+% now texture map results ('nearest', 'linear' inlined for speed)
 if( strcmp(method,'nearest') )
   rs = min(max(floor(rs+.5),1),m);
   cs = min(max(floor(cs+.5),1),n);
   J = I( rs+(cs-1)*m );
-elseif(strncmpi(method,'lin',3) || strncmpi(method,'bil',3))
+elseif( strncmp(method,'linear',3) )
   rs=min(max(rs,2),m-1); wrs=rs-floor(rs);
   cs=min(max(cs,2),n-1); wcs=cs-floor(cs);
   ids = floor(rs)+floor(cs-1)*m; wrscs=wrs.*wcs;
