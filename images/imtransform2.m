@@ -43,8 +43,8 @@ function J = imtransform2( I, varargin )
 %
 % EXAMPLE - general homography (out of plane rotation)
 %  load trees; I=X; method='nearest';
-%  R = rotationMatrix([0 1 0],pi/4); z=500;
-%  H = R; H(1:2,:)=H(1:2,:)*z; H(:,3)=H(:,3)*z;
+%  S=eye(3); S([1 5])=1/500; % zoom out 500 pixels
+%  H=S^-1*rotationMatrix([0 1 0],pi/4)*S;
 %  J = imtransform2(I,H,method,'loose',1);
 %
 % EXAMPLE - rotation
@@ -61,7 +61,7 @@ function J = imtransform2( I, varargin )
 %
 % See also TEXTUREMAP, INTERP2
 %
-% Piotr's Image&Video Toolbox      Version 2.53
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
