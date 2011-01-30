@@ -130,9 +130,9 @@ if( strcmp(method,'nearest') )
 elseif(strncmpi(method,'lin',3) || strncmpi(method,'bil',3))
   rs=min(max(rs,2),m-1); wrs=rs-floor(rs);
   cs=min(max(cs,2),n-1); wcs=cs-floor(cs);
-  ids = floor(rs)+floor(cs-1)*m;
-  J = (I(ids).*(1-wrs) + I(ids+1).*wrs).*(1-wcs) + ...
-    (I(ids+m).*(1-wrs) + I(ids+(m+1)).*wrs).*wcs;
+  ids = floor(rs)+floor(cs-1)*m; wrscs=wrs.*wcs;
+  J = I(ids).*(1-wrs-wcs+wrscs) + I(ids+1).*(wrs-wrscs) + ...
+    I(ids+m).*(wcs-wrscs) + I(ids+m+1).*wrscs;
 else
   J = interp2( I, cs, rs, method, 0 );
 end
