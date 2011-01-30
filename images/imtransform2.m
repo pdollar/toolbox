@@ -130,11 +130,11 @@ if( strcmp(method,'nearest') )
   cs = min(max(floor(cs+.5),1),n);
   J = I( rs+(cs-1)*m );
 elseif( strncmp(method,'linear',3) )
-  rs=min(max(rs,2),m-1); wrs=rs-floor(rs);
-  cs=min(max(cs,2),n-1); wcs=cs-floor(cs);
-  ids = floor(rs)+floor(cs-1)*m; wrscs=wrs.*wcs;
-  J = I(ids).*(1-wrs-wcs+wrscs) + I(ids+1).*(wrs-wrscs) + ...
-    I(ids+m).*(wcs-wrscs) + I(ids+m+1).*wrscs;
+  rs=min(max(rs,2),m-1); frs=floor(rs);
+  cs=min(max(cs,2),n-1); fcs=floor(cs);
+  ids=frs+(fcs-1)*m; wrs=rs-frs; wcs=cs-fcs; wrscs=wrs.*wcs;
+  wa=1-wrs-wcs+wrscs; wb=wrs-wrscs; wc=wcs-wrscs; wd=wrscs;
+  J = I(ids).*wa + I(ids+1).*wb + I(ids+m).*wc + I(ids+m+1).*wd;
 else
   J = interp2( I, cs, rs, method, 0 );
 end
