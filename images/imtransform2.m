@@ -117,9 +117,10 @@ end
 % apply inverse homography on meshgrid in destination image
 m1=floor(r1-r0+1); cs=c0:c1; cs=cs(ones(1,m1),:);
 n1=floor(c1-c0+1); rs=(r0:r1)'; rs=rs(:,ones(n1,1));
-P = H \ [rs(:)'; cs(:)'; ones(1,m1*n1)];
-rs = P(1,:)./P(3,:) + (m+1)/2;
-cs = P(2,:)./P(3,:) + (n+1)/2;
+H=H/H(9); Hi=H^-1; vs=[rs(:)'; cs(:)'; ones(1,m1*n1)];
+if(all(H(3,1:2)==0)), P=Hi(1:2,:)*vs; else
+  P=Hi*vs; P(1,:)=P(1,:)./P(3,:); P(2,:)=P(2,:)./P(3,:); end
+rs=P(1,:)+(m+1)/2; cs=P(2,:)+(n+1)/2;
 
 % now texture map results ('nearest','linear' inlined for speed)
 if( strcmp(method,'nearest') )
