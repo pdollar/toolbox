@@ -21,7 +21,7 @@ function J = imtransform2( I, varargin )
 %  method  - ['linear'] 'nearest', 'spline', 'cubic' (for interp2)
 %  bbox    - ['loose'] or 'crop'
 %  show    - [0] figure to use for optional display
-%  pad     - [0] padding value (scalar or 'replicate')
+%  pad     - [0] padding value (scalar, 'replicate' or 'none')
 %
 % INPUTS - specific to general homography
 %  H       - 3x3 nonsingular homography matrix
@@ -98,7 +98,7 @@ if( ~any(strcmp(bbox,{'loose','crop'})));
 
 % pad I and convert to double, makes interpolation simpler
 classI=class(I); if(~strcmp(classI,'double')), I=double(I); end
-I=padarray(I,[2,2],pad,'both');
+if(~strcmp(pad,'none')), I=padarray(I,[2,2],pad,'both'); end
 
 % set origin to be center of image
 m = size(I,1); r0 = (-m+1)/2; r1 = (m-1)/2;
@@ -135,7 +135,8 @@ elseif(strncmpi(method,'lin',3) || strncmpi(method,'bil',3))
 else
   J = interp2( I, cs, rs, method, 0 );
 end
-J=reshape(J,[m1 n1]); J=J(3:end-2,3:end-2);
+J=reshape(J,[m1 n1]);
+if(~strcmp(pad,'none')), J=J(3:end-2,3:end-2); end
 if(~strcmp(classI,'double')), J=feval(classI,J ); end
 
 % optionally show
