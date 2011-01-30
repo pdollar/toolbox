@@ -124,16 +124,22 @@ if(all(H(3,1:2)==0)), P=Hi(1:2,:)*vs; else
   P=Hi*vs; P(1,:)=P(1,:)./P(3,:); P(2,:)=P(2,:)./P(3,:); end
 rs=P(1,:)+(m+1)/2; cs=P(2,:)+(n+1)/2;
 
-% now texture map results ('nearest', 'linear' inlined for speed)
+% compute indices into I
 if( strcmp(method,'nearest') )
   rs = min(max(floor(rs+.5),1),m);
   cs = min(max(floor(cs+.5),1),n);
-  J = I( rs+(cs-1)*m );
+  ids = rs+(cs-1)*m;
 elseif( strncmp(method,'linear',3) )
   rs=min(max(rs,2),m-1); frs=floor(rs);
   cs=min(max(cs,2),n-1); fcs=floor(cs);
   ids=frs+(fcs-1)*m; wrs=rs-frs; wcs=cs-fcs; wrscs=wrs.*wcs;
   wa=1-wrs-wcs+wrscs; wb=wrs-wrscs; wc=wcs-wrscs; wd=wrscs;
+end
+
+% now texture map results ('nearest', 'linear' inlined for speed)
+if( strcmp(method,'nearest') )
+  J = I(ids);
+elseif( strncmp(method,'linear',3) )
   J = I(ids).*wa + I(ids+1).*wb + I(ids+m).*wc + I(ids+m+1).*wd;
 else
   J = interp2( I, cs, rs, method, 0 );
