@@ -12,9 +12,9 @@ function J = imtransform2( I, varargin )
 % currently inexact (because of some padding/cropping). Preserves I's type.
 %
 % USAGE
-%  J=imtransform2(I,H,[method],[bbox],[show],[pad])     % general hom
-%  J=imtransform2(I,angle,[method],[bbox],[show],[pad]) % rotation
-%  J=imtransform2(I,dx,dy,[method],[bbox],[show],[pad]) % translation
+%  J=imtransform2(I,H,[method],[bbox],[show],[pad],[cache])     % homog.
+%  J=imtransform2(I,angle,[method],[bbox],[show],[pad],[cache]) % rotate
+%  J=imtransform2(I,dx,dy,[method],[bbox],[show],[pad],[cache]) % translate
 %
 % INPUTS - common
 %  I       - 2D image [converted to double]
@@ -22,6 +22,7 @@ function J = imtransform2( I, varargin )
 %  bbox    - ['loose'] or 'crop'
 %  show    - [0] figure to use for optional display
 %  pad     - [0] padding value (scalar, 'replicate' or 'none')
+%  cache   - [0] optionally cache precomp. for given transform/dims.
 %
 % INPUTS - specific to general homography
 %  H       - 3x3 nonsingular homography matrix
@@ -83,13 +84,14 @@ else % presumably a general homography
   J = imtransform2main( I, varargin{:} );
 end
 
-function J = imtransform2main( I, H, method, bbox, show, pad )
+function J = imtransform2main( I, H, method, bbox, show, pad, useCache )
 
 % check inputs
 if( nargin<3 || isempty(method)), method='linear'; end
 if( nargin<4 || isempty(bbox)), bbox='loose'; end
 if( nargin<5 || isempty(show)), show=0; end
 if( nargin<6 || isempty(pad)), pad=0; end
+if( nargin<7 || isempty(useCache)), useCache=0; end
 if( ndims(I)~=2 ), error('I must a MxN array'); end
 if( any(size(H)~=[3 3])), error('H must be 3x3'); end
 if( rank(H)~=3), error('H must be full rank.'); end
@@ -106,34 +108,57 @@ if(~strcmp(pad,'none')), I=padarray(I,[2,2],pad,'both'); end
 m = size(I,1); r0 = (-m+1)/2; r1 = (m-1)/2;
 n = size(I,2); c0 = (-n+1)/2; c1 = (n-1)/2;
 
-% If 'loose' then get bounds of resulting image. To do this project the
-% original points accoring to the homography and see the bounds. Note
-% that since a homography maps a quadrilateral to a quadrilateral only
-% need to look at where the bounds of the quadrilateral are mapped to.
-if( strcmp(bbox,'loose') )
-  P = H * [r0 r1 r0 r1; c0 c0 c1 c1; 1 1 1 1];
-  rs=P(1,:)./P(3,:); r0=min(rs(:)); r1=max(rs(:));
-  cs=P(2,:)./P(3,:); c0=min(cs(:)); c1=max(cs(:));
+% optionally use cache
+persistent cache; if(isempty(cache)), cache=simpleCache('init'); end
+if(useCache), cacheKey=[m n H(:)' double([method bbox show pad])];
+  [cached,cacheVal]=simpleCache('get',cache,cacheKey); end
+
+% perform transform precomputations
+if( ~useCache || ~cached )
+  % If 'loose' then get bounds of resulting image. To do this project the
+  % original points accoring to the homography and see the bounds. Note
+  % that since a homography maps a quadrilateral to a quadrilateral only
+  % need to look at where the bounds of the quadrilateral are mapped to.
+  if( strcmp(bbox,'loose') )
+    P = H * [r0 r1 r0 r1; c0 c0 c1 c1; 1 1 1 1];
+    rs=P(1,:)./P(3,:); r0=min(rs(:)); r1=max(rs(:));
+    cs=P(2,:)./P(3,:); c0=min(cs(:)); c1=max(cs(:));
+  end
+  
+  % apply inverse homography on meshgrid in destination image
+  m1=floor(r1-r0+1); cs=c0:c1; cs=cs(ones(1,m1),:);
+  n1=floor(c1-c0+1); rs=(r0:r1)'; rs=rs(:,ones(n1,1));
+  H=H/H(9); Hi=H^-1; vs=[rs(:)'; cs(:)'; ones(1,m1*n1)];
+  if(all(H(3,1:2)==0)), P=Hi(1:2,:)*vs; else
+    P=Hi*vs; P(1,:)=P(1,:)./P(3,:); P(2,:)=P(2,:)./P(3,:); end
+  rs=P(1,:)+(m+1)/2; cs=P(2,:)+(n+1)/2;
+  
+  % compute indices into I
+  if( strcmp(method,'nearest') )
+    rs = min(max(floor(rs+.5),1),m);
+    cs = min(max(floor(cs+.5),1),n);
+    ids = rs+(cs-1)*m;
+  elseif( strncmp(method,'linear',3) )
+    rs=min(max(rs,2),m-1); frs=floor(rs);
+    cs=min(max(cs,2),n-1); fcs=floor(cs);
+    ids=frs+(fcs-1)*m; wrs=rs-frs; wcs=cs-fcs; wrscs=wrs.*wcs;
+    wa=1-wrs-wcs+wrscs; wb=wrs-wrscs; wc=wcs-wrscs; wd=wrscs;
+  end
 end
 
-% apply inverse homography on meshgrid in destination image
-m1=floor(r1-r0+1); cs=c0:c1; cs=cs(ones(1,m1),:);
-n1=floor(c1-c0+1); rs=(r0:r1)'; rs=rs(:,ones(n1,1));
-H=H/H(9); Hi=H^-1; vs=[rs(:)'; cs(:)'; ones(1,m1*n1)];
-if(all(H(3,1:2)==0)), P=Hi(1:2,:)*vs; else
-  P=Hi*vs; P(1,:)=P(1,:)./P(3,:); P(2,:)=P(2,:)./P(3,:); end
-rs=P(1,:)+(m+1)/2; cs=P(2,:)+(n+1)/2;
-
-% compute indices into I
-if( strcmp(method,'nearest') )
-  rs = min(max(floor(rs+.5),1),m);
-  cs = min(max(floor(cs+.5),1),n);
-  ids = rs+(cs-1)*m;
-elseif( strncmp(method,'linear',3) )
-  rs=min(max(rs,2),m-1); frs=floor(rs);
-  cs=min(max(cs,2),n-1); fcs=floor(cs);
-  ids=frs+(fcs-1)*m; wrs=rs-frs; wcs=cs-fcs; wrscs=wrs.*wcs;
-  wa=1-wrs-wcs+wrscs; wb=wrs-wrscs; wc=wcs-wrscs; wd=wrscs;
+% if using cache, either put/get value to/from cache
+if( useCache )
+  if( strcmp(method,'nearest') )
+    if(cached), [m1,n1,ids]=deal(cacheVal{:});
+    else cacheVal={m1,n1,ids}; end
+  elseif( strncmp(method,'linear',3) )
+    if(cached), [m1,n1,ids,wa,wb,wc,wd]=deal(cacheVal{:});
+    else cacheVal={m1,n1,ids,wa,wb,wc,wd}; end
+  else
+    if(cached), [m1,n1,rs,cs]=deal(cacheVal{:});
+    else cacheVal={m1,n1,rs,cs}; end
+  end
+  if(~cached), cache=simpleCache('put',cache,cacheKey,cacheVal); end
 end
 
 % now texture map results ('nearest', 'linear' inlined for speed)
