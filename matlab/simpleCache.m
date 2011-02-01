@@ -84,7 +84,7 @@ function cache = cachegrow( cache )
 cacheSiz = length( cache.keyns );
 if( cacheSiz>64 ) % warn if getting big
   warning(['doubling cache size to: ' int2str2(cacheSiz*2)]);%#ok<WNTAG>
-end;
+end
 cache.freeinds = [cache.freeinds (cacheSiz+1):(2*cacheSiz)];
 cache.keyns = [cache.keyns -ones(1,cacheSiz)];
 cache.keys  = [cache.keys cell(1,cacheSiz)];
@@ -112,22 +112,17 @@ end
 
 function [ind,val] = cacheget( cache, key )
 % get cache element, or fail
-
 cacheSiz = length( cache.keyns );
 keyn = length( key );
 for i=1:cacheSiz
   if(keyn==cache.keyns(i) && all(key==cache.keys{i}))
-    val = cache.vals{i};
-    ind = i;
-    return;
-  end
+    val = cache.vals{i}; ind = i; return; end
 end
 ind=-1; val=-1;
 end
 
 function [cache,found] = cacheremove( cache, key )
 % get cache element, or fail
-
 ind = cacheget( cache, key );
 found = ind>0;
 if( found )
