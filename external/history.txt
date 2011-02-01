@@ -1,5 +1,6 @@
 Version NEW
  -imtransform2.m: various optimizations, including optional caching
+ -minor: simpleCache
 
 Version 2.60 (21-Jan-11)
  -behaviorAnnotator: added video behavior annotation tool to toolbox.

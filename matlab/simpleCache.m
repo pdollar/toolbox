@@ -44,46 +44,38 @@ function varargout = simpleCache( op, cache, varargin )
 %
 % See also PERSISTENT, MASKGAUSSIANS
 %
-% Piotr's Image&Video Toolbox      Version 2.0
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 if( strcmp(op,'init') ) %%% init a cache
-  error(nargchk(1, 2, nargin));
-  error(nargoutchk(1, 1, nargout));
   cacheSiz = 8;
   cache.freeinds = 1:cacheSiz;
   cache.keyns = -ones(1,cacheSiz);
   cache.keys = cell(1,cacheSiz);
   cache.vals = cell(1,cacheSiz);
   varargout = {cache};
-
+  
 elseif( strcmp(op,'put') ) %%% a put operation
-  error(nargchk(4, 4, nargin));
-  error(nargoutchk(1, 1, nargout));
-  [ key, val ] = deal( varargin{:} );
+  key=varargin{1}; val=varargin{2};
   if( ~isvector(key) ); error( 'key must be a vector' ); end;
   cache = cacheput( cache, key, val );
   varargout = {cache};
-
+  
 elseif( strcmp(op,'get') ) %%% a get operation
-  error(nargchk(3, 3, nargin));
-  error(nargoutchk(0, 2, nargout));
-  key = deal( varargin{:} );
+  key=varargin{1};
   if( ~isvector(key) ); error( 'key must be a vector' ); end;
   [ind,val] = cacheget( cache, key );
   found = ind>0;
   varargout = {found,val};
-
+  
 elseif( strcmp(op,'remove') ) %%% a remove operation
-  error(nargchk(3, 3, nargin));
-  error(nargoutchk(0, 2, nargout));
-  key = deal( varargin{:} );
+  key=varargin{1};
   if( ~isvector(key) ); error( 'key must be a vector' ); end;
   [cache,found] = cacheremove( cache, key );
   varargout = {cache,found};
-
+  
 else %%% unknown op
   error( ['Unknown cache operation: ' op] );
 end
