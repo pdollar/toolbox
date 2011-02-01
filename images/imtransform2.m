@@ -94,7 +94,6 @@ if( nargin<6 || isempty(pad)), pad=0; end
 if( nargin<7 || isempty(useCache)), useCache=0; end
 if( ndims(I)~=2 ), error('I must a MxN array'); end
 if( any(size(H)~=[3 3])), error('H must be 3x3'); end
-if( rank(H)~=3), error('H must be full rank.'); end
 if( ~any(strcmp(bbox,{'loose','crop'})));
   error(['illegal value for bbox: ' bbox]); end
 if(strncmpi(method,'lin',3) || strncmpi(method,'bil',3))
