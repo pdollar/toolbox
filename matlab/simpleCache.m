@@ -60,25 +60,23 @@ switch op
     
   case 'put' % a put operation
     key=varargin{1}; val=varargin{2};
-    if( ~isvector(key) ); error( 'key must be a vector' ); end;
     cache = cacheput( cache, key, val );
     varargout = {cache};
     
   case 'get' % a get operation
     key=varargin{1};
-    if( ~isvector(key) ); error( 'key must be a vector' ); end;
     [ind,val] = cacheget( cache, key );
     found = ind>0;
     varargout = {found,val};
     
   case 'remove'  % a remove operation
     key=varargin{1};
-    if( ~isvector(key) ); error( 'key must be a vector' ); end;
     [cache,found] = cacheremove( cache, key );
     varargout = {cache,found};
     
   otherwise
     error('Unknown cache operation: %s',op);
+end
 end
 
 function cache = cachegrow( cache )
@@ -91,6 +89,7 @@ cache.freeinds = [cache.freeinds (cacheSiz+1):(2*cacheSiz)];
 cache.keyns = [cache.keyns -ones(1,cacheSiz)];
 cache.keys  = [cache.keys cell(1,cacheSiz)];
 cache.vals  = [cache.vals cell(1,cacheSiz)];
+end
 
 function cache = cacheput( cache, key, val )
 % put something into the cache
@@ -109,6 +108,7 @@ end
 cache.keyns(ind) = length(key);
 cache.keys{ind} = key;
 cache.vals{ind} = val;
+end
 
 function [ind,val] = cacheget( cache, key )
 % get cache element, or fail
@@ -123,6 +123,7 @@ for i=1:cacheSiz
   end
 end
 ind=-1; val=-1;
+end
 
 function [cache,found] = cacheremove( cache, key )
 % get cache element, or fail
@@ -134,4 +135,5 @@ if( found )
   cache.keyns(ind) = -1;
   cache.keys{ind} = [];
   cache.vals{ind} = [];
+end
 end
