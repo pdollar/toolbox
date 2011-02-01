@@ -49,35 +49,36 @@ function varargout = simpleCache( op, cache, varargin )
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
-if( strcmp(op,'init') ) %%% init a cache
-  cacheSiz = 8;
-  cache.freeinds = 1:cacheSiz;
-  cache.keyns = -ones(1,cacheSiz);
-  cache.keys = cell(1,cacheSiz);
-  cache.vals = cell(1,cacheSiz);
-  varargout = {cache};
-  
-elseif( strcmp(op,'put') ) %%% a put operation
-  key=varargin{1}; val=varargin{2};
-  if( ~isvector(key) ); error( 'key must be a vector' ); end;
-  cache = cacheput( cache, key, val );
-  varargout = {cache};
-  
-elseif( strcmp(op,'get') ) %%% a get operation
-  key=varargin{1};
-  if( ~isvector(key) ); error( 'key must be a vector' ); end;
-  [ind,val] = cacheget( cache, key );
-  found = ind>0;
-  varargout = {found,val};
-  
-elseif( strcmp(op,'remove') ) %%% a remove operation
-  key=varargin{1};
-  if( ~isvector(key) ); error( 'key must be a vector' ); end;
-  [cache,found] = cacheremove( cache, key );
-  varargout = {cache,found};
-  
-else %%% unknown op
-  error( ['Unknown cache operation: ' op] );
+switch op
+  case 'init' % init a cache
+    cacheSiz = 8;
+    cache.freeinds = 1:cacheSiz;
+    cache.keyns = -ones(1,cacheSiz);
+    cache.keys = cell(1,cacheSiz);
+    cache.vals = cell(1,cacheSiz);
+    varargout = {cache};
+    
+  case 'put' % a put operation
+    key=varargin{1}; val=varargin{2};
+    if( ~isvector(key) ); error( 'key must be a vector' ); end;
+    cache = cacheput( cache, key, val );
+    varargout = {cache};
+    
+  case 'get' % a get operation
+    key=varargin{1};
+    if( ~isvector(key) ); error( 'key must be a vector' ); end;
+    [ind,val] = cacheget( cache, key );
+    found = ind>0;
+    varargout = {found,val};
+    
+  case 'remove'  % a remove operation
+    key=varargin{1};
+    if( ~isvector(key) ); error( 'key must be a vector' ); end;
+    [cache,found] = cacheremove( cache, key );
+    varargout = {cache,found};
+    
+  otherwise
+    error('Unknown cache operation: %s',op);
 end
 
 function cache = cachegrow( cache )
