@@ -1,5 +1,5 @@
 Version NEW
- -imtransform2.m: various optimizations, including optional caching
+ -imtransform2.m: various optimizations, including mex and caching
  -minor: simpleCache
 
 Version 2.60 (21-Jan-11)

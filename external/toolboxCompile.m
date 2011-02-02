@@ -30,8 +30,8 @@ if(exist('OCTAVE_VERSION','builtin')), opts={'-o'}; end
 % compile c functions
 fs={'assignToBins1','histc2c','ktHistcRgb_c','ktComputeW_c',...
   'nlfiltersep_max','nlfiltersep_sum','imResample1','convOnes',...
-  'imtransformLinear','meanShift1','fernsInds1'};
-ds=[repmat({'images'},1,9),repmat({'classify'},1,2)];
+  'imtransform2_comp','imtransform2_apply','meanShift1','fernsInds1'};
+ds=[repmat({'images'},1,10),repmat({'classify'},1,2)];
 for i=1:length(fs), mex([rd '/' ds{i} '/private/' fs{i} '.c'],...
     opts{:},[rd '/' ds{i} '/private/' fs{i} '.' mexext]); end
 
