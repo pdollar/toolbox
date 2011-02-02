@@ -141,9 +141,7 @@ if( ~useCache || ~cached )
     cs = min(max(uint32(cs),1),n);
     ids = rs+(cs-1)*m;
   elseif( strncmp(method,'linear',3) )
-    rs=min(max(rs,2),m-1); frs=uint32(rs-.5); wrs=rs-double(frs);
-    cs=min(max(cs,2),n-1); fcs=uint32(cs-.5); wcs=cs-double(fcs);
-    ids=frs+(fcs-1)*m; wd=wrs.*wcs; wa=1-wrs-wcs+wd; wb=wrs-wd; wc=wcs-wd;
+    rs=min(max(rs,2),m-1); cs=min(max(cs,2),n-1);
   end
 end
 
@@ -153,8 +151,8 @@ if( useCache )
     if(cached), [m1,n1,ids]=deal(cacheVal{:});
     else cacheVal={m1,n1,ids}; end
   elseif( strncmp(method,'linear',3) )
-    if(cached), [m1,n1,ids,wa,wb,wc,wd]=deal(cacheVal{:});
-    else cacheVal={m1,n1,ids,wa,wb,wc,wd}; end
+    if(cached), [m1,n1,rs,cs]=deal(cacheVal{:});
+    else cacheVal={m1,n1,rs,cs}; end
   else
     if(cached), [m1,n1,rs,cs]=deal(cacheVal{:});
     else cacheVal={m1,n1,rs,cs}; end
@@ -166,8 +164,7 @@ end
 if( strcmp(method,'nearest') )
   J = I(ids);
 elseif( strncmp(method,'linear',3) )
-  %J = I(ids).*wa + I(ids+1).*wb + I(ids+m).*wc + I(ids+m+1).*wd;
-  J = imtransformLinear(I,wa,wb,wc,wd,ids);
+  J = imtransformLinear(I,rs,cs);
 else
   J = interp2( I, cs, rs, method, 0 );
 end

@@ -7,22 +7,24 @@
 #include "mex.h"
 
 void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
-  /* J=imtransformLinear(I,ids,wa,wb,wc,wd); */
-  int m, n, i; double *I, *J, *wa, *wb, *wc, *wd; unsigned int *ids;
+  /* J=imtransformLinear(I,rs,cs); */
+  int m, n, i, id, fr, fc; double *I, *J, *rs, *cs;
+  double wr, wc, wrc, r, c;
 
   /* extract inputs */
   m = mxGetM(prhs[0]); n = mxGetN(prhs[0]);
   I   = (double*) mxGetData(prhs[0]);
-  wa  = (double*) mxGetData(prhs[1]);
-  wb  = (double*) mxGetData(prhs[2]);
-  wc  = (double*) mxGetData(prhs[3]);
-  wd  = (double*) mxGetData(prhs[4]);
-  ids = (unsigned int*) mxGetData(prhs[5]);
+  rs  = (double*) mxGetData(prhs[1]);
+  cs  = (double*) mxGetData(prhs[2]);
 
-  /* Perform interpolation: J = I(ids).*wa + I(ids+1).*wb + I(ids+m).*wc + I(ids+m+1).*wd; */
+  /* Perform interpolation */
   J = mxMalloc(sizeof(double)*m*n);
-  for(i=0; i<m*n; i++)
-    J[i]=I[ids[i]-1]*wa[i] + I[ids[i]]*wb[i] + I[ids[i]+m-1]*wc[i] + I[ids[i]+m]*wd[i];
+  for( i=0; i<m*n; i++ ) {
+    r = rs[i]; fr = (int) r; wr = r-fr;
+    c = cs[i]; fc = (int) c; wc = c-fc;
+    id=(fr-1)+(fc-1)*m; wrc=wr*wc;
+    J[i]=I[id]*(1-wr-wc+wrc) + I[id+1]*(wr-wrc) + I[id+m]*(wc-wrc) + I[id+m+1]*wrc;
+  }
 
   /* create output array */
   plhs[0] = mxCreateNumericMatrix(0,0,mxDOUBLE_CLASS,mxREAL);
