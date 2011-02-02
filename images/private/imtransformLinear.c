@@ -19,11 +19,12 @@ void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   wd  = (double*) mxGetData(prhs[4]);
   ids = (unsigned int*) mxGetData(prhs[5]);
 
-  /* create output array */
-  plhs[0] = mxCreateNumericMatrix(m,n,mxDOUBLE_CLASS,mxREAL);
-  J = (double*) mxGetData(plhs[0]);
-
   /* Perform interpolation: J = I(ids).*wa + I(ids+1).*wb + I(ids+m).*wc + I(ids+m+1).*wd; */
+  J = mxMalloc(sizeof(double)*m*n);
   for(i=0; i<m*n; i++)
     J[i]=I[ids[i]-1]*wa[i] + I[ids[i]]*wb[i] + I[ids[i]+m-1]*wc[i] + I[ids[i]+m]*wd[i];
+
+  /* create output array */
+  plhs[0] = mxCreateNumericMatrix(0,0,mxDOUBLE_CLASS,mxREAL);
+  mxSetData(plhs[0],J); mxSetM(plhs[0],m); mxSetN(plhs[0],n);
 }
