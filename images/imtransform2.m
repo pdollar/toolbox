@@ -101,7 +101,8 @@ if(strncmpi(method,'lin',3) || strncmpi(method,'bil',3))
 
 % pad I and convert to double, makes interpolation simpler
 classI=class(I); if(~strcmp(classI,'double')), I=double(I); end
-if(~strcmp(pad,'none')), I=padarray(I,[2,2],pad,'both'); end
+if(~strcmp(pad,'none')), [m,n]=size(I); I=I([1 1 1:m m m],[1 1 1:n n n]);
+  if(~ischar(pad)),I([1:2 m+3:m+4],:)=pad; I(:,[1:2 n+3:n+4])=pad; end; end
 
 % set origin to be center of image
 m = size(I,1); r0 = (-m+1)/2; r1 = (m-1)/2;
