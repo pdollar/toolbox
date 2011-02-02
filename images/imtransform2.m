@@ -137,14 +137,13 @@ if( ~useCache || ~cached )
   
   % compute indices into I
   if( strcmp(method,'nearest') )
-    rs = min(max(floor(rs+.5),1),m);
-    cs = min(max(floor(cs+.5),1),n);
+    rs = min(max(uint32(rs),1),m);
+    cs = min(max(uint32(cs),1),n);
     ids = rs+(cs-1)*m;
   elseif( strncmp(method,'linear',3) )
-    rs=min(max(rs,2),m-1); frs=floor(rs);
-    cs=min(max(cs,2),n-1); fcs=floor(cs);
-    ids=uint32(frs+(fcs-1)*m); wrs=rs-frs; wcs=cs-fcs; wrscs=wrs.*wcs;
-    wa=1-wrs-wcs+wrscs; wb=wrs-wrscs; wc=wcs-wrscs; wd=wrscs;
+    rs=min(max(rs,2),m-1); frs=uint32(rs-.5); wrs=rs-double(frs);
+    cs=min(max(cs,2),n-1); fcs=uint32(cs-.5); wcs=cs-double(fcs);
+    ids=frs+(fcs-1)*m; wd=wrs.*wcs; wa=1-wrs-wcs+wd; wb=wrs-wd; wc=wcs-wd;
   end
 end
 
