@@ -7,8 +7,8 @@
 #include "mex.h"
 
 void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
-  /* J=imtransform2_apply(I,rs,cs); */
-  int m, n, i, id, fr, fc; double *I, *J, *rs, *cs;
+  /* J=imtransform2_apply(I,rs,cs,flag); */
+  int flag, m, n, i, id, fr, fc; double *I, *J, *rs, *cs;
   double wr, wc, wrc, r, c;
 
   /* extract inputs */
@@ -16,14 +16,21 @@ void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   I   = (double*) mxGetData(prhs[0]);
   rs  = (double*) mxGetData(prhs[1]);
   cs  = (double*) mxGetData(prhs[2]);
+  flag = (int) mxGetScalar(prhs[3]);
 
   /* Perform interpolation */
   J = mxMalloc(sizeof(double)*m*n);
-  for( i=0; i<m*n; i++ ) {
-    r = rs[i]; fr = (int) r; wr = r-fr;
-    c = cs[i]; fc = (int) c; wc = c-fc;
-    id=(fr-1)+(fc-1)*m; wrc=wr*wc;
-    J[i]=I[id]*(1-wr-wc+wrc) + I[id+1]*(wr-wrc) + I[id+m]*(wc-wrc) + I[id+m+1]*wrc;
+  if( flag==1 ) { /* nearest neighbor */
+    for( i=0; i<m*n; i++ ) {
+      id=(rs[i]-1)+(cs[i]-1)*m; J[i]=I[id];
+    }
+  } else { /* bilinear */
+    for( i=0; i<m*n; i++ ) {
+      r = rs[i]; fr = (int) r; wr = r-fr;
+      c = cs[i]; fc = (int) c; wc = c-fc;
+      id=(fr-1)+(fc-1)*m; wrc=wr*wc;
+      J[i]=I[id]*(1-wr-wc+wrc) + I[id+1]*(wr-wrc) + I[id+m]*(wc-wrc) + I[id+m+1]*wrc;
+    }
   }
 
   /* create output array */

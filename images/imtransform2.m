@@ -137,14 +137,11 @@ if( useCache )
 end
 
 % now texture map results ('nearest', 'linear' inlined for speed)
-if( mflag==1 )
-  J = I(rs+(cs-1)*m);
-elseif( mflag==2 )
-  J = imtransform2_apply(I,rs,cs);
+if( mflag )
+  J = imtransform2_apply(I,rs,cs,mflag);
 else
-  J = interp2( I, cs, rs, method, 0 );
+  J = reshape(interp2( I, cs, rs, method, 0 ),m1,n1);
 end
-J=reshape(J,[m1 n1]);
 if(~strcmp(pad,'none')), J=J(3:end-2,3:end-2); end
 if(~strcmp(classI,'double')), J=feval(classI,J ); end
 
