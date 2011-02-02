@@ -139,7 +139,6 @@ if( ~useCache || ~cached )
   if( strcmp(method,'nearest') )
     rs = min(max(uint32(rs),1),m);
     cs = min(max(uint32(cs),1),n);
-    ids = rs+(cs-1)*m;
   elseif( strncmp(method,'linear',3) )
     rs=min(max(rs,2),m-1); cs=min(max(cs,2),n-1);
   end
@@ -147,22 +146,13 @@ end
 
 % if using cache, either put/get value to/from cache
 if( useCache )
-  if( strcmp(method,'nearest') )
-    if(cached), [m1,n1,ids]=deal(cacheVal{:});
-    else cacheVal={m1,n1,ids}; end
-  elseif( strncmp(method,'linear',3) )
-    if(cached), [m1,n1,rs,cs]=deal(cacheVal{:});
-    else cacheVal={m1,n1,rs,cs}; end
-  else
-    if(cached), [m1,n1,rs,cs]=deal(cacheVal{:});
-    else cacheVal={m1,n1,rs,cs}; end
-  end
-  if(~cached), cache=simpleCache('put',cache,cacheKey,cacheVal); end
+  if( cached ), [m1,n1,rs,cs]=deal(cacheVal{:});
+  else cache=simpleCache('put',cache,cacheKey,{m1,n1,rs,cs}); end
 end
 
 % now texture map results ('nearest', 'linear' inlined for speed)
 if( strcmp(method,'nearest') )
-  J = I(ids);
+  J = I(rs+(cs-1)*m);
 elseif( strncmp(method,'linear',3) )
   J = imtransformLinear(I,rs,cs);
 else
