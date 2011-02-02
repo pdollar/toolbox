@@ -126,22 +126,10 @@ if( ~useCache || ~cached )
   end
   
   % apply inverse homography on meshgrid in destination image
-  m1=floor(r1-r0+1); cs0=c0:c1; cs0=cs0(ones(1,m1),:);
-  n1=floor(c1-c0+1); rs0=(r0:r1)'; rs0=rs0(:,ones(n1,1));
-  H=H^-1; H=H/H(9); cs0=cs0(:); rs0=rs0(:);
-  rs=H(1,1)*rs0+H(1,2)*cs0+H(1,3);
-  cs=H(2,1)*rs0+H(2,2)*cs0+H(2,3);
-  if(any(H(3,1:2)~=0)), zs=H(3,1)*rs0+H(3,2)*cs0+1;
-    rs=rs./zs; cs=cs./zs; end
-  rs=rs+(m+1)/2; cs=cs+(n+1)/2;
-  
-  % compute indices into I
-  if( strcmp(method,'nearest') )
-    rs = min(max(uint32(rs),1),m);
-    cs = min(max(uint32(cs),1),n);
-  elseif( strncmp(method,'linear',3) )
-    rs=min(max(rs,2),m-1); cs=min(max(cs,2),n-1);
-  end
+  if(strcmp(method,'nearest') ), flag=1;
+  elseif(strncmp(method,'linear',3)), flag=2; else flag=0; end
+  m1=floor(r1-r0+1); n1=floor(c1-c0+1);
+  H=H^-1; H=H/H(9); [rs,cs]=imtransform2_comp(H,m,n,r0,r1,c0,c1,flag);
 end
 
 % if using cache, either put/get value to/from cache
@@ -154,7 +142,7 @@ end
 if( strcmp(method,'nearest') )
   J = I(rs+(cs-1)*m);
 elseif( strncmp(method,'linear',3) )
-  J = imtransformLinear(I,rs,cs);
+  J = imtransform2_apply(I,rs,cs);
 else
   J = interp2( I, cs, rs, method, 0 );
 end

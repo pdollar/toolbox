@@ -7,7 +7,7 @@
 #include "mex.h"
 
 void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
-  /* J=imtransformLinear(I,rs,cs); */
+  /* J=imtransform2_apply(I,rs,cs); */
   int m, n, i, id, fr, fc; double *I, *J, *rs, *cs;
   double wr, wc, wrc, r, c;
 
