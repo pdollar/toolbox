@@ -140,7 +140,7 @@ if( ~useCache || ~cached )
   elseif( strncmp(method,'linear',3) )
     rs=min(max(rs,2),m-1); frs=floor(rs);
     cs=min(max(cs,2),n-1); fcs=floor(cs);
-    ids=frs+(fcs-1)*m; wrs=rs-frs; wcs=cs-fcs; wrscs=wrs.*wcs;
+    ids=uint32(frs+(fcs-1)*m); wrs=rs-frs; wcs=cs-fcs; wrscs=wrs.*wcs;
     wa=1-wrs-wcs+wrscs; wb=wrs-wrscs; wc=wcs-wrscs; wd=wrscs;
   end
 end
@@ -164,7 +164,8 @@ end
 if( strcmp(method,'nearest') )
   J = I(ids);
 elseif( strncmp(method,'linear',3) )
-  J = I(ids).*wa + I(ids+1).*wb + I(ids+m).*wc + I(ids+m+1).*wd;
+  %J = I(ids).*wa + I(ids+1).*wb + I(ids+m).*wc + I(ids+m+1).*wd;
+  J = imtransformLinear(I,wa,wb,wc,wd,ids);
 else
   J = interp2( I, cs, rs, method, 0 );
 end
