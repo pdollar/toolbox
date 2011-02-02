@@ -96,8 +96,8 @@ if( ndims(I)~=2 ), error('I must a MxN array'); end
 if( any(size(H)~=[3 3])), error('H must be 3x3'); end
 if( ~any(strcmp(bbox,{'loose','crop'})));
   error(['illegal value for bbox: ' bbox]); end
-if(strncmpi(method,'lin',3) || strncmpi(method,'bil',3))
-  method='linear'; end
+if(strncmpi(method,'lin',3) || strncmpi(method,'bil',3)), mflag=2;
+elseif(strcmp(method,'nearest') ), mflag=1; else mflag=0; end
 
 % pad I and convert to double, makes interpolation simpler
 classI=class(I); if(~strcmp(classI,'double')), I=double(I); end
@@ -126,10 +126,8 @@ if( ~useCache || ~cached )
   end
   
   % apply inverse homography on meshgrid in destination image
-  if(strcmp(method,'nearest') ), flag=1;
-  elseif(strncmp(method,'linear',3)), flag=2; else flag=0; end
-  m1=floor(r1-r0+1); n1=floor(c1-c0+1);
-  H=H^-1; H=H/H(9); [rs,cs]=imtransform2_comp(H,m,n,r0,r1,c0,c1,flag);
+  m1=floor(r1-r0+1); n1=floor(c1-c0+1); H=H^-1; H=H/H(9);
+  [rs,cs]=imtransform2_comp(H,m,n,r0,r1,c0,c1,mflag);
 end
 
 % if using cache, either put/get value to/from cache
@@ -139,9 +137,9 @@ if( useCache )
 end
 
 % now texture map results ('nearest', 'linear' inlined for speed)
-if( strcmp(method,'nearest') )
+if( mflag==1 )
   J = I(rs+(cs-1)*m);
-elseif( strncmp(method,'linear',3) )
+elseif( mflag==2 )
   J = imtransform2_apply(I,rs,cs);
 else
   J = interp2( I, cs, rs, method, 0 );
