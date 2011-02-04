@@ -109,7 +109,7 @@ if(~strcmp(pad,'none')), [m,n]=size(I); I=I([1 1 1:m m m],[1 1 1:n n n]);
 persistent cVals cKeys cCnt; if(isempty(cCnt)), cCnt=0; end; cached=0;
 if(useCache), cKey=[size(I,1) size(I,2) H(:)' mflag looseFlag];
   if(cCnt>0), id=find(all(cKey(ones(1,cCnt),:)==cKeys(1:cCnt,:),2));
-    if(~isempty(id)),[m1,n1,rs,cs,is]=deal(cVals{id}{:});cached=1; end; end
+    if(~isempty(id)), [rs,cs,is]=deal(cVals{id}{:}); cached=1; end; end
 end
 
 % perform transform precomputations
@@ -129,13 +129,12 @@ if( ~useCache || ~cached )
   end
   
   % apply inverse homography on meshgrid in destination image
-  m1=floor(r1-r0+1); n1=floor(c1-c0+1); H=H^-1; H=H/H(9);
-  [rs,cs,is]=imtransform2_comp(H,m,n,r0,r1,c0,c1,mflag);
+  H=H^-1; H=H/H(9); [rs,cs,is]=imtransform2_comp(H,m,n,r0,r1,c0,c1,mflag);
   
   % if using cache, put value into cache
   if(useCache), if(cCnt==length(cVals)), cCnt1=max(16,cCnt);
       cVals=[cVals; cell(cCnt1,1)]; cKeys=[cKeys; zeros(cCnt1,13)]; end
-    cCnt=cCnt+1; cVals{cCnt}={m1,n1,rs,cs,is}; cKeys(cCnt,:)=cKey;
+    cCnt=cCnt+1; cVals{cCnt}={rs,cs,is}; cKeys(cCnt,:)=cKey;
   end
 end
 
@@ -143,7 +142,7 @@ end
 if( mflag )
   J = imtransform2_apply(I,rs,cs,is,mflag);
 else
-  J = reshape(interp2(I,cs,rs,method,0),m1,n1);
+  J = interp2(I,cs,rs,method,0);
 end
 if(~strcmp(pad,'none')), J=J(3:end-2,3:end-2); end
 if(~strcmp(classI,'double')), J=feval(classI,J ); end

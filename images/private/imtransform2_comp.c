@@ -70,7 +70,7 @@ void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   plhs[0] = mxCreateNumericMatrix(0,0,mxDOUBLE_CLASS,mxREAL);
   plhs[1] = mxCreateNumericMatrix(0,0,mxDOUBLE_CLASS,mxREAL);
   plhs[2] = mxCreateNumericMatrix(0,0,mxINT32_CLASS,mxREAL);
-  mxSetData(plhs[0],rs); mxSetM(plhs[0],m1*n1); mxSetN(plhs[0],1);
-  mxSetData(plhs[1],cs); mxSetM(plhs[1],m1*n1); mxSetN(plhs[1],1);
-  mxSetData(plhs[2],is); mxSetM(plhs[2],m1*n1); mxSetN(plhs[2],1);
+  mxSetData(plhs[0],rs); mxSetM(plhs[0],m1); mxSetN(plhs[0],n1);
+  mxSetData(plhs[1],cs); mxSetM(plhs[1],m1); mxSetN(plhs[1],n1);
+  mxSetData(plhs[2],is); mxSetM(plhs[2],m1); mxSetN(plhs[2],n1);
 }
