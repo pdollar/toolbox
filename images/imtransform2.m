@@ -105,11 +105,14 @@ classI=class(I); if(~strcmp(classI,'double')), I=double(I); end
 if(~strcmp(pad,'none')), [m,n]=size(I); I=I([1 1 1:m m m],[1 1 1:n n n]);
   if(~ischar(pad)),I([1:2 m+3:m+4],:)=pad; I(:,[1:2 n+3:n+4])=pad; end; end
 
-% optionally use cache
-persistent cache; if(isempty(cache)), cache=simpleCache('init'); end
-if(useCache), cacheKey=[size(I,1) size(I,2) H(:)' mflag looseFlag];
-  [cached,cacheVal]=simpleCache('get',cache,cacheKey);
-  if(cached), [m1,n1,rs,cs,is]=deal(cacheVal{:}); end
+% optionally cache precomputed transformations
+persistent cVals cKeys cCnt; if(isempty(cCnt)), cCnt=0; end
+if(useCache), cKey=[size(I,1) size(I,2) H(:)' mflag looseFlag];
+  if(isempty(cKeys)), cached=0; else
+    id=find(all(cKey(ones(1,cCnt),:)==cKeys(1:cCnt,:),2));
+    cached=~isempty(id);
+    if(cached), [m1,n1,rs,cs,is]=deal(cVals{id(1)}{:}); end
+  end
 end
 
 % perform transform precomputations
@@ -133,7 +136,10 @@ if( ~useCache || ~cached )
   [rs,cs,is]=imtransform2_comp(H,m,n,r0,r1,c0,c1,mflag);
   
   % if using cache, put value into cache
-  if(useCache),cache=simpleCache('put',cache,cacheKey,{m1,n1,rs,cs,is});end
+  if(useCache), if(cCnt==length(cVals)), cCnt1=max(16,cCnt);
+      cVals=[cVals; cell(cCnt1,1)]; cKeys=[cKeys; zeros(cCnt1,13)]; end
+    cCnt=cCnt+1; cVals{cCnt}={m1,n1,rs,cs,is}; cKeys(cCnt,:)=cKey;
+  end
 end
 
 % now texture map results ('nearest', 'linear' mexed for speed)
