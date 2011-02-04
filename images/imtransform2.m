@@ -96,6 +96,7 @@ if( ndims(I)~=2 ), error('I must a MxN array'); end
 if( any(size(H)~=[3 3])), error('H must be 3x3'); end
 if( ~any(strcmp(bbox,{'loose','crop'})));
   error(['illegal value for bbox: ' bbox]); end
+looseFlag = strcmp(bbox,'loose');
 if(strncmpi(method,'lin',3) || strncmpi(method,'bil',3)), mflag=2;
 elseif(strcmp(method,'nearest') ), mflag=1; else mflag=0; end
 
@@ -106,8 +107,10 @@ if(~strcmp(pad,'none')), [m,n]=size(I); I=I([1 1 1:m m m],[1 1 1:n n n]);
 
 % optionally use cache
 persistent cache; if(isempty(cache)), cache=simpleCache('init'); end
-if(useCache), cacheKey=[size(I) H(:)' double([method bbox show pad])];
-  [cached,cacheVal]=simpleCache('get',cache,cacheKey); end
+if(useCache), cacheKey=[size(I,1) size(I,2) H(:)' mflag looseFlag];
+  [cached,cacheVal]=simpleCache('get',cache,cacheKey);
+  if(cached), [m1,n1,rs,cs,is]=deal(cacheVal{:}); end
+end
 
 % perform transform precomputations
 if( ~useCache || ~cached )
@@ -119,7 +122,7 @@ if( ~useCache || ~cached )
   % original points accoring to the homography and see the bounds. Note
   % that since a homography maps a quadrilateral to a quadrilateral only
   % need to look at where the bounds of the quadrilateral are mapped to.
-  if( strcmp(bbox,'loose') )
+  if( looseFlag )
     P = H * [r0 r1 r0 r1; c0 c0 c1 c1; 1 1 1 1];
     rs=P(1,:)./P(3,:); r0=min(rs(:)); r1=max(rs(:));
     cs=P(2,:)./P(3,:); c0=min(cs(:)); c1=max(cs(:));
@@ -128,12 +131,9 @@ if( ~useCache || ~cached )
   % apply inverse homography on meshgrid in destination image
   m1=floor(r1-r0+1); n1=floor(c1-c0+1); H=H^-1; H=H/H(9);
   [rs,cs,is]=imtransform2_comp(H,m,n,r0,r1,c0,c1,mflag);
-end
-
-% if using cache, either put/get value to/from cache
-if( useCache )
-  if( cached ), [m1,n1,rs,cs,is]=deal(cacheVal{:});
-  else cache=simpleCache('put',cache,cacheKey,{m1,n1,rs,cs,is}); end
+  
+  % if using cache, put value into cache
+  if(useCache),cache=simpleCache('put',cache,cacheKey,{m1,n1,rs,cs,is});end
 end
 
 % now texture map results ('nearest', 'linear' mexed for speed)
