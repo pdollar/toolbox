@@ -104,17 +104,17 @@ classI=class(I); if(~strcmp(classI,'double')), I=double(I); end
 if(~strcmp(pad,'none')), [m,n]=size(I); I=I([1 1 1:m m m],[1 1 1:n n n]);
   if(~ischar(pad)),I([1:2 m+3:m+4],:)=pad; I(:,[1:2 n+3:n+4])=pad; end; end
 
-% set origin to be center of image
-m = size(I,1); r0 = (-m+1)/2; r1 = (m-1)/2;
-n = size(I,2); c0 = (-n+1)/2; c1 = (n-1)/2;
-
 % optionally use cache
 persistent cache; if(isempty(cache)), cache=simpleCache('init'); end
-if(useCache), cacheKey=[m n H(:)' double([method bbox show pad])];
+if(useCache), cacheKey=[size(I) H(:)' double([method bbox show pad])];
   [cached,cacheVal]=simpleCache('get',cache,cacheKey); end
 
 % perform transform precomputations
 if( ~useCache || ~cached )
+  % set origin to be center of image
+  m = size(I,1); r0 = (-m+1)/2; r1 = (m-1)/2;
+  n = size(I,2); c0 = (-n+1)/2; c1 = (n-1)/2;
+  
   % If 'loose' then get bounds of resulting image. To do this project the
   % original points accoring to the homography and see the bounds. Note
   % that since a homography maps a quadrilateral to a quadrilateral only
@@ -136,11 +136,11 @@ if( useCache )
   else cache=simpleCache('put',cache,cacheKey,{m1,n1,rs,cs}); end
 end
 
-% now texture map results ('nearest', 'linear' inlined for speed)
+% now texture map results ('nearest', 'linear' mexed for speed)
 if( mflag )
   J = imtransform2_apply(I,rs,cs,mflag);
 else
-  J = reshape(interp2( I, cs, rs, method, 0 ),m1,n1);
+  J = reshape(interp2(I,cs,rs,method,0),m1,n1);
 end
 if(~strcmp(pad,'none')), J=J(3:end-2,3:end-2); end
 if(~strcmp(classI,'double')), J=feval(classI,J ); end
