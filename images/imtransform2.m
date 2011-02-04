@@ -106,13 +106,10 @@ if(~strcmp(pad,'none')), [m,n]=size(I); I=I([1 1 1:m m m],[1 1 1:n n n]);
   if(~ischar(pad)),I([1:2 m+3:m+4],:)=pad; I(:,[1:2 n+3:n+4])=pad; end; end
 
 % optionally cache precomputed transformations
-persistent cVals cKeys cCnt; if(isempty(cCnt)), cCnt=0; end
+persistent cVals cKeys cCnt; if(isempty(cCnt)), cCnt=0; end; cached=0;
 if(useCache), cKey=[size(I,1) size(I,2) H(:)' mflag looseFlag];
-  if(isempty(cKeys)), cached=0; else
-    id=find(all(cKey(ones(1,cCnt),:)==cKeys(1:cCnt,:),2));
-    cached=~isempty(id);
-    if(cached), [m1,n1,rs,cs,is]=deal(cVals{id(1)}{:}); end
-  end
+  if(cCnt>0), id=find(all(cKey(ones(1,cCnt),:)==cKeys(1:cCnt,:),2));
+    if(~isempty(id)),[m1,n1,rs,cs,is]=deal(cVals{id}{:});cached=1; end; end
 end
 
 % perform transform precomputations
