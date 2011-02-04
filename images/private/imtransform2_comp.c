@@ -9,7 +9,7 @@
 void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   /* [rs,cs]=imtransform2_comp(H,m,n,r0,r1,c0,c1,flag); */
   int m, n, flag; double *H, r0, r1, c0, c1;
-  int m1, n1, ind, i, j; double *rs, *cs, r, c, m2, n2, z;
+  int m1, n1, ind=0, i, j; double *rs, *cs, r, c, m2, n2, z;
 
   /* extract inputs */
   H  = (double*) mxGetData(prhs[0]);
@@ -29,17 +29,23 @@ void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 
   /* Compute rs an cs */
   if( H[2]==0 && H[5]==0 ) {
-    for(i=0; i<n1; i++) for(j=0; j<m1; j++) {
-      c=c0+i; r=r0+j; ind=i*m1+j;
-      rs[ind] = H[0]*r + H[3]*c + H[6] + m2;
-      cs[ind] = H[1]*r + H[4]*c + H[7] + n2;
+    for( i=0; i<n1; i++ ) {
+      r = H[0]*r0 + H[3]*(c0+i) + H[6] + m2;
+      c = H[1]*r0 + H[4]*(c0+i) + H[7] + n2;
+      for(j=0; j<m1; j++) {
+        rs[ind]=r; cs[ind]=c;
+        r+=H[0]; c+=H[1]; ind++;
+      }
     }
   } else {
-    for(i=0; i<n1; i++) for(j=0; j<m1; j++) {
-      c=c0+i; r=r0+j; ind=i*m1+j;
-      z = H[2]*r + H[5]*c + 1;
-      rs[ind] = (H[0]*r + H[3]*c + H[6])/z + m2;
-      cs[ind] = (H[1]*r + H[4]*c + H[7])/z + n2;
+    for( i=0; i<n1; i++ ) {
+      r = H[0]*r0 + H[3]*(c0+i) + H[6];
+      c = H[1]*r0 + H[4]*(c0+i) + H[7];
+      z = H[2]*r0 + H[5]*(c0+i) + 1;
+      for(j=0; j<m1; j++) {
+        rs[ind]=r/z+m2; cs[ind]=c/z+n2;
+        r+=H[0]; c+=H[1]; z+=H[2]; ind++;
+      }
     }
   }
 
