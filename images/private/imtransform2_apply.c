@@ -12,7 +12,7 @@ void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   double wr, wc, wrc, r, c;
 
   /* extract inputs */
-  m = mxGetM(prhs[0]); n = mxGetN(prhs[0]);
+  m = mxGetM(prhs[1]); n = mxGetN(prhs[1]);
   I   = (double*) mxGetData(prhs[0]);
   rs  = (double*) mxGetData(prhs[1]);
   cs  = (double*) mxGetData(prhs[2]);
