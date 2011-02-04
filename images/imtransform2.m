@@ -83,6 +83,7 @@ elseif( nargin>2 && isscalar(varargin{1}) ...
 else % presumably a general homography
   J = imtransform2main( I, varargin{:} );
 end
+end
 
 function J = imtransform2main( I, H, method, bbox, show, pad, useCache )
 
@@ -151,4 +152,5 @@ if(~strcmp(classI,'double')), J=feval(classI,J ); end
 if( show )
   figure(show); clf; im(I(3:end-2,3:end-2));
   figure(show+1); clf; im(J);
+end
 end
