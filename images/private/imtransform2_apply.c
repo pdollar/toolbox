@@ -8,8 +8,8 @@
 
 void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   /* J=imtransform2_apply(I,rs,cs,is,flag); */
-  int flag, m, n, m1, n1, i, id, fr, fc, *is; double *I, *J, *rs, *cs;
-  double wr, wc, wrc, r, c;
+  int flag, m, n, m1, n1, i, id, *is;
+  double *I, *J, *rs, *cs, wr, wc, wrc;
 
   /* extract inputs */
   m = mxGetM(prhs[0]); n = mxGetN(prhs[0]);
