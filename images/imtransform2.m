@@ -140,17 +140,13 @@ if( ~useCache || ~cached )
 end
 
 % now texture map results ('nearest', 'linear' mexed for speed)
-if( mflag )
-  J = imtransform2_apply(I,rs,cs,is,mflag);
-else
-  J = interp2(I,cs,rs,method,0);
-end
+if(mflag), J = imtransform2_apply(I,rs,cs,is,mflag);
+else J = interp2(I,cs,rs,method,0); end
 if(~strcmp(pad,'none')), J=J(3:end-2,3:end-2); end
 if(~strcmp(classI,'double')), J=feval(classI,J ); end
 
 % optionally show
-if( show )
-  figure(show); clf; im(I(3:end-2,3:end-2));
-  figure(show+1); clf; im(J);
-end
+if(show), if(~strcmp(pad,'none')), I=I(3:end-2,3:end-2); end
+  figure(show); clf; im(I); figure(show+1); clf; im(J); end
+
 end
