@@ -49,7 +49,7 @@ function J = imtransform2( I, varargin )
 %  J = imtransform2(I,H,method,'loose',1);
 %
 % EXAMPLE - rotation
-%  load trees; I=X; method='bicubic';
+%  load trees; I=X; method='bilinear';
 %  tic; J1 = imrotate(I,55,method,'crop'); toc
 %  tic; J2 = imtransform2(I,55,method,'crop'); toc
 %  clf; subplot(2,2,1); im(I); subplot(2,2,2); im(J1-J2);
