@@ -56,7 +56,7 @@ function out = seqIo( fName, action, varargin )
 % seqIo>toImgs, seqIo>frImgs, seqIo>convert, seqIo>newHeader,
 % seqIo>readerDual, seqPlayer, seqReaderPlugin, seqWriterPlugin
 %
-% Piotr's Image&Video Toolbox      Version 2.60
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -273,9 +273,9 @@ end
 function frImgs( fName, info, varargin )
 % Create seq file from an array or directory of images or from an AVI file.
 %
-% For info, only codec (e.g., 'jpg') and fps must be specified while width
-% and height and determined automatically. If converting from AVI, fps is
-% also determined automatically.
+% For info, if converting from array, only codec (e.g., 'jpg') and fps must
+% be specified while width and height and determined automatically. If
+% converting from AVI, fps is also determined automatically.
 %
 % USAGE
 %  seqIo( fName, 'frImgs', info, varargin )
