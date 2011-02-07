@@ -143,7 +143,10 @@ end
 
 % now texture map results ('nearest', 'linear' mexed for speed)
 if(mflag), J = imtransform2_apply(I,rs,cs,is,mflag);
-else J = interp2(I,cs,rs,method,0); end
+else J=interp2(I(:,:,1),cs,rs,method,0);
+  k=size(I,3); if(k>1), J=J(:,:,ones(1,k)); end
+  for i=2:k, J(:,:,i)=interp2(I(:,:,i),cs,rs,method,0); end
+end
 if(~strcmp(pad,'none')), J=J(3:end-2,3:end-2,:); end
 if(~strcmp(classI,'double')), J=feval(classI,J); end
 
