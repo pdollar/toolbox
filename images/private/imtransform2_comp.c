@@ -64,6 +64,11 @@ void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
       fr = (int) r; fc = (int) c;
       rs[i]=r-fr; cs[i]=c-fc; is[i]=(fr-1)+(fc-1)*m;
     }
+  } else { /* other cases - clamp only */
+    for(i=0; i<n1*m1; i++) {
+      rs[i] = rs[i]<2 ? 2 : (rs[i]>m-1 ? m-1 : rs[i]);
+      cs[i] = cs[i]<2 ? 2 : (cs[i]>n-1 ? n-1 : cs[i]);
+    }
   }
 
   /* create output array */
