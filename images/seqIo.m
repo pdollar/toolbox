@@ -244,6 +244,7 @@ function Is = toImgs( fName, tDir, skip, f0, f1, ext )
 % EXAMPLE
 %
 % See also seqIo
+if(nargin<3 || isempty(tDir)), tDir=[]; end
 if(nargin<3 || isempty(skip)), skip=1; end
 if(nargin<4 || isempty(f0)), f0=0; end
 if(nargin<5 || isempty(f1)), f1=inf; end
