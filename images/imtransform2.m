@@ -17,7 +17,7 @@ function J = imtransform2( I, varargin )
 %  J=imtransform2(I,dx,dy,[method],[bbox],[show],[pad],[cache]) % translate
 %
 % INPUTS - common
-%  I       - 2D image [converted to double]
+%  I       - input image [converted to double]
 %  method  - ['linear'] 'nearest', 'spline', 'cubic' (for interp2)
 %  bbox    - ['loose'] or 'crop'
 %  show    - [0] figure to use for optional display
@@ -93,7 +93,7 @@ if( nargin<4 || isempty(bbox)), bbox='loose'; end
 if( nargin<5 || isempty(show)), show=0; end
 if( nargin<6 || isempty(pad)), pad=0; end
 if( nargin<7 || isempty(useCache)), useCache=0; end
-if( ndims(I)~=2 ), error('I must a MxN array'); end
+if( ndims(I)~=2 && ndims(I)~=3 ), error('I must a MxNXK array'); end
 if( any(size(H)~=[3 3])), error('H must be 3x3'); end
 if( ~any(strcmp(bbox,{'loose','crop'})));
   error(['illegal value for bbox: ' bbox]); end
@@ -104,8 +104,8 @@ elseif(strcmp(method,'nearest') ), mflag=1; else mflag=0; end
 % pad I and convert to double, makes interpolation simpler
 classI=class(I); if(~strcmp(classI,'double')), I=double(I); end
 if(~strcmp(pad,'none'))
-  m=size(I,1); n=size(I,2); I=I([1 1 1:m m m],[1 1 1:n n n]);
-  if(~ischar(pad)), I([1:2 m+3:m+4],:)=pad; I(:,[1:2 n+3:n+4])=pad; end
+  m=size(I,1); n=size(I,2); I=I([1 1 1:m m m],[1 1 1:n n n],:);
+  if(~ischar(pad)), I([1:2 m+3:m+4],:,:)=pad; I(:,[1:2 n+3:n+4],:)=pad; end
 end; m=size(I,1); n=size(I,2);
 
 % optionally cache precomputed transformations
@@ -144,11 +144,11 @@ end
 % now texture map results ('nearest', 'linear' mexed for speed)
 if(mflag), J = imtransform2_apply(I,rs,cs,is,mflag);
 else J = interp2(I,cs,rs,method,0); end
-if(~strcmp(pad,'none')), J=J(3:end-2,3:end-2); end
-if(~strcmp(classI,'double')), J=feval(classI,J ); end
+if(~strcmp(pad,'none')), J=J(3:end-2,3:end-2,:); end
+if(~strcmp(classI,'double')), J=feval(classI,J); end
 
 % optionally show
-if(show), if(~strcmp(pad,'none')), I=I(3:end-2,3:end-2); end
+if(show), if(~strcmp(pad,'none')), I=I(3:end-2,3:end-2,:); end
   figure(show); clf; im(I); figure(show+1); clf; im(J); end
 
 end
