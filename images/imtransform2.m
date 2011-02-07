@@ -38,7 +38,7 @@ function J = imtransform2( I, varargin )
 %  J       - transformed image
 %
 % EXAMPLE - general homography (rotation + translation)
-%  load trees; I=X; method='linear';
+%  I=imread('peppers.png'); method='linear';
 %  R = rotationMatrix(pi/4); T=[1; 3]; H=[R T; 0 0 1];
 %  J = imtransform2(I,H,method,'crop',1,'replicate');
 %
@@ -97,7 +97,7 @@ if( ndims(I)~=2 && ndims(I)~=3 ), error('I must a MxNXK array'); end
 if( any(size(H)~=[3 3])), error('H must be 3x3'); end
 if( ~any(strcmp(bbox,{'loose','crop'})));
   error(['illegal value for bbox: ' bbox]); end
-looseFlag = strcmp(bbox,'loose');
+looseFlag = strcmp(bbox,'loose'); if(show), Iorig=I; end
 if(strncmpi(method,'lin',3) || strncmpi(method,'bil',3)), mflag=2;
 elseif(strcmp(method,'nearest') ), mflag=1; else mflag=0; end
 
@@ -151,7 +151,6 @@ if(~strcmp(pad,'none')), J=J(3:end-2,3:end-2,:); end
 if(~strcmp(classI,'double')), J=feval(classI,J); end
 
 % optionally show
-if(show), if(~strcmp(pad,'none')), I=I(3:end-2,3:end-2,:); end
-  figure(show); clf; im(I); figure(show+1); clf; im(J); end
+if(show), figure(show); clf; im(Iorig); figure(show+1); clf; im(J); end
 
 end
