@@ -37,7 +37,8 @@ void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
       J1=J+areaJ*k; I1=I+areaI*k;
       for( i=0; i<areaJ; i++ ) {
         id=is[i]; wr=rs[i]; wc=cs[i]; wrc=wr*wc;
-        J1[i]=I1[id]*(1-wr-wc+wrc) + I1[id+1]*(wr-wrc) + I1[id+nsI[0]]*(wc-wrc) + I1[id+nsI[0]+1]*wrc;
+        J1[i]=I1[id]*(1-wr-wc+wrc) + I1[id+1]*(wr-wrc) 
+          + I1[id+nsI[0]]*(wc-wrc) + I1[id+nsI[0]+1]*wrc;
       }
     }
   }
