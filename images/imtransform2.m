@@ -103,12 +103,14 @@ elseif(strcmp(method,'nearest') ), mflag=1; else mflag=0; end
 
 % pad I and convert to double, makes interpolation simpler
 classI=class(I); if(~strcmp(classI,'double')), I=double(I); end
-if(~strcmp(pad,'none')), [m,n]=size(I); I=I([1 1 1:m m m],[1 1 1:n n n]);
-  if(~ischar(pad)),I([1:2 m+3:m+4],:)=pad; I(:,[1:2 n+3:n+4])=pad; end; end
+if(~strcmp(pad,'none'))
+  m=size(I,1); n=size(I,2); I=I([1 1 1:m m m],[1 1 1:n n n]);
+  if(~ischar(pad)), I([1:2 m+3:m+4],:)=pad; I(:,[1:2 n+3:n+4])=pad; end
+end; m=size(I,1); n=size(I,2);
 
 % optionally cache precomputed transformations
 persistent cVals cKeys cCnt; if(isempty(cCnt)), cCnt=0; end; cached=0;
-if(useCache), cKey=[size(I,1) size(I,2) H(:)' mflag looseFlag];
+if(useCache), cKey=[m n H(:)' mflag looseFlag];
   if(cCnt>0), id=find(all(cKey(ones(1,cCnt),:)==cKeys(1:cCnt,:),2));
     if(~isempty(id)), [rs,cs,is]=deal(cVals{id}{:}); cached=1; end; end
 end
@@ -116,8 +118,8 @@ end
 % perform transform precomputations
 if( ~useCache || ~cached )
   % set origin to be center of image
-  m = size(I,1); r0 = (-m+1)/2; r1 = (m-1)/2;
-  n = size(I,2); c0 = (-n+1)/2; c1 = (n-1)/2;
+  r0 = (-m+1)/2; r1 = (m-1)/2;
+  c0 = (-n+1)/2; c1 = (n-1)/2;
   
   % If 'loose' then get bounds of resulting image. To do this project the
   % original points accoring to the homography and see the bounds. Note
