@@ -22,8 +22,8 @@ void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   flag = (int) mxGetScalar(prhs[7]);
 
   /* initialize memory */
-  m1  = (int) floor(r1-r0+1); m2 = (m+1.0)/2.0;
-  n1  = (int) floor(c1-c0+1); n2 = (n+1.0)/2.0;
+  m1  = (int) (r1-r0+1); m2 = (m+1.0)/2.0;
+  n1  = (int) (c1-c0+1); n2 = (n+1.0)/2.0;
   rs  = mxMalloc(sizeof(double)*m1*n1);
   cs  = mxMalloc(sizeof(double)*m1*n1);
   is  = mxMalloc(sizeof(int)*m1*n1);
