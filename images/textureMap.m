@@ -39,9 +39,8 @@ function [J,boundX,boundY] = textureMap( I, rsDst, csDst, bbox, fillVal )
 %  load trees; I=X; angle=55; R=rotationMatrix(-angle/180*pi);
 %  m=size(I,1); n=size(I,2); m2=(m+1)/2; n2=(n+1)/2;
 %  [cs,rs]=meshgrid(1:n,1:m); vs=R*[cs(:)-n2 rs(:)-m2]';
-%  cs=reshape(vs(1,:),m,n)+n2; rs=reshape(vs(2,:),m,n)+m2;
 %  tic; J1 = imrotate(I,angle,'bilinear','crop'); toc
-%  tic, J2 = textureMap(I,rs,cs,'crop',nan); toc
+%  tic, J2 = textureMap(I,vs(2,:)+m2,vs(1,:)+n2,'crop',nan); toc
 %  figure(1); clf; subplot(2,2,1); im(I); subplot(2,2,2); im(J1-J2);
 %  subplot(2,2,3); im(J1); subplot(2,2,4); im(J2);
 %
