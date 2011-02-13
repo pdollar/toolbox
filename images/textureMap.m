@@ -1,4 +1,4 @@
-function [J,boundX,boundY] = textureMap(I, rsDst, csDst, bbox, holeVal)
+function [J,boundX,boundY] = textureMap( I, rsDst, csDst, bbox, fillVal )
 % Maps texture in I according to rsDst and csDst.
 %
 % I has (nrows*ncols) coordinates.  Each coordinate has an associated
@@ -9,7 +9,7 @@ function [J,boundX,boundY] = textureMap(I, rsDst, csDst, bbox, holeVal)
 % intensities at the closest coordinates (r',c').  In the function below
 % specify the destination of (r,c) by (rsDst(r,c), csDst(r,c)).
 %
-% If the inverse mapping is also available -- ie if we can go from the
+% If the inverse mapping is also available -- ie, if we can go from the
 % coordinates in the destination to the coordinates in the source, then a
 % much more efficient procedure can be used to textureMap that involves
 % interp2 instead of griddata. Use imtransform2 for this case.
@@ -21,14 +21,14 @@ function [J,boundX,boundY] = textureMap(I, rsDst, csDst, bbox, holeVal)
 % transformed image and is the same size as I.
 %
 % USAGE
-%  J = textureMap( I, rsDst, csDst, [bbox], [holeVal] )
+%  J = textureMap( I, rsDst, csDst, [bbox], [fillVal] )
 %
 % INPUTS
 %  I           - 2D input image
 %  rsDst       - rsDst(i,j) is row loc where I(i,j) gets mapped to
 %  csDst       - csDst(i,j) is col loc where I(i,j) gets mapped to
 %  bbox        - ['loose'] see above for meaning of bbox 'loose' or 'crop'
-%  holeVal     - [0] Value of the empty warps
+%  fillVal     - [0] Value of the empty warps
 %
 % OUTPUTS
 %  J           - result of texture mapping
@@ -53,7 +53,7 @@ function [J,boundX,boundY] = textureMap(I, rsDst, csDst, bbox, holeVal)
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 if(nargin<4 || isempty(bbox)), bbox='loose'; end
-if(nargin<5 || isempty(holeVal)), holeVal=0; end
+if(nargin<5 || isempty(fillVal)), fillVal=0; end
 if(isa(I,'uint8')), I=double(I); end; m=size(I,1); n=size(I,2);
 if( all(size(rsDst)~=[m n]) || all(size(csDst)~=[m n]))
   error('incorrect size for rsDst or csDst'); end
@@ -77,6 +77,6 @@ if(exist('TriScatteredInterp','file'))
 else
   J=griddata(csDst,rsDst,I,cs,rs); %#ok<FPARK>
 end
-if(~isnan(holeVal)), J(isnan(J))=holeVal; end
+if(~isnan(fillVal)), J(isnan(J))=fillVal; end
 
 end
