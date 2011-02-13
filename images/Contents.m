@@ -27,7 +27,7 @@
 %   imResample        - Fast bilinear image downsampling/upsampling.
 %   imShrink          - Used to shrink a multidimensional array I by integer amount.
 %   imtransform2      - Applies a general/special homography on an image I
-%   textureMap        - Maps texture in I according to rowDst and colDst.
+%   textureMap        - Maps texture in I according to rsDst and csDst.
 %
 % Generalized nonmaximal suppression:
 %   nonMaxSupr        - Applies nonmaximal suppression on an image of arbitrary dimension.
