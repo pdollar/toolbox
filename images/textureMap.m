@@ -25,8 +25,8 @@ function [J,boundX,boundY] = textureMap(I, rsDst, csDst, bbox, holeVal)
 %
 % INPUTS
 %  I           - 2D input image
-%  rsDst      - rsDst(i,j) is row loc where I(i,j) gets mapped to
-%  csDst      - csDst(i,j) is col loc where I(i,j) gets mapped to
+%  rsDst       - rsDst(i,j) is row loc where I(i,j) gets mapped to
+%  csDst       - csDst(i,j) is col loc where I(i,j) gets mapped to
 %  bbox        - ['loose'] see above for meaning of bbox 'loose' or 'crop'
 %  holeVal     - [0] Value of the empty warps
 %
@@ -36,6 +36,14 @@ function [J,boundX,boundY] = textureMap(I, rsDst, csDst, bbox, holeVal)
 %  boundaryY   - returns the smallest/biggest y coordinate of the output
 %
 % EXAMPLE
+%  load trees; I=X; angle=55; R=rotationMatrix(-angle/180*pi);
+%  m=size(I,1); n=size(I,2); m2=(m+1)/2; n2=(n+1)/2;
+%  [cs,rs]=meshgrid(1:n,1:m); vs=R*[cs(:)-n2 rs(:)-m2]';
+%  cs=reshape(vs(1,:),m,n)+n2; rs=reshape(vs(2,:),m,n)+m2;
+%  tic; J1 = imrotate(I,angle,'bilinear','crop'); toc
+%  tic, J2 = textureMap(I,rs,cs,'crop',nan); toc
+%  figure(1); clf; subplot(2,2,1); im(I); subplot(2,2,2); im(J1-J2);
+%  subplot(2,2,3); im(J1); subplot(2,2,4); im(J2);
 %
 % See also IMTRANSFORM2
 %
@@ -63,7 +71,12 @@ else
 end
 
 % Get values at cs and rs
-J = griddata( csDst, rsDst, I, cs, rs ); %#ok<FPARK>
+if(exist('TriScatteredInterp','file'))
+  F=TriScatteredInterp(csDst(:),rsDst(:),I(:),'linear');
+  J=reshape(F(cs(:),rs(:)),m,n);
+else
+  J=griddata(csDst,rsDst,I,cs,rs); %#ok<FPARK>
+end
 if(~isnan(holeVal)), J(isnan(J))=holeVal; end
 
 end
