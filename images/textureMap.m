@@ -1,4 +1,4 @@
-function [IR,boundX,boundY] = textureMap(I, rowDst, colDst, bbox, holeVal)
+function [J,boundX,boundY] = textureMap(I, rowDst, colDst, bbox, holeVal)
 % Maps texture in I according to rowDst and colDst.
 %
 % I has (nrows*ncols) coordinates.  Each coordinate has an associated
@@ -12,17 +12,16 @@ function [IR,boundX,boundY] = textureMap(I, rowDst, colDst, bbox, holeVal)
 % If the inverse mapping is also available -- ie if we can go from the
 % coordinates in the destination to the coordinates in the source, then a
 % much more efficient procedure can be used to textureMap that involves
-% interp2 instead of griddata.  See imtransform2  for example usage in
-% this case.
+% interp2 instead of griddata. Use imtransform2 for this case.
 %
 % The bounding box of the image is set by the BBOX argument, a string that
-% can be 'loose' (default) or 'crop'. When BBOX is 'loose', IR includes the
+% can be 'loose' (default) or 'crop'. When BBOX is 'loose', J includes the
 % whole transformed image, which generally is larger than I. When BBOX is
-% 'crop' IR is cropped to include only the central portion of the
+% 'crop' J is cropped to include only the central portion of the
 % transformed image and is the same size as I.
 %
 % USAGE
-%  IR = textureMap( I, rowDst, colDst, [bbox], [holeVal] )
+%  J = textureMap( I, rowDst, colDst, [bbox], [holeVal] )
 %
 % INPUTS
 %  I           - 2D input image
@@ -32,7 +31,7 @@ function [IR,boundX,boundY] = textureMap(I, rowDst, colDst, bbox, holeVal)
 %  holeVal     - [0] Value of the empty warps
 %
 % OUTPUTS
-%  IR          - result of texture mapping
+%  J           - result of texture mapping
 %  boundaryX   - returns the smallest/biggest x coordinate of the output
 %  boundaryY   - returns the smallest/biggest y coordinate of the output
 %
@@ -45,7 +44,7 @@ function [IR,boundX,boundY] = textureMap(I, rowDst, colDst, bbox, holeVal)
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
-if(isa( I, 'uint8' )), I = double(I); end
+if(isa(I,'uint8')), I=double(I); end
 if(nargin<4 || isempty(bbox)), bbox='loose'; end
 if(nargin<5 || isempty(holeVal)), holeVal=0; end
 
@@ -56,8 +55,8 @@ end
 
 % find sampling points
 if( strcmp('loose',bbox) )
-  minr = floor(min(rowDst(:)));   minc = floor(min(colDst(:)));
-  maxr = ceil(max(rowDst(:)));    maxc = ceil(max(colDst(:)));
+  minr = floor(min(rowDst(:))); minc = floor(min(colDst(:)));
+  maxr = ceil(max(rowDst(:))); maxc = ceil(max(colDst(:)));
   [colGrid,rowGrid] = meshgrid( minc:maxc, minr:maxr );
   boundX=[minc maxc]; boundY=[minr maxr];
 elseif( strcmp('crop',bbox) )
@@ -68,7 +67,7 @@ else
 end
 
 % Get values at colGrid and rowGrid
-IR = griddata( colDst, rowDst, I, colGrid, rowGrid ); %#ok<FPARK>
-IR(isnan(IR)) = holeVal;
+J = griddata( colDst, rowDst, I, colGrid, rowGrid ); %#ok<FPARK>
+J(isnan(J)) = holeVal;
 
 end
