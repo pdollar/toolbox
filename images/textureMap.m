@@ -40,15 +40,15 @@ function [IR,boundX,boundY] = textureMap(I, rowDst, colDst, bbox, holeVal)
 %
 % See also IMTRANSFORM2
 %
-% Piotr's Image&Video Toolbox      Version 2.50
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
-if(isa( I, 'uint8' )); I = double(I); end
-if( nargin<4 || isempty(bbox)); bbox='loose'; end
-if( nargin<5 || isempty(holeVal) ); holeVal=0; end
-  
+if(isa( I, 'uint8' )), I = double(I); end
+if(nargin<4 || isempty(bbox)), bbox='loose'; end
+if(nargin<5 || isempty(holeVal)), holeVal=0; end
+
 siz = size(I);
 if( all(size(rowDst)~=siz) || all(size(colDst)~=siz))
   error( 'incorrect size for rowDst or colDst' );
@@ -60,7 +60,6 @@ if( strcmp('loose',bbox) )
   maxr = ceil(max(rowDst(:)));    maxc = ceil(max(colDst(:)));
   [colGrid,rowGrid] = meshgrid( minc:maxc, minr:maxr );
   boundX=[minc maxc]; boundY=[minr maxr];
-  
 elseif( strcmp('crop',bbox) )
   [colGrid,rowGrid] = meshgrid( 1:size(I,2), 1:size(I,1) );
   boundX=[1 size(I,2)]; boundY=[1 size(I,1)];
@@ -71,3 +70,5 @@ end
 % Get values at colGrid and rowGrid
 IR = griddata( colDst, rowDst, I, colGrid, rowGrid ); %#ok<FPARK>
 IR(isnan(IR)) = holeVal;
+
+end
