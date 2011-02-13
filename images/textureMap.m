@@ -55,13 +55,13 @@ function [J,boundX,boundY] = textureMap( I, rsDst, csDst, bbox, fillVal )
 if(nargin<4 || isempty(bbox)), bbox='loose'; end
 if(nargin<5 || isempty(fillVal)), fillVal=0; end
 if(isa(I,'uint8')), I=double(I); end; m=size(I,1); n=size(I,2);
-if( all(size(rsDst)~=[m n]) || all(size(csDst)~=[m n]))
-  error('incorrect size for rsDst or csDst'); end
+rsDst=rsDst(:); assert(numel(rsDst)==m*n);
+csDst=csDst(:); assert(numel(csDst)==m*n);
 
 % find sampling points
 if( strcmp('loose',bbox) )
-  minr=floor(min(rsDst(:))); maxr=ceil(max(rsDst(:)));
-  minc=floor(min(csDst(:))); maxc=ceil(max(csDst(:)));
+  minr=floor(min(rsDst)); maxr=ceil(max(rsDst));
+  minc=floor(min(csDst)); maxc=ceil(max(csDst));
   [cs,rs] = meshgrid( minc:maxc, minr:maxr );
   boundX=[minc maxc]; boundY=[minr maxr];
 elseif( strcmp('crop',bbox) )
@@ -72,10 +72,9 @@ end
 
 % Get values at cs and rs
 if(exist('TriScatteredInterp','file'))
-  F=TriScatteredInterp(csDst(:),rsDst(:),I(:),'linear');
-  J=reshape(F(cs(:),rs(:)),m,n);
+  F=TriScatteredInterp(csDst,rsDst,I(:),'linear'); J=F(cs,rs);
 else
-  J=griddata(csDst,rsDst,I,cs,rs); %#ok<FPARK>
+  J=griddata(csDst,rsDst,I(:),cs,rs); %#ok<FPARK>
 end
 if(~isnan(fillVal)), J(isnan(J))=fillVal; end
 
