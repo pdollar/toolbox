@@ -44,30 +44,26 @@ function [J,boundX,boundY] = textureMap(I, rowDst, colDst, bbox, holeVal)
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
-if(isa(I,'uint8')), I=double(I); end
 if(nargin<4 || isempty(bbox)), bbox='loose'; end
 if(nargin<5 || isempty(holeVal)), holeVal=0; end
-
-siz = size(I);
-if( all(size(rowDst)~=siz) || all(size(colDst)~=siz))
-  error( 'incorrect size for rowDst or colDst' );
-end
+if(isa(I,'uint8')), I=double(I); end; m=size(I,1); n=size(I,2);
+if( all(size(rowDst)~=[m n]) || all(size(colDst)~=[m n]))
+  error('incorrect size for rowDst or colDst'); end
 
 % find sampling points
 if( strcmp('loose',bbox) )
-  minr = floor(min(rowDst(:))); minc = floor(min(colDst(:)));
-  maxr = ceil(max(rowDst(:))); maxc = ceil(max(colDst(:)));
-  [colGrid,rowGrid] = meshgrid( minc:maxc, minr:maxr );
+  minr=floor(min(rowDst(:))); maxr=ceil(max(rowDst(:)));
+  minc=floor(min(colDst(:))); maxc=ceil(max(colDst(:)));
+  [cs,rs] = meshgrid( minc:maxc, minr:maxr );
   boundX=[minc maxc]; boundY=[minr maxr];
 elseif( strcmp('crop',bbox) )
-  [colGrid,rowGrid] = meshgrid( 1:size(I,2), 1:size(I,1) );
-  boundX=[1 size(I,2)]; boundY=[1 size(I,1)];
+  [cs,rs]=meshgrid(1:n,1:m); boundX=[1 n]; boundY=[1 m];
 else
-  error('illegal value for bbox');
+  error('illegal value for bbox: %s',bbox);
 end
 
-% Get values at colGrid and rowGrid
-J = griddata( colDst, rowDst, I, colGrid, rowGrid ); %#ok<FPARK>
-J(isnan(J)) = holeVal;
+% Get values at cs and rs
+J = griddata( colDst, rowDst, I, cs, rs ); %#ok<FPARK>
+if(~isnan(holeVal)), J(isnan(J))=holeVal; end
 
 end
