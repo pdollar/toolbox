@@ -83,8 +83,8 @@ void			applyHomography(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[
 
 void			applyTransform(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   /* J=applyTransform(I,rs,cs,is,flag); */
-  int flag, *nsI, nsJ[3], areaJ, areaI, nDims, i, k, id, *is;
-  double *I, *J, *I1, *J1, *rs, *cs, wr, wc, wrc;
+  int flag, *nsI, nsJ[3], areaJ, areaI, nDims, i, k, id, *is, isProvided, fr, fc;
+  double *I, *J, *I1, *J1, *rs, *cs, wr, wc, wrc, r, c;
 
   /* extract inputs */
   I   = (double*) mxGetData(prhs[0]);
@@ -99,22 +99,40 @@ void			applyTransform(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]
   nsJ[0]=mxGetM(prhs[1]); nsJ[1]=mxGetN(prhs[1]);
   nsJ[2]=(nDims==2) ? 1 : nsI[2];
   areaJ=nsJ[0]*nsJ[1]; areaI=nsI[0]*nsI[1];
+  isProvided = (mxGetNumberOfElements(prhs[3])==areaJ);
 
   /* Perform interpolation */
   J = mxMalloc(sizeof(double)*areaJ*nsJ[2]);
-  if( flag==1 ) { /* nearest neighbor */
+  if( flag==1 && isProvided ) { /* nearest neighbor and isProvided */
     for( k=0; k<nsJ[2]; k++ ) {
       J1=J+areaJ*k; I1=I+areaI*k;
       for( i=0; i<areaJ; i++ ) J1[i]=I1[is[i]];
     }
-  } else { /* bilinear */
+  } else if( flag==1 && !isProvided ) { /* nearest neighbor and NOT isProvided */
+    for( i=0; i<areaJ; i++ ) {
+      r = rs[i]<1 ? 1 : (rs[i]>nsI[0] ? nsI[0] : rs[i]);
+      c = cs[i]<1 ? 1 : (cs[i]>nsI[1] ? nsI[1] : cs[i]);
+      id = ((int) (r-.5)) + ((int) (c-.5)) * nsI[0];
+      for( k=0; k<nsJ[2]; k++ ) J[i+areaJ*k]=I[id+areaI*k];
+    }
+  } else if( flag==2 && isProvided) { /* bilinear and isProvided */
     for( k=0; k<nsJ[2]; k++ ) {
       J1=J+areaJ*k; I1=I+areaI*k;
       for( i=0; i<areaJ; i++ ) {
         id=is[i]; wr=rs[i]; wc=cs[i]; wrc=wr*wc;
-        J1[i]=I1[id]*(1-wr-wc+wrc) + I1[id+1]*(wr-wrc) 
+        J1[i]=I1[id]*(1-wr-wc+wrc) + I1[id+1]*(wr-wrc)
           + I1[id+nsI[0]]*(wc-wrc) + I1[id+nsI[0]+1]*wrc;
       }
+    }
+ } else if( flag==2 && !isProvided ) { /* bilinear and NOT isProvided */
+    for( i=0; i<areaJ; i++ ) {
+      r = rs[i]<2 ? 2 : (rs[i]>nsI[0]-1 ? nsI[0]-1 : rs[i]);
+      c = cs[i]<2 ? 2 : (cs[i]>nsI[1]-1 ? nsI[1]-1 : cs[i]);
+      fr = (int) r; wr=r-fr; fc = (int) c; wc=c-fc;
+      id=(fr-1)+(fc-1)*nsI[0]; wrc=wr*wc;
+      for( k=0; k<nsJ[2]; k++ ) { I1=I+areaI*k+id;
+        J[i+areaJ*k]=I1[0]*(1-wr-wc+wrc) + I1[1]*(wr-wrc)
+          + I1[nsI[0]]*(wc-wrc) + I1[nsI[0]+1]*wrc; }
     }
   }
 
