@@ -132,7 +132,8 @@ if( ~useCache || ~cached )
   end
   
   % apply inverse homography on meshgrid in destination image
-  H=H^-1; H=H/H(9); [rs,cs,is]=imtransform2_comp(H,m,n,r0,r1,c0,c1,mflag);
+  H=H^-1; H=H/H(9);
+  [rs,cs,is]=imtransform2_c('applyHomography',H,m,n,r0,r1,c0,c1,mflag);
   
   % if using cache, put value into cache
   if(useCache), if(cCnt==length(cVals)), cCnt1=max(16,cCnt);
@@ -142,7 +143,7 @@ if( ~useCache || ~cached )
 end
 
 % now texture map results ('nearest', 'linear' mexed for speed)
-if(mflag), J = imtransform2_apply(I,rs,cs,is,mflag);
+if(mflag), J = imtransform2_c('applyTransform',I,rs,cs,is,mflag);
 else J=interp2(I(:,:,1),cs,rs,method,0);
   k=size(I,3); if(k>1), J=J(:,:,ones(1,k)); end
   for i=2:k, J(:,:,i)=interp2(I(:,:,i),cs,rs,method,0); end
