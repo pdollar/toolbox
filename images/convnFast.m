@@ -42,7 +42,7 @@ function C = convnFast( A, B, shape )
 %
 % See also CONV2, CONVN
 %
-% Piotr's Image&Video Toolbox      Version 2.0
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -136,8 +136,26 @@ radii = (sizB-1)/2;
 % flip B appropriately (conv flips B)
 for d=1:nd; B = flipdim(B,d); end
 
+% accelerated case for 1D mask B
+if( nd==2 && sizB(1)==1 )
+  sumB=sum(B(:)); r=radii(2); O=ones(1,sizA(1));
+  for i=1:r
+    Ai=A(:,1:r+i); Bi=B(r+2-i:end);
+    C(:,i)=sum(Ai.*Bi(O,:),2)/sum(Bi)*sumB;
+    Ai=A(:,end+1-r-i:end); Bi=B(1:(end-r+i-1));
+    C(:,end-i+1)=sum(Ai.*Bi(O,:),2)/sum(Bi)*sumB;
+  end; return;
+elseif( nd==2 && sizB(2)==1 )
+  sumB=sum(B(:)); r=radii(1); O=ones(1,sizA(2));
+  for i=1:r
+    Ai=A(1:r+i,:); Bi=B(r+2-i:end);
+    C(i,:)=sum(Ai.*Bi(:,O),1)/sum(Bi)*sumB;
+    Ai=A(end+1-r-i:end,:); Bi=B(1:(end-r+i-1));
+    C(end-i+1,:)=sum(Ai.*Bi(:,O),1)/sum(Bi)*sumB;
+  end; return;
+end
+
 % get location that need to be updated
-% this is the LEAST efficient part (fixing is annoying though)
 inds = {':'}; inds = inds(:,ones(1,nd));
 Dind = zeros( sizA );
 for d=1:nd
@@ -160,7 +178,7 @@ Bends = Bstarts + (Aends-Astarts);
 % now update these locations
 vs = zeros( 1, nlocs );
 if( nd==2 )
-  for i=1:nlocs % accelerated for 2D arrays [fast]
+  for i=1:nlocs % accelerated for 2D arrays
     Apart = A( Astarts(i,1):Aends(i,1), Astarts(i,2):Aends(i,2) );
     Bpart = B( Bstarts(i,1):Bends(i,1), Bstarts(i,2):Bends(i,2) );
     v = (Apart.*Bpart); vs(i) = sum(v(:)) ./ sum(Bpart(:));
@@ -226,7 +244,7 @@ switch 3
       disc = conv2(a,b); k = k + 1; t2 = cputime; %#ok<NASGU>
     end
     K = (t2-t1)/k/siza^2/sizb^2;
-
+    
   case 2  % convn  [[empirically K = 5e-8]]
     % convolution time = K*prod(size(a))*prod(size(b))
     siza = [10 10 10];  sizb = [30 30 10];
@@ -236,7 +254,7 @@ switch 3
       disc = convn(a,b); k = k + 1; t2 = cputime; %#ok<NASGU>
     end
     K = (t2-t1)/k/prod(siza)/prod(sizb);
-
+    
   case 3 % fft (one dimensional) [[empirically K = 1e-7]]
     % fft time = K * n log(n)  [if n is power of 2]
     % Works fastest for powers of 2.  (so always zero pad until have
