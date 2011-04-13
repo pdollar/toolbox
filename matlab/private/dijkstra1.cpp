@@ -9,6 +9,12 @@
  * Based on ISOMAP code which can be found at http:*isomap.stanford.edu/.
  * See accompanying m file (dijkstra.m) for usage.
  *************************************************************************/
+
+#if (_MSC_VER >= 1600)
+#define __STDC_UTF_16__
+typedef unsigned short char16_t;
+#endif
+
 #include "mex.h"
 #include "fibheap.h"
 #define DIJKSTRA_CPP
