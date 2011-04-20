@@ -10,6 +10,10 @@
  * See accompanying m file (dijkstra.m) for usage.
  *************************************************************************/
 
+/**************************************************************************
+ * Bug fix for certain versions of VC++ compiler when used in Matlab.
+ * http://www.mathworks.com/matlabcentral/newsreader/view_thread/281754
+ *************************************************************************/
 #if (_MSC_VER >= 1600)
 #define __STDC_UTF_16__
 typedef unsigned short char16_t;
