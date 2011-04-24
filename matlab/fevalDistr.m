@@ -40,7 +40,7 @@ function [out,res] = fevalDistr( funNm, jobs, varargin )
 %
 % See also controller, queue
 %
-% Piotr's Image&Video Toolbox      Version 2.52
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -79,7 +79,7 @@ switch type
       if(isempty(jids1)), pause(.1); continue; end
       jid=jids1(1); [r,err]=controller('jobRecv',jid);
       if(~isempty(err)), disp('ABORTING'); out=0; break; end
-      k=k+1; if(store), res{k}=r; end
+      k=k+1; if(store), res{jid==jids}=r; end
       tocStatus(tid,k/nJob); if(k==nJob), out=1; break; end
     end; controller('closeQueue');
   otherwise, assert(false);
