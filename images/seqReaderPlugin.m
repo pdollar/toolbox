@@ -29,7 +29,7 @@ function varargout = seqReaderPlugin( cmd, h, varargin )
 %
 % See also SEQIO, SEQWRITERPLUGIN
 %
-% Piotr's Image&Video Toolbox      Version 2.52
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -112,8 +112,11 @@ if(strcmp(ext,'raw')), assert(info.numFrames>0); else
   oName=[fName '-seek.mat']; n=info.numFrames; if(n==0), n=10^7; end
   if(exist(oName,'file')==2), load(oName); info.seek=seek; else %#ok<NODEF>
     tid=ticStatus('loading seek info',.1,5); seek=zeros(n,1); seek(1)=1024;
+    extra=8; % extra bytes after image data (8 for ts, then 0 or 8 empty)
     for i=2:n
-      s=seek(i-1)+fread(fid,1,'uint32')+16; valid=fseek(fid,s,'bof')==0;
+      s=seek(i-1)+fread(fid,1,'uint32')+extra; valid=fseek(fid,s,'bof')==0;
+      if(i==2 && valid), if(fread(fid,1,'uint32')~=0), fseek(fid,-4,'cof');
+        else extra=extra+8; s=s+8; valid=fseek(fid,s,'bof')==0; end; end
       if(valid), seek(i)=s; tocStatus(tid,i/n);
       else n=i-1; seek=seek(1:n); tocStatus(tid,1); break; end
     end; if(info.numFrames==0), info.numFrames=n; end
