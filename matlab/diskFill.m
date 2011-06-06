@@ -24,14 +24,11 @@ nm = sprintf('%s/garbage_%s_%05i_%%05i.mat',tDir,date,round(rand*10^5));
 tid = ticStatus();
 for i=1:nGig
   % write up to 1 GB of garbage bytes in chunks of 1 MB
-  fid=fopen(sprintf(nm,i),'w'); n=0; k=2^20;
-  while( n<2^30 && k>1 )
-    o = fwrite(fid,rand(k,1)); 
-    n = n+o; if( o<k ), k=k/2; end
-  end
-  fclose(fid); tocStatus( tid, i/nGig );
+  fid=fopen(sprintf(nm,i),'w'); mb=2^20; n=0; o=mb;
+  while(n<2^30 && o==mb), o=fwrite(fid,rand(mb,1)); n=n+o; end
+  try fclose(fid); catch, end; tocStatus( tid, i/nGig ); %#ok<CTCH>
   % if write failed (k<1), disk is presumably full
-  if( k<1 && i<nGig), tocStatus(tid,1);
+  if( o<mb && i<nGig), tocStatus(tid,1);
     disp('Congrats, disk is full!'); break;
   end
 end
