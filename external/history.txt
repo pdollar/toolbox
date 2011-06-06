@@ -1,7 +1,7 @@
 Version NEW
  -imtransform2.m: various optimizations, including mex and caching
  -minor: fevalDistr, simpleCache, seqIo, seqPlayer, seqReaderPlugin, ...
-    textureMap, convnFast, dijkstra1.cpp
+    textureMap, convnFast, dijkstra1.cpp, diskFill
  [todo: imtransform2_*.c: add mex files, update headers]
 
 Version 2.60 (21-Jan-11)
