@@ -26,7 +26,7 @@
 %   imNormalize       - Various ways to normalize a (multidimensional) image.
 %   imResample        - Fast bilinear image downsampling/upsampling.
 %   imShrink          - Used to shrink a multidimensional array I by integer amount.
-%   imtransform2      - Applies a general/special homography on an image I
+%   imtransform2      - Applies a linear or nonlinear transformation to an image I.
 %   textureMap        - Maps texture in I according to rsDst and csDst.
 %
 % Generalized nonmaximal suppression:
