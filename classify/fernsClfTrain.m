@@ -70,12 +70,11 @@ else
 end
 
 % get counts for each leaf for each class for each fern
-pFern = bayes(ones(2^S,H,M));
-for n=1:N, h=hs(n);
-  for m=1:M, ind=inds(n,m);
-    pFern(ind,h,m)=pFern(ind,h,m)+1;
-  end
+pFern = zeros(2^S,H,M); edges = 1:2^S;
+for h=1:H, inds1=inds(hs==h,:);
+  for m=1:M, pFern(:,h,m)=histc(inds1(:,m),edges); end
 end
+pFern = pFern + bayes;
 
 % convert fern leaf class counts into probabilities
 if( bayes<=0 )
