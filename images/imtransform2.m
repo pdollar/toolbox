@@ -132,6 +132,7 @@ if( ~useCache || ~cached )
   end
   
   % apply inverse homography on meshgrid in destination image
+  s=svd(H); if(s(3)<=1e-6*s(1)), error('H is ill conditioned'); end
   H=H^-1; H=H/H(9);
   [rs,cs,is]=imtransform2_c('applyHomography',H,m,n,r0,r1,c0,c1,mflag);
   
@@ -143,8 +144,10 @@ if( ~useCache || ~cached )
 end
 
 % now texture map results ('nearest', 'linear' mexed for speed)
-if(mflag), J = imtransform2_c('applyTransform',I,rs,cs,is,mflag);
-else J=interp2(I(:,:,1),cs,rs,method,0);
+if( mflag )
+  J = imtransform2_c('applyTransform',I,rs,cs,is,mflag);
+else
+  J=interp2(I(:,:,1),cs,rs,method,0);
   k=size(I,3); if(k>1), J=J(:,:,ones(1,k)); end
   for i=2:k, J(:,:,i)=interp2(I(:,:,i),cs,rs,method,0); end
 end
