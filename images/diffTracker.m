@@ -47,15 +47,15 @@ function [delta,err] = diffTracker( I0, I1, sig, ss )
 % EXAMPLE - translation and scale
 %  I0 = double(imread('coins.png'))/255; dx=9; dy=-2; ds=1.10;
 %  H1 = [eye(2)*ds -[dy; dx]; 0 0 1];
-%  I1 = imtransform2(I0,H1,'bilinear','crop');
+%  I1 = imtransform2(I0,H1);
 %  tic, [ds,err] = diffTracker( I0, I1, 25, 1.05 ), toc
 %  H2 = [eye(2)*ds(3) -[ds(2); ds(1)]; 0 0 1];
-%  I2 = imtransform2(I0,H2,'bilinear','crop');
+%  I2 = imtransform2(I0,H2);
 %  figure(1); im(I0); figure(2); im(I1); figure(3); im(I2);
-% 
+%
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 2.53
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]

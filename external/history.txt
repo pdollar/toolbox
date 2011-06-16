@@ -3,7 +3,7 @@ Version NEW
  -fernsClfTrain: various speedups (thanks Kristin Branson)
  -kernelTracker: minor bug fix for single scale case (thanks Juan Carlos Niebles)
  -minor: fevalDistr, simpleCache, seqIo, seqPlayer, seqReaderPlugin, ...
-    textureMap, convnFast, dijkstra1.cpp, diskFill
+    textureMap, convnFast, dijkstra1.cpp, diskFill, diffTracker
  [todo: imtransform2_*.c: add mex files, update headers]
 
 Version 2.60 (21-Jan-11)
