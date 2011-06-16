@@ -134,7 +134,7 @@ if( ~useCache || ~cached )
   % apply inverse homography on meshgrid in destination image
   s=svd(H); if(s(3)<=1e-6*s(1)), error('H is ill conditioned'); end
   H=H^-1; H=H/H(9);
-  [rs,cs,is]=imtransform2_c('applyHomography',H,m,n,r0,r1,c0,c1,mflag);
+  [rs,cs,is]=imtransform2_c('homogToInds',H,m,n,r0,r1,c0,c1,mflag);
   
   % if using cache, put value into cache
   if(useCache), if(cCnt==length(cVals)), cCnt1=max(16,cCnt);
