@@ -1,12 +1,11 @@
-Version NEW
+Version 2.61 (16-June-11)
  -imtransform2: massive overhaul (optimized, mexed, new IO format)
  -imagesAlign: added code for fast/robust homography estimation
  -diffTracker: removed (made obsolete by far more powerful imagesAlign)
  -fernsClfTrain: various speedups (thanks Kristin Branson)
  -kernelTracker: minor bug fix for single scale case (thanks Juan Carlos Niebles)
  -minor: fevalDistr, simpleCache, seqIo, seqPlayer, seqReaderPlugin, ...
-    textureMap, convnFast, diskFill, jitterImage, dijkstra1.cpp
- [todo: compile and add binaries]
+    textureMap, convnFast, diskFill, jitterImage, toolboxCompile, dijkstra1.cpp
 
 Version 2.60 (21-Jan-11)
  -behaviorAnnotator: added video behavior annotation tool to toolbox.

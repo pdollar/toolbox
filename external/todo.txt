@@ -1,4 +1,0 @@
--add links to good toolboxes (Vincent's, VideoIO, Lightspeed)
--add bibtex entry to front page? (see Vincent's http://vision.ucsd.edu/~vrabaud/toolbox/doc/ )
--Google Analytics code to <a> tags (see Vincent's overview)
--no longer use CAPS for "see also" fields

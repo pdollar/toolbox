@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of imagesAlign</title>
+  <meta name="keywords" content="imagesAlign">
+  <meta name="description" content="Fast and robust estimation of homography relating two images.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>imagesAlign
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Fast and robust estimation of homography relating two images.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [H,Ip] = imagesAlign( I, Iref, varargin ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Fast and robust estimation of homography relating two images.
+
+ The algorithm for image alignment is a simple but effective variant of
+ the inverse compositional algorithm. For a thorough overview, see:
+   &quot;Lucas-kanade 20 years on A unifying framework,&quot;
+   S. Baker and I. Matthews. IJCV 2004.
+ The implementation is optimized and can easily run at 20-30 fps.
+ 
+ type may take on the following values:
+  'translation'  - translation only
+  'rigid'        - translation and rotation
+  'similarity'   - translation, rotation and scale
+  'affine'       - 6 parameter affine transform
+  'rotation'     - pure rotation (about x, y and z)
+  'projective'   - full 8 parameter homography
+ Alternatively, type may be a vector of ids between 1 and 8, specifying
+ exactly the types of transforms allowed. The ids correspond, to: 1:
+ translate-x, 2: translate-y, 3: uniform scale, 4: shear, 5: non-uniform
+ scale, 6: rotate-z, 7: rotate-x, 8: rotate-y. For example, to specify
+ translation use type=[1,2]. If the transforms don't form a group, the
+ returned homography may have more degrees of freedom than expected.
+
+ Parameters (in rough order of importance): [resample] controls image
+ downsampling prior to computing H. Runtime is proportional to area, so
+ using resample&lt;1 can dramatically speed up alignment, and in general not
+ degrade performance much. [sig] controls image smoothing, sig=2 gives
+ good performance, setting sig too low causes loss of information and too
+ high will violate the linearity assumption. [epsilon] defines the
+ stopping criteria, use to adjust performance versus speed tradeoff.
+ [lambda] is a regularization term that causes small transforms to be
+ favored, in general any small non-zero setting of lambda works well.
+ [outThr] is a threshold beyond which pixels are considered outliers, be
+ careful not to set too low. [minArea] determines coarsest scale beyond
+ which the image is not downsampled (should not be set too low). [H0] can
+ be used to specify an initial alignment. Use [show] to display results.
+
+ USAGE
+  [H,Ip] = imagesAlign( I, Iref, varargin )
+
+ INPUTS
+  I          - transformed version of I
+  Iref       - reference grayscale double image
+  varargin   - additional params (struct or name/value pairs)
+   .type       - ['projective'] see above for options
+   .resample   - [1] image resampling prior to homography estimation
+   .sig        - [2] amount of Gaussian spatial smoothing to apply
+   .epsilon    - [1e-3] stopping criteria (min change in error)
+   .lambda     - [1e-6] regularization term favoring small transforms
+   .outThr     - [inf] outlier threshold
+   .minArea    - [4096] minimum image area in coarse to fine search
+   .H0         - [eye(3)] optional initial homography estimate
+   .show       - [0] optionally display results in figure show
+
+ OUTPUTS
+  H        - estimated homography to transform I into Iref
+  Ip       - tranformed version of I (slow to compute)
+
+ EXAMPLE
+  Iref = double(imread('cameraman.tif'))/255;
+  H0 = [eye(2)+randn(2)*.1 randn(2,1)*10; randn(1,2)*1e-3 1];
+  I = imtransform2(Iref,H0^-1,'pad','replicate');
+  o=50; P=ones(o)*1; I(150:149+o,150:149+o)=P;
+  prmAlign={'outThr',.1,'resample',.5,'type',1:8,'show'};
+  [H,Ip]=imagesAlign(I,Iref,prmAlign{:},1);
+  tic, for i=1:30, H=imagesAlign(I,Iref,prmAlign{:},0); end;
+  t=toc; fprintf('average fps: %f\n',30/t)
+
+ See also <a href="imtransform2.html" class="code" title="function J = imtransform2( I, H, varargin )">imTransform2</a>
+
+ Piotr's Image&amp;Video Toolbox      Version 2.61
+ Copyright 2011 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Please email me if you find bugs, or have suggestions or questions!
+ Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../filters/filterGauss.html" class="code" title="function G = filterGauss( dims, mu, C, show )">filterGauss</a>	n-dimensional Gaussian filter.</li><li><a href="im.html" class="code" title="function varargout = im( I, range, extraInf )">im</a>	Function for displaying grayscale images.</li><li><a href="imResample.html" class="code" title="function B = imResample( A, varargin )">imResample</a>	Fast bilinear image downsampling/upsampling.</li><li><a href="imtransform2.html" class="code" title="function J = imtransform2( I, H, varargin )">imtransform2</a>	Applies a linear or nonlinear transformation to an image I.</li><li><a href="montage2.html" class="code" title="function varargout = montage2( IS, prm )">montage2</a>	Used to display collections of images and videos.</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+
+<!-- Start of Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-4884268-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+<!-- end of Google Analytics Code -->
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

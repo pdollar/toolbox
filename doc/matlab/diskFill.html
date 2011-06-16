@@ -2,9 +2,9 @@
                 "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
 <head>
-  <title>Description of seqPlayer</title>
-  <meta name="keywords" content="seqPlayer">
-  <meta name="description" content="Simple GUI to play seq files.">
+  <title>Description of diskFill</title>
+  <meta name="keywords" content="diskFill">
+  <meta name="description" content="Fill a harddisk with garbage files (useful before discarding disk).">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -12,45 +12,32 @@
 </head>
 <body>
 <a name="_top"></a>
-<!-- menu.html images -->
-<h1>seqPlayer
+<!-- menu.html matlab -->
+<h1>diskFill
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>Simple GUI to play seq files.</strong></div>
+<div class="box"><strong>Fill a harddisk with garbage files (useful before discarding disk).</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function seqPlayer( fName, dispFunc ) </strong></div>
+<div class="box"><strong>function diskFill( tDir, nGig ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> Simple GUI to play seq files.
-
- Use arrow keys to play the video. Controls are as follows:
- (1) If stopped: [L] play backward, [R] play forward
- (2) If playing forward: [L] halve speed, [R] double speed, [U/D] stop
- (3) If playing backward: [L] double speed, [R] halve speed,[U/D] stop
- You can explicitly enter a frame or use the slider to jump in the video.
-
- One can pass in a function handle dispFunc, where &quot;hs=dispFunc(frame)&quot;
- performs additional custom display for the given frame (and returns the
- handles for any created objects).
+<div class="fragment"><pre class="comment"> Fill a harddisk with garbage files (useful before discarding disk).
 
  USAGE
-  seqPlayer( [fName], [dispFunc] )
+  diskFill( tDir, nGig )
 
  INPUTS
-  fName    - optional seq file to load at start
-  dispFunc - allow custom display per frame
+  tDir    - target directory to fill with garbage
+  nGig    - maximum number of gigabytes to write to disk
 
  OUTPUTS
 
  EXAMPLE
-  load images; [h,w,n]=size(video);
-  info=struct('height',h,'width',w,'codec','monojpg','fps',20);
-  sw=seqIo('video','w',info); for t=1:n, sw.addframe(video(:,:,t)); end
-  sw.close(); seqPlayer('video');
+  diskFill( 'k:', 500 )
 
- See also <a href="seqIo.html" class="code" title="function out = seqIo( fName, action, varargin )">SEQIO</a>
+ See also
 
  Piotr's Image&amp;Video Toolbox      Version 2.61
  Copyright 2011 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -61,7 +48,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="seqIo.html" class="code" title="function out = seqIo( fName, action, varargin )">seqIo</a>	Utilities for reading and writing seq files.</li><li><a href="../matlab/c.html" class="code" title="">c</a>	clc - clear command window.</li></ul>
+<li><a href="ticStatus.html" class="code" title="function id = ticStatus( msg, updateFreq, updateMinT, erasePrev )">ticStatus</a>	Used to display the progress of a long process.</li><li><a href="tocStatus.html" class="code" title="function tocStatus( id, fracDone )">tocStatus</a>	Used to display the progress of a long process.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>
