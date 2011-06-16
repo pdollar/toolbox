@@ -53,7 +53,7 @@ function [allRct, allSim, allIc] = kernelTracker( I, prm )
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 2.52
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -110,37 +110,37 @@ if( dispFlag )
 end
 
 %%% main loop
-pos=pos1;
+pos = pos1;
 allRct = zeros(nFrame,4); allRct(1,:)=rctS;
 allIc = cell(1,nFrame); allIc{1}=Ic;
 allSim = zeros(1,nFrame);
 for frm = 1:nFrame
   Icur = I(:,:,:,frm);
-
+  
   % current model (linearly interpolate)
   r=(frm-1)/nFrame; q = qS*(1-r) + qE*r;
-
+  
   if( scaleSrch )
     % search over scale
-    best={};  bestSim=-1;  pos1=pos;
+    best={}; bestSim=-1; pos1=pos;
     for s=max(1,scale-1):min(nScale,scale+1)
       [p,pos,Ic,sim]=kernelTracker1(Icur,q,pos1,kernel(s),nBit);
       if( sim>bestSim ); best={p,pos,Ic,s}; bestSim=sim; end;
     end
     [p,pos,Ic,scale]=deal(best{:});
     wd=kernel(scale).wd; ht=kernel(scale).ht;
-
+    
   else
     % otherwise just do meanshift once
-    [p,pos,Ic,bestSim]=kernelTracker1(Icur,q,pos1,kernel(scale),nBit);
+    [p,pos,Ic,bestSim]=kernelTracker1(Icur,q,pos,kernel(scale),nBit);
   end
-
+  
   % record results
   if( bestSim<simThr ); break; end;
   rctC=[pos(1)-wd/2 pos(2)-ht/2 wd, ht ];
   allIc{frm}=Ic;  allRct(frm,:)=rctC;
   allSim(frm)=bestSim;
-
+  
   % display
   if( dispFlag )
     set(hImg,'CData',Icur); title(['bestSim=' num2str(bestSim)]);
@@ -167,18 +167,18 @@ ht=kernel.ht; ht2=ht/2;
 xs=kernel.xs; ys=kernel.ys;
 for iter=1:1000
   posPrev = pos;
-
+  
   % check if pos in bounds
   rct = [pos(1)-wd/2 pos(2)-ht/2 wd, ht ];
   if( rct(1)<1 || rct(2)<1 || (rct(1)+wd)>nCols || (rct(2)+ht)>mRows )
     pos=posPrev; p=[]; Ic=[]; sim=eps; return;
   end
-
+  
   % crop window / compute histogram
   [Ic,Qc] = cropWindow( I, nBit, pos, wd, ht );
   p = buildHist( Qc, kernel, nBit );
   if( iter==20 ); break; end;
-
+  
   % compute meanshift step
   w = ktComputeW_c( Qc, q, p, nBit );
   posDel = [sum(xs.*w)*wd2, sum(ys.*w)*ht2] / (sum(w)+eps);
