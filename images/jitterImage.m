@@ -103,7 +103,7 @@ for i=1:nOps, H=HS(:,:,i); d=H(1:2,3)';
     s=max(1-d,1); e=min(siz(1:2)-d,siz(1:2)); s1=2-min(1-d,1); e1=e-s+s1;
     I1(s1(1):e1(1),s1(2):e1(2),:) = I(s(1):e(1),s(2):e(2),:);
   else % handle general transformations
-    for j=1:nCh, I1(:,:,j)=imtransform2(I(:,:,j),H,method,'crop'); end
+    for j=1:nCh, I1(:,:,j)=imtransform2(I(:,:,j),H,'method',method); end
   end
   % crop and store result
   I2 = I1(p(1)+1:end-p(1),p(2)+1:end-p(2),:);
