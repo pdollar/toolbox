@@ -1,5 +1,7 @@
 Version NEW
- -imtransform2.m: various optimizations, including mex and caching
+ -imtransform2: massive overhaul (optimized, mexed, new IO format)
+ -imagesAlign: added code for fast/robust homography estimation
+ -diffTracker: removed (made obsolete by far more powerful imagesAlign)
  -fernsClfTrain: various speedups (thanks Kristin Branson)
  -kernelTracker: minor bug fix for single scale case (thanks Juan Carlos Niebles)
  -minor: fevalDistr, simpleCache, seqIo, seqPlayer, seqReaderPlugin, ...
