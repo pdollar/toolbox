@@ -48,7 +48,7 @@ function [ferns,hsPr] = fernsClfTrain( data, hs, varargin )
 %
 % See also fernsClfApply, fernsInds
 %
-% Piotr's Image&Video Toolbox      Version 2.50
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -80,10 +80,10 @@ end
 % convert fern leaf class counts into probabilities
 if( bayes<=0 )
   norm = 1./sum(pFern,2);
-  for h=1:H, pFern(:,h,:)=pFern(:,h,:).*norm; end
+  pFern = bsxfun(@times,pFern,norm);
 else
   norm = 1./sum(pFern,1);
-  for s=1:2^S, pFern(s,:,:)=pFern(s,:,:).*norm; end
+  pFern = bsxfun(@times,pFern,norm);
   pFern=log(pFern);
 end
 
