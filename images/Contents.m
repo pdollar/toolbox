@@ -54,7 +54,7 @@
 % Behavior annotation for seq files:
 %   behaviorAnnotator - Caltech Behavior Annotator.
 %   behaviorData      - Retrieve and manipulate behavior annotation of a video.
-% 
+%
 % Binary mask creation:
 %   maskCircle        - Creates an image of a 'pie slice' of a circle.
 %   maskEllipse       - Creates a binary image of an ellipse.
@@ -67,9 +67,9 @@
 %   localSum          - Fast routine for box filtering.
 %
 % Miscellaneous:
-%   diffTracker       - Fast, robust estimation of translation/scale change between two images.
 %   hog               - Efficiently compute histogram of oriented gradient (HOG) features.
 %   hogDraw           - Create visualization of hog descriptor.
+%   imagesAlign       - Fast and robust estimation of homography relating two images.
 %   imMlGauss         - Calculates max likelihood params of Gaussian that gave rise to image G.
 %   imrectLite        - A 'lite' version of imrect [OBSOLETE: use imrectRot].
 %   imRectRot         - Create a draggable, resizable, rotatable rectangle or ellipse.
