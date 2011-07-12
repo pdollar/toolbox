@@ -1,3 +1,6 @@
+Version NEW
+ -dijskstra.cpp: broken on 64-bit matlab!!
+
 Version 2.61 (16-June-11)
  -imtransform2: massive overhaul (optimized, mexed, new IO format)
  -imagesAlign: added code for fast/robust homography estimation
