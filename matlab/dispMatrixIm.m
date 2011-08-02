@@ -13,6 +13,7 @@ function dispMatrixIm( M, varargin )
 %   .maxM       - [] maximum possible value im M (defines display range)
 %   .maxLen     - [inf] maximum number of chars to display per element
 %   .pvPairs    - [{'FontSize',20}] parameter / value list for text.m
+%   .cmap       - ['gray'] colormap for matrix (see doc colormap)
 %
 % OUTPUTS
 %
@@ -24,21 +25,21 @@ function dispMatrixIm( M, varargin )
 %
 % See also imLabel, confMatrixShow
 %
-% Piotr's Image&Video Toolbox      Version 2.50
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
 % get default parameters
 dfs={'fStr','%1.2f','invert',0,'show0',1,'maxM',[],...
-  'maxLen','inf','pvPairs',{'FontSize',20}};
-[fStr,invert,show0,maxM,maxLen,pvPairs]=getPrmDflt(varargin,dfs,1);
+  'maxLen','inf','pvPairs',{'FontSize',20},'cmap','gray'};
+[fStr,invert,show0,maxM,maxLen,pvPairs,cmap]=getPrmDflt(varargin,dfs,1);
 if( any(M(:)<0) ); error( 'M must have non-negative entries' ); end
 % optionally invert M for display
 [m,n]=size(M); maxM=max([maxM; M(:)]);
 M1=M; if(invert), M1=maxM-M1; end
 % display M as image
-clf; imagesc(M1,[0,maxM]); colormap gray;
+clf; imagesc(M1,[0,maxM]); colormap(cmap);
 set(gca,'XTick',[]); set(gca,'YTick',[]);
 % now write text of actual confusion value
 txtAlign={'VerticalAlignment','middle','HorizontalAlignment','center'};
