@@ -39,12 +39,12 @@ void compGradImg(double *I, double *G, int *O, int h, int w, int d, int oBin ) {
 
   /* compute gradient magnitude and orientation at each location */
   for( x=0; x<w; x++ ) {
-    rx=1; G0=G+x*h; O0=O+x*h; Ix=I+x*h; Ix0=Ix-h; Ix1=Ix+h;
-    if(x==0) { Ix0=Ix; rx=2; } else if(x==w-1) { Ix1=Ix; rx=2; }
+    rx=.5; G0=G+x*h; O0=O+x*h; Ix=I+x*h; Ix0=Ix-h; Ix1=Ix+h;
+    if(x==0) { Ix0=Ix; rx=1; } else if(x==w-1) { Ix1=Ix; rx=1; }
     for( y=0; y<h; y++ ) {
-      if(y==0) {   Iy0=Ix-0; Iy1=Ix+1; ry=2; }
-      if(y==1) {   Iy0=Ix-1; Iy1=Ix+1; ry=1; }
-      if(y==h-1) { Iy0=Ix-1; Iy1=Ix+0; ry=2; }
+      if(y==0) {   Iy0=Ix-0; Iy1=Ix+1; ry=1; }
+      if(y==1) {   Iy0=Ix-1; Iy1=Ix+1; ry=.5; }
+      if(y==h-1) { Iy0=Ix-1; Iy1=Ix+0; ry=1; }
       dy=(*Iy1-*Iy0)*ry; dx=(*Ix1-*Ix0)*rx; g=dx*dx+dy*dy;
       for(c=1; c<d; c++) {
         dy1=(*(Iy1+c*a)-*(Iy0+c*a))*ry; dx1=(*(Ix1+c*a)-*(Ix0+c*a))*rx;
@@ -111,7 +111,7 @@ mxArray* hog( double *I, int h, int w, int d, int sBin, int oBin, int oGr ) {
     H1=(double*) mxGetPr(H) + x*ds[0] + y;
     for(x1=1; x1>=0; x1--) for(y1=1; y1>=0; y1--) {
       N1 = N + (x+x1)*hb + (y+y1);  hist1 = hist + (x+1)*hb + (y+1);
-      n = 1.0/sqrt(*N1 + *(N1+1) + *(N1+hb) + *(N1+hb+1) + 0.0001);
+      n = 1.0/sqrt(*N1 + *(N1+1) + *(N1+hb) + *(N1+hb+1) + 0.000025);
       for(o=0; o<oBin; o++) { *H1=mind(*hist1*n, 0.2); H1+=nc; hist1+=nb; }
     }
   }
