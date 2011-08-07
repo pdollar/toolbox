@@ -6,7 +6,6 @@
 *******************************************************************************/
 #include <math.h>
 #include "mex.h"
-
 #define PI 3.1415926535897931
 double mind(double x, double y) { return (x <= y ? x : y); }
 
@@ -27,73 +26,72 @@ int compOrient( double dx, double dy, double *ux, double *uy, int oBin ) {
 }
 
 /* compute gradient magnitude and orientation at each location */
-void compGradImg(double *I, double *G, int *O, int h, int w, int d, int oBin ) {
-  int x, y, c, o, a=w*h; double g, g1, dx, dx1, dy, dy1, rx, ry;
-  double *ux, *uy, *Ix, *Ix0, *Ix1, *Iy0, *Iy1, *G0; int *O0;
-
-  /* compute unit vectors evenly distributed at oBin orientations */
+void gradMag(double *I, double *M, int *O, int h, int w, int d, int oBin ) {
+  int x, y, c, o, a=w*h; double m, m1, dx, dx1, dy, dy1, rx, ry;
+  double *ux, *uy, *Ix, *Ix0, *Ix1, *Iy0, *Iy1, *M0; int *O0;
+  /* pre-compute unit vectors evenly distributed at oBin orientations */
   ux = (double*) mxMalloc(oBin*sizeof(double));
   uy = (double*) mxMalloc(oBin*sizeof(double));
   for( o=0; o<oBin; o++ ) ux[o]=cos( ((double)o)/((double)oBin)*PI );
   for( o=0; o<oBin; o++ ) uy[o]=sin( ((double)o)/((double)oBin)*PI );
-
   /* compute gradient magnitude and orientation at each location */
   for( x=0; x<w; x++ ) {
-    rx=.5; G0=G+x*h; O0=O+x*h; Ix=I+x*h; Ix0=Ix-h; Ix1=Ix+h;
+    rx=.5; M0=M+x*h; O0=O+x*h; Ix=I+x*h; Ix0=Ix-h; Ix1=Ix+h;
     if(x==0) { Ix0=Ix; rx=1; } else if(x==w-1) { Ix1=Ix; rx=1; }
     for( y=0; y<h; y++ ) {
       if(y==0) {   Iy0=Ix-0; Iy1=Ix+1; ry=1; }
       if(y==1) {   Iy0=Ix-1; Iy1=Ix+1; ry=.5; }
       if(y==h-1) { Iy0=Ix-1; Iy1=Ix+0; ry=1; }
-      dy=(*Iy1-*Iy0)*ry; dx=(*Ix1-*Ix0)*rx; g=dx*dx+dy*dy;
+      dy=(*Iy1-*Iy0)*ry; dx=(*Ix1-*Ix0)*rx; m=dx*dx+dy*dy;
       for(c=1; c<d; c++) {
         dy1=(*(Iy1+c*a)-*(Iy0+c*a))*ry; dx1=(*(Ix1+c*a)-*(Ix0+c*a))*rx;
-        g1=dx1*dx1+dy1*dy1; if(g1>g) { g=g1; dx=dx1; dy=dy1; }
+        m1=dx1*dx1+dy1*dy1; if(m1>m) { m=m1; dx=dx1; dy=dy1; }
       }
-      *(G0++)=sqrt(g); *(O0++)=compOrient(dx,dy,ux,uy,oBin);
+      *(M0++)=sqrt(m); *(O0++)=compOrient(dx,dy,ux,uy,oBin);
       Ix0++; Ix1++; Iy0++; Iy1++; Ix++;
     }
   }
-
   mxFree(ux); mxFree(uy);
 }
 
 /* compute oBin gradient histograms per sBin x sBin block of pixels */
-double *compHist(double *I, int h, int w, int d, int sBin, int oBin, int oGr) {
+double *gradHist(double *I, int h, int w, int d, int sBin, int oBin, int oGr) {
   const int hb=h/sBin, wb=w/sBin, h0=hb*sBin, w0=wb*sBin, nb=wb*hb;
-  double *G, *H, *H0; int *O; int x, y, o0, o1, xb0, yb0;
-  double od0, od1, o, v, xb, yb, xd0, xd1, yd0, yd1;
+  const double s=sBin, sInv=1/s, sInv2=1/s/s, oGrInv=1/((double)oGr);
+  double *M, *H, *H0; int *O; int x, y, xy, o0, o1, xb0, yb0, oBin1=oBin*nb;
+  double od0, od1, o, m, xb, yb, xd0, xd1, yd0, yd1;
   /* compute gradient image */
-  G = (double*) mxMalloc(h*w*sizeof(double));
+  M = (double*) mxMalloc(h*w*sizeof(double));
   O = (int*) mxMalloc(h*w*sizeof(int));
-  compGradImg(I, G, O, h, w, d, oBin*oGr);
-  /* compute histograms using G and O */
+  gradMag(I, M, O, h, w, d, oBin*oGr);
+  /* compute histograms using M and O */
   H = (double*) mxCalloc(nb*oBin, sizeof(double));
   for( x=0; x<w0; x++ ) for( y=0; y<h0; y++ ) {
     /* get interpolation coefficients */
-    v=*(G+x*h+y); o=((double)(*(O+x*h+y)))/((double) oGr); o0=((int) o);
-    xb=(((double) x)+.5)/((double) sBin)-0.5; xb0=(xb<0) ? -1 : ((int) xb);
-    yb=(((double) y)+.5)/((double) sBin)-0.5; yb0=(yb<0) ? -1 : ((int) yb);
+    xy=x*h+y; m=M[xy]; o=O[xy]*oGrInv; o0=(int) o;
+    xb=(((double) x)+.5)*sInv-0.5; xb0=(xb<0) ? -1 : (int) xb;
+    yb=(((double) y)+.5)*sInv-0.5; yb0=(yb<0) ? -1 : (int) yb;
     xd0=xb-xb0; xd1=1.0-xd0; yd0=yb-yb0; yd1=1.0-yd0; H0=H+xb0*hb+yb0;
     /* interpolate using bilinear or trilinear interpolation */
     if( oGr==1 ) {
-      if( xb0>=0 && yb0>=0     ) *(H0+o0*nb)      += xd1*yd1*v;
-      if( xb0+1<wb && yb0>=0   ) *(H0+hb+o0*nb)   += xd0*yd1*v;
-      if( xb0>=0 && yb0+1<hb   ) *(H0+1+o0*nb)    += xd1*yd0*v;
-      if( xb0+1<wb && yb0+1<hb ) *(H0+hb+1+o0*nb) += xd0*yd0*v;
+      o0*=nb;
+      if( xb0>=0 && yb0>=0     ) *(H0+o0)      += xd1*yd1*m;
+      if( xb0+1<wb && yb0>=0   ) *(H0+hb+o0)   += xd0*yd1*m;
+      if( xb0>=0 && yb0+1<hb   ) *(H0+1+o0)    += xd1*yd0*m;
+      if( xb0+1<wb && yb0+1<hb ) *(H0+hb+1+o0) += xd0*yd0*m;
     } else {
-      o1=(o0+1)%oBin; od0=o-o0; od1=1.0-od0;
-      if( xb0>=0 && yb0>=0     ) *(H0+o0*nb)      += od1*xd1*yd1*v;
-      if( xb0+1<wb && yb0>=0   ) *(H0+hb+o0*nb)   += od1*xd0*yd1*v;
-      if( xb0>=0 && yb0+1<hb   ) *(H0+1+o0*nb)    += od1*xd1*yd0*v;
-      if( xb0+1<wb && yb0+1<hb ) *(H0+hb+1+o0*nb) += od1*xd0*yd0*v;
-      if( xb0>=0 && yb0>=0     ) *(H0+o1*nb)      += od0*xd1*yd1*v;
-      if( xb0+1<wb && yb0>=0   ) *(H0+hb+o1*nb)   += od0*xd0*yd1*v;
-      if( xb0>=0 && yb0+1<hb   ) *(H0+1+o1*nb)    += od0*xd1*yd0*v;
-      if( xb0+1<wb && yb0+1<hb ) *(H0+hb+1+o1*nb) += od0*xd0*yd0*v;
+      od0=o-o0; od1=1.0-od0; o0*=nb; o1=o0+nb; if(o1==oBin1) o1=0;
+      if( xb0>=0 && yb0>=0     ) *(H0+o0)      += od1*xd1*yd1*m;
+      if( xb0+1<wb && yb0>=0   ) *(H0+hb+o0)   += od1*xd0*yd1*m;
+      if( xb0>=0 && yb0+1<hb   ) *(H0+1+o0)    += od1*xd1*yd0*m;
+      if( xb0+1<wb && yb0+1<hb ) *(H0+hb+1+o0) += od1*xd0*yd0*m;
+      if( xb0>=0 && yb0>=0     ) *(H0+o1)      += od0*xd1*yd1*m;
+      if( xb0+1<wb && yb0>=0   ) *(H0+hb+o1)   += od0*xd0*yd1*m;
+      if( xb0>=0 && yb0+1<hb   ) *(H0+1+o1)    += od0*xd1*yd0*m;
+      if( xb0+1<wb && yb0+1<hb ) *(H0+hb+1+o1) += od0*xd0*yd0*m;
     }
   }
-  mxFree(G); mxFree(O); return H;
+  mxFree(M); mxFree(O); return H;
 }
 
 /* compute HOG features */
@@ -102,7 +100,7 @@ mxArray* hog( double *I, int h, int w, int d, int sBin, int oBin, int oGr ) {
   const int hb=h/sBin, wb=w/sBin, nb=wb*hb;
   const int ds[3] = { hb>2?hb-2:0, wb>2?wb-2:0, oBin*4 }, nc=ds[0]*ds[1];
   /* compute histogram and L2 norm per spatial block */
-  hist = compHist( I, h, w, d, sBin, oBin, oGr );
+  hist = gradHist( I, h, w, d, sBin, oBin, oGr );
   N = (double*) mxCalloc(nb,sizeof(double));
   for(o=0; o<oBin; o++) for(x=0; x<nb; x++) N[x]+=hist[x+o*nb]*hist[x+o*nb];
   /* perform 4 different normalizations per spatial block */
