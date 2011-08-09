@@ -1,7 +1,7 @@
 Version NEW
  -TODO: dijskstra.cpp: broken on 64-bit matlab!
  -TODO: drop 32 bit bnary support
- -minor: dispMatrixIm.m, hog1.cpp
+ -minor: dispMatrixIm.m, hog1.cpp, imtransform2
 
 Version 2.61 (16-June-11)
  -imtransform2: massive overhaul (optimized, mexed, new IO format)
