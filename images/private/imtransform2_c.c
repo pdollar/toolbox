@@ -1,12 +1,12 @@
-/**************************************************************************
- * Piotr's Image&Video Toolbox      Version 2.61
- * Copyright 2011 Piotr Dollar.  [pdollar-at-caltech.edu]
- * Please email me if you find bugs, or have suggestions or questions!
- * Licensed under the Lesser GPL [see external/lgpl.txt]
- *************************************************************************/
+/*******************************************************************************
+* Piotr's Image&Video Toolbox      Version NEW
+* Copyright 2011 Piotr Dollar.  [pdollar-at-caltech.edu]
+* Please email me if you find bugs, or have suggestions or questions!
+* Licensed under the Lesser GPL [see external/lgpl.txt]
+*******************************************************************************/
 #include "mex.h"
 
-/**************************************************************************
+/*******************************************************************************
 %% initialize test data
 I=imResample(double(imread('cameraman.tif')),256,256); [m,n]=size(I);
 rep=100; flag=2; H=[eye(2)+randn(2)*.1 randn(2,1)*5; randn(1,2)*0.0 1];
@@ -23,9 +23,9 @@ for i=1:rep, if(i==1), tic; end
   J2 = imtransform2_c('applyTransform',I,rs2,cs2,is2,flag);
 end; toc
 [mean2(abs(is1-is2)) mean2(abs(J1-J2))]
-*************************************************************************/
+*******************************************************************************/
 
-void			homogToFlow(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
+void homogToFlow(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   /* [us,vs]=homogToFlow(H,m,n,[r0],[r1],[c0],[c1]); */
   int ind=0, i, j, m, n, m1, n1; double *H, *us, *vs;
   double r, c, r0, c0, r1, c1, m2, n2, z;
@@ -82,15 +82,15 @@ void			homogToFlow(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   mxSetData(plhs[1],vs); mxSetM(plhs[1],m1); mxSetN(plhs[1],n1);
 }
 
-void			homogsToFlow(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
+void homogsToFlow(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   /* [us,vs]=homogsToFlow(H,M); */
-  int i, j, k, m, n, q, nDims, *dims, affine=1, ind=0; unsigned int *M;
+  int i, j, k, m, n, q, *dims, affine=1, ind=0; unsigned int *M;
   double *H, *H1, *us, *vs; double r, c, r0, c0, z;
 
   /* extract inputs */
   H = (double*) mxGetData(prhs[0]);
   M = (unsigned int*) mxGetData(prhs[1]);
-  m = mxGetM(prhs[1]); n = mxGetN(prhs[1]);
+  m = (int) mxGetM(prhs[1]); n = (int) mxGetN(prhs[1]);
   if(mxGetNumberOfDimensions(prhs[0])==2) q=1; else {
     dims=(int*) mxGetDimensions(prhs[0]); q=dims[2]; }
 
@@ -128,7 +128,7 @@ void			homogsToFlow(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) 
   mxSetData(plhs[1],vs); mxSetM(plhs[1],m); mxSetN(plhs[1],n);
 }
 
-void			flowToInds(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
+void flowToInds(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   /* [rs,cs,is]=flowToInds(us,vs,m,n,flag); */
   int m, n, m1, n1, flag; double *us, *vs;
   int *is, ind=0, i, j, fr, fc; double *rs, *cs, r, c;
@@ -141,7 +141,7 @@ void			flowToInds(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   flag = (int) mxGetScalar(prhs[4]);
 
   /* initialize memory */
-  m1=mxGetM(prhs[0]); n1=mxGetN(prhs[0]);
+  m1=(int)mxGetM(prhs[0]); n1=(int)mxGetN(prhs[0]);
   rs  = mxMalloc(sizeof(double)*m1*n1);
   cs  = mxMalloc(sizeof(double)*m1*n1);
   is  = mxMalloc(sizeof(int)*m1*n1);
@@ -160,7 +160,7 @@ void			flowToInds(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
       rs[ind]=r-fr; cs[ind]=c-fc; is[ind]=(fr-1)+(fc-1)*m; ind++;
     }
   } else { /* other cases - clamp only */
-   for(i=0; i<n1; i++) for(j=0; j<m1; j++) {
+    for(i=0; i<n1; i++) for(j=0; j<m1; j++) {
       r=us[ind]+j+1; rs[ind] = r<2 ? 2 : (r>m-1 ? m-1 : r);
       c=vs[ind]+i+1; cs[ind] = c<2 ? 2 : (c>n-1 ? n-1 : c); ind++;
     }
@@ -175,7 +175,7 @@ void			flowToInds(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   mxSetData(plhs[2],is); mxSetM(plhs[2],m1); mxSetN(plhs[2],n1);
 }
 
-void			homogToInds(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
+void homogToInds(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   /* [rs,cs,is]=homogToInds(H,m,n,r0,r1,c0,c1,flag); */
   int m, n, flag; double *H, r0, r1, c0, c1;
   int *is, m1, n1, ind=0, i, j, fr, fc; double *rs, *cs, r, c, m2, n2, z;
@@ -249,7 +249,7 @@ void			homogToInds(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   mxSetData(plhs[2],is); mxSetM(plhs[2],m1); mxSetN(plhs[2],n1);
 }
 
-void			applyTransform(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
+void applyTransform(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   /* J=applyTransform(I,rs,cs,is,flag); */
   int flag, *nsI, nsJ[3], areaJ, areaI, nDims, i, k, id, *is;
   double *I, *J, *I1, *J1, *rs, *cs, wr, wc, wrc, r, c;
@@ -264,7 +264,7 @@ void			applyTransform(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]
   /* get dimensions */
   nDims = mxGetNumberOfDimensions(prhs[0]);
   nsI = (int*) mxGetDimensions(prhs[0]);
-  nsJ[0]=mxGetM(prhs[1]); nsJ[1]=mxGetN(prhs[1]);
+  nsJ[0]=(int)mxGetM(prhs[1]); nsJ[1]=(int)mxGetN(prhs[1]);
   nsJ[2]=(nDims==2) ? 1 : nsI[2];
   areaJ=nsJ[0]*nsJ[1]; areaI=nsI[0]*nsI[1];
 
@@ -291,7 +291,7 @@ void			applyTransform(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]
   mxSetData(plhs[0],J); mxSetDimensions(plhs[0],nsJ,3);
 }
 
-void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
+void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   /* switchyard - apply appropriate action */
   int fail; char action[1024]; fail=mxGetString(prhs[0],action,1024);
   if(fail) mexErrMsgTxt("Failed to get action.");
