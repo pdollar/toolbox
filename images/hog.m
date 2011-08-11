@@ -20,18 +20,15 @@ function H = hog( I, varargin )
 % The computed features are NOT identical to those described in the CVPR05
 % paper. Specifically, there is no Gaussian spatial window, and other minor
 % details differ. The choices were made for speed of the resulting code:
-% ~.1s for a 640x480x3 color image on a standard machine from 2005. Further
-% speedups can be obtained by not using trilinear interpolation (e.g.,
-% setting oGran=1 results in a ~33% speedup at some loss in accuracy).
+% ~.1s for a 640x480x3 color image on a standard machine from 2005.
 %
 % USAGE
-%  H = hog( I, [sBin], [oBin], [oGran] )
+%  H = hog( I, [sBin], [oBin] )
 %
 % INPUTS
 %  I        - [mxn] color or grayscale input image (must have type double)
 %  sBin     - [8] spatial bin size
 %  oBin     - [9] number of orientation bins
-%  oGran    - [10] controls quality of linear interpolation for orientation
 %
 % OUTPUTS
 %  H        - [m/sBin-2 n/sBin-2 oBin*4] computed hog features
@@ -42,8 +39,8 @@ function H = hog( I, varargin )
 %
 % See also hogDraw
 %
-% Piotr's Image&Video Toolbox      Version 2.42
-% Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Piotr's Image&Video Toolbox      Version NEW
+% Copyright 2011 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
