@@ -40,7 +40,7 @@ void gradMag(double *I, double *M, float *O, int h, int w, int d ) {
         m1=dx1*dx1+dy1*dy1; if(m1>m) { m=m1; dx=dx1; dy=dy1; }
       }
       if( m==0 ) { o=0; } else {
-        m=sqrt(m); //o=acos(dx/m);
+        m=sqrt(m); /* o=acos(dx/m); */
         o = acost[(int)((dx/m+1.1f)*acMult)];
         if( o>PI-1e-5 ) o=0; else if( dy<0 ) o=(float)PI-o;
       }
