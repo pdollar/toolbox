@@ -1,9 +1,9 @@
-/**************************************************************************
- * Piotr's Image&Video Toolbox      Version 2.60
- * Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
+/*******************************************************************************
+ * Piotr's Image&Video Toolbox      Version NEW
+ * Copyright 2011 Piotr Dollar.  [pdollar-at-caltech.edu]
  * Please email me if you find bugs, or have suggestions or questions!
  * Licensed under the Lesser GPL [see external/lgpl.txt]
- *************************************************************************/
+ ******************************************************************************/
 #include <math.h>
 #include "mex.h"
 typedef unsigned char uchar;
@@ -11,7 +11,7 @@ typedef unsigned char uchar;
 /* struct used for caching interpolation values for single column */
 typedef struct { int yb, ya0, ya1; double wt0, wt1; } InterpInfo;
 
-InterpInfo*		interpInfoDn( int ha, int hb, int *n ) {
+InterpInfo* interpInfoDn( int ha, int hb, int *n ) {
   /* compute interpolation values for single column for DOWN sampling */
   int c, ya, yb, ya0, ya1; double sc, scInv, ya0f, ya1f; InterpInfo *ii;
   sc = (double)hb/(double)ha; scInv = 1.0/sc;
@@ -30,7 +30,7 @@ InterpInfo*		interpInfoDn( int ha, int hb, int *n ) {
   *n=c; return ii;
 }
 
-InterpInfo*		interpInfoUp( int ha, int hb, int *n ) {
+InterpInfo* interpInfoUp( int ha, int hb, int *n ) {
   /* compute interpolation values for single column for UP sampling */
   int ya, yb; double sc, scInv, yaf; InterpInfo *ii;
   sc = (double)hb/(double)ha; scInv = 1.0/sc; yaf=.5*scInv-.5;
@@ -49,7 +49,7 @@ InterpInfo*		interpInfoUp( int ha, int hb, int *n ) {
   *n=hb; return ii;
 }
 
-void			resample( double *A, double *B, int dim, int m0, int m1, int n, int nCh ) {
+void resample( double *A, double *B, int dim, int m0, int m1, int n, int nCh ) {
   /* resample along dim in A, store in B */
   int ch, x, y, r; double *a, *a0, *a1, *b, *b0, wt0, wt1;
   const bool downsample=(m1<m0); InterpInfo *ii;
@@ -57,7 +57,7 @@ void			resample( double *A, double *B, int dim, int m0, int m1, int n, int nCh )
   if(dim==1) for(y=0; y<r; y++) { ii[y].yb*=n; ii[y].ya0*=n; ii[y].ya1*=n; }
   for(ch=0; ch<nCh; ch++) {
     a=A+ch*n*m0; b=B+ch*n*m1;
-	/* resample height m0->m1 (width n unchanged) */
+    /* resample height m0->m1 (width n unchanged) */
     if(dim==0) for(x=0; x<n; x++) {
       a0=a+x*m0; b0=b+x*m1;
       if( downsample ) for(y=0; y<r; y++) b0[ii[y].yb] += a0[ii[y].ya0]*ii[y].wt0;
@@ -72,7 +72,7 @@ void			resample( double *A, double *B, int dim, int m0, int m1, int n, int nCh )
   mxFree(ii);
 }
 
-void			resampleInt( double *A, double *B, int h0, int w0, int nCh, int r )
+void resampleInt( double *A, double *B, int h0, int w0, int nCh, int r )
 {
   /* resample by integer factor r (special case, more efficient than resample) */
   int ch, i, j, i0, j0; double *a, *b; int h1=h0/r, w1=w0/r, h2, w2; double norm=1.0/r/r;
@@ -81,17 +81,18 @@ void			resampleInt( double *A, double *B, int h0, int w0, int nCh, int r )
   for(i=0; i<h1*w1*nCh; i++) B[i]*=norm;
 }
 
-void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
+void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   /* B=imResample(A,scale) or B=imResample(A,h,w); */
-  double input1=0, input2=0; int *ns, ms[3], nCh, nDims, i, r;
+  double input1=0, input2=0; int *ns, ms[3], n, m, nCh, nDims, i, r;
   double *A, *B, *T; void *A1, *B1; mxClassID id;
 
   /* Error checking on arguments */
   if( nrhs<2 || nrhs>3) mexErrMsgTxt("Two or three inputs expected.");
   if( nlhs>1 ) mexErrMsgTxt("One output expected.");
   nDims=mxGetNumberOfDimensions(prhs[0]); id=mxGetClassID(prhs[0]);
-  if( (nDims!=2 && nDims!=3) || (id!=mxDOUBLE_CLASS && id!=mxUINT8_CLASS) )
-    mexErrMsgTxt("A should be 2D or 3D double or uint8 array.");
+  if( (nDims!=2 && nDims!=3) ||
+    (id!=mxSINGLE_CLASS && id!=mxDOUBLE_CLASS && id!=mxUINT8_CLASS) )
+    mexErrMsgTxt("A should be 2D or 3D single, double or uint8 array.");
   input1=mxGetScalar(prhs[1]); if(nrhs>=3) input2=mxGetScalar(prhs[2]);
 
   /* create output array */
@@ -101,15 +102,17 @@ void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   } else {
     ms[0]=(int) input1; ms[1]=(int) input2;
   }
-  plhs[0] = mxCreateNumericArray(3, ms, id, mxREAL);
+  plhs[0] = mxCreateNumericArray(3, (const mwSize*) ms, id, mxREAL);
+  n=ns[0]*ns[1]*nCh; m=ms[0]*ms[1]*nCh;
 
   /* convert to double if id!=mxDOUBLE_CLASS */
   A1=mxGetData(prhs[0]); B1=mxGetData(plhs[0]);
   if( id==mxDOUBLE_CLASS ) { A=(double*) A1; B=(double*) B1; } else {
-    A = (double*) mxMalloc( ns[0]*ns[1]*nCh*sizeof(double) );
-    B = (double*) mxCalloc( ms[0]*ms[1]*nCh, sizeof(double) );
+    A = (double*) mxMalloc( n*sizeof(double) );
+    B = (double*) mxCalloc( m, sizeof(double) );
   }
-  if(id==mxUINT8_CLASS) for(i=0; i<ns[0]*ns[1]*nCh; i++) A[i]=(double) ((uchar*)A1)[i];
+  if(id==mxUINT8_CLASS) for(i=0; i<n; i++) A[i]=(double) ((uchar*)A1)[i];
+  if(id==mxSINGLE_CLASS) for(i=0; i<n; i++) A[i]=(double) ((float*)A1)[i];
 
   /* Perform rescaling */
   r=ns[0]/ms[0]; if(ms[0]*r==ns[0] && ms[1]*r==ns[1] ) {
@@ -122,6 +125,7 @@ void			mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   }
 
   /* convert from double if id!=mxDOUBLE_CLASS */
-  if(id==mxUINT8_CLASS) for(i=0; i<ms[0]*ms[1]*nCh; i++) ((uchar*)B1)[i]=(uchar) (B[i]+.5);
-  if( id!=mxDOUBLE_CLASS ) { mxFree(A); mxFree(B); }
+  if(id==mxUINT8_CLASS) for(i=0; i<m; i++) ((uchar*)B1)[i]=(uchar) (B[i]+.5);
+  if(id==mxSINGLE_CLASS) for(i=0; i<m; i++) ((float*)B1)[i]=(float) B[i];
+  if(id!=mxDOUBLE_CLASS) { mxFree(A); mxFree(B); }
 }

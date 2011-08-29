@@ -2,7 +2,7 @@ Version NEW
  -hog: major optimizations (>2x speedup), removed obsolete param oGran
  -TODO: dijskstra.cpp: broken on 64-bit matlab!
  -TODO: drop 32 bit binary support, change hog to c code
- -minor: dispMatrixIm.m, imtransform2
+ -minor: dispMatrixIm.m, imtransform2, imResample
 
 Version 2.61 (16-June-11)
  -imtransform2: massive overhaul (optimized, mexed, new IO format)

@@ -13,12 +13,12 @@ function B = imResample( A, varargin )
 %  B = imResample( A, h, w, [method] )
 %
 % INPUT [1]
-%  A        - input image (2D or 3D double or uint8 array)
+%  A        - input image (2D or 3D single, double or uint8 array)
 %  scale    - size(B)=size(A)*scale
 %  method   - ['bilinear'] either 'bilinear' or 'nearest'
 %
 % INPUT [2]
-%  A        - input image (2D or 3D double or uint8 array)
+%  A        - input image (2D or 3D single, double or uint8 array)
 %  h        - height(B)=h
 %  w        - width(B)=w
 %  method   - ['bilinear'] either 'bilinear' or 'nearest'
@@ -34,8 +34,8 @@ function B = imResample( A, varargin )
 %
 % See also IMRESIZE
 %
-% Piotr's Image&Video Toolbox      Version 2.60
-% Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Piotr's Image&Video Toolbox      Version NEW
+% Copyright 2011 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
