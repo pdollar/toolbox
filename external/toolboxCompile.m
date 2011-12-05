@@ -11,7 +11,7 @@
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 2.61
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2011 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -29,15 +29,17 @@ if(exist('OCTAVE_VERSION','builtin')), opts={'-o'}; end
 
 % compile c functions
 fs={'assignToBins1','histc2c','ktHistcRgb_c','ktComputeW_c',...
-  'nlfiltersep_max','nlfiltersep_sum','imResample1','convOnes',...
+  'nlfiltersep_max','nlfiltersep_sum','convOnes',...
   'imtransform2_c','meanShift1','fernsInds1'};
-ds=[repmat({'images'},1,9),repmat({'classify'},1,2)];
-for i=1:length(fs), mex([rd '/' ds{i} '/private/' fs{i} '.c'],...
-    opts{:},[rd '/' ds{i} '/private/' fs{i} '.' mexext]); end
+ds=[repmat({'images'},1,8),repmat({'classify'},1,2)];
+for i=1:length(fs), fs{i}=[rd '/' ds{i} '/private/' fs{i}]; end
+for i=1:length(fs), mex([fs{i} '.c'],opts{:},[fs{i} '.' mexext]); end
 
 % compile c++ functions
 try
-  f=[rd '/images/private/hog1']; mex([f '.cpp'],opts{:},[f '.' mexext]);
+  fs={'hog1','imResample1'}; ds=repmat({'images'},1,2);
+  for i=1:length(fs), fs{i}=[rd '/' ds{i} '/private/' fs{i}]; end
+  for i=1:length(fs), mex([fs{i} '.cpp'],opts{:},[fs{i} '.' mexext]); end
   d=[rd '/matlab/private/']; mex([d 'fibheap.cpp'],[d 'dijkstra1.cpp'], ...
     opts{:}, [d 'dijkstra1.' mexext]);
 catch ME
