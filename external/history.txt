@@ -1,11 +1,11 @@
 Version NEW
- -hog: major optimizations (>2x speedup), removed obsolete param oGran
- -TODO: remove hog (after adding channels code)
- -TODO: add note for imShrink to use convBox() (after adding channels code)
+ -hog: major optimizations, removed obsolete param oGran
+ -imResample: major optimziations, added float support
+ -TODO: remove hog and imResample (after adding channels code)
  -TODO: dijskstra.cpp: broken on 64-bit matlab!
  -TODO: drop 32 bit binary support
  -TODO: bug in plotRoc? return is miss-rate not detection rate?
- -minor: dispMatrixIm.m, imtransform2, imResample
+ -minor: dispMatrixIm.m, imtransform2
 
 Version 2.61 (16-June-11)
  -imtransform2: massive overhaul (optimized, mexed, new IO format)
