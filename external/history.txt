@@ -1,10 +1,10 @@
 Version NEW
  -hog: major optimizations, removed obsolete param oGran
  -imResample: major optimziations, added float support
+ -removed all 32 bit binaries (will no longer distribute)
  -TODO: remove hog and imResample (after adding channels code)
  -TODO: dijskstra.cpp: broken on 64-bit matlab!
- -TODO: drop 32 bit binary support
- -TODO: bug in plotRoc? return is miss-rate not detection rate?
+ -TODO: plotRoc.m: needs cleanup, bug in return of det?
  -minor: dispMatrixIm.m, imtransform2
 
 Version 2.61 (16-June-11)
