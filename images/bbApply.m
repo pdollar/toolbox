@@ -58,7 +58,7 @@ function varargout = bbApply( action, varargin )
 % bbApply>union bbApply>resize bbApply>squarify bbApply>draw bbApply>crop
 % bbApply>convert bbApply>random bbApply>frMask bbApply>toMask
 %
-% Piotr's Image&Video Toolbox      Version 2.52
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -535,6 +535,7 @@ function bbs = frMask( M, bbw, bbh, thr )
 % See also bbApply, bbApply>toMask
 if(nargin<4), thr=0; end
 pos=ind2sub2(size(M),find(M>thr));
+if(isempty(pos)), bbs=zeros(0,5); return; end
 bbs=[fliplr(pos) pos]; bbs(:,5)=M(M>thr);
 bbs(:,1)=bbs(:,1)-floor(bbw/2); bbs(:,3)=bbw;
 bbs(:,2)=bbs(:,2)-floor(bbh/2); bbs(:,4)=bbh;

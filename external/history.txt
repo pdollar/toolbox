@@ -5,7 +5,7 @@ Version NEW
  -TODO: remove hog and imResample (after adding channels code)
  -TODO: dijskstra.cpp: broken on 64-bit matlab!
  -TODO: plotRoc.m: needs cleanup, bug in return of det?
- -minor: dispMatrixIm.m, imtransform2
+ -minor: dispMatrixIm.m, imtransform2, bbApply.m
 
 Version 2.61 (16-June-11)
  -imtransform2: massive overhaul (optimized, mexed, new IO format)
