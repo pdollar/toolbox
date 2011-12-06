@@ -41,29 +41,29 @@ template<class T> void resampleCoef( int ha, int hb, int &n, int *&yas,
 // resample A using bilinear interpolation and and store result in B
 template<class T>
 void resample( T *A, T *B, int ha, int hb, int wa, int wb, int d ) {
-  int hn, wn, x, y, z, xa, xb; T *A0, *B0, wt; bool xBd;
-  T *C = (T*) mxMalloc((ha+4)*sizeof(T));
+  int hn, wn, x, y, z, xa, xb, ya; T *A0, *A1, *B0, wt, wt1; bool xBd;
+  T *C = (T*) mxMalloc((ha+4)*sizeof(T)); for(y=ha; y<ha+4; y++) C[y]=0;
   // get coefficients for resampling along w and h
   int *xas, *xbs, *yas, *ybs; T *xwts, *ywts; int xbd[2], ybd[2];
   resampleCoef<T>( wa, wb, wn, xas, xbs, xwts, xbd, 0 );
   resampleCoef<T>( ha, hb, hn, yas, ybs, ywts, ybd, 4 );
   // resample each channel in turn
   for( z=0; z<d; z++ ) for( x=0; x<wn; x++ ) {
-    xa=xas[x]; xb=xbs[x]; wt=xwts[x];
-    A0=A+z*ha*wa+xa*ha; B0=B+z*hb*wb+xb*hb;
+    xa=xas[x]; xb=xbs[x]; wt=xwts[x]; wt1=1-wt;
+    A0=A+z*ha*wa+xa*ha; A1=A0+ha; B0=B+z*hb*wb+xb*hb;
     // resample along x direction (A -> C)
     if( wa>wb ) {
-      xBd = x==0 || xb!=xbs[x-1];
-      if(xBd) for(y=0; y<ha; y++) C[y]  = A0[y] * wt;
-      else    for(y=0; y<ha; y++) C[y] += A0[y] * wt;
+      xBd = x==0 || xb!=xbs[x-1]; y=0;
+      if(xBd)  for(; y<ha; y++) C[y]  = A0[y] * wt;
+      if(!xBd) for(; y<ha; y++) C[y] += A0[y] * wt;
     } else {
-      xBd = x<xbd[0] || x>=wb-xbd[1]; T wt1=1-wt, *A1=A0+ha;
-      if(xBd) for(y=0; y<ha; y++) C[y] = A0[y];
-      else    for(y=0; y<ha; y++) C[y] = A0[y] * wt + A1[y] * wt1;
+      xBd = x<xbd[0] || x>=wb-xbd[1]; y=0;
+      if(xBd)  for(; y<ha; y++) C[y] = A0[y];
+      if(!xBd) for(; y<ha; y++) C[y] = A0[y] * wt + A1[y] * wt1;
     }
     // resample along y direction (B -> C)
     if( ha>hb ) {
-      xBd = x==wn-1 || xb!=xbs[x+1]; if(!xBd) continue; int ya, y=0;
+      xBd = x==wn-1 || xb!=xbs[x+1]; if(!xBd) continue; y=0;
       #define U(o) C[ya+o]*ywts[y*4+o]
       if(ybd[0]==2) for(; y<hb; y++) { ya=yas[y*4]; B0[y]=U(0)+U(1); }
       if(ybd[0]==3) for(; y<hb; y++) { ya=yas[y*4]; B0[y]=U(0)+U(1)+U(2); }
