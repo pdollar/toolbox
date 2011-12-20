@@ -3,8 +3,8 @@ Version NEW
  -imResample: major optimziations, added float support
  -removed all 32 bit binaries (will no longer distribute)
  -TODO: remove hog and imResample (after adding channels code)
- -TODO: dijskstra.cpp: broken on 64-bit matlab!
  -TODO: plotRoc.m: needs cleanup, bug in return of det?
+ -dijskstra.*: removed from toolbox (was broken on 64 bit matlab)
  -minor: dispMatrixIm.m, imtransform2, bbApply.m
 
 Version 2.61 (16-June-11)
