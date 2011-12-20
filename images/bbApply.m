@@ -534,11 +534,11 @@ function bbs = frMask( M, bbw, bbh, thr )
 %
 % See also bbApply, bbApply>toMask
 if(nargin<4), thr=0; end
-pos=ind2sub2(size(M),find(M>thr));
-if(isempty(pos)), bbs=zeros(0,5); return; end
-bbs=[fliplr(pos) pos]; bbs(:,5)=M(M>thr);
-bbs(:,1)=bbs(:,1)-floor(bbw/2); bbs(:,3)=bbw;
-bbs(:,2)=bbs(:,2)-floor(bbh/2); bbs(:,4)=bbh;
+ids=find(M>thr); h=size(M,1);
+if(isempty(ids)), bbs=zeros(0,5); return; end
+xs=floor((ids-1)/h); ys=ids-xs*h; xs=xs+1;
+bbs=[xs-floor(bbw/2) ys-floor(bbh/2)];
+bbs(:,3)=bbw; bbs(:,4)=bbh; bbs(:,5)=M(ids);
 end
 
 function M = toMask( bbs, w, h, fill )
