@@ -20,23 +20,26 @@
 <div class="box"><strong>Function for display of rocs (receiver operator characteristic curves).</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function [h,det] = plotRoc( D, varargin ) </strong></div>
+<div class="box"><strong>function [h,miss] = plotRoc( D, varargin ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment"> Function for display of rocs (receiver operator characteristic curves).
 
  Display roc curves. Consistent usage ensures uniform look for rocs. The
- input D should have n rows, each of which is of the form [false-positive
- rate true-positive rate]. D is generated, for example, by scanning a
- detection threshold over n values from 0 (so first entry in D is [1 1])
- to 1 (so last entry is [0 0]). Alternatively D can be a cell vector of
- rocs, in which case an average ROC will be shown with error bars.
+ input D should have n rows, each of which is of the form:
+  D = [falsePosRate truePosRate]
+ D is generated, for example, by scanning a detection threshold over n
+ values from 0 (so first entry is [1 1]) to 1 (so last entry is [0 0]).
+ Alternatively D can be a cell vector of rocs, in which case an average
+ ROC will be shown with error bars. Plots missRate (which is just 1 minus
+ the truePosRate) on the y-axis versus the falsePosRate on the x-axis.
 
  USAGE
-  [h,det] = plotRoc( D, prm )
+  [h,miss] = plotRoc( D, prm )
 
  INPUTS
-  D    - [nx2] n data points along roc (falsePos/truePos)
+  D    - [nx2] n data points along roc [falsePosRate truePosRate]
+         typically ranges from [1 1] to [0 0] (or may be reversed)
   prm  - [] param struct
    .color    - ['g'] color for curve
    .lineSt   - ['-'] linestyle (see LineSpec)
@@ -49,10 +52,12 @@
    .lims     - [0 1 0 1] axes limits
    .smooth   - [0] if T compute lower envelop of roc to smooth staircase
    .fpTarget - [-1] if&gt;0 plot line and return detection rate at given fp
+   .xLbl     - ['false positive rate'] label for x-axis
+   .yLbl     - ['miss rate'] label for y-axis
 
  OUTPUTS
   h    - plot handle for use in legend only
-  det  - detection rate at fpTarget (if fpTar specified)
+  miss - miss rate at fpTarget (if fpTarget specified)
 
  EXAMPLE
   k=2; x=0:.0001:1; data1 = [1-x; (1-x.^k).^(1/k)]';
@@ -63,8 +68,8 @@
 
  See also
 
- Piotr's Image&amp;Video Toolbox      Version 2.60
- Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 2.62
+ Copyright 2011 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
 
