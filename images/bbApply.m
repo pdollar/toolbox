@@ -534,7 +534,7 @@ function bbs = frMask( M, bbw, bbh, thr )
 %
 % See also bbApply, bbApply>toMask
 if(nargin<4), thr=0; end
-ids=find(M>thr); h=size(M,1);
+ids=find(M>thr); ids=ids(:); h=size(M,1);
 if(isempty(ids)), bbs=zeros(0,5); return; end
 xs=floor((ids-1)/h); ys=ids-xs*h; xs=xs+1;
 bbs=[xs-floor(bbw/2) ys-floor(bbh/2)];
