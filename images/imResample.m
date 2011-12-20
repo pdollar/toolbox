@@ -43,7 +43,7 @@ if( bilinear )
   % use bilinear interpolation
   if(k==1), m1=round(scale*m); n1=round(scale*n);
   else m1=scale(1); n1=scale(2); end
-  B=imResampleMex(A,m1,n1,norm);
+  B=imResample1(A,m1,n1,norm);
 else
   % use nearest neighbor interpolation
   if(k==1), sy=scale; sx=sy; m1=ceil(m*sy); n1=ceil(n*sx);
