@@ -4,7 +4,7 @@ Version NEW
  -removed all 32 bit binaries (will no longer distribute)
  -TODO: plotRoc.m: needs cleanup, bug in return of det?
  -dijskstra.*: removed from toolbox (was broken on 64 bit matlab)
- -minor: dispMatrixIm.m, imtransform2, bbApply.m
+ -minor: dispMatrixIm.m, imtransform2, bbApply.m, jitterImage.m
 
 Version 2.61 (16-June-11)
  -imtransform2: massive overhaul (optimized, mexed, new IO format)

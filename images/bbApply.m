@@ -419,7 +419,7 @@ for i=1:n, [patches{i},bbs(i,1:4)]=crop1(bbs(i,1:4)); end
       patch = I(lcsS(1):lcsE(1),lcsS(2):lcsE(2),:);
     end
     bb = [lcsS([2 1]) lcsE([2 1])-lcsS([2 1])+1];
-    if(~isempty(dims)), patch=imResample(patch,dims(2),dims(1)); end
+    if(~isempty(dims)), patch=imResample(patch,[dims(2),dims(1)]); end
   end
 end
 

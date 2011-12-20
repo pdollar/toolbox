@@ -47,13 +47,13 @@ function IJ = jitterImage( I, varargin )
 %  % additionally create multiple scaled versions
 %  IJ = jitterImage(I,'scls',[1 1; 2 1; 1 2; 2 2]); montage2(IJ)
 %  % example on color image (5 images of slight rotations)
-%  I=imResample(imread('peppers.png'),100,100);
+%  I=imResample(imread('peppers.png'),[100,100]);
 %  IJ=jitterImage(I,'nPhi',5,'mPhi',25,'hasChn',1);
 %  montage2(uint8(IJ),{'hasChn',1})
 %
 % See also imtransform2
 %
-% Piotr's Image&Video Toolbox      Version 2.61
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2011 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
