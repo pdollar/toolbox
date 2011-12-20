@@ -1,9 +1,9 @@
 Version NEW
- -hog: major optimizations, removed obsolete param oGran
- -imResample: major optimziations, *input format has changed*
- -removed all 32 bit binaries (will no longer distribute)
  -TODO: plotRoc.m: needs cleanup, bug in return of det?
+ -imResample: major optimziations, *input format has changed*
+ -hog: major optimizations, removed obsolete param oGran
  -dijskstra.*: removed from toolbox (was broken on 64 bit matlab)
+ -removed all 32 bit binaries (will no longer distribute)
  -minor: dispMatrixIm.m, imtransform2, bbApply.m, jitterImage.m
 
 Version 2.61 (16-June-11)
