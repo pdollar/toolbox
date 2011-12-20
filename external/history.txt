@@ -1,4 +1,4 @@
-Version NEW
+Version 2.62 (20-Dec-11)
  -imResample: major optimziations, *input format has changed*
  -ploRoc.m: improved options and commenting, fixed second output parameter
  -hog: major optimizations, removed obsolete param oGran
