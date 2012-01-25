@@ -40,7 +40,7 @@ function varargout = bbApply( action, varargin )
 % Convert weighted mask to bbs.
 %   bbs = bbApply('frMask',M,bbw,bbh,[thr])
 % Create weighted mask encoding bb centers (or extent).
-%   M = bbApply('toMask',bbs,w,h,[fill])
+%   M = bbApply('toMask',bbs,w,h,[fill],[bgrd])
 %
 % USAGE
 %  varargout = bbApply( action, varargin );
@@ -58,7 +58,7 @@ function varargout = bbApply( action, varargin )
 % bbApply>union bbApply>resize bbApply>squarify bbApply>draw bbApply>crop
 % bbApply>convert bbApply>random bbApply>frMask bbApply>toMask
 %
-% Piotr's Image&Video Toolbox      Version 2.62
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2011 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -541,33 +541,38 @@ bbs=[xs-floor(bbw/2) ys-floor(bbh/2)];
 bbs(:,3)=bbw; bbs(:,4)=bbh; bbs(:,5)=M(ids);
 end
 
-function M = toMask( bbs, w, h, fill )
+function M = toMask( bbs, w, h, fill, bgrd )
 % Create weighted mask encoding bb centers (or extent).
 %
 % USAGE
-%  M = bbApply('toMask',bbs,w,h,[fill])
+%  M = bbApply('toMask',bbs,w,h,[fill],[bgrd])
 %
 % INPUTS
 %  bbs    - bounding boxes
 %  w      - mask target width
 %  h      - mask target height
 %  fill   - [0] if 1 encodes extent of bbs
+%  bgrd   - [0] default value for background pixels
 %
 % OUTPUTS
-%  M      - hxw binary mask
+%  M      - hxw mask
 %
 % EXAMPLE
 %
 % See also bbApply, bbApply>frMask
 if(nargin<4||isempty(fill)), fill=0; end
+if(nargin<5||isempty(bgrd)), bgrd=0; end
 if(size(bbs,2)==4), bbs(:,5)=1; end
-M=zeros(h,w); n=size(bbs,1);
+M=zeros(h,w); B=true(h,w); n=size(bbs,1);
 if( fill==0 )
   p=floor(getCenter(bbs)); p=sub2ind([h w],p(:,2),p(:,1));
   for i=1:n, M(p(i))=M(p(i))+bbs(i,5); end
+  if(bgrd~=0), B(p)=0; end
 else
   bbs=[intersect(round(bbs),[1 1 w h]) bbs(:,5)]; n=size(bbs,1);
   x0=bbs(:,1); x1=x0+bbs(:,3)-1; y0=bbs(:,2); y1=y0+bbs(:,4)-1;
-  for i=1:n, y=y0(i):y1(i); x=x0(i):x1(i); M(y,x)=M(y,x)+bbs(i,5); end
+  for i=1:n, y=y0(i):y1(i); x=x0(i):x1(i);
+    M(y,x)=M(y,x)+bbs(i,5); B(y,x)=0; end
 end
+if(bgrd~=0), M(B)=bgrd; end
 end
