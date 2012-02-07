@@ -29,7 +29,7 @@ function varargout = seqReaderPlugin( cmd, h, varargin )
 %
 % See also SEQIO, SEQWRITERPLUGIN
 %
-% Piotr's Image&Video Toolbox      Version 2.61
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2011 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -98,6 +98,7 @@ if(isempty(info)), info=readHeader(fid); else
   info.numFrames=0; fseek(fid,1024,'bof'); end
 switch(info.imageFormat)
   case {100,200}, ext='raw';
+  case {101    }, ext='brgb8';
   case {102,201}, ext='jpg';
   case {001,002}, ext='png';
   otherwise, error('unknown format');
@@ -108,7 +109,7 @@ if(strcmp(ext,'png')), getImgFile( 'png' ); end
 [tNm tNm]=fileparts(fName); t=clock; t=mod(t(end),1);
 tNm=sprintf('tmp_%s_%09i.%s',tNm,round((t+rand)/2*1e9),ext);
 % compute seek info for compressed images
-if(strcmp(ext,'raw')), assert(info.numFrames>0); else
+if(any(strcmp(ext,{'raw','brgb8'}))), assert(info.numFrames>0); else
   oName=[fName '-seek.mat']; n=info.numFrames; if(n==0), n=10^7; end
   if(exist(oName,'file')==2), load(oName); info.seek=seek; else %#ok<NODEF>
     tid=ticStatus('loading seek info',.1,5); seek=zeros(n,1); seek(1)=1024;
@@ -139,17 +140,18 @@ function [I,ts] = getFrame( frame, fid, info, tNm, decode )
 nCh=info.imageBitDepth/8; ext=info.ext;
 if(frame<0 || frame>=info.numFrames), I=[]; ts=[]; return; end
 switch ext
-  case 'raw'
+  case {'raw','brgb8'}
     % read in an uncompressed image (assume imageBitDepthReal==8)
     fseek(fid,1024+frame*info.trueImageSize,'bof');
     I = fread(fid,info.imageSizeBytes,'*uint8');
     if( decode )
       % reshape appropriately for mxn or mxnx3 RGB image
-      siz = [info.height info.width info.imageBitDepth/8];
+      siz = [info.height info.width nCh];
       if(nCh==1), I=reshape(I,siz(2),siz(1))'; else
         I = permute(reshape(I,siz(3),siz(2),siz(1)),[3,2,1]);
       end
       if(nCh==3), t=I(:,:,3); I(:,:,3)=I(:,:,1); I(:,:,1)=t; end
+      if(strcmp(ext,'brgb8')), I=demosaic(I,'bggr'); end
     end
   case 'jpg'
     fseek(fid,info.seek(frame+1),'bof'); nBytes=fread(fid,1,'uint32');
@@ -182,7 +184,7 @@ n=length(frames); ts=nan(1,n);
 for i=1:n, frame=frames(i);
   if(frame<0 || frame>=info.numFrames), continue; end
   switch info.ext
-    case 'raw' % uncompressed
+    case {'raw','brgb8'} % uncompressed
       fseek(fid,1024+frame*info.trueImageSize+info.imageSizeBytes,'bof');
     case {'jpg','png'} % compressed
       fseek(fid,info.seek(frame+1),'bof');
