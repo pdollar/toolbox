@@ -27,13 +27,13 @@ function [h,miss] = plotRoc( D, varargin )
 %   .nMarker  - [5] number of markers (regularly spaced) to display
 %   .lims     - [0 1 0 1] axes limits
 %   .smooth   - [0] if T compute lower envelop of roc to smooth staircase
-%   .fpTarget - [-1] if>0 plot line and return detection rate at given fp
+%   .fpTarget - [] return miss rates at given fp values (and draw lines)
 %   .xLbl     - ['false positive rate'] label for x-axis
 %   .yLbl     - ['miss rate'] label for y-axis
 %
 % OUTPUTS
 %  h    - plot handle for use in legend only
-%  miss - miss rate at fpTarget (if fpTarget specified)
+%  miss - miss rates at fpTarget reference values (if fpTarget specified)
 %
 % EXAMPLE
 %  k=2; x=0:.0001:1; data1 = [1-x; (1-x.^k).^(1/k)]';
@@ -44,7 +44,7 @@ function [h,miss] = plotRoc( D, varargin )
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 2.62
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2011 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -53,7 +53,7 @@ function [h,miss] = plotRoc( D, varargin )
 [color lineSt lineWd logx logy marker mrkrSiz nMarker lims smooth ...
   fpTarget xLbl yLbl] = getPrmDflt( varargin, {'color' 'g' 'lineSt' '-' ...
   'lineWd' 4 'logx' 0 'logy' 0 'marker' '' 'mrkrSiz' 12 'nMarker' 5 ...
-  'lims' [] 'smooth' 0 'fpTarget' -1, 'xLbl' 'false positive rate' ...
+  'lims' [] 'smooth' 0 'fpTarget' [] 'xLbl' 'false positive rate' ...
   'yLbl' 'miss rate' } );
 if( isempty(lims) ); lims=[logx*1e-5 1 logy*1e-5 1]; end
 
@@ -79,10 +79,12 @@ if(nD>1), DQs=std(squeeze(DQ(:,2,:)),0,2);
 xlabel(xLbl); ylabel(yLbl);
 
 % plot line at given fp rate
-if( fpTarget<=0 ), miss=-1; else
-  [d,i]=max(D1(:,1)<fpTarget); miss=D1(i,2);
-  title(sprintf('miss rate = %.2f%%',miss*100));
-  plot([fpTarget fpTarget],lims(3:4),'LineWidth',1,'Color',.7*[1 1 1]);
+m=length(fpTarget); miss=zeros(1,m);
+if( m>0 )
+  assert( min(D1(:,1))<=min(fpTarget) );
+  for i=1:m, j=find(D1(:,1)<=fpTarget(i)); miss(i)=D1(j(1),2); end
+  fp=min(fpTarget); plot([fp fp],lims(3:4),'Color',.7*[1 1 1]);
+  fp=max(fpTarget); plot([fp fp],lims(3:4),'Color',.7*[1 1 1]);
 end
 
 % set log axes

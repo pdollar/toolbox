@@ -1,4 +1,5 @@
 Version NEW
+ -plotRoc.m: ability to specify multiple reference points
  -bbGt.m: optimized various subfunctions and made more flexible
  -minor: bbApply.m, seqReaderPlugin.m
 
