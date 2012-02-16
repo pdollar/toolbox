@@ -536,6 +536,13 @@ function [gt,dt,files] = evalResDir( gtDir, dtDir, varargin )
 % bounding box (left/top/width/height/detection score). The text file may
 % be empty in the case of no detections, but it must exist.
 %
+% File names: given an image named "name.ext", the corresponding gt file
+% should be named either "name.txt" or "name.ext.txt". If the gt uses the
+% format "name.txt", so must the dt files. If the gt files use the format
+% "name.ext.txt", the dt files can use either "name.txt" or "name.ext.txt".
+% In other words the image extension (".ext") is optional, but ".txt" is
+% mandatory. Naming must be consistent across the whole directory.
+%
 % Prior to calling evalRes(), the ground truth annotation is passed through
 % bbGt>toGt() with the parameters pGt. See bbGt>toGt() for more info. The
 % detections are optionally resized before comparing against the ground
@@ -574,14 +581,15 @@ function [gt,dt,files] = evalResDir( gtDir, dtDir, varargin )
 % bbApply>resize
 
 % get parameters
-dfs={'thr',.5,'mul',0,'pGt',{},'resize',{},...
-  'pNms',struct('type','none'),'f0',1,'f1',inf,'imDir',''};
-[thr,mul,pGt,resize,pNms,f0,f1,imDir]=getPrmDflt(varargin,dfs,1);
+noNms=struct('type','none'); dfs={'thr',.5,'mul',0,'pGt',{},...
+  'resize',{},'pNms',noNms,'f0',1,'f1',inf,'imDir',''};
+[thr,mul,pGt,r,pNms,f0,f1,imDir]=getPrmDflt(varargin,dfs,1);
 if(isempty(imDir)), imDir=gtDir; end
 
 % get list of files in ground truth directory
 fs=dir([gtDir '/*.txt']); fs={fs.name};
 fs=fs(f0:min(f1,end)); n=length(fs); assert(n>0);
+files=cell(1,n); for i=1:n, files{i}=[imDir '/' fs{i}(1:end-4)]; end
 
 % load and prepare ground truth annotations (or use cached values)
 persistent keyPrv gtPrv; key={fs,gtDir,pGt};
@@ -590,21 +598,19 @@ if(isequal(key,keyPrv)), gt=gtPrv; else gt=cell(1,n);
   gtPrv=gt; keyPrv=key;
 end
 
-% load and prepare detections
+% load detections
 for i=1:n, dtNm=[dtDir '/' fs{i}]; if(i==1), dt=cell(1,n); end
   if(~exist(dtNm,'file')), dtNm=[dtDir '/' fs{i}(1:end-8) '.txt']; end
   dt1=load(dtNm,'-ascii');
-  if(numel(dt1)==0), dt1=zeros(0,5); end; dt1=dt1(:,1:5);
-  if(~isempty(resize)), dt1=bbApply('resize',dt1,resize{:}); end
-  if(~isequal(pNms,struct('type','none'))), dt1=bbNms(dt1,pNms); end
-  dt{i}=dt1;
+  if(numel(dt1)==0), dt1=zeros(0,5); end; dt{i}=dt1(:,1:5);
 end
+
+% post-process detections if necessary
+if(~isempty(r)), for i=1:n, dt{i}=bbApply('resize',dt{i},r{:}); end; end
+if(~isequal(pNms,noNms)), for i=1:n, dt{i}=bbNms(dt{i},pNms); end; end
 
 % run evaluation on each image
 for i=1:n, [gt{i},dt{i}] = evalRes(gt{i},dt{i},thr,mul); end
-
-% construct list of image files
-files=cell(1,n); for i=1:n, files{i} = [imDir '/' fs{i}(1:end-4)]; end
 
 end
 
