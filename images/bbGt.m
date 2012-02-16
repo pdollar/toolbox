@@ -560,11 +560,11 @@ for i=1:n
   dt1=bbNms(dt1,pNms);
   % load ground truth and prepare for evaluation
   gtNm=[gtDir '/' files{i}];
-  gt1 = bbGt('toGt',bbGt('bbLoad',gtNm),pGt);
+  gt1 = toGt(bbLoad(gtNm),pGt);
   % name of corresponding image
   files{i} = [imDir '/' files{i}(1:end-4)];
   % run evaluation and store result
-  [gt1,dt1] = bbGt('evalRes',gt1,dt1,thr,mul);
+  [gt1,dt1] = evalRes(gt1,dt1,thr,mul);
   gt{i}=gt1; dt{i}=dt1; tocStatus(ticId,i/n);
 end
 
