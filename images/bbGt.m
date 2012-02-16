@@ -81,7 +81,7 @@ function varargout = bbGt( action, varargin )
 % bbGt>evalResDir, bbGt>compRoc, bbGt>cropRes, bbGt>compOas, bbGt>compOa,
 % bbGt>sampleData
 %
-% Piotr's Image&Video Toolbox      Version 2.52
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -157,13 +157,13 @@ function objs = bbLoad( fName )
 % EXAMPLE
 %
 % See also bbGt, bbGt>bbSave
-if(~exist(fName,'file')), error([fName ' not found']); end
-try v=textread(fName,'%% bbGt version=%d',1); catch, v=0; end %#ok<CTCH>
+fId=fopen(fName); if(fId==-1), error(['unable to open file: ' fName]); end
+try v=textscan(fId,'%% bbGt version=%d'); v=v{1}; catch, v=0; end%#ok<CTCH>
 if(isempty(v)), v=0; end; opts={'commentstyle','matlab'};
 % if old ann version may have fewer fields m (initialize them to 0)
 if(all(v~=[0 1 2 3])), error('Unknown version %i.',v); end
-ms=[10 10 11 12]; m=ms(v+1); in=cell(1,m);
-[in{:}]=textread(fName,['%s' repmat(' %d',1,m-1)],opts{:});
+ms=[10 10 11 12]; m=ms(v+1);
+in=textscan(fId,['%s' repmat(' %d',1,m-1)],opts{:}); fclose(fId);
 for i=m+1:12, in{i}=zeros(length(in{1}),1); end
 % create objs struct from read in fields
 nObj=length(in{1}); O=ones(1,nObj); occ=mat2cell(in{6},O,1);
