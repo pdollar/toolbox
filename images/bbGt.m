@@ -573,30 +573,35 @@ function [gt,dt,files] = evalResDir( gtDir, dtDir, varargin )
 % See also bbGt, bbGt>evalRes, bbGt>toGt, bbNms, bbGt>compRoc,
 % bbApply>resize
 
+% get parameters
 dfs={'thr',.5,'mul',0,'pGt',{},'resize',{},...
   'pNms',struct('type','none'),'f0',1,'f1',inf,'imDir',''};
 [thr,mul,pGt,resize,pNms,f0,f1,imDir]=getPrmDflt(varargin,dfs,1);
 if(isempty(imDir)), imDir=gtDir; end
-% get files in ground truth directory
-files=dir([gtDir '/*.txt']); files={files.name};
-files=files(f0:min(f1,end)); n=length(files); assert(n>0);
+
+% get list of files in ground truth directory
+fs=dir([gtDir '/*.txt']); fs={fs.name};
+fs=fs(f0:min(f1,end)); n=length(fs); assert(n>0);
 gt=cell(1,n); dt=cell(1,n);
-for i=1:n
-  % load detections results and process appropriately
-  dtNm=[dtDir '/' files{i}];
-  if(~exist(dtNm,'file')), dtNm=[dtDir '/' files{i}(1:end-8) '.txt']; end
+
+% load and prepare ground truth annotations
+for i=1:n, gt{i}=toGt(bbLoad([gtDir '/' fs{i}]),pGt); end
+
+% load and prepare detections
+for i=1:n, dtNm=[dtDir '/' fs{i}];
+  if(~exist(dtNm,'file')), dtNm=[dtDir '/' fs{i}(1:end-8) '.txt']; end
   dt1=load(dtNm,'-ascii');
   if(numel(dt1)==0), dt1=zeros(0,5); end; dt1=dt1(:,1:5);
   if(~isempty(resize)), dt1=bbApply('resize',dt1,resize{:}); end
   if(~isequal(pNms,struct('type','none'))), dt1=bbNms(dt1,pNms); end
-  % load ground truth and prepare for evaluation
-  gtNm=[gtDir '/' files{i}];
-  gt1 = toGt(bbLoad(gtNm),pGt);
-  % name of corresponding image
-  files{i} = [imDir '/' files{i}(1:end-4)];
-  % run evaluation and store result
-  [gt{i},dt{i}] = evalRes(gt1,dt1,thr,mul);
+  dt{i}=dt1;
 end
+
+% run evaluation on each image
+for i=1:n, [gt{i},dt{i}] = evalRes(gt{i},dt{i},thr,mul); end
+
+% construct list of image files
+files=cell(1,n); for i=1:n, files{i} = [imDir '/' fs{i}(1:end-4)]; end
 
 end
 
