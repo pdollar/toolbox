@@ -580,7 +580,7 @@ if(isempty(imDir)), imDir=gtDir; end
 % get files in ground truth directory
 files=dir([gtDir '/*.txt']); files={files.name};
 files=files(f0:min(f1,end)); n=length(files); assert(n>0);
-gt=cell(1,n); dt=cell(1,n); ticId=ticStatus('evaluating');
+gt=cell(1,n); dt=cell(1,n);
 for i=1:n
   % load detections results and process appropriately
   dtNm=[dtDir '/' files{i}];
@@ -588,15 +588,14 @@ for i=1:n
   dt1=load(dtNm,'-ascii');
   if(numel(dt1)==0), dt1=zeros(0,5); end; dt1=dt1(:,1:5);
   if(~isempty(resize)), dt1=bbApply('resize',dt1,resize{:}); end
-  dt1=bbNms(dt1,pNms);
+  if(~isequal(pNms,struct('type','none'))), dt1=bbNms(dt1,pNms); end
   % load ground truth and prepare for evaluation
   gtNm=[gtDir '/' files{i}];
   gt1 = toGt(bbLoad(gtNm),pGt);
   % name of corresponding image
   files{i} = [imDir '/' files{i}(1:end-4)];
   % run evaluation and store result
-  [gt1,dt1] = evalRes(gt1,dt1,thr,mul);
-  gt{i}=gt1; dt{i}=dt1; tocStatus(ticId,i/n);
+  [gt{i},dt{i}] = evalRes(gt1,dt1,thr,mul);
 end
 
 end
