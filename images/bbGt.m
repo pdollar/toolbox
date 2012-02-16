@@ -110,7 +110,7 @@ function objs = create( n )
 %
 % See also bbGt
 o=struct('lbl','','bb',[0 0 0 0],'occ',0,'bbv',[0 0 0 0],'ign',0,'ang',0);
-if(nargin<1), n=1; end; objs=repmat(o,n,1);
+if(nargin<1 || n==1), objs=o; return; end; objs=o(ones(n,1));
 end
 
 function objs = bbSave( objs, fName )
@@ -159,17 +159,19 @@ function objs = bbLoad( fName )
 % See also bbGt, bbGt>bbSave
 fId=fopen(fName); if(fId==-1), error(['unable to open file: ' fName]); end
 try v=textscan(fId,'%% bbGt version=%d'); v=v{1}; catch, v=0; end%#ok<CTCH>
-if(isempty(v)), v=0; end; opts={'commentstyle','matlab'};
-% if old ann version may have fewer fields m (initialize them to 0)
+if(isempty(v)), v=0; end
+% read in annotation (m is number of fields for given version v)
 if(all(v~=[0 1 2 3])), error('Unknown version %i.',v); end
-ms=[10 10 11 12]; m=ms(v+1);
-in=textscan(fId,['%s' repmat(' %d',1,m-1)],opts{:}); fclose(fId);
-for i=m+1:12, in{i}=zeros(length(in{1}),1); end
+frmt='%s %d %d %d %d %d %d %d %d %d %d %d';
+ms=[10 10 11 12]; m=ms(v+1); frmt=frmt(1:2+(m-1)*3);
+in=textscan(fId,frmt); fclose(fId);
 % create objs struct from read in fields
-nObj=length(in{1}); O=ones(1,nObj); occ=mat2cell(in{6},O,1);
-bb=mat2cell([in{2:5}],O,4); bbv=mat2cell([in{7:10}],O,4);
-ign=mat2cell(in{11},O,1); ang=mat2cell(in{12},O,1);
-objs=struct('lbl',in{1},'bb',bb,'occ',occ,'bbv',bbv,'ign',ign,'ang',ang);
+n=length(in{1}); objs=create(n);
+for i=1:n, objs(i).lbl=in{1}{i}; objs(i).occ=in{6}(i); end
+bb=[in{2} in{3} in{4} in{5}]; bbv=[in{7} in{8} in{9} in{10}];
+for i=1:n, objs(i).bb=bb(i,:); objs(i).bbv=bbv(i,:); end
+if(m>=11), for i=1:n, objs(i).ign=in{11}(i); end; end
+if(m>=12), for i=1:n, objs(i).ang=in{12}(i); end; end
 end
 
 function vals = get( objs, name )
