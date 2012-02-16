@@ -582,13 +582,16 @@ if(isempty(imDir)), imDir=gtDir; end
 % get list of files in ground truth directory
 fs=dir([gtDir '/*.txt']); fs={fs.name};
 fs=fs(f0:min(f1,end)); n=length(fs); assert(n>0);
-gt=cell(1,n); dt=cell(1,n);
 
-% load and prepare ground truth annotations
-for i=1:n, gt{i}=toGt(bbLoad([gtDir '/' fs{i}]),pGt); end
+% load and prepare ground truth annotations (or use cached values)
+persistent keyPrv gtPrv; key={fs,gtDir,pGt};
+if(isequal(key,keyPrv)), gt=gtPrv; else gt=cell(1,n);
+  for i=1:n, gt{i}=toGt(bbLoad([gtDir '/' fs{i}]),pGt); end
+  gtPrv=gt; keyPrv=key;
+end
 
 % load and prepare detections
-for i=1:n, dtNm=[dtDir '/' fs{i}];
+for i=1:n, dtNm=[dtDir '/' fs{i}]; if(i==1), dt=cell(1,n); end
   if(~exist(dtNm,'file')), dtNm=[dtDir '/' fs{i}(1:end-8) '.txt']; end
   dt1=load(dtNm,'-ascii');
   if(numel(dt1)==0), dt1=zeros(0,5); end; dt1=dt1(:,1:5);
