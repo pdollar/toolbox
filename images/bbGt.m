@@ -543,6 +543,12 @@ function [gt,dt,files] = evalResDir( gtDir, dtDir, varargin )
 % In other words the image extension (".ext") is optional, but ".txt" is
 % mandatory. Naming must be consistent across the whole directory.
 %
+% As an alternative to specifying a directory of detection files, dtDir can
+% point to a single text file that contains the detection results across
+% all images. In this case each row in the text file has an extra leading
+% column specifying the image id: (imgId/left/top/width/height/score). If
+% dtDir points to a text file f1 must be 1.
+%
 % Prior to calling evalRes(), the ground truth annotation is passed through
 % bbGt>toGt() with the parameters pGt. See bbGt>toGt() for more info. The
 % detections are optionally resized before comparing against the ground
@@ -559,7 +565,7 @@ function [gt,dt,files] = evalResDir( gtDir, dtDir, varargin )
 %
 % INPUTS
 %  gtDir        - location of ground truth
-%  dtDir        - location of detections
+%  dtDir        - location of detections (or file containing all dts)
 %  varargin     - additional params (struct or name/value pairs)
 %   .thr          - [.5] threshold for evalRes()
 %   .mul          - [0] multiple match flag for evalRes()
@@ -598,14 +604,19 @@ if(isequal(key,keyPrv)), gt=gtPrv; else gt=cell(1,n);
   gtPrv=gt; keyPrv=key;
 end
 
-% load detections
-for i=1:n
-  nm=fs{i}(1:end-4); p=find(nm=='.'); ext='';
-  if(~isempty(p)), p=p(end); ext=nm(p:end); nm=nm(1:p-1); end
-  nm0=[dtDir '/' nm '.txt']; nm1=[dtDir '/' nm ext '.txt'];
-  if(i==1), dt=cell(1,n); useExt=exist(nm1,'file'); end
-  if(useExt), dt1=load(nm1,'-ascii'); else dt1=load(nm0,'-ascii'); end
-  if(numel(dt1)==0), dt1=zeros(0,5); end; dt{i}=dt1(:,1:5);
+% load detections (from single or multiple files)
+if( length(dtDir)>4 && strcmp(dtDir(end-3:end),'.txt') )
+  assert(f0==1); dt1=load(dtDir,'-ascii'); ids=dt1(:,1);
+  dt=cell(1,n); for i=1:n, dt{i}=dt1(ids==i,2:6); end
+else
+  for i=1:n
+    nm=fs{i}(1:end-4); p=find(nm=='.'); ext='';
+    if(~isempty(p)), p=p(end); ext=nm(p:end); nm=nm(1:p-1); end
+    nm0=[dtDir '/' nm '.txt']; nm1=[dtDir '/' nm ext '.txt'];
+    if(i==1), dt=cell(1,n); useExt=exist(nm1,'file'); end
+    if(useExt), dt1=load(nm1,'-ascii'); else dt1=load(nm0,'-ascii'); end
+    if(numel(dt1)==0), dt1=zeros(0,5); end; dt{i}=dt1(:,1:5);
+  end
 end
 
 % post-process detections if necessary
