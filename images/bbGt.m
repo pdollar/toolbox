@@ -327,27 +327,47 @@ function [gtBbs,ids] = toGt( objs, prm )
 %
 % See also bbGt
 
-r=[0 inf]; r1=[-inf inf];
-dfs={'lbls',[],'ilbls',[],'hRng',r,'wRng',r,'aRng',r,'arRng',r,...
-  'oRng',r,'xRng',r1,'yRng',r1,'vRng',r,'ar',[],'pad',0,'ellipse',1};
-[lbls,ilbls,hRng,wRng,aRng,arRng,oRng,xRng,yRng,vRng,ar0,pad,ellipse] = ...
-  getPrmDflt(prm,dfs,1);
-if(numel(pad)==1), pad=[pad pad]; end;
-nObj=length(objs); keep=true(nObj,1); gtBbs=zeros(nObj,5);
-chk = @(v,rng) v<rng(1) || v>rng(2); lbls=[lbls ilbls];
-for i=1:nObj, o=objs(i);
-  if(~isempty(lbls) && ~any(strcmp(o.lbl,lbls))), keep(i)=0; continue; end
-  bb=o.bb; bbv=o.bbv; w=bb(3); h=bb(4); a=w*h; ar=w/h; ang=mod(o.ang,360);
-  if(~o.occ || all(bbv==0)), v=1; elseif(all(bbv==bb)), v=0; else
-    v=bbv(3)*bbv(4)/a; end
-  ex = bbExtent(o.bb,ang,ellipse);
-  ign = o.ign || any(strcmp(o.lbl,ilbls)) || chk(h,hRng) || chk(w,wRng) ...
-    || chk(a,aRng) || chk(ar,arRng) || chk(ang,oRng) || chk(v,vRng) ...
-    || chk(ex(1),xRng) || chk(ex(1)+ex(3),xRng) ...
-    || chk(ex(2),yRng) || chk(ex(2)+ex(4),xRng);
-  gtBbs(i,1:4)=ex; gtBbs(i,5)=ign;
+% get parameters
+checks = ~isempty(prm);
+if(~checks), lbls=[]; ilbls=[]; ar0=[]; pad=[0 0]; ellipse=1; else
+  r=[0 inf]; r1=[-inf inf];
+  dfs={'lbls',[],'ilbls',[],'hRng',r,'wRng',r,'aRng',r,'arRng',r,...
+    'oRng',r,'xRng',r1,'yRng',r1,'vRng',r,'ar',[],'pad',0,'ellipse',1};
+  [lbls,ilbls,hRng,wRng,aRng,arRng,oRng,xRng,yRng,vRng,ar0,pad,...
+    ellipse] = getPrmDflt(prm,dfs,1);
+  if(numel(pad)==1), pad=[pad pad]; end;
 end
-ids=find(keep); gtBbs=gtBbs(keep,:);
+
+% only keep objects whose lbl is in lbls or ilbls
+n=length(objs); lbls=[lbls ilbls];
+if(isempty(lbls)), ids=1:n; else
+  K=true(n,1); for i=1:n, K(i)=any(strcmp(objs(i).lbl,lbls)); end
+  ids=find(K); objs=objs(ids); n=length(objs);
+end
+
+% get extent of each bounding box (not trivial if ang~=0)
+gtBbs=[reshape([objs.bb],4,[]); [objs.ign]]';
+for i=1:n, ang=mod(objs(i).ang,360); objs(i).ang=ang;
+  if(ang~=0), gtBbs(i,1:4)=bbExtent(gtBbs(i,1:4),ang,ellipse); end
+end
+
+% set ignore flags for each gtBb (could be made much more efficient)
+if( checks )
+  chk = @(v,rng) v<rng(1) || v>rng(2);
+  for i=1:n, o=objs(i);
+    bb=o.bb; bbv=o.bbv; w=bb(3); h=bb(4); a=w*h; ar=w/h; ang=o.ang;
+    if(~o.occ || all(bbv==0)), v=1; elseif(all(bbv==bb)), v=0; else
+      v=bbv(3)*bbv(4)/a; end
+    ex = gtBbs(i,1:4);
+    ign = any(strcmp(o.lbl,ilbls)) || chk(h,hRng) || chk(w,wRng) ...
+      || chk(a,aRng) || chk(ar,arRng) || chk(ang,oRng) || chk(v,vRng) ...
+      || chk(ex(1),xRng) || chk(ex(1)+ex(3),xRng) ...
+      || chk(ex(2),yRng) || chk(ex(2)+ex(4),xRng);
+    gtBbs(i,5)=ign;
+  end
+end
+
+% final reshaping of gtBbs
 if(ar0), gtBbs=bbApply('squarify',gtBbs,0,ar0); end
 if(any(pad~=0)), gtBbs=bbApply('resize',gtBbs,1+pad(2),1+pad(1)); end
 
