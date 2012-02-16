@@ -1,5 +1,6 @@
 Version NEW
- -minor: bbApply.m, seqReaderPlugin.m, bbGt.m
+ -bbGt.m: optimized various subfunctions and made more flexible
+ -minor: bbApply.m, seqReaderPlugin.m
 
 Version 2.62 (22-Dec-11)
  -imResample: major optimziations, *input format has changed*

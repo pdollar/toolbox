@@ -599,9 +599,12 @@ if(isequal(key,keyPrv)), gt=gtPrv; else gt=cell(1,n);
 end
 
 % load detections
-for i=1:n, dtNm=[dtDir '/' fs{i}]; if(i==1), dt=cell(1,n); end
-  if(~exist(dtNm,'file')), dtNm=[dtDir '/' fs{i}(1:end-8) '.txt']; end
-  dt1=load(dtNm,'-ascii');
+for i=1:n
+  nm=fs{i}(1:end-4); p=find(nm=='.'); ext='';
+  if(~isempty(p)), p=p(end); ext=nm(p:end); nm=nm(1:p-1); end
+  nm0=[dtDir '/' nm '.txt']; nm1=[dtDir '/' nm ext '.txt'];
+  if(i==1), dt=cell(1,n); useExt=exist(nm1,'file'); end
+  if(useExt), dt1=load(nm1,'-ascii'); else dt1=load(nm0,'-ascii'); end
   if(numel(dt1)==0), dt1=zeros(0,5); end; dt{i}=dt1(:,1:5);
 end
 
