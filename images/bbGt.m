@@ -44,7 +44,7 @@ function varargout = bbGt( action, varargin )
 %
 %%% (2) Routines for evaluating the Pascal criteria for object detection.
 % Returns filtered ground truth bbs for purpose of evaluation.
-%   gtBbs = bbGt( 'toGt', objs, prm )
+%   bbs = bbGt( 'toGt', objs, prm )
 % Evaluates detections in a single frame against ground truth data.
 %  [gt, dt] = bbGt( 'evalRes', gt0, dt0, [thr], [mul] )
 % Display evaluation results for given image.
@@ -266,7 +266,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [gtBbs,ids] = toGt( objs, prm )
+function [bbs,ids] = toGt( objs, prm )
 % Returns filtered ground truth bbs for purpose of evaluation.
 %
 % Returns bbs for all objects with lbl in lbls. The result is an [nx5]
@@ -295,27 +295,27 @@ function [gtBbs,ids] = toGt( objs, prm )
 % which case v=0 (note that v~=1 in this case).
 %
 % USAGE
-%  gtBbs = bbGt( 'toGt', objs, prm )
+%  bbs = bbGt( 'toGt', objs, prm )
 %
 % INPUTS
 %  objs     - ground truth objects
 %  prm      -
 %   .lbls       - [] return objs w these labels (or [] to return all)
 %   .ilbls      - [] return objs w these labels but set to ignore
-%   .hRng       - [0 inf] range of acceptable obj heights
-%   .wRng       - [0 inf] range of acceptable obj widths
-%   .aRng       - [0 inf] range of acceptable obj areas
-%   .arRng      - [0 inf] range of acceptable obj aspect ratios
-%   .oRng       - [0 inf] range of acceptable obj orientations (angles)
-%   .xRng       - [-inf inf] range of x coordinates of bb extent
-%   .yRng       - [-inf inf] range of y coordinates of bb extent
-%   .vRng       - [0 inf] range of acceptable obj occlusion levels
+%   .hRng       - [] range of acceptable obj heights
+%   .wRng       - [] range of acceptable obj widths
+%   .aRng       - [] range of acceptable obj areas
+%   .arRng      - [] range of acceptable obj aspect ratios
+%   .oRng       - [] range of acceptable obj orientations (angles)
+%   .xRng       - [] range of x coordinates of bb extent
+%   .yRng       - [] range of y coordinates of bb extent
+%   .vRng       - [] range of acceptable obj occlusion levels
 %   .ar         - [] standardize aspect ratios of bbs
 %   .pad        - [0] frac extra padding for each patch (or [padx pady])
 %   .ellipse    - [1] controls how oriented bb is converted to regular bb
 %
 % OUTPUTS
-%  gtBbs    - [n x 5] array containg ground truth bbs [x y w h ignore]
+%  bbs      - [n x 5] array containg ground truth bbs [x y w h ignore]
 %  ids      - [n x 1] list of object ids selected
 %
 % EXAMPLE
@@ -323,67 +323,64 @@ function [gtBbs,ids] = toGt( objs, prm )
 %  objs(1).ign=0; objs(1).lbl='person'; objs(1).bb=[0 0 10 10];
 %  objs(2).ign=0; objs(2).lbl='person'; objs(2).bb=[0 0 20 20];
 %  objs(3).ign=0; objs(3).lbl='bicycle'; objs(3).bb=[0 0 20 20];
-%  [gtBbs,ids] = bbGt('toGt',objs,{'lbls',{'person'},'hRng',[15 inf]})
+%  [bbs,ids] = bbGt('toGt',objs,{'lbls',{'person'},'hRng',[15 inf]})
 %
 % See also bbGt
 
 % get parameters
-checks = ~isempty(prm);
-if(~checks), lbls=[]; ilbls=[]; ar0=[]; pad=[0 0]; ellipse=1; else
+if(isempty(prm)), ellipse=1; checks=0; else
   dfs={'lbls',[],'ilbls',[],'hRng',[],'wRng',[],'aRng',[],'arRng',[],...
     'oRng',[],'xRng',[],'yRng',[],'vRng',[],'ar',[],'pad',0,'ellipse',1};
   [lbls,ilbls,hRng,wRng,aRng,arRng,oRng,xRng,yRng,vRng,ar0,pad,...
     ellipse] = getPrmDflt(prm,dfs,1);
-  if(numel(pad)==1), pad=[pad pad]; end;
+  checks=1; if(numel(pad)==1), pad=[pad pad]; end;
 end
 
 % only keep objects whose lbl is in lbls or ilbls
-n=length(objs); lbls=[lbls ilbls];
-if(isempty(lbls)), ids=1:n; else
-  K=true(n,1); for i=1:n, K(i)=any(strcmp(objs(i).lbl,lbls)); end
+n=length(objs); ids=1:n;
+if(checks && (~isempty(lbls) || ~isempty(ilbls))), K=true(n,1);
+  for i=1:n, K(i)=any(strcmp(objs(i).lbl,[lbls ilbls])); end
   ids=find(K); objs=objs(ids); n=length(objs);
 end
 
 % get extent of each bounding box (not trivial if ang~=0)
-gtBbs=[reshape([objs.bb],4,[]); [objs.ign]]';
+if(n==0), bbs=zeros(0,5); return; end
+bbs=double([reshape([objs.bb],4,[]); [objs.ign]]');
 for i=1:n, ang=mod(objs(i).ang,360); objs(i).ang=ang;
-  if(ang~=0), gtBbs(i,1:4)=bbExtent(gtBbs(i,1:4),ang,ellipse); end
+  if(ang~=0), bbs(i,1:4)=bbExtent(bbs(i,1:4),ang,ellipse); end
 end
+if(checks==0), return; end
 
 % filter (set ignore flags)
-if( checks )
-  if(~isempty(ilbls)), for i=1:n, v=objs(i).lbl;
-      gtBbs(i,5)=gtBbs(i,5) || any(strcmp(v,ilbls)); end; end
-  if(~isempty(xRng)),  for i=1:n, v=gtBbs(i,1);
-      gtBbs(i,5)=gtBbs(i,5) || v<xRng(1) || v>xRng(2); end; end
-  if(~isempty(xRng)),  for i=1:n, v=gtBbs(i,1)+gtBbs(i,3);
-      gtBbs(i,5)=gtBbs(i,5) || v<xRng(1) || v>xRng(2); end; end
-  if(~isempty(yRng)),  for i=1:n, v=gtBbs(i,2);
-      gtBbs(i,5)=gtBbs(i,5) || v<yRng(1) || v>yRng(2); end; end
-  if(~isempty(yRng)),  for i=1:n, v=gtBbs(i,2)+gtBbs(i,4);
-      gtBbs(i,5)=gtBbs(i,5) || v<yRng(1) || v>yRng(2); end; end
-  if(~isempty(wRng)),  for i=1:n, v=objs(i).bb(3);
-      gtBbs(i,5)=gtBbs(i,5) || v<wRng(1) || v>wRng(2); end; end
-  if(~isempty(hRng)),  for i=1:n, v=objs(i).bb(4);
-      gtBbs(i,5)=gtBbs(i,5) || v<hRng(1) || v>hRng(2); end; end
-  if(~isempty(oRng)),  for i=1:n, v=objs(i).ang;
-      gtBbs(i,5)=gtBbs(i,5) || v<oRng(1) || v>oRng(2); end; end
-  if(~isempty(aRng)),  for i=1:n, v=objs(i).bb(3)*objs(i).bb(4);
-      gtBbs(i,5)=gtBbs(i,5) || v<aRng(1) || v>aRng(2); end; end
-  if(~isempty(arRng)), for i=1:n, v=objs(i).bb(3)/objs(i).bb(4);
-      gtBbs(i,5)=gtBbs(i,5) || v<arRng(1) || v>arRng(2); end; end
-  if(~isempty(vRng))
-    for i=1:n, o=objs(i); bb=o.bb; bbv=o.bbv;
-      if(~o.occ || all(bbv==0)), v=1; elseif(all(bbv==bb)), v=0; else
-        v=bbv(3)*bbv(4)/bb(3)*bb(4); end
-      gtBbs(i,5)=gtBbs(i,5) || v<vRng(1) || v>vRng(2);
-    end;
-  end
+if(~isempty(ilbls)), for i=1:n, v=objs(i).lbl;
+    bbs(i,5)=bbs(i,5) || any(strcmp(v,ilbls)); end; end
+if(~isempty(xRng)),  for i=1:n, v=bbs(i,1);
+    bbs(i,5)=bbs(i,5) || v<xRng(1) || v>xRng(2); end; end
+if(~isempty(xRng)),  for i=1:n, v=bbs(i,1)+bbs(i,3);
+    bbs(i,5)=bbs(i,5) || v<xRng(1) || v>xRng(2); end; end
+if(~isempty(yRng)),  for i=1:n, v=bbs(i,2);
+    bbs(i,5)=bbs(i,5) || v<yRng(1) || v>yRng(2); end; end
+if(~isempty(yRng)),  for i=1:n, v=bbs(i,2)+bbs(i,4);
+    bbs(i,5)=bbs(i,5) || v<yRng(1) || v>yRng(2); end; end
+if(~isempty(wRng)),  for i=1:n, v=objs(i).bb(3);
+    bbs(i,5)=bbs(i,5) || v<wRng(1) || v>wRng(2); end; end
+if(~isempty(hRng)),  for i=1:n, v=objs(i).bb(4);
+    bbs(i,5)=bbs(i,5) || v<hRng(1) || v>hRng(2); end; end
+if(~isempty(oRng)),  for i=1:n, v=objs(i).ang;
+    bbs(i,5)=bbs(i,5) || v<oRng(1) || v>oRng(2); end; end
+if(~isempty(aRng)),  for i=1:n, v=objs(i).bb(3)*objs(i).bb(4);
+    bbs(i,5)=bbs(i,5) || v<aRng(1) || v>aRng(2); end; end
+if(~isempty(arRng)), for i=1:n, v=objs(i).bb(3)/objs(i).bb(4);
+    bbs(i,5)=bbs(i,5) || v<arRng(1) || v>arRng(2); end; end
+if(~isempty(vRng)),  for i=1:n, o=objs(i); bb=o.bb; bbv=o.bbv; %#ok<ALIGN>
+    if(~o.occ || all(bbv==0)), v=1; elseif(all(bbv==bb)), v=0; else
+      v=(bbv(3)*bbv(4))/(bb(3)*bb(4)); end
+    bbs(i,5)=bbs(i,5) || v<vRng(1) || v>vRng(2); end
 end
 
-% final reshaping of gtBbs
-if(ar0), gtBbs=bbApply('squarify',gtBbs,0,ar0); end
-if(any(pad~=0)), gtBbs=bbApply('resize',gtBbs,1+pad(2),1+pad(1)); end
+% final reshaping of bbs
+if(ar0), bbs=bbApply('squarify',bbs,0,ar0); end
+if(any(pad~=0)), bbs=bbApply('resize',bbs,1+pad(2),1+pad(1)); end
 
   function bb = bbExtent( bb, ang, ellipse )
     % get bb that fully contains given oriented bb
