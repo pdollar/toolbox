@@ -330,9 +330,8 @@ function [gtBbs,ids] = toGt( objs, prm )
 % get parameters
 checks = ~isempty(prm);
 if(~checks), lbls=[]; ilbls=[]; ar0=[]; pad=[0 0]; ellipse=1; else
-  r=[0 inf]; r1=[-inf inf];
-  dfs={'lbls',[],'ilbls',[],'hRng',r,'wRng',r,'aRng',r,'arRng',r,...
-    'oRng',r,'xRng',r1,'yRng',r1,'vRng',r,'ar',[],'pad',0,'ellipse',1};
+  dfs={'lbls',[],'ilbls',[],'hRng',[],'wRng',[],'aRng',[],'arRng',[],...
+    'oRng',[],'xRng',[],'yRng',[],'vRng',[],'ar',[],'pad',0,'ellipse',1};
   [lbls,ilbls,hRng,wRng,aRng,arRng,oRng,xRng,yRng,vRng,ar0,pad,...
     ellipse] = getPrmDflt(prm,dfs,1);
   if(numel(pad)==1), pad=[pad pad]; end;
@@ -351,19 +350,34 @@ for i=1:n, ang=mod(objs(i).ang,360); objs(i).ang=ang;
   if(ang~=0), gtBbs(i,1:4)=bbExtent(gtBbs(i,1:4),ang,ellipse); end
 end
 
-% set ignore flags for each gtBb (could be made much more efficient)
+% filter (set ignore flags)
 if( checks )
-  chk = @(v,rng) v<rng(1) || v>rng(2);
-  for i=1:n, o=objs(i);
-    bb=o.bb; bbv=o.bbv; w=bb(3); h=bb(4); a=w*h; ar=w/h; ang=o.ang;
-    if(~o.occ || all(bbv==0)), v=1; elseif(all(bbv==bb)), v=0; else
-      v=bbv(3)*bbv(4)/a; end
-    ex = gtBbs(i,1:4);
-    ign = any(strcmp(o.lbl,ilbls)) || chk(h,hRng) || chk(w,wRng) ...
-      || chk(a,aRng) || chk(ar,arRng) || chk(ang,oRng) || chk(v,vRng) ...
-      || chk(ex(1),xRng) || chk(ex(1)+ex(3),xRng) ...
-      || chk(ex(2),yRng) || chk(ex(2)+ex(4),xRng);
-    gtBbs(i,5)=ign;
+  if(~isempty(ilbls)), for i=1:n, v=objs(i).lbl;
+      gtBbs(i,5)=gtBbs(i,5) || any(strcmp(v,ilbls)); end; end
+  if(~isempty(xRng)),  for i=1:n, v=gtBbs(i,1);
+      gtBbs(i,5)=gtBbs(i,5) || v<xRng(1) || v>xRng(2); end; end
+  if(~isempty(xRng)),  for i=1:n, v=gtBbs(i,1)+gtBbs(i,3);
+      gtBbs(i,5)=gtBbs(i,5) || v<xRng(1) || v>xRng(2); end; end
+  if(~isempty(yRng)),  for i=1:n, v=gtBbs(i,2);
+      gtBbs(i,5)=gtBbs(i,5) || v<yRng(1) || v>yRng(2); end; end
+  if(~isempty(yRng)),  for i=1:n, v=gtBbs(i,2)+gtBbs(i,4);
+      gtBbs(i,5)=gtBbs(i,5) || v<yRng(1) || v>yRng(2); end; end
+  if(~isempty(wRng)),  for i=1:n, v=objs(i).bb(3);
+      gtBbs(i,5)=gtBbs(i,5) || v<wRng(1) || v>wRng(2); end; end
+  if(~isempty(hRng)),  for i=1:n, v=objs(i).bb(4);
+      gtBbs(i,5)=gtBbs(i,5) || v<hRng(1) || v>hRng(2); end; end
+  if(~isempty(oRng)),  for i=1:n, v=objs(i).ang;
+      gtBbs(i,5)=gtBbs(i,5) || v<oRng(1) || v>oRng(2); end; end
+  if(~isempty(aRng)),  for i=1:n, v=objs(i).bb(3)*objs(i).bb(4);
+      gtBbs(i,5)=gtBbs(i,5) || v<aRng(1) || v>aRng(2); end; end
+  if(~isempty(arRng)), for i=1:n, v=objs(i).bb(3)/objs(i).bb(4);
+      gtBbs(i,5)=gtBbs(i,5) || v<arRng(1) || v>arRng(2); end; end
+  if(~isempty(vRng))
+    for i=1:n, o=objs(i); bb=o.bb; bbv=o.bbv;
+      if(~o.occ || all(bbv==0)), v=1; elseif(all(bbv==bb)), v=0; else
+        v=bbv(3)*bbv(4)/bb(3)*bb(4); end
+      gtBbs(i,5)=gtBbs(i,5) || v<vRng(1) || v>vRng(2);
+    end;
   end
 end
 
