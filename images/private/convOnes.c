@@ -5,6 +5,7 @@
  * Licensed under the Lesser GPL [see external/lgpl.txt]
  *************************************************************************/
 #include <math.h>
+#include <string.h>
 #include "mex.h"
 
 #ifndef min 
@@ -15,6 +16,7 @@ void			convOnes( double *A, double *B, int ry, int rx, int rz, int h, int w, int
   /* convolve w ones mask (fast smooth) */
   int i,j,k,o,c,m=32,m1; double *V, *S; int ry2, rx2, rz2, a;
   ry2=ry*2; rx2=rx*2; rz2=rz*2; a=w*h; S=A;
+  if( ry==0 && rx==0 && rz==0 ) { memcpy(B,A,h*w*d*sizeof(double)); return; }
   /* convolve along y */
   if( ry>0 ) { V=(double*) mxCalloc( h+ry2+1, sizeof(double) );
     for(k=0; k<d; k++) for(j=0; j<w; j++) { o=k*a+j*h;

@@ -1,7 +1,7 @@
 Version NEW
  -plotRoc.m: ability to specify multiple reference points
  -bbGt.m: optimized various subfunctions and made more flexible
- -minor: bbApply.m, seqReaderPlugin.m
+ -minor: bbApply.m, seqReaderPlugin.m, convOnes.c
 
 Version 2.62 (22-Dec-11)
  -imResample: major optimziations, *input format has changed*
