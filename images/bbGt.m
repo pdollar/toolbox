@@ -606,7 +606,8 @@ end
 
 % load detections (from single or multiple files)
 if( length(dtDir)>4 && strcmp(dtDir(end-3:end),'.txt') )
-  assert(f0==1); dt1=load(dtDir,'-ascii'); ids=dt1(:,1);
+  assert(f0==1); dt1=load(dtDir,'-ascii');
+  if(numel(dt1)==0), dt1=zeros(0,6); end; ids=dt1(:,1);
   dt=cell(1,n); for i=1:n, dt{i}=dt1(ids==i,2:6); end
 else
   for i=1:n
