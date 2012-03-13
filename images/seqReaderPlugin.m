@@ -81,12 +81,12 @@ if(nIn>0 && nMin==0 && nMax==0), error(['"' cmd '" takes no args.']); end
 if(nIn<nMin||nIn>nMax), error(['Incorrect num args for "' cmd '".']); end
 end
 
-function getImgFile( fName )
+function success = getImgFile( fName )
 % create local copy of fName which is in a imagesci/private
-fName = [fName '.' mexext]; s = filesep;
+fName = [fName '.' mexext]; s = filesep; success = 1;
 sName = [fileparts(which('imread.m')) s 'private' s fName];
 tName = [fileparts(mfilename('fullpath')) s 'private' s fName];
-if(~exist(tName,'file')), copyfile(sName,tName); end
+if(~exist(tName,'file')), success=copyfile(sName,tName); end
 end
 
 function [info, fid, tNm] = open( fName, info )
@@ -102,9 +102,13 @@ switch(info.imageFormat)
   case {102,201}, ext='jpg';
   case {001,002}, ext='png';
   otherwise, error('unknown format');
-end; info.ext=ext;
-if(strcmp(ext,'jpg')), getImgFile( 'rjpg8c' ); end
-if(strcmp(ext,'png')), getImgFile( 'png' ); end
+end; info.ext=ext; s=1;
+if(strcmp(ext,'jpg')), s=getImgFile('rjpg8c'); end
+if(strcmp(ext,'png')), s=getImgFile('png');
+  if(s), info.readImg=@(nm) png('read',nm,[]); end; end
+if(strcmp(ext,'png') && ~s), s=getImgFile('pngreadc');
+  if(s), info.readImg=@(nm) pngreadc(nm,[]); end; end
+if(~s), error('Cannot find Matlab''s source image reader'); end
 % generate unique temporary name
 [tNm tNm]=fileparts(fName); t=clock; t=mod(t(end),1);
 tNm=sprintf('tmp_%s_%09i.%s',tNm,round((t+rand)/2*1e9),ext);
@@ -170,7 +174,7 @@ switch ext
       % write/read to/from temporary .png (not that much overhead)
       for t=0:99, fw=fopen(tNm,'w'); if(fw>=0), break; end; pause(.01); end
       if(fw==-1), error(['unable to write: ' tNm]); end
-      fwrite(fw,I); fclose(fw); I=png('read',tNm,[]);
+      fwrite(fw,I); fclose(fw); I=info.readImg(tNm);
       I=permute(I,ndims(I):-1:1);
     end
   otherwise, assert(false);
