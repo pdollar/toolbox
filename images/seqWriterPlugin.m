@@ -37,7 +37,7 @@ function varargout = seqWriterPlugin( cmd, h, varargin )
 %
 % See also SEQIO, SEQREADERPLUGIN
 %
-% Piotr's Image&Video Toolbox      Version 2.52
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -84,12 +84,12 @@ if(nIn>0 && nMin==0 && nMax==0), error(['"' cmd '" takes no args.']); end
 if(nIn<nMin||nIn>nMax), error(['Incorrect num args for "' cmd '".']); end
 end
 
-function getImgFile( fName )
+function success = getImgFile( fName )
 % create local copy of fName which is in a imagesci/private
-fName = [fName '.' mexext]; s = filesep;
+fName = [fName '.' mexext]; s = filesep; success = 1;
 sName = [fileparts(which('imread.m')) s 'private' s fName];
 tName = [fileparts(mfilename('fullpath')) s 'private' s fName];
-if(~exist(tName,'file')), copyfile(sName,tName); end
+if(~exist(tName,'file')), success=copyfile(sName,tName); end
 end
 
 function [info, fid, tNm] = open( fName, info )
@@ -108,9 +108,13 @@ switch(info.codec)
   case {'monopng', 'imageFormat001'}, frmt=001; nCh=1; ext='png';
   case {'png', 'imageFormat002'},     frmt=002; nCh=3; ext='png';
   otherwise, error('unknown format');
-end
-if(strcmp(ext,'jpg')), getImgFile( 'wjpg8c' ); end
-if(strcmp(ext,'png')), getImgFile( 'png' ); end
+end; s=1;
+if(strcmp(ext,'jpg')), s=getImgFile('wjpg8c'); end
+if(strcmp(ext,'png')), s=getImgFile('png');
+  if(s), info.writeImg=@(p) png('write',p{:}); end; end
+if(strcmp(ext,'png') && ~s), s=getImgFile('pngwritec');
+  if(s), info.writeImg=@(p) pngwritec(p{:}); end; end
+if(~s), error('Cannot find Matlab''s source image writer'); end
 info.imageFormat=frmt; info.ext=ext;
 if(any(strcmp(ext,{'jpg','png'}))), info.seek=1024; info.seekNm=t; end
 if(~isfield2(info,'quality')), info.quality=80; end
@@ -150,9 +154,9 @@ switch ext
   case 'png'
     if( encode )
       % write/read to/from temporary .png (not that much overhead)
-      p=cell(1,18); p{1}='write'; if(nCh==1), p{5}=0; else p{5}=2; end
-      p{2}=I; p{4}=tNm; p{6}=8; p{9}='none'; p{17}=cell(0,2);
-      for t=0:99, try png(p{:}); fr=fopen(tNm,'r'); assert(fr>0);
+      p=cell(1,17); if(nCh==1), p{4}=0; else p{4}=2; end
+      p{1}=I; p{3}=tNm; p{5}=8; p{8}='none'; p{16}=cell(0,2);
+      for t=0:99, try info.writeImg(p); fr=fopen(tNm,'r'); assert(fr>0);
           break; catch, pause(.01); fr=-1; end; end %#ok<CTCH>
       if(fr<0), error(['write fail: ' tNm]); end; I=fread(fr); fclose(fr);
     end

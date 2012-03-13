@@ -1,7 +1,7 @@
 Version NEW
  -plotRoc.m: ability to specify multiple reference points
  -bbGt.m: optimized various subfunctions and made more flexible
- -seqReaderPlugin.m: support for PNG Matlab 2011b and BayerRGB8 (for read only)
+ -seq*Plugin.m: support for PNG in Matlab 2011b and BayerRGB8 (for read only)
  -minor: bbApply.m, convOnes.c
 
 Version 2.62 (22-Dec-11)
