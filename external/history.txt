@@ -1,4 +1,4 @@
-Version NEW
+Version 2.63 (15-Mar-2012)
  -plotRoc.m: ability to specify multiple reference points
  -bbGt.m: optimized various subfunctions and made more flexible
  -seq*Plugin.m: support for PNG in Matlab 2011b and BayerRGB8 (for read only)

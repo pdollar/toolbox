@@ -1,3 +1,9 @@
+Version 2.63 (15-Mar-2012)
+ -plotRoc.m: ability to specify multiple reference points
+ -bbGt.m: optimized various subfunctions and made more flexible
+ -seq*Plugin.m: support for PNG in Matlab 2011b and BayerRGB8 (for read only)
+ -minor: bbApply.m, convOnes.c
+
 Version 2.62 (22-Dec-11)
  -imResample: major optimziations, *input format has changed*
  -ploRoc.m: improved options and commenting, fixed second output parameter
