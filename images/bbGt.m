@@ -63,6 +63,8 @@ function varargout = bbGt( action, varargin )
 %%% (3) Routines for sampling training examples from a labeled image.
 % Sample pos or neg examples for training from an annotated image.
 %   [bbs, IS] = bbGt( 'sampleData', I, prm )
+% Sample and save positive examples from an annotated directory of images.
+%   out = bbGt( 'sampleDataDir', prm )
 %
 % USAGE
 %  varargout = bbGt( action, varargin );
@@ -79,9 +81,9 @@ function varargout = bbGt( action, varargin )
 % See also bbApply, bbLabeler, bbGt>create, bbGt>bbSave, bbGt>bbLoad,
 % bbGt>get, bbGt>set, bbGt>draw, bbGt>toGt, bbGt>evalRes, bbGt>showRes,
 % bbGt>evalResDir, bbGt>compRoc, bbGt>cropRes, bbGt>compOas, bbGt>compOa,
-% bbGt>sampleData
+% bbGt>sampleData, bbGt>sampleDataDir
 %
-% Piotr's Image&Video Toolbox      Version 2.63
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -895,4 +897,55 @@ for i=1:size(bbs,1)
   if(mod(r,2)==1), I=permute(I,[2 1 3]); end
   for k=1:size(I,3), I(:,:,k)=rot90(I0(:,:,k),r); end; IS{i}=I;
 end
+end
+
+function out = sampleDataDir( varargin )
+% Sample and save positive examples from an annotated directory of images.
+%
+% Takes as input directories containing ground truth and images. Crops all
+% positive windows from each image and stores in the target directory.
+% bb>toGt() with params 'pGt' controls which ground truth bbs are used.
+% bbGt>sampleData() with params 'pSmp' controls how the bbs are extracted.
+%
+% USAGE
+%  out = bbGt( 'sampleDataDir', prm )
+%
+% INPUTS
+%  prm        - parameters (struct or name/value pairs)
+%   .gtDir      - ['REQ'] ground truth data location
+%   .imDir      - ['REQ'] source data location
+%   .trDir      - ['REQ'] target data location
+%   .pGt        - ['REQ'] params for bbGt>toGt
+%   .pSmp       - ['REQ'] params for bbGt>sampleData
+%
+% OUTPUTS
+%   out       - returns 1 on successful completion
+%
+% EXAMPLE
+%
+% See also bbGt, bbGt>toGt, bbGt>sampleData
+
+% get parameters
+dfs={ 'gtDir','REQ', 'imDir','REQ', 'trDir','REQ',...
+  'pGt','REQ', 'pSmp','REQ'}; out = 1;
+[gtDir,imDir,trDir,pGt,pSmp]=getPrmDflt(varargin,dfs,1);
+if(iscell(pSmp)), pSmp=cell2struct(pSmp(2:2:end),pSmp(1:2:end),2); end
+
+% get list of ground truth and images
+fsGt=dir([gtDir '/*.txt']); fsGt={fsGt.name}; n=length(fsGt); assert(n>0);
+fsIm=cell(1,n); for i=1:n, fsIm{i}=[imDir '/' fsGt{i}(1:end-4)]; end
+for i=1:n, fsGt{i}=[gtDir '/' fsGt{i}]; end
+
+% sample from each image in the source dir
+if(~exist(trDir,'dir')), mkdir(trDir); end
+ticId=ticStatus('sampling positives'); k=0;
+for i=1:n
+  I = imread(fsIm{i});
+  bbs = bbGt('bbLoad',fsGt{i});
+  pSmp.bbs=bbGt('toGt',bbs,pGt);
+  [bbs,Is]=bbGt('sampleData',I,pSmp); m=size(bbs,1);
+  for j=1:m, k=k+1; imwrite(Is{j},[trDir '/I' int2str2(k-1,5) '.png']); end
+  tocStatus(ticId,i/n);
+end
+
 end
