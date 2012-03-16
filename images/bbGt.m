@@ -41,6 +41,8 @@ function varargout = bbGt( action, varargin )
 %   objs = bbGt( 'set', objs, name, vals )
 % Draw an ellipse for each labeled object.
 %   hs = draw( objs, varargin )
+% Load detection outputs from text files.
+%   dts = bbGt( 'dtsLoad', fNames, n )
 %
 %%% (2) Routines for evaluating the Pascal criteria for object detection.
 % Get all corresponding files in given directories.
@@ -81,9 +83,9 @@ function varargout = bbGt( action, varargin )
 % EXAMPLE
 %
 % See also bbApply, bbLabeler, bbGt>create, bbGt>bbSave, bbGt>bbLoad,
-% bbGt>get, bbGt>set, bbGt>draw, bbGt>getFiles, bbGt>toGt, bbGt>evalRes,
-% bbGt>showRes, bbGt>evalResDir, bbGt>compRoc, bbGt>cropRes, bbGt>compOas,
-% bbGt>compOa, bbGt>sampleData, bbGt>sampleDataDir
+% bbGt>get, bbGt>set, bbGt>draw, bbGt>dtsLoad, bbGt>getFiles, bbGt>toGt,
+% bbGt>evalRes, bbGt>showRes, bbGt>evalResDir, bbGt>compRoc, bbGt>cropRes,
+% bbGt>compOas, bbGt>compOa, bbGt>sampleData, bbGt>sampleDataDir
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -266,6 +268,44 @@ for i=1:n
   x=bbApply('getCenter',bb); r=bb(3:4)/2; a=objs(i).ang/180*pi-pi/2;
   [hs(i,2),hs(i,3),hs(i,4)]=plotEllipse(x(2),x(1),r(2),r(1),a,ci,[],lw,ls);
 end; hold off;
+end
+
+function dts = dtsLoad( fNames, n )
+% Load detection outputs from text files.
+%
+% Each detection should be a text file where each row contains 5 numbers
+% representing a bounding box (left/top/width/height/score). If fNames is
+% not a cell array, fNames should point to a single text file that contains
+% the detection results across a set of images. In this case each row in
+% the text file should have an extra leading column specifying the image
+% id: (imgId/left/top/width/height/score).
+%
+% USAGE
+%  dets = bbGt( 'dtLoad', fNames, n )
+%
+% INPUTS
+%  fNames   - {1xn} cell array of text files or single text file
+%  n        - number of dts to load (necessary if fNames is a single file)
+%
+% OUTPUTS
+%  dts      - {1xn} loaded detections (each is a mx5 array of bbs)
+%
+% EXAMPLE
+%
+% See also bbGt
+
+if( iscell(fNames) )
+  % load each detection from a separate text file
+  assert(length(fNames)==n); dts=cell(1,n);
+  for i=1:n, dt=load(fNames{i},'-ascii');
+    if(numel(dt)==0), dt=zeros(0,5); end; dts{i}=dt(:,1:5); end
+else
+  % load all detections from a single text file
+  dt=load(fNames,'-ascii'); if(numel(dt)==0), dt=zeros(0,6); end
+  ids=dt(:,1); assert(max(ids)<=n);
+  dts=cell(1,n); for i=1:n, dts{i}=dt(ids==i,2:6); end
+end
+
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -645,9 +685,9 @@ if(isempty(imDir)), imDir=gtDir; end
 
 % get list of gt, im and dt files
 if(length(dtDir)>4 && strcmp(dtDir(end-3:end),'.txt'))
-  fs=getFiles({gtDir,imDir},f0,f1); dtFs={}; dtFile=dtDir;
+  fs=getFiles({gtDir,imDir},f0,f1); dtFs=dtDir;
 else
-  fs=getFiles({gtDir,imDir,dtDir},f0,f1); dtFs=fs(3,:); dtFile='';
+  fs=getFiles({gtDir,imDir,dtDir},f0,f1); dtFs=fs(3,:);
 end
 gtFs=fs(1,:); imFs=fs(2,:); n=length(gtFs);
 
@@ -658,15 +698,8 @@ if(isequal(key,keyPrv)), gt=gtPrv; else gt=cell(1,n);
   gtPrv=gt; keyPrv=key;
 end
 
-% load detections (from single or multiple files)
-if(~isempty(dtFile))
-  assert(f0==1); dt1=load(dtDir,'-ascii');
-  if(numel(dt1)==0), dt1=zeros(0,6); end; ids=dt1(:,1);
-  dt=cell(1,n); for i=1:n, dt{i}=dt1(ids==i,2:6); end
-else
-  dt=cell(1,n); for i=1:n, dt1=load(dtFs{i},'-ascii');
-    if(numel(dt1)==0), dt1=zeros(0,5); end; dt{i}=dt1(:,1:5); end
-end
+% load detections
+dt = dtsLoad( dtFs, n );
 
 % optionally apply nms
 if(~isequal(pNms,noNms)), for i=1:n, dt{i}=bbNms(dt{i},pNms); end; end
