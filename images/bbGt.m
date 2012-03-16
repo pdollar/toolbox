@@ -64,9 +64,9 @@ function varargout = bbGt( action, varargin )
 %
 %%% (3) Routines for sampling training examples from a labeled image.
 % Sample pos or neg examples for training from an annotated image.
-%   [bbs, IS] = bbGt( 'sampleData', I, prm )
+%   [bbs,Is] = bbGt( 'sampleData', I, prm )
 % Sample and save positive examples from an annotated directory of images.
-%   out = bbGt( 'sampleDataDir', prm )
+%   [bbs,Is] = bbGt( 'sampleDataDir', prm )
 %
 % USAGE
 %  varargout = bbGt( action, varargin );
@@ -874,7 +874,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [bbs, IS] = sampleData( I, prm )
+function [bbs,Is] = sampleData( I, prm )
 % Sample pos or neg examples for training from an annotated image.
 %
 % An annotated image can contain both pos and neg examples of a given class
@@ -902,7 +902,7 @@ function [bbs, IS] = sampleData( I, prm )
 % resized to a fixed size. If dims==[], the bbs are not altered.
 %
 % USAGE
-%  [bbs, IS] = bbGt( 'sampleData', I, prm )
+%  [bbs, Is] = bbGt( 'sampleData', I, prm )
 %
 % INPUTS
 %  I        - input image from which to sample
@@ -920,7 +920,7 @@ function [bbs, IS] = sampleData( I, prm )
 %
 % OUTPUTS
 %  bbs      - actual sampled bbs
-%  IS       - [1xn] cell of cropped image regions
+%  Is       - [1xn] cell of cropped image regions
 %
 % EXAMPLE
 %
@@ -944,25 +944,26 @@ end
 % standardize aspect ratios (by growing bbs) and pad bbs
 if(~isempty(ar) && squarify), bbs=bbApply('squarify',bbs,0,ar); end
 if(any(pad~=0)), bbs=bbApply('resize',bbs,1+pad(2),1+pad(1)); end
-% crop IS, resizing if dims~=[]
+% crop Is, resizing if dims~=[]
 crop=nargout==2; dims=round(dims);
-if(crop), [IS,bbs]=bbApply('crop',I,bbs,padEl,dims); end
+if(crop), [Is,bbs]=bbApply('crop',I,bbs,padEl,dims); end
 % finally create flipped and rotated versions of each croppted patch
 nf=flip+1; nr=length(rots); bbs=reshape(repmat(bbs,1,nf*nr)',nd,[])';
-if(~crop), return; end; IS=repmat(IS,nf*nr,1); IS=IS(:);
+if(~crop), return; end; Is=repmat(Is,nf*nr,1); Is=Is(:);
 for i=1:size(bbs,1)
-  I=IS{i}; f=mod(i+1,nf); if(f), I=flipdim(I,2); end
+  I=Is{i}; f=mod(i+1,nf); if(f), I=flipdim(I,2); end
   I0=I; r=rots(floor(mod(i-1,nr*nf)/nf)+1);
   if(mod(r,2)==1), I=permute(I,[2 1 3]); end
-  for k=1:size(I,3), I(:,:,k)=rot90(I0(:,:,k),r); end; IS{i}=I;
+  for k=1:size(I,3), I(:,:,k)=rot90(I0(:,:,k),r); end; Is{i}=I;
 end
 end
 
-function out = sampleDataDir( varargin )
+function [bbs,Is] = sampleDataDir( varargin )
 % Sample and save positive examples from an annotated directory of images.
 %
-% Takes as input lists of gt and image files. Crops all positive windows
-% from each image and stores in the target directory.
+% Crops all positive windows from each image in the specified directory and
+% either stores them in 'trDir' (if specified) or returns the result.
+% Essentially a wrapper function that call sampleData() on each image.
 %
 % bb>getfiles() with params 'pFiles' controls list of gt/im files.
 % bb>toGt() with params 'pGt' controls which ground truth bbs are used.
@@ -974,25 +975,30 @@ function out = sampleDataDir( varargin )
 % INPUTS
 %  prm        - parameters (struct or name/value pairs)
 %   .pFiles     - ['REQ'] parameters for bbGt>getFiles
-%   .trDir      - ['REQ'] target data directory
-%   .pGt        - ['REQ'] params for bbGt>toGt
+%   .pGt        - [] params for bbGt>toGt
 %   .pSmp       - ['REQ'] params for bbGt>sampleData
+%   .trDir      - [''] target data directory
 %
 % OUTPUTS
-%   out       - returns 1 on successful completion
+%  bbs        - [mx5] actual sampled bbs
+%  Is         - [mx1] cell of cropped image regions
 %
 % EXAMPLE
 %
 % See also bbGt, bbGt>getFiles, bbGt>toGt, bbGt>sampleData
-dfs={ 'pFiles','REQ', 'trDir','REQ', 'pGt','REQ', 'pSmp','REQ' };
-[pFiles,trDir,pGt,pSmp]=getPrmDflt(varargin,dfs,1); out=1;
+dfs={ 'pFiles','REQ', 'pGt',[], 'pSmp','REQ', 'trDir','' };
+[pFiles,pGt,pSmp,trDir]=getPrmDflt(varargin,dfs,1);
 if(iscell(pSmp)), pSmp=cell2struct(pSmp(2:2:end),pSmp(1:2:end),2); end
-[fs,fsGt,fsIm]=getFiles(pFiles); assert(~isempty(fsIm));
-if(~exist(trDir,'dir')), mkdir(trDir); end; k=0; n=length(fsGt);
+[fs,fsGt,fsIm]=getFiles(pFiles); assert(~isempty(fsIm)); n=length(fs);
+wrt=~isempty(trDir); str=nargout==2;
+if(wrt && ~exist(trDir,'dir')), mkdir(trDir); end
+m=100000; bbs=zeros(m,5); Is=cell(m,1); k=0;
 ticId=ticStatus('sampling positives');
 for i=1:n
-  I=imread(fsIm{i}); bbs=bbLoad(fsGt{i});  pSmp.bbs=toGt(bbs,pGt);
-  [bbs,Is]=sampleData(I,pSmp); m=size(bbs,1); tocStatus(ticId,i/n);
-  for j=1:m, k=k+1; imwrite(Is{j},[trDir '/I' int2str2(k-1,5) '.png']); end
+  I=imread(fsIm{i}); bbs1=bbLoad(fsGt{i}); pSmp.bbs=toGt(bbs1,pGt);
+  [bbs1,Is1]=sampleData(I,pSmp); [m,nd]=size(bbs1); tocStatus(ticId,i/n);
+  for j=1:m, k=k+1; bbs(k,1:nd)=bbs1(j,:); if(str), Is{k}=Is1{j}; end
+    if(wrt), imwrite(Is1{j},[trDir '/I' int2str2(k-1,5) '.png']); end; end
 end
+bbs=bbs(1:k,1:nd); Is=Is(1:k);
 end
