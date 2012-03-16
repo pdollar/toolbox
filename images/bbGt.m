@@ -65,7 +65,7 @@ function varargout = bbGt( action, varargin )
 %%% (3) Routines for sampling training examples from a labeled image.
 % Sample pos or neg examples for training from an annotated image.
 %   [bbs,Is] = bbGt( 'sampleData', I, prm )
-% Sample and save positive examples from an annotated directory of images.
+% Sample pos or neg examples from an annotated directory of images.
 %   [bbs,Is] = bbGt( 'sampleDataDir', prm )
 %
 % USAGE
@@ -959,11 +959,12 @@ end
 end
 
 function [bbs,Is] = sampleDataDir( varargin )
-% Sample and save positive examples from an annotated directory of images.
+% Sample pos or neg examples from an annotated directory of images.
 %
-% Crops all positive windows from each image in the specified directory and
-% either stores them in 'trDir' (if specified) or returns the result.
-% Essentially a wrapper function that call sampleData() on each image.
+% Crops pos or neg examples from each image and optionally stores them in
+% 'trDir' (if specified). Essentially a wrapper function that calls
+% sampleData() on each image. If bbRand is specified then samples random
+% negs (that don't overlap the positives), otherwise samples positives.
 %
 % bb>getfiles() with params 'pFiles' controls list of gt/im files.
 % bb>toGt() with params 'pGt' controls which ground truth bbs are used.
@@ -974,10 +975,11 @@ function [bbs,Is] = sampleDataDir( varargin )
 %
 % INPUTS
 %  prm        - parameters (struct or name/value pairs)
-%   .pFiles     - ['REQ'] parameters for bbGt>getFiles
+%   .pFiles     - ['REQ'] params for bbGt>getFiles
 %   .pGt        - [] params for bbGt>toGt
 %   .pSmp       - ['REQ'] params for bbGt>sampleData
 %   .trDir      - [''] target data directory
+%   .bbRand     - [] optional last three params for bbApply>random()
 %
 % OUTPUTS
 %  bbs        - [mx5] actual sampled bbs
@@ -985,20 +987,26 @@ function [bbs,Is] = sampleDataDir( varargin )
 %
 % EXAMPLE
 %
-% See also bbGt, bbGt>getFiles, bbGt>toGt, bbGt>sampleData
-dfs={ 'pFiles','REQ', 'pGt',[], 'pSmp','REQ', 'trDir','' };
-[pFiles,pGt,pSmp,trDir]=getPrmDflt(varargin,dfs,1);
+% See also bbGt, bbGt>getFiles, bbGt>toGt, bbGt>sampleData, bbApply>random
+
+dfs={ 'pFiles','REQ', 'pGt',[], 'pSmp','REQ', 'trDir','', 'bbRand',[] };
+[pFiles,pGt,pSmp,trDir,bbRand]=getPrmDflt(varargin,dfs,1);
+
 if(iscell(pSmp)), pSmp=cell2struct(pSmp(2:2:end),pSmp(1:2:end),2); end
 [fs,fsGt,fsIm]=getFiles(pFiles); assert(~isempty(fsIm)); n=length(fs);
-wrt=~isempty(trDir); str=nargout==2;
+wrt=~isempty(trDir); str=nargout==2; rnd=~isempty(bbRand);
 if(wrt && ~exist(trDir,'dir')), mkdir(trDir); end
+
 m=100000; bbs=zeros(m,5); Is=cell(m,1); k=0;
-ticId=ticStatus('sampling positives');
+ticId=ticStatus('sampling windows');
 for i=1:n
-  I=imread(fsIm{i}); bbs1=bbLoad(fsGt{i}); pSmp.bbs=toGt(bbs1,pGt);
-  [bbs1,Is1]=sampleData(I,pSmp); [m,nd]=size(bbs1); tocStatus(ticId,i/n);
-  for j=1:m, k=k+1; bbs(k,1:nd)=bbs1(j,:); if(str), Is{k}=Is1{j}; end
+  I=imread(fsIm{i}); [h,w,~]=size(I);
+  bb=bbLoad(fsGt{i}); bb=toGt(bb,pGt); pSmp.bbs=bb;
+  if(rnd), pSmp.bbs=bbApply('random',w,h,bbRand{:}); pSmp.ibbs=bb; end
+  [bb,Is1]=sampleData(I,pSmp); [m,nd]=size(bb); tocStatus(ticId,i/n);
+  for j=1:m, k=k+1; bbs(k,1:nd)=bb(j,:); if(str), Is{k}=Is1{j}; end
     if(wrt), imwrite(Is1{j},[trDir '/I' int2str2(k-1,5) '.png']); end; end
 end
 bbs=bbs(1:k,1:nd); Is=Is(1:k);
+
 end
