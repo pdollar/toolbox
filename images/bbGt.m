@@ -43,18 +43,20 @@ function varargout = bbGt( action, varargin )
 %   hs = draw( objs, varargin )
 %
 %%% (2) Routines for evaluating the Pascal criteria for object detection.
+% Get all gt and corresponding image files in given directories.
+%   [fs,fsGt,fsIm] = bbGt( 'getFiles', prm )
 % Returns filtered ground truth bbs for purpose of evaluation.
 %   bbs = bbGt( 'toGt', objs, prm )
 % Evaluates detections in a single frame against ground truth data.
-%  [gt, dt] = bbGt( 'evalRes', gt0, dt0, [thr], [mul] )
+%   [gt, dt] = bbGt( 'evalRes', gt0, dt0, [thr], [mul] )
 % Display evaluation results for given image.
-%  [hs,hImg] = bbGt( 'showRes' I, gt, dt, varargin )
+%   [hs,hImg] = bbGt( 'showRes' I, gt, dt, varargin )
 % Run evaluation evalRes for each ground truth/detection result in dirs.
-%  [gt,dt,files] = bbGt( 'evalResDir', gtDir, dtDir, [varargin] )
+%   [gt,dt,files] = bbGt( 'evalResDir', gtDir, dtDir, [varargin] )
 % Compute ROC or PR based on outputs of evalRes on multiple images.
-%  [xs,ys,ref] = bbGt( 'compRoc', gt, dt, roc, ref )
+%   [xs,ys,ref] = bbGt( 'compRoc', gt, dt, roc, ref )
 % Extract true or false positives or negatives for visualization.
-%  [Is,scores,imgIds] = bbGt( 'cropRes', gt, dt, files, varargin )
+%   [Is,scores,imgIds] = bbGt( 'cropRes', gt, dt, files, varargin )
 % Computes (modified) overlap area between pairs of bbs.
 %   oa = bbGt( 'compOas', dt, gt, [ig] )
 % Optimized version of compOas for a single pair of bbs.
@@ -79,9 +81,9 @@ function varargout = bbGt( action, varargin )
 % EXAMPLE
 %
 % See also bbApply, bbLabeler, bbGt>create, bbGt>bbSave, bbGt>bbLoad,
-% bbGt>get, bbGt>set, bbGt>draw, bbGt>toGt, bbGt>evalRes, bbGt>showRes,
-% bbGt>evalResDir, bbGt>compRoc, bbGt>cropRes, bbGt>compOas, bbGt>compOa,
-% bbGt>sampleData, bbGt>sampleDataDir
+% bbGt>get, bbGt>set, bbGt>draw, bbGt>getFiles, bbGt>toGt, bbGt>evalRes,
+% bbGt>showRes, bbGt>evalResDir, bbGt>compRoc, bbGt>cropRes, bbGt>compOas,
+% bbGt>compOa, bbGt>sampleData, bbGt>sampleDataDir
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -267,6 +269,63 @@ end; hold off;
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function [fs,fsGt,fsIm] = getFiles( varargin )
+% Get all gt and corresponding image files in given directories.
+%
+% File names: given an image named "name.imExt", the corresponding gt file
+% should be named either "name.gtExt" or "name.imExt.gtExt". Returns a list
+% of all files without path or extension (fs), the ground truth fils (fsGt)
+% and the image files (fsIm).
+%
+% USAGE
+%  [fs,fsGt,fsIm] = bbGt( 'getFiles', prm )
+%
+% INPUTS
+%  prm        - parameters (struct or name/value pairs)
+%   .gtDir      - ['REQ'] ground truth data location
+%   .gtExt      - ['.txt'] ground truth extension
+%   .f0         - [1] first ground truth file to use
+%   .f1         - [inf] last ground truth file to use
+%   .imDir      - [''] optional image data location
+%
+% OUTPUTS
+%   fs        - [1xn] list of file names without path or extension
+%   fsGt      - [1xn] list of full file names for ground truth
+%   fsIm      - [1xn] list of full file names for images (if imDir~='')
+%
+% EXAMPLE
+%
+% See also bbGt
+
+% get parameters
+dfs={ 'gtDir','REQ', 'gtExt','.txt', 'f0',1, 'f1',inf, 'imDir','' };
+[gtDir,gtExt,f0,f1,imDir]=getPrmDflt(varargin,dfs,1);
+
+% get list of files in ground truth directory
+sep=filesep; fsGt=dir([gtDir sep '*' gtExt]); fsGt={fsGt.name};
+fsGt=fsGt(f0:min(f1,end)); n=length(fsGt); fs=fsGt;
+if(n==0), error('No ground truth files found.'); end
+for i=1:n, fsGt{i}=[gtDir sep fsGt{i}]; end
+
+% fs contains the gt files without the path or extension
+n=length(fs); for i=1:n, f=fs{i};
+  f(find(f=='.',1,'first'):end)=[]; fs{i}=f; end
+
+% optionally get list of corresponding files in image directory
+if(isempty(imDir)), fsIm={}; else
+  assert(~isequal(imDir,gtDir)); fsIm=cell(1,n); k=0; j=0;
+  fsIm0=dir(imDir); fsIm0={fsIm0.name}; m=length(fsIm0);
+  eMsg='Ground truth file ''%s'' has no corresponding image file.';
+  for i=1:n, f=fs{i}; r=length(f); match=0;
+    while(j<m), j=j+1; if(strcmpi(f,fsIm0{j}(1:min(end,r))))
+        k=k+1; fsIm{k}=fsIm0{j}; match=1; break; end; end
+    if(~match), error(eMsg,f); end
+  end
+  for i=1:n, fsIm{i}=[imDir sep fsIm{i}]; end
+end
+
+end
 
 function [bbs,ids] = toGt( objs, prm )
 % Returns filtered ground truth bbs for purpose of evaluation.
