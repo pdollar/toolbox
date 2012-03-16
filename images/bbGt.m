@@ -41,16 +41,16 @@ function varargout = bbGt( action, varargin )
 %   objs = bbGt( 'set', objs, name, vals )
 % Draw an ellipse for each labeled object.
 %   hs = draw( objs, varargin )
-% Load detection outputs from text files.
-%   dts = bbGt( 'dtsLoad', fNames, n )
 %
 %%% (2) Routines for evaluating the Pascal criteria for object detection.
+% Load detection outputs from text files.
+%   dts = bbGt( 'dtsLoad', fNames, n )
 % Get all corresponding files in given directories.
 %   [fs,fs0] = bbGt('getFiles', dirs, [f0], [f1] )
 % Returns filtered ground truth bbs for purpose of evaluation.
 %   bbs = bbGt( 'toGt', objs, prm )
 % Evaluates detections in a single frame against ground truth data.
-%   [gt, dt] = bbGt( 'evalRes', gt0, dt0, [thr], [mul] )
+%   [gt,dt] = bbGt( 'evalRes', gt0, dt0, [thr], [mul] )
 % Display evaluation results for given image.
 %   [hs,hImg] = bbGt( 'showRes' I, gt, dt, varargin )
 % Run evaluation evalRes for each ground truth/detection result in dirs.
@@ -64,8 +64,8 @@ function varargout = bbGt( action, varargin )
 % Optimized version of compOas for a single pair of bbs.
 %   oa = bbGt( 'compOa', dt, gt, ig )
 %
-%%% (3) Routines for sampling training examples from a labeled image.
-% Sample pos or neg examples for training from an annotated image.
+%%% (3) Routines for sampling examples from annotated images.
+% Sample pos or neg examples from an annotated image.
 %   [bbs,Is] = bbGt( 'sampleData', I, prm )
 % Sample pos or neg examples from an annotated directory of images.
 %   [bbs,Is] = bbGt( 'sampleDataDir', prm )
@@ -270,6 +270,8 @@ for i=1:n
 end; hold off;
 end
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 function dts = dtsLoad( fNames, n )
 % Load detection outputs from text files.
 %
@@ -307,8 +309,6 @@ else
 end
 
 end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function [fs,fs0] = getFiles( dirs, f0, f1 )
 % Get all corresponding files in given directories.
@@ -506,7 +506,7 @@ if(any(pad~=0)), bbs=bbApply('resize',bbs,1+pad(2),1+pad(1)); end
   end
 end
 
-function [gt, dt] = evalRes( gt0, dt0, thr, mul )
+function [gt,dt] = evalRes( gt0, dt0, thr, mul )
 % Evaluates detections in a single frame against ground truth data.
 %
 % Uses modified Pascal criteria that allows for "ignore" regions. The
@@ -636,20 +636,13 @@ end
 function [gt,dt,imFs] = evalResDir( gtDir, dtDir, varargin )
 % Run evaluation evalRes for each ground truth/detection result in dirs.
 %
-% Loads each ground truth annotation in gtDir and the corresponding
-% detection in dtDir, and calls evalRes() on the pair. The detection should
-% just be a text file with each row containing 5 numbers which represent a
-% bounding box (left/top/width/height/score). The text file may be empty in
-% case of no detections, but it must exist. Ground truth, detection and
-% image files must correspond according to getFiles().
-%
-% As an alternative to specifying a directory of detection files, dtDir can
+% Loads each ground truth (gt) annotation in gtDir and the corresponding
+% detection (dt) in dtDir, and calls evalRes() on the pair. Ground truth,
+% detection and image files must correspond according to getFiles(). See
+% dtsLoad() for the format for the detections. dtDir can alternatively
 % point to a single text file that contains the detection results across
-% all images. In this case each row in the text file has an extra leading
-% column specifying the image id: (imgId/left/top/width/height/score). If
-% dtDir points to a text file f1 must be 1.
-%
-% Prior to calling evalRes(), the ground truth annotation is passed through
+% all images (if dtDir points to a text file f1 must be 1). Prior to
+% calling evalRes(), the ground truth annotations are passed through
 % bbGt>toGt() with the parameters pGt. See bbGt>toGt() for more info. Also,
 % if specified, nms is optionally applied to the detections (see bbNms()).
 %
@@ -675,7 +668,8 @@ function [gt,dt,imFs] = evalResDir( gtDir, dtDir, varargin )
 %
 % EXAMPLE
 %
-% See also bbGt, bbGt>evalRes, bbGt>toGt, bbGt>getFiles, bbNms
+% See also bbGt, bbGt>evalRes, bbGt>toGt, bbGt>getFiles, bbGt>dtsLoad,
+% bbNms
 
 % get parameters
 noNms=struct('type','none'); dfs={'thr',.5,'mul',0,'pGt',{},...
@@ -684,12 +678,10 @@ noNms=struct('type','none'); dfs={'thr',.5,'mul',0,'pGt',{},...
 if(isempty(imDir)), imDir=gtDir; end
 
 % get list of gt, im and dt files
-if(length(dtDir)>4 && strcmp(dtDir(end-3:end),'.txt'))
-  fs=getFiles({gtDir,imDir},f0,f1); dtFs=dtDir;
-else
-  fs=getFiles({gtDir,imDir,dtDir},f0,f1); dtFs=fs(3,:);
-end
-gtFs=fs(1,:); imFs=fs(2,:); n=length(gtFs);
+dtFile=length(dtDir)>4 && strcmp(dtDir(end-3:end),'.txt');
+if(dtFile), dirs={gtDir,imDir}; else dirs={gtDir,imDir,gtDir}; end
+fs=getFiles(dirs,f0,f1); gtFs=fs(1,:); imFs=fs(2,:); n=length(gtFs);
+if(dtFile), dtFs=dtDir; else dtFs=fs(3,:); end
 
 % load and prepare ground truth annotations (or use cached values)
 persistent keyPrv gtPrv; key={gtFs,pGt};
@@ -698,10 +690,8 @@ if(isequal(key,keyPrv)), gt=gtPrv; else gt=cell(1,n);
   gtPrv=gt; keyPrv=key;
 end
 
-% load detections
+% load detections and optionally apply nms
 dt = dtsLoad( dtFs, n );
-
-% optionally apply nms
 if(~isequal(pNms,noNms)), for i=1:n, dt{i}=bbNms(dt{i},pNms); end; end
 
 % run evaluation on each image
@@ -894,7 +884,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function [bbs,Is] = sampleData( I, prm )
-% Sample pos or neg examples for training from an annotated image.
+% Sample pos or neg examples from an annotated image.
 %
 % An annotated image can contain both pos and neg examples of a given class
 % (such as a pedestrian). This function allows for sampling of only pos
