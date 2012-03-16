@@ -58,7 +58,7 @@ function varargout = bbApply( action, varargin )
 % bbApply>union bbApply>resize bbApply>squarify bbApply>draw bbApply>crop
 % bbApply>convert bbApply>random bbApply>frMask bbApply>toMask
 %
-% Piotr's Image&Video Toolbox      Version 2.63
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -499,11 +499,12 @@ bb=[x y w h];
     else
       % generate random [x w] pairs until have n that fall in rng
       assert(rng(1)<=rng(2)); k=0; x=zeros(n,1); w=zeros(n,1);
-      for i=0:10000
+      for i=0:10000, if(n==0), return; end
         t=1+floor(maxx*rand(n,2));
         x1=min(t(:,1),t(:,2)); w1=max(t(:,1),t(:,2))-x1+1;
         kp=(w1>=rng(1) & w1<=rng(2)); x1=x1(kp); w1=w1(kp);
-        k1=length(x1); if(k1>n-k), k1=n-k; x1=x1(1:k1); w1=w1(1:k1); end
+        k1=length(x1); if(k1==0), continue; end
+        if(k1>n-k), k1=n-k; x1=x1(1:k1); w1=w1(1:k1); end
         x(k+1:k+k1,:)=x1; w(k+1:k+k1,:)=w1; k=k+k1; if(k==n), break; end
       end, assert(k==n);
     end

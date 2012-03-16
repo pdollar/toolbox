@@ -1,5 +1,6 @@
 Version NEW
  -bbGt.m: added sampleDataDir()
+ -minor: bbApply.m
 
 Version 2.63 (15-Mar-2012)
  -plotRoc.m: ability to specify multiple reference points
