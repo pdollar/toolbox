@@ -43,8 +43,8 @@ function varargout = bbGt( action, varargin )
 %   hs = draw( objs, varargin )
 %
 %%% (2) Routines for evaluating the Pascal criteria for object detection.
-% Get all gt and corresponding image files in given directories.
-%   [fs,gtFs,imFs] = bbGt( 'getFiles', prm )
+% Get all corresponding files in given directories.
+%   [fs,fs0] = bbGt('getFiles', dirs, [f0], [f1] )
 % Returns filtered ground truth bbs for purpose of evaluation.
 %   bbs = bbGt( 'toGt', objs, prm )
 % Evaluates detections in a single frame against ground truth data.
@@ -270,61 +270,66 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [fs,gtFs,imFs] = getFiles( varargin )
-% Get all gt and corresponding image files in given directories.
+function [fs,fs0] = getFiles( dirs, f0, f1 )
+% Get all corresponding files in given directories.
 %
-% File names: given an image named "name.imExt", the corresponding gt file
-% should be named either "name.gtExt" or "name.imExt.gtExt". Returns a list
-% of all files without path or extension (fs), the ground truth fils (gtFs)
-% and the image files (imFs).
+% The first dir in 'dirs' serves as the baseline dir. getFiles() returns
+% all files in the baseline dir and all corresponding files in the
+% remaining dirs to the files in the baseline dir, in the same order. Two
+% files are in correspondence if they have the same base name (regardless
+% of extension). For example, given a file named "name.jpg", a
+% corresponding file may be named "name.txt" or "name.jpg.txt". Every file
+% in the baseline dir must have a matching file in the remaining dirs.
 %
 % USAGE
-%  [fs,gtFs,imFs] = bbGt( 'getFiles', prm )
+%  [fs,fs0] = bbGt('getFiles', dirs, [f0], [f1] )
 %
 % INPUTS
-%  prm        - parameters (struct or name/value pairs)
-%   .gtDir      - ['REQ'] ground truth data location
-%   .gtExt      - ['.txt'] ground truth extension
-%   .f0         - [1] first ground truth file to use
-%   .f1         - [inf] last ground truth file to use
-%   .imDir      - [''] optional image data location
+%   dirs      - {1xm} list of m directories
+%   f0        - [1] index of first file in baseline dir to use
+%   f1        - [inf] index of last file in baseline dir to use
 %
 % OUTPUTS
-%   fs        - [1xn] list of file names without path or extension
-%   gtFs      - [1xn] list of full file names for ground truth
-%   imFs      - [1xn] list of full file names for images (if imDir~='')
+%   fs        - {mxn} list of full file names in each dir
+%   fs0       - {1xn} list of file names without path or extensions
 %
 % EXAMPLE
 %
 % See also bbGt
 
-% get parameters
-dfs={ 'gtDir','REQ', 'gtExt','.txt', 'f0',1, 'f1',inf, 'imDir','' };
-[gtDir,gtExt,f0,f1,imDir]=getPrmDflt(varargin,dfs,1);
+if(nargin<2 || isempty(f0)), f0=1; end
+if(nargin<3 || isempty(f1)), f1=inf; end
+m=length(dirs); assert(m>0); sep=filesep;
 
-% get list of files in ground truth directory
-sep=filesep; gtFs=dir([gtDir sep '*' gtExt]); gtFs={gtFs.name};
-gtFs=gtFs(f0:min(f1,end)); n=length(gtFs); fs=gtFs;
-if(n==0), error('No ground truth files found.'); end
-for i=1:n, gtFs{i}=[gtDir sep gtFs{i}]; end
+for d=1:m, dir1=dirs{d}; dir1(dir1=='\')=sep; dir1(dir1=='/')=sep;
+  if(dir1(end)==sep), dir1(end)=[]; end; dirs{d}=dir1; end
 
-% fs contains the gt files without the path or extension
-n=length(fs); for i=1:n, f=fs{i};
-  f(find(f=='.',1,'first'):end)=[]; fs{i}=f; end
+[fs0,fs1] = getFiles0(dirs{1},f0,f1,sep);
+n1=length(fs0); fs=cell(m,n1); fs(1,:)=fs1;
+for d=2:m, fs(d,:)=getFiles1(dirs{d},fs0,sep); end
 
-% optionally get list of corresponding files in image directory
-if(isempty(imDir)), imFs={}; else
-  assert(~isequal(imDir,gtDir)); imFs=cell(1,n); k=0; j=0;
-  imFs0=dir(imDir); imFs0={imFs0.name}; m=length(imFs0);
-  eMsg='Ground truth file ''%s'' has no corresponding image file.';
-  for i=1:n, f=fs{i}; r=length(f); match=0;
-    while(j<m), j=j+1; if(strcmpi(f,imFs0{j}(1:min(end,r))))
-        k=k+1; imFs{k}=imFs0{j}; match=1; break; end; end
-    if(~match), error(eMsg,f); end
+  function [fs0,fs1] = getFiles0( dir1, f0, f1, sep )
+    % get fs1 in dir1 (and fs0 without path or extension)
+    fs1=dir([dir1 sep '*']); fs1={fs1.name}; fs1=fs1(3:end);
+    fs1=fs1(f0:min(f1,end)); fs0=fs1; n=length(fs0);
+    if(n==0), error('No files found in baseline dir.'); end
+    for i=1:n, fs1{i}=[dir1 sep fs0{i}]; end
+    n=length(fs0); for i=1:n, f=fs0{i};
+      f(find(f=='.',1,'first'):end)=[]; fs0{i}=f; end
   end
-  for i=1:n, imFs{i}=[imDir sep imFs{i}]; end
-end
 
+  function fs1 = getFiles1( dir1, fs0, sep )
+    % get fs1 in dir1 corresponding to fs0
+    n=length(fs0); fs1=cell(1,n); i2=0; i1=0;
+    fs2=dir(dir1); fs2={fs2.name}; n2=length(fs2);
+    eMsg='''%s'' has no corresponding file in %s.';
+    for i0=1:n, r=length(fs0{i0}); match=0;
+      while(i2<n2), i2=i2+1; if(strcmpi(fs0{i0},fs2{i2}(1:min(end,r))))
+          i1=i1+1; fs1{i1}=fs2{i2}; match=1; break; end; end
+      if(~match), error(eMsg,fs0{i0},dir1); end
+    end
+    for i1=1:n, fs1{i1}=[dir1 sep fs1{i1}]; end
+  end
 end
 
 function [bbs,ids] = toGt( objs, prm )
