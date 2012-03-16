@@ -44,7 +44,7 @@ function varargout = bbGt( action, varargin )
 %
 %%% (2) Routines for evaluating the Pascal criteria for object detection.
 % Get all gt and corresponding image files in given directories.
-%   [fs,fsGt,fsIm] = bbGt( 'getFiles', prm )
+%   [fs,gtFs,imFs] = bbGt( 'getFiles', prm )
 % Returns filtered ground truth bbs for purpose of evaluation.
 %   bbs = bbGt( 'toGt', objs, prm )
 % Evaluates detections in a single frame against ground truth data.
@@ -52,11 +52,11 @@ function varargout = bbGt( action, varargin )
 % Display evaluation results for given image.
 %   [hs,hImg] = bbGt( 'showRes' I, gt, dt, varargin )
 % Run evaluation evalRes for each ground truth/detection result in dirs.
-%   [gt,dt,files] = bbGt( 'evalResDir', gtDir, dtDir, [varargin] )
+%   [gt,dt,imFs] = bbGt( 'evalResDir', gtDir, dtDir, [varargin] )
 % Compute ROC or PR based on outputs of evalRes on multiple images.
 %   [xs,ys,ref] = bbGt( 'compRoc', gt, dt, roc, ref )
 % Extract true or false positives or negatives for visualization.
-%   [Is,scores,imgIds] = bbGt( 'cropRes', gt, dt, files, varargin )
+%   [Is,scores,imgIds] = bbGt( 'cropRes', gt, dt, imFs, varargin )
 % Computes (modified) overlap area between pairs of bbs.
 %   oa = bbGt( 'compOas', dt, gt, [ig] )
 % Optimized version of compOas for a single pair of bbs.
@@ -270,16 +270,16 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [fs,fsGt,fsIm] = getFiles( varargin )
+function [fs,gtFs,imFs] = getFiles( varargin )
 % Get all gt and corresponding image files in given directories.
 %
 % File names: given an image named "name.imExt", the corresponding gt file
 % should be named either "name.gtExt" or "name.imExt.gtExt". Returns a list
-% of all files without path or extension (fs), the ground truth fils (fsGt)
-% and the image files (fsIm).
+% of all files without path or extension (fs), the ground truth fils (gtFs)
+% and the image files (imFs).
 %
 % USAGE
-%  [fs,fsGt,fsIm] = bbGt( 'getFiles', prm )
+%  [fs,gtFs,imFs] = bbGt( 'getFiles', prm )
 %
 % INPUTS
 %  prm        - parameters (struct or name/value pairs)
@@ -291,8 +291,8 @@ function [fs,fsGt,fsIm] = getFiles( varargin )
 %
 % OUTPUTS
 %   fs        - [1xn] list of file names without path or extension
-%   fsGt      - [1xn] list of full file names for ground truth
-%   fsIm      - [1xn] list of full file names for images (if imDir~='')
+%   gtFs      - [1xn] list of full file names for ground truth
+%   imFs      - [1xn] list of full file names for images (if imDir~='')
 %
 % EXAMPLE
 %
@@ -303,26 +303,26 @@ dfs={ 'gtDir','REQ', 'gtExt','.txt', 'f0',1, 'f1',inf, 'imDir','' };
 [gtDir,gtExt,f0,f1,imDir]=getPrmDflt(varargin,dfs,1);
 
 % get list of files in ground truth directory
-sep=filesep; fsGt=dir([gtDir sep '*' gtExt]); fsGt={fsGt.name};
-fsGt=fsGt(f0:min(f1,end)); n=length(fsGt); fs=fsGt;
+sep=filesep; gtFs=dir([gtDir sep '*' gtExt]); gtFs={gtFs.name};
+gtFs=gtFs(f0:min(f1,end)); n=length(gtFs); fs=gtFs;
 if(n==0), error('No ground truth files found.'); end
-for i=1:n, fsGt{i}=[gtDir sep fsGt{i}]; end
+for i=1:n, gtFs{i}=[gtDir sep gtFs{i}]; end
 
 % fs contains the gt files without the path or extension
 n=length(fs); for i=1:n, f=fs{i};
   f(find(f=='.',1,'first'):end)=[]; fs{i}=f; end
 
 % optionally get list of corresponding files in image directory
-if(isempty(imDir)), fsIm={}; else
-  assert(~isequal(imDir,gtDir)); fsIm=cell(1,n); k=0; j=0;
-  fsIm0=dir(imDir); fsIm0={fsIm0.name}; m=length(fsIm0);
+if(isempty(imDir)), imFs={}; else
+  assert(~isequal(imDir,gtDir)); imFs=cell(1,n); k=0; j=0;
+  imFs0=dir(imDir); imFs0={imFs0.name}; m=length(imFs0);
   eMsg='Ground truth file ''%s'' has no corresponding image file.';
   for i=1:n, f=fs{i}; r=length(f); match=0;
-    while(j<m), j=j+1; if(strcmpi(f,fsIm0{j}(1:min(end,r))))
-        k=k+1; fsIm{k}=fsIm0{j}; match=1; break; end; end
+    while(j<m), j=j+1; if(strcmpi(f,imFs0{j}(1:min(end,r))))
+        k=k+1; imFs{k}=imFs0{j}; match=1; break; end; end
     if(~match), error(eMsg,f); end
   end
-  for i=1:n, fsIm{i}=[imDir sep fsIm{i}]; end
+  for i=1:n, imFs{i}=[imDir sep imFs{i}]; end
 end
 
 end
@@ -588,7 +588,7 @@ end
 hs=[hs{:}]; hold off;
 end
 
-function [gt,dt,files] = evalResDir( gtDir, dtDir, varargin )
+function [gt,dt,imFs] = evalResDir( gtDir, dtDir, varargin )
 % Run evaluation evalRes for each ground truth/detection result in dirs.
 %
 % Loads each ground truth annotation in gtDir and the corresponding
@@ -622,7 +622,7 @@ function [gt,dt,files] = evalResDir( gtDir, dtDir, varargin )
 % bbNms() for more info.
 %
 % USAGE
-%  [gt,dt,files] = bbGt( 'evalResDir', gtDir, dtDir, [varargin] )
+%  [gt,dt,imFs] = bbGt( 'evalResDir', gtDir, dtDir, [varargin] )
 %
 % INPUTS
 %  gtDir        - location of ground truth
@@ -640,7 +640,7 @@ function [gt,dt,files] = evalResDir( gtDir, dtDir, varargin )
 % OUTPUTS
 %  gt           - {1xn} first output of evalRes() for each image
 %  dt           - {1xn} second output of evalRes() for each image
-%  files        - {1xn} names of corresponding images (possibly w/o ext)
+%  imFs         - {1xn} names of corresponding images (possibly w/o ext)
 %
 % EXAMPLE
 %
@@ -656,7 +656,7 @@ if(isempty(imDir)), imDir=gtDir; end
 % get list of files in ground truth directory
 fs=dir([gtDir '/*.txt']); fs={fs.name};
 fs=fs(f0:min(f1,end)); n=length(fs); assert(n>0);
-files=cell(1,n); for i=1:n, files{i}=[imDir '/' fs{i}(1:end-4)]; end
+imFs=cell(1,n); for i=1:n, imFs{i}=[imDir '/' fs{i}(1:end-4)]; end
 
 % load and prepare ground truth annotations (or use cached values)
 persistent keyPrv gtPrv; key={fs,gtDir,pGt};
@@ -739,16 +739,16 @@ end
 [d,ind]=min(abs(xs-ref)); ref=ys(ind);
 end
 
-function [Is,scores,imgIds] = cropRes( gt, dt, files, varargin )
+function [Is,scores,imgIds] = cropRes( gt, dt, imFs, varargin )
 % Extract true or false positives or negatives for visualization.
 %
 % USAGE
-%  [Is,scores,imgIds] = bbGt( 'cropRes', gt, dt, files, varargin )
+%  [Is,scores,imgIds] = bbGt( 'cropRes', gt, dt, imFs, varargin )
 %
 % INPUTS
 %  gt         - {1xN} first output of evalRes() for each image
 %  dt         - {1xN} second output of evalRes() for each image
-%  files      - {1xN} name of each image
+%  imFs       - {1xN} name of each image
 %  varargin   - additional params (struct or name/value pairs)
 %   .dims       - ['REQ'] target dimensions for extracted windows
 %   .pad        - [0] padding amount for cropping
@@ -767,7 +767,7 @@ function [Is,scores,imgIds] = cropRes( gt, dt, files, varargin )
 % See also bbGt, bbGt>evalRes
 dfs={'dims','REQ','pad',0,'type','fp','n',100,'show',1,'fStr','%0.1f'};
 [dims,pad,type,n,show,fStr]=getPrmDflt(varargin,dfs,1);
-N=length(files); assert(length(gt)==N && length(dt)==N);
+N=length(imFs); assert(length(gt)==N && length(dt)==N);
 % crop patches either in gt or dt according to type
 switch type
   case 'fn', bbs=gt; keep=@(bbs) bbs(:,5)==0;
@@ -792,7 +792,7 @@ if(any(pad>0)), dims1=dims+2*pad; rs=dims1./dims; dims=dims1; end
 if(any(pad>0)), bbs=bbApply('resize',bbs,rs(1),rs(2)); end
 for i=1:N
   locs=find(ids==i); if(isempty(locs)), continue; end
-  Is1=bbApply('crop',imread(files{i}),bbs(locs,1:4),'replicate',dims);
+  Is1=bbApply('crop',imread(imFs{i}),bbs(locs,1:4),'replicate',dims);
   for j=1:length(locs), Is{locs(j)}=Is1{j}; end;
   scores(locs)=bbs(locs,5); imgIds(locs)=i;
 end; Is=cell2array(Is);
@@ -993,15 +993,15 @@ dfs={ 'pFiles','REQ', 'pGt',[], 'pSmp','REQ', 'trDir','', 'bbRand',[] };
 [pFiles,pGt,pSmp,trDir,bbRand]=getPrmDflt(varargin,dfs,1);
 
 if(iscell(pSmp)), pSmp=cell2struct(pSmp(2:2:end),pSmp(1:2:end),2); end
-[fs,fsGt,fsIm]=getFiles(pFiles); assert(~isempty(fsIm)); n=length(fs);
+[fs,gtFs,imFs]=getFiles(pFiles); assert(~isempty(imFs)); n=length(fs);
 wrt=~isempty(trDir); str=nargout==2; rnd=~isempty(bbRand);
 if(wrt && ~exist(trDir,'dir')), mkdir(trDir); end
 
 m=100000; bbs=zeros(m,5); Is=cell(m,1); k=0;
 ticId=ticStatus('sampling windows');
 for i=1:n
-  I=imread(fsIm{i}); [h,w,~]=size(I);
-  bb=bbLoad(fsGt{i}); bb=toGt(bb,pGt); pSmp.bbs=bb;
+  I=imread(imFs{i}); [h,w,~]=size(I);
+  bb=bbLoad(gtFs{i}); bb=toGt(bb,pGt); pSmp.bbs=bb;
   if(rnd), pSmp.bbs=bbApply('random',w,h,bbRand{:}); pSmp.ibbs=bb; end
   [bb,Is1]=sampleData(I,pSmp); [m,nd]=size(bb); tocStatus(ticId,i/n);
   for j=1:m, k=k+1; bbs(k,1:nd)=bb(j,:); if(str), Is{k}=Is1{j}; end
