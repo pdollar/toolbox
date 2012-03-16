@@ -961,8 +961,10 @@ end
 function out = sampleDataDir( varargin )
 % Sample and save positive examples from an annotated directory of images.
 %
-% Takes as input directories containing ground truth and images. Crops all
-% positive windows from each image and stores in the target directory.
+% Takes as input lists of gt and image files. Crops all positive windows
+% from each image and stores in the target directory.
+%
+% bb>getfiles() with params 'pFiles' controls list of gt/im files.
 % bb>toGt() with params 'pGt' controls which ground truth bbs are used.
 % bbGt>sampleData() with params 'pSmp' controls how the bbs are extracted.
 %
@@ -971,9 +973,8 @@ function out = sampleDataDir( varargin )
 %
 % INPUTS
 %  prm        - parameters (struct or name/value pairs)
-%   .gtDir      - ['REQ'] ground truth data location
-%   .imDir      - ['REQ'] source data location
-%   .trDir      - ['REQ'] target data location
+%   .pFiles     - ['REQ'] parameters for bbGt>getFiles
+%   .trDir      - ['REQ'] target data directory
 %   .pGt        - ['REQ'] params for bbGt>toGt
 %   .pSmp       - ['REQ'] params for bbGt>sampleData
 %
@@ -982,29 +983,16 @@ function out = sampleDataDir( varargin )
 %
 % EXAMPLE
 %
-% See also bbGt, bbGt>toGt, bbGt>sampleData
-
-% get parameters
-dfs={ 'gtDir','REQ', 'imDir','REQ', 'trDir','REQ',...
-  'pGt','REQ', 'pSmp','REQ'}; out = 1;
-[gtDir,imDir,trDir,pGt,pSmp]=getPrmDflt(varargin,dfs,1);
+% See also bbGt, bbGt>getFiles, bbGt>toGt, bbGt>sampleData
+dfs={ 'pFiles','REQ', 'trDir','REQ', 'pGt','REQ', 'pSmp','REQ' };
+[pFiles,trDir,pGt,pSmp]=getPrmDflt(varargin,dfs,1); out=1;
 if(iscell(pSmp)), pSmp=cell2struct(pSmp(2:2:end),pSmp(1:2:end),2); end
-
-% get list of ground truth and images
-fsGt=dir([gtDir '/*.txt']); fsGt={fsGt.name}; n=length(fsGt); assert(n>0);
-fsIm=cell(1,n); for i=1:n, fsIm{i}=[imDir '/' fsGt{i}(1:end-4)]; end
-for i=1:n, fsGt{i}=[gtDir '/' fsGt{i}]; end
-
-% sample from each image in the source dir
-if(~exist(trDir,'dir')), mkdir(trDir); end
-ticId=ticStatus('sampling positives'); k=0;
+[fs,fsGt,fsIm]=getFiles(pFiles); assert(~isempty(fsIm));
+if(~exist(trDir,'dir')), mkdir(trDir); end; k=0; n=length(fsGt);
+ticId=ticStatus('sampling positives');
 for i=1:n
-  I = imread(fsIm{i});
-  bbs = bbGt('bbLoad',fsGt{i});
-  pSmp.bbs=bbGt('toGt',bbs,pGt);
-  [bbs,Is]=bbGt('sampleData',I,pSmp); m=size(bbs,1);
+  I=imread(fsIm{i}); bbs=bbLoad(fsGt{i});  pSmp.bbs=toGt(bbs,pGt);
+  [bbs,Is]=sampleData(I,pSmp); m=size(bbs,1); tocStatus(ticId,i/n);
   for j=1:m, k=k+1; imwrite(Is{j},[trDir '/I' int2str2(k-1,5) '.png']); end
-  tocStatus(ticId,i/n);
 end
-
 end
