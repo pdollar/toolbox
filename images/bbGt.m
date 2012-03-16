@@ -971,19 +971,19 @@ function [bbs,Is] = sampleDataDir( varargin )
 % sampleData() on each image. If bbRand is specified then samples random
 % negs (that don't overlap the positives), otherwise samples positives.
 %
-% bb>getfiles() with params 'pFiles' controls list of gt/im files.
 % bb>toGt() with params 'pGt' controls which ground truth bbs are used.
 % bbGt>sampleData() with params 'pSmp' controls how the bbs are extracted.
 %
 % USAGE
-%  out = bbGt( 'sampleDataDir', prm )
+%  [bbs,Is] = bbGt( 'sampleDataDir', prm )
 %
 % INPUTS
 %  prm        - parameters (struct or name/value pairs)
-%   .pFiles     - ['REQ'] params for bbGt>getFiles
+%   .gtDir      - ['REQ'] directory containing ground truth
+%   .imDir      - ['REQ'] directory containing images
+%   .trDir      - [''] target data directory
 %   .pGt        - [] params for bbGt>toGt
 %   .pSmp       - ['REQ'] params for bbGt>sampleData
-%   .trDir      - [''] target data directory
 %   .bbRand     - [] optional last three params for bbApply>random()
 %
 % OUTPUTS
@@ -994,11 +994,12 @@ function [bbs,Is] = sampleDataDir( varargin )
 %
 % See also bbGt, bbGt>getFiles, bbGt>toGt, bbGt>sampleData, bbApply>random
 
-dfs={ 'pFiles','REQ', 'pGt',[], 'pSmp','REQ', 'trDir','', 'bbRand',[] };
-[pFiles,pGt,pSmp,trDir,bbRand]=getPrmDflt(varargin,dfs,1);
+dfs={ 'gtDir','REQ', 'imDir','REQ', 'trDir','', ...
+  'pGt',[], 'pSmp','REQ', 'bbRand',[] };
+[gtDir,imDir,trDir,pGt,pSmp,bbRand]=getPrmDflt(varargin,dfs,1);
 
 if(iscell(pSmp)), pSmp=cell2struct(pSmp(2:2:end),pSmp(1:2:end),2); end
-[fs,gtFs,imFs]=getFiles(pFiles); assert(~isempty(imFs)); n=length(fs);
+fs=getFiles({gtDir,imDir}); gtFs=fs(1,:); imFs=fs(2,:); n=length(imFs);
 wrt=~isempty(trDir); str=nargout==2; rnd=~isempty(bbRand);
 if(wrt && ~exist(trDir,'dir')), mkdir(trDir); end
 
