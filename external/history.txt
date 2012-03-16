@@ -1,5 +1,5 @@
 Version NEW
- -bbGt.m: added sampleDataDir()
+ -bbGt.m: major additions/overhaul
  -minor: bbApply.m
 
 Version 2.63 (15-Mar-2012)

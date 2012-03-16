@@ -597,17 +597,11 @@ function [gt,dt,imFs] = evalResDir( gtDir, dtDir, varargin )
 % Run evaluation evalRes for each ground truth/detection result in dirs.
 %
 % Loads each ground truth annotation in gtDir and the corresponding
-% detection in gtDir, and call evalRes() on the pair. The detection should
+% detection in dtDir, and calls evalRes() on the pair. The detection should
 % just be a text file with each row containing 5 numbers which represent a
-% bounding box (left/top/width/height/detection score). The text file may
-% be empty in the case of no detections, but it must exist.
-%
-% File names: given an image named "name.ext", the corresponding gt file
-% should be named either "name.txt" or "name.ext.txt". If the gt uses the
-% format "name.txt", so must the dt files. If the gt files use the format
-% "name.ext.txt", the dt files can use either "name.txt" or "name.ext.txt".
-% In other words the image extension (".ext") is optional, but ".txt" is
-% mandatory. Naming must be consistent across the whole directory.
+% bounding box (left/top/width/height/score). The text file may be empty in
+% case of no detections, but it must exist. Ground truth, detection and
+% image files must correspond according to getFiles().
 %
 % As an alternative to specifying a directory of detection files, dtDir can
 % point to a single text file that contains the detection results across
@@ -616,15 +610,8 @@ function [gt,dt,imFs] = evalResDir( gtDir, dtDir, varargin )
 % dtDir points to a text file f1 must be 1.
 %
 % Prior to calling evalRes(), the ground truth annotation is passed through
-% bbGt>toGt() with the parameters pGt. See bbGt>toGt() for more info. The
-% detections are optionally resized before comparing against the ground
-% truth. The resizing is important as some detectors return bbs that are
-% padded. For example, if a detector returns a bounding box of size 128x64
-% around objects of size 100x43 (as is typical for some pedestrian
-% detectors on the INRIA pedestrian database), the resize parameters should
-% be {100/128, 43/64, 0}, see bbApply>resize() for more info. Finally nms
-% is optionally applied to the detections (if pNms are specified), see
-% bbNms() for more info.
+% bbGt>toGt() with the parameters pGt. See bbGt>toGt() for more info. Also,
+% if specified, nms is optionally applied to the detections (see bbNms()).
 %
 % USAGE
 %  [gt,dt,imFs] = bbGt( 'evalResDir', gtDir, dtDir, [varargin] )
@@ -636,58 +623,52 @@ function [gt,dt,imFs] = evalResDir( gtDir, dtDir, varargin )
 %   .thr          - [.5] threshold for evalRes()
 %   .mul          - [0] multiple match flag for evalRes()
 %   .pGt          - {} params for bbGt>toGt
-%   .resize       - {} parameters for bbApply('resize')
-%   .pNms         - ['type','none'] params non maximal suppresion
+%   .pNms         - ['type','none'] params for non maximal suppresion
 %   .f0           - [1] first ground truth file to use
 %   .f1           - [inf] last ground truth file to use
-%   .imDir        - [gtDir] directory containing images
+%   .imDir        - [gtDir] optional directory containing images
 %
 % OUTPUTS
 %  gt           - {1xn} first output of evalRes() for each image
 %  dt           - {1xn} second output of evalRes() for each image
-%  imFs         - {1xn} names of corresponding images (possibly w/o ext)
+%  imFs         - {1xn} names of corresponding images (if imDir specified)
 %
 % EXAMPLE
 %
-% See also bbGt, bbGt>evalRes, bbGt>toGt, bbNms, bbGt>compRoc,
-% bbApply>resize
+% See also bbGt, bbGt>evalRes, bbGt>toGt, bbGt>getFiles, bbNms
 
 % get parameters
 noNms=struct('type','none'); dfs={'thr',.5,'mul',0,'pGt',{},...
-  'resize',{},'pNms',noNms,'f0',1,'f1',inf,'imDir',''};
-[thr,mul,pGt,r,pNms,f0,f1,imDir]=getPrmDflt(varargin,dfs,1);
+  'pNms',noNms,'f0',1,'f1',inf,'imDir',''};
+[thr,mul,pGt,pNms,f0,f1,imDir]=getPrmDflt(varargin,dfs,1);
 if(isempty(imDir)), imDir=gtDir; end
 
-% get list of files in ground truth directory
-fs=dir([gtDir '/*.txt']); fs={fs.name};
-fs=fs(f0:min(f1,end)); n=length(fs); assert(n>0);
-imFs=cell(1,n); for i=1:n, imFs{i}=[imDir '/' fs{i}(1:end-4)]; end
+% get list of gt, im and dt files
+if(length(dtDir)>4 && strcmp(dtDir(end-3:end),'.txt'))
+  fs=getFiles({gtDir,imDir},f0,f1); dtFs={}; dtFile=dtDir;
+else
+  fs=getFiles({gtDir,imDir,dtDir},f0,f1); dtFs=fs(3,:); dtFile='';
+end
+gtFs=fs(1,:); imFs=fs(2,:); n=length(gtFs);
 
 % load and prepare ground truth annotations (or use cached values)
-persistent keyPrv gtPrv; key={fs,gtDir,pGt};
+persistent keyPrv gtPrv; key={gtFs,pGt};
 if(isequal(key,keyPrv)), gt=gtPrv; else gt=cell(1,n);
-  for i=1:n, gt{i}=toGt(bbLoad([gtDir '/' fs{i}]),pGt); end
+  for i=1:n, gt{i}=toGt(bbLoad(gtFs{i}),pGt); end
   gtPrv=gt; keyPrv=key;
 end
 
 % load detections (from single or multiple files)
-if( length(dtDir)>4 && strcmp(dtDir(end-3:end),'.txt') )
+if(~isempty(dtFile))
   assert(f0==1); dt1=load(dtDir,'-ascii');
   if(numel(dt1)==0), dt1=zeros(0,6); end; ids=dt1(:,1);
   dt=cell(1,n); for i=1:n, dt{i}=dt1(ids==i,2:6); end
 else
-  for i=1:n
-    nm=fs{i}(1:end-4); p=find(nm=='.'); ext='';
-    if(~isempty(p)), p=p(end); ext=nm(p:end); nm=nm(1:p-1); end
-    nm0=[dtDir '/' nm '.txt']; nm1=[dtDir '/' nm ext '.txt'];
-    if(i==1), dt=cell(1,n); useExt=exist(nm1,'file'); end
-    if(useExt), dt1=load(nm1,'-ascii'); else dt1=load(nm0,'-ascii'); end
-    if(numel(dt1)==0), dt1=zeros(0,5); end; dt{i}=dt1(:,1:5);
-  end
+  dt=cell(1,n); for i=1:n, dt1=load(dtFs{i},'-ascii');
+    if(numel(dt1)==0), dt1=zeros(0,5); end; dt{i}=dt1(:,1:5); end
 end
 
-% post-process detections if necessary
-if(~isempty(r)), for i=1:n, dt{i}=bbApply('resize',dt{i},r{:}); end; end
+% optionally apply nms
 if(~isequal(pNms,noNms)), for i=1:n, dt{i}=bbNms(dt{i},pNms); end; end
 
 % run evaluation on each image
