@@ -35,6 +35,8 @@ function varargout = bbGt( action, varargin )
 %   objs = bbGt( 'bbSave', objs, fName )
 % Load bb annotation from text file.
 %   objs = bbGt( 'bbLoad', fName )
+% Load bb annotation from file stored in PASCAL VOC format.
+%   objs = bbGt( 'bbLoadPascal', fName )
 % Get object property 'name' (in a standard array).
 %   vals = bbGt( 'get', objs, name )
 % Set object property 'name' (with a standard array).
@@ -83,9 +85,10 @@ function varargout = bbGt( action, varargin )
 % EXAMPLE
 %
 % See also bbApply, bbLabeler, bbGt>create, bbGt>bbSave, bbGt>bbLoad,
-% bbGt>get, bbGt>set, bbGt>draw, bbGt>dtsLoad, bbGt>getFiles, bbGt>toGt,
-% bbGt>evalRes, bbGt>showRes, bbGt>evalResDir, bbGt>compRoc, bbGt>cropRes,
-% bbGt>compOas, bbGt>compOa, bbGt>sampleData, bbGt>sampleDataDir
+% bbGt>bbLoadPascal, bbGt>get, bbGt>set, bbGt>draw, bbGt>dtsLoad,
+% bbGt>getFiles, bbGt>toGt, bbGt>evalRes, bbGt>showRes, bbGt>evalResDir,
+% bbGt>compRoc, bbGt>cropRes, bbGt>compOas, bbGt>compOa, bbGt>sampleData,
+% bbGt>sampleDataDir
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -180,6 +183,39 @@ if(m>=11), for i=1:n, objs(i).ign=in{11}(i); end; end
 if(m>=12), for i=1:n, objs(i).ang=in{12}(i); end; end
 end
 
+function objs = bbLoadPascal( fName )
+% Load bb annotation from file stored in PASCAL VOC format.
+%
+% Requires 'VOCcode/' to be in directory path. Part of VOCdevkit available
+% from the PASCAL VOC: http://pascallin.ecs.soton.ac.uk/challenges/VOC/.
+% Objects labeled as either 'truncated' or 'occluded' using the PASCAL
+% definitions have the 'occ' flag set to true. Objects labeled as
+% 'difficult' have the 'ign' flag set to true. 'class' is used for 'lbl'.
+%
+% USAGE
+%  objs = bbGt( 'bbLoadPascal', fName )
+%
+% INPUTS
+%  fName  - name of text file
+%
+% OUTPUTS
+%  objs   - loaded objects
+%
+% EXAMPLE
+%
+% See also bbGt, bbGt>bbSave, bbGt>bbLoad
+if(exist('PASreadrecord.m','file')~=2)
+  error('bbLoadPascal() requires the PASCAL VOC code.'); end
+os=PASreadrecord(fName); os=os.objects;
+n=length(os); objs=create(n);
+for i=1:n
+  bb=os(i).bbox; bb(3)=bb(3)-bb(1); bb(4)=bb(4)-bb(2); objs(i).bb=bb;
+  objs(i).lbl=os(i).class; objs(i).ign=os(i).difficult;
+  objs(i).occ=os(i).occluded || os(i).truncated;
+  if(objs(i).occ), objs(i).bbv=bb; end
+end
+end
+
 function vals = get( objs, name )
 % Get object property 'name' (in a standard array).
 %
@@ -241,7 +277,7 @@ function hs = draw( objs, varargin )
 % Draw an ellipse for each labeled object.
 %
 % USAGE
-%  objs = bbGt( 'draw', objs, prm )
+%  hs = bbGt( 'draw', objs, prm )
 %
 % INPUTS
 %  objs       - [nx1] struct array of objects
