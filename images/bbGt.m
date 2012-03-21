@@ -282,7 +282,7 @@ function hs = draw( objs, varargin )
 % INPUTS
 %  objs       - [nx1] struct array of objects
 %  varargin   - additional params (struct or name/value pairs)
-%   .col        - ['g'] color or [kx1] array of colors
+%   .col        - ['g'] color or [nx1] array of colors
 %   .lw         - [2] line width
 %   .ls         - ['-'] line style
 %
@@ -442,8 +442,8 @@ function [bbs,ids] = toGt( objs, prm )
 % INPUTS
 %  objs     - ground truth objects
 %  prm      -
-%   .lbls       - [] return objs w these labels (or [] to return all)
-%   .ilbls      - [] return objs w these labels but set to ignore
+%   .lbls       - [] return objs with these labels (or [] to return all)
+%   .ilbls      - [] return objs with these labels but set to ignore
 %   .hRng       - [] range of acceptable obj heights
 %   .wRng       - [] range of acceptable obj widths
 %   .aRng       - [] range of acceptable obj areas
