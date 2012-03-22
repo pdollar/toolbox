@@ -43,8 +43,8 @@ function varargout = bbGt( action, varargin )
 %   objs = bbGt( 'set', objs, name, vals )
 % Draw an ellipse for each labeled object.
 %   hs = draw( objs, pDraw )
-% Returns filtered ground truth bbs.
-%   bbs = bbGt( 'toGt', objs, pGt )
+% Filters ground truth objs and converts them to bbs.
+%   bbs = bbGt( 'toBbs', objs, pToBbs )
 %
 %%% (2) Routines for evaluating the Pascal criteria for object detection.
 % Load detection outputs from text files.
@@ -85,7 +85,7 @@ function varargout = bbGt( action, varargin )
 % EXAMPLE
 %
 % See also bbApply, bbLabeler, bbGt>create, bbGt>bbSave, bbGt>bbLoad,
-% bbGt>bbLoadPascal, bbGt>get, bbGt>set, bbGt>draw, bbGt>toGt,
+% bbGt>bbLoadPascal, bbGt>get, bbGt>set, bbGt>draw, bbGt>toBbs,
 % bbGt>dtsLoad, bbGt>getFiles, bbGt>evalRes, bbGt>showRes, bbGt>evalResDir,
 % bbGt>compRoc, bbGt>cropRes, bbGt>compOas, bbGt>compOa, bbGt>sampleData,
 % bbGt>sampleDataDir
@@ -306,8 +306,8 @@ for i=1:n
 end; hold off;
 end
 
-function [bbs,ids] = toGt( objs, varargin )
-% Returns filtered ground truth bbs.
+function [bbs,ids] = toBbs( objs, varargin )
+% Filters ground truth objs and converts them to bbs.
 %
 % Returns bbs for all objects with lbl in lbls. The result is an [nx5]
 % array where each row is of the form [x y w h ignore]. [x y w h] is the bb
@@ -335,11 +335,11 @@ function [bbs,ids] = toGt( objs, varargin )
 % which case v=0 (note that v~=1 in this case).
 %
 % USAGE
-%  bbs = bbGt( 'toGt', objs, pGt )
+%  bbs = bbGt( 'toBbs', objs, pToBbs )
 %
 % INPUTS
 %  objs     - ground truth objects
-%  pGt      - parameters (struct or name/value pairs)
+%  pToBbs   - parameters (struct or name/value pairs)
 %   .lbls     - [] return objs with these labels (or [] to return all)
 %   .ilbls    - [] return objs with these labels but set to ignore
 %   .hRng     - [] range of acceptable obj heights
@@ -361,7 +361,7 @@ function [bbs,ids] = toGt( objs, varargin )
 %  objs(1).ign=0; objs(1).lbl='person'; objs(1).bb=[0 0 10 10];
 %  objs(2).ign=0; objs(2).lbl='person'; objs(2).bb=[0 0 20 20];
 %  objs(3).ign=0; objs(3).lbl='bicycle'; objs(3).bb=[0 0 20 20];
-%  [bbs,ids] = bbGt('toGt',objs,{'lbls',{'person'},'hRng',[15 inf]})
+%  [bbs,ids] = bbGt('toBbs',objs,{'lbls',{'person'},'hRng',[15 inf]})
 %
 % See also bbGt
 
@@ -635,7 +635,7 @@ function [hs,hImg] = showRes( I, gt, dt, varargin )
 %
 % EXAMPLE
 %
-% See also bbGt, bbGt>evalRes, bbGt>toGt
+% See also bbGt, bbGt>evalRes, bbGt>toBbs
 dfs={'evShow',1,'gtShow',1,'dtShow',1,'cols','krg',...
   'gtLs','-','dtLs','--','lw',3};
 [evShow,gtShow,dtShow,cols,gtLs,dtLs,lw]=getPrmDflt(varargin,dfs,1);
@@ -672,8 +672,8 @@ function [gt,dt,imFs] = evalResDir( gtDir, dtDir, varargin )
 % point to a single text file that contains the detection results across
 % all images (if dtDir points to a text file f1 must be 1). Prior to
 % calling evalRes(), the ground truth annotations are passed through
-% bbGt>toGt() with the parameters pGt. See bbGt>toGt() for more info. Also,
-% if specified, nms is optionally applied to the detections (see bbNms()).
+% bbGt>toBbs() with the parameters pToBbs. See bbGt>toBbs() for more info.
+% Also nms is optionally applied to the detections (see bbNms()).
 %
 % USAGE
 %  [gt,dt,imFs] = bbGt( 'evalResDir', gtDir, dtDir, varargin )
@@ -684,7 +684,7 @@ function [gt,dt,imFs] = evalResDir( gtDir, dtDir, varargin )
 %  varargin     - additional parameters (struct or name/value pairs)
 %   .thr          - [.5] threshold for evalRes()
 %   .mul          - [0] multiple match flag for evalRes()
-%   .pGt          - {} params for bbGt>toGt
+%   .pToBbs       - {} params for bbGt>toBbs
 %   .pNms         - ['type','none'] params for non maximal suppresion
 %   .f0           - [1] first ground truth file to use
 %   .f1           - [inf] last ground truth file to use
@@ -697,13 +697,13 @@ function [gt,dt,imFs] = evalResDir( gtDir, dtDir, varargin )
 %
 % EXAMPLE
 %
-% See also bbGt, bbGt>evalRes, bbGt>toGt, bbGt>getFiles, bbGt>dtsLoad,
+% See also bbGt, bbGt>evalRes, bbGt>toBbs, bbGt>getFiles, bbGt>dtsLoad,
 % bbNms
 
 % get parameters
-noNms=struct('type','none'); dfs={'thr',.5,'mul',0,'pGt',{},...
+noNms=struct('type','none'); dfs={'thr',.5,'mul',0,'pToBbs',{},...
   'pNms',noNms,'f0',1,'f1',inf,'imDir',''};
-[thr,mul,pGt,pNms,f0,f1,imDir]=getPrmDflt(varargin,dfs,1);
+[thr,mul,pToBbs,pNms,f0,f1,imDir]=getPrmDflt(varargin,dfs,1);
 if(isempty(imDir)), imDir=gtDir; end
 
 % get list of gt, im and dt files
@@ -713,9 +713,9 @@ fs=getFiles(dirs,f0,f1); gtFs=fs(1,:); imFs=fs(2,:); n=length(gtFs);
 if(dtFile), dtFs=dtDir; else dtFs=fs(3,:); end
 
 % load and prepare ground truth annotations (or use cached values)
-persistent keyPrv gtPrv; key={gtFs,pGt};
+persistent keyPrv gtPrv; key={gtFs,pToBbs};
 if(isequal(key,keyPrv)), gt=gtPrv; else gt=cell(1,n);
-  for i=1:n, gt{i}=toGt(bbLoad(gtFs{i}),pGt); end
+  for i=1:n, gt{i}=toBbs(bbLoad(gtFs{i}),pToBbs); end
   gtPrv=gt; keyPrv=key;
 end
 
@@ -924,7 +924,7 @@ function [bbs,Is] = sampleData( I, varargin )
 % bbs should contain the candidate bounding boxes, and ibbs should contain
 % the bounding boxes that are to be ignored. During sampling, only bbs that
 % do not match any ibbs are kept (two bbs match if their area of overlap is
-% above the given thr, see bbGt>compOas). Use gtBbs=toGt(...) to obtain a
+% above the given thr, see bbGt>compOas). Use gtBbs=toBbs(...) to obtain a
 % list of ground truth bbs containing the positive windows. Let dtBbs
 % contain the bbs output by some detection algorithm. Then,
 %  to sample true-positives, use:   bbs=gtBbs and ibbs=[]
@@ -962,7 +962,7 @@ function [bbs,Is] = sampleData( I, varargin )
 %
 % EXAMPLE
 %
-% See also bbGt, bbGt>toGt, bbApply>crop, bbApply>resize, bbApply>squarify
+% See also bbGt, bbGt>toBbs, bbApply>crop, bbApply>resize, bbApply>squarify
 % bbApply>random, bbGt>compOas
 
 % get parameters
@@ -1005,7 +1005,7 @@ function [bbs,Is] = sampleDataDir( varargin )
 % sampleData() on each image. If bbRand is specified then samples random
 % negs (that don't overlap the positives), otherwise samples positives.
 %
-% bb>toGt() with params 'pGt' controls which ground truth bbs are used.
+% bb>toBbs() with params 'pToBbs' controls which ground truth bbs are used.
 % bbGt>sampleData() with params 'pSmp' controls how the bbs are extracted.
 %
 % USAGE
@@ -1016,7 +1016,7 @@ function [bbs,Is] = sampleDataDir( varargin )
 %   .gtDir      - ['REQ'] directory containing ground truth
 %   .imDir      - ['REQ'] directory containing images
 %   .trDir      - [''] target data directory
-%   .pGt        - [] params for bbGt>toGt
+%   .pToBbs     - {} params for bbGt>toBbs
 %   .pSmp       - ['REQ'] params for bbGt>sampleData
 %   .bbRand     - [] optional last three params for bbApply>random()
 %
@@ -1026,11 +1026,11 @@ function [bbs,Is] = sampleDataDir( varargin )
 %
 % EXAMPLE
 %
-% See also bbGt, bbGt>getFiles, bbGt>toGt, bbGt>sampleData, bbApply>random
+% See also bbGt, bbGt>getFiles, bbGt>toBbs, bbGt>sampleData, bbApply>random
 
 dfs={ 'gtDir','REQ', 'imDir','REQ', 'trDir','', ...
-  'pGt',[], 'pSmp','REQ', 'bbRand',[] };
-[gtDir,imDir,trDir,pGt,pSmp,bbRand]=getPrmDflt(varargin,dfs,1);
+  'pToBbs',{}, 'pSmp','REQ', 'bbRand',[] };
+[gtDir,imDir,trDir,pToBbs,pSmp,bbRand]=getPrmDflt(varargin,dfs,1);
 
 if(iscell(pSmp)), pSmp=cell2struct(pSmp(2:2:end),pSmp(1:2:end),2); end
 fs=getFiles({gtDir,imDir}); gtFs=fs(1,:); imFs=fs(2,:); n=length(imFs);
@@ -1041,7 +1041,7 @@ m=100000; bbs=zeros(m,5); Is=cell(m,1); k=0;
 ticId=ticStatus('sampling windows');
 for i=1:n
   I=imread(imFs{i}); [h,w,~]=size(I);
-  bb=bbLoad(gtFs{i}); bb=toGt(bb,pGt); pSmp.bbs=bb;
+  bb=bbLoad(gtFs{i}); bb=toBbs(bb,pToBbs); pSmp.bbs=bb;
   if(rnd), pSmp.bbs=bbApply('random',w,h,bbRand{:}); pSmp.ibbs=bb; end
   [bb,Is1]=sampleData(I,pSmp); [m,nd]=size(bb); tocStatus(ticId,i/n);
   for j=1:m, k=k+1; bbs(k,1:nd)=bb(j,:); if(str), Is{k}=Is1{j}; end
