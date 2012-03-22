@@ -452,8 +452,6 @@ function [bbs,ids] = toGt( objs, prm )
 %   .xRng       - [] range of x coordinates of bb extent
 %   .yRng       - [] range of y coordinates of bb extent
 %   .vRng       - [] range of acceptable obj occlusion levels
-%   .ar         - [] standardize aspect ratios of bbs
-%   .pad        - [0] frac extra padding for each patch (or [padx pady])
 %   .ellipse    - [1] controls how oriented bb is converted to regular bb
 %
 % OUTPUTS
@@ -472,10 +470,9 @@ function [bbs,ids] = toGt( objs, prm )
 % get parameters
 if(isempty(prm)), ellipse=1; checks=0; else
   dfs={'lbls',[],'ilbls',[],'hRng',[],'wRng',[],'aRng',[],'arRng',[],...
-    'oRng',[],'xRng',[],'yRng',[],'vRng',[],'ar',[],'pad',0,'ellipse',1};
-  [lbls,ilbls,hRng,wRng,aRng,arRng,oRng,xRng,yRng,vRng,ar0,pad,...
-    ellipse] = getPrmDflt(prm,dfs,1);
-  checks=1; if(numel(pad)==1), pad=[pad pad]; end;
+    'oRng',[],'xRng',[],'yRng',[],'vRng',[],'ellipse',1};
+  [lbls,ilbls,hRng,wRng,aRng,arRng,oRng,xRng,yRng,vRng,ellipse] = ...
+    getPrmDflt(prm,dfs,1); checks=1;
 end
 
 % only keep objects whose lbl is in lbls or ilbls
@@ -519,10 +516,6 @@ if(~isempty(vRng)),  for i=1:n, o=objs(i); bb=o.bb; bbv=o.bbv; %#ok<ALIGN>
       v=(bbv(3)*bbv(4))/(bb(3)*bb(4)); end
     bbs(i,5)=bbs(i,5) || v<vRng(1) || v>vRng(2); end
 end
-
-% final reshaping of bbs
-if(ar0), bbs=bbApply('squarify',bbs,0,ar0); end
-if(any(pad~=0)), bbs=bbApply('resize',bbs,1+pad(2),1+pad(1)); end
 
   function bb = bbExtent( bb, ang, ellipse )
     % get bb that fully contains given oriented bb
