@@ -42,9 +42,9 @@ function varargout = bbGt( action, varargin )
 % Set object property 'name' (with a standard array).
 %   objs = bbGt( 'set', objs, name, vals )
 % Draw an ellipse for each labeled object.
-%   hs = draw( objs, varargin )
+%   hs = draw( objs, pDraw )
 % Returns filtered ground truth bbs.
-%   bbs = bbGt( 'toGt', objs, prm )
+%   bbs = bbGt( 'toGt', objs, pGt )
 %
 %%% (2) Routines for evaluating the Pascal criteria for object detection.
 % Load detection outputs from text files.
@@ -56,7 +56,7 @@ function varargout = bbGt( action, varargin )
 % Display evaluation results for given image.
 %   [hs,hImg] = bbGt( 'showRes' I, gt, dt, varargin )
 % Run evaluation evalRes for each ground truth/detection result in dirs.
-%   [gt,dt,imFs] = bbGt( 'evalResDir', gtDir, dtDir, [varargin] )
+%   [gt,dt,imFs] = bbGt( 'evalResDir', gtDir, dtDir, varargin )
 % Compute ROC or PR based on outputs of evalRes on multiple images.
 %   [xs,ys,ref] = bbGt( 'compRoc', gt, dt, roc, ref )
 % Extract true or false positives or negatives for visualization.
@@ -68,9 +68,9 @@ function varargout = bbGt( action, varargin )
 %
 %%% (3) Routines for sampling examples from annotated images.
 % Sample pos or neg examples from an annotated image.
-%   [bbs,Is] = bbGt( 'sampleData', I, prm )
+%   [bbs,Is] = bbGt( 'sampleData', I, pSmp )
 % Sample pos or neg examples from an annotated directory of images.
-%   [bbs,Is] = bbGt( 'sampleDataDir', prm )
+%   [bbs,Is] = bbGt( 'sampleDataDir', pSmpDir )
 %
 % USAGE
 %  varargout = bbGt( action, varargin );
@@ -277,11 +277,11 @@ function hs = draw( objs, varargin )
 % Draw an ellipse for each labeled object.
 %
 % USAGE
-%  hs = bbGt( 'draw', objs, prm )
+%  hs = bbGt( 'draw', objs, pDraw )
 %
 % INPUTS
 %  objs       - [nx1] struct array of objects
-%  varargin   - additional params (struct or name/value pairs)
+%  pDraw      - parameters (struct or name/value pairs)
 %   .col        - ['g'] color or [nx1] array of colors
 %   .lw         - [2] line width
 %   .ls         - ['-'] line style
@@ -306,7 +306,7 @@ for i=1:n
 end; hold off;
 end
 
-function [bbs,ids] = toGt( objs, prm )
+function [bbs,ids] = toGt( objs, varargin )
 % Returns filtered ground truth bbs.
 %
 % Returns bbs for all objects with lbl in lbls. The result is an [nx5]
@@ -335,22 +335,22 @@ function [bbs,ids] = toGt( objs, prm )
 % which case v=0 (note that v~=1 in this case).
 %
 % USAGE
-%  bbs = bbGt( 'toGt', objs, prm )
+%  bbs = bbGt( 'toGt', objs, pGt )
 %
 % INPUTS
 %  objs     - ground truth objects
-%  prm      -
-%   .lbls       - [] return objs with these labels (or [] to return all)
-%   .ilbls      - [] return objs with these labels but set to ignore
-%   .hRng       - [] range of acceptable obj heights
-%   .wRng       - [] range of acceptable obj widths
-%   .aRng       - [] range of acceptable obj areas
-%   .arRng      - [] range of acceptable obj aspect ratios
-%   .oRng       - [] range of acceptable obj orientations (angles)
-%   .xRng       - [] range of x coordinates of bb extent
-%   .yRng       - [] range of y coordinates of bb extent
-%   .vRng       - [] range of acceptable obj occlusion levels
-%   .ellipse    - [1] controls how oriented bb is converted to regular bb
+%  pGt      - parameters (struct or name/value pairs)
+%   .lbls     - [] return objs with these labels (or [] to return all)
+%   .ilbls    - [] return objs with these labels but set to ignore
+%   .hRng     - [] range of acceptable obj heights
+%   .wRng     - [] range of acceptable obj widths
+%   .aRng     - [] range of acceptable obj areas
+%   .arRng    - [] range of acceptable obj aspect ratios
+%   .oRng     - [] range of acceptable obj orientations (angles)
+%   .xRng     - [] range of x coordinates of bb extent
+%   .yRng     - [] range of y coordinates of bb extent
+%   .vRng     - [] range of acceptable obj occlusion levels
+%   .ellipse  - [1] controls how oriented bb is converted to regular bb
 %
 % OUTPUTS
 %  bbs      - [n x 5] array containg ground truth bbs [x y w h ignore]
@@ -366,11 +366,11 @@ function [bbs,ids] = toGt( objs, prm )
 % See also bbGt
 
 % get parameters
-if(isempty(prm)), ellipse=1; checks=0; else
+if(nargin<=1), ellipse=1; checks=0; else
   dfs={'lbls',[],'ilbls',[],'hRng',[],'wRng',[],'aRng',[],'arRng',[],...
     'oRng',[],'xRng',[],'yRng',[],'vRng',[],'ellipse',1};
   [lbls,ilbls,hRng,wRng,aRng,arRng,oRng,xRng,yRng,vRng,ellipse] = ...
-    getPrmDflt(prm,dfs,1); checks=1;
+    getPrmDflt(varargin,dfs,1); checks=1;
 end
 
 % only keep objects whose lbl is in lbls or ilbls
@@ -614,13 +614,13 @@ function [hs,hImg] = showRes( I, gt, dt, varargin )
 % Display evaluation results for given image.
 %
 % USAGE
-%  [hs,hImg] = bbGt( 'showRes', I, gt, dt, [varargin] )
+%  [hs,hImg] = bbGt( 'showRes', I, gt, dt, varargin )
 %
 % INPUTS
 %  I          - image to display, image filename, or []
 %  gt         - first output of evalRes()
 %  dt         - second output of evalRes()
-%  varargin   - additional params (struct or name/value pairs)
+%  varargin   - additional parameters (struct or name/value pairs)
 %   .evShow     - [1] if true show results of evaluation
 %   .gtShow     - [1] if true show ground truth
 %   .dtShow     - [1] if true show detections
@@ -676,12 +676,12 @@ function [gt,dt,imFs] = evalResDir( gtDir, dtDir, varargin )
 % if specified, nms is optionally applied to the detections (see bbNms()).
 %
 % USAGE
-%  [gt,dt,imFs] = bbGt( 'evalResDir', gtDir, dtDir, [varargin] )
+%  [gt,dt,imFs] = bbGt( 'evalResDir', gtDir, dtDir, varargin )
 %
 % INPUTS
 %  gtDir        - location of ground truth
 %  dtDir        - location of detections (or file containing all dts)
-%  varargin     - additional params (struct or name/value pairs)
+%  varargin     - additional parameters (struct or name/value pairs)
 %   .thr          - [.5] threshold for evalRes()
 %   .mul          - [0] multiple match flag for evalRes()
 %   .pGt          - {} params for bbGt>toGt
@@ -787,7 +787,7 @@ function [Is,scores,imgIds] = cropRes( gt, dt, imFs, varargin )
 %  gt         - {1xN} first output of evalRes() for each image
 %  dt         - {1xN} second output of evalRes() for each image
 %  imFs       - {1xN} name of each image
-%  varargin   - additional params (struct or name/value pairs)
+%  varargin   - additional parameters (struct or name/value pairs)
 %   .dims       - ['REQ'] target dimensions for extracted windows
 %   .pad        - [0] padding amount for cropping
 %   .type       - ['fp'] one of: 'fp', 'fn', 'tp', 'dt'
@@ -912,7 +912,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [bbs,Is] = sampleData( I, prm )
+function [bbs,Is] = sampleData( I, varargin )
 % Sample pos or neg examples from an annotated image.
 %
 % An annotated image can contain both pos and neg examples of a given class
@@ -940,21 +940,21 @@ function [bbs,Is] = sampleData( I, prm )
 % resized to a fixed size. If dims==[], the bbs are not altered.
 %
 % USAGE
-%  [bbs, Is] = bbGt( 'sampleData', I, prm )
+%  [bbs, Is] = bbGt( 'sampleData', I, pSmp )
 %
 % INPUTS
 %  I        - input image from which to sample
-%  prm      -
-%   .n          - [inf] max number of bbs to sample
-%   .bbs        - [REQ] candidate bbs from which to sample [x y w h ign]
-%   .ibbs       - [] bbs that should not be sampled [x y w h ign]
-%   .thr        - [.5] overlap threshold between bbs and ibbs
-%   .dims       - [] target bb aspect ratio [ar] or dims [w h]
-%   .squarify   - [1] if squarify expand bb to ar else stretch patch to ar
-%   .pad        - [0] frac extra padding for each patch (or [padx pady])
-%   .padEl      - ['replicate'] how to pad at boundaries (see bbApply>crop)
-%   .flip       - [0] if true use left/right reflection of each bb
-%   .rots       - [0] specify 90 degree rotations of each bb (e.g. 0:3)
+%  pSmp     - parameters (struct or name/value pairs)
+%   .n        - [inf] max number of bbs to sample
+%   .bbs      - [REQ] candidate bbs from which to sample [x y w h ign]
+%   .ibbs     - [] bbs that should not be sampled [x y w h ign]
+%   .thr      - [.5] overlap threshold between bbs and ibbs
+%   .dims     - [] target bb aspect ratio [ar] or dims [w h]
+%   .squarify - [1] if squarify expand bb to ar else stretch patch to ar
+%   .pad      - [0] frac extra padding for each patch (or [padx pady])
+%   .padEl    - ['replicate'] how to pad at boundaries (see bbApply>crop)
+%   .flip     - [0] if true use left/right reflection of each bb
+%   .rots     - [0] specify 90 degree rotations of each bb (e.g. 0:3)
 %
 % OUTPUTS
 %  bbs      - actual sampled bbs
@@ -968,7 +968,8 @@ function [bbs,Is] = sampleData( I, prm )
 % get parameters
 dfs={'n',inf, 'bbs','REQ', 'ibbs',[], 'thr',.5, 'dims',[], ...
   'squarify',1, 'pad',0, 'padEl','replicate', 'flip',0, 'rots',0 };
-[n,bbs,ibbs,thr,dims,squarify,pad,padEl,flip,rots]=getPrmDflt(prm,dfs,1);
+[n,bbs,ibbs,thr,dims,squarify,pad,padEl,flip,rots] = ...
+  getPrmDflt(varargin,dfs,1);
 if(numel(dims)==2), ar=dims(1)/dims(2); else ar=dims; dims=[]; end
 if(numel(pad)==1), pad=[pad pad]; end; if(dims), dims=dims.*(1+pad); end
 % discard any candidate bbs that match the ignore bbs, sample to at most n
@@ -1008,10 +1009,10 @@ function [bbs,Is] = sampleDataDir( varargin )
 % bbGt>sampleData() with params 'pSmp' controls how the bbs are extracted.
 %
 % USAGE
-%  [bbs,Is] = bbGt( 'sampleDataDir', prm )
+%  [bbs,Is] = bbGt( 'sampleDataDir', pSmpDir )
 %
 % INPUTS
-%  prm        - parameters (struct or name/value pairs)
+%  pSmpDir    - parameters (struct or name/value pairs)
 %   .gtDir      - ['REQ'] directory containing ground truth
 %   .imDir      - ['REQ'] directory containing images
 %   .trDir      - [''] target data directory
