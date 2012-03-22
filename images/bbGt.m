@@ -43,14 +43,14 @@ function varargout = bbGt( action, varargin )
 %   objs = bbGt( 'set', objs, name, vals )
 % Draw an ellipse for each labeled object.
 %   hs = draw( objs, varargin )
+% Returns filtered ground truth bbs.
+%   bbs = bbGt( 'toGt', objs, prm )
 %
 %%% (2) Routines for evaluating the Pascal criteria for object detection.
 % Load detection outputs from text files.
 %   dts = bbGt( 'dtsLoad', fNames, n )
 % Get all corresponding files in given directories.
 %   [fs,fs0] = bbGt('getFiles', dirs, [f0], [f1] )
-% Returns filtered ground truth bbs for purpose of evaluation.
-%   bbs = bbGt( 'toGt', objs, prm )
 % Evaluates detections in a single frame against ground truth data.
 %   [gt,dt] = bbGt( 'evalRes', gt0, dt0, [thr], [mul] )
 % Display evaluation results for given image.
@@ -85,8 +85,8 @@ function varargout = bbGt( action, varargin )
 % EXAMPLE
 %
 % See also bbApply, bbLabeler, bbGt>create, bbGt>bbSave, bbGt>bbLoad,
-% bbGt>bbLoadPascal, bbGt>get, bbGt>set, bbGt>draw, bbGt>dtsLoad,
-% bbGt>getFiles, bbGt>toGt, bbGt>evalRes, bbGt>showRes, bbGt>evalResDir,
+% bbGt>bbLoadPascal, bbGt>get, bbGt>set, bbGt>draw, bbGt>toGt,
+% bbGt>dtsLoad, bbGt>getFiles, bbGt>evalRes, bbGt>showRes, bbGt>evalResDir,
 % bbGt>compRoc, bbGt>cropRes, bbGt>compOas, bbGt>compOa, bbGt>sampleData,
 % bbGt>sampleDataDir
 %
@@ -306,110 +306,8 @@ for i=1:n
 end; hold off;
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-function dts = dtsLoad( fNames, n )
-% Load detection outputs from text files.
-%
-% Each detection should be a text file where each row contains 5 numbers
-% representing a bounding box (left/top/width/height/score). If fNames is
-% not a cell array, fNames should point to a single text file that contains
-% the detection results across a set of images. In this case each row in
-% the text file should have an extra leading column specifying the image
-% id: (imgId/left/top/width/height/score).
-%
-% USAGE
-%  dets = bbGt( 'dtLoad', fNames, n )
-%
-% INPUTS
-%  fNames   - {1xn} cell array of text files or single text file
-%  n        - number of dts to load (necessary if fNames is a single file)
-%
-% OUTPUTS
-%  dts      - {1xn} loaded detections (each is a mx5 array of bbs)
-%
-% EXAMPLE
-%
-% See also bbGt
-
-if( iscell(fNames) )
-  % load each detection from a separate text file
-  assert(length(fNames)==n); dts=cell(1,n);
-  for i=1:n, dt=load(fNames{i},'-ascii');
-    if(numel(dt)==0), dt=zeros(0,5); end; dts{i}=dt(:,1:5); end
-else
-  % load all detections from a single text file
-  dt=load(fNames,'-ascii'); if(numel(dt)==0), dt=zeros(0,6); end
-  ids=dt(:,1); assert(max(ids)<=n);
-  dts=cell(1,n); for i=1:n, dts{i}=dt(ids==i,2:6); end
-end
-
-end
-
-function [fs,fs0] = getFiles( dirs, f0, f1 )
-% Get all corresponding files in given directories.
-%
-% The first dir in 'dirs' serves as the baseline dir. getFiles() returns
-% all files in the baseline dir and all corresponding files in the
-% remaining dirs to the files in the baseline dir, in the same order. Two
-% files are in correspondence if they have the same base name (regardless
-% of extension). For example, given a file named "name.jpg", a
-% corresponding file may be named "name.txt" or "name.jpg.txt". Every file
-% in the baseline dir must have a matching file in the remaining dirs.
-%
-% USAGE
-%  [fs,fs0] = bbGt('getFiles', dirs, [f0], [f1] )
-%
-% INPUTS
-%   dirs      - {1xm} list of m directories
-%   f0        - [1] index of first file in baseline dir to use
-%   f1        - [inf] index of last file in baseline dir to use
-%
-% OUTPUTS
-%   fs        - {mxn} list of full file names in each dir
-%   fs0       - {1xn} list of file names without path or extensions
-%
-% EXAMPLE
-%
-% See also bbGt
-
-if(nargin<2 || isempty(f0)), f0=1; end
-if(nargin<3 || isempty(f1)), f1=inf; end
-m=length(dirs); assert(m>0); sep=filesep;
-
-for d=1:m, dir1=dirs{d}; dir1(dir1=='\')=sep; dir1(dir1=='/')=sep;
-  if(dir1(end)==sep), dir1(end)=[]; end; dirs{d}=dir1; end
-
-[fs0,fs1] = getFiles0(dirs{1},f0,f1,sep);
-n1=length(fs0); fs=cell(m,n1); fs(1,:)=fs1;
-for d=2:m, fs(d,:)=getFiles1(dirs{d},fs0,sep); end
-
-  function [fs0,fs1] = getFiles0( dir1, f0, f1, sep )
-    % get fs1 in dir1 (and fs0 without path or extension)
-    fs1=dir([dir1 sep '*']); fs1={fs1.name}; fs1=fs1(3:end);
-    fs1=fs1(f0:min(f1,end)); fs0=fs1; n=length(fs0);
-    if(n==0), error('No files found in baseline dir.'); end
-    for i=1:n, fs1{i}=[dir1 sep fs0{i}]; end
-    n=length(fs0); for i=1:n, f=fs0{i};
-      f(find(f=='.',1,'first'):end)=[]; fs0{i}=f; end
-  end
-
-  function fs1 = getFiles1( dir1, fs0, sep )
-    % get fs1 in dir1 corresponding to fs0
-    n=length(fs0); fs1=cell(1,n); i2=0; i1=0;
-    fs2=dir(dir1); fs2={fs2.name}; n2=length(fs2);
-    eMsg='''%s'' has no corresponding file in %s.';
-    for i0=1:n, r=length(fs0{i0}); match=0;
-      while(i2<n2), i2=i2+1; if(strcmpi(fs0{i0},fs2{i2}(1:min(end,r))))
-          i1=i1+1; fs1{i1}=fs2{i2}; match=1; break; end; end
-      if(~match), error(eMsg,fs0{i0},dir1); end
-    end
-    for i1=1:n, fs1{i1}=[dir1 sep fs1{i1}]; end
-  end
-end
-
 function [bbs,ids] = toGt( objs, prm )
-% Returns filtered ground truth bbs for purpose of evaluation.
+% Returns filtered ground truth bbs.
 %
 % Returns bbs for all objects with lbl in lbls. The result is an [nx5]
 % array where each row is of the form [x y w h ignore]. [x y w h] is the bb
@@ -532,6 +430,108 @@ end
       x0=min(p(:,1)); x1=max(p(:,1)); y0=min(p(:,2)); y1=max(p(:,2));
       bb=[x0 y0 x1-x0 y1-y0];
     end
+  end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function dts = dtsLoad( fNames, n )
+% Load detection outputs from text files.
+%
+% Each detection should be a text file where each row contains 5 numbers
+% representing a bounding box (left/top/width/height/score). If fNames is
+% not a cell array, fNames should point to a single text file that contains
+% the detection results across a set of images. In this case each row in
+% the text file should have an extra leading column specifying the image
+% id: (imgId/left/top/width/height/score).
+%
+% USAGE
+%  dets = bbGt( 'dtLoad', fNames, n )
+%
+% INPUTS
+%  fNames   - {1xn} cell array of text files or single text file
+%  n        - number of dts to load (necessary if fNames is a single file)
+%
+% OUTPUTS
+%  dts      - {1xn} loaded detections (each is a mx5 array of bbs)
+%
+% EXAMPLE
+%
+% See also bbGt
+
+if( iscell(fNames) )
+  % load each detection from a separate text file
+  assert(length(fNames)==n); dts=cell(1,n);
+  for i=1:n, dt=load(fNames{i},'-ascii');
+    if(numel(dt)==0), dt=zeros(0,5); end; dts{i}=dt(:,1:5); end
+else
+  % load all detections from a single text file
+  dt=load(fNames,'-ascii'); if(numel(dt)==0), dt=zeros(0,6); end
+  ids=dt(:,1); assert(max(ids)<=n);
+  dts=cell(1,n); for i=1:n, dts{i}=dt(ids==i,2:6); end
+end
+
+end
+
+function [fs,fs0] = getFiles( dirs, f0, f1 )
+% Get all corresponding files in given directories.
+%
+% The first dir in 'dirs' serves as the baseline dir. getFiles() returns
+% all files in the baseline dir and all corresponding files in the
+% remaining dirs to the files in the baseline dir, in the same order. Two
+% files are in correspondence if they have the same base name (regardless
+% of extension). For example, given a file named "name.jpg", a
+% corresponding file may be named "name.txt" or "name.jpg.txt". Every file
+% in the baseline dir must have a matching file in the remaining dirs.
+%
+% USAGE
+%  [fs,fs0] = bbGt('getFiles', dirs, [f0], [f1] )
+%
+% INPUTS
+%   dirs      - {1xm} list of m directories
+%   f0        - [1] index of first file in baseline dir to use
+%   f1        - [inf] index of last file in baseline dir to use
+%
+% OUTPUTS
+%   fs        - {mxn} list of full file names in each dir
+%   fs0       - {1xn} list of file names without path or extensions
+%
+% EXAMPLE
+%
+% See also bbGt
+
+if(nargin<2 || isempty(f0)), f0=1; end
+if(nargin<3 || isempty(f1)), f1=inf; end
+m=length(dirs); assert(m>0); sep=filesep;
+
+for d=1:m, dir1=dirs{d}; dir1(dir1=='\')=sep; dir1(dir1=='/')=sep;
+  if(dir1(end)==sep), dir1(end)=[]; end; dirs{d}=dir1; end
+
+[fs0,fs1] = getFiles0(dirs{1},f0,f1,sep);
+n1=length(fs0); fs=cell(m,n1); fs(1,:)=fs1;
+for d=2:m, fs(d,:)=getFiles1(dirs{d},fs0,sep); end
+
+  function [fs0,fs1] = getFiles0( dir1, f0, f1, sep )
+    % get fs1 in dir1 (and fs0 without path or extension)
+    fs1=dir([dir1 sep '*']); fs1={fs1.name}; fs1=fs1(3:end);
+    fs1=fs1(f0:min(f1,end)); fs0=fs1; n=length(fs0);
+    if(n==0), error('No files found in baseline dir.'); end
+    for i=1:n, fs1{i}=[dir1 sep fs0{i}]; end
+    n=length(fs0); for i=1:n, f=fs0{i};
+      f(find(f=='.',1,'first'):end)=[]; fs0{i}=f; end
+  end
+
+  function fs1 = getFiles1( dir1, fs0, sep )
+    % get fs1 in dir1 corresponding to fs0
+    n=length(fs0); fs1=cell(1,n); i2=0; i1=0;
+    fs2=dir(dir1); fs2={fs2.name}; n2=length(fs2);
+    eMsg='''%s'' has no corresponding file in %s.';
+    for i0=1:n, r=length(fs0{i0}); match=0;
+      while(i2<n2), i2=i2+1; if(strcmpi(fs0{i0},fs2{i2}(1:min(end,r))))
+          i1=i1+1; fs1{i1}=fs2{i2}; match=1; break; end; end
+      if(~match), error(eMsg,fs0{i0},dir1); end
+    end
+    for i1=1:n, fs1{i1}=[dir1 sep fs1{i1}]; end
   end
 end
 
