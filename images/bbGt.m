@@ -958,7 +958,7 @@ function [bbs,Is] = sampleData( I, varargin )
 %
 % OUTPUTS
 %  bbs      - actual sampled bbs
-%  Is       - [1xn] cell of cropped image regions
+%  Is       - [nx1] cell of cropped image regions
 %
 % EXAMPLE
 %
@@ -1019,26 +1019,29 @@ function Is = sampleDataDir( varargin )
 %   .pToBbs     - {} params for bbGt>toBbs
 %   .pSmp       - {} params for bbGt>sampleData
 %   .bbRand     - {} last three params for bbApply>random()
+%   .maxn       - [inf] maximum number of windows to sample
 %
 % OUTPUTS
-%  Is         - [mx1] cell of cropped image regions
+%  Is         - [nx1] cell of cropped image regions
 %
 % EXAMPLE
 %
 % See also bbGt, bbGt>getFiles, bbGt>toBbs, bbGt>sampleData, bbApply>random
 
-dfs={'gtDir','REQ', 'imDir','REQ', 'pToBbs',{}, 'pSmp',{}, 'bbRand',{}};
-[gtDir,imDir,pToBbs,pSmp,bbRand]=getPrmDflt(varargin,dfs,1);
+dfs={'gtDir','REQ', 'imDir','REQ', 'pToBbs',{}, ...
+  'pSmp',{}, 'bbRand',{}, 'maxn',inf };
+[gtDir,imDir,pToBbs,pSmp,bbRand,maxn] = getPrmDflt(varargin,dfs,1);
 if(iscell(pSmp)), pSmp=cell2struct(pSmp(2:2:end),pSmp(1:2:end),2); end
-fs=getFiles({gtDir,imDir}); gtFs=fs(1,:); imFs=fs(2,:); n=length(imFs);
-rnd=~isempty(bbRand); Is=cell(100000,1);
+rnd=~isempty(bbRand); fs=getFiles({gtDir,imDir}); n=size(fs,2);
+if(~isinf(maxn)), fs=fs(:,randperm(n)); end; Is=cell(100000,1);
 tid=ticStatus('Sampling windows'); k=0;
 for i=1:n
-  I=imread(imFs{i}); [h,w,~]=size(I);
-  bb=toBbs(bbLoad(gtFs{i}),pToBbs); pSmp.bbs=bb;
+  I=imread(fs{2,i}); [h,w,~]=size(I);
+  bb=toBbs(bbLoad(fs{1,i}),pToBbs); pSmp.bbs=bb;
   if(rnd), pSmp.bbs=bbApply('random',w,h,bbRand{:}); pSmp.ibbs=bb; end
   [~,Is1]=sampleData(I,pSmp); k0=k+1; k=k+length(Is1); Is(k0:k)=Is1;
-  tocStatus(tid,i/n);
+  if(k>maxn), Is=Is(randperm(k,maxn)); k=maxn; end
+  tocStatus(tid,max(i/n,k/maxn)); if(k==maxn), break; end
 end
 Is=Is(1:k);
 
