@@ -70,7 +70,7 @@ function varargout = bbGt( action, varargin )
 % Sample pos or neg examples from an annotated image.
 %   [bbs,Is] = bbGt( 'sampleData', I, pSmp )
 % Sample pos or neg examples from an annotated directory of images.
-%   [bbs,Is] = bbGt( 'sampleDataDir', pSmpDir )
+%   Is = bbGt( 'sampleDataDir', pSmpDir )
 %
 % USAGE
 %  varargout = bbGt( action, varargin );
@@ -997,56 +997,49 @@ for i=1:size(bbs,1)
 end
 end
 
-function [bbs,Is] = sampleDataDir( varargin )
+function Is = sampleDataDir( varargin )
 % Sample pos or neg examples from an annotated directory of images.
 %
-% Crops pos or neg examples from each image and optionally stores them in
-% 'trDir' (if specified). Essentially a wrapper function that calls
-% sampleData() on each image. If bbRand is specified then samples random
-% negs (that don't overlap the positives), otherwise samples positives.
+% Crops pos or neg examples from each image in imDir. Essentially a wrapper
+% that calls sampleData() on each image. Samples positives unless bbRand is
+% specified, in which case samples random negs (for example, bbRand set to
+% {[w0 w1],-ar,k} would sample k bbs per image with widths between w0 and
+% w1 and aspect ratio ar, see bbApply>random() for details).
 %
 % bb>toBbs() with params 'pToBbs' controls which ground truth bbs are used.
 % bbGt>sampleData() with params 'pSmp' controls how the bbs are extracted.
 %
 % USAGE
-%  [bbs,Is] = bbGt( 'sampleDataDir', pSmpDir )
+%  Is = bbGt( 'sampleDataDir', pSmpDir )
 %
 % INPUTS
 %  pSmpDir    - parameters (struct or name/value pairs)
 %   .gtDir      - ['REQ'] directory containing ground truth
 %   .imDir      - ['REQ'] directory containing images
-%   .trDir      - [''] target data directory
 %   .pToBbs     - {} params for bbGt>toBbs
-%   .pSmp       - ['REQ'] params for bbGt>sampleData
-%   .bbRand     - [] optional last three params for bbApply>random()
+%   .pSmp       - {} params for bbGt>sampleData
+%   .bbRand     - {} last three params for bbApply>random()
 %
 % OUTPUTS
-%  bbs        - [mx5] actual sampled bbs
 %  Is         - [mx1] cell of cropped image regions
 %
 % EXAMPLE
 %
 % See also bbGt, bbGt>getFiles, bbGt>toBbs, bbGt>sampleData, bbApply>random
 
-dfs={ 'gtDir','REQ', 'imDir','REQ', 'trDir','', ...
-  'pToBbs',{}, 'pSmp','REQ', 'bbRand',[] };
-[gtDir,imDir,trDir,pToBbs,pSmp,bbRand]=getPrmDflt(varargin,dfs,1);
-
+dfs={'gtDir','REQ', 'imDir','REQ', 'pToBbs',{}, 'pSmp',{}, 'bbRand',{}};
+[gtDir,imDir,pToBbs,pSmp,bbRand]=getPrmDflt(varargin,dfs,1);
 if(iscell(pSmp)), pSmp=cell2struct(pSmp(2:2:end),pSmp(1:2:end),2); end
 fs=getFiles({gtDir,imDir}); gtFs=fs(1,:); imFs=fs(2,:); n=length(imFs);
-wrt=~isempty(trDir); str=nargout==2; rnd=~isempty(bbRand);
-if(wrt && ~exist(trDir,'dir')), mkdir(trDir); end
-
-m=100000; bbs=zeros(m,5); Is=cell(m,1); k=0;
-ticId=ticStatus('sampling windows');
+rnd=~isempty(bbRand); Is=cell(100000,1);
+tid=ticStatus('Sampling windows'); k=0;
 for i=1:n
   I=imread(imFs{i}); [h,w,~]=size(I);
-  bb=bbLoad(gtFs{i}); bb=toBbs(bb,pToBbs); pSmp.bbs=bb;
+  bb=toBbs(bbLoad(gtFs{i}),pToBbs); pSmp.bbs=bb;
   if(rnd), pSmp.bbs=bbApply('random',w,h,bbRand{:}); pSmp.ibbs=bb; end
-  [bb,Is1]=sampleData(I,pSmp); [m,nd]=size(bb); tocStatus(ticId,i/n);
-  for j=1:m, k=k+1; bbs(k,1:nd)=bb(j,:); if(str), Is{k}=Is1{j}; end
-    if(wrt), imwrite(Is1{j},[trDir '/I' int2str2(k-1,5) '.png']); end; end
+  [~,Is1]=sampleData(I,pSmp); k0=k+1; k=k+length(Is1); Is(k0:k)=Is1;
+  tocStatus(tid,i/n);
 end
-bbs=bbs(1:k,1:nd); Is=Is(1:k);
+Is=Is(1:k);
 
 end
