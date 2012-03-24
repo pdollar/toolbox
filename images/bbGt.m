@@ -515,7 +515,7 @@ for d=2:m, fs(d,:)=getFiles1(dirs{d},fs0,sep); end
     % get fs1 in dir1 (and fs0 without path or extension)
     fs1=dir([dir1 sep '*']); fs1={fs1.name}; fs1=fs1(3:end);
     fs1=fs1(f0:min(f1,end)); fs0=fs1; n=length(fs0);
-    if(n==0), error('No files found in baseline dir.'); end
+    if(n==0), error('No files found in baseline dir %s.',dir1); end
     for i=1:n, fs1{i}=[dir1 sep fs0{i}]; end
     n=length(fs0); for i=1:n, f=fs0{i};
       f(find(f=='.',1,'first'):end)=[]; fs0{i}=f; end
