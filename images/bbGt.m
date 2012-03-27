@@ -1040,7 +1040,7 @@ for i=1:n
   bb=toBbs(bbLoad(fs{1,i}),pToBbs); pSmp.bbs=bb;
   if(rnd), pSmp.bbs=bbApply('random',w,h,bbRand{:}); pSmp.ibbs=bb; end
   [~,Is1]=sampleData(I,pSmp); k0=k+1; k=k+length(Is1); Is(k0:k)=Is1;
-  if(k>maxn), Is=Is(randperm(k,maxn)); k=maxn; end
+  if(k>maxn), Is=Is(randsample(k,maxn)); k=maxn; end
   tocStatus(tid,max(i/n,k/maxn)); if(k==maxn), break; end
 end
 Is=Is(1:k);
