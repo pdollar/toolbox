@@ -1004,7 +1004,8 @@ function Is = sampleDataDir( varargin )
 % that calls sampleData() on each image. Samples positives unless bbRand is
 % specified, in which case samples random negs (for example, bbRand set to
 % {[w0 w1],-ar,k} would sample k bbs per image with widths between w0 and
-% w1 and aspect ratio ar, see bbApply>random() for details).
+% w1 and aspect ratio ar, see bbApply>random() for details). If sampling
+% random wins, gtDir is optional (if sampling positives it's required).
 %
 % bb>toBbs() with params 'pToBbs' controls which ground truth bbs are used.
 % bbGt>sampleData() with params 'pSmp' controls how the bbs are extracted.
@@ -1014,8 +1015,8 @@ function Is = sampleDataDir( varargin )
 %
 % INPUTS
 %  pSmpDir    - parameters (struct or name/value pairs)
-%   .gtDir      - ['REQ'] directory containing ground truth
 %   .imDir      - ['REQ'] directory containing images
+%   .gtDir      - [''] directory containing ground truth
 %   .pToBbs     - {} params for bbGt>toBbs
 %   .pSmp       - {} params for bbGt>sampleData
 %   .bbRand     - {} last three params for bbApply>random()
@@ -1028,17 +1029,19 @@ function Is = sampleDataDir( varargin )
 %
 % See also bbGt, bbGt>getFiles, bbGt>toBbs, bbGt>sampleData, bbApply>random
 
-dfs={'gtDir','REQ', 'imDir','REQ', 'pToBbs',{}, ...
+dfs={'imDir','REQ', 'gtDir','', 'pToBbs',{},...
   'pSmp',{}, 'bbRand',{}, 'maxn',inf };
-[gtDir,imDir,pToBbs,pSmp,bbRand,maxn] = getPrmDflt(varargin,dfs,1);
+[imDir,gtDir,pToBbs,pSmp,bbRand,maxn] = getPrmDflt(varargin,dfs,1);
 if(iscell(pSmp)), pSmp=cell2struct(pSmp(2:2:end),pSmp(1:2:end),2); end
-rnd=~isempty(bbRand); fs=getFiles({gtDir,imDir}); n=size(fs,2);
-if(~isinf(maxn)), fs=fs(:,randperm(n)); end; Is=cell(100000,1);
-tid=ticStatus('Sampling windows'); k=0;
+hasGt=~isempty(gtDir); hasRn=~isempty(bbRand); assert(hasRn || hasGt);
+if(hasGt), fs={imDir,gtDir}; else fs={imDir}; end; fs=getFiles(fs);
+n=size(fs,2); if(~isinf(maxn)), fs=fs(:,randperm(n)); end
+tid=ticStatus('Sampling windows'); Is=cell(100000,1); k=0;
 for i=1:n
-  I=imread(fs{2,i}); [h,w,~]=size(I);
-  bb=toBbs(bbLoad(fs{1,i}),pToBbs); pSmp.bbs=bb;
-  if(rnd), pSmp.bbs=bbApply('random',w,h,bbRand{:}); pSmp.ibbs=bb; end
+  I=imread(fs{1,i}); [h,w,~]=size(I);
+  if(hasGt), bbGt=toBbs(bbLoad(fs{2,i}),pToBbs); else bbGt=[]; end
+  if(hasRn), bbRn=bbApply('random',w,h,bbRand{:}); end
+  if(hasRn), pSmp.bbs=bbRn; pSmp.ibbs=bbGt; else pSmp.bbs=bbGt; end
   [~,Is1]=sampleData(I,pSmp); k0=k+1; k=k+length(Is1); Is(k0:k)=Is1;
   if(k>maxn), Is=Is(randsample(k,maxn)); k=maxn; end
   tocStatus(tid,max(i/n,k/maxn)); if(k==maxn), break; end
