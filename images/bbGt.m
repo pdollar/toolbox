@@ -1000,12 +1000,15 @@ end
 function Is = sampleDataDir( varargin )
 % Sample pos or neg examples from an annotated directory of images.
 %
-% Crops pos or neg examples from each image in imDir. Essentially a wrapper
-% that calls sampleData() on each image. Samples positives unless bbRand is
-% specified, in which case samples random negs (for example, bbRand set to
-% {[w0 w1],-ar,k} would sample k bbs per image with widths between w0 and
-% w1 and aspect ratio ar, see bbApply>random() for details). If sampling
-% random wins, gtDir is optional (if sampling positives it's required).
+% sampleDataDir() is a wrapper function that calls sampleData() on every
+% image in 'imDir'. To sample POSITIVE examples specify 'gtDir', in which
+% case loads the gt associated with each image and samples pos windows. To
+% sample NEGATIVE examples specify 'bbFunc', where bbFunc() is a callback
+% that takes an image and returns a set of candidate neg bbs. For example:
+%   bbFunc=@(I) bbApply('random',size(I,2),size(I,1),[w0 w1],-ar,k)
+% takes an image and generates k random bbs with widths between w0 and w1
+% and aspect ratio ar (see bbApply>random()). If both 'gtDir' and 'bbFunc'
+% are specified, samples candidate neg windows that don't overlap the gt.
 %
 % bb>toBbs() with params 'pToBbs' controls which ground truth bbs are used.
 % bbGt>sampleData() with params 'pSmp' controls how the bbs are extracted.
@@ -1019,7 +1022,7 @@ function Is = sampleDataDir( varargin )
 %   .gtDir      - [''] directory containing ground truth
 %   .pToBbs     - {} params for bbGt>toBbs
 %   .pSmp       - {} params for bbGt>sampleData
-%   .bbRand     - {} last three params for bbApply>random()
+%   .bbFunc     - {} function that generates candidate bbs (see above)
 %   .maxn       - [inf] maximum number of windows to sample
 %
 % OUTPUTS
@@ -1030,18 +1033,17 @@ function Is = sampleDataDir( varargin )
 % See also bbGt, bbGt>getFiles, bbGt>toBbs, bbGt>sampleData, bbApply>random
 
 dfs={'imDir','REQ', 'gtDir','', 'pToBbs',{},...
-  'pSmp',{}, 'bbRand',{}, 'maxn',inf };
-[imDir,gtDir,pToBbs,pSmp,bbRand,maxn] = getPrmDflt(varargin,dfs,1);
+  'pSmp',{}, 'bbFunc',{}, 'maxn',inf };
+[imDir,gtDir,pToBbs,pSmp,bbFunc,maxn] = getPrmDflt(varargin,dfs,1);
 if(iscell(pSmp)), pSmp=cell2struct(pSmp(2:2:end),pSmp(1:2:end),2); end
-hasGt=~isempty(gtDir); hasRn=~isempty(bbRand); assert(hasRn || hasGt);
+hasGt=~isempty(gtDir); hasFn=~isempty(bbFunc); assert(hasFn || hasGt);
 if(hasGt), fs={imDir,gtDir}; else fs={imDir}; end; fs=getFiles(fs);
 n=size(fs,2); if(~isinf(maxn)), fs=fs(:,randperm(n)); end
 tid=ticStatus('Sampling windows'); Is=cell(100000,1); k=0;
 for i=1:n
-  I=imread(fs{1,i}); [h,w,~]=size(I);
+  I=imread(fs{1,i});
   if(hasGt), bbGt=toBbs(bbLoad(fs{2,i}),pToBbs); else bbGt=[]; end
-  if(hasRn), bbRn=bbApply('random',w,h,bbRand{:}); end
-  if(hasRn), pSmp.bbs=bbRn; pSmp.ibbs=bbGt; else pSmp.bbs=bbGt; end
+  if(hasFn), pSmp.bbs=bbFunc(I); pSmp.ibbs=bbGt; else pSmp.bbs=bbGt; end
   [~,Is1]=sampleData(I,pSmp); k0=k+1; k=k+length(Is1); Is(k0:k)=Is1;
   if(k>maxn), Is=Is(randsample(k,maxn)); k=maxn; end
   tocStatus(tid,max(i/n,k/maxn)); if(k==maxn), break; end
