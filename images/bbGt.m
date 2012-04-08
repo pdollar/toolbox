@@ -1001,10 +1001,10 @@ function Is = sampleDataDir( varargin )
 % Sample pos or neg examples from an annotated directory of images.
 %
 % sampleDataDir() is a wrapper function that calls sampleData() on every
-% image in 'imDir'. To sample POSITIVE examples specify 'gtDir', in which
-% case loads the gt associated with each image and samples pos windows. To
-% sample NEGATIVE examples specify 'bbFunc', where bbFunc() is a callback
-% that takes an image and returns a set of candidate neg bbs. For example:
+% image in 'imDir'. To sample POSITIVES specify 'gtDir', in which case
+% loads the gt for with each image and samples pos windows. To sample
+% NEGATIVES specify 'bbFunc', where bbFunc() is a callback that takes an
+% image and 'bbArgs' and returns a set of candidate neg bbs. For example:
 %   bbFunc=@(I) bbApply('random',size(I,2),size(I,1),[w0 w1],-ar,k)
 % takes an image and generates k random bbs with widths between w0 and w1
 % and aspect ratio ar (see bbApply>random()). If both 'gtDir' and 'bbFunc'
@@ -1023,6 +1023,7 @@ function Is = sampleDataDir( varargin )
 %   .pToBbs     - {} params for bbGt>toBbs
 %   .pSmp       - {} params for bbGt>sampleData
 %   .bbFunc     - {} function that generates candidate bbs (see above)
+%   .bbArgs     - {} arguments too bbFunc(I,bbArgs{:})
 %   .maxn       - [inf] maximum number of windows to sample
 %
 % OUTPUTS
@@ -1033,21 +1034,21 @@ function Is = sampleDataDir( varargin )
 % See also bbGt, bbGt>getFiles, bbGt>toBbs, bbGt>sampleData, bbApply>random
 
 dfs={'imDir','REQ', 'gtDir','', 'pToBbs',{},...
-  'pSmp',{}, 'bbFunc',{}, 'maxn',inf };
-[imDir,gtDir,pToBbs,pSmp,bbFunc,maxn] = getPrmDflt(varargin,dfs,1);
+  'pSmp',{}, 'bbFunc',{}, 'bbArgs',{}, 'maxn',inf };
+[imDir,gtDir,pToBbs,pSmp,bbFunc,bbArgs,maxn] = getPrmDflt(varargin,dfs,1);
 if(iscell(pSmp)), pSmp=cell2struct(pSmp(2:2:end),pSmp(1:2:end),2); end
 hasGt=~isempty(gtDir); hasFn=~isempty(bbFunc); assert(hasFn || hasGt);
 if(hasGt), fs={imDir,gtDir}; else fs={imDir}; end; fs=getFiles(fs);
 n=size(fs,2); if(~isinf(maxn)), fs=fs(:,randperm(n)); end
-tid=ticStatus('Sampling windows'); Is=cell(100000,1); k=0;
+tid=ticStatus('Sampling windows',1,1); Is=cell(100000,1); k=0;
 for i=1:n
-  I=imread(fs{1,i});
-  if(hasGt), bbGt=toBbs(bbLoad(fs{2,i}),pToBbs); else bbGt=[]; end
-  if(hasFn), pSmp.bbs=bbFunc(I); pSmp.ibbs=bbGt; else pSmp.bbs=bbGt; end
+  I=imread(fs{1,i}); bbGt=[];
+  if(hasGt), bbGt=toBbs(bbLoad(fs{2,i}),pToBbs); pSmp.bbs=bbGt; end
+  if(hasFn), pSmp.bbs=bbFunc(I,bbArgs{:}); pSmp.ibbs=bbGt; end
   [~,Is1]=sampleData(I,pSmp); k0=k+1; k=k+length(Is1); Is(k0:k)=Is1;
   if(k>maxn), Is=Is(randsample(k,maxn)); k=maxn; end
   tocStatus(tid,max(i/n,k/maxn)); if(k==maxn), break; end
-end
-Is=Is(1:k);
+end; Is=Is(1:k);
+fprintf('Sampled %i windows from %i images.\n',k,i);
 
 end
