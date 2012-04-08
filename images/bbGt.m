@@ -1009,6 +1009,8 @@ function Is = sampleDataDir( varargin )
 % takes an image and generates k random bbs with widths between w0 and w1
 % and aspect ratio ar (see bbApply>random()). If both 'gtDir' and 'bbFunc'
 % are specified, samples candidate neg windows that don't overlap the gt.
+% Finally, 'batch' is used to run the execution in parallel (assuming
+% matlabpool is open), this is useful if bbFunc() is slow.
 %
 % bb>toBbs() with params 'pToBbs' controls which ground truth bbs are used.
 % bbGt>sampleData() with params 'pSmp' controls how the bbs are extracted.
@@ -1023,8 +1025,9 @@ function Is = sampleDataDir( varargin )
 %   .pToBbs     - {} params for bbGt>toBbs
 %   .pSmp       - {} params for bbGt>sampleData
 %   .bbFunc     - {} function that generates candidate bbs (see above)
-%   .bbArgs     - {} arguments too bbFunc(I,bbArgs{:})
+%   .bbArgs     - {} arguments to bbFunc(I,bbArgs{:})
 %   .maxn       - [inf] maximum number of windows to sample
+%   .batch      - [1] batch size for parallel (parfor) execution
 %
 % OUTPUTS
 %  Is         - [nx1] cell of cropped image regions
@@ -1033,22 +1036,37 @@ function Is = sampleDataDir( varargin )
 %
 % See also bbGt, bbGt>getFiles, bbGt>toBbs, bbGt>sampleData, bbApply>random
 
-dfs={'imDir','REQ', 'gtDir','', 'pToBbs',{},...
-  'pSmp',{}, 'bbFunc',{}, 'bbArgs',{}, 'maxn',inf };
-[imDir,gtDir,pToBbs,pSmp,bbFunc,bbArgs,maxn] = getPrmDflt(varargin,dfs,1);
+% get paramters
+dfs={'imDir','REQ', 'gtDir','', 'pToBbs',{}, 'pSmp',{}, ...
+  'bbFunc',{}, 'bbArgs',{}, 'maxn',inf, 'batch',1 };
+[imDir,gtDir,pToBbs,pSmp,bbFunc,bbArgs,maxn,batch] ...
+  = getPrmDflt(varargin,dfs,1);
 if(iscell(pSmp)), pSmp=cell2struct(pSmp(2:2:end),pSmp(1:2:end),2); end
 hasGt=~isempty(gtDir); hasFn=~isempty(bbFunc); assert(hasFn || hasGt);
+
+% get list of image and possibly gt files
 if(hasGt), fs={imDir,gtDir}; else fs={imDir}; end; fs=getFiles(fs);
 n=size(fs,2); if(~isinf(maxn)), fs=fs(:,randperm(n)); end
-tid=ticStatus('Sampling windows',1,1); Is=cell(100000,1); k=0;
-for i=1:n
-  I=imread(fs{1,i}); bbGt=[];
-  if(hasGt), bbGt=toBbs(bbLoad(fs{2,i}),pToBbs); pSmp.bbs=bbGt; end
-  if(hasFn), pSmp.bbs=bbFunc(I,bbArgs{:}); pSmp.ibbs=bbGt; end
-  [~,Is1]=sampleData(I,pSmp); k0=k+1; k=k+length(Is1); Is(k0:k)=Is1;
+batch=min(batch,n); Is=cell(n*1000,1); Is1=cell(1,batch);
+
+% loop over images (in batches) and sample windows
+tid=ticStatus('Sampling windows',1,1); k=0; i=0;
+while( i<n && k<maxn )
+  batch=min(batch,n-i); p={fs,pToBbs,pSmp,bbFunc,bbArgs};
+  if(batch==1), Is1{1}=sampleDataDir1(i+1,p{:}); else
+    parfor j=1:batch, Is1{j}=sampleDataDir1(i+j,p{:}); end; end %#ok<PFBNS>
+  for j=1:batch, k0=k+1; k=k+length(Is1{j}); Is(k0:k)=Is1{j}; end
   if(k>maxn), Is=Is(randsample(k,maxn)); k=maxn; end
-  tocStatus(tid,max(i/n,k/maxn)); if(k==maxn), break; end
+  i=i+batch; tocStatus(tid,max(i/n,k/maxn));
 end; Is=Is(1:k);
 fprintf('Sampled %i windows from %i images.\n',k,i);
 
+end
+
+function Is = sampleDataDir1( ind, fs, pToBbs, pSmp, bbFunc, bbArgs )
+% Helper function for sampleDataDir(), do not call directly.
+I=imread(fs{1,ind}); bbGt=[]; hasGt=size(fs,1)>1; hasFn=~isempty(bbFunc);
+if(hasGt), bbGt=toBbs(bbLoad(fs{2,ind}),pToBbs); pSmp.bbs=bbGt; end
+if(hasFn), pSmp.bbs=bbFunc(I,bbArgs{:}); pSmp.ibbs=bbGt; end
+[~,Is]=sampleData(I,pSmp);
 end
