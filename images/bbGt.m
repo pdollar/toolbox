@@ -1059,7 +1059,7 @@ while( i<n && k<maxn )
   if(k>maxn), Is=Is(randsample(k,maxn)); k=maxn; end
   i=i+batch; tocStatus(tid,max(i/n,k/maxn));
 end; Is=Is(1:k);
-fprintf('Sampled %i windows from %i images.\n',k,i);
+fprintf('Sampled %i windows from %i images in %s.\n',k,i,imDir);
 
 end
 
