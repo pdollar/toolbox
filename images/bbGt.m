@@ -34,9 +34,7 @@ function varargout = bbGt( action, varargin )
 % Save bb annotation to text file.
 %   objs = bbGt( 'bbSave', objs, fName )
 % Load bb annotation from text file.
-%   objs = bbGt( 'bbLoad', fName )
-% Load bb annotation from file stored in PASCAL VOC format.
-%   objs = bbGt( 'bbLoadPascal', fName )
+%   objs = bbGt( 'bbLoad', fName, [format] )
 % Get object property 'name' (in a standard array).
 %   vals = bbGt( 'get', objs, name )
 % Set object property 'name' (with a standard array).
@@ -85,10 +83,9 @@ function varargout = bbGt( action, varargin )
 % EXAMPLE
 %
 % See also bbApply, bbLabeler, bbGt>create, bbGt>bbSave, bbGt>bbLoad,
-% bbGt>bbLoadPascal, bbGt>get, bbGt>set, bbGt>draw, bbGt>toBbs,
-% bbGt>dtsLoad, bbGt>getFiles, bbGt>evalRes, bbGt>showRes, bbGt>evalResDir,
-% bbGt>compRoc, bbGt>cropRes, bbGt>compOas, bbGt>compOa, bbGt>sampleData,
-% bbGt>sampleDataDir
+% bbGt>get, bbGt>set, bbGt>draw, bbGt>toBbs, bbGt>dtsLoad, bbGt>getFiles,
+% bbGt>evalRes, bbGt>showRes, bbGt>evalResDir, bbGt>compRoc, bbGt>cropRes,
+% bbGt>compOas, bbGt>compOa, bbGt>sampleData, bbGt>sampleDataDir
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -151,14 +148,24 @@ end
 fclose(fid);
 end
 
-function objs = bbLoad( fName )
+function objs = bbLoad( fName, format )
 % Load bb annotation from text file.
 %
+% Specify 'format' to indicate the format of the ground truth. format=0 is
+% the default format (created by bbSave/bbLabeler). format=1 is the PASCAL
+% VOC format. Loading ground truth in this format requires 'VOCcode/' to be
+% in directory path. It's part of VOCdevkit available from the PASCAL VOC:
+% http://pascallin.ecs.soton.ac.uk/challenges/VOC/. Objects labeled as
+% either 'truncated' or 'occluded' using the PASCAL definitions have the
+% 'occ' flag set to true. Objects labeled as 'difficult' have the 'ign'
+% flag set to true. 'class' is used for 'lbl'.
+%
 % USAGE
-%  objs = bbGt( 'bbLoad', fName )
+%  objs = bbGt( 'bbLoad', fName, [format] )
 %
 % INPUTS
 %  fName  - name of text file
+%  format - [0] gt format 0:default, 1:PASCAL
 %
 % OUTPUTS
 %  objs   - loaded objects
@@ -166,53 +173,38 @@ function objs = bbLoad( fName )
 % EXAMPLE
 %
 % See also bbGt, bbGt>bbSave
-fId=fopen(fName); if(fId==-1), error(['unable to open file: ' fName]); end
-try v=textscan(fId,'%% bbGt version=%d'); v=v{1}; catch, v=0; end%#ok<CTCH>
-if(isempty(v)), v=0; end
-% read in annotation (m is number of fields for given version v)
-if(all(v~=[0 1 2 3])), error('Unknown version %i.',v); end
-frmt='%s %d %d %d %d %d %d %d %d %d %d %d';
-ms=[10 10 11 12]; m=ms(v+1); frmt=frmt(1:2+(m-1)*3);
-in=textscan(fId,frmt); for i=2:m, in{i}=double(in{i}); end; fclose(fId);
-% create objs struct from read in fields
-n=length(in{1}); objs=create(n);
-for i=1:n, objs(i).lbl=in{1}{i}; objs(i).occ=in{6}(i); end
-bb=[in{2} in{3} in{4} in{5}]; bbv=[in{7} in{8} in{9} in{10}];
-for i=1:n, objs(i).bb=bb(i,:); objs(i).bbv=bbv(i,:); end
-if(m>=11), for i=1:n, objs(i).ign=in{11}(i); end; end
-if(m>=12), for i=1:n, objs(i).ang=in{12}(i); end; end
-end
-
-function objs = bbLoadPascal( fName )
-% Load bb annotation from file stored in PASCAL VOC format.
-%
-% Requires 'VOCcode/' to be in directory path. Part of VOCdevkit available
-% from the PASCAL VOC: http://pascallin.ecs.soton.ac.uk/challenges/VOC/.
-% Objects labeled as either 'truncated' or 'occluded' using the PASCAL
-% definitions have the 'occ' flag set to true. Objects labeled as
-% 'difficult' have the 'ign' flag set to true. 'class' is used for 'lbl'.
-%
-% USAGE
-%  objs = bbGt( 'bbLoadPascal', fName )
-%
-% INPUTS
-%  fName  - name of text file
-%
-% OUTPUTS
-%  objs   - loaded objects
-%
-% EXAMPLE
-%
-% See also bbGt, bbGt>bbSave, bbGt>bbLoad
-if(exist('PASreadrecord.m','file')~=2)
-  error('bbLoadPascal() requires the PASCAL VOC code.'); end
-os=PASreadrecord(fName); os=os.objects;
-n=length(os); objs=create(n);
-for i=1:n
-  bb=os(i).bbox; bb(3)=bb(3)-bb(1); bb(4)=bb(4)-bb(2); objs(i).bb=bb;
-  objs(i).lbl=os(i).class; objs(i).ign=os(i).difficult;
-  objs(i).occ=os(i).occluded || os(i).truncated;
-  if(objs(i).occ), objs(i).bbv=bb; end
+if(nargin<2 || isempty(format)), format=0; end
+if( format==0 )
+  % load images stored in default format
+  fId=fopen(fName);
+  if(fId==-1), error(['unable to open file: ' fName]); end; v=0;
+  try v=textscan(fId,'%% bbGt version=%d'); v=v{1}; catch, end %#ok<CTCH>
+  if(isempty(v)), v=0; end
+  % read in annotation (m is number of fields for given version v)
+  if(all(v~=[0 1 2 3])), error('Unknown version %i.',v); end
+  frmt='%s %d %d %d %d %d %d %d %d %d %d %d';
+  ms=[10 10 11 12]; m=ms(v+1); frmt=frmt(1:2+(m-1)*3);
+  in=textscan(fId,frmt); for i=2:m, in{i}=double(in{i}); end; fclose(fId);
+  % create objs struct from read in fields
+  n=length(in{1}); objs=create(n);
+  for i=1:n, objs(i).lbl=in{1}{i}; objs(i).occ=in{6}(i); end
+  bb=[in{2} in{3} in{4} in{5}]; bbv=[in{7} in{8} in{9} in{10}];
+  for i=1:n, objs(i).bb=bb(i,:); objs(i).bbv=bbv(i,:); end
+  if(m>=11), for i=1:n, objs(i).ign=in{11}(i); end; end
+  if(m>=12), for i=1:n, objs(i).ang=in{12}(i); end; end
+elseif( format==1 )
+  % load images stored in PASCAL VOC format
+  if(exist('PASreadrecord.m','file')~=2)
+    error('bbLoad() requires the PASCAL VOC code.'); end
+  os=PASreadrecord(fName); os=os.objects;
+  n=length(os); objs=create(n);
+  for i=1:n
+    bb=os(i).bbox; bb(3)=bb(3)-bb(1); bb(4)=bb(4)-bb(2); objs(i).bb=bb;
+    objs(i).lbl=os(i).class; objs(i).ign=os(i).difficult;
+    objs(i).occ=os(i).occluded || os(i).truncated;
+    if(objs(i).occ), objs(i).bbv=bb; end
+  end
+else error('bbLoad() unknown format: %i',format);
 end
 end
 
