@@ -33,16 +33,14 @@ function varargout = bbGt( action, varargin )
 %   objs = bbGt( 'create', [n] );
 % Save bb annotation to text file.
 %   objs = bbGt( 'bbSave', objs, fName )
-% Load bb annotation from text file.
-%   objs = bbGt( 'bbLoad', fName, [format] )
+% Load bb annotation from text file and filter.
+%   [objs,bbs] = bbGt( 'bbLoad', fName, [pLoad] )
 % Get object property 'name' (in a standard array).
 %   vals = bbGt( 'get', objs, name )
 % Set object property 'name' (with a standard array).
 %   objs = bbGt( 'set', objs, name, vals )
 % Draw an ellipse for each labeled object.
 %   hs = draw( objs, pDraw )
-% Filters ground truth objs and converts them to bbs.
-%   bbs = bbGt( 'toBbs', objs, pToBbs )
 %
 %%% (2) Routines for evaluating the Pascal criteria for object detection.
 % Load detection outputs from text files.
@@ -148,34 +146,80 @@ end
 fclose(fid);
 end
 
-function objs = bbLoad( fName, format )
-% Load bb annotation from text file.
+function [objs,bbs] = bbLoad( fName, varargin )
+% Load bb annotation from text file and filter.
 %
-% Specify 'format' to indicate the format of the ground truth. format=0 is
-% the default format (created by bbSave/bbLabeler). format=1 is the PASCAL
-% VOC format. Loading ground truth in this format requires 'VOCcode/' to be
-% in directory path. It's part of VOCdevkit available from the PASCAL VOC:
-% http://pascallin.ecs.soton.ac.uk/challenges/VOC/. Objects labeled as
-% either 'truncated' or 'occluded' using the PASCAL definitions have the
-% 'occ' flag set to true. Objects labeled as 'difficult' have the 'ign'
-% flag set to true. 'class' is used for 'lbl'.
+% FORMAT: Specify 'format' to indicate the format of the ground truth.
+% format=0 is the default format (created by bbSave/bbLabeler). format=1 is
+% the PASCAL VOC format. Loading ground truth in this format requires
+% 'VOCcode/' to be in directory path. It's part of VOCdevkit available from
+% the PASCAL VOC: http://pascallin.ecs.soton.ac.uk/challenges/VOC/. Objects
+% labeled as either 'truncated' or 'occluded' using the PASCAL definitions
+% have the 'occ' flag set to true. Objects labeled as 'difficult' have the
+% 'ign' flag set to true. 'class' is used for 'lbl'.
+%
+% FILTERING: After loading, the objects can be filtered. First, only
+% objects with lbl in lbls or ilbls or returned. For each object, obj.ign
+% is set to 1 if it was already at 1, if its label was in ilbls, or if any
+% object property is outside of the specified range. The ignore flag is
+% used during training and testing so that objects with certain properties
+% (such as very small or heavily occluded objects) are excluded. The range
+% for each property is a two element vector, [0 inf] by default; a property
+% value v is inside the range if v>=rng(1) && v<=rng(2). Tested properties
+% include height (h), width (w), area (a), aspect ratio (ar), orientation
+% (o), extent x-coordinate (x), extent y-coordinate (y), and fraction
+% visible (v). The last property is computed as the visible object area
+% divided by the total area, except if o.occ==0, in which case v=1, or
+% all(o.bbv==o.bb), which indicates the object may be barely visible, in
+% which case v=0 (note that v~=1 in this case).
+%
+% RETURN: In addition to outputting the loaded objs, bbLoad() can return the
+% corresponding bounding boxes (bbs) in an [nx5] array where each row is of
+% the form [x y w h ignore], [x y w h] is the bb and ignore=obj.ign. For
+% oriented bbs, the extent of the bb is returned, where the extent is the
+% smallest axis aligned bb containing the oriented bb. If the oriented bb
+% was labeled as a rectangle as opposed to an ellipse, the tightest bb will
+% usually increase slightly in size due to the corners of the rectangle
+% sticking out beyond the ellipse bounds. The 'ellipse' flag controls how
+% an oriented bb is converted to a regular bb. Specifically, set ellipse=1
+% if an ellipse tightly delineates the object and 0 if a rectangle does.
 %
 % USAGE
-%  objs = bbGt( 'bbLoad', fName, [format] )
+%  [objs,bbs] = bbGt( 'bbLoad', fName, [pLoad] )
 %
 % INPUTS
-%  fName  - name of text file
-%  format - [0] gt format 0:default, 1:PASCAL
+%  fName    - name of text file
+%  pLoad    - parameters (struct or name/value pairs)
+%   .format   - [0] gt format 0:default, 1:PASCAL
+%   .ellipse  - [1] controls how oriented bb is converted to regular bb
+%   .lbls     - [] return objs with these labels (or [] to return all)
+%   .ilbls    - [] return objs with these labels but set to ignore
+%   .hRng     - [] range of acceptable obj heights
+%   .wRng     - [] range of acceptable obj widths
+%   .aRng     - [] range of acceptable obj areas
+%   .arRng    - [] range of acceptable obj aspect ratios
+%   .oRng     - [] range of acceptable obj orientations (angles)
+%   .xRng     - [] range of x coordinates of bb extent
+%   .yRng     - [] range of y coordinates of bb extent
+%   .vRng     - [] range of acceptable obj occlusion levels
 %
 % OUTPUTS
-%  objs   - loaded objects
+%  objs     - loaded objects
+%  bbs      - [nx5] array containg ground truth bbs [x y w h ignore]
 %
 % EXAMPLE
 %
 % See also bbGt, bbGt>bbSave
-if(nargin<2 || isempty(format)), format=0; end
+
+% get parameters
+dfs={'format',0,'ellipse',1,'lbls',[],'ilbls',[],'hRng',[],'wRng',[],...
+  'aRng',[],'arRng',[],'oRng',[],'xRng',[],'yRng',[],'vRng',[]};
+[format,ellipse,lbls,ilbls,hRng,wRng,aRng,arRng,oRng,xRng,yRng,vRng] ...
+  = getPrmDflt(varargin,dfs,1);
+
+% load objs
 if( format==0 )
-  % load images stored in default format
+  % load objs stored in default format
   fId=fopen(fName);
   if(fId==-1), error(['unable to open file: ' fName]); end; v=0;
   try v=textscan(fId,'%% bbGt version=%d'); v=v{1}; catch, end %#ok<CTCH>
@@ -193,7 +237,7 @@ if( format==0 )
   if(m>=11), for i=1:n, objs(i).ign=in{11}(i); end; end
   if(m>=12), for i=1:n, objs(i).ang=in{12}(i); end; end
 elseif( format==1 )
-  % load images stored in PASCAL VOC format
+  % load objs stored in PASCAL VOC format
   if(exist('PASreadrecord.m','file')~=2)
     error('bbLoad() requires the PASCAL VOC code.'); end
   os=PASreadrecord(fName); os=os.objects;
@@ -206,6 +250,62 @@ elseif( format==1 )
   end
 else error('bbLoad() unknown format: %i',format);
 end
+
+% only keep objects whose lbl is in lbls or ilbls
+if(~isempty(lbls) || ~isempty(ilbls)), K=true(n,1);
+  for i=1:n, K(i)=any(strcmp(objs(i).lbl,[lbls ilbls])); end
+  objs=objs(K); n=length(objs);
+end
+
+% filter objs (set ignore flags)
+for i=1:n, objs(i).ang=mod(objs(i).ang,360); end
+if(~isempty(ilbls)), for i=1:n, v=objs(i).lbl;
+    objs(i).ign = objs(i).ign || any(strcmp(v,ilbls)); end; end
+if(~isempty(xRng)),  for i=1:n, v=objs(i).bb(1);
+    objs(i).ign = objs(i).ign || v<xRng(1) || v>xRng(2); end; end
+if(~isempty(xRng)),  for i=1:n, v=objs(i).bb(1)+objs(i).bb(3);
+    objs(i).ign = objs(i).ign || v<xRng(1) || v>xRng(2); end; end
+if(~isempty(yRng)),  for i=1:n, v=objs(i).bb(2);
+    objs(i).ign = objs(i).ign || v<yRng(1) || v>yRng(2); end; end
+if(~isempty(yRng)),  for i=1:n, v=objs(i).bb(2)+objs(i).bb(4);
+    objs(i).ign = objs(i).ign || v<yRng(1) || v>yRng(2); end; end
+if(~isempty(wRng)),  for i=1:n, v=objs(i).bb(3);
+    objs(i).ign = objs(i).ign || v<wRng(1) || v>wRng(2); end; end
+if(~isempty(hRng)),  for i=1:n, v=objs(i).bb(4);
+    objs(i).ign = objs(i).ign || v<hRng(1) || v>hRng(2); end; end
+if(~isempty(oRng)),  for i=1:n, v=objs(i).ang;
+    objs(i).ign = objs(i).ign || v<oRng(1) || v>oRng(2); end; end
+if(~isempty(aRng)),  for i=1:n, v=objs(i).bb(3)*objs(i).bb(4);
+    objs(i).ign = objs(i).ign || v<aRng(1) || v>aRng(2); end; end
+if(~isempty(arRng)), for i=1:n, v=objs(i).bb(3)/objs(i).bb(4);
+    objs(i).ign = objs(i).ign || v<arRng(1) || v>arRng(2); end; end
+if(~isempty(vRng)),  for i=1:n, o=objs(i); bb=o.bb; bbv=o.bbv; %#ok<ALIGN>
+    if(~o.occ || all(bbv==0)), v=1; elseif(all(bbv==bb)), v=0; else
+      v=(bbv(3)*bbv(4))/(bb(3)*bb(4)); end
+    objs(i).ign = objs(i).ign || v<vRng(1) || v>vRng(2); end
+end
+
+% finally get extent of each bounding box (not trivial if ang~=0)
+if(nargout<=1), return; end; if(n==0), bbs=zeros(0,5); return; end
+bbs=double([reshape([objs.bb],4,[]); [objs.ign]]');
+for i=1:n, bbs(i,1:4)=bbExtent(bbs(i,1:4),objs(i).ang,ellipse); end
+
+  function bb = bbExtent( bb, ang, ellipse )
+    % get bb that fully contains given oriented bb
+    if(~ang), return; end
+    if( ellipse ) % get bb that encompases ellipse (tighter)
+      x=bbApply('getCenter',bb); a=bb(4)/2; b=bb(3)/2; ang=ang-90;
+      rx=(a*cosd(ang))^2+(b*sind(ang))^2; rx=abs(rx/sqrt(rx));
+      ry=(a*sind(ang))^2+(b*cosd(ang))^2; ry=abs(ry/sqrt(ry));
+      bb=[x(1)-rx x(2)-ry 2*rx 2*ry];
+    else % get bb that encompases rectangle (looser)
+      c=cosd(ang); s=sind(ang); R=[c -s; s c]; rs=bb(3:4)/2;
+      x0=-rs(1); x1=rs(1); y0=-rs(2); y1=rs(2); pc=bb(1:2)+rs;
+      p=[x0 y0; x1 y0; x1 y1; x0 y1]*R'+pc(ones(4,1),:);
+      x0=min(p(:,1)); x1=max(p(:,1)); y0=min(p(:,2)); y1=max(p(:,2));
+      bb=[x0 y0 x1-x0 y1-y0];
+    end
+  end
 end
 
 function vals = get( objs, name )
