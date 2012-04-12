@@ -298,7 +298,7 @@ for i=1:n
 end; hold off;
 end
 
-function [bbs,ids] = toBbs( objs, varargin )
+function bbs = toBbs( objs, varargin )
 % Filters ground truth objs and converts them to bbs.
 %
 % Returns bbs for all objects with lbl in lbls. The result is an [nx5]
@@ -346,66 +346,61 @@ function [bbs,ids] = toBbs( objs, varargin )
 %
 % OUTPUTS
 %  bbs      - [n x 5] array containg ground truth bbs [x y w h ignore]
-%  ids      - [n x 1] list of object ids selected
 %
 % EXAMPLE
 %  objs=bbGt('create',3);
 %  objs(1).ign=0; objs(1).lbl='person'; objs(1).bb=[0 0 10 10];
 %  objs(2).ign=0; objs(2).lbl='person'; objs(2).bb=[0 0 20 20];
 %  objs(3).ign=0; objs(3).lbl='bicycle'; objs(3).bb=[0 0 20 20];
-%  [bbs,ids] = bbGt('toBbs',objs,{'lbls',{'person'},'hRng',[15 inf]})
+%  bbs = bbGt('toBbs',objs,{'lbls',{'person'},'hRng',[15 inf]})
 %
 % See also bbGt
 
 % get parameters
-if(nargin<=1), ellipse=1; checks=0; else
-  dfs={'lbls',[],'ilbls',[],'hRng',[],'wRng',[],'aRng',[],'arRng',[],...
-    'oRng',[],'xRng',[],'yRng',[],'vRng',[],'ellipse',1};
-  [lbls,ilbls,hRng,wRng,aRng,arRng,oRng,xRng,yRng,vRng,ellipse] = ...
-    getPrmDflt(varargin,dfs,1); checks=1;
-end
+dfs={'lbls',[],'ilbls',[],'hRng',[],'wRng',[],'aRng',[],'arRng',[],...
+  'oRng',[],'xRng',[],'yRng',[],'vRng',[],'ellipse',1};
+[lbls,ilbls,hRng,wRng,aRng,arRng,oRng,xRng,yRng,vRng,ellipse] = ...
+  getPrmDflt(varargin,dfs,1);
 
 % only keep objects whose lbl is in lbls or ilbls
-n=length(objs); ids=1:n;
-if(checks && (~isempty(lbls) || ~isempty(ilbls))), K=true(n,1);
+if( ~isempty(lbls) || ~isempty(ilbls) )
+  n=length(objs); K=true(n,1);
   for i=1:n, K(i)=any(strcmp(objs(i).lbl,[lbls ilbls])); end
-  ids=find(K); objs=objs(ids); n=length(objs);
+  objs=objs(K); n=length(objs);
 end
-
-% get extent of each bounding box (not trivial if ang~=0)
-if(n==0), bbs=zeros(0,5); return; end
-bbs=double([reshape([objs.bb],4,[]); [objs.ign]]');
-for i=1:n, ang=mod(objs(i).ang,360); objs(i).ang=ang;
-  if(ang~=0), bbs(i,1:4)=bbExtent(bbs(i,1:4),ang,ellipse); end
-end
-if(checks==0), return; end
 
 % filter (set ignore flags)
+for i=1:n, objs(i).ang=mod(objs(i).ang,360); end
 if(~isempty(ilbls)), for i=1:n, v=objs(i).lbl;
-    bbs(i,5)=bbs(i,5) || any(strcmp(v,ilbls)); end; end
-if(~isempty(xRng)),  for i=1:n, v=bbs(i,1);
-    bbs(i,5)=bbs(i,5) || v<xRng(1) || v>xRng(2); end; end
-if(~isempty(xRng)),  for i=1:n, v=bbs(i,1)+bbs(i,3);
-    bbs(i,5)=bbs(i,5) || v<xRng(1) || v>xRng(2); end; end
-if(~isempty(yRng)),  for i=1:n, v=bbs(i,2);
-    bbs(i,5)=bbs(i,5) || v<yRng(1) || v>yRng(2); end; end
-if(~isempty(yRng)),  for i=1:n, v=bbs(i,2)+bbs(i,4);
-    bbs(i,5)=bbs(i,5) || v<yRng(1) || v>yRng(2); end; end
+    objs(i).ign = objs(i).ign || any(strcmp(v,ilbls)); end; end
+if(~isempty(xRng)),  for i=1:n, v=objs(i).bb(1);
+    objs(i).ign = objs(i).ign || v<xRng(1) || v>xRng(2); end; end
+if(~isempty(xRng)),  for i=1:n, v=objs(i).bb(1)+objs(i).bb(3);
+    objs(i).ign = objs(i).ign || v<xRng(1) || v>xRng(2); end; end
+if(~isempty(yRng)),  for i=1:n, v=objs(i).bb(2);
+    objs(i).ign = objs(i).ign || v<yRng(1) || v>yRng(2); end; end
+if(~isempty(yRng)),  for i=1:n, v=objs(i).bb(2)+objs(i).bb(4);
+    objs(i).ign = objs(i).ign || v<yRng(1) || v>yRng(2); end; end
 if(~isempty(wRng)),  for i=1:n, v=objs(i).bb(3);
-    bbs(i,5)=bbs(i,5) || v<wRng(1) || v>wRng(2); end; end
+    objs(i).ign = objs(i).ign || v<wRng(1) || v>wRng(2); end; end
 if(~isempty(hRng)),  for i=1:n, v=objs(i).bb(4);
-    bbs(i,5)=bbs(i,5) || v<hRng(1) || v>hRng(2); end; end
+    objs(i).ign = objs(i).ign || v<hRng(1) || v>hRng(2); end; end
 if(~isempty(oRng)),  for i=1:n, v=objs(i).ang;
-    bbs(i,5)=bbs(i,5) || v<oRng(1) || v>oRng(2); end; end
+    objs(i).ign = objs(i).ign || v<oRng(1) || v>oRng(2); end; end
 if(~isempty(aRng)),  for i=1:n, v=objs(i).bb(3)*objs(i).bb(4);
-    bbs(i,5)=bbs(i,5) || v<aRng(1) || v>aRng(2); end; end
+    objs(i).ign = objs(i).ign || v<aRng(1) || v>aRng(2); end; end
 if(~isempty(arRng)), for i=1:n, v=objs(i).bb(3)/objs(i).bb(4);
-    bbs(i,5)=bbs(i,5) || v<arRng(1) || v>arRng(2); end; end
+    objs(i).ign = objs(i).ign || v<arRng(1) || v>arRng(2); end; end
 if(~isempty(vRng)),  for i=1:n, o=objs(i); bb=o.bb; bbv=o.bbv; %#ok<ALIGN>
     if(~o.occ || all(bbv==0)), v=1; elseif(all(bbv==bb)), v=0; else
       v=(bbv(3)*bbv(4))/(bb(3)*bb(4)); end
-    bbs(i,5)=bbs(i,5) || v<vRng(1) || v>vRng(2); end
+    objs(i).ign = objs(i).ign || v<vRng(1) || v>vRng(2); end
 end
+
+% finally get extent of each bounding box (not trivial if ang~=0)
+if(n==0), bbs=zeros(0,5); return; end
+bbs=double([reshape([objs.bb],4,[]); [objs.ign]]');
+for i=1:n, bbs(i,1:4)=bbExtent(bbs(i,1:4),objs(i).ang,ellipse); end
 
   function bb = bbExtent( bb, ang, ellipse )
     % get bb that fully contains given oriented bb
