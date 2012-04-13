@@ -28,13 +28,14 @@
  bbGt gives acces to three types of routines:
  (1) Data structure for storing bb image annotations.
  (2) Routines for evaluating the Pascal criteria for object detection.
- (3) Routines for sampling training examples from a labeled image.
+ (3) Routines for sampling training windows from a labeled image.
 
  The bb annotation stores bb for objects of interest with additional
  information per object, such as occlusion information. The underlying
  data structure is simply a Matlab stuct array, one struct per object.
  This annotation format is an alternative to the annotation format used
- for the PASCAL object challenges.
+ for the PASCAL object challenges (in addition routines for loading PASCAL
+ format data are provided, see bbLoad()).
 
  Each object struct has the following fields:
   lbl  - a string label describing object type (eg: 'pedestrian')
@@ -57,36 +58,38 @@
    objs = bbGt( 'create', [n] );
  Save bb annotation to text file.
    objs = bbGt( 'bbSave', objs, fName )
- Load bb annotation from text file.
-   objs = bbGt( 'bbLoad', fName )
+ Load bb annotation from text file and filter.
+   [objs,bbs] = bbGt( 'bbLoad', fName, [pLoad] )
  Get object property 'name' (in a standard array).
    vals = bbGt( 'get', objs, name )
  Set object property 'name' (with a standard array).
    objs = bbGt( 'set', objs, name, vals )
  Draw an ellipse for each labeled object.
-   hs = draw( objs, varargin )
+   hs = draw( objs, pDraw )
 
 %% (2) Routines for evaluating the Pascal criteria for object detection.
- Returns filtered ground truth bbs for purpose of evaluation.
-   bbs = bbGt( 'toGt', objs, prm )
- Evaluates detections in a single frame against ground truth data.
-  [gt, dt] = bbGt( 'evalRes', gt0, dt0, [thr], [mul] )
+ Get all corresponding files in given directories.
+   [fs,fs0] = bbGt('getFiles', dirs, [f0], [f1] )
+ Load all ground truth and detection bbs in given directories.
+   [gt0,dt0] = bbGt( 'loadAll', gtDir, [dtDir], [pLoad] )
+ Evaluates detections against ground truth data.
+   [gt,dt] = bbGt( 'evalRes', gt0, dt0, [thr], [mul] )
  Display evaluation results for given image.
-  [hs,hImg] = bbGt( 'showRes' I, gt, dt, varargin )
- Run evaluation evalRes for each ground truth/detection result in dirs.
-  [gt,dt,files] = bbGt( 'evalResDir', gtDir, dtDir, [varargin] )
+   [hs,hImg] = bbGt( 'showRes' I, gt, dt, varargin )
  Compute ROC or PR based on outputs of evalRes on multiple images.
-  [xs,ys,ref] = bbGt( 'compRoc', gt, dt, roc, ref )
+   [xs,ys,ref] = bbGt( 'compRoc', gt, dt, roc, ref )
  Extract true or false positives or negatives for visualization.
-  [Is,scores,imgIds] = bbGt( 'cropRes', gt, dt, files, varargin )
+   [Is,scores,imgIds] = bbGt( 'cropRes', gt, dt, imFs, varargin )
  Computes (modified) overlap area between pairs of bbs.
    oa = bbGt( 'compOas', dt, gt, [ig] )
  Optimized version of compOas for a single pair of bbs.
    oa = bbGt( 'compOa', dt, gt, ig )
 
-%% (3) Routines for sampling training examples from a labeled image.
- Sample pos or neg examples for training from an annotated image.
-   [bbs, IS] = bbGt( 'sampleData', I, prm )
+%% (3) Routines for sampling windows from annotated images.
+ Sample pos or neg windows from an annotated image.
+   Is = bbGt( 'sampleWins', I, pSmp )
+ Sample pos or neg windows from an annotated directory of images.
+   Is = bbGt( 'sampleWinsDir', pSmpDir )
 
  USAGE
   varargout = bbGt( action, varargin );
@@ -101,11 +104,11 @@
  EXAMPLE
 
  See also <a href="bbApply.html" class="code" title="function varargout = bbApply( action, varargin )">bbApply</a>, <a href="bbLabeler.html" class="code" title="function bbLabeler( objTypes, imgDir, resDir )">bbLabeler</a>, bbGt&gt;create, bbGt&gt;bbSave, bbGt&gt;bbLoad,
- bbGt&gt;get, bbGt&gt;set, bbGt&gt;draw, bbGt&gt;toGt, bbGt&gt;evalRes, bbGt&gt;showRes,
- bbGt&gt;evalResDir, bbGt&gt;compRoc, bbGt&gt;cropRes, bbGt&gt;compOas, bbGt&gt;compOa,
- bbGt&gt;sampleData
+ bbGt&gt;get, bbGt&gt;set, bbGt&gt;draw, bbGt&gt;getFiles, bbGt&gt;loadAll,
+ bbGt&gt;evalRes, bbGt&gt;showRes,  bbGt&gt;compRoc, bbGt&gt;cropRes, bbGt&gt;compOas,
+ bbGt&gt;compOa, bbGt&gt;sampleWins, bbGt&gt;sampleWinsDir
 
- Piotr's Image&amp;Video Toolbox      Version 2.63
+ Piotr's Image&amp;Video Toolbox      Version 2.64
  Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
@@ -114,10 +117,10 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="bbApply.html" class="code" title="function varargout = bbApply( action, varargin )">bbApply</a>	Functions for manipulating bounding boxes (bb).</li><li><a href="bbNms.html" class="code" title="function bbs = bbNms( bbs, varargin )">bbNms</a>	Bounding box (bb) non-maximal suppression (nms).</li><li><a href="im.html" class="code" title="function varargout = im( I, range, extraInf )">im</a>	Function for displaying grayscale images.</li><li><a href="montage2.html" class="code" title="function varargout = montage2( IS, prm )">montage2</a>	Used to display collections of images and videos.</li><li><a href="../matlab/c.html" class="code" title="">c</a>	clc - clear command window.</li><li><a href="../matlab/cell2array.html" class="code" title="function Y = cell2array( X, padEl )">cell2array</a>	Flattens a cell array of regular arrays into a regular array.</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li><li><a href="../matlab/plotEllipse.html" class="code" title="function [h,hc,hl] = plotEllipse(cRow,cCol,ra,rb,phi,color,nPnts,lw,ls)">plotEllipse</a>	Adds an ellipse to the current plot.</li></ul>
+<li><a href="bbApply.html" class="code" title="function varargout = bbApply( action, varargin )">bbApply</a>	Functions for manipulating bounding boxes (bb).</li><li><a href="bbGt.html" class="code" title="function varargout = bbGt( action, varargin )">bbGt</a>	Bounding box (bb) annotations struct, evaluation and sampling routines.</li><li><a href="im.html" class="code" title="function varargout = im( I, range, extraInf )">im</a>	Function for displaying grayscale images.</li><li><a href="montage2.html" class="code" title="function varargout = montage2( IS, prm )">montage2</a>	Used to display collections of images and videos.</li><li><a href="../matlab/c.html" class="code" title="">c</a>	clc - clear command window.</li><li><a href="../matlab/cell2array.html" class="code" title="function Y = cell2array( X, padEl )">cell2array</a>	Flattens a cell array of regular arrays into a regular array.</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li><li><a href="../matlab/plotEllipse.html" class="code" title="function [h,hc,hl] = plotEllipse(cRow,cCol,ra,rb,phi,color,nPnts,lw,ls)">plotEllipse</a>	Adds an ellipse to the current plot.</li><li><a href="../matlab/ticStatus.html" class="code" title="function id = ticStatus( msg, updateFreq, updateMinT, erasePrev )">ticStatus</a>	Used to display the progress of a long process.</li><li><a href="../matlab/tocStatus.html" class="code" title="function tocStatus( id, fracDone )">tocStatus</a>	Used to display the progress of a long process.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="bbLabeler.html" class="code" title="function bbLabeler( objTypes, imgDir, resDir )">bbLabeler</a>	Bounding box or ellipse labeler for static images.</li></ul>
+<li><a href="bbGt.html" class="code" title="function varargout = bbGt( action, varargin )">bbGt</a>	Bounding box (bb) annotations struct, evaluation and sampling routines.</li><li><a href="bbLabeler.html" class="code" title="function bbLabeler( objTypes, imgDir, resDir )">bbLabeler</a>	Bounding box or ellipse labeler for static images.</li></ul>
 <!-- crossreference -->
 
 
