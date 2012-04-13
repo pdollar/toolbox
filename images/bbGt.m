@@ -176,7 +176,7 @@ function [objs,bbs] = bbLoad( fName, varargin )
 % all(o.bbv==o.bb), which indicates the object may be barely visible, in
 % which case v=0 (note that v~=1 in this case).
 %
-% RETURN: In addition to outputting the loaded objs, bbLoad() can return the
+% RETURN: In addition to outputting the objs, bbLoad() can return the
 % corresponding bounding boxes (bbs) in an [nx5] array where each row is of
 % the form [x y w h ignore], [x y w h] is the bb and ignore=obj.ign. For
 % oriented bbs, the extent of the bb is returned, where the extent is the
@@ -635,16 +635,10 @@ if(~isempty(I)), hImg=im(I,[],0); title(''); end
 % display bbs with or w/o color coding based on output of evalRes
 hold on; hs=cell(1,1000); k=0;
 if( evShow )
-  if( gtShow )
-    for i=1:size(gt,1), k=k+1;
-      hs{k}=bbApply('draw',gt(i,1:4),cols(gt(i,5)+2),lw,gtLs);
-    end
-  end
-  if( dtShow )
-    for i=1:size(dt,1), k=k+1;
-      hs{k}=bbApply('draw',dt(i,1:5),cols(dt(i,6)+2),lw,dtLs);
-    end
-  end
+  if(gtShow), for i=1:size(gt,1), k=k+1;
+      hs{k}=bbApply('draw',gt(i,1:4),cols(gt(i,5)+2),lw,gtLs); end; end
+  if(dtShow), for i=1:size(dt,1), k=k+1;
+      hs{k}=bbApply('draw',dt(i,1:5),cols(dt(i,6)+2),lw,dtLs); end; end
 else
   if(gtShow), k=k+1; hs{k}=bbApply('draw',gt(:,1:4),cols(3),lw,gtLs); end
   if(dtShow), k=k+1; hs{k}=bbApply('draw',dt(:,1:5),cols(3),lw,dtLs); end
@@ -735,11 +729,8 @@ if(size(dt,1)==0), xs=0; ys=0; ref=0; return; end
 np=size(gt,1); score=dt(:,5); tp=dt(:,6);
 [score, order]=sort(score,'descend'); tp=tp(order);
 fp=double(tp~=1); fp=cumsum(fp); tp=cumsum(tp);
-if( roc )
-  tp=tp/np; fppi=fp/nImg; xs=fppi; ys=tp;
-else
-  rec=tp/np; prec=tp./(fp+tp); xs=rec; ys=prec;
-end
+if( roc ), tp=tp/np; fppi=fp/nImg; xs=fppi; ys=tp;
+else rec=tp/np; prec=tp./(fp+tp); xs=rec; ys=prec; end
 % reference point
 [d,ind]=min(abs(xs-ref)); ref=ys(ind);
 end
