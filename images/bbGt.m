@@ -4,7 +4,7 @@ function varargout = bbGt( action, varargin )
 % bbGt gives acces to three types of routines:
 % (1) Data structure for storing bb image annotations.
 % (2) Routines for evaluating the Pascal criteria for object detection.
-% (3) Routines for sampling training examples from a labeled image.
+% (3) Routines for sampling training windows from a labeled image.
 %
 % The bb annotation stores bb for objects of interest with additional
 % information per object, such as occlusion information. The underlying
@@ -62,11 +62,11 @@ function varargout = bbGt( action, varargin )
 % Optimized version of compOas for a single pair of bbs.
 %   oa = bbGt( 'compOa', dt, gt, ig )
 %
-%%% (3) Routines for sampling examples from annotated images.
-% Sample pos or neg examples from an annotated image.
-%   [bbs,Is] = bbGt( 'sampleData', I, pSmp )
-% Sample pos or neg examples from an annotated directory of images.
-%   Is = bbGt( 'sampleDataDir', pSmpDir )
+%%% (3) Routines for sampling windows from annotated images.
+% Sample pos or neg windows from an annotated image.
+%   Is = bbGt( 'sampleWins', I, pSmp )
+% Sample pos or neg windows from an annotated directory of images.
+%   Is = bbGt( 'sampleWinsDir', pSmpDir )
 %
 % USAGE
 %  varargout = bbGt( action, varargin );
@@ -83,7 +83,7 @@ function varargout = bbGt( action, varargin )
 % See also bbApply, bbLabeler, bbGt>create, bbGt>bbSave, bbGt>bbLoad,
 % bbGt>get, bbGt>set, bbGt>draw, bbGt>dtsLoad, bbGt>getFiles, bbGt>evalRes,
 % bbGt>showRes, bbGt>evalResDir, bbGt>compRoc, bbGt>cropRes, bbGt>compOas,
-% bbGt>compOa, bbGt>sampleData, bbGt>sampleDataDir
+% bbGt>compOa, bbGt>sampleWins, bbGt>sampleWinsDir
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -678,7 +678,7 @@ if(dtFile), dtFs=dtDir; else dtFs=fs(3,:); end
 % load and prepare ground truth annotations (or use cached values)
 persistent keyPrv gtPrv; key={gtFs,pLoad};
 if(isequal(key,keyPrv)), gt=gtPrv; else gt=cell(1,n);
-  for i=1:n, gt{i}=bbLoad(gtFs{i},pLoad); end
+  for i=1:n, [~,gt{i}]=bbLoad(gtFs{i},pLoad); end
   gtPrv=gt; keyPrv=key;
 end
 
@@ -875,12 +875,12 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [bbs,Is] = sampleData( I, varargin )
-% Sample pos or neg examples from an annotated image.
+function Is = sampleWins( I, varargin )
+% Sample pos or neg windows from an annotated image.
 %
 % An annotated image can contain both pos and neg examples of a given class
 % (such as a pedestrian). This function allows for sampling of only pos
-% windows, without sampling any negs, or vice-versa. For example, this can
+% windows without sampling any negs, or vice-versa. For example, this can
 % be quite useful during bootstrapping, to sample high scoring false pos
 % without actually sampling any windows that contain true pos.
 %
@@ -888,8 +888,8 @@ function [bbs,Is] = sampleData( I, varargin )
 % the bounding boxes that are to be ignored. During sampling, only bbs that
 % do not match any ibbs are kept (two bbs match if their area of overlap is
 % above the given thr, see bbGt>compOas). Use gtBbs=bbLoad(...) to obtain a
-% list of ground truth bbs containing the positive windows. Let dtBbs
-% contain the bbs output by some detection algorithm. Then,
+% list of ground truth bbs containing the positive windows (with ignore
+% flags set as desired). Let dtBbs contain detected bbs. Then:
 %  to sample true-positives, use:   bbs=gtBbs and ibbs=[]
 %  to sample false-negatives, use:  bbs=gtBbs and ibbs=dtBbs
 %  to sample false-positives, use:  bbs=dtBbs and ibbs=gtBbs
@@ -903,7 +903,7 @@ function [bbs,Is] = sampleData( I, varargin )
 % resized to a fixed size. If dims==[], the bbs are not altered.
 %
 % USAGE
-%  [bbs, Is] = bbGt( 'sampleData', I, pSmp )
+%  Is = bbGt( 'sampleWins', I, pSmp )
 %
 % INPUTS
 %  I        - input image from which to sample
@@ -916,11 +916,8 @@ function [bbs,Is] = sampleData( I, varargin )
 %   .squarify - [1] if squarify expand bb to ar else stretch patch to ar
 %   .pad      - [0] frac extra padding for each patch (or [padx pady])
 %   .padEl    - ['replicate'] how to pad at boundaries (see bbApply>crop)
-%   .flip     - [0] if true use left/right reflection of each bb
-%   .rots     - [0] specify 90 degree rotations of each bb (e.g. 0:3)
 %
 % OUTPUTS
-%  bbs      - actual sampled bbs
 %  Is       - [nx1] cell of cropped image regions
 %
 % EXAMPLE
@@ -930,40 +927,28 @@ function [bbs,Is] = sampleData( I, varargin )
 
 % get parameters
 dfs={'n',inf, 'bbs','REQ', 'ibbs',[], 'thr',.5, 'dims',[], ...
-  'squarify',1, 'pad',0, 'padEl','replicate', 'flip',0, 'rots',0 };
-[n,bbs,ibbs,thr,dims,squarify,pad,padEl,flip,rots] = ...
-  getPrmDflt(varargin,dfs,1);
-if(numel(dims)==2), ar=dims(1)/dims(2); else ar=dims; dims=[]; end
-if(numel(pad)==1), pad=[pad pad]; end; if(dims), dims=dims.*(1+pad); end
+  'squarify',1, 'pad',0, 'padEl','replicate' };
+[n,bbs,ibbs,thr,dims,squarify,pad,padEl] = getPrmDflt(varargin,dfs,1);
 % discard any candidate bbs that match the ignore bbs, sample to at most n
-nd=size(bbs,2); if(nd==5), bbs=bbs(bbs(:,5)==0,:); end
-if(flip), n=n/2; end; n=n/length(rots); m=size(bbs,1);
+nd=size(bbs,2); if(nd==5), bbs=bbs(bbs(:,5)==0,:); end; m=size(bbs,1);
 if(isempty(ibbs)), if(m>n), bbs=bbs(randsample(m,n),:); end; else
   if(m>n), bbs=bbs(randperm(m),:); end; K=false(1,m); i=1;
   keep=@(i) all(compOas(bbs(i,:),ibbs,ibbs(:,5))<thr);
   while(sum(K)<n && i<=m), K(i)=keep(i); i=i+1; end; bbs=bbs(K,:);
 end
-% standardize aspect ratios (by growing bbs) and pad bbs
+% standardize aspect ratios (by growing bbs), pad bbs and finally crop
+if(numel(dims)==2), ar=dims(1)/dims(2); else ar=dims; dims=[]; end
+if(numel(pad)==1), pad=[pad pad]; end; if(dims), dims=dims.*(1+pad); end
 if(~isempty(ar) && squarify), bbs=bbApply('squarify',bbs,0,ar); end
 if(any(pad~=0)), bbs=bbApply('resize',bbs,1+pad(2),1+pad(1)); end
-% crop Is, resizing if dims~=[]
-crop=nargout==2; dims=round(dims);
-if(crop), [Is,bbs]=bbApply('crop',I,bbs,padEl,dims); end
-% finally create flipped and rotated versions of each croppted patch
-nf=flip+1; nr=length(rots); bbs=reshape(repmat(bbs,1,nf*nr)',nd,[])';
-if(~crop), return; end; Is=repmat(Is,nf*nr,1); Is=Is(:);
-for i=1:size(bbs,1)
-  I=Is{i}; f=mod(i+1,nf); if(f), I=flipdim(I,2); end
-  I0=I; r=rots(floor(mod(i-1,nr*nf)/nf)+1);
-  if(mod(r,2)==1), I=permute(I,[2 1 3]); end
-  for k=1:size(I,3), I(:,:,k)=rot90(I0(:,:,k),r); end; Is{i}=I;
-end
+Is=bbApply('crop',I,bbs,padEl,round(dims));
+
 end
 
-function Is = sampleDataDir( varargin )
-% Sample pos or neg examples from an annotated directory of images.
+function Is = sampleWinsDir( varargin )
+% Sample pos or neg windows from an annotated directory of images.
 %
-% sampleDataDir() is a wrapper function that calls sampleData() on every
+% sampleWinsDir() is a wrapper function that calls sampleWins() on every
 % image in 'imDir'. To sample POSITIVES specify 'gtDir', in which case
 % loads the gt for with each image and samples pos windows. To sample
 % NEGATIVES specify 'bbFunc', where bbFunc() is a callback that takes an
@@ -976,14 +961,14 @@ function Is = sampleDataDir( varargin )
 % matlabpool is open), this is useful if bbFunc() is slow.
 %
 % USAGE
-%  Is = bbGt( 'sampleDataDir', pSmpDir )
+%  Is = bbGt( 'sampleWinsDir', pSmpDir )
 %
 % INPUTS
 %  pSmpDir    - parameters (struct or name/value pairs)
 %   .imDir      - ['REQ'] directory containing images
 %   .gtDir      - [''] directory containing ground truth
 %   .pLoad      - {} params for bbGt>bbLoad() (determine format/filtering)
-%   .pSmp       - {} params for bbGt>sampleData (determines bb extraction)
+%   .pSmp       - {} params for bbGt>sampleWins (determines bb extraction)
 %   .bbFunc     - {} function that generates candidate bbs (see above)
 %   .bbArgs     - {} arguments to bbFunc(I,bbArgs{:})
 %   .maxn       - [inf] maximum number of windows to sample
@@ -994,7 +979,7 @@ function Is = sampleDataDir( varargin )
 %
 % EXAMPLE
 %
-% See also bbGt, bbGt>getFiles, bbGt>bbLoad, bbGt>sampleData
+% See also bbGt, bbGt>getFiles, bbGt>bbLoad, bbGt>sampleWins
 
 % get paramters
 dfs={'imDir','REQ', 'gtDir','', 'pLoad',{}, 'pSmp',{}, ...
@@ -1013,8 +998,8 @@ batch=min(batch,n); Is=cell(n*1000,1); Is1=cell(1,batch);
 tid=ticStatus('Sampling windows',1,1); k=0; i=0;
 while( i<n && k<maxn )
   batch=min(batch,n-i); p={fs,pLoad,pSmp,bbFunc,bbArgs};
-  if(batch==1), Is1{1}=sampleDataDir1(i+1,p{:}); else
-    parfor j=1:batch, Is1{j}=sampleDataDir1(i+j,p{:}); end; end %#ok<PFBNS>
+  if(batch==1), Is1{1}=sampleWinsDir1(i+1,p{:}); else
+    parfor j=1:batch, Is1{j}=sampleWinsDir1(i+j,p{:}); end; end %#ok<PFBNS>
   for j=1:batch, k0=k+1; k=k+length(Is1{j}); Is(k0:k)=Is1{j}; end
   if(k>maxn), Is=Is(randsample(k,maxn)); k=maxn; end
   i=i+batch; tocStatus(tid,max(i/n,k/maxn));
@@ -1023,10 +1008,10 @@ fprintf('Sampled %i windows from %i images in %s.\n',k,i,imDir);
 
 end
 
-function Is = sampleDataDir1( ind, fs, pLoad, pSmp, bbFunc, bbArgs )
-% Helper function for sampleDataDir(), do not call directly.
+function Is = sampleWinsDir1( ind, fs, pLoad, pSmp, bbFunc, bbArgs )
+% Helper function for sampleWinsDir(), do not call directly.
 I=imread(fs{1,ind}); bbGt=[]; hasGt=size(fs,1)>1; hasFn=~isempty(bbFunc);
 if(hasGt), [~,bbGt]=bbLoad(fs{2,ind},pLoad); pSmp.bbs=bbGt; end
 if(hasFn), pSmp.bbs=bbFunc(I,bbArgs{:}); pSmp.ibbs=bbGt; end
-[~,Is]=sampleData(I,pSmp);
+Is=sampleWins(I,pSmp);
 end
