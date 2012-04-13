@@ -44,7 +44,9 @@ function varargout = bbGt( action, varargin )
 %
 %%% (2) Routines for evaluating the Pascal criteria for object detection.
 % Load detection outputs from text files.
-%   dts = bbGt( 'dtsLoad', fNames, n )
+%   dts = bbGt( 'dtLoadAll', fNames, n )
+% Load bb annotations from text files and filter.
+%   [objs,bbs] = bbGt( 'bbLoadAll', fNames, pLoad )
 % Get all corresponding files in given directories.
 %   [fs,fs0] = bbGt('getFiles', dirs, [f0], [f1] )
 % Evaluates detections in a single frame against ground truth data.
@@ -52,7 +54,7 @@ function varargout = bbGt( action, varargin )
 % Display evaluation results for given image.
 %   [hs,hImg] = bbGt( 'showRes' I, gt, dt, varargin )
 % Run evaluation evalRes for each ground truth/detection result in dirs.
-%   [gt,dt,imFs] = bbGt( 'evalResDir', gtDir, dtDir, varargin )
+%   [gt,dt] = bbGt( 'evalResDir', gtDir, dtDir, varargin )
 % Compute ROC or PR based on outputs of evalRes on multiple images.
 %   [xs,ys,ref] = bbGt( 'compRoc', gt, dt, roc, ref )
 % Extract true or false positives or negatives for visualization.
@@ -81,9 +83,10 @@ function varargout = bbGt( action, varargin )
 % EXAMPLE
 %
 % See also bbApply, bbLabeler, bbGt>create, bbGt>bbSave, bbGt>bbLoad,
-% bbGt>get, bbGt>set, bbGt>draw, bbGt>dtsLoad, bbGt>getFiles, bbGt>evalRes,
-% bbGt>showRes, bbGt>evalResDir, bbGt>compRoc, bbGt>cropRes, bbGt>compOas,
-% bbGt>compOa, bbGt>sampleWins, bbGt>sampleWinsDir
+% bbGt>get, bbGt>set, bbGt>draw, bbGt>dtLoadAll, bbGt>bbLoadAll,
+% bbGt>getFiles, bbGt>evalRes, bbGt>showRes, bbGt>evalResDir, bbGt>compRoc,
+% bbGt>cropRes, bbGt>compOas, bbGt>compOa, bbGt>sampleWins,
+% bbGt>sampleWinsDir
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -400,7 +403,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function dts = dtsLoad( fNames, n )
+function dts = dtLoadAll( fNames, n )
 % Load detection outputs from text files.
 %
 % Each detection should be a text file where each row contains 5 numbers
@@ -411,7 +414,7 @@ function dts = dtsLoad( fNames, n )
 % id: (imgId/left/top/width/height/score).
 %
 % USAGE
-%  dets = bbGt( 'dtLoad', fNames, n )
+%  dets = bbGt( 'dtLoadAll', fNames, n )
 %
 % INPUTS
 %  fNames   - {1xn} cell array of text files or single text file
@@ -422,20 +425,42 @@ function dts = dtsLoad( fNames, n )
 %
 % EXAMPLE
 %
-% See also bbGt
-
+% See also bbGt, bbGt>bbLoadAll
 if( iscell(fNames) )
-  % load each detection from a separate text file
   assert(length(fNames)==n); dts=cell(1,n);
   for i=1:n, dt=load(fNames{i},'-ascii');
     if(numel(dt)==0), dt=zeros(0,5); end; dts{i}=dt(:,1:5); end
 else
-  % load all detections from a single text file
   dt=load(fNames,'-ascii'); if(numel(dt)==0), dt=zeros(0,6); end
   ids=dt(:,1); assert(max(ids)<=n);
   dts=cell(1,n); for i=1:n, dts{i}=dt(ids==i,2:6); end
 end
+end
 
+function [objs,bbs] = bbLoadAll( fNames, pLoad )
+% Load bb annotations from text files and filter.
+%
+% USAGE
+%  [objs,bbs] = bbGt( 'bbLoadAll', fNames, pLoad )
+%
+% INPUTS
+%  fNames   - {1xn} cell array of text files
+%  pLoad    - {} params for bbGt>bbLoad() (determine format/filtering)
+%
+% OUTPUTS
+%  objs     - {1xn} loaded ground truth objs
+%  bbs      - {1xn} loaded ground truth bbs
+%
+% EXAMPLE
+%
+% See also bbGt, bbGt>bbLoad, bbGt>dtLoadAll
+persistent keyPrv objsPrv bbsPrv;
+key={fNames,pLoad}; n=length(fNames);
+if(isequal(key,keyPrv)), objs=objsPrv; bbs=bbsPrv; else
+  bbs=cell(1,n); objs=bbs;
+  for i=1:n, [objs{i},bbs{i}]=bbLoad(fNames{i},pLoad); end
+  objsPrv=objs; bbsPrv=bbs; keyPrv=key;
+end
 end
 
 function [fs,fs0] = getFiles( dirs, f0, f1 )
@@ -627,19 +652,19 @@ end
 hs=[hs{:}]; hold off;
 end
 
-function [gt,dt,imFs] = evalResDir( gtDir, dtDir, varargin )
+function [gt,dt] = evalResDir( gtDir, dtDir, varargin )
 % Run evaluation evalRes for each ground truth/detection result in dirs.
 %
 % Loads each ground truth (gt) annotation in gtDir and the corresponding
-% detection (dt) in dtDir, and calls evalRes() on the pair. Ground truth,
-% detection and image files must correspond according to getFiles(). See
-% dtsLoad() for format for the detections. dtDir can alternatively point to
-% a single text file that contains the detection results across all images
-% (if dtDir points to a text file f1 must be 1). Prior to calling
+% detection (dt) in dtDir, and calls evalRes() on the pair. Ground truth
+% and detection files must correspond according to getFiles(). See
+% dtLoadAll() for format for the detections. dtDir can alternatively point
+% to a single text file that contains the detection results across all
+% images (if dtDir points to a text file f1 must be 1). Prior to calling
 % evalRes(), nms is optionally applied to the detections (see bbNms()).
 %
 % USAGE
-%  [gt,dt,imFs] = bbGt( 'evalResDir', gtDir, dtDir, varargin )
+%  [gt,dt] = bbGt( 'evalResDir', gtDir, dtDir, varargin )
 %
 % INPUTS
 %  gtDir      - location of ground truth
@@ -649,46 +674,25 @@ function [gt,dt,imFs] = evalResDir( gtDir, dtDir, varargin )
 %   .mul        - [0] multiple match flag for evalRes()
 %   .pLoad      - {} params for bbGt>bbLoad() (determine format/filtering)
 %   .pNms       - ['type','none'] params for non maximal suppresion
-%   .f0         - [1] first ground truth file to use
-%   .f1         - [inf] last ground truth file to use
-%   .imDir      - [gtDir] optional directory containing images
 %
 % OUTPUTS
 %  gt         - {1xn} first output of evalRes() for each image
 %  dt         - {1xn} second output of evalRes() for each image
-%  imFs       - {1xn} names of corresponding images (if imDir specified)
 %
 % EXAMPLE
 %
-% See also bbGt, bbGt>evalRes, bbGt>bbLoad, bbGt>getFiles, bbGt>dtsLoad,
-% bbNms
-
-% get parameters
-noNms=struct('type','none'); dfs={'thr',.5,'mul',0,'pLoad',{},...
-  'pNms',noNms,'f0',1,'f1',inf,'imDir',''};
-[thr,mul,pLoad,pNms,f0,f1,imDir]=getPrmDflt(varargin,dfs,1);
-if(isempty(imDir)), imDir=gtDir; end
-
-% get list of gt, im and dt files
+% See also bbGt, bbGt>evalRes, bbGt>getFiles, bbGt>dtLoadAll,
+% bbGt>bbLoadAll bbNms
+noNms=struct('type','none');
+dfs={'thr',.5,'mul',0,'pLoad',{},'pNms',noNms};
+[thr,mul,pLoad,pNms]=getPrmDflt(varargin,dfs,1);
 dtFile=length(dtDir)>4 && strcmp(dtDir(end-3:end),'.txt');
-if(dtFile), dirs={gtDir,imDir}; else dirs={gtDir,imDir,gtDir}; end
-fs=getFiles(dirs,f0,f1); gtFs=fs(1,:); imFs=fs(2,:); n=length(gtFs);
-if(dtFile), dtFs=dtDir; else dtFs=fs(3,:); end
-
-% load and prepare ground truth annotations (or use cached values)
-persistent keyPrv gtPrv; key={gtFs,pLoad};
-if(isequal(key,keyPrv)), gt=gtPrv; else gt=cell(1,n);
-  for i=1:n, [~,gt{i}]=bbLoad(gtFs{i},pLoad); end
-  gtPrv=gt; keyPrv=key;
-end
-
-% load detections and optionally apply nms
-dt = dtsLoad( dtFs, n );
+if(dtFile), dirs={gtDir}; else dirs={gtDir,gtDir}; end
+fs=getFiles(dirs); gtFs=fs(1,:); n=length(gtFs);
+if(dtFile), dtFs=dtDir; else dtFs=fs(2,:); end
+[~,gt] = bbLoadAll(gtFs,pLoad); dt=dtLoadAll(dtFs,n);
 if(~isequal(pNms,noNms)), for i=1:n, dt{i}=bbNms(dt{i},pNms); end; end
-
-% run evaluation on each image
 for i=1:n, [gt{i},dt{i}] = evalRes(gt{i},dt{i},thr,mul); end
-
 end
 
 function [xs,ys,score,ref] = compRoc( gt, dt, roc, ref )
