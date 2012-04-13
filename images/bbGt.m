@@ -4,7 +4,8 @@ function varargout = bbGt( action, varargin )
 % bbGt gives acces to three types of routines:
 % (1) Data structure for storing bb image annotations.
 % (2) Routines for evaluating the Pascal criteria for object detection.
-% (3) Routines for sampling training windows from a labeled image.
+% (3) Routines for evaluating the Pascal criteria over multiple images.
+% (4) Routines for sampling training windows from a labeled image.
 %
 % The bb annotation stores bb for objects of interest with additional
 % information per object, such as occlusion information. The underlying
@@ -43,28 +44,30 @@ function varargout = bbGt( action, varargin )
 %   hs = draw( objs, pDraw )
 %
 %%% (2) Routines for evaluating the Pascal criteria for object detection.
-% Load detection outputs from text files.
-%   dts = bbGt( 'dtLoadAll', fNames, n )
-% Load bb annotations from text files and filter.
-%   [objs,bbs] = bbGt( 'bbLoadAll', fNames, pLoad )
-% Get all corresponding files in given directories.
-%   [fs,fs0] = bbGt('getFiles', dirs, [f0], [f1] )
 % Evaluates detections in a single frame against ground truth data.
 %   [gt,dt] = bbGt( 'evalRes', gt0, dt0, [thr], [mul] )
 % Display evaluation results for given image.
 %   [hs,hImg] = bbGt( 'showRes' I, gt, dt, varargin )
+% Computes (modified) overlap area between pairs of bbs.
+%   oa = bbGt( 'compOas', dt, gt, [ig] )
+% Optimized version of compOas for a single pair of bbs.
+%   oa = bbGt( 'compOa', dt, gt, ig )
+%
+%%% (3) Routines for evaluating the Pascal criteria over multiple images.
+% Get all corresponding files in given directories.
+%   [fs,fs0] = bbGt('getFiles', dirs, [f0], [f1] )
+% Load detection outputs from text files.
+%   dts = bbGt( 'dtLoadAll', fNames, n )
+% Load bb annotations from text files and filter.
+%   [objs,bbs] = bbGt( 'bbLoadAll', fNames, pLoad )
 % Run evaluation evalRes for each ground truth/detection result in dirs.
 %   [gt,dt] = bbGt( 'evalResDir', gtDir, dtDir, varargin )
 % Compute ROC or PR based on outputs of evalRes on multiple images.
 %   [xs,ys,ref] = bbGt( 'compRoc', gt, dt, roc, ref )
 % Extract true or false positives or negatives for visualization.
 %   [Is,scores,imgIds] = bbGt( 'cropRes', gt, dt, imFs, varargin )
-% Computes (modified) overlap area between pairs of bbs.
-%   oa = bbGt( 'compOas', dt, gt, [ig] )
-% Optimized version of compOas for a single pair of bbs.
-%   oa = bbGt( 'compOa', dt, gt, ig )
 %
-%%% (3) Routines for sampling windows from annotated images.
+%%% (4) Routines for sampling windows from annotated images.
 % Sample pos or neg windows from an annotated image.
 %   Is = bbGt( 'sampleWins', I, pSmp )
 % Sample pos or neg windows from an annotated directory of images.
@@ -83,9 +86,9 @@ function varargout = bbGt( action, varargin )
 % EXAMPLE
 %
 % See also bbApply, bbLabeler, bbGt>create, bbGt>bbSave, bbGt>bbLoad,
-% bbGt>get, bbGt>set, bbGt>draw, bbGt>dtLoadAll, bbGt>bbLoadAll,
-% bbGt>getFiles, bbGt>evalRes, bbGt>showRes, bbGt>evalResDir, bbGt>compRoc,
-% bbGt>cropRes, bbGt>compOas, bbGt>compOa, bbGt>sampleWins,
+% bbGt>get, bbGt>set, bbGt>draw, bbGt>evalRes, bbGt>showRes, bbGt>compOas,
+% bbGt>compOa, bbGt>getFiles, bbGt>dtLoadAll, bbGt>bbLoadAll,
+% bbGt>evalResDir, bbGt>compRoc, bbGt>cropRes, bbGt>sampleWins,
 % bbGt>sampleWinsDir
 %
 % Piotr's Image&Video Toolbox      Version NEW
@@ -403,128 +406,6 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function dts = dtLoadAll( fNames, n )
-% Load detection outputs from text files.
-%
-% Each detection should be a text file where each row contains 5 numbers
-% representing a bounding box (left/top/width/height/score). If fNames is
-% not a cell array, fNames should point to a single text file that contains
-% the detection results across a set of images. In this case each row in
-% the text file should have an extra leading column specifying the image
-% id: (imgId/left/top/width/height/score).
-%
-% USAGE
-%  dets = bbGt( 'dtLoadAll', fNames, n )
-%
-% INPUTS
-%  fNames   - {1xn} cell array of text files or single text file
-%  n        - number of dts to load (necessary if fNames is a single file)
-%
-% OUTPUTS
-%  dts      - {1xn} loaded detections (each is a mx5 array of bbs)
-%
-% EXAMPLE
-%
-% See also bbGt, bbGt>bbLoadAll
-if( iscell(fNames) )
-  assert(length(fNames)==n); dts=cell(1,n);
-  for i=1:n, dt=load(fNames{i},'-ascii');
-    if(numel(dt)==0), dt=zeros(0,5); end; dts{i}=dt(:,1:5); end
-else
-  dt=load(fNames,'-ascii'); if(numel(dt)==0), dt=zeros(0,6); end
-  ids=dt(:,1); assert(max(ids)<=n);
-  dts=cell(1,n); for i=1:n, dts{i}=dt(ids==i,2:6); end
-end
-end
-
-function [objs,bbs] = bbLoadAll( fNames, pLoad )
-% Load bb annotations from text files and filter.
-%
-% USAGE
-%  [objs,bbs] = bbGt( 'bbLoadAll', fNames, pLoad )
-%
-% INPUTS
-%  fNames   - {1xn} cell array of text files
-%  pLoad    - {} params for bbGt>bbLoad() (determine format/filtering)
-%
-% OUTPUTS
-%  objs     - {1xn} loaded ground truth objs
-%  bbs      - {1xn} loaded ground truth bbs
-%
-% EXAMPLE
-%
-% See also bbGt, bbGt>bbLoad, bbGt>dtLoadAll
-persistent keyPrv objsPrv bbsPrv;
-key={fNames,pLoad}; n=length(fNames);
-if(isequal(key,keyPrv)), objs=objsPrv; bbs=bbsPrv; else
-  bbs=cell(1,n); objs=bbs;
-  for i=1:n, [objs{i},bbs{i}]=bbLoad(fNames{i},pLoad); end
-  objsPrv=objs; bbsPrv=bbs; keyPrv=key;
-end
-end
-
-function [fs,fs0] = getFiles( dirs, f0, f1 )
-% Get all corresponding files in given directories.
-%
-% The first dir in 'dirs' serves as the baseline dir. getFiles() returns
-% all files in the baseline dir and all corresponding files in the
-% remaining dirs to the files in the baseline dir, in the same order. Two
-% files are in correspondence if they have the same base name (regardless
-% of extension). For example, given a file named "name.jpg", a
-% corresponding file may be named "name.txt" or "name.jpg.txt". Every file
-% in the baseline dir must have a matching file in the remaining dirs.
-%
-% USAGE
-%  [fs,fs0] = bbGt('getFiles', dirs, [f0], [f1] )
-%
-% INPUTS
-%   dirs      - {1xm} list of m directories
-%   f0        - [1] index of first file in baseline dir to use
-%   f1        - [inf] index of last file in baseline dir to use
-%
-% OUTPUTS
-%   fs        - {mxn} list of full file names in each dir
-%   fs0       - {1xn} list of file names without path or extensions
-%
-% EXAMPLE
-%
-% See also bbGt
-
-if(nargin<2 || isempty(f0)), f0=1; end
-if(nargin<3 || isempty(f1)), f1=inf; end
-m=length(dirs); assert(m>0); sep=filesep;
-
-for d=1:m, dir1=dirs{d}; dir1(dir1=='\')=sep; dir1(dir1=='/')=sep;
-  if(dir1(end)==sep), dir1(end)=[]; end; dirs{d}=dir1; end
-
-[fs0,fs1] = getFiles0(dirs{1},f0,f1,sep);
-n1=length(fs0); fs=cell(m,n1); fs(1,:)=fs1;
-for d=2:m, fs(d,:)=getFiles1(dirs{d},fs0,sep); end
-
-  function [fs0,fs1] = getFiles0( dir1, f0, f1, sep )
-    % get fs1 in dir1 (and fs0 without path or extension)
-    fs1=dir([dir1 sep '*']); fs1={fs1.name}; fs1=fs1(3:end);
-    fs1=fs1(f0:min(f1,end)); fs0=fs1; n=length(fs0);
-    if(n==0), error('No files found in baseline dir %s.',dir1); end
-    for i=1:n, fs1{i}=[dir1 sep fs0{i}]; end
-    n=length(fs0); for i=1:n, f=fs0{i};
-      f(find(f=='.',1,'first'):end)=[]; fs0{i}=f; end
-  end
-
-  function fs1 = getFiles1( dir1, fs0, sep )
-    % get fs1 in dir1 corresponding to fs0
-    n=length(fs0); fs1=cell(1,n); i2=0; i1=0;
-    fs2=dir(dir1); fs2={fs2.name}; n2=length(fs2);
-    eMsg='''%s'' has no corresponding file in %s.';
-    for i0=1:n, r=length(fs0{i0}); match=0;
-      while(i2<n2), i2=i2+1; if(strcmpi(fs0{i0},fs2{i2}(1:min(end,r))))
-          i1=i1+1; fs1{i1}=fs2{i2}; match=1; break; end; end
-      if(~match), error(eMsg,fs0{i0},dir1); end
-    end
-    for i1=1:n, fs1{i1}=[dir1 sep fs1{i1}]; end
-  end
-end
-
 function [gt,dt] = evalRes( gt0, dt0, thr, mul )
 % Evaluates detections in a single frame against ground truth data.
 %
@@ -644,6 +525,197 @@ else
   if(dtShow), k=k+1; hs{k}=bbApply('draw',dt(:,1:5),cols(3),lw,dtLs); end
 end
 hs=[hs{:}]; hold off;
+end
+
+function oa = compOas( dt, gt, ig )
+% Computes (modified) overlap area between pairs of bbs.
+%
+% Uses modified Pascal criteria with "ignore" regions. The overlap area
+% (oa) of a ground truth (gt) and detected (dt) bb is defined as:
+%  oa(gt,dt) = area(intersect(dt,dt)) / area(union(gt,dt))
+% In the modified criteria, a gt bb may be marked as "ignore", in which
+% case the dt bb can can match any subregion of the gt bb. Choosing gt' in
+% gt that most closely matches dt can be done using gt'=intersect(dt,gt).
+% Computing oa(gt',dt) is equivalent to:
+%  oa'(gt,dt) = area(intersect(gt,dt)) / area(dt)
+%
+% USAGE
+%  oa = bbGt( 'compOas', dt, gt, [ig] )
+%
+% INPUTS
+%  dt       - [mx4] detected bbs
+%  gt       - [nx4] gt bbs
+%  ig       - [nx1] 0/1 ignore flags (0 by default)
+%
+% OUTPUTS
+%  oas      - [m x n] overlap area between each gt and each dt bb
+%
+% EXAMPLE
+%  dt=[0 0 10 10]; gt=[0 0 20 20];
+%  oa0 = bbGt('compOas',dt,gt,0)
+%  oa1 = bbGt('compOas',dt,gt,1)
+%
+% See also bbGt, bbGt>evalRes
+m=size(dt,1); n=size(gt,1); oa=zeros(m,n);
+if(nargin<3), ig=zeros(n,1); end
+de=dt(:,[1 2])+dt(:,[3 4]); da=dt(:,3).*dt(:,4);
+ge=gt(:,[1 2])+gt(:,[3 4]); ga=gt(:,3).*gt(:,4);
+for i=1:m
+  for j=1:n
+    w=min(de(i,1),ge(j,1))-max(dt(i,1),gt(j,1)); if(w<=0), continue; end
+    h=min(de(i,2),ge(j,2))-max(dt(i,2),gt(j,2)); if(h<=0), continue; end
+    t=w*h; if(ig(j)), u=da(i); else u=da(i)+ga(j)-t; end; oa(i,j)=t/u;
+  end
+end
+end
+
+function oa = compOa( dt, gt, ig )
+% Optimized version of compOas for a single pair of bbs.
+%
+% USAGE
+%  oa = bbGt( 'compOa', dt, gt, ig )
+%
+% INPUTS
+%  dt       - [1x4] detected bb
+%  gt       - [1x4] gt bb
+%  ig       - 0/1 ignore flag
+%
+% OUTPUTS
+%  oa       - overlap area between gt and dt bb
+%
+% EXAMPLE
+%  dt=[0 0 10 10]; gt=[0 0 20 20];
+%  oa0 = bbGt('compOa',dt,gt,0)
+%  oa1 = bbGt('compOa',dt,gt,1)
+%
+% See also bbGt, bbGt>compOas
+w=min(dt(3)+dt(1),gt(3)+gt(1))-max(dt(1),gt(1)); if(w<=0),oa=0; return; end
+h=min(dt(4)+dt(2),gt(4)+gt(2))-max(dt(2),gt(2)); if(h<=0),oa=0; return; end
+i=w*h; if(ig),u=dt(3)*dt(4); else u=dt(3)*dt(4)+gt(3)*gt(4)-i; end; oa=i/u;
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function [fs,fs0] = getFiles( dirs, f0, f1 )
+% Get all corresponding files in given directories.
+%
+% The first dir in 'dirs' serves as the baseline dir. getFiles() returns
+% all files in the baseline dir and all corresponding files in the
+% remaining dirs to the files in the baseline dir, in the same order. Two
+% files are in correspondence if they have the same base name (regardless
+% of extension). For example, given a file named "name.jpg", a
+% corresponding file may be named "name.txt" or "name.jpg.txt". Every file
+% in the baseline dir must have a matching file in the remaining dirs.
+%
+% USAGE
+%  [fs,fs0] = bbGt('getFiles', dirs, [f0], [f1] )
+%
+% INPUTS
+%   dirs      - {1xm} list of m directories
+%   f0        - [1] index of first file in baseline dir to use
+%   f1        - [inf] index of last file in baseline dir to use
+%
+% OUTPUTS
+%   fs        - {mxn} list of full file names in each dir
+%   fs0       - {1xn} list of file names without path or extensions
+%
+% EXAMPLE
+%
+% See also bbGt
+
+if(nargin<2 || isempty(f0)), f0=1; end
+if(nargin<3 || isempty(f1)), f1=inf; end
+m=length(dirs); assert(m>0); sep=filesep;
+
+for d=1:m, dir1=dirs{d}; dir1(dir1=='\')=sep; dir1(dir1=='/')=sep;
+  if(dir1(end)==sep), dir1(end)=[]; end; dirs{d}=dir1; end
+
+[fs0,fs1] = getFiles0(dirs{1},f0,f1,sep);
+n1=length(fs0); fs=cell(m,n1); fs(1,:)=fs1;
+for d=2:m, fs(d,:)=getFiles1(dirs{d},fs0,sep); end
+
+  function [fs0,fs1] = getFiles0( dir1, f0, f1, sep )
+    % get fs1 in dir1 (and fs0 without path or extension)
+    fs1=dir([dir1 sep '*']); fs1={fs1.name}; fs1=fs1(3:end);
+    fs1=fs1(f0:min(f1,end)); fs0=fs1; n=length(fs0);
+    if(n==0), error('No files found in baseline dir %s.',dir1); end
+    for i=1:n, fs1{i}=[dir1 sep fs0{i}]; end
+    n=length(fs0); for i=1:n, f=fs0{i};
+      f(find(f=='.',1,'first'):end)=[]; fs0{i}=f; end
+  end
+
+  function fs1 = getFiles1( dir1, fs0, sep )
+    % get fs1 in dir1 corresponding to fs0
+    n=length(fs0); fs1=cell(1,n); i2=0; i1=0;
+    fs2=dir(dir1); fs2={fs2.name}; n2=length(fs2);
+    eMsg='''%s'' has no corresponding file in %s.';
+    for i0=1:n, r=length(fs0{i0}); match=0;
+      while(i2<n2), i2=i2+1; if(strcmpi(fs0{i0},fs2{i2}(1:min(end,r))))
+          i1=i1+1; fs1{i1}=fs2{i2}; match=1; break; end; end
+      if(~match), error(eMsg,fs0{i0},dir1); end
+    end
+    for i1=1:n, fs1{i1}=[dir1 sep fs1{i1}]; end
+  end
+end
+
+function dts = dtLoadAll( fNames, n )
+% Load detection outputs from text files.
+%
+% Each detection should be a text file where each row contains 5 numbers
+% representing a bounding box (left/top/width/height/score). If fNames is
+% not a cell array, fNames should point to a single text file that contains
+% the detection results across a set of images. In this case each row in
+% the text file should have an extra leading column specifying the image
+% id: (imgId/left/top/width/height/score).
+%
+% USAGE
+%  dets = bbGt( 'dtLoadAll', fNames, n )
+%
+% INPUTS
+%  fNames   - {1xn} cell array of text files or single text file
+%  n        - number of dts to load (necessary if fNames is a single file)
+%
+% OUTPUTS
+%  dts      - {1xn} loaded detections (each is a mx5 array of bbs)
+%
+% EXAMPLE
+%
+% See also bbGt, bbGt>bbLoadAll
+if( iscell(fNames) )
+  assert(length(fNames)==n); dts=cell(1,n);
+  for i=1:n, dt=load(fNames{i},'-ascii');
+    if(numel(dt)==0), dt=zeros(0,5); end; dts{i}=dt(:,1:5); end
+else
+  dt=load(fNames,'-ascii'); if(numel(dt)==0), dt=zeros(0,6); end
+  ids=dt(:,1); assert(max(ids)<=n);
+  dts=cell(1,n); for i=1:n, dts{i}=dt(ids==i,2:6); end
+end
+end
+
+function [objs,bbs] = bbLoadAll( fNames, pLoad )
+% Load bb annotations from text files and filter.
+%
+% USAGE
+%  [objs,bbs] = bbGt( 'bbLoadAll', fNames, pLoad )
+%
+% INPUTS
+%  fNames   - {1xn} cell array of text files
+%  pLoad    - {} params for bbGt>bbLoad() (determine format/filtering)
+%
+% OUTPUTS
+%  objs     - {1xn} loaded ground truth objs
+%  bbs      - {1xn} loaded ground truth bbs
+%
+% EXAMPLE
+%
+% See also bbGt, bbGt>bbLoad, bbGt>dtLoadAll
+persistent keyPrv objsPrv bbsPrv;
+key={fNames,pLoad}; n=length(fNames);
+if(isequal(key,keyPrv)), objs=objsPrv; bbs=bbsPrv; else
+  bbs=cell(1,n); objs=bbs;
+  for i=1:n, [objs{i},bbs{i}]=bbLoad(fNames{i},pLoad); end
+  objsPrv=objs; bbsPrv=bbs; keyPrv=key;
+end
 end
 
 function [gt,dt] = evalResDir( gtDir, dtDir, varargin )
@@ -799,73 +871,6 @@ if(~isempty(fStr) && ~strcmp(type,'fn'))
   lbls=cell(1,n); for i=1:n, lbls{i}=num2str(scores(i),fStr); end
   pMnt=[pMnt 'labels' {lbls}];
 end; montage2(Is,pMnt); title(type);
-end
-
-function oa = compOas( dt, gt, ig )
-% Computes (modified) overlap area between pairs of bbs.
-%
-% Uses modified Pascal criteria with "ignore" regions. The overlap area
-% (oa) of a ground truth (gt) and detected (dt) bb is defined as:
-%  oa(gt,dt) = area(intersect(dt,dt)) / area(union(gt,dt))
-% In the modified criteria, a gt bb may be marked as "ignore", in which
-% case the dt bb can can match any subregion of the gt bb. Choosing gt' in
-% gt that most closely matches dt can be done using gt'=intersect(dt,gt).
-% Computing oa(gt',dt) is equivalent to:
-%  oa'(gt,dt) = area(intersect(gt,dt)) / area(dt)
-%
-% USAGE
-%  oa = bbGt( 'compOas', dt, gt, [ig] )
-%
-% INPUTS
-%  dt       - [mx4] detected bbs
-%  gt       - [nx4] gt bbs
-%  ig       - [nx1] 0/1 ignore flags (0 by default)
-%
-% OUTPUTS
-%  oas      - [m x n] overlap area between each gt and each dt bb
-%
-% EXAMPLE
-%  dt=[0 0 10 10]; gt=[0 0 20 20];
-%  oa0 = bbGt('compOas',dt,gt,0)
-%  oa1 = bbGt('compOas',dt,gt,1)
-%
-% See also bbGt, bbGt>evalRes
-m=size(dt,1); n=size(gt,1); oa=zeros(m,n);
-if(nargin<3), ig=zeros(n,1); end
-de=dt(:,[1 2])+dt(:,[3 4]); da=dt(:,3).*dt(:,4);
-ge=gt(:,[1 2])+gt(:,[3 4]); ga=gt(:,3).*gt(:,4);
-for i=1:m
-  for j=1:n
-    w=min(de(i,1),ge(j,1))-max(dt(i,1),gt(j,1)); if(w<=0), continue; end
-    h=min(de(i,2),ge(j,2))-max(dt(i,2),gt(j,2)); if(h<=0), continue; end
-    t=w*h; if(ig(j)), u=da(i); else u=da(i)+ga(j)-t; end; oa(i,j)=t/u;
-  end
-end
-end
-
-function oa = compOa( dt, gt, ig )
-% Optimized version of compOas for a single pair of bbs.
-%
-% USAGE
-%  oa = bbGt( 'compOa', dt, gt, ig )
-%
-% INPUTS
-%  dt       - [1x4] detected bb
-%  gt       - [1x4] gt bb
-%  ig       - 0/1 ignore flag
-%
-% OUTPUTS
-%  oa       - overlap area between gt and dt bb
-%
-% EXAMPLE
-%  dt=[0 0 10 10]; gt=[0 0 20 20];
-%  oa0 = bbGt('compOa',dt,gt,0)
-%  oa1 = bbGt('compOa',dt,gt,1)
-%
-% See also bbGt, bbGt>compOas
-w=min(dt(3)+dt(1),gt(3)+gt(1))-max(dt(1),gt(1)); if(w<=0),oa=0; return; end
-h=min(dt(4)+dt(2),gt(4)+gt(2))-max(dt(2),gt(2)); if(h<=0),oa=0; return; end
-i=w*h; if(ig),u=dt(3)*dt(4); else u=dt(3)*dt(4)+gt(3)*gt(4)-i; end; oa=i/u;
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
