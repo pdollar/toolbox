@@ -81,9 +81,9 @@ function varargout = bbGt( action, varargin )
 % EXAMPLE
 %
 % See also bbApply, bbLabeler, bbGt>create, bbGt>bbSave, bbGt>bbLoad,
-% bbGt>get, bbGt>set, bbGt>draw, bbGt>toBbs, bbGt>dtsLoad, bbGt>getFiles,
-% bbGt>evalRes, bbGt>showRes, bbGt>evalResDir, bbGt>compRoc, bbGt>cropRes,
-% bbGt>compOas, bbGt>compOa, bbGt>sampleData, bbGt>sampleDataDir
+% bbGt>get, bbGt>set, bbGt>draw, bbGt>dtsLoad, bbGt>getFiles, bbGt>evalRes,
+% bbGt>showRes, bbGt>evalResDir, bbGt>compRoc, bbGt>cropRes, bbGt>compOas,
+% bbGt>compOa, bbGt>sampleData, bbGt>sampleDataDir
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -398,128 +398,6 @@ for i=1:n
 end; hold off;
 end
 
-function bbs = toBbs( objs, varargin )
-% Filters ground truth objs and converts them to bbs.
-%
-% Returns bbs for all objects with lbl in lbls. The result is an [nx5]
-% array where each row is of the form [x y w h ignore]. [x y w h] is the bb
-% and ignore is a 0/1 flag that indicates regions to be ignored. For each
-% returned object, the ignore flag is set to 1 if obj.ign==1 or any object
-% property is outside of the specified range (details below). The ignore
-% flag is used during evaluation so that objects with certain properties
-% (such as very small or heavily occluded objects) can be excluded.
-%
-% For oriented bbs, the extent of the bb is returned instead, where the
-% extent is the smallest axis aligned bb containing the oriented bb. If the
-% oriented bb was labeled as a rectangle as opposed to an ellipse, the
-% tightest bb will usually increase slightly in size due to the corners of
-% the rectangle sticking out beyond the ellipse bounds. The 'ellipse' flag
-% controls how an oriented bb is converted to a regular bb. Specifically,
-% set ellipse=1 if an ellipse tightly delineates the object and 0 ow.
-%
-% The range for each property is a two element vector, [0 inf] by default;
-% a property value v is inside the range if v>=rng(1) && v<=rng(2). Tested
-% properties include height (h), width (w), area (a), aspect ratio (ar),
-% orienation (o), extent x-coordinate (x), extent y-coordinate (y), and
-% fraction visible (v). The last property is computed as the visible object
-% area divided by the total area, except if o.occ==0, in which case v=1, or
-% all(o.bbv==o.bb), which indicates the object may be barely visible, in
-% which case v=0 (note that v~=1 in this case).
-%
-% USAGE
-%  bbs = bbGt( 'toBbs', objs, pToBbs )
-%
-% INPUTS
-%  objs     - ground truth objects
-%  pToBbs   - parameters (struct or name/value pairs)
-%   .lbls     - [] return objs with these labels (or [] to return all)
-%   .ilbls    - [] return objs with these labels but set to ignore
-%   .hRng     - [] range of acceptable obj heights
-%   .wRng     - [] range of acceptable obj widths
-%   .aRng     - [] range of acceptable obj areas
-%   .arRng    - [] range of acceptable obj aspect ratios
-%   .oRng     - [] range of acceptable obj orientations (angles)
-%   .xRng     - [] range of x coordinates of bb extent
-%   .yRng     - [] range of y coordinates of bb extent
-%   .vRng     - [] range of acceptable obj occlusion levels
-%   .ellipse  - [1] controls how oriented bb is converted to regular bb
-%
-% OUTPUTS
-%  bbs      - [n x 5] array containg ground truth bbs [x y w h ignore]
-%
-% EXAMPLE
-%  objs=bbGt('create',3);
-%  objs(1).ign=0; objs(1).lbl='person'; objs(1).bb=[0 0 10 10];
-%  objs(2).ign=0; objs(2).lbl='person'; objs(2).bb=[0 0 20 20];
-%  objs(3).ign=0; objs(3).lbl='bicycle'; objs(3).bb=[0 0 20 20];
-%  bbs = bbGt('toBbs',objs,{'lbls',{'person'},'hRng',[15 inf]})
-%
-% See also bbGt
-
-% get parameters
-dfs={'lbls',[],'ilbls',[],'hRng',[],'wRng',[],'aRng',[],'arRng',[],...
-  'oRng',[],'xRng',[],'yRng',[],'vRng',[],'ellipse',1};
-[lbls,ilbls,hRng,wRng,aRng,arRng,oRng,xRng,yRng,vRng,ellipse] = ...
-  getPrmDflt(varargin,dfs,1);
-
-% only keep objects whose lbl is in lbls or ilbls
-if( ~isempty(lbls) || ~isempty(ilbls) )
-  n=length(objs); K=true(n,1);
-  for i=1:n, K(i)=any(strcmp(objs(i).lbl,[lbls ilbls])); end
-  objs=objs(K); n=length(objs);
-end
-
-% filter (set ignore flags)
-for i=1:n, objs(i).ang=mod(objs(i).ang,360); end
-if(~isempty(ilbls)), for i=1:n, v=objs(i).lbl;
-    objs(i).ign = objs(i).ign || any(strcmp(v,ilbls)); end; end
-if(~isempty(xRng)),  for i=1:n, v=objs(i).bb(1);
-    objs(i).ign = objs(i).ign || v<xRng(1) || v>xRng(2); end; end
-if(~isempty(xRng)),  for i=1:n, v=objs(i).bb(1)+objs(i).bb(3);
-    objs(i).ign = objs(i).ign || v<xRng(1) || v>xRng(2); end; end
-if(~isempty(yRng)),  for i=1:n, v=objs(i).bb(2);
-    objs(i).ign = objs(i).ign || v<yRng(1) || v>yRng(2); end; end
-if(~isempty(yRng)),  for i=1:n, v=objs(i).bb(2)+objs(i).bb(4);
-    objs(i).ign = objs(i).ign || v<yRng(1) || v>yRng(2); end; end
-if(~isempty(wRng)),  for i=1:n, v=objs(i).bb(3);
-    objs(i).ign = objs(i).ign || v<wRng(1) || v>wRng(2); end; end
-if(~isempty(hRng)),  for i=1:n, v=objs(i).bb(4);
-    objs(i).ign = objs(i).ign || v<hRng(1) || v>hRng(2); end; end
-if(~isempty(oRng)),  for i=1:n, v=objs(i).ang;
-    objs(i).ign = objs(i).ign || v<oRng(1) || v>oRng(2); end; end
-if(~isempty(aRng)),  for i=1:n, v=objs(i).bb(3)*objs(i).bb(4);
-    objs(i).ign = objs(i).ign || v<aRng(1) || v>aRng(2); end; end
-if(~isempty(arRng)), for i=1:n, v=objs(i).bb(3)/objs(i).bb(4);
-    objs(i).ign = objs(i).ign || v<arRng(1) || v>arRng(2); end; end
-if(~isempty(vRng)),  for i=1:n, o=objs(i); bb=o.bb; bbv=o.bbv; %#ok<ALIGN>
-    if(~o.occ || all(bbv==0)), v=1; elseif(all(bbv==bb)), v=0; else
-      v=(bbv(3)*bbv(4))/(bb(3)*bb(4)); end
-    objs(i).ign = objs(i).ign || v<vRng(1) || v>vRng(2); end
-end
-
-% finally get extent of each bounding box (not trivial if ang~=0)
-if(n==0), bbs=zeros(0,5); return; end
-bbs=double([reshape([objs.bb],4,[]); [objs.ign]]');
-for i=1:n, bbs(i,1:4)=bbExtent(bbs(i,1:4),objs(i).ang,ellipse); end
-
-  function bb = bbExtent( bb, ang, ellipse )
-    % get bb that fully contains given oriented bb
-    if(~ang), return; end
-    if( ellipse ) % get bb that encompases ellipse (tighter)
-      x=bbApply('getCenter',bb); a=bb(4)/2; b=bb(3)/2; ang=ang-90;
-      rx=(a*cosd(ang))^2+(b*sind(ang))^2; rx=abs(rx/sqrt(rx));
-      ry=(a*sind(ang))^2+(b*cosd(ang))^2; ry=abs(ry/sqrt(ry));
-      bb=[x(1)-rx x(2)-ry 2*rx 2*ry];
-    else % get bb that encompases rectangle (looser)
-      c=cosd(ang); s=sind(ang); R=[c -s; s c]; rs=bb(3:4)/2;
-      x0=-rs(1); x1=rs(1); y0=-rs(2); y1=rs(2); pc=bb(1:2)+rs;
-      p=[x0 y0; x1 y0; x1 y1; x0 y1]*R'+pc(ones(4,1),:);
-      x0=min(p(:,1)); x1=max(p(:,1)); y0=min(p(:,2)); y1=max(p(:,2));
-      bb=[x0 y0 x1-x0 y1-y0];
-    end
-  end
-end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function dts = dtsLoad( fNames, n )
@@ -722,7 +600,7 @@ function [hs,hImg] = showRes( I, gt, dt, varargin )
 %
 % EXAMPLE
 %
-% See also bbGt, bbGt>evalRes, bbGt>toBbs
+% See also bbGt, bbGt>evalRes
 dfs={'evShow',1,'gtShow',1,'dtShow',1,'cols','krg',...
   'gtLs','-','dtLs','--','lw',3};
 [evShow,gtShow,dtShow,cols,gtLs,dtLs,lw]=getPrmDflt(varargin,dfs,1);
@@ -755,42 +633,40 @@ function [gt,dt,imFs] = evalResDir( gtDir, dtDir, varargin )
 % Loads each ground truth (gt) annotation in gtDir and the corresponding
 % detection (dt) in dtDir, and calls evalRes() on the pair. Ground truth,
 % detection and image files must correspond according to getFiles(). See
-% dtsLoad() for the format for the detections. dtDir can alternatively
-% point to a single text file that contains the detection results across
-% all images (if dtDir points to a text file f1 must be 1). Prior to
-% calling evalRes(), the ground truth annotations are passed through
-% bbGt>toBbs() with the parameters pToBbs. See bbGt>toBbs() for more info.
-% Also nms is optionally applied to the detections (see bbNms()).
+% dtsLoad() for format for the detections. dtDir can alternatively point to
+% a single text file that contains the detection results across all images
+% (if dtDir points to a text file f1 must be 1). Prior to calling
+% evalRes(), nms is optionally applied to the detections (see bbNms()).
 %
 % USAGE
 %  [gt,dt,imFs] = bbGt( 'evalResDir', gtDir, dtDir, varargin )
 %
 % INPUTS
-%  gtDir        - location of ground truth
-%  dtDir        - location of detections (or file containing all dts)
-%  varargin     - additional parameters (struct or name/value pairs)
-%   .thr          - [.5] threshold for evalRes()
-%   .mul          - [0] multiple match flag for evalRes()
-%   .pToBbs       - {} params for bbGt>toBbs
-%   .pNms         - ['type','none'] params for non maximal suppresion
-%   .f0           - [1] first ground truth file to use
-%   .f1           - [inf] last ground truth file to use
-%   .imDir        - [gtDir] optional directory containing images
+%  gtDir      - location of ground truth
+%  dtDir      - location of detections (or file containing all dts)
+%  varargin   - additional parameters (struct or name/value pairs)
+%   .thr        - [.5] threshold for evalRes()
+%   .mul        - [0] multiple match flag for evalRes()
+%   .pLoad      - {} params for bbGt>bbLoad() (determine format/filtering)
+%   .pNms       - ['type','none'] params for non maximal suppresion
+%   .f0         - [1] first ground truth file to use
+%   .f1         - [inf] last ground truth file to use
+%   .imDir      - [gtDir] optional directory containing images
 %
 % OUTPUTS
-%  gt           - {1xn} first output of evalRes() for each image
-%  dt           - {1xn} second output of evalRes() for each image
-%  imFs         - {1xn} names of corresponding images (if imDir specified)
+%  gt         - {1xn} first output of evalRes() for each image
+%  dt         - {1xn} second output of evalRes() for each image
+%  imFs       - {1xn} names of corresponding images (if imDir specified)
 %
 % EXAMPLE
 %
-% See also bbGt, bbGt>evalRes, bbGt>toBbs, bbGt>getFiles, bbGt>dtsLoad,
+% See also bbGt, bbGt>evalRes, bbGt>bbLoad, bbGt>getFiles, bbGt>dtsLoad,
 % bbNms
 
 % get parameters
-noNms=struct('type','none'); dfs={'thr',.5,'mul',0,'pToBbs',{},...
+noNms=struct('type','none'); dfs={'thr',.5,'mul',0,'pLoad',{},...
   'pNms',noNms,'f0',1,'f1',inf,'imDir',''};
-[thr,mul,pToBbs,pNms,f0,f1,imDir]=getPrmDflt(varargin,dfs,1);
+[thr,mul,pLoad,pNms,f0,f1,imDir]=getPrmDflt(varargin,dfs,1);
 if(isempty(imDir)), imDir=gtDir; end
 
 % get list of gt, im and dt files
@@ -800,9 +676,9 @@ fs=getFiles(dirs,f0,f1); gtFs=fs(1,:); imFs=fs(2,:); n=length(gtFs);
 if(dtFile), dtFs=dtDir; else dtFs=fs(3,:); end
 
 % load and prepare ground truth annotations (or use cached values)
-persistent keyPrv gtPrv; key={gtFs,pToBbs};
+persistent keyPrv gtPrv; key={gtFs,pLoad};
 if(isequal(key,keyPrv)), gt=gtPrv; else gt=cell(1,n);
-  for i=1:n, gt{i}=toBbs(bbLoad(gtFs{i}),pToBbs); end
+  for i=1:n, gt{i}=bbLoad(gtFs{i},pLoad); end
   gtPrv=gt; keyPrv=key;
 end
 
@@ -1011,7 +887,7 @@ function [bbs,Is] = sampleData( I, varargin )
 % bbs should contain the candidate bounding boxes, and ibbs should contain
 % the bounding boxes that are to be ignored. During sampling, only bbs that
 % do not match any ibbs are kept (two bbs match if their area of overlap is
-% above the given thr, see bbGt>compOas). Use gtBbs=toBbs(...) to obtain a
+% above the given thr, see bbGt>compOas). Use gtBbs=bbLoad(...) to obtain a
 % list of ground truth bbs containing the positive windows. Let dtBbs
 % contain the bbs output by some detection algorithm. Then,
 %  to sample true-positives, use:   bbs=gtBbs and ibbs=[]
@@ -1049,8 +925,8 @@ function [bbs,Is] = sampleData( I, varargin )
 %
 % EXAMPLE
 %
-% See also bbGt, bbGt>toBbs, bbApply>crop, bbApply>resize, bbApply>squarify
-% bbApply>random, bbGt>compOas
+% See also bbGt, bbGt>bbLoad, bbApply>crop, bbApply>resize,
+% bbApply>squarify bbApply>random, bbGt>compOas
 
 % get parameters
 dfs={'n',inf, 'bbs','REQ', 'ibbs',[], 'thr',.5, 'dims',[], ...
@@ -1099,9 +975,6 @@ function Is = sampleDataDir( varargin )
 % Finally, 'batch' is used to run the execution in parallel (assuming
 % matlabpool is open), this is useful if bbFunc() is slow.
 %
-% bb>toBbs() with params 'pToBbs' controls which ground truth bbs are used.
-% bbGt>sampleData() with params 'pSmp' controls how the bbs are extracted.
-%
 % USAGE
 %  Is = bbGt( 'sampleDataDir', pSmpDir )
 %
@@ -1109,8 +982,8 @@ function Is = sampleDataDir( varargin )
 %  pSmpDir    - parameters (struct or name/value pairs)
 %   .imDir      - ['REQ'] directory containing images
 %   .gtDir      - [''] directory containing ground truth
-%   .pToBbs     - {} params for bbGt>toBbs
-%   .pSmp       - {} params for bbGt>sampleData
+%   .pLoad      - {} params for bbGt>bbLoad() (determine format/filtering)
+%   .pSmp       - {} params for bbGt>sampleData (determines bb extraction)
 %   .bbFunc     - {} function that generates candidate bbs (see above)
 %   .bbArgs     - {} arguments to bbFunc(I,bbArgs{:})
 %   .maxn       - [inf] maximum number of windows to sample
@@ -1121,12 +994,12 @@ function Is = sampleDataDir( varargin )
 %
 % EXAMPLE
 %
-% See also bbGt, bbGt>getFiles, bbGt>toBbs, bbGt>sampleData, bbApply>random
+% See also bbGt, bbGt>getFiles, bbGt>bbLoad, bbGt>sampleData
 
 % get paramters
-dfs={'imDir','REQ', 'gtDir','', 'pToBbs',{}, 'pSmp',{}, ...
+dfs={'imDir','REQ', 'gtDir','', 'pLoad',{}, 'pSmp',{}, ...
   'bbFunc',{}, 'bbArgs',{}, 'maxn',inf, 'batch',1 };
-[imDir,gtDir,pToBbs,pSmp,bbFunc,bbArgs,maxn,batch] ...
+[imDir,gtDir,pLoad,pSmp,bbFunc,bbArgs,maxn,batch] ...
   = getPrmDflt(varargin,dfs,1);
 if(iscell(pSmp)), pSmp=cell2struct(pSmp(2:2:end),pSmp(1:2:end),2); end
 hasGt=~isempty(gtDir); hasFn=~isempty(bbFunc); assert(hasFn || hasGt);
@@ -1139,7 +1012,7 @@ batch=min(batch,n); Is=cell(n*1000,1); Is1=cell(1,batch);
 % loop over images (in batches) and sample windows
 tid=ticStatus('Sampling windows',1,1); k=0; i=0;
 while( i<n && k<maxn )
-  batch=min(batch,n-i); p={fs,pToBbs,pSmp,bbFunc,bbArgs};
+  batch=min(batch,n-i); p={fs,pLoad,pSmp,bbFunc,bbArgs};
   if(batch==1), Is1{1}=sampleDataDir1(i+1,p{:}); else
     parfor j=1:batch, Is1{j}=sampleDataDir1(i+j,p{:}); end; end %#ok<PFBNS>
   for j=1:batch, k0=k+1; k=k+length(Is1{j}); Is(k0:k)=Is1{j}; end
@@ -1150,10 +1023,10 @@ fprintf('Sampled %i windows from %i images in %s.\n',k,i,imDir);
 
 end
 
-function Is = sampleDataDir1( ind, fs, pToBbs, pSmp, bbFunc, bbArgs )
+function Is = sampleDataDir1( ind, fs, pLoad, pSmp, bbFunc, bbArgs )
 % Helper function for sampleDataDir(), do not call directly.
 I=imread(fs{1,ind}); bbGt=[]; hasGt=size(fs,1)>1; hasFn=~isempty(bbFunc);
-if(hasGt), bbGt=toBbs(bbLoad(fs{2,ind}),pToBbs); pSmp.bbs=bbGt; end
+if(hasGt), [~,bbGt]=bbLoad(fs{2,ind},pLoad); pSmp.bbs=bbGt; end
 if(hasFn), pSmp.bbs=bbFunc(I,bbArgs{:}); pSmp.ibbs=bbGt; end
 [~,Is]=sampleData(I,pSmp);
 end

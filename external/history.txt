@@ -1,5 +1,5 @@
 Version NEW
- -bbGt.m: major additions/overhaul, replaced bbGt>toGt() with bbGt>toBbs()
+ -bbGt.m: major changes/overhaul, not fully backward compatible
  -minor: bbApply.m
 
 Version 2.63 (15-Mar-2012)
