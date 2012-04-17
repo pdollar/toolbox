@@ -58,7 +58,7 @@ function varargout = bbApply( action, varargin )
 % bbApply>union bbApply>resize bbApply>squarify bbApply>draw bbApply>crop
 % bbApply>convert bbApply>random bbApply>frMask bbApply>toMask
 %
-% Piotr's Image&Video Toolbox      Version 2.64
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -509,6 +509,88 @@ bb=[x y w h];
       end, assert(k==n);
     end
   end
+end
+
+function bbs = randomBbs( varargin )
+% Randomly generate bbs that fall in a specified region.
+%
+% A number of constraints can be specified that control the size and other
+% characteristics of the generated bbs. The function does its best to
+% resolve incompatible constraints (for example if the maximum width and
+% height are both 5 while the minimum area is 100 no possible bbs could be
+% generated). If it is still impossible to generate n bbs with the given
+% constraints (or even a single such bb) a warning is displayed.
+%
+% USAGE
+%  bbs =  bbApply( 'randomBbs', pRandom )
+%
+% INPUTS
+%  pRandom    - parameters (struct or name/value pairs)
+%   .n          - ['REQ'] number of bbs to generate
+%   .dims       - ['REQ'] region in which to generate bbs (height,width)
+%   .wRng       - [1 inf] range for width of bbs (or scalar value)
+%   .hRng       - [1 inf] range for height of bbs (or scalar value)
+%   .aRng       - [1 inf] range for area of bbs
+%   .arRng      - [0 inf] range for aspect ratio (width/height) of bbs
+%   .unique     - [1] if true generate unique bbs
+%   .show       - [0] if true show sample generated bbs
+%
+% OUTPUTS
+%  bbs        - [nx4] array of randomly generated bbs
+%
+% EXAMPLE
+%  bbs=bbApply('randomBbs','n',50,'dims',[20 20],'arRng',[.5 .5],'show',1);
+%
+% See also bbApply
+
+% get parameters
+rng=[1 inf]; dfs={ 'n','REQ', 'dims','REQ', 'wRng',rng, 'hRng',rng, ...
+  'aRng',rng, 'arRng',[0 inf], 'unique',1, 'show',0 };
+[n,dims,wRng,hRng,aRng,arRng,uniqueOnly,show]=getPrmDflt(varargin,dfs,1);
+if(length(hRng)==1), hRng=[hRng hRng]; end
+if(length(wRng)==1), wRng=[wRng wRng]; end
+
+% adjust constraints to make them mutually consistent
+hRng(2)=min(hRng(2),dims(1)); hRng(1)=min(hRng);
+wRng(2)=min(wRng(2),dims(2)); wRng(1)=min(wRng);
+aRng(1)=min(aRng); aRng1=wRng.*hRng;
+aRng(1)=min(max(aRng(1),aRng1(1)),aRng1(2));
+aRng(2)=min(max(aRng(2),aRng1(1)),aRng1(2));
+arRng(1)=min(arRng); arRng1=[wRng(1)/hRng(2) wRng(2)/hRng(1)];
+arRng(1)=min(max(arRng(1),arRng1(1)),arRng1(2));
+arRng(2)=min(max(arRng(2),arRng1(1)),arRng1(2));
+
+% generate random bbs satisfying constraints
+k=0; bbs=zeros(n,4); ids=zeros(n,1);
+M=max(dims)+1; M=[M^3 M^2 M^1 M^0];
+for i=1:100000
+  ys=1+floor(rand(2,n)*dims(1)); ys0=min(ys); ys1=max(ys); hs=ys1-ys0+1;
+  xs=1+floor(rand(2,n)*dims(2)); xs0=min(xs); xs1=max(xs); ws=xs1-xs0+1;
+  as=ws.*hs; ars=ws./hs; bbs1=[xs0' ys0' ws' hs'];
+  kp = hs>=hRng(1) & hs<=hRng(2) & ws>=wRng(1) & ws<=wRng(2) & ...
+    as>=aRng(1) & as<=aRng(2) & ars>=arRng(1) & ars<=arRng(2);
+  bbs1=bbs1(kp,:); bbs1=bbs1(1:min(end,n-k),:);
+  k0=k+1; k=k+size(bbs1,1); bbs(k0:k,:)=bbs1;
+  if( uniqueOnly && k )
+    ids1=sum(bbs1.*M(ones(1,size(bbs1,1)),:),2); ids(k0:k)=ids1;
+    bbs=bbs(1:k,:); ids=ids(1:k,:); [ids,o]=sort(ids); bbs=bbs(o,:);
+    kp=[ids(1:end-1)~=ids(2:end); true]; bbs=bbs(kp,:); ids=ids(kp,:);
+    k=size(bbs,1); bbs(k+1:n,:)=0; ids(k+1:n,:)=0;
+  end
+  if(k>=n), break; end
+end
+if( k<n ), warning('only generated %i of %i bbs',k,n); end %#ok<WNTAG>
+bbs=bbs(1:k,:); n=k;
+
+% optionally display a few bbs
+if( show )
+  k=8; figure(show); im(zeros(dims)); cs=uniqueColors(1,k,0,0);
+  if(n>k), bbs1=bbs(randsample(n,k),:); else bbs1=bbs; end
+  bbs1(:,1:2)=bbs1(:,1:2)-.5;
+  for i=1:min(k,n), rectangle('Position',bbs1(i,:),...
+      'EdgeColor',cs(i,:),'LineStyle','--'); end
+end
+
 end
 
 function bbs = frMask( M, bbw, bbh, thr )
