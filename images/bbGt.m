@@ -84,7 +84,7 @@ function varargout = bbGt( action, varargin )
 % bbGt>evalRes, bbGt>showRes,  bbGt>compRoc, bbGt>cropRes, bbGt>compOas,
 % bbGt>compOa, bbGt>sampleWins, bbGt>sampleWinsDir
 %
-% Piotr's Image&Video Toolbox      Version 2.64
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -915,12 +915,11 @@ function Is = sampleWinsDir( varargin )
 % loads the gt for with each image and samples pos windows. To sample
 % NEGATIVES specify 'bbFunc', where bbFunc() is a callback that takes an
 % image and 'bbArgs' and returns a set of candidate neg bbs. For example:
-%   bbFunc=@(I) bbApply('random',size(I,2),size(I,1),[w0 w1],-ar,k)
-% takes an image and generates k random bbs with widths between w0 and w1
-% and aspect ratio ar (see bbApply>random()). If both 'gtDir' and 'bbFunc'
-% are specified, samples candidate neg windows that don't overlap the gt.
-% Finally, 'batch' is used to run the execution in parallel (assuming
-% matlabpool is open), this is useful if bbFunc() is slow.
+%   bbFunc=@(I) bbApply('random','dims',[size(I,1),size(I,2)],'n',10)
+% generates 10 random bbs over I (see bbApply>random()). If both 'gtDir'
+% and 'bbFunc' are specified, samples candidate neg windows that don't
+% overlap the gt. Finally, 'batch' is used to run the execution in parallel
+% (assuming matlabpool is open), this is useful if bbFunc() is slow.
 %
 % USAGE
 %  Is = bbGt( 'sampleWinsDir', pSmpDir )
@@ -941,7 +940,7 @@ function Is = sampleWinsDir( varargin )
 %
 % EXAMPLE
 %
-% See also bbGt, bbGt>getFiles, bbGt>bbLoad, bbGt>sampleWins
+% See also bbGt, bbGt>getFiles, bbGt>bbLoad, bbGt>sampleWins, bbApply
 
 % get paramters
 dfs={'imDir','REQ', 'gtDir','', 'pLoad',{}, 'pSmp',{}, ...

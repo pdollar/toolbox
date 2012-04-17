@@ -1,5 +1,6 @@
 Version NEW
- -minor: bbApply.m
+ -bbApply>random(): rewrote to make more powerful
+ -minor: bbGt.m
 
 Version 2.64 (13-Apr-2012)
  -bbGt.m: major changes/overhaul, not fully backward compatible
