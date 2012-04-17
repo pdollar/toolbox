@@ -515,11 +515,10 @@ function bbs = randomBbs( varargin )
 % Randomly generate bbs that fall in a specified region.
 %
 % A number of constraints can be specified that control the size and other
-% characteristics of the generated bbs. The function does its best to
-% resolve incompatible constraints (for example if the maximum width and
-% height are both 5 while the minimum area is 100 no possible bbs could be
-% generated). If it is still impossible to generate n bbs with the given
-% constraints (or even a single such bb) a warning is displayed.
+% characteristics of the generated bbs. Note that if incompatible
+% constraints are specified (e.g. if the maximum width and height are both
+% 5 while the minimum area is 100) no bbs will be generated. More
+% generally, if fewer than n bbs are generated a warning is displayed.
 %
 % USAGE
 %  bbs =  bbApply( 'randomBbs', pRandom )
@@ -549,16 +548,6 @@ rng=[1 inf]; dfs={ 'n','REQ', 'dims','REQ', 'wRng',rng, 'hRng',rng, ...
 [n,dims,wRng,hRng,aRng,arRng,uniqueOnly,show]=getPrmDflt(varargin,dfs,1);
 if(length(hRng)==1), hRng=[hRng hRng]; end
 if(length(wRng)==1), wRng=[wRng wRng]; end
-
-% adjust constraints to make them mutually consistent
-hRng(2)=min(hRng(2),dims(1)); hRng(1)=min(hRng);
-wRng(2)=min(wRng(2),dims(2)); wRng(1)=min(wRng);
-aRng(1)=min(aRng); aRng1=wRng.*hRng;
-aRng(1)=min(max(aRng(1),aRng1(1)),aRng1(2));
-aRng(2)=min(max(aRng(2),aRng1(1)),aRng1(2));
-arRng(1)=min(arRng); arRng1=[wRng(1)/hRng(2) wRng(2)/hRng(1)];
-arRng(1)=min(max(arRng(1),arRng1(1)),arRng1(2));
-arRng(2)=min(max(arRng(2),arRng1(1)),arRng1(2));
 
 % generate random bbs satisfying constraints
 k=0; bbs=zeros(n,4); ids=zeros(n,1);
