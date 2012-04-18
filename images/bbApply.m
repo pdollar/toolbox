@@ -501,10 +501,12 @@ M=max(dims)+1; M=[M^3 M^2 M^1 M^0];
 for i=1:100000
   ys=1+floor(rand(2,n)*dims(1)); ys0=min(ys); ys1=max(ys); hs=ys1-ys0+1;
   xs=1+floor(rand(2,n)*dims(2)); xs0=min(xs); xs1=max(xs); ws=xs1-xs0+1;
-  as=ws.*hs; ars=ws./hs; bbs1=[xs0' ys0' ws' hs'];
-  kp = hs>=hRng(1) & hs<=hRng(2) & ws>=wRng(1) & ws<=wRng(2) & ...
+  if(arRng(1)==arRng(2)), ws=hs.*arRng(1); end
+  ars=ws./hs; ws=round(ws); xs1=xs0+ws-1; as=ws.*hs;
+  kp = ys0>0 & xs0>0 & ys1<=dims(1) & xs1<=dims(2) & ...
+    hs>=hRng(1) & hs<=hRng(2) & ws>=wRng(1) & ws<=wRng(2) & ...
     as>=aRng(1) & as<=aRng(2) & ars>=arRng(1) & ars<=arRng(2);
-  bbs1=bbs1(kp,:); bbs1=bbs1(1:min(end,n-k),:);
+  bbs1=[xs0' ys0' ws' hs']; bbs1=bbs1(kp,:); bbs1=bbs1(1:min(end,n-k),:);
   k0=k+1; k=k+size(bbs1,1); bbs(k0:k,:)=bbs1;
   if( uniqueOnly && k )
     ids1=sum(bbs1.*M(ones(1,size(bbs1,1)),:),2); ids(k0:k)=ids1;
