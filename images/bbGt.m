@@ -760,12 +760,12 @@ for i=1:N
   scores(locs)=bbs(locs,5); imgIds(locs)=i;
 end; Is=cell2array(Is);
 % optionally display
-if(~show), return; end; figure(show); clf;
-pMnt={'hasChn',size(Is1{1},3)>1};
-if(~isempty(fStr) && ~strcmp(type,'fn'))
-  lbls=cell(1,n); for i=1:n, lbls{i}=num2str(scores(i),fStr); end
-  pMnt=[pMnt 'labels' {lbls}];
-end; montage2(Is,pMnt); title(type);
+if(~show), return; end; figure(show); pMnt={'hasChn',size(Is1{1},3)>1};
+if(isempty(fStr)), montage2(Is,pMnt); title(type); return; end
+ls=cell(1,n); for i=1:n, ls{i}=int2str2(imgIds(i)); end
+if(~strcmp(type,'fn'))
+  for i=1:n, ls{i}=[ls{i} '/' num2str(scores(i),fStr)]; end; end
+montage2(Is,[pMnt 'labels' {ls}]); title(type);
 end
 
 function oa = compOas( dt, gt, ig )
