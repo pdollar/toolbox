@@ -460,6 +460,12 @@ end
 function bbs = random( varargin )
 % Randomly generate bbs that fall in a specified region.
 %
+% The vector dims defines the region in which bbs are generated. Specify
+% dims=[height width] to generate bbs=[x y w h] such that: 1<=x<=width,
+% 1<=y<=height, x+w-1<=width, y+h-1<=height. The biggest bb generated can
+% be bb=[1 1 width height]. If dims is a three element vector the third
+% coordinate is the depth, in this case bbs=[x y w h d] where 1<=d<=depth.
+%
 % A number of constraints can be specified that control the size and other
 % characteristics of the generated bbs. Note that if incompatible
 % constraints are specified (e.g. if the maximum width and height are both
@@ -472,7 +478,7 @@ function bbs = random( varargin )
 % INPUTS
 %  pRandom    - parameters (struct or name/value pairs)
 %   .n          - ['REQ'] number of bbs to generate
-%   .dims       - ['REQ'] region in which to generate bbs (height,width)
+%   .dims       - ['REQ'] region in which to generate bbs [height,width]
 %   .wRng       - [1 inf] range for width of bbs (or scalar value)
 %   .hRng       - [1 inf] range for height of bbs (or scalar value)
 %   .aRng       - [1 inf] range for area of bbs
@@ -481,7 +487,7 @@ function bbs = random( varargin )
 %   .show       - [0] if true show sample generated bbs
 %
 % OUTPUTS
-%  bbs        - [nx4] array of randomly generated bbs
+%  bbs        - [nx4] array of randomly generated integer bbs
 %
 % EXAMPLE
 %  bbs=bbApply('random','n',50,'dims',[20 20],'arRng',[.5 .5],'show',1);
@@ -494,27 +500,29 @@ rng=[1 inf]; dfs={ 'n','REQ', 'dims','REQ', 'wRng',rng, 'hRng',rng, ...
 [n,dims,wRng,hRng,aRng,arRng,uniqueOnly,show]=getPrmDflt(varargin,dfs,1);
 if(length(hRng)==1), hRng=[hRng hRng]; end
 if(length(wRng)==1), wRng=[wRng wRng]; end
+if(length(dims)==3), d=5; else d=4; end
 
 % generate random bbs satisfying constraints
-k=0; bbs=zeros(n,4); ids=zeros(n,1);
-M=max(dims)+1; M=[M^3 M^2 M^1 M^0];
-for i=1:100000
-  ys=1+floor(rand(2,n)*dims(1)); ys0=min(ys); ys1=max(ys); hs=ys1-ys0+1;
-  xs=1+floor(rand(2,n)*dims(2)); xs0=min(xs); xs1=max(xs); ws=xs1-xs0+1;
+bbs=zeros(n,d); ids=zeros(n,1); n1=min(n*10,1000);
+M=max(dims)+1; M=M.^(0:d-1); iter=0; k=0;
+while( k<n && iter<1000 )
+  ys=1+floor(rand(2,n1)*dims(1)); ys0=min(ys); ys1=max(ys); hs=ys1-ys0+1;
+  xs=1+floor(rand(2,n1)*dims(2)); xs0=min(xs); xs1=max(xs); ws=xs1-xs0+1;
+  if(d==5), ds=1+floor(rand(1,n1)*dims(3)); else ds=zeros(0,n1); end
   if(arRng(1)==arRng(2)), ws=hs.*arRng(1); end
   ars=ws./hs; ws=round(ws); xs1=xs0+ws-1; as=ws.*hs;
   kp = ys0>0 & xs0>0 & ys1<=dims(1) & xs1<=dims(2) & ...
     hs>=hRng(1) & hs<=hRng(2) & ws>=wRng(1) & ws<=wRng(2) & ...
     as>=aRng(1) & as<=aRng(2) & ars>=arRng(1) & ars<=arRng(2);
-  bbs1=[xs0' ys0' ws' hs']; bbs1=bbs1(kp,:); bbs1=bbs1(1:min(end,n-k),:);
-  k0=k+1; k=k+size(bbs1,1); bbs(k0:k,:)=bbs1;
+  bbs1=[xs0' ys0' ws' hs' ds']; bbs1=bbs1(kp,:); k0=k;
+  bbs1=bbs1(1:min(end,n-k),:); k=k+size(bbs1,1); bbs(k0+1:k,:)=bbs1;
   if( uniqueOnly && k )
-    ids1=sum(bbs1.*M(ones(1,size(bbs1,1)),:),2); ids(k0:k)=ids1;
+    ids1=sum(bbs1.*M(ones(1,size(bbs1,1)),:),2); ids(k0+1:k)=ids1;
     bbs=bbs(1:k,:); ids=ids(1:k,:); [ids,o]=sort(ids); bbs=bbs(o,:);
     kp=[ids(1:end-1)~=ids(2:end); true]; bbs=bbs(kp,:); ids=ids(kp,:);
     k=size(bbs,1); bbs(k+1:n,:)=0; ids(k+1:n,:)=0;
   end
-  if(k>=n), break; end
+  if(k0==k), iter=iter+1; else iter=0; end
 end
 if( k<n ), warning('only generated %i of %i bbs',k,n); end %#ok<WNTAG>
 bbs=bbs(1:k,:); n=k;
