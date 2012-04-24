@@ -484,6 +484,7 @@ function bbs = random( varargin )
 %   .aRng       - [1 inf] range for area of bbs
 %   .arRng      - [0 inf] range for aspect ratio (width/height) of bbs
 %   .unique     - [1] if true generate unique bbs
+%   .maxOverlap - [1] max overlap (intersection/union) between bbs
 %   .maxIter    - [100] max iterations to go w/o changes before giving up
 %   .show       - [0] if true show sample generated bbs
 %
@@ -497,8 +498,9 @@ function bbs = random( varargin )
 
 % get parameters
 rng=[1 inf]; dfs={ 'n','REQ', 'dims','REQ', 'wRng',rng, 'hRng',rng, ...
-  'aRng',rng, 'arRng',[0 inf], 'unique',1, 'maxIter',100, 'show',0 };
-[n,dims,wRng,hRng,aRng,arRng,uniqueOnly,maxIter,show] ...
+  'aRng',rng, 'arRng',[0 inf], 'unique',1, 'maxOverlap',1, ...
+  'maxIter',100, 'show',0 };
+[n,dims,wRng,hRng,aRng,arRng,uniqueOnly,maxOverlap,maxIter,show] ...
   = getPrmDflt(varargin,dfs,1);
 if(length(hRng)==1), hRng=[hRng hRng]; end
 if(length(wRng)==1), wRng=[wRng wRng]; end
@@ -518,7 +520,11 @@ while( k<n && iter<maxIter )
     as>=aRng(1) & as<=aRng(2) & ars>=arRng(1) & ars<=arRng(2);
   bbs1=[xs0' ys0' ws' hs' ds']; bbs1=bbs1(kp,:);
   k0=k; bbs=[bbs; bbs1]; k=size(bbs,1); %#ok<AGROW>
-  if( uniqueOnly && k )
+  if( maxOverlap<1 ), k1=k0+1;
+    while( k1<=k ), oa=max(bbGt('compOas',bbs(1:k1-1,:),bbs(k1,:)));
+      if(oa>maxOverlap), bbs(k1,:)=[]; k=k-1; else k1=k1+1; end
+    end
+  elseif( uniqueOnly && k )
     ids=[ids; sum(bbs1.*M(ones(1,size(bbs1,1)),:),2)]; %#ok<AGROW>
     [ids,o]=sort(ids); bbs=bbs(o,:); kp=[ids(1:end-1)~=ids(2:end); true];
     bbs=bbs(kp,:); ids=ids(kp,:);
