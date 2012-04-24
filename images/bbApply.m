@@ -484,6 +484,7 @@ function bbs = random( varargin )
 %   .aRng       - [1 inf] range for area of bbs
 %   .arRng      - [0 inf] range for aspect ratio (width/height) of bbs
 %   .unique     - [1] if true generate unique bbs
+%   .maxIter    - [100] max iterations to go w/o changes before giving up
 %   .show       - [0] if true show sample generated bbs
 %
 % OUTPUTS
@@ -496,8 +497,9 @@ function bbs = random( varargin )
 
 % get parameters
 rng=[1 inf]; dfs={ 'n','REQ', 'dims','REQ', 'wRng',rng, 'hRng',rng, ...
-  'aRng',rng, 'arRng',[0 inf], 'unique',1, 'show',0 };
-[n,dims,wRng,hRng,aRng,arRng,uniqueOnly,show]=getPrmDflt(varargin,dfs,1);
+  'aRng',rng, 'arRng',[0 inf], 'unique',1, 'maxIter',100, 'show',0 };
+[n,dims,wRng,hRng,aRng,arRng,uniqueOnly,maxIter,show] ...
+  = getPrmDflt(varargin,dfs,1);
 if(length(hRng)==1), hRng=[hRng hRng]; end
 if(length(wRng)==1), wRng=[wRng wRng]; end
 if(length(dims)==3), d=5; else d=4; end
@@ -505,7 +507,7 @@ if(length(dims)==3), d=5; else d=4; end
 % generate random bbs satisfying constraints
 bbs=zeros(n,d); ids=zeros(n,1); n1=min(n*10,1000);
 M=max(dims)+1; M=M.^(0:d-1); iter=0; k=0;
-while( k<n && iter<1000 )
+while( k<n && iter<maxIter )
   ys=1+floor(rand(2,n1)*dims(1)); ys0=min(ys); ys1=max(ys); hs=ys1-ys0+1;
   xs=1+floor(rand(2,n1)*dims(2)); xs0=min(xs); xs1=max(xs); ws=xs1-xs0+1;
   if(d==5), ds=1+floor(rand(1,n1)*dims(3)); else ds=zeros(0,n1); end
