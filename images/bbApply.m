@@ -509,6 +509,7 @@ if(length(dims)==3), d=5; else d=4; end
 % generate random bbs satisfying constraints
 bbs=zeros(0,d); ids=zeros(0,1); n1=min(n*10,1000);
 M=max(dims)+1; M=M.^(0:d-1); iter=0; k=0;
+tid=ticStatus('generating random bbs',1,2);
 while( k<n && iter<maxIter )
   ys=1+floor(rand(2,n1)*dims(1)); ys0=min(ys); ys1=max(ys); hs=ys1-ys0+1;
   xs=1+floor(rand(2,n1)*dims(2)); xs0=min(xs); xs1=max(xs); ws=xs1-xs0+1;
@@ -535,9 +536,9 @@ while( k<n && iter<maxIter )
     bbs=bbs(kp,:); ids=ids(kp,:);
   end
   k=size(bbs,1); if(k0==k), iter=iter+1; else iter=0; end
+  if(k>n), bbs=bbs(1:n,:); k=n; end; tocStatus(tid,max(k/n,iter/maxIter));
 end
-if( k<n ), warning('only generated %i of %i bbs',k,n); end %#ok<WNTAG>
-if( k<n ), n=k; else bbs=bbs(1:n,:); end
+if( k<n ), warning('only generated %i of %i bbs',k,n); n=k; end %#ok<WNTAG>
 
 % optionally display a few bbs
 if( show )
