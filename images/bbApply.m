@@ -505,7 +505,7 @@ if(length(wRng)==1), wRng=[wRng wRng]; end
 if(length(dims)==3), d=5; else d=4; end
 
 % generate random bbs satisfying constraints
-bbs=zeros(n,d); ids=zeros(n,1); n1=min(n*10,1000);
+bbs=zeros(0,d); ids=zeros(0,1); n1=min(n*10,1000);
 M=max(dims)+1; M=M.^(0:d-1); iter=0; k=0;
 while( k<n && iter<maxIter )
   ys=1+floor(rand(2,n1)*dims(1)); ys0=min(ys); ys1=max(ys); hs=ys1-ys0+1;
@@ -516,18 +516,17 @@ while( k<n && iter<maxIter )
   kp = ys0>0 & xs0>0 & ys1<=dims(1) & xs1<=dims(2) & ...
     hs>=hRng(1) & hs<=hRng(2) & ws>=wRng(1) & ws<=wRng(2) & ...
     as>=aRng(1) & as<=aRng(2) & ars>=arRng(1) & ars<=arRng(2);
-  bbs1=[xs0' ys0' ws' hs' ds']; bbs1=bbs1(kp,:); k0=k;
-  bbs1=bbs1(1:min(end,n-k),:); k=k+size(bbs1,1); bbs(k0+1:k,:)=bbs1;
+  bbs1=[xs0' ys0' ws' hs' ds']; bbs1=bbs1(kp,:);
+  k0=k; bbs=[bbs; bbs1]; k=size(bbs,1); %#ok<AGROW>
   if( uniqueOnly && k )
-    ids1=sum(bbs1.*M(ones(1,size(bbs1,1)),:),2); ids(k0+1:k)=ids1;
-    bbs=bbs(1:k,:); ids=ids(1:k,:); [ids,o]=sort(ids); bbs=bbs(o,:);
-    kp=[ids(1:end-1)~=ids(2:end); true]; bbs=bbs(kp,:); ids=ids(kp,:);
-    k=size(bbs,1); bbs(k+1:n,:)=0; ids(k+1:n,:)=0;
+    ids=[ids; sum(bbs1.*M(ones(1,size(bbs1,1)),:),2)]; %#ok<AGROW>
+    [ids,o]=sort(ids); bbs=bbs(o,:); kp=[ids(1:end-1)~=ids(2:end); true];
+    bbs=bbs(kp,:); ids=ids(kp,:);
   end
-  if(k0==k), iter=iter+1; else iter=0; end
+  k=size(bbs,1); if(k0==k), iter=iter+1; else iter=0; end
 end
 if( k<n ), warning('only generated %i of %i bbs',k,n); end %#ok<WNTAG>
-bbs=bbs(1:k,:); n=k;
+if( k<n ), n=k; else bbs=bbs(1:n,:); end
 
 % optionally display a few bbs
 if( show )
