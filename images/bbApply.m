@@ -520,13 +520,14 @@ while( k<n && iter<maxIter )
     as>=aRng(1) & as<=aRng(2) & ars>=arRng(1) & ars<=arRng(2);
   bbs1=[xs0' ys0' ws' hs' ds']; bbs1=bbs1(kp,:);
   k0=k; bbs=[bbs; bbs1]; k=size(bbs,1); %#ok<AGROW>
-  if( maxOverlap<1 && k )
-    if(k0==0), bbs1(1,:)=[]; k0=1; end; bbs=bbs(1:k0,:);
-    for j=1:size(bbs1,1), bb=bbs1(j,:);
+  if( maxOverlap<1 && k ), bbs=bbs(1:k0,:);
+    for j=1:size(bbs1,1), bbs0=bbs; bb=bbs1(j,:);
+      if(d==5), bbs=bbs(bbs(:,5)==bb(5),:); end
+      if(isempty(bbs)), bbs=[bbs0; bb]; continue; end
       ws1=min(bbs(:,1)+bbs(:,3),bb(1)+bb(3))-max(bbs(:,1),bb(1));
       hs1=min(bbs(:,2)+bbs(:,4),bb(2)+bb(4))-max(bbs(:,2),bb(2));
       o=max(0,ws1).*max(0,hs1); o=o./(bbs(:,3).*bbs(:,4)+bb(3).*bb(4)-o);
-      if(max(o)<=maxOverlap), bbs=[bbs; bb]; end %#ok<AGROW>
+      if(max(o)<=maxOverlap), bbs=[bbs0; bb]; else bbs=bbs0; end
     end
   elseif( uniqueOnly && k )
     ids=[ids; sum(bbs1.*M(ones(1,size(bbs1,1)),:),2)]; %#ok<AGROW>
