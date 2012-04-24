@@ -520,9 +520,13 @@ while( k<n && iter<maxIter )
     as>=aRng(1) & as<=aRng(2) & ars>=arRng(1) & ars<=arRng(2);
   bbs1=[xs0' ys0' ws' hs' ds']; bbs1=bbs1(kp,:);
   k0=k; bbs=[bbs; bbs1]; k=size(bbs,1); %#ok<AGROW>
-  if( maxOverlap<1 ), k1=k0+1;
-    while( k1<=k ), oa=max(bbGt('compOas',bbs(1:k1-1,:),bbs(k1,:)));
-      if(oa>maxOverlap), bbs(k1,:)=[]; k=k-1; else k1=k1+1; end
+  if( maxOverlap<1 && k )
+    if(k0==0), bbs1(1,:)=[]; k0=1; end; bbs=bbs(1:k0,:);
+    for j=1:size(bbs1,1), bb=bbs1(j,:);
+      ws1=min(bbs(:,1)+bbs(:,3),bb(1)+bb(3))-max(bbs(:,1),bb(1));
+      hs1=min(bbs(:,2)+bbs(:,4),bb(2)+bb(4))-max(bbs(:,2),bb(2));
+      o=max(0,ws1).*max(0,hs1); o=o./(bbs(:,3).*bbs(:,4)+bb(3).*bb(4)-o);
+      if(max(o)<=maxOverlap), bbs=[bbs; bb]; end %#ok<AGROW>
     end
   elseif( uniqueOnly && k )
     ids=[ids; sum(bbs1.*M(ones(1,size(bbs1,1)),:),2)]; %#ok<AGROW>
