@@ -893,7 +893,7 @@ dfs={'n',inf, 'bbs','REQ', 'ibbs',[], 'thr',.5, 'dims',[], ...
 [n,bbs,ibbs,thr,dims,squarify,pad,padEl] = getPrmDflt(varargin,dfs,1);
 % discard any candidate bbs that match the ignore bbs, sample to at most n
 nd=size(bbs,2); if(nd==5), bbs=bbs(bbs(:,5)==0,:); end; m=size(bbs,1);
-if(isempty(ibbs)), if(m>n), bbs=bbs(randsample(m,n),:); end; else
+if(isempty(ibbs)), if(m>n), bbs=bbs(randSample(m,n),:); end; else
   if(m>n), bbs=bbs(randperm(m),:); end; K=false(1,m); i=1;
   keep=@(i) all(compOas(bbs(i,:),ibbs,ibbs(:,5))<thr);
   while(sum(K)<n && i<=m), K(i)=keep(i); i=i+1; end; bbs=bbs(K,:);
@@ -962,7 +962,7 @@ while( i<n && k<maxn )
   if(batch==1), Is1{1}=sampleWinsDir1(i+1,p{:}); else
     parfor j=1:batch, Is1{j}=sampleWinsDir1(i+j,p{:}); end; end %#ok<PFBNS>
   for j=1:batch, k0=k+1; k=k+length(Is1{j}); Is(k0:k)=Is1{j}; end
-  if(k>maxn), Is=Is(randsample(k,maxn)); k=maxn; end
+  if(k>maxn), Is=Is(randSample(k,maxn)); k=maxn; end
   i=i+batch; tocStatus(tid,max(i/n,k/maxn));
 end; Is=Is(1:k);
 fprintf('Sampled %i windows from %i images in %s.\n',k,i,imDir);
