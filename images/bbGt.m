@@ -958,9 +958,9 @@ batch=min(batch,n); Is=cell(n*1000,1); Is1=cell(1,batch);
 % loop over images (in batches) and sample windows
 tid=ticStatus('Sampling windows',1,1); k=0; i=0;
 while( i<n && k<maxn )
-  batch=min(batch,n-i); p={fs,pLoad,pSmp,bbFunc,bbArgs};
-  if(batch==1), Is1{1}=sampleWinsDir1(i+1,p{:}); else
-    parfor j=1:batch, Is1{j}=sampleWinsDir1(i+j,p{:}); end; end %#ok<PFBNS>
+  batch=min(batch,n-i); prm={fs,pLoad,pSmp,bbFunc,bbArgs};
+  if(batch==1), Is1{1}=sampleWinsDir1(i+1,prm); else
+    parfor j=1:batch, Is1{j}=sampleWinsDir1(i+j,prm); end; end
   for j=1:batch, k0=k+1; k=k+length(Is1{j}); Is(k0:k)=Is1{j}; end
   if(k>maxn), Is=Is(randSample(k,maxn)); k=maxn; end
   i=i+batch; tocStatus(tid,max(i/n,k/maxn));
@@ -969,9 +969,11 @@ fprintf('Sampled %i windows from %i images in %s.\n',k,i,imDir);
 
 end
 
-function Is = sampleWinsDir1( ind, fs, pLoad, pSmp, bbFunc, bbArgs )
+function Is = sampleWinsDir1( ind, prm )
 % Helper function for sampleWinsDir(), do not call directly.
-I=imread(fs{1,ind}); bbGt=[]; hasGt=size(fs,1)>1; hasFn=~isempty(bbFunc);
+[fs,pLoad,pSmp,bbFunc,bbArgs]=deal(prm{:});
+I=imread(fs{1,ind}); bbGt=[];
+hasGt=size(fs,1)>1; hasFn=~isempty(bbFunc);
 if(hasGt), [~,bbGt]=bbLoad(fs{2,ind},pLoad); pSmp.bbs=bbGt; end
 if(hasFn), pSmp.bbs=bbFunc(I,bbArgs{:}); pSmp.ibbs=bbGt; end
 Is=sampleWins(I,pSmp);
