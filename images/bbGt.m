@@ -46,6 +46,8 @@ function varargout = bbGt( action, varargin )
 %%% (2) Routines for evaluating the Pascal criteria for object detection.
 % Get all corresponding files in given directories.
 %   [fs,fs0] = bbGt('getFiles', dirs, [f0], [f1] )
+% Copy corresponding files into given directories.
+%   fs = bbGt( 'copyFiles', fs, dirs )
 % Load all ground truth and detection bbs in given directories.
 %   [gt0,dt0] = bbGt( 'loadAll', gtDir, [dtDir], [pLoad] )
 % Evaluates detections against ground truth data.
@@ -80,9 +82,9 @@ function varargout = bbGt( action, varargin )
 % EXAMPLE
 %
 % See also bbApply, bbLabeler, bbGt>create, bbGt>bbSave, bbGt>bbLoad,
-% bbGt>get, bbGt>set, bbGt>draw, bbGt>getFiles, bbGt>loadAll,
-% bbGt>evalRes, bbGt>showRes,  bbGt>compRoc, bbGt>cropRes, bbGt>compOas,
-% bbGt>compOa, bbGt>sampleWins, bbGt>sampleWinsDir
+% bbGt>get, bbGt>set, bbGt>draw, bbGt>getFiles, bbGt>copyFiles,
+% bbGt>loadAll, bbGt>evalRes, bbGt>showRes,  bbGt>compRoc, bbGt>cropRes,
+% bbGt>compOas, bbGt>compOa, bbGt>sampleWins, bbGt>sampleWinsDir
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -459,6 +461,33 @@ for d=2:m, fs(d,:)=getFiles1(dirs{d},fs0,sep); end
     end
     for i1=1:n, fs1{i1}=[dir1 sep fs1{i1}]; end
   end
+end
+
+function fs = copyFiles( fs, dirs )
+% Copy corresponding files into given directories.
+%
+% Useful for splitting data into training, validation and testing sets.
+% See also bbGt>getFiles for obtaining a set of corresponding files.
+%
+% USAGE
+%  fs = bbGt( 'copyFiles', fs, dirs )
+%
+% INPUTS
+%   fs        - {mxn} list of full file names in each dir
+%   dirs      - {1xm} list of m target directories
+%
+% OUTPUTS
+%   fs        - {mxn} list of full file names of copied files
+%
+% EXAMPLE
+%
+% See also bbGt, bbGt>getFiles
+[m,n]=size(fs); assert(numel(dirs)==m); if(n==0), return; end
+for d=1:m
+  if(~exist(dirs{d},'dir')), mkdir(dirs{d}); end
+  for i=1:n, f=fs{d,i}; j=[0 find(f=='/' | f=='\')]; j=j(end);
+    fs{d,i}=[dirs{d} '/' f(j+1:end)]; copyfile(f,fs{d,i}); end
+end
 end
 
 function [gt0,dt0] = loadAll( gtDir, dtDir, pLoad )
