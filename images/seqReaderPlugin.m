@@ -29,7 +29,7 @@ function varargout = seqReaderPlugin( cmd, h, varargin )
 %
 % See also SEQIO, SEQWRITERPLUGIN
 %
-% Piotr's Image&Video Toolbox      Version 2.63
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -100,10 +100,11 @@ switch(info.imageFormat)
   case {100,200}, ext='raw';
   case {101    }, ext='brgb8';
   case {102,201}, ext='jpg';
+  case {103    }, ext ='jbrgb';
   case {001,002}, ext='png';
   otherwise, error('unknown format');
 end; info.ext=ext; s=1;
-if(strcmp(ext,'jpg')), s=getImgFile('rjpg8c'); end
+if(strcmp(ext,{'jpg','jbrgb'})), s=getImgFile('rjpg8c'); end
 if(strcmp(ext,'png')), s=getImgFile('png');
   if(s), info.readImg=@(nm) png('read',nm,[]); end; end
 if(strcmp(ext,'png') && ~s), s=getImgFile('pngreadc');
@@ -157,7 +158,7 @@ switch ext
       if(nCh==3), t=I(:,:,3); I(:,:,3)=I(:,:,1); I(:,:,1)=t; end
       if(strcmp(ext,'brgb8')), I=demosaic(I,'bggr'); end
     end
-  case 'jpg'
+  case {'jpg','jbrgb'}
     fseek(fid,info.seek(frame+1),'bof'); nBytes=fread(fid,1,'uint32');
     I = fread(fid,nBytes-4,'*uint8');
     if( decode )
@@ -166,6 +167,7 @@ switch ext
       for t=0:99, fw=fopen(tNm,'w'); if(fw>=0), break; end; pause(.01); end
       if(fw==-1), error(['unable to write: ' tNm]); end
       fwrite(fw,I); fclose(fw); I=rjpg8c(tNm);
+      if(strcmp(ext,'jbrgb')), I=demosaic(I,'bggr'); end
     end
   case 'png'
     fseek(fid,info.seek(frame+1),'bof'); nBytes=fread(fid,1,'uint32');
@@ -190,7 +192,7 @@ for i=1:n, frame=frames(i);
   switch info.ext
     case {'raw','brgb8'} % uncompressed
       fseek(fid,1024+frame*info.trueImageSize+info.imageSizeBytes,'bof');
-    case {'jpg','png'} % compressed
+    case {'jpg','png','jbrgb'} % compressed
       fseek(fid,info.seek(frame+1),'bof');
       fseek(fid,fread(fid,1,'uint32')-4,'cof');
     otherwise, assert(false);
