@@ -38,9 +38,9 @@ function IJ = jitterImage( I, varargin )
 %
 % EXAMPLE
 %  load trees; I=imresize(ind2gray(X,map),[41 41]); clear X caption map
-%  % creates 7^2*2 images of slight trans with reflection (but no rotation)
+%  % creates 10 (of 7^2*2) images of slight trans
 %  IJ = jitterImage(I,'nTrn',7,'mTrn',3,'maxn',10); montage2(IJ)
-%  % creates 5 images of slight rotations (no translations)
+%  % creates 5 images of slight rotations w reflection
 %  IJ = jitterImage(I,'nPhi',5,'mPhi',25,'flip',1); montage2(IJ)
 %  % creates 45 images of both rot and slight trans
 %  IJ = jitterImage(I,'nPhi',5,'mPhi',10,'nTrn',3,'mTrn',2); montage2(IJ)
@@ -53,7 +53,7 @@ function IJ = jitterImage( I, varargin )
 %
 % See also imtransform2
 %
-% Piotr's Image&Video Toolbox      Version 2.62
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2011 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -64,7 +64,7 @@ dfs={'maxn',inf, 'nPhi',0, 'mPhi',0, 'nTrn',0, 'mTrn',0, 'flip',0, ...
   'jsiz',siz(1:2), 'scls',[1 1], 'method','linear', 'hasChn',0};
 [maxn,nPhi,mPhi,nTrn,mTrn,flip,jsiz,scls,method,hasChn] = ...
   getPrmDflt(varargin,dfs,1);
-if(nPhi<=1), mPhi=0; nPhi=1; end; if(nTrn<=1), mTrn=0; nTrn=1; end
+if(nPhi<1), mPhi=0; nPhi=1; end; if(nTrn<1), mTrn=0; nTrn=1; end
 
 % I must be big enough to support given ops so grow I if necessary
 trn=linspace(-mTrn,mTrn,nTrn); [dX,dY]=meshgrid(trn,trn);
