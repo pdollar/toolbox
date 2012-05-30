@@ -2,7 +2,7 @@ Version NEW
  -bbApply>random(): rewrote to make more powerful
  -bbGt: various improvements/tweaks
  -seqReaderPlugin.m: support for reading Jpeg-BayerRGB8 (thanks Dayu Lin)
- -minor: jitterImage.m
+ -minor: jitterImage.m, char2img.m
 
 Version 2.64 (13-Apr-2012)
  -bbGt.m: major changes/overhaul, not fully backward compatible

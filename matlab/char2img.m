@@ -25,7 +25,7 @@ function masks = char2img( strings, h, pad )
 %
 % See also TXT2IMG
 %
-% Piotr's Image&Video Toolbox      Version 2.35
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -43,8 +43,8 @@ if(isempty(h0) || h0~=h)
 end
 % add padding to chars
 if(nargin<3 || isempty(pad)), pad=0; end
-charsPad=chars; pad=ones(h,pad,'uint8');
-for i=1:length(chars), charsPad{i}=[pad chars{i} pad]; end
+charsPad=chars; if(pad), pad=ones(h,pad,'uint8');
+  for i=1:length(chars), charsPad{i}=[pad chars{i} pad]; end; end
 % create actual string using templates
 if(~iscell(strings)), strings={strings}; end
 n=length(strings); masks=cell(1,n);
