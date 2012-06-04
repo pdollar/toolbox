@@ -536,7 +536,8 @@ while( k<n && iter<maxIter )
     bbs=bbs(kp,:); ids=ids(kp,:);
   end
   k=size(bbs,1); if(k0==k), iter=iter+1; else iter=0; end
-  if(k>n), bbs=bbs(1:n,:); k=n; end; tocStatus(tid,max(k/n,iter/maxIter));
+  if(k>n), bbs=bbs(randSample(k,n),:); k=n; end;
+  tocStatus(tid,max(k/n,iter/maxIter));
 end
 if( k<n ), warning('only generated %i of %i bbs',k,n); n=k; end %#ok<WNTAG>
 
