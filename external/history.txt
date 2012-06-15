@@ -1,4 +1,4 @@
-Version NEW
+Version 2.65 (14-June-2012)
  -bbApply>random(): rewrote to make more powerful
  -bbGt: various improvements/tweaks
  -seqReaderPlugin.m: support for reading Jpeg-BayerRGB8 (thanks Dayu Lin)
