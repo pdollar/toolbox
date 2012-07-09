@@ -18,7 +18,7 @@ function bbLabeler( objTypes, imgDir, resDir )
 %
 % See also bbGt, imRectRot
 %
-% Piotr's Image&Video Toolbox      Version 2.53
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -150,7 +150,7 @@ usePnts=0; imgApi.setImgDir(imgDir);
         ' * p-key or pnts-icon: toggle pnt creation on/off'
         ' * left-arrow or <<-icon: select previous bb'
         ' * right-arrow or >>-icon: select next bb'
-        ' * up/down-arrow a-key/z-key or dropbox: select bb label' 
+        ' * up/down-arrow a-key/z-key or dropbox: select bb label'
         ' * ctrl and +/- keys: increase/decrease contrast' };
       pos=get(0,'ScreenSize'); pos=[(pos(3)-400)/2 (pos(4)-520)/2 400 520];
       hHelp = figure('NumberTitle','off', 'Toolbar','auto', ...
@@ -410,7 +410,8 @@ usePnts=0; imgApi.setImgDir(imgDir);
     
     function setImgDir( imgDir1 )
       objApi.closeAnn(); imgDir=imgDir1;
-      imgFiles=[dir([imgDir '/*.jpg']); dir([imgDir '/*.png'])];
+      imgFiles=[dir([imgDir '/*.jpg']); dir([imgDir '/*.jpeg']); ...
+        dir([imgDir '/*.png']); dir([imgDir '/*.tif'])];
       imgFiles={imgFiles.name}; nImg=length(imgFiles); setImg(1);
       set(pTop.hImgNum,'String',['/' int2str(nImg)]);
     end

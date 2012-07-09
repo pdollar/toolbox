@@ -1,3 +1,6 @@
+Version NEW
+ -minor: bbLabeler.m
+
 Version 2.65 (14-June-2012)
  -bbApply>random(): rewrote to make more powerful
  -bbGt: various improvements/tweaks
