@@ -44,7 +44,7 @@ function [h,miss] = plotRoc( D, varargin )
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 2.63
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -89,7 +89,7 @@ end
 
 % set log axes
 if( logx==1 )
-  ticks=10.^(-8:0);
+  ticks=10.^(-8:8);
   set(gca,'XScale','log','XTick',ticks);
 end
 if( logy==1 )
