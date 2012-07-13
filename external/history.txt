@@ -1,5 +1,5 @@
 Version NEW
- -minor: bbLabeler.m, plotRoc.m
+ -minor: bbLabeler.m, plotRoc.m, seqReader/WriterPlugin.m
 
 Version 2.65 (14-June-2012)
  -bbApply>random(): rewrote to make more powerful

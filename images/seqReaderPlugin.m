@@ -29,7 +29,7 @@ function varargout = seqReaderPlugin( cmd, h, varargin )
 %
 % See also SEQIO, SEQWRITERPLUGIN
 %
-% Piotr's Image&Video Toolbox      Version 2.65
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -112,7 +112,7 @@ if(strcmp(ext,'png') && ~s), s=getImgFile('pngreadc');
 if(~s), error('Cannot find Matlab''s source image reader'); end
 % generate unique temporary name
 [tNm tNm]=fileparts(fName); t=clock; t=mod(t(end),1);
-tNm=sprintf('tmp_%s_%09i.%s',tNm,round((t+rand)/2*1e9),ext);
+tNm=sprintf('tmp_%s_%15i.%s',tNm,round((t+rand)/2*1e15),ext);
 % compute seek info for compressed images
 if(any(strcmp(ext,{'raw','brgb8'}))), assert(info.numFrames>0); else
   oName=[fName '-seek.mat']; n=info.numFrames; if(n==0), n=10^7; end

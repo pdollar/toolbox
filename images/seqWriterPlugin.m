@@ -37,7 +37,7 @@ function varargout = seqWriterPlugin( cmd, h, varargin )
 %
 % See also SEQIO, SEQREADERPLUGIN
 %
-% Piotr's Image&Video Toolbox      Version 2.63
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -123,7 +123,7 @@ nByte=info.width*info.height*nCh; info.imageSizeBytes=nByte;
 info.numFrames=0; info.trueImageSize=nByte+6+512-mod(nByte+6,512);
 % generate unique temporary name
 [tNm tNm]=fileparts(fName); t=clock; t=mod(t(end),1);
-tNm=sprintf('tmp_%s_%09i.%s',tNm,round((t+rand)/2*1e9),ext);
+tNm=sprintf('tmp_%s_%15i.%s',tNm,round((t+rand)/2*1e15),ext);
 end
 
 function info = addFrame( fid, info, tNm, encode, I, ts )
