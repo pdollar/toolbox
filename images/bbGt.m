@@ -86,7 +86,7 @@ function varargout = bbGt( action, varargin )
 % bbGt>loadAll, bbGt>evalRes, bbGt>showRes,  bbGt>compRoc, bbGt>cropRes,
 % bbGt>compOas, bbGt>compOa, bbGt>sampleWins, bbGt>sampleWinsDir
 %
-% Piotr's Image&Video Toolbox      Version 2.65
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
@@ -748,6 +748,7 @@ function [Is,scores,imgIds] = cropRes( gt, dt, imFs, varargin )
 %   .n          - [100] max number of windows to extract
 %   .show       - [1] figure for displaying results (or 0)
 %   .fStr       - ['%0.1f'] label{i}=num2str(score(i),fStr)
+%   .embed      - [0] if true embed dt/gt bbs into cropped windows
 %
 % OUTPUTS
 %  Is         - [dimsxn] extracted image windows
@@ -757,8 +758,9 @@ function [Is,scores,imgIds] = cropRes( gt, dt, imFs, varargin )
 % EXAMPLE
 %
 % See also bbGt, bbGt>evalRes
-dfs={'dims','REQ','pad',0,'type','fp','n',100,'show',1,'fStr','%0.1f'};
-[dims,pad,type,n,show,fStr]=getPrmDflt(varargin,dfs,1);
+dfs={'dims','REQ','pad',0,'type','fp','n',100,...
+  'show',1,'fStr','%0.1f','embed',0};
+[dims,pad,type,n,show,fStr,embed]=getPrmDflt(varargin,dfs,1);
 N=length(imFs); assert(length(gt)==N && length(dt)==N);
 % crop patches either in gt or dt according to type
 switch type
@@ -780,11 +782,17 @@ bbs=bbs(ord(1:n),:); ids=ids(ord(1:n));
 % extract patches from each image
 if(n==0), Is=[]; scores=[]; imgIds=[]; return; end;
 Is=cell(1,n); scores=zeros(1,n); imgIds=zeros(1,n);
-if(any(pad>0)), dims1=dims+2*pad; rs=dims1./dims; dims=dims1; end
+if(any(pad>0)), dims1=dims.*(1+pad); rs=dims1./dims; dims=dims1; end
 if(any(pad>0)), bbs=bbApply('resize',bbs,rs(1),rs(2)); end
 for i=1:N
-  locs=find(ids==i); if(isempty(locs)), continue; end
-  Is1=bbApply('crop',imread(imFs{i}),bbs(locs,1:4),'replicate',dims);
+  locs=find(ids==i); if(isempty(locs)), continue; end; I=imread(imFs{i});
+  if( embed )
+    if(any(strcmp(type,{'fp','dt'}))), bbs1=gt{i};
+    else bbs1=dt{i}(:,[1:4 6]); end
+    I=bbApply('embed',I,bbs1(bbs1(:,5)==0,1:4),'col',[255 0 0]);
+    I=bbApply('embed',I,bbs1(bbs1(:,5)==1,1:4),'col',[0 255 0]);
+  end
+  Is1=bbApply('crop',I,bbs(locs,1:4),'replicate',dims);
   for j=1:length(locs), Is{locs(j)}=Is1{j}; end;
   scores(locs)=bbs(locs,5); imgIds(locs)=i;
 end; Is=cell2array(Is);
