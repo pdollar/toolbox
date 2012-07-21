@@ -1,97 +1,76 @@
-function [Vx,Vy] = optFlowHorn( I1, I2, sigma, show )
+function [Vx,Vy] = optFlowHorn( I1, I2, sigma, show, alpha, nIter )
 % Calculate optical flow using Horn & Schunck.
 %
 % USAGE
-%  [Vx,Vy] = optFlowHorn( I1, I2, [sigma], [show] )
+%  [Vx,Vy] = optFlowHorn( I1, I2, [sigma], [show], [alpha], [nIter] )
 %
 % INPUTS
 %  I1, I2      - input images to calculate flow between
 %  sigma       - [1] amount to smooth by (may be 0)
 %  show        - [0] figure to use for display (no display if == 0)
+%  alpha       - [.1] smoothness constraint
+%  nIter       - [100] number of iterations (speed vs accuracy)
 %
 % OUTPUTS
 %  Vx, Vy      - x,y components of flow  [Vx>0->right, Vy>0->down]
 %
 % EXAMPLE
 %
-% See also OPTFLOWCORR, OPTFLOWLK
+% See also optFlowCorr, optFlowLk
 %
-% Piotr's Image&Video Toolbox      Version 2.0
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Lesser GPL [see external/lgpl.txt]
 
-if (nargin < 3); sigma=1; end;
-if (nargin < 4); show=0; end;
+% default parameters
+if( nargin<3 || isempty(sigma)); sigma=1; end;
+if( nargin<4 || isempty(show)); show=0; end;
+if( nargin<5 || isempty(alpha)); alpha=.1; end;
+if( nargin<6 || isempty(nIter)); nIter=1000; end;
 
-if( ndims(I1)~=2 || ndims(I2)~=2 )
-  error('Only works for 2d input images.');
-end
-if( any(size(I1)~=size(I2)) )
-  error('Input images must have same dimensions.');
-end
-I1 = gaussSmooth(I1,sigma,'smooth');
-I2 = gaussSmooth(I2,sigma,'smooth');
+% error checking
+if( ndims(I1)~=2 || ndims(I2)~=2 || any(size(I1)~=size(I2)) )
+  error('Input images must be 2D and have same dimensions.'); end
 
-% ALGORITHM:
-[N1,N2]=size(I1);
+% smooth images
+I1 = single(gaussSmooth(I1,sigma,'same'));
+I2 = single(gaussSmooth(I2,sigma,'same'));
 
-PI1=zeros(N1+2,N2+2); PI1(2:end-1,2:end-1)=I1;
-[PI11,PI12,PI13,PI14,PI15]=shifted(I1);
+% compute derivatives (averaging over 2x2 neighborhoods)
+A00=shift(I1,0,0); A10=shift(I1,1,0);
+A01=shift(I1,0,1); A11=shift(I1,1,1);
+B00=shift(I2,0,0); B10=shift(I2,1,0);
+B01=shift(I2,0,1); B11=shift(I2,1,1);
+Ex=0.25*((A01+B01+A11+B11)-(A00+B00+A10+B10));
+Ey=0.25*((A10+B10+A11+B11)-(A00+B00+A01+B01));
+Et=0.25*((B00+B10+B01+B11)-(A00+A10+A01+A11));
+Ex([1 end],:)=0; Ex(:,[1 end])=0;
+Ey([1 end],:)=0; Ey(:,[1 end])=0;
+Et([1 end],:)=0; Et(:,[1 end])=0;
 
-PI2=zeros(N1+2,N2+2); PI2(2:end-1,2:end-1)=I2;
-[PI21,PI22,PI23,PI24,PI25]=shifted(I2);
-
-Ex=clamp(0.25*((PI13+PI23+PI15+PI25)-(PI1+PI2+PI12+PI22)));
-Ey=clamp(0.25*((PI12+PI22+PI15+PI25)-(PI1+PI2+PI13+PI23)));
-Et=clamp(0.25*((PI2+PI22+PI23+PI25)-(PI1+PI12+PI13+PI15)));
-
-% initialize the values of U and V;
-lambda=10;
-den=lambda./(1+lambda*(Ex.*Ex+Ey.*Ey));
-U=zeros(N1,N2); V = U;
-niter=1000;
-for i = 1:niter
-  [U1,U2,U3,U4,disc]=shifted(U); %#ok<NASGU>
-  [V1,V2,V3,V4,disc]=shifted(V); %#ok<NASGU>
-
-  Ub=(U1+U2+U3+U4)/4;
-  Vb=(V1+V2+V3+V4)/4;
-
-  nen=(Ex.*Ub+Ey.*Vb+Et).*den;
-  Un=Ub-Ex.*nen;
-  Vn=Vb-Ey.*nen;
-  U=Un(2:end-1,2:end-1);
-  V=Vn(2:end-1,2:end-1);
+% initialize the values of U and V and iterate
+den=1./(alpha*alpha + Ex.*Ex + Ey.*Ey);
+[m,n]=size(I1); U=zeros(m,n,'single'); V = U;
+for i = 1:nIter
+  Ub=.25*(shift(U,-1,0)+shift(U,1,0)+shift(U,0,-1)+shift(U,0,1));
+  Vb=.25*(shift(V,-1,0)+shift(V,1,0)+shift(V,0,-1)+shift(V,0,1));
+  num=(Ex.*Ub + Ey.*Vb + Et).*den;
+  U=Ub-Ex.*num; U=U(2:end-1,2:end-1);
+  V=Vb-Ey.*num; V=V(2:end-1,2:end-1);
 end
 Vx = V; Vy = U;
 
 % show quiver plot on top of reliab
 if( show )
-  figure(show); clf; im( I1 );
-  hold('on'); quiver( Vx, Vy, 0,'-b' ); hold('off');
+  figure(show); clf; im(I1); hold('on');
+  quiver( Vx, Vy, 0,'-b' ); hold('off');
 end
 
-function I=clamp(I)
-I(1,:)=0;
-I(end,:)=0;
-I(:,1)=0;
-I(:,end)=0;
+end
 
-function [s1,s2,s3,s4,s5]=shifted(I)
-[N1,N2]=size(I);
-
-s1 = zeros(N1+2,N2+2);
-s1(3:end,2:end-1)=I; %i-1
-
-s2 = zeros(N1+2,N2+2);
-s2(2:end-1,1:end-2)=I; %j+1
-
-s3 = zeros(N1+2,N2+2);
-s3(1:end-2,2:end-1)=I; %i+1
-
-s4 = zeros(N1+2,N2+2);
-s4(2:end-1,3:end)=I;  %j-1
-
-s5 = zeros(N1+2,N2+2);
-s5(1:end-2,1:end-2)=I; % i+1,j+1
+function J = shift( I, x, y )
+% shift I by -1<=x,y<=1 pixels
+[h,w]=size(I); J=zeros(h+2,w+2,'single');
+J(2-y:end-1-y,2-x:end-1-x)=I;
+end

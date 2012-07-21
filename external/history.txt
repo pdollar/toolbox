@@ -1,4 +1,5 @@
 Version NEW
+ -optFlowHorn.m: major rewrite/optimization
  -minor: bbLabeler.m, plotRoc.m, seqReader/WriterPlugin.m, bbGt.m
 
 Version 2.65 (14-June-2012)
