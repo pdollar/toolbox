@@ -1,3 +1,6 @@
+Version NEW
+ -removed obsolete mac binaries
+
 Version 2.66 (4-Aug-2012)
  -optFlowHorn.m: major rewrite/optimization, coarse-to-fine computation
  -minor: bbLabeler.m, plotRoc.m, seqReader/WriterPlugin.m, bbGt.m
