@@ -28,9 +28,9 @@ function C = mat2cell2( X, parts )
 % See also MAT2CELL, CELL2ARRAY, CELL2MAT
 %
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
-% Licensed under the Lesser GPL [see external/lgpl.txt]
+% Licensed under the Simplified BSD License [see external/bsd.txt]
 
 siz = size(X); nd = ndims(X);
 [parts,er] = checkNumArgs( parts, size(siz), 0, 2 ); error(er);

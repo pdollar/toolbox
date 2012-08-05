@@ -38,9 +38,9 @@ function mask = maskEllipse( mRows, nCols, varargin )
 % See also PLOTELLIPSE, GAUSS2ELLIPSE, MASKCIRCLE, MASKGAUSSIANS, IMMLGAUSS
 %
 % Piotr's Image&Video Toolbox      Version 2.40
-% Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
-% Licensed under the Lesser GPL [see external/lgpl.txt]
+% Licensed under the Simplified BSD License [see external/bsd.txt]
 
 if( nargin==7 )
   [cRow, cCol, ra, rb, phi] = deal( varargin{:} );

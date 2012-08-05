@@ -23,9 +23,9 @@ function FR = FbApply2d( I, FB, shape, show )
 % See also CONV2, FBMAKE
 %
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
-% Licensed under the Lesser GPL [see external/lgpl.txt]
+% Licensed under the Simplified BSD License [see external/bsd.txt]
 
 if( nargin<3 || isempty(shape)); shape = 'full'; end
 if( nargin<4 || isempty(show)); show=0; end

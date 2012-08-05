@@ -16,9 +16,9 @@ function diskFill( tDir, nGig )
 % See also
 %
 % Piotr's Image&Video Toolbox      Version 2.61
-% Copyright 2011 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
-% Licensed under the Lesser GPL [see external/lgpl.txt]
+% Licensed under the Simplified BSD License [see external/bsd.txt]
 
 nm = sprintf('%s/garbage_%s_%05i_%%05i.mat',tDir,date,round(rand*10^5));
 tid = ticStatus();

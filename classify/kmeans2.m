@@ -52,9 +52,9 @@ function [ IDX, C, d ] = kmeans2( X, k, varargin )
 % See also DEMOCLUSTER
 %
 % Piotr's Image&Video Toolbox      Version 2.52
-% Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
-% Licensed under the Lesser GPL [see external/lgpl.txt]
+% Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % get input args
 dfs = {'nTrial',1, 'maxIter',100, 'display',0, 'rndSeed',[],...

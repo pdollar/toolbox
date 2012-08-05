@@ -31,9 +31,9 @@ function clrs = uniqueColors( m, n, show, offset )
 % See also hsv2rgb, colormap, hsv, jet
 %
 % Piotr's Image&Video Toolbox      Version 2.51
-% Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
-% Licensed under the Lesser GPL [see external/lgpl.txt]
+% Licensed under the Simplified BSD License [see external/bsd.txt]
 
 if(nargin<3 || isempty(show)), show=0; end
 if(nargin<4 || isempty(offset)), offset=1; end

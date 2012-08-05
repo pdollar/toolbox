@@ -48,9 +48,9 @@ function I = nlfiltersep( I, dims, shape, fun, varargin )
 % See also NLFILTER, LOCALSUM
 %
 % Piotr's Image&Video Toolbox      Version 2.53
-% Copyright 2010 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
-% Licensed under the Lesser GPL [see external/lgpl.txt]
+% Licensed under the Simplified BSD License [see external/bsd.txt]
 
 params=varargin; nd=ndims(I); siz=size(I);
 [dims,er]=checkNumArgs(dims,size(siz),0,1); error(er);

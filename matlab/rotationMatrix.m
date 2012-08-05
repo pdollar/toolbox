@@ -89,9 +89,9 @@ function varargout=rotationMatrix(varargin)
 % See also
 %
 % Piotr's Image&Video Toolbox      Version 2.35
-% Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
-% Licensed under the Lesser GPL [see external/lgpl.txt]
+% Licensed under the Simplified BSD License [see external/bsd.txt]
 
 %%% Find the closest orthonormal matrix
 if all(size(varargin{1})==[3 3]) && nargout<=1

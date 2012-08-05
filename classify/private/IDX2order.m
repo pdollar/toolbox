@@ -21,9 +21,9 @@ function order = IDX2order( IDX )
 % See also DISTMATRIXSHOW
 %
 % Piotr's Image&Video Toolbox      Version 2.0
-% Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
-% Licensed under the Lesser GPL [see external/lgpl.txt]
+% Licensed under the Simplified BSD License [see external/bsd.txt]
 
 k = max(IDX);  n = length(IDX);
 order = zeros(1,n);  count = 0;

@@ -15,13 +15,13 @@ function toolboxUpdateHeader
 % Piotr's Image&Video Toolbox      Version 2.66
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
-% Licensed under the Lesser GPL [see external/lgpl.txt]
+% Licensed under the Simplified BSD License [see external/bsd.txt]
 
 header={
   '% Piotr''s Image&Video Toolbox      Version 2.66'; ...
   '% Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]'; ...
   '% Please email me if you find bugs, or have suggestions or questions!'; ...
-  '% Licensed under the Lesser GPL [see external/lgpl.txt]'};
+  '% Licensed under the Simplified BSD License [see external/bsd.txt]'};
 
 % must start in /toolbox base directory
 cd(fileparts(mfilename('fullpath'))); cd('../');
@@ -54,27 +54,9 @@ for i=1:nHeader; assert( strfind(lines{loc+i-1},header{i}(1:10))>0 ); end
 
 % check if first lines changed, if so update; optionally update rest
 if(any(strfind(lines{loc},'NEW'))); lines{loc}=header{1}; else return; end
-if(1), for i=2:nHeader; lines{loc+i-1}=header{i}; end; end
+for i=2:nHeader; lines{loc+i-1}=header{i}; end
 assert(isempty(lines{loc-1}) || strcmp(lines{loc-1},'%'));
-if(1), lines{loc-1} = '%'; end
-writeFile( fName, lines );
-
-end
-
-function moveComment( fName ) %#ok<DEFNU>
-lines=readFile(fName); n=length(lines);
-
-% check first non-comment lines is "function ..." if not, we're done
-for i=1:n; L=lines{i}; if(~isempty(L)&&L(1)~='%'), break; end; end
-if(i==n || ~strcmp(lines{i}(1:8),'function')),
-  warning([fName ' not a function']); return; %#ok<WNTAG>
-end; if(i==1), return; end;
-
-% Move main comment to appear after "function ..."
-% This FAILS if func spans multiple lines (use mlint to find failures)!!!
-if(~isempty(lines{i+1})), start=i+1; else start=i+2; end;
-lines={lines{i} lines{[1:i-1 start:end]}}; lines=lines';
-writeFile( fName, lines );
+lines{loc-1} = '%'; writeFile( fName, lines );
 
 end
 

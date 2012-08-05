@@ -16,9 +16,9 @@ function V = hogDraw( H, w )
 % See also hog
 %
 % Piotr's Image&Video Toolbox      Version 2.41
-% Copyright 2009 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
-% Licensed under the Lesser GPL [see external/lgpl.txt]
+% Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % fold 4 normalizations
 nFold=4; s=size(H); s(3)=s(3)/nFold; w0=H; H=zeros(s);
