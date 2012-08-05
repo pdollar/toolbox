@@ -20,36 +20,38 @@
 <div class="box"><strong>Calculate optical flow using Horn &amp; Schunck.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function [Vx,Vy] = optFlowHorn( I1, I2, sigma, show ) </strong></div>
+<div class="box"><strong>function [Vx,Vy] = optFlowHorn( I1, I2, sigma, show, alpha, nIter ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment"> Calculate optical flow using Horn &amp; Schunck.
 
  USAGE
-  [Vx,Vy] = optFlowHorn( I1, I2, [sigma], [show] )
+  [Vx,Vy] = optFlowHorn( I1, I2, [sigma], [show], [alpha], [nIter] )
 
  INPUTS
   I1, I2      - input images to calculate flow between
   sigma       - [1] amount to smooth by (may be 0)
   show        - [0] figure to use for display (no display if == 0)
+  alpha       - [.1] smoothness constraint
+  nIter       - [500] number of iterations (speed vs accuracy)
 
  OUTPUTS
   Vx, Vy      - x,y components of flow  [Vx&gt;0-&gt;right, Vy&gt;0-&gt;down]
 
  EXAMPLE
 
- See also <a href="optFlowCorr.html" class="code" title="function [Vx,Vy,reliab] = optFlowCorr( I1, I2, patchR, searchR,sigma, thr, show )">OPTFLOWCORR</a>, <a href="optFlowLk.html" class="code" title="function [Vx,Vy,reliab]=optFlowLk( I1, I2, winN,winSig, sigma, thr, show )">OPTFLOWLK</a>
+ See also <a href="optFlowCorr.html" class="code" title="function [Vx,Vy,reliab] = optFlowCorr( I1, I2, patchR, searchR,sigma, thr, show )">optFlowCorr</a>, <a href="optFlowLk.html" class="code" title="function [Vx,Vy,reliab]=optFlowLk( I1, I2, winN,winSig, sigma, thr, show )">optFlowLk</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.0
- Copyright 2008 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 2.66
+ Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
- Licensed under the Lesser GPL [see external/lgpl.txt]</pre></div>
+ Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="gaussSmooth.html" class="code" title="function [L,filters] = gaussSmooth( I, sigmas, shape, radius )">gaussSmooth</a>	Applies Gaussian smoothing to a (multidimensional) image.</li><li><a href="im.html" class="code" title="function varargout = im( I, range, extraInf )">im</a>	Function for displaying grayscale images.</li></ul>
+<li><a href="gaussSmooth.html" class="code" title="function [L,filters] = gaussSmooth( I, sigmas, shape, radius )">gaussSmooth</a>	Applies Gaussian smoothing to a (multidimensional) image.</li><li><a href="im.html" class="code" title="function varargout = im( I, range, extraInf )">im</a>	Function for displaying grayscale images.</li><li><a href="imResample.html" class="code" title="function B = imResample( A, scale, method, norm )">imResample</a>	Fast bilinear image downsampling/upsampling.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>
