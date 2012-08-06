@@ -17,7 +17,7 @@ function toolboxGenDoc
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 2.41
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -28,13 +28,14 @@ addpath([pwd '/external/m2html']);
 
 % delete old doc
 delete('doc/*.*');
+delete('doc/channels/*.*');
 delete('doc/classify/*.*');
 delete('doc/filters/*.*');
 delete('doc/images/*.*');
 delete('doc/matlab/*.*');
 
 % run m2html
-params = {'mfiles',{'classify','images','filters','matlab'}};
+params = {'mfiles',{'channels','classify','images','filters','matlab'}};
 params = [params {'htmldir','doc','recursive','on','source','off'}];
 params = [params {'template','frame-piotr','index','menu','global','on'}];
 m2html(params{:});
@@ -67,7 +68,7 @@ rmdir('doc/classify/private','s')
 rmdir('doc/images/private','s')
 
 % postprocess each html file
-dirs = {'classify','images','filters','matlab'};
+dirs = {'channels','classify','images','filters','matlab'};
 for d=1:length(dirs)
   fNames = dir(['doc/' dirs{d} '/*.html']); fNames={fNames.name};
   for j=1:length(fNames), postProcess( ['doc/' dirs{d} '/' fNames{j} ]); end
