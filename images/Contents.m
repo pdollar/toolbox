@@ -24,7 +24,6 @@
 %
 % Image deformation:
 %   imNormalize       - Various ways to normalize a (multidimensional) image.
-%   imResample        - Fast bilinear image downsampling/upsampling.
 %   imShrink          - Used to shrink a multidimensional array I by integer amount.
 %   imtransform2      - Applies a linear or nonlinear transformation to an image I.
 %   textureMap        - Maps texture in I according to rsDst and csDst.
@@ -67,7 +66,6 @@
 %   localSum          - Fast routine for box filtering.
 %
 % Miscellaneous:
-%   hog               - Efficiently compute histogram of oriented gradient (HOG) features.
 %   hogDraw           - Create visualization of hog descriptor.
 %   imagesAlign       - Fast and robust estimation of homography relating two images.
 %   imMlGauss         - Calculates max likelihood params of Gaussian that gave rise to image G.
