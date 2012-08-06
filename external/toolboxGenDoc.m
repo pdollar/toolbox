@@ -26,52 +26,31 @@ function toolboxGenDoc
 cd(fileparts(mfilename('fullpath'))); cd('../');
 addpath([pwd '/external/m2html']);
 
-% delete old doc
-delete('doc/*.*');
-delete('doc/channels/*.*');
-delete('doc/classify/*.*');
-delete('doc/filters/*.*');
-delete('doc/images/*.*');
-delete('doc/matlab/*.*');
+% delete old doc and run m2html
+if(exist('doc/','dir')), rmdir('doc/','s'); end
+dirs={'channels','classify','images','filters','matlab'};
+m2html('mfiles',dirs,'htmldir','doc','recursive','on','source','off',...
+  'template','frame-piotr','index','menu','global','on');
 
-% run m2html
-params = {'mfiles',{'channels','classify','images','filters','matlab'}};
-params = [params {'htmldir','doc','recursive','on','source','off'}];
-params = [params {'template','frame-piotr','index','menu','global','on'}];
-m2html(params{:});
+% copy custom menu.html and history file
+sDir='external/m2html/templates/';
+copyfile([sDir 'menu-for-frame-piotr.html'],'doc/menu.html');
+copyfile('external/history.txt','doc/history.txt');
 
-% copy custom menu.html
-copyfile('external\m2html\templates\menu-for-frame-piotr.html','doc/menu.html')
-
-% copy history file
-copyfile('external\history.txt','doc/history.txt')
-
-% remove links to .svn and private in the menu.html files
-d = { './doc' };
-while ~isempty(d)
-  dTmp = dir(d{1});
-  for i = 1 : length(dTmp)
-    name = dTmp(i).name;
-    if strcmp( name,'.') || strcmp( name,'..'); continue; end
-    if dTmp(i).isdir; d{end+1} = [ d{1} '/' name ]; continue; end %#ok<AGROW>
-    if ~strcmp( name,'menu.html'); continue; end
-    fid = fopen( [ d{1} '/' name ], 'r' ); c = fread(fid, '*char')'; fclose( fid );
-    c = regexprep( c, '<li>([^<]*[<]?[^<]*)\.svn([^<]*[<]?[^<]*)</li>', '');
-    c = regexprep( c, '<li>([^<]*[<]?[^<]*)private([^<]*[<]?[^<]*)</li>', '');
-    fid = fopen( [ d{1} '/' name ], 'w' ); fwrite( fid, c ); fclose( fid );
-  end
-  d(1) = [];
+% remove links to private/ in the menu.html files and remove private/ dirs
+for i=1:length(dirs)
+  name = ['doc/' dirs{i} '/menu.html'];
+  fid=fopen(name,'r'); c=fread(fid,'*char')'; fclose(fid);
+  c=regexprep(c,'<li>([^<]*[<]?[^<]*)private([^<]*[<]?[^<]*)</li>','');
+  fid=fopen(name,'w'); fwrite(fid,c); fclose(fid);
+  name = ['doc/' dirs{i} '/private/'];
+  if(exist(name,'dir')), rmdir(name,'s'); end
 end
 
-% remove /private directories
-rmdir('doc/classify/private','s')
-rmdir('doc/images/private','s')
-
 % postprocess each html file
-dirs = {'channels','classify','images','filters','matlab'};
 for d=1:length(dirs)
-  fNames = dir(['doc/' dirs{d} '/*.html']); fNames={fNames.name};
-  for j=1:length(fNames), postProcess( ['doc/' dirs{d} '/' fNames{j} ]); end
+  fs=dir(['doc/' dirs{d} '/*.html']); fs={fs.name};
+  for j=1:length(fs), postProcess(['doc/' dirs{d} '/' fs{j}]); end
 end
 
 end
