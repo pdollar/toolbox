@@ -1,78 +1,78 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
                 "http://www.w3.org/TR/REC-html40/loose.dtd">
-
 <html>
 <head>
   <title>Piotr's Image & Video Matlab Toolbox</title>
-  <meta name="keywords" content="computer vision, images, video, image processing, toolbox">
-  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-  <meta name="robots" content="index, follow">
-  <link type="text/css" rel="stylesheet" href="./m2html.css">
+  <meta name="keywords" content="computer vision, images, video, features, image processing, toolbox" />
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta name="robots" content="index, follow" />
+  <link type="text/css" rel="stylesheet" href="./m2html.css" />
 </head>
-<BODY><A name=_top></A>
+<body><a name=_top></a>
 
-<H1>Overview</H1>
-<H2>DESCRIPTION<A href="#_top"><IMG alt=^ src="up.png" border=0></A></H2>
-<DIV class=box>
- <P><STRONG>This toolbox is meant to facilitate the manipulation of images and
+<h1>Overview</h1>
+<h2>DESCRIPTION<a href="#_top"><img alt=^ src="up.png" border=0 /></a></h2>
+<div class=box><p><strong>
+ This toolbox is meant to facilitate the manipulation of images and
  video in Matlab. Its purpose is to complement, not replace, Matlab's Image
  Processing Toolbox, and in fact it requires that the Matlab Image Toolbox
  be installed. Emphasis has been placed on code efficiency and
- code reuse.  Thanks to everyone who has given me feedback and suggestions --
- you've helped make this toolbox more useful and easier to
- use.</STRONG></P>
-</DIV>
+ code reuse.  Thanks to everyone who has given me feedback --
+ you've helped make this toolbox more useful and easier to use.
+</strong></p></div>
 
-<H2>CONTENTS<A href="#_top"><IMG alt=^ src="up.png" border=0></A></H2>
-<DIV class=box>
- <STRONG>The toolbox is divided into 4 parts, arranged by directory:</STRONG>
-  <UL style="LIST-STYLE-IMAGE: url(./matlabicon.gif)">
-   <LI><A href="classify/Contents.html">classify</A> Fast clustering, random ferns, RBF functions, PCA, etc. </LI>
-   <LI><A href="filters/Contents.html">filters</A> Routines for filtering images.</LI>
-   <LI><A href="images/Contents.html">images</A> Routines for manipulating and displaying images and videos.</LI>
-   <LI><A href="matlab/Contents.html">matlab</A> General Matlab functions that should have been a part of Matlab.</LI>
-  </UL>
-</DIV>
+<h2>CONTENTS<a href="#_top"><img alt=^ src="up.png" border=0 /></a></h2>
+<div class=box>
+ <strong>The toolbox is divided into 4 parts, arranged by directory:</strong>
+  <ul style="LIST-STYLE-IMAGE: url(./matlabicon.gif)">
+   <li><a href="channels/Contents.html">channels</a> Robust image features, including HOG, for fast object detection. </li>
+   <li><a href="classify/Contents.html">classify</a> Fast clustering, random ferns, RBF functions, PCA, etc. </li>
+   <li><a href="filters/Contents.html">filters</a> Routines for filtering images.</li>
+   <li><a href="images/Contents.html">images</a> Routines for manipulating and displaying images and videos.</li>
+   <li><a href="matlab/Contents.html">matlab</a> General Matlab functions that should have been a part of Matlab.</li>
+  </ul>
+</div>
 
-<H2>DOWNLOAD<A href="#_top"><IMG alt=^ src="up.png" border=0></A></H2>
-<DIV class=box>
- <P><STRONG>For version history click <a href="history.txt">here.</a>
- This code is licensed under the <a href="http://en.wikipedia.org/wiki/BSD_licenses" target="blank">Simplified BSD License.</a></STRONG></P>
- <UL>
-  <LI><A href="../piotr_toolbox_V2.66.zip">Version 2.66</A> &nbsp; Aug. 04, 2012
-  <LI><A href="../piotr_toolbox_V1.50.zip">Version 1.50</A> &nbsp; July 06, 2007
-  <LI><A href="../piotr_toolbox_V1.03.zip">Version 1.03</A> &nbsp; May. 03, 2006
- </UL>
- </DIV>
+<h2>DOWNLOAD<a href="#_top"><img alt=^ src="up.png" border=0 /></a></h2>
+<div class="box">
+ <p><strong>For version history click <a href="history.txt">here.</a>
+ This code is licensed under the <a href="http://en.wikipedia.org/wiki/BSD_licenses" target="blank">Simplified BSD License.</a></strong></p>
+ <ul>
+  <li><a href="../piotr_toolbox_V2.66.zip">Version 2.66</a> &nbsp; Aug. 04, 2012 &nbsp; [current stable version]
+  <li><a href="../piotr_toolbox_V1.03.zip">Version 1.03</a> &nbsp; May. 03, 2006 &nbsp; [compatible with cuboids code]
+  <li><a href="../">All Versions</a>
+ </ul>
+ </div>
 
-</DIV>
+</div>
 
-<H2>INSTALL<A href="#_top"><IMG alt=^ src="up.png" border=0></A></H2>
-<DIV class=box>
- <P><STRONG>Simply unzip, then add all directories to the Matlab path:</STRONG>
- <BR>&nbsp; &gt;&gt; addpath(genpath('c:\toolbox')); savepath;</P>
- <P>If needed, run the compile script for the mex files:
-   <BR>&nbsp; &gt;&gt; toolboxCompile;
-   <BR>Note: 64 bit Windows/Linux binaries are already included.
- </P> 
-</DIV>
+<h2>INSTALL<a href="#_top"><img alt=^ src="up.png" border=0 /></a></h2>
+<div class=box>
+ <p><strong>Simply unzip, then add all directories to the Matlab path:</strong>
+ <br/>&nbsp; &gt;&gt; addpath(genpath('c:\toolbox')); savepath;</p>
+ <p>If needed, run the compile script for the mex files:
+   <br/>&nbsp; &gt;&gt; toolboxCompile;
+   <br/>Note: 64 bit Windows/Linux binaries are already included.
+ </p> 
+</div>
 
-<H2>CITE<A href="#_top"><IMG alt=^ src="up.png" border=0></A></H2>
-<DIV class=box>
-<P><STRONG>If you use use this code in a publication, I would be grateful if you cite: </STRONG></P>
+<h2>CITE<a href="#_top"><img alt=^ src="up.png" border=0 /></a></h2>
+<div class=box>
+<p><strong>If you use use this code in a publication, I would be grateful if you cite: </strong></p>
 @misc{PMT,
-<br />&nbsp;&nbsp; author = {Piotr Doll\'ar},
-<br />&nbsp;&nbsp; title = {{P}iotr's {I}mage and {V}ideo {M}atlab {T}oolbox ({PMT})},
-<br />&nbsp;&nbsp; howpublished = {\url{http://vision.ucsd.edu/~pdollar/toolbox/doc/index.html}}
-<br />}
-</DIV>
+<br/>&nbsp;&nbsp; author = {Piotr Doll\'ar},
+<br/>&nbsp;&nbsp; title = {{P}iotr's {I}mage and {V}ideo {M}atlab {T}oolbox ({PMT})},
+<br/>&nbsp;&nbsp; howpublished = {\url{http://vision.ucsd.edu/~pdollar/toolbox/doc/index.html}}
+<br/>}
+<br/><br/>Use of <a href="channels/Contents.html">channels</a> requires separate citations.
+</div>
 
-<H2>CONTACT<A href="#_top"><IMG alt=^ src="up.png" border=0></A></H2>
-<DIV class=box>
+<h2>CONTACT<a href="#_top"><img alt=^ src="up.png" border=0 /></a></h2>
+<div class=box>
  If you have a question or a suggestion, or if you find a bug,
- please email me at<FONT style="BACKGROUND-COLOR: #f5f5f5" color=#0000ff>
- pdollar-at-caltech.edu</FONT></DIV></FONT>
-</DIV>
+ please email me at<font style="BACKGROUND-COLOR: #f5f5f5" color=#0000ff>
+ pdollar-at-caltech.edu</font></div>
+</div>
 
 <!-- Start of Google Analytics Code -->
 <script type="text/javascript">
@@ -86,5 +86,5 @@ pageTracker._trackPageview();
 </script>
 <!-- end of Google Analytics Code -->
 
-</BODY>
+</body>
 </html>
