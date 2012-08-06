@@ -47,10 +47,9 @@ function [lambdas,as,scales,fs] = chnsScaling( pPyramid, Is, show )
 % See also chnsCompute, chnsPyramid, fevalImages
 %
 % Piotr's Image&Video Toolbox      Version NEW
-% Copyright 2011 Piotr Dollar & Ron Appel
-% Contact [pdollar-at-caltech.edu] & [appel-at-caltech.edu]
-% Please email us if you find bugs, or have suggestions or questions!
-% Licensed under the Lesser GPL [see external/lgpl.txt]
+% Copyright 2012 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
+% Please email me if you find bugs, or have suggestions or questions!
+% Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % get additional input arguments
 if(nargin<3 || isempty(show)), show=1; end

@@ -30,9 +30,9 @@ function B = imResample( A, scale, method, norm )
 % See also imresize
 %
 % Piotr's Image&Video Toolbox      Version NEW
-% Copyright 2011 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
-% Licensed under the Lesser GPL [see external/lgpl.txt]
+% Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % figure out method and get target dimensions
 if( nargin<3 || isempty(method) ), bilinear=1; else
