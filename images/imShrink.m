@@ -1,14 +1,13 @@
 function I = imShrink( I, ratios )
 % Used to shrink a multidimensional array I by integer amount.
 %
-% ratios specifies the block dimensions.  For example, ratios=[2 3 4]
-% shrinks a 3 dimensional array I by a factor of 2 along the first
-% dimension, 3 along the secong and 4 along the third.  ratios must be
-% strictly positive integers.  A value of 1 means no shrinking is done
-% along a given dimension.
-%
-% Can handle very large arrays in a memory efficient manner. All the work
-% is done by localSum with the 'block' shape flag.
+% ratios specifies block dimensions. For example, ratios=[2 3 4] shrinks a
+% 3 dimensional array I by a factor of 2 along the first dimension, 3 along
+% the secong and 4 along the third. ratios must be positive integers. A
+% value of 1 means no shrinking is done along a given dimension. Can handle
+% very large arrays in a memory efficient manner. All the work is done by
+% localSum with the 'block' shape flag. Note that for downsampling by 2x or
+% 4x for 2D arrays imResample is much faster.
 %
 % USAGE
 %  I = imShrink( I, ratios )
@@ -25,9 +24,9 @@ function I = imShrink( I, ratios )
 %  I2 = imShrink( I, [2 2] );
 %  figure(1); im(I); figure(2); im(I2);
 %
-% See also IMRESIZE, LOCALSUM
+% See also imResample, localSum
 %
-% Piotr's Image&Video Toolbox      Version 2.12
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
