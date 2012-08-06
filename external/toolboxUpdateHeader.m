@@ -12,7 +12,7 @@ function toolboxUpdateHeader
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 2.66
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -25,7 +25,7 @@ header={
 
 % must start in /toolbox base directory
 cd(fileparts(mfilename('fullpath'))); cd('../');
-dirs={ 'classify', 'classify/private', 'filters', 'images', ...
+dirs={ 'channels', 'classify', 'classify/private', 'filters', 'images', ...
   'images/private', 'matlab', 'external' };
 
 % update the headers
@@ -53,8 +53,9 @@ if(loc>n-nHeader+1), warning([fName ' no header']); return; end %#ok<WNTAG>
 for i=1:nHeader; assert( strfind(lines{loc+i-1},header{i}(1:10))>0 ); end
 
 % check if first lines changed, if so update; optionally update rest
-if(any(strfind(lines{loc},'NEW'))); lines{loc}=header{1}; else return; end
-for i=2:nHeader; lines{loc+i-1}=header{i}; end
+if(~any(strfind(lines{loc},'NEW'))); return; end
+lines{loc+1}(13:16)=header{2}(13:16);
+for i=[1 3:nHeader]; lines{loc+i-1}=header{i}; end
 assert(isempty(lines{loc-1}) || strcmp(lines{loc-1},'%'));
 lines{loc-1} = '%'; writeFile( fName, lines );
 
