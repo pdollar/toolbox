@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Contents</title>
+  <meta name="keywords" content="Contents">
+  <meta name="description" content="CHANNELS">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html channels -->
+<h1>Contents
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>CHANNELS</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> CHANNELS
+ See also
+
+ Fast channel feature computation code based on the papers:
+  [1] P. Dollár, Z. Tu, P. Perona and S. Belongie
+   &quot;Integral Channel Features&quot;, BMVC 2009.
+  [2] P. Dollár, S. Belongie and P. Perona
+   &quot;The Fastest Pedestrian Detector in the West,&quot; BMVC 2010.
+  [3] P. Dollár, R. Appel and W. Kienzle
+   &quot;Crosstalk Cascades for Frame-Rate Pedestrian Detection,&quot; ECCV 2012.
+ Please cite a subset of the above papers if you end up using the code.
+ Code written and maintained by Piotr Dollar and Ron Appel.
+
+ Channels:
+   <a href="chnsCompute.html" class="code" title="function chns = chnsCompute( I, varargin )">chnsCompute</a>  - Compute channel features at a single scale given an input image.
+   <a href="chnsPyramid.html" class="code" title="function pyramid = chnsPyramid( I, varargin )">chnsPyramid</a>  - Compute channel feature pyramid given an input image.
+   <a href="chnsScaling.html" class="code" title="function [lambdas,as,scales,fs] = chnsScaling( pPyramid, Is, show )">chnsScaling</a>  - Compute lambdas for channel power law scaling.
+
+ Constant time image smoothing:
+   <a href="convBox.html" class="code" title="function J = convBox( I, r, s, nomex )">convBox</a>      - Extremely fast 2D image convolution with a box filter.
+   <a href="convMax.html" class="code" title="function J = convMax( I, r, nomex )">convMax</a>      - Extremely fast 2D image convolution with a max filter.
+   <a href="convTri.html" class="code" title="function J = convTri( I, r, s, nomex )">convTri</a>      - Extremely fast 2D image convolution with a triangle filter.
+
+ Gradients and gradient histograms:
+   <a href="gradient2.html" class="code" title="function [Gx,Gy] = gradient2( I )">gradient2</a>    - Compute numerical gradients along x and y directions.
+   <a href="gradientHist.html" class="code" title="function H = gradientHist( M, O, varargin )">gradientHist</a> - Compute oriented gradient histograms.
+   <a href="gradientMag.html" class="code" title="function [M,O] = gradientMag( I, channel, normRad, normConst )">gradientMag</a>  - Compute gradient magnitude and orientation at each image location.
+   <a href="hog.html" class="code" title="function H = hog( I, binSize, nOrients, clip )">hog</a>          - Efficiently compute histogram of oriented gradient (HOG) features.
+   <a href="hogDraw.html" class="code" title="function V = hogDraw( H, w )">hogDraw</a>      - Create visualization of <a href="hog.html" class="code" title="function H = hog( I, binSize, nOrients, clip )">hog</a> descriptor.
+
+ Miscellaneous:
+   <a href="imPad.html" class="code" title="function J = imPad( I, pad, type )">imPad</a>        - Pad an image along its four boundaries.
+   <a href="imResample.html" class="code" title="function B = imResample( A, scale, method, norm )">imResample</a>   - Fast bilinear image downsampling/upsampling.
+   <a href="rgbConvert.html" class="code" title="function J = rgbConvert( I, colorSpace, useSingle )">rgbConvert</a>   - Convert RGB image to other color spaces (highly optimized).</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+
+<!-- Start of Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-4884268-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+<!-- end of Google Analytics Code -->
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

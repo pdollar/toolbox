@@ -12,7 +12,7 @@
 </head>
 <body>
 <a name="_top"></a>
-<!-- menu.html images -->
+<!-- menu.html channels -->
 <h1>imResample
 </h1>
 
@@ -29,6 +29,9 @@
  antialiasing turned off if scale is near 1, except sometimes the final
  dims are off by 1 pixel. For very small values of the scale imresize is
  faster but only looks at subset of values of original image.
+
+ This code requires SSE2 to compile and run (most modern Intel and AMD
+ processors support SSE2). Please see: http://en.wikipedia.org/wiki/SSE2.
 
  USAGE
   B = imResample( A, scale, [method], [norm] )
@@ -50,7 +53,7 @@
 
  See also imresize
 
- Piotr's Image&amp;Video Toolbox      Version 2.62
+ Piotr's Image&amp;Video Toolbox      Version NEW
  Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>
@@ -62,7 +65,7 @@ This function calls:
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="bbApply.html" class="code" title="function varargout = bbApply( action, varargin )">bbApply</a>	Functions for manipulating bounding boxes (bb).</li><li><a href="imagesAlign.html" class="code" title="function [H,Ip] = imagesAlign( I, Iref, varargin )">imagesAlign</a>	Fast and robust estimation of homography relating two images.</li><li><a href="optFlowHorn.html" class="code" title="function [Vx,Vy] = optFlowHorn( I1, I2, sigma, show, alpha, nIter )">optFlowHorn</a>	Calculate optical flow using Horn & Schunck.</li></ul>
+<li><a href="chnsScaling.html" class="code" title="function [lambdas,as,scales,fs] = chnsScaling( pPyramid, Is, show )">chnsScaling</a>	Compute lambdas for channel power law scaling.</li><li><a href="../images/bbApply.html" class="code" title="function varargout = bbApply( action, varargin )">bbApply</a>	Functions for manipulating bounding boxes (bb).</li><li><a href="../images/imagesAlign.html" class="code" title="function [H,Ip] = imagesAlign( I, Iref, varargin )">imagesAlign</a>	Fast and robust estimation of homography relating two images.</li><li><a href="../images/optFlowHorn.html" class="code" title="function [Vx,Vy] = optFlowHorn( I1, I2, sigma, show, alpha, nIter )">optFlowHorn</a>	Calculate optical flow using Horn & Schunck.</li></ul>
 <!-- crossreference -->
 
 

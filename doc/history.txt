@@ -1,3 +1,12 @@
+Version NEW
+ * THIS IS A MAJOR RELEASE, FEATURING THE FOLLOWING NEW PACKAGE:
+ *  channels/ - Robust image features, including HOG, for fast object detection. 
+ * For more information, see channels/Contents.m
+ * Other changes:
+ -moved hog, hogDraw and imResample from images/ to channels/
+ -removed mac binaries which were obsolete (code can still be compiled on a Mac)
+ -minor: toolboxUpdateHeader, toolboxCompile, toolboxGenDoc, localSum, imShrink
+
 Version 2.66 (4-Aug-2012)
  -optFlowHorn.m: major rewrite/optimization, coarse-to-fine computation
  -minor: bbLabeler.m, plotRoc.m, seqReader/WriterPlugin.m, bbGt.m

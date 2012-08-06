@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of chnsPyramid</title>
+  <meta name="keywords" content="chnsPyramid">
+  <meta name="description" content="Compute channel feature pyramid given an input image.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html channels -->
+<h1>chnsPyramid
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Compute channel feature pyramid given an input image.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function pyramid = chnsPyramid( I, varargin ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Compute channel feature pyramid given an input image.
+
+ While chnsCompute() computes channel features at a single scale,
+ chnsPyramid() calls chnsCompute() multiple times on different scale
+ images to create a scale-space pyramid of channel features.
+
+ In its simplest form, chnsPyramid() first creates an image pyramid, then
+ calls chnsCompute() with the specified &quot;pChns&quot; on each scale of the image
+ pyramid. The parameter &quot;nPerOct&quot; determines the number of scales per
+ octave in the image pyramid (an octave is the set of scales up to half of
+ the initial scale), a typical value is nPerOct=8 in which case each scale
+ in the pyramid is 2^(-1/8)~=.917 times the size of the previous. The
+ smallest scale of the pyramid is determined by &quot;minDs&quot;, once either image
+ dimension in the resized image falls below minDs, pyramid creation stops.
+ The largest scale in the pyramid is determined by &quot;nOctUp&quot; which
+ determines the number of octaves to compute above the original scale.
+
+ While calling chnsCompute() on each image scale works, it is unnecessary.
+ For a broad family of features, including gradient histograms and all
+ channel types tested, the feature responses computed at a single scale
+ can be used to approximate feature responses at nearby scales. The
+ approximation is accurate at least within an entire scale octave. For
+ details and to understand why this unexpected result holds, please see:
+   P. Dollár, S. Belongie and P. Perona
+   &quot;The Fastest Pedestrian Detector in the West,&quot; BMVC 2010.
+
+ The parameter &quot;nApprox&quot; determines how many intermediate scales are
+ approximated using the techniques described in the above paper. Roughly
+ speaking, channels at approximated scales are computed by taking the
+ corresponding channel at the nearest true scale (computed w chnsCompute)
+ and resampling and re-normalizing it appropriately. For example, if
+ nPerOct=8 and nApprox=7, then the 7 intermediate scales are approximated
+ and only power of two scales are actually computed (using chnsCompute).
+ The parameter &quot;lambdas&quot; determines how the channels are normalized (see
+ the above paper). lambdas for a given set of channels can be computed
+ using chnsScaling.m, alternatively, if no lambdas are specified, the
+ lambdas are automatically approximated using two true image scales.
+
+ Typically approximating all scales within an octave (by setting
+ nApprox=nPerOct-1 or nApprox=-1) works well, and results in large speed
+ gains (~4x). See example below for a visualization of the pyramid
+ computed with and without the approximation. While there is a slight
+ difference in the channels, during detection the approximated channels
+ have been shown to be essentially as effective as the original channels.
+
+ In many applications (such as object detection) the channels can be
+ subsampled prior to use. Use the &quot;shrink&quot; parameter to subsample the
+ channels by an integer amount after computation, this is also necessary
+ to speed up the computation of the approximate channels described above.
+
+ While every effort is made to space the image scales evenly, this is not
+ always possible. For example, given a 101x100 image, it is impossible to
+ downsample it by exactly 1/2 along the first dimension, moreover, the
+ exact scaling along the two dimensions will differ. Instead, the scales
+ are tweaked slightly (e.g. for a 101x101 image the scale would go from
+ 1/2 to something like 50/101), and the output contains the exact scaling
+ factors used for both the heights and the widths (&quot;scaleshw&quot;) and also
+ the approximate scale for both dimensions (&quot;scales&quot;). If &quot;shrink&quot;&gt;1 the
+ scales are further tweaked so that the resized image has dimensions that
+ are exactly divisible by shrink (for details please see the code).
+
+ If chnsPyramid() is called with no inputs or empty I, the output is the
+ complete default parameters (pPyramid). Finally, we describe the
+ remaining parameters: &quot;pad&quot; controls the amount the channels are padded
+ after being created (useful for detecting objects near boundaries);
+ &quot;smoothIm&quot; controls the amount the image is smoothed prior to computing
+ the channels (typically the amount of image smoothing should be small or
+ gradient information is lost); &quot;smoothChns&quot; controls the amount of
+ smoothing after the channels are created (and controls the integration
+ scale of the channels, see the BMVC09 paper); finally &quot;concat&quot; determines
+ whether all channels at a single scale are concatenated in the output.
+
+ An emphasis has been placed on speed, with the code undergoing heavy
+ optimization. Computing the full set of (approximated) *multi-scale*
+ channels on a 480x640 image runs over *30 fps* on a single core of a
+ machine from 2011 (although runtime depends on input parameters).
+
+ USAGE
+  pyramid = chnsPyramid( I, pPyramid )
+
+ INPUTS
+  I            - [hxwx3] input image (uint8 or single/double in [0,1])
+  pPyramid     - parameters (struct or name/value pairs)
+   .pChns        - parameters for creating channels (see chnsCompute.m)
+   .nPerOct      - [8] number of scales per octave
+   .nOctUp       - [0] number of upsampled octaves to compute
+   .nApprox      - [-1] number of approx. scales (if -1 nApprox=nPerOct-1)
+   .lambdas      - [] coefficients for power law scaling (see BMVC10)
+   .shrink       - [4] integer downsampling amount for channels
+   .pad          - [0 0] amount to pad channels (along T/B and L/R)
+   .minDs        - [16 16] minimum image size for channel computation
+   .smoothIm     - [1] radius for image smoothing (using convTri)
+   .smoothChns   - [1] radius for channel smoothing (using convTri)
+   .concat       - [1] if true concatenate channels
+   .complete     - [] if true does not check/set default vals in pPyramid
+
+ OUTPUTS
+  pyramid      - output struct
+   .pPyramid     - exact input parameters used (may change from input)
+   .nTypes       - number of channel types
+   .nScales      - number of scales computed
+   .data         - [nScales x nTypes] cell array of computed channels
+   .info         - [nTypes x 1] struct array (mirrored from chnsCompute)
+   .lambdas      - [nTypes x 1] scaling coefficients actually used
+   .scales       - [nScales x 1] relative scales (approximate)
+   .scaleshw     - [nScales x 2] exact scales for resampling h and w
+
+ EXAMPLE
+  I=imResample(imread('peppers.png'),[480 640]);
+  pPyramid=chnsPyramid(); pPyramid.minDs=[128 128];
+  pPyramid.nApprox=0; tic, P1=chnsPyramid(I,pPyramid); toc
+  pPyramid.nApprox=7; tic, P2=chnsPyramid(I,pPyramid); toc
+  figure(1); montage2(P1.data{2}); figure(2); montage2(P2.data{2});
+  figure(3); montage2(abs(P1.data{2}-P2.data{2})); colorbar;
+
+ See also <a href="chnsCompute.html" class="code" title="function chns = chnsCompute( I, varargin )">chnsCompute</a>, <a href="chnsScaling.html" class="code" title="function [lambdas,as,scales,fs] = chnsScaling( pPyramid, Is, show )">chnsScaling</a>, <a href="convTri.html" class="code" title="function J = convTri( I, r, s, nomex )">convTri</a>, <a href="imPad.html" class="code" title="function J = imPad( I, pad, type )">imPad</a>
+
+ Piotr's Image&amp;Video Toolbox      Version NEW
+ Copyright 2012 Piotr Dollar &amp; Ron Appel.  [pdollar-at-caltech.edu]
+ Please email me if you find bugs, or have suggestions or questions!
+ Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="chnsCompute.html" class="code" title="function chns = chnsCompute( I, varargin )">chnsCompute</a>	Compute channel features at a single scale given an input image.</li><li><a href="convTri.html" class="code" title="function J = convTri( I, r, s, nomex )">convTri</a>	Extremely fast 2D image convolution with a triangle filter.</li><li><a href="imPad.html" class="code" title="function J = imPad( I, pad, type )">imPad</a>	Pad an image along its four boundaries.</li><li><a href="rgbConvert.html" class="code" title="function J = rgbConvert( I, colorSpace, useSingle )">rgbConvert</a>	Convert RGB image to other color spaces (highly optimized).</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="chnsScaling.html" class="code" title="function [lambdas,as,scales,fs] = chnsScaling( pPyramid, Is, show )">chnsScaling</a>	Compute lambdas for channel power law scaling.</li></ul>
+<!-- crossreference -->
+
+
+
+
+<!-- Start of Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-4884268-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+<!-- end of Google Analytics Code -->
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

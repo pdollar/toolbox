@@ -2,9 +2,9 @@
                 "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
 <head>
-  <title>Description of figureResized</title>
-  <meta name="keywords" content="figureResized">
-  <meta name="description" content="Creates a figures that takes up certain area of screen.">
+  <title>Description of gradient2</title>
+  <meta name="keywords" content="gradient2">
+  <meta name="description" content="Compute numerical gradients along x and y directions.">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -12,39 +12,48 @@
 </head>
 <body>
 <a name="_top"></a>
-<!-- menu.html matlab -->
-<h1>figureResized
+<!-- menu.html channels -->
+<h1>gradient2
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>Creates a figures that takes up certain area of screen.</strong></div>
+<div class="box"><strong>Compute numerical gradients along x and y directions.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function varargout = figureResized( screenratio, varargin ) </strong></div>
+<div class="box"><strong>function [Gx,Gy] = gradient2( I ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> Creates a figures that takes up certain area of screen.
+<div class="fragment"><pre class="comment"> Compute numerical gradients along x and y directions.
 
- Almost same as figure, except get to specify what fraction of available
- screen space figure should take up.  Figure appears in center of screen.
+ For 2D arrays identical to Matlab's gradient() with a spacing value of
+ h=1 but ~10-20x faster (due to mexed implementation). Like gradient(),
+ computes centered derivatives in interior of image and uncentered
+ derivatives along boundaries. For 3D arrays computes x and y gradient
+ separately for each channel and concatenates the results.
+
+ This code requires SSE2 to compile and run (most modern Intel and AMD
+ processors support SSE2). Please see: http://en.wikipedia.org/wiki/SSE2.
 
  USAGE
-  varargout = figureResized( screenratio, varargin )
+  [Gx,Gy] = gradient2( I )
 
  INPUTS
-  screenratio - controls fraction of screen image takes out (&lt;=.8)
-  varargin    - parameters to figure
+  I      - [hxwxk] input k channel single image
 
  OUTPUTS
-  varargout   - out from figure
+  Gx     - [hxwxk] x-gradient (horizontal)
+  Gy     - [hxwxk] y-gradient (vertical)
 
  EXAMPLE
-  figureResized( .75 )
+  I=single(imread('peppers.png'))/255;
+  tic, [Gx1,Gy1]=gradient(I,1); toc
+  tic, [Gx2,Gy2]=gradient2(I); toc
+  isequal(Gx1,Gx2), isequal(Gy1,Gy2)
 
- See also FIGURE
+ See also gradient, <a href="gradientMag.html" class="code" title="function [M,O] = gradientMag( I, channel, normRad, normConst )">gradientMag</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.0
- Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version NEW
+ Copyright 2012 Piotr Dollar &amp; Ron Appel.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>
 
@@ -55,7 +64,7 @@ This function calls:
 </ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="../channels/chnsScaling.html" class="code" title="function [lambdas,as,scales,fs] = chnsScaling( pPyramid, Is, show )">chnsScaling</a>	Compute lambdas for channel power law scaling.</li><li><a href="../classify/pcaVisualize.html" class="code" title="function varargout=pcaVisualize( U, mu, vars, X, index, ks, fname, show )">pcaVisualize</a>	Visualization of quality of approximation of X given principal comp.</li></ul>
+</ul>
 <!-- crossreference -->
 
 

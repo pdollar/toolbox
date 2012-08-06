@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of chnsScaling</title>
+  <meta name="keywords" content="chnsScaling">
+  <meta name="description" content="Compute lambdas for channel power law scaling.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html channels -->
+<h1>chnsScaling
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Compute lambdas for channel power law scaling.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [lambdas,as,scales,fs] = chnsScaling( pPyramid, Is, show ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Compute lambdas for channel power law scaling.
+
+ For a broad family of features, including gradient histograms and all
+ channel types tested, the feature responses computed at a single scale
+ can be used to approximate feature responses at nearby scales. The
+ approximation is accurate at least within an entire scale octave. For
+ details and to understand why this unexpected result holds, please see:
+   P. Dollár, S. Belongie and P. Perona
+   &quot;The Fastest Pedestrian Detector in the West,&quot; BMVC 2010.
+
+ This function computes channels at multiple image scales and plots the
+ resulting power law scaling. The purpose of this function is two-fold:
+ (1) compute lambdas for fast approximate channel computation for use in
+ chnsPyramid() and (2) provide a visualization of the power law channel
+ scaling described in the BMVC2010 paper.
+
+ chnsScaling() takes two main inputs: the parameters for computing an
+ image pyramid (pPyramid), which also include parameters for individual
+ channel computation, and an image or set of images (Is). The images are
+ downsampled to the dimension of the smallest image for simplicity of
+ computing the lambdas (and fairly high resolution images are best). The
+ computed lambdas will depend on the channel parameters (e.g. how much
+ smoothing is performed), but given enough images (&gt;1000) the computed
+ lambdas should not depend on the exact images used.
+
+ USAGE
+  [lambdas,as,scales,fs] = chnsScaling( pPyramid, Is, [show] )
+
+ INPUTS
+  pPyramid       - parameters for creating pyramid (see chnsPyramid.m)
+  Is             - [nImages x 1] cell array of images (nImages may be 1)
+  show           - [1] figure in which to display results
+
+ OUTPUTS
+  lambdas        - [nTypes x 1] computed lambdas
+  as             - [nTypes x 1] computed y-intercepts
+  scales         - [nScales x 1] vector of actual scales used
+  fs             - [nImages x nScales x nTypes] array of feature means
+
+ EXAMPLE
+  sDir='../demoPeds/data/train/negBig';
+  Is = fevalImages( @(x) {x}, {}, sDir, 'I', 'png', 0, 200 );
+  pPyramid = chnsPyramid([],'shrink',4,'nPerOct',12);
+  lambdas = chnsScaling( pPyramid, Is, 1 );
+
+ See also <a href="chnsCompute.html" class="code" title="function chns = chnsCompute( I, varargin )">chnsCompute</a>, <a href="chnsPyramid.html" class="code" title="function pyramid = chnsPyramid( I, varargin )">chnsPyramid</a>, fevalImages
+
+ Piotr's Image&amp;Video Toolbox      Version NEW
+ Copyright 2012 Piotr Dollar &amp; Ron Appel.  [pdollar-at-caltech.edu]
+ Please email me if you find bugs, or have suggestions or questions!
+ Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="chnsPyramid.html" class="code" title="function pyramid = chnsPyramid( I, varargin )">chnsPyramid</a>	Compute channel feature pyramid given an input image.</li><li><a href="imResample.html" class="code" title="function B = imResample( A, scale, method, norm )">imResample</a>	Fast bilinear image downsampling/upsampling.</li><li><a href="../matlab/figureResized.html" class="code" title="function varargout = figureResized( screenratio, varargin )">figureResized</a>	Creates a figures that takes up certain area of screen.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+
+<!-- Start of Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-4884268-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+<!-- end of Google Analytics Code -->
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>
