@@ -24,6 +24,7 @@
 %   gradientHist - Compute oriented gradient histograms.
 %   gradientMag  - Compute gradient magnitude and orientation at each image location.
 %   hog          - Efficiently compute histogram of oriented gradient (HOG) features.
+%   hogDraw      - Create visualization of hog descriptor.
 %
 % Miscellaneous:
 %   imPad        - Pad an image along its four boundaries.

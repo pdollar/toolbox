@@ -66,7 +66,6 @@
 %   localSum          - Fast routine for box filtering.
 %
 % Miscellaneous:
-%   hogDraw           - Create visualization of hog descriptor.
 %   imagesAlign       - Fast and robust estimation of homography relating two images.
 %   imMlGauss         - Calculates max likelihood params of Gaussian that gave rise to image G.
 %   imrectLite        - A 'lite' version of imrect [OBSOLETE: use imrectRot].
