@@ -6,7 +6,9 @@
 %   "Integral Channel Features", BMVC 2009.
 %  [2] P. Dollár, S. Belongie and P. Perona
 %   "The Fastest Pedestrian Detector in the West," BMVC 2010.
-% Please cite the above two papers if you end up using the code.
+%  [3] P. Dollár, R. Appel and W. Kienzle
+%   "Crosstalk Cascades for Frame-Rate Pedestrian Detection," ECCV 2012.
+% Please cite a subset of the above papers if you end up using the code.
 % Code written and maintained by Piotr Dollar and Ron Appel.
 %
 % Channels:
