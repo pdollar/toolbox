@@ -70,16 +70,15 @@ Et=0.25*((B00+B10+B01+B11)-(A00+A10+A01+A11));
 Ex([1 end],:)=0; Ex(:,[1 end])=0;
 Ey([1 end],:)=0; Ey(:,[1 end])=0;
 Et([1 end],:)=0; Et(:,[1 end])=0;
-% iterate updating U and V in each iter
-den=1./(alpha*alpha + Ex.*Ex + Ey.*Ey); V=Vx; U=Vy;
+Z=1./(alpha*alpha + Ex.*Ex + Ey.*Ey);
+% iterate updating Ux and Vx in each iter
 for i = 1:nIter
-  Ub=.25*(shift(U,-1,0)+shift(U,1,0)+shift(U,0,-1)+shift(U,0,1));
-  Vb=.25*(shift(V,-1,0)+shift(V,1,0)+shift(V,0,-1)+shift(V,0,1));
-  num=(Ex.*Ub + Ey.*Vb + Et).*den;
-  U=Ub-Ex.*num; U=U(2:end-1,2:end-1);
-  V=Vb-Ey.*num; V=V(2:end-1,2:end-1);
+  Ub=.25*(shift(Vy,-1,0)+shift(Vy,1,0)+shift(Vy,0,-1)+shift(Vy,0,1));
+  Vb=.25*(shift(Vx,-1,0)+shift(Vx,1,0)+shift(Vx,0,-1)+shift(Vx,0,1));
+  m=(Ex.*Ub + Ey.*Vb + Et).*Z;
+  Vy=Ub-Ex.*m; Vy=Vy(2:end-1,2:end-1);
+  Vx=Vb-Ey.*m; Vx=Vx(2:end-1,2:end-1);
 end
-Vx = V; Vy = U;
 end
 
 function J = shift( I, x, y )
