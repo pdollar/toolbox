@@ -1,6 +1,7 @@
 Version NEW
  -optFlowHorn.m: added C++/SSE optimized version (~10x speedup)
  -optFlowLk.m: major rewrite/optimization using new channels code
+ -optFlowCorr.m: deleted (was obsolete/slow)
  -minor: toolboxCompile.m
 
 Version 3.00 (6-Aug-2012)
