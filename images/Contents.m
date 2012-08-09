@@ -34,9 +34,8 @@
 %   nonMaxSuprWin     - Nonmaximal suppression of values outside of a given window.
 %
 % Optical Flow:
-%   optFlowCorr       - Calculate optical flow using cross-correlation.
-%   optFlowHorn       - Calculate optical flow using Horn & Schunck.
-%   optFlowLk         - Calculate optical flow using Lucas & Kanade.  Fast, parallel code.
+%   optFlowHorn       - Calculate optical flow using Horn & Schunck (mexed implementation).
+%   optFlowLk         - Calculate optical flow using Lucas & Kanade (fast, parallel code).
 %
 % Seq files:
 %   seqIo             - Utilities for reading and writing seq files.

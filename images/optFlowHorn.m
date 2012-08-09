@@ -1,22 +1,22 @@
-function [Vx,Vy] = optFlowHorn( I1, I2, sigma, show, alpha, nIter )
-% Calculate optical flow using Horn & Schunck.
+function [Vx,Vy] = optFlowHorn( I1, I2, smooth, alpha, nIter, show )
+% Calculate optical flow using Horn & Schunck (mexed implementation).
 %
 % USAGE
-%  [Vx,Vy] = optFlowHorn( I1, I2, [sigma], [show], [alpha], [nIter] )
+%  [Vx,Vy] = optFlowHorn( I1, I2, smooth, [alpha], [nIter], [show] )
 %
 % INPUTS
-%  I1, I2      - input images to calculate flow between
-%  sigma       - [1] amount to smooth by (may be 0)
-%  show        - [0] figure to use for display (no display if == 0)
-%  alpha       - [.1] smoothness constraint
-%  nIter       - [500] number of iterations (speed vs accuracy)
+%  I1, I2   - input images to calculate flow between
+%  smooth   - smoothing radius for triangle filter (may be 0)
+%  alpha    - smoothness constraint (data vs smoothness term)
+%  nIter    - [500] number of iterations (speed vs accuracy)
+%  show     - [0] figure to use for display (no display if == 0)
 %
 % OUTPUTS
-%  Vx, Vy      - x,y components of flow  [Vx>0->right, Vy>0->down]
+%  Vx, Vy   - x,y components of flow  [Vx>0->right, Vy>0->down]
 %
 % EXAMPLE
 %
-% See also optFlowCorr, optFlowLk
+% See also optFlowLk, convTri
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -24,10 +24,8 @@ function [Vx,Vy] = optFlowHorn( I1, I2, sigma, show, alpha, nIter )
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % default parameters
-if( nargin<3 || isempty(sigma)); sigma=1; end;
-if( nargin<4 || isempty(show)); show=0; end;
-if( nargin<5 || isempty(alpha)); alpha=.1; end;
-if( nargin<6 || isempty(nIter)); nIter=500; end;
+if( nargin<5 || isempty(nIter)); nIter=500; end;
+if( nargin<6 || isempty(show)); show=0; end;
 
 % error checking
 if( ndims(I1)~=2 || ndims(I2)~=2 || any(size(I1)~=size(I2)) )
@@ -42,8 +40,7 @@ for s=1:nScales
   if( scale==1 ), I1b=I1; I2b=I2; else
     I1b=imResample(I1,[h1 w1]); I2b=imResample(I2,[h1 w1]); end
   % smooth images
-  if(sigma), r=ceil(sqrt(6*sigma*sigma+1)-1);
-    I1b=convTri(I1b,r); I2b=convTri(I2b,r); end
+  I1b=convTri(I1b,smooth); I2b=convTri(I2b,smooth);
   % initialize Vx,Vy or upsample from previous scale
   if(s==1), Vx=zeros(h1,w1,'single'); Vy=Vx; else
     Vx=imResample(Vx,[h1 w1])*2; Vy=imResample(Vy,[h1 w1])*2; end
