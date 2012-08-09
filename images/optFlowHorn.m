@@ -72,16 +72,19 @@ Ey([1 end],:)=0; Ey(:,[1 end])=0;
 Et([1 end],:)=0; Et(:,[1 end])=0;
 Z=1./(alpha*alpha + Ex.*Ex + Ey.*Ey);
 % iterate updating Ux and Vx in each iter
-for i = 1:nIter
-  Ub=.25*(shift(Vy,-1,0)+shift(Vy,1,0)+shift(Vy,0,-1)+shift(Vy,0,1));
-  Vb=.25*(shift(Vx,-1,0)+shift(Vx,1,0)+shift(Vx,0,-1)+shift(Vx,0,1));
-  m=(Ex.*Ub + Ey.*Vb + Et).*Z;
-  Vy=Ub-Ex.*m; Vy=Vy(2:end-1,2:end-1);
-  Vx=Vb-Ey.*m; Vx=Vx(2:end-1,2:end-1);
-end
+Vx=shift(Vx,0,0); Vy=shift(Vy,0,0);
+optFlowHornMex(Vx,Vy,Ex,Ey,Et,Z,nIter);
+Vx=Vx(2:end-1,2:end-1); Vy=Vy(2:end-1,2:end-1);
+% for i = 1:nIter
+%   Mx=.25*(shift(Vx,-1,0)+shift(Vx,1,0)+shift(Vx,0,-1)+shift(Vx,0,1));
+%   My=.25*(shift(Vy,-1,0)+shift(Vy,1,0)+shift(Vy,0,-1)+shift(Vy,0,1));
+%   m=(Ex.*Mx + Ey.*My + Et).*Z;
+%   Vx=Mx-Ex.*m; Vx=Vx(2:end-1,2:end-1);
+%   Vy=My-Ey.*m; Vy=Vy(2:end-1,2:end-1);
+% end
 end
 
-function J = shift( I, x, y )
+function J = shift( I, y, x )
 % shift I by -1<=x,y<=1 pixels
 [h,w]=size(I); J=zeros(h+2,w+2,'single');
 J(2-y:end-1-y,2-x:end-1-x)=I;

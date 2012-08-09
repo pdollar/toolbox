@@ -1,3 +1,6 @@
+Version NEW
+ -optFlowHorn.m: added C++/SSE optimized version (~10x speedup)
+
 Version 3.00 (6-Aug-2012)
  * THIS IS A MAJOR RELEASE, FEATURING THE FOLLOWING NEW PACKAGE:
  *  channels/ - Robust image features, including HOG, for fast object detection. 
