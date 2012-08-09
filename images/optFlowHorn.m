@@ -34,6 +34,7 @@ if( ndims(I1)~=2 || ndims(I2)~=2 || any(size(I1)~=size(I2)) )
   error('Input images must be 2D and have same dimensions.'); end
 
 % run optical flow in coarse to fine fashion
+I1=single(I1); I2=single(I2);
 [h,w]=size(I1); nScales=floor(log2(min(h,w)))-2;
 for s=1:nScales
   % get current scale and I1b and I2b at given scale
@@ -41,8 +42,8 @@ for s=1:nScales
   if( scale==1 ), I1b=I1; I2b=I2; else
     I1b=imResample(I1,[h1 w1]); I2b=imResample(I2,[h1 w1]); end
   % smooth images
-  if(sigma), I1b=single(gaussSmooth(I1b,sigma,'same')); end
-  if(sigma), I2b=single(gaussSmooth(I2b,sigma,'same')); end
+  if(sigma), r=ceil(sqrt(6*sigma*sigma+1)-1);
+    I1b=convTri(I1b,r); I2b=convTri(I2b,r); end
   % initialize Vx,Vy or upsample from previous scale
   if(s==1), Vx=zeros(h1,w1,'single'); Vy=Vx; else
     Vx=imResample(Vx,[h1 w1])*2; Vy=imResample(Vy,[h1 w1])*2; end
@@ -72,16 +73,18 @@ Ey([1 end],:)=0; Ey(:,[1 end])=0;
 Et([1 end],:)=0; Et(:,[1 end])=0;
 Z=1./(alpha*alpha + Ex.*Ex + Ey.*Ey);
 % iterate updating Ux and Vx in each iter
-Vx=shift(Vx,0,0); Vy=shift(Vy,0,0);
-optFlowHornMex(Vx,Vy,Ex,Ey,Et,Z,nIter);
-Vx=Vx(2:end-1,2:end-1); Vy=Vy(2:end-1,2:end-1);
-% for i = 1:nIter
-%   Mx=.25*(shift(Vx,-1,0)+shift(Vx,1,0)+shift(Vx,0,-1)+shift(Vx,0,1));
-%   My=.25*(shift(Vy,-1,0)+shift(Vy,1,0)+shift(Vy,0,-1)+shift(Vy,0,1));
-%   m=(Ex.*Mx + Ey.*My + Et).*Z;
-%   Vx=Mx-Ex.*m; Vx=Vx(2:end-1,2:end-1);
-%   Vy=My-Ey.*m; Vy=Vy(2:end-1,2:end-1);
-% end
+if( 1 )
+  Vx=shift(Vx,0,0); Vy=shift(Vy,0,0);
+  optFlowHornMex(Vx,Vy,Ex,Ey,Et,Z,nIter);
+  Vx=Vx(2:end-1,2:end-1); Vy=Vy(2:end-1,2:end-1);
+else
+  for i = 1:nIter
+    Mx=.25*(shift(Vx,-1,0)+shift(Vx,1,0)+shift(Vx,0,-1)+shift(Vx,0,1));
+    My=.25*(shift(Vy,-1,0)+shift(Vy,1,0)+shift(Vy,0,-1)+shift(Vy,0,1));
+    m=(Ex.*Mx+Ey.*My+Et).*Z; Vx=Mx-Ex.*m; Vy=My-Ey.*m;
+    Vx=Vx(2:end-1,2:end-1); Vy=Vy(2:end-1,2:end-1);
+  end
+end
 end
 
 function J = shift( I, y, x )
