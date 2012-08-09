@@ -18,7 +18,7 @@ function [Vx,Vy] = optFlowHorn( I1, I2, sigma, show, alpha, nIter )
 %
 % See also optFlowCorr, optFlowLk
 %
-% Piotr's Image&Video Toolbox      Version 2.66
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
