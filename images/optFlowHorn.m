@@ -43,8 +43,7 @@ for s=1:nScales
   if(s==1), Vx=zeros(h1,w1,'single'); Vy=Vx; else
     Vx=imResample(Vx,[h1 w1])*2; Vy=imResample(Vy,[h1 w1])*2; end
   % transform I1b according to current estimate of Vx and Vy
-  if(s>1), I1b=imtransform2(I1b,[],'pad','none',...
-      'vs',-double(Vx),'us',-double(Vy)); end
+  if(s), I1b=imtransform2(I1b,[],'pad','replciate','vs',-Vx,'us',-Vy); end
   % smooth images
   I1b=convTri(I1b,smooth); I2b=convTri(I2b,smooth);
   % run optical flow on current scale
