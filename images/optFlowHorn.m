@@ -39,13 +39,17 @@ for s=1:nScales
   scale=2^(nScales-s); h1=round(h/scale); w1=round(w/scale);
   if( scale==1 ), I1b=I1; I2b=I2; else
     I1b=imResample(I1,[h1 w1]); I2b=imResample(I2,[h1 w1]); end
-  % smooth images
-  I1b=convTri(I1b,smooth); I2b=convTri(I2b,smooth);
   % initialize Vx,Vy or upsample from previous scale
   if(s==1), Vx=zeros(h1,w1,'single'); Vy=Vx; else
     Vx=imResample(Vx,[h1 w1])*2; Vy=imResample(Vy,[h1 w1])*2; end
+  % transform I1b according to current estimate of Vx and Vy
+  if(s>1), I1b=imtransform2(I1b,[],'pad','none',...
+      'vs',-double(Vx),'us',-double(Vy)); end
+  % smooth images
+  I1b=convTri(I1b,smooth); I2b=convTri(I2b,smooth);
   % run optical flow on current scale
-  [Vx,Vy]=optFlowHorn1(I1b,I2b,Vx,Vy,alpha,nIter);
+  [Vx1,Vy1]=optFlowHorn1(I1b,I2b,alpha,nIter);
+  Vx=Vx+Vx1; Vy=Vy+Vy1;
 end
 
 % show quiver plot on top of reliab
@@ -56,7 +60,7 @@ end
 
 end
 
-function [Vx,Vy] = optFlowHorn1( I1,I2,Vx,Vy,alpha,nIter )
+function [Vx,Vy] = optFlowHorn1( I1, I2, alpha, nIter )
 % compute derivatives (averaging over 2x2 neighborhoods)
 A00=shift(I1,0,0); A10=shift(I1,1,0);
 A01=shift(I1,0,1); A11=shift(I1,1,1);
@@ -71,10 +75,10 @@ Et([1 end],:)=0; Et(:,[1 end])=0;
 Z=1./(alpha*alpha + Ex.*Ex + Ey.*Ey);
 % iterate updating Ux and Vx in each iter
 if( 1 )
-  Vx=shift(Vx,0,0); Vy=shift(Vy,0,0);
-  optFlowHornMex(Vx,Vy,Ex,Ey,Et,Z,nIter);
+  [Vx,Vy]=optFlowHornMex(Ex,Ey,Et,Z,nIter);
   Vx=Vx(2:end-1,2:end-1); Vy=Vy(2:end-1,2:end-1);
 else
+  Vx=zeros(size(I1),'single'); Vy=Vx;
   for i = 1:nIter
     Mx=.25*(shift(Vx,-1,0)+shift(Vx,1,0)+shift(Vx,0,-1)+shift(Vx,0,1));
     My=.25*(shift(Vy,-1,0)+shift(Vy,1,0)+shift(Vy,0,-1)+shift(Vy,0,1));

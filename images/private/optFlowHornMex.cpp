@@ -42,21 +42,27 @@ void optFlowHorn( float *Vx, float *Vy, const float *Ex, const float *Ey,
   delete [] Vx0; delete [] Vy0;
 }
 
-// optFlowHornMex(Vx,Vy,Ex,Ey,Et,Z,nIter); operates in place on Vx,Vy
+// [Vx,Vy]=optFlowHornMex(Ex,Ey,Et,Z,nIter); - helper for optFlowHorn
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
-  size_t h, w, nIter; float *Is[6];
+  size_t h, w, nIter; float *Is[4], *Vx, *Vy;
 
   // Error checking on arguments
-  if( nrhs!=7 ) mexErrMsgTxt("Seven inputs expected.");
-  if( nlhs>0 ) mexErrMsgTxt("NO outputs expected.");
+  if( nrhs!=5 ) mexErrMsgTxt("Five inputs expected.");
+  if( nlhs!=2 ) mexErrMsgTxt("Two outputs expected.");
   h = mxGetM(prhs[0]); w = mxGetN(prhs[0]);
-  for( int i=0; i<6; i++ ) {
+  for( int i=0; i<4; i++ ) {
     if(mxGetM(prhs[i])!=h || mxGetN(prhs[i])!=w) mexErrMsgTxt("Invalid dims.");
     if(mxGetClassID(prhs[i])!=mxSINGLE_CLASS) mexErrMsgTxt("Invalid type.");
     Is[i] = (float*) mxGetData(prhs[i]);
   }
-  nIter = (int) mxGetScalar(prhs[6]);
+  nIter = (int) mxGetScalar(prhs[4]);
+
+  // create output matricies
+  plhs[0] = mxCreateNumericMatrix(int(h),int(w),mxSINGLE_CLASS,mxREAL);
+  plhs[1] = mxCreateNumericMatrix(int(h),int(w),mxSINGLE_CLASS,mxREAL);
+  Vx = (float*) mxGetData(plhs[0]);
+  Vy = (float*) mxGetData(plhs[1]);
 
   // run optical flow
-  optFlowHorn(Is[0],Is[1],Is[2],Is[3],Is[4],Is[5],int(h),int(w),nIter);
+  optFlowHorn(Vx,Vy,Is[0],Is[1],Is[2],Is[3],int(h),int(w),nIter);
 }
