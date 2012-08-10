@@ -1,6 +1,6 @@
 Version NEW
  -optFlow*.m: major rewrite/optimization, altered input/output format
- -minor: toolboxCompile.m
+ -minor: toolboxCompile.m, imtransform2
 
 Version 3.00 (6-Aug-2012)
  * THIS IS A MAJOR RELEASE, FEATURING THE FOLLOWING NEW PACKAGE:

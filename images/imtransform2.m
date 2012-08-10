@@ -59,7 +59,7 @@ function J = imtransform2( I, H, varargin )
 %
 % See also TEXTUREMAP, INTERP2
 %
-% Piotr's Image&Video Toolbox      Version 2.61
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -70,6 +70,7 @@ dfs={'method','linear','bbox','crop','show',0,'pad',0,'useCache',0,...
 [method,bbox,show,pad,useCache,us,vs] = getPrmDflt(varargin,dfs,1);
 looseFlag = strcmp(bbox,'loose'); if(show), Iorig=I; end; useH=1;
 if(~isempty(us) && ~isempty(vs)), useH=0; assert(numel(us)==numel(vs)); end
+if(~isa(us,'double')||~isa(vs,'double')), us=double(us); vs=double(vs); end
 if( useH && any(size(H)~=[3 3])), error('H must be 3x3'); end
 if( useH && all(all(H==eye(3))) ), J=I; return; end
 if( ndims(I)~=2 && ndims(I)~=3 ), error('I must a MxNXK array'); end
@@ -78,9 +79,10 @@ if(strncmpi(method,'lin',3) || strncmpi(method,'bil',3)), mflag=2;
 elseif(strcmp(method,'nearest') ), mflag=1; else mflag=0; end
 
 % pad I and convert to double, makes interpolation simpler
-classI=class(I); if(~strcmp(classI,'double')), I=double(I); end
+isDouble=isa(I,'double'); if(~isDouble), classI=class(I); I=double(I); end
 if(~strcmp(pad,'none'))
-  m=size(I,1); n=size(I,2); I=I([1 1 1:m m m],[1 1 1:n n n],:);
+  m=size(I,1); n=size(I,2); ms=[1 1 1:m m m]; ns=[1 1 1:n n n];
+  I=I(ms,ns,:); if(~useH), us=us(ms,ns); vs=vs(ms,ns); end
   if(~ischar(pad)), I([1:2 m+3:m+4],:,:)=pad; I(:,[1:2 n+3:n+4],:)=pad; end
 end; m=size(I,1); n=size(I,2);
 
@@ -131,7 +133,7 @@ else
   for i=2:k, J(:,:,i)=interp2(I(:,:,i),cs,rs,method,0); end
 end
 if(~strcmp(pad,'none')), J=J(3:end-2,3:end-2,:); end
-if(~strcmp(classI,'double')), J=feval(classI,J); end
+if(~isDouble), J=feval(classI,J); end
 
 % optionally show
 if(show), figure(show); clf; im(Iorig); figure(show+1); clf; im(J); end
