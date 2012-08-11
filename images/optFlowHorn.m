@@ -8,7 +8,7 @@ function [Vx,Vy] = optFlowHorn( I1, I2, smooth, alpha, nIter, show )
 %  I1, I2   - input images to calculate flow between
 %  smooth   - smoothing radius for triangle filter (may be 0)
 %  alpha    - smoothness constraint (data vs smoothness term)
-%  nIter    - [500] number of iterations (speed vs accuracy)
+%  nIter    - [250] number of iterations (speed vs accuracy)
 %  show     - [0] figure to use for display (no display if == 0)
 %
 % OUTPUTS
@@ -16,50 +16,46 @@ function [Vx,Vy] = optFlowHorn( I1, I2, smooth, alpha, nIter, show )
 %
 % EXAMPLE
 %
-% See also optFlowLk, convTri
+% See also optFlowLk, convTri, imtransform2
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
-% default parameters
-if( nargin<5 || isempty(nIter)); nIter=500; end;
+% get default parameters and do error checking
+if( nargin<5 || isempty(nIter)); nIter=250; end;
 if( nargin<6 || isempty(show)); show=0; end;
-
-% error checking
 if( ndims(I1)~=2 || ndims(I2)~=2 || any(size(I1)~=size(I2)) )
   error('Input images must be 2D and have same dimensions.'); end
 
 % run optical flow in coarse to fine fashion
-I1=single(I1); I2=single(I2);
+if(~isa(I1,'single')), I1=single(I1); I2=single(I2); end
 [h,w]=size(I1); nScales=floor(log2(min(h,w)))-2;
 for s=1:nScales
-  % get current scale and I1b and I2b at given scale
+  % get current scale and I1s and I2s at given scale
   scale=2^(nScales-s); h1=round(h/scale); w1=round(w/scale);
-  if( scale==1 ), I1b=I1; I2b=I2; else
-    I1b=imResample(I1,[h1 w1]); I2b=imResample(I2,[h1 w1]); end
+  if( scale==1 ), I1s=I1; I2s=I2; else
+    I1s=imResample(I1,[h1 w1]); I2s=imResample(I2,[h1 w1]); end
   % initialize Vx,Vy or upsample from previous scale
   if(s==1), Vx=zeros(h1,w1,'single'); Vy=Vx; else
     Vx=imResample(Vx,[h1 w1])*2; Vy=imResample(Vy,[h1 w1])*2; end
-  % transform I1b according to current estimate of Vx and Vy
-  if(s), I1b=imtransform2(I1b,[],'pad','replciate','vs',-Vx,'us',-Vy); end
-  % smooth images
-  I1b=convTri(I1b,smooth); I2b=convTri(I2b,smooth);
+  % transform I1s according to current estimate of Vx and Vy
+  if(s), I1s=imtransform2(I1s,[],'pad','replciate','vs',-Vx,'us',-Vy); end
   % run optical flow on current scale
-  [Vx1,Vy1]=optFlowHorn1(I1b,I2b,alpha,nIter);
+  [Vx1,Vy1]=optFlowHorn1(I1s,I2s,smooth,alpha,nIter);
   Vx=Vx+Vx1; Vy=Vy+Vy1;
 end
 
-% show quiver plot on top of reliab
-if( show )
-  figure(show); clf; im(I1); hold('on');
-  quiver(Vx,Vy,0,'-b'); hold('off');
-end
+% show quiver plot on top of I1
+if(show), figure(show); clf; im(I1); hold('on');
+  quiver(Vx,Vy,0,'-b'); hold('off'); end
 
 end
 
-function [Vx,Vy] = optFlowHorn1( I1, I2, alpha, nIter )
+function [Vx,Vy] = optFlowHorn1( I1, I2, smooth, alpha, nIter )
+% smooth images
+I1=convTri(I1,smooth); I2=convTri(I2,smooth);
 % compute derivatives (averaging over 2x2 neighborhoods)
 A00=shift(I1,0,0); A10=shift(I1,1,0);
 A01=shift(I1,0,1); A11=shift(I1,1,1);

@@ -26,7 +26,7 @@ function [Vx,Vy,reliab]=optFlowLk( I1, I2, smooth, radius, show )
 %  [Vx,Vy,reliab] = optFlowLk( I5A, I5B, smooth, radius, show );
 %  [Vx,Vy] = optFlowHorn( I5A, I5B, smooth, alpha, 500, show+1 );
 %
-% See also optFlowHorn, convTri
+% See also optFlowHorn, convTri, imtransform2
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
