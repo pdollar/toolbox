@@ -63,19 +63,17 @@ if(show), figure(show); clf; im(I1); hold('on');
 end
 
 function [Vx,Vy,reliab] = optFlowLk1( I1, I2, smooth, radius  )
-% Smooth images
+% http://en.wikipedia.org/wiki/Lucas-Kanade_method
 I1=convTri(I1,smooth); I2=convTri(I2,smooth);
-% Compute components of outer product of gradient of frame 1
-[Gx,Gy]=gradient2(I1); Gxx=Gx.^2; Gxy=Gx.*Gy; Gyy=Gy.^2;
-Axx=convTri(Gxx,radius); Axy=convTri(Gxy,radius); Ayy=convTri(Gyy,radius);
-% Compute inner product of gradient with time derivative
-It=I2-I1; Ixt=-Gx.*It; Iyt=-Gy.*It;
-ATbx=convTri(Ixt,radius); ATby=convTri(Iyt,radius);
-% Find determinant, trace, and eigenvalues of A'A
-detA=Axx.*Ayy-Axy.^2; trA=Axx+Ayy;
-% Compute components of velocity vectors
-Vx=(1./(detA+eps)).*(Ayy.*ATbx-Axy.*ATby);
-Vy=(1./(detA+eps)).*(-Axy.*ATbx+Axx.*ATby);
+% Compute elements of A'A and also of A'b
+[Ix,Iy]=gradient2(I1); It=I2-I1; AAxy=convTri(Ix.*Iy,radius);
+AAxx=convTri(Ix.^2,radius); ABxt=convTri(-Ix.*It,radius);
+AAyy=convTri(Iy.^2,radius); AByt=convTri(-Iy.*It,radius);
+% Find determinant and trace of A'A
+AAdet=AAxx.*AAyy-AAxy.^2; AAdeti=1./(AAdet+eps); AAtr=AAxx+AAyy;
+% Compute components of velocity vectors (A'A)^-1 * A'b
+Vx = AAdeti .* ( AAyy.*ABxt - AAxy.*AByt);
+Vy = AAdeti .* (-AAxy.*ABxt + AAxx.*AByt);
 % Check for ill conditioned second moment matrices
-reliab = 0.5*trA - 0.5*sqrt(trA.^2-4*detA);
+reliab = 0.5*AAtr - 0.5*sqrt(AAtr.^2-4*AAdet);
 end
