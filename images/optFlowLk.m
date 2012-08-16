@@ -66,6 +66,7 @@ function [Vx,Vy,reliab] = optFlowLk1( I1, I2, smooth, radius  )
 % http://en.wikipedia.org/wiki/Lucas-Kanade_method
 I1=convTri(I1,smooth); I2=convTri(I2,smooth);
 % Compute elements of A'A and also of A'b
+radius=min(radius,floor(min(size(I1,1),size(I1,2))/2)-1);
 [Ix,Iy]=gradient2(I1); It=I2-I1; AAxy=convTri(Ix.*Iy,radius);
 AAxx=convTri(Ix.^2,radius); ABxt=convTri(-Ix.*It,radius);
 AAyy=convTri(Iy.^2,radius); AByt=convTri(-Iy.*It,radius);
