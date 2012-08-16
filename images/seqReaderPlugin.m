@@ -29,7 +29,7 @@ function varargout = seqReaderPlugin( cmd, h, varargin )
 %
 % See also SEQIO, SEQWRITERPLUGIN
 %
-% Piotr's Image&Video Toolbox      Version 2.66
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -104,7 +104,7 @@ switch(info.imageFormat)
   case {001,002}, ext='png';
   otherwise, error('unknown format');
 end; info.ext=ext; s=1;
-if(strcmp(ext,{'jpg','jbrgb'})), s=getImgFile('rjpg8c'); end
+if(any(strcmp(ext,{'jpg','jbrgb'}))), s=getImgFile('rjpg8c'); end
 if(strcmp(ext,'png')), s=getImgFile('png');
   if(s), info.readImg=@(nm) png('read',nm,[]); end; end
 if(strcmp(ext,'png') && ~s), s=getImgFile('pngreadc');
