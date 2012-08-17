@@ -5,7 +5,15 @@ function [Vx,Vy,reliab]=opticalFlow( I1, I2, varargin )
 %  LK: http://en.wikipedia.org/wiki/Lucas-Kanade_method
 %  HS: http://en.wikipedia.org/wiki/Horn-Schunck_method
 % LK is a local, fast method (the implementation is fully vectorized).
-% HS is a global, slower method (a mexed-SSE implementation is provided).
+% HS is a global, slower method (an SSE implementation is provided).
+%
+% Common parameters for LK and HS: 'smooth' determines smoothing prior to
+% flow computation and can make flow estimation more robust. 'resample' can
+% be used to downsample an image for faster but lower quality results, e.g.
+% resample=.5 makes flow computation about 4x faster. LK: 'radius' controls
+% integration window size (and smoothness of flow). HS: 'alpha' controls
+% tradeoff between data and smoothness term (and smoothness of flow) and
+% 'nIter' determines number of gradient decent steps.
 %
 % USAGE
 %  [Vx,Vy,reliab] = opticalFlow( I1, I2, pFlow )
@@ -15,6 +23,7 @@ function [Vx,Vy,reliab]=opticalFlow( I1, I2, varargin )
 %  pFlow    - parameters (struct or name/value pairs)
 %   .type       - ['LK'] may be either 'LK' or 'HS'
 %   .smooth     - [1] smoothing radius for triangle filter (may be 0)
+%   .resample   - [1] resampling amount (must be a power of 2)
 %   .radius     - [5] integration radius for weighted window [LK only]
 %   .alpha      - [1] smoothness constraint [HS only]
 %   .nIter      - [250] number of iterations [HS only]
@@ -50,8 +59,8 @@ function [Vx,Vy,reliab]=opticalFlow( I1, I2, varargin )
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % get default parameters and do error checking
-dfs={'type','LK','smooth',1,'radius',5,'alpha',1,'nIter',250};
-[type,smooth,radius,alpha,nIter]=getPrmDflt(varargin,dfs,1);
+dfs={'type','LK','smooth',1,'resample',1,'radius',5,'alpha',1,'nIter',250};
+[type,smooth,resample,radius,alpha,nIter]=getPrmDflt(varargin,dfs,1);
 assert(any(strcmp(type,{'LK','HS'}))); useLk=strcmp(type,'LK');
 if( ndims(I1)~=2 || ndims(I2)~=2 || any(size(I1)~=size(I2)) )
   error('Input images must be 2D and have same dimensions.'); end
@@ -59,14 +68,14 @@ if( ndims(I1)~=2 || ndims(I2)~=2 || any(size(I1)~=size(I2)) )
 % run optical flow in coarse to fine fashion
 if(~isa(I1,'single')), I1=single(I1); I2=single(I2); end
 [h,w]=size(I1); nScales=floor(log2(min(h,w)))-2;
-for s=1:nScales
+for s=1:nScales + round(log2(resample))
   % get current scale and I1s and I2s at given scale
   scale=2^(nScales-s); h1=round(h/scale); w1=round(w/scale);
   if( scale==1 ), I1s=I1; I2s=I2; else
     I1s=imResample(I1,[h1 w1]); I2s=imResample(I2,[h1 w1]); end
   % initialize Vx,Vy or upsample from previous scale
-  if(s==1), Vx=zeros(h1,w1,'single'); Vy=Vx; else
-    Vx=imResample(Vx,[h1 w1])*2; Vy=imResample(Vy,[h1 w1])*2; end
+  if(s==1), Vx=zeros(h1,w1,'single'); Vy=Vx; else r=sqrt(h1*w1/numel(Vx));
+    Vx=imResample(Vx,[h1 w1])*r; Vy=imResample(Vy,[h1 w1])*r; end
   % transform I1s according to current estimate of Vx and Vy
   if(s), I1s=imtransform2(I1s,[],'pad','replciate','vs',-Vx,'us',-Vy); end
   % smooth images
@@ -76,6 +85,8 @@ for s=1:nScales
   else [Vx1,Vy1]=opticalFlowHs(I1s,I2s,alpha,nIter); reliab=[]; end
   Vx=Vx+Vx1; Vy=Vy+Vy1;
 end
+if(s~=nScales), r=sqrt(h*w/numel(Vx));
+  Vx=imResample(Vx,[h w])*r; Vy=imResample(Vy,[h w])*r; end
 
 end
 
