@@ -18,13 +18,29 @@ function [Vx,Vy,reliab]=opticalFlow( I1, I2, varargin )
 %   .radius     - [5] integration radius for weighted window [LK only]
 %   .alpha      - [1] smoothness constraint [HS only]
 %   .nIter      - [250] number of iterations [HS only]
-%   .show       - [0] figure to use for display (no display if == 0)
 %
 % OUTPUTS
 %  Vx, Vy   - x,y components of flow  [Vx>0->right, Vy>0->down]
 %  reliab   - reliability of flow in given window [LK only]
 %
-% EXAMPLE
+% EXAMPLE - compute LK flow on test images
+%  load opticalFlowTest;
+%  [Vx,Vy]=opticalFlow(I1,I2,'smooth',1,'radius',10,'type','LK');
+%  figure(1); im(I1); figure(2); im(I2);
+%  figure(3); im([Vx Vy]); colormap jet;
+%
+% EXAMPLE - rectify I1 to I2 using computed flow
+%  load opticalFlowTest;
+%  [Vx,Vy]=opticalFlow(I1,I2,'smooth',1,'radius',10,'type','LK');
+%  I1=imtransform2(I1,[],'vs',-Vx,'us',-Vy,'pad','replicate');
+%  figure(1); im(I1); figure(2); im(I2);
+%
+% EXAMPLE - compare LK and HS flow
+%  load opticalFlowTest;
+%  prm={'smooth',1,'radius',10,'alpha',20,'nIter',200,'type'};
+%  tic, [Vx1,Vy1]=opticalFlow(I1,I2,prm{:},'LK'); toc
+%  tic, [Vx2,Vy2]=opticalFlow(I1,I2,prm{:},'HS'); toc
+%  figure(1); im([Vx1 Vy1; Vx2 Vy2]); colormap jet;
 %
 % See also convTri, imtransform2
 %
@@ -34,8 +50,8 @@ function [Vx,Vy,reliab]=opticalFlow( I1, I2, varargin )
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % get default parameters and do error checking
-dfs={'type','LK','smooth',1,'radius',5,'alpha',1,'nIter',250,'show',0};
-[type,smooth,radius,alpha,nIter,show]=getPrmDflt(varargin,dfs,1);
+dfs={'type','LK','smooth',1,'radius',5,'alpha',1,'nIter',250};
+[type,smooth,radius,alpha,nIter]=getPrmDflt(varargin,dfs,1);
 assert(any(strcmp(type,{'LK','HS'}))); useLk=strcmp(type,'LK');
 if( ndims(I1)~=2 || ndims(I2)~=2 || any(size(I1)~=size(I2)) )
   error('Input images must be 2D and have same dimensions.'); end
@@ -60,10 +76,6 @@ for s=1:nScales
   else [Vx1,Vy1]=opticalFlowHs(I1s,I2s,alpha,nIter); reliab=[]; end
   Vx=Vx+Vx1; Vy=Vy+Vy1;
 end
-
-% show quiver plot on top of I1
-if(show), figure(show); clf; im(I1); hold('on');
-  quiver(Vx,Vy,0,'-b'); hold('off'); end
 
 end
 
