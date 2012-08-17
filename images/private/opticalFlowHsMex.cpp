@@ -9,7 +9,7 @@
 #include "../../channels/private/sse.hpp"
 
 // run nIter iterations of Horn & Schunk optical flow (alters Vx, Vy)
-void optFlowHorn( float *Vx, float *Vy, const float *Ex, const float *Ey,
+void opticalFlowHsMex( float *Vx, float *Vy, const float *Ex, const float *Ey,
   const float *Et, const float *Z, const int h, const int w, const int nIter )
 {
   int x, y, x1, i, t, s; float my, mx, m, *Vx0, *Vy0;
@@ -42,7 +42,7 @@ void optFlowHorn( float *Vx, float *Vy, const float *Ex, const float *Ey,
   delete [] Vx0; delete [] Vy0;
 }
 
-// [Vx,Vy]=optFlowHornMex(Ex,Ey,Et,Z,nIter); - helper for optFlowHorn
+// [Vx,Vy]=opticalFlowHsMex(Ex,Ey,Et,Z,nIter); - helper for opticalFlow
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   size_t h, w, nIter; float *Is[4], *Vx, *Vy;
 
@@ -64,5 +64,5 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   Vy = (float*) mxGetData(plhs[1]);
 
   // run optical flow
-  optFlowHorn(Vx,Vy,Is[0],Is[1],Is[2],Is[3],int(h),int(w),nIter);
+  opticalFlowHsMex(Vx,Vy,Is[0],Is[1],Is[2],Is[3],int(h),int(w),nIter);
 }

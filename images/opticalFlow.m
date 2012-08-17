@@ -1,22 +1,32 @@
-function [Vx,Vy] = optFlowHorn( I1, I2, smooth, alpha, nIter, show )
-% Calculate optical flow using Horn & Schunck (mexed implementation).
+function [Vx,Vy,reliab]=opticalFlow( I1, I2, varargin )
+% Coarse-to-fine optical flow using Lucas&Kanade or Horn&Schunck.
+%
+% Implemented 'type' of optical flow estimation:
+%  LK: http://en.wikipedia.org/wiki/Lucas-Kanade_method
+%  HS: http://en.wikipedia.org/wiki/Horn-Schunck_method
+% LK is a local, fast method (the implementation is fully vectorized).
+% HS is a global, slower method (a mexed-SSE implementation is provided).
 %
 % USAGE
-%  [Vx,Vy] = optFlowHorn( I1, I2, smooth, [alpha], [nIter], [show] )
+%  [Vx,Vy,reliab] = opticalFlow( I1, I2, pFlow )
 %
 % INPUTS
 %  I1, I2   - input images to calculate flow between
-%  smooth   - smoothing radius for triangle filter (may be 0)
-%  alpha    - smoothness constraint (data vs smoothness term)
-%  nIter    - [250] number of iterations (speed vs accuracy)
-%  show     - [0] figure to use for display (no display if == 0)
+%  pFlow    - parameters (struct or name/value pairs)
+%   .type       - ['LK'] may be either 'LK' or 'HS'
+%   .smooth     - [1] smoothing radius for triangle filter (may be 0)
+%   .radius     - [5] integration radius for weighted window [LK only]
+%   .alpha      - [1] smoothness constraint [HS only]
+%   .nIter      - [250] number of iterations [HS only]
+%   .show       - [0] figure to use for display (no display if == 0)
 %
 % OUTPUTS
 %  Vx, Vy   - x,y components of flow  [Vx>0->right, Vy>0->down]
+%  reliab   - reliability of flow in given window [LK only]
 %
 % EXAMPLE
 %
-% See also optFlowLk, convTri, imtransform2
+% See also convTri, imtransform2
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -24,8 +34,9 @@ function [Vx,Vy] = optFlowHorn( I1, I2, smooth, alpha, nIter, show )
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % get default parameters and do error checking
-if( nargin<5 || isempty(nIter)); nIter=250; end;
-if( nargin<6 || isempty(show)); show=0; end;
+dfs={'type','LK','smooth',1,'radius',5,'alpha',1,'nIter',250,'show',0};
+[type,smooth,radius,alpha,nIter,show]=getPrmDflt(varargin,dfs,1);
+assert(any(strcmp(type,{'LK','HS'}))); useLk=strcmp(type,'LK');
 if( ndims(I1)~=2 || ndims(I2)~=2 || any(size(I1)~=size(I2)) )
   error('Input images must be 2D and have same dimensions.'); end
 
@@ -42,8 +53,11 @@ for s=1:nScales
     Vx=imResample(Vx,[h1 w1])*2; Vy=imResample(Vy,[h1 w1])*2; end
   % transform I1s according to current estimate of Vx and Vy
   if(s), I1s=imtransform2(I1s,[],'pad','replciate','vs',-Vx,'us',-Vy); end
+  % smooth images
+  I1s=convTri(I1s,smooth); I2s=convTri(I2s,smooth);
   % run optical flow on current scale
-  [Vx1,Vy1]=optFlowHorn1(I1s,I2s,smooth,alpha,nIter);
+  if( useLk ), [Vx1,Vy1,reliab]=opticalFlowLk(I1s,I2s,radius);
+  else [Vx1,Vy1]=opticalFlowHs(I1s,I2s,alpha,nIter); reliab=[]; end
   Vx=Vx+Vx1; Vy=Vy+Vy1;
 end
 
@@ -53,9 +67,22 @@ if(show), figure(show); clf; im(I1); hold('on');
 
 end
 
-function [Vx,Vy] = optFlowHorn1( I1, I2, smooth, alpha, nIter )
-% smooth images
-I1=convTri(I1,smooth); I2=convTri(I2,smooth);
+function [Vx,Vy,reliab] = opticalFlowLk( I1, I2, radius  )
+% Compute elements of A'A and also of A'b
+radius=min(radius,floor(min(size(I1,1),size(I1,2))/2)-1);
+[Ix,Iy]=gradient2(I1); It=I2-I1; AAxy=convTri(Ix.*Iy,radius);
+AAxx=convTri(Ix.^2,radius); ABxt=convTri(-Ix.*It,radius);
+AAyy=convTri(Iy.^2,radius); AByt=convTri(-Iy.*It,radius);
+% Find determinant and trace of A'A
+AAdet=AAxx.*AAyy-AAxy.^2; AAdeti=1./(AAdet+eps); AAtr=AAxx+AAyy;
+% Compute components of velocity vectors (A'A)^-1 * A'b
+Vx = AAdeti .* ( AAyy.*ABxt - AAxy.*AByt);
+Vy = AAdeti .* (-AAxy.*ABxt + AAxx.*AByt);
+% Check for ill conditioned second moment matrices
+reliab = 0.5*AAtr - 0.5*sqrt(AAtr.^2-4*AAdet);
+end
+
+function [Vx,Vy] = opticalFlowHs( I1, I2, alpha, nIter )
 % compute derivatives (averaging over 2x2 neighborhoods)
 A00=shift(I1,0,0); A10=shift(I1,1,0);
 A01=shift(I1,0,1); A11=shift(I1,1,1);
@@ -70,7 +97,7 @@ Et([1 end],:)=0; Et(:,[1 end])=0;
 Z=1./(alpha*alpha + Ex.*Ex + Ey.*Ey);
 % iterate updating Ux and Vx in each iter
 if( 1 )
-  [Vx,Vy]=optFlowHornMex(Ex,Ey,Et,Z,nIter);
+  [Vx,Vy]=opticalFlowHsMex(Ex,Ey,Et,Z,nIter);
   Vx=Vx(2:end-1,2:end-1); Vy=Vy(2:end-1,2:end-1);
 else
   Vx=zeros(size(I1),'single'); Vy=Vx;

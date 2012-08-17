@@ -33,10 +33,6 @@
 %   nonMaxSuprList    - Applies nonmaximal suppression to a list.
 %   nonMaxSuprWin     - Nonmaximal suppression of values outside of a given window.
 %
-% Optical Flow:
-%   optFlowHorn       - Calculate optical flow using Horn & Schunck (mexed implementation).
-%   optFlowLk         - Calculate optical flow using Lucas & Kanade (fast, parallel code).
-%
 % Seq files:
 %   seqIo             - Utilities for reading and writing seq files.
 %   seqReaderPlugin   - Plugin for seqIo and videoIO to allow reading of seq files.
@@ -72,3 +68,4 @@
 %   imwrite2          - Similar to imwrite, except follows a strict naming convention.
 %   jitterImage       - Creates multiple, slightly jittered versions of an image.
 %   kernelTracker     - Kernel Tracker from Comaniciu, Ramesh and Meer PAMI 2003.
+%   opticalFlow       - Coarse-to-fine optical flow using Lucas&Kanade or Horn&Schunck.

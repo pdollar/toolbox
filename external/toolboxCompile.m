@@ -38,7 +38,7 @@ for i=1:length(fs), mex([fs{i} '.c'],opts{:},[fs{i} '.' mexext]); end
 % compile c++ functions
 try
   fs={'convConst','gradientMex','rgbConvertMex',...
-    'imResampleMex','imPadMex','optFlowHornMex'};
+    'imResampleMex','imPadMex','opticalFlowHsMex'};
   ds=[repmat({'channels'},1,5) 'images'];
   for i=1:length(fs), fs{i}=[rd '/' ds{i} '/private/' fs{i}]; end
   for i=1:length(fs), mex([fs{i} '.cpp'],opts{:},[fs{i} '.' mexext]); end

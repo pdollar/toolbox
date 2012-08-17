@@ -1,5 +1,6 @@
 Version NEW
- -optFlow*.m: major rewrite/optimization, altered input/output format
+ -opticalFlow.m: optimized coarse-to-fine LK and HS flow
+ -optFlow*.m: deleted, made obsolete by opticalFlow.m
  -minor: toolboxCompile.m, imtransform2.m, seqReaderPlugin.m
 
 Version 3.00 (6-Aug-2012)
