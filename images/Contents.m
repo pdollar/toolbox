@@ -23,19 +23,18 @@
 %   xeucn             - n-dimensional euclidean distance between each window in A and template T.
 %
 % Image deformation:
+%   imagesAlign       - Fast and robust estimation of homography relating two images.
 %   imNormalize       - Various ways to normalize a (multidimensional) image.
 %   imShrink          - Used to shrink a multidimensional array I by integer amount.
 %   imtransform2      - Applies a linear or nonlinear transformation to an image I.
+%   jitterImage       - Creates multiple, slightly jittered versions of an image.
+%   opticalFlow       - Coarse-to-fine optical flow using Lucas&Kanade or Horn&Schunck.
 %   textureMap        - Maps texture in I according to rsDst and csDst.
 %
 % Generalized nonmaximal suppression:
 %   nonMaxSupr        - Applies nonmaximal suppression on an image of arbitrary dimension.
 %   nonMaxSuprList    - Applies nonmaximal suppression to a list.
 %   nonMaxSuprWin     - Nonmaximal suppression of values outside of a given window.
-%
-% Optical Flow:
-%   optFlowHorn       - Calculate optical flow using Horn & Schunck (mexed implementation).
-%   optFlowLk         - Calculate optical flow using Lucas & Kanade (fast, parallel code).
 %
 % Seq files:
 %   seqIo             - Utilities for reading and writing seq files.
@@ -65,10 +64,8 @@
 %   localSum          - Fast routine for box filtering.
 %
 % Miscellaneous:
-%   imagesAlign       - Fast and robust estimation of homography relating two images.
 %   imMlGauss         - Calculates max likelihood params of Gaussian that gave rise to image G.
 %   imrectLite        - A 'lite' version of imrect [OBSOLETE: use imrectRot].
 %   imRectRot         - Create a draggable, resizable, rotatable rectangle or ellipse.
 %   imwrite2          - Similar to imwrite, except follows a strict naming convention.
-%   jitterImage       - Creates multiple, slightly jittered versions of an image.
 %   kernelTracker     - Kernel Tracker from Comaniciu, Ramesh and Meer PAMI 2003.
