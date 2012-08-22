@@ -53,7 +53,7 @@ function [Vx,Vy,reliab]=opticalFlow( I1, I2, varargin )
 %
 % See also convTri, imtransform2
 %
-% Piotr's Image&Video Toolbox      Version NEW
+% Piotr's Image&Video Toolbox      Version 3.01
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]

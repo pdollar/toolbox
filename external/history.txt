@@ -1,4 +1,4 @@
-Version NEW
+Version 3.01 (21-Aug-2012)
  -opticalFlow.m: optimized coarse-to-fine LK and HS flow
  -optFlow*.m: deleted, made obsolete by opticalFlow.m
  -minor: toolboxCompile.m, imtransform2.m, seqReaderPlugin.m
