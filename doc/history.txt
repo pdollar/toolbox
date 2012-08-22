@@ -1,3 +1,8 @@
+Version 3.01 (21-Aug-2012)
+ -opticalFlow.m: optimized coarse-to-fine LK and HS flow
+ -optFlow*.m: deleted, made obsolete by opticalFlow.m
+ -minor: toolboxCompile.m, imtransform2.m, seqReaderPlugin.m
+
 Version 3.00 (6-Aug-2012)
  * THIS IS A MAJOR RELEASE, FEATURING THE FOLLOWING NEW PACKAGE:
  *  channels/ - Robust image features, including HOG, for fast object detection. 

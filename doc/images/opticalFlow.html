@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of opticalFlow</title>
+  <meta name="keywords" content="opticalFlow">
+  <meta name="description" content="Coarse-to-fine optical flow using Lucas&amp;Kanade or Horn&amp;Schunck.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html images -->
+<h1>opticalFlow
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Coarse-to-fine optical flow using Lucas&amp;Kanade or Horn&amp;Schunck.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [Vx,Vy,reliab]=opticalFlow( I1, I2, varargin ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Coarse-to-fine optical flow using Lucas&amp;Kanade or Horn&amp;Schunck.
+
+ Implemented 'type' of optical flow estimation:
+  LK: http://en.wikipedia.org/wiki/Lucas-Kanade_method
+  HS: http://en.wikipedia.org/wiki/Horn-Schunck_method
+ LK is a local, fast method (the implementation is fully vectorized).
+ HS is a global, slower method (an SSE implementation is provided).
+
+ Common parameters for LK and HS: 'smooth' determines smoothing prior to
+ flow computation and can make flow estimation more robust. 'resample' can
+ be used to downsample an image for faster but lower quality results, e.g.
+ resample=.5 makes flow computation about 4x faster. LK: 'radius' controls
+ integration window size (and smoothness of flow). HS: 'alpha' controls
+ tradeoff between data and smoothness term (and smoothness of flow) and
+ 'nIter' determines number of gradient decent steps.
+
+ USAGE
+  [Vx,Vy,reliab] = opticalFlow( I1, I2, pFlow )
+
+ INPUTS
+  I1, I2   - input images to calculate flow between
+  pFlow    - parameters (struct or name/value pairs)
+   .type       - ['LK'] may be either 'LK' or 'HS'
+   .smooth     - [1] smoothing radius for triangle filter (may be 0)
+   .resample   - [1] resampling amount (must be a power of 2)
+   .radius     - [5] integration radius for weighted window [LK only]
+   .alpha      - [1] smoothness constraint [HS only]
+   .nIter      - [250] number of iterations [HS only]
+
+ OUTPUTS
+  Vx, Vy   - x,y components of flow  [Vx&gt;0-&gt;right, Vy&gt;0-&gt;down]
+  reliab   - reliability of flow in given window [LK only]
+
+ EXAMPLE - compute LK flow on test images
+  load opticalFlowTest;
+  [Vx,Vy]=opticalFlow(I1,I2,'smooth',1,'radius',10,'type','LK');
+  figure(1); im(I1); figure(2); im(I2);
+  figure(3); im([Vx Vy]); colormap jet;
+
+ EXAMPLE - rectify I1 to I2 using computed flow
+  load opticalFlowTest;
+  [Vx,Vy]=opticalFlow(I1,I2,'smooth',1,'radius',10,'type','LK');
+  I1=imtransform2(I1,[],'vs',-Vx,'us',-Vy,'pad','replicate');
+  figure(1); im(I1); figure(2); im(I2);
+
+ EXAMPLE - compare LK and HS flow
+  load opticalFlowTest;
+  prm={'smooth',1,'radius',10,'alpha',20,'nIter',200,'type'};
+  tic, [Vx1,Vy1]=opticalFlow(I1,I2,prm{:},'LK'); toc
+  tic, [Vx2,Vy2]=opticalFlow(I1,I2,prm{:},'HS'); toc
+  figure(1); im([Vx1 Vy1; Vx2 Vy2]); colormap jet;
+
+ See also convTri, <a href="imtransform2.html" class="code" title="function J = imtransform2( I, H, varargin )">imtransform2</a>
+
+ Piotr's Image&amp;Video Toolbox      Version 3.01
+ Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Please email me if you find bugs, or have suggestions or questions!
+ Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../channels/convTri.html" class="code" title="function J = convTri( I, r, s, nomex )">convTri</a>	Extremely fast 2D image convolution with a triangle filter.</li><li><a href="../channels/gradient2.html" class="code" title="function [Gx,Gy] = gradient2( I )">gradient2</a>	Compute numerical gradients along x and y directions.</li><li><a href="../channels/imResample.html" class="code" title="function B = imResample( A, scale, method, norm )">imResample</a>	Fast bilinear image downsampling/upsampling.</li><li><a href="imtransform2.html" class="code" title="function J = imtransform2( I, H, varargin )">imtransform2</a>	Applies a linear or nonlinear transformation to an image I.</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+
+<!-- Start of Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-4884268-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+<!-- end of Google Analytics Code -->
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

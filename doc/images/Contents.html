@@ -48,20 +48,18 @@
    <a href="xeucn.html" class="code" title="function C = xeucn( A, T, shape )">xeucn</a>             - n-dimensional euclidean distance between each window in A and template T.
 
  Image deformation:
+   <a href="imagesAlign.html" class="code" title="function [H,Ip] = imagesAlign( I, Iref, varargin )">imagesAlign</a>       - Fast and robust estimation of homography relating two images.
    <a href="imNormalize.html" class="code" title="function X = imNormalize( X, flag )">imNormalize</a>       - Various ways to normalize a (multidimensional) image.
    <a href="imShrink.html" class="code" title="function I = imShrink( I, ratios )">imShrink</a>          - Used to shrink a multidimensional array I by integer amount.
    <a href="imtransform2.html" class="code" title="function J = imtransform2( I, H, varargin )">imtransform2</a>      - Applies a linear or nonlinear transformation to an image I.
+   <a href="jitterImage.html" class="code" title="function IJ = jitterImage( I, varargin )">jitterImage</a>       - Creates multiple, slightly jittered versions of an image.
+   <a href="opticalFlow.html" class="code" title="function [Vx,Vy,reliab]=opticalFlow( I1, I2, varargin )">opticalFlow</a>       - Coarse-to-fine optical flow using Lucas&amp;Kanade or Horn&amp;Schunck.
    <a href="textureMap.html" class="code" title="function [J,boundX,boundY] = textureMap( I, rsDst, csDst, bbox, fillVal )">textureMap</a>        - Maps texture in I according to rsDst and csDst.
 
  Generalized nonmaximal suppression:
    <a href="nonMaxSupr.html" class="code" title="function [subs,vals] = nonMaxSupr( I, radii, thresh, maxn )">nonMaxSupr</a>        - Applies nonmaximal suppression on an image of arbitrary dimension.
    <a href="nonMaxSuprList.html" class="code" title="function [subs,vals,keep] = nonMaxSuprList( subs, vals, radii,thresh, maxn, flag)">nonMaxSuprList</a>    - Applies nonmaximal suppression to a list.
    <a href="nonMaxSuprWin.html" class="code" title="function [subs,vals,keepLocs] = nonMaxSuprWin( subs, vals,strLocs, endLocs, thresh, maxn )">nonMaxSuprWin</a>     - Nonmaximal suppression of values outside of a given window.
-
- Optical Flow:
-   <a href="optFlowCorr.html" class="code" title="function [Vx,Vy,reliab] = optFlowCorr( I1, I2, patchR, searchR,sigma, thr, show )">optFlowCorr</a>       - Calculate optical flow using cross-correlation.
-   <a href="optFlowHorn.html" class="code" title="function [Vx,Vy] = optFlowHorn( I1, I2, sigma, show, alpha, nIter )">optFlowHorn</a>       - Calculate optical flow using Horn &amp; Schunck.
-   <a href="optFlowLk.html" class="code" title="function [Vx,Vy,reliab]=optFlowLk( I1, I2, winN,winSig, sigma, thr, show )">optFlowLk</a>         - Calculate optical flow using Lucas &amp; Kanade.  Fast, parallel code.
 
  Seq files:
    <a href="seqIo.html" class="code" title="function out = seqIo( fName, action, varargin )">seqIo</a>             - Utilities for reading and writing seq files.
@@ -91,12 +89,10 @@
    <a href="localSum.html" class="code" title="function I = localSum( I, dims, shape, op )">localSum</a>          - Fast routine for box filtering.
 
  Miscellaneous:
-   <a href="imagesAlign.html" class="code" title="function [H,Ip] = imagesAlign( I, Iref, varargin )">imagesAlign</a>       - Fast and robust estimation of homography relating two images.
    <a href="imMlGauss.html" class="code" title="function varargout = imMlGauss( G, symmFlag, show )">imMlGauss</a>         - Calculates max likelihood params of Gaussian that gave rise to image G.
    <a href="imrectLite.html" class="code" title="function [hRect,api] = imrectLite( hParent, pos, lims, ar, varargin )">imrectLite</a>        - A 'lite' version of imrect [OBSOLETE: use imrectRot].
    <a href="imRectRot.html" class="code" title="function [hPatch,api] = imRectRot( varargin )">imRectRot</a>         - Create a draggable, resizable, rotatable rectangle or ellipse.
    <a href="imwrite2.html" class="code" title="function I = imwrite2( I, mulFlag, imagei, path,name, ext, nDigits, nSplits, spliti, varargin )">imwrite2</a>          - Similar to imwrite, except follows a strict naming convention.
-   <a href="jitterImage.html" class="code" title="function IJ = jitterImage( I, varargin )">jitterImage</a>       - Creates multiple, slightly jittered versions of an image.
    <a href="kernelTracker.html" class="code" title="function [allRct, allSim, allIc] = kernelTracker( I, prm )">kernelTracker</a>     - Kernel Tracker from Comaniciu, Ramesh and Meer PAMI 2003.</pre></div>
 
 <!-- crossreference -->
