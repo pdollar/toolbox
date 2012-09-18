@@ -11,7 +11,7 @@
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 3.01
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -37,9 +37,9 @@ for i=1:length(fs), mex([fs{i} '.c'],opts{:},[fs{i} '.' mexext]); end
 
 % compile c++ functions
 try
-  fs={'convConst','gradientMex','rgbConvertMex',...
-    'imResampleMex','imPadMex','opticalFlowHsMex'};
-  ds=[repmat({'channels'},1,5) 'images'];
+  fs={'convConst','gradientMex','rgbConvertMex','imResampleMex',...
+    'imPadMex','opticalFlowHsMex','forestFindThr','forestInds'};
+  ds=[repmat({'channels'},1,5) 'images' repmat({'classify'},1,2)];
   for i=1:length(fs), fs{i}=[rd '/' ds{i} '/private/' fs{i}]; end
   for i=1:length(fs), mex([fs{i} '.cpp'],opts{:},[fs{i} '.' mexext]); end
 catch ME
