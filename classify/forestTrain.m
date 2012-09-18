@@ -56,20 +56,23 @@ function forest = forestTrain( data, hs, varargin )
 dfs={'M',1,'N1',[],'F1',[],'minCount',1,'maxDepth',64,'dWts',[],'fWts',[]};
 [M,N1,F1,minCount,maxDepth,dWts,fWts]=getPrmDflt(varargin,dfs,1);
 [N,F]=size(data); assert(length(hs)==N); assert(all(hs>0));
-minCount=max(1,minCount); fWts=fWts/sum(fWts); dWts=dWts/sum(dWts);
-if(~isa(data,'single')), data=single(data); end
-if(~isa(hs,'uint32')), hs=uint32(hs); end
-if(~isa(dWts,'single')), dWts=single(dWts); end
-if(isempty(dWts)), dWts=ones(1,N,'single')/N; end
 if(isempty(N1)), N1=round(5*N/M); end; N1=min(N,N1);
 if(isempty(F1)), F1=round(sqrt(F)); end; F1=min(F,F1);
-if(isempty(fWts)), fWts=F; end
+if(isempty(dWts)), dWts=ones(1,N,'single'); end; dWts=dWts/sum(dWts);
+if(isempty(fWts)), fWts=ones(1,F,'single'); end; fWts=fWts/sum(fWts);
+
+% make sure data has correct types
+if(~isa(data,'single')), data=single(data); end
+if(~isa(hs,'uint32')), hs=uint32(hs); end
+if(~isa(fWts,'single')), fWts=single(fWts); end
+if(~isa(dWts,'single')), dWts=single(dWts); end
 
 % train M independent random trees
 if(M==1), forest=treeTrain(data,hs,F1,minCount,maxDepth,dWts,fWts);
   return; end
 for i=1:M
-  d=wswor(dWts,N1,4); data1=data(d,:); hs1=hs(d); dWts1=dWts(d);
+  d=wswor(dWts,N1,4); data1=data(d,:); hs1=hs(d);
+  dWts1=dWts(d); dWts1=dWts1/sum(dWts1);
   tree=treeTrain(data1,hs1,F1,minCount,maxDepth,dWts1,fWts);
   if(i==1), forest=tree(ones(M,1)); else forest(i)=tree; end
 end
@@ -87,7 +90,7 @@ while( k < K )
   if( all(hs1(1)==hs1) )
     % pure node, set distribution to delta function and stop
     distr(k,hs1(1)) = 1;
-  elseif( count(k)<=minCount || depth(k)>maxDepth )
+  elseif( count(k)<=1 || count(k)<=minCount || depth(k)>maxDepth )
     % insufficient data, store distribution and stop
     distr(k,:)=histc(hs1,1:H)/single(count(k));
   else
@@ -113,11 +116,10 @@ end
 function ids = wswor( prob, N, trials )
 % Fast weighted sample without replacement. Alternative to:
 %  ids=datasample(1:length(prob),N,'weights',prob,'replace',false);
-% If prob is a scalar then uses unweighted sampling N of prob.
-if(length(prob)==1), ids=randperm(prob,N); return; end
-if(N>=length(prob)), ids=1:N; return; end
-cumprob=min([0 cumsum(prob)],1); cumprob(end)=1;
-[~,ids]=histc(rand(N*trials,1),cumprob);
+M=length(prob); assert(N<=M); if(N==M), ids=1:N; return; end
+if(all(prob(1)==prob)), ids=randperm(M,N); return; end
+cumprob=min([0 cumsum(prob)],1); assert(abs(cumprob(end)-1)<.01);
+cumprob(end)=1; [~,ids]=histc(rand(N*trials,1),cumprob);
 [s,ord]=sort(ids); K(ord)=[1; diff(s)]~=0; ids=ids(K);
 if(length(ids)<N), ids=wswor(cumprob,N,trials*2); end
 ids=ids(1:N)';
