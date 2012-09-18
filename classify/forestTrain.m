@@ -19,7 +19,7 @@ function forest = forestTrain( data, hs, varargin )
 %   .F1       - [sqrt(F)] number features to sample for each node split
 %   .minCount - [1] minimum number of data points to allow split
 %   .maxDepth - [64] maximum depth of tree
-%   .dWts     - [] weights used for sampling and weighing each sample
+%   .dWts     - [] weights used for sampling and weighing each data point
 %   .fWts     - [] weights used for sampling features
 %
 % OUTPUTS
@@ -67,12 +67,12 @@ if(~isa(hs,'uint32')), hs=uint32(hs); end
 if(~isa(fWts,'single')), fWts=single(fWts); end
 if(~isa(dWts,'single')), dWts=single(dWts); end
 
-% train M independent random trees
-if(M==1), forest=treeTrain(data,hs,F1,minCount,maxDepth,dWts,fWts);
-  return; end
+% train M random trees on different subsets of data
 for i=1:M
-  d=wswor(dWts,N1,4); data1=data(d,:); hs1=hs(d);
-  dWts1=dWts(d); dWts1=dWts1/sum(dWts1);
+  if(N==N1), data1=data; hs1=hs; dWts1=dWts; else
+    d=wswor(dWts,N1,4); data1=data(d,:); hs1=hs(d);
+    dWts1=dWts(d); dWts1=dWts1/sum(dWts1);
+  end
   tree=treeTrain(data1,hs1,F1,minCount,maxDepth,dWts1,fWts);
   if(i==1), forest=tree(ones(M,1)); else forest(i)=tree; end
 end
