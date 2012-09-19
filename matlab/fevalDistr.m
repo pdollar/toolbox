@@ -40,7 +40,7 @@ function [out,res] = fevalDistr( funNm, jobs, varargin )
 %
 % See also controller, queue
 %
-% Piotr's Image&Video Toolbox      Version 2.61
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -55,16 +55,40 @@ nJob=length(jobs); res=cell(1,nJob); store=(nargout==2);
 if(nJob==0), out=1; return; end
 switch type
   case 'local'
-    % run jobs locally using single computational thread
+    % run jobs locally using for loop
     tid=ticStatus('collecting jobs'); out=1;
     for i=1:nJob, r=feval(funNm,jobs{i}{:});
       if(store), res{i}=r; end; tocStatus(tid,i/nJob); end
+    
   case 'parfor'
-    % run jobs locally using multiple computational threads
+    % run jobs locally using parfor loop
     parfor i=1:nJob, r=feval(funNm,jobs{i}{:});
       if(store), res{i}=r; end; end; out=1;
+    
+  case 'parallel-windows'
+    % run jobs locally using multiple threads by compiling windows exe
+    t=clock; t=mod(t(end),1); t=round((t+rand)/2*1e15);
+    tDir=sprintf('temp-%15i\\',t); mkdir(tDir); fprintf('Compiling...\n');
+    mcc('-m','fevalDistrDisk','-d',tDir,'-a',funNm);
+    cmd=['start /B /min ' tDir 'fevalDistrDisk.exe ' funNm];
+    Q=feature('numCores'); q=0; i=0; k=0; tid=ticStatus('collecting jobs');
+    while( 1 )
+      while( q<Q && i<nJob ), q=q+1; i=i+1;
+        job=jobs{i}; save([tDir int2str2(i,5) '-in'],'job'); %#ok<NASGU>
+        system([cmd ' ' tDir int2str2(i,5)]);
+      end
+      fs=dir([tDir '*-done']); fs={fs.name}; k1=length(fs); k=k+k1; q=q-k1;
+      for i1=1:k1
+        i2=str2double(fs{i1}(end-9:end-5)); f=[tDir int2str2(i2,5)];
+        if(store), r=load([f '-out']); res{i2}=r.r; end
+        delete([f '-in.mat'],[f '-out.mat'],[f '-done']);
+      end
+      tocStatus(tid,k/nJob); if(k==nJob), out=1; break; end
+    end
+    for i=1:10, try rmdir(tDir,'s'); catch, pause(1), end; end %#ok<CTCH>
+    
   case 'distr'
-    % run jobs using queuing system
+    % run jobs using Linux queuing system
     controller('launchQueue',pLaunch{:});
     if( group>1 )
       nJobGrp=ceil(nJob/group); jobsGrp=cell(1,nJobGrp); k=0;
@@ -82,6 +106,7 @@ switch type
       k=k+1; if(store), res{jid==jids}=r; end
       tocStatus(tid,k/nJob); if(k==nJob), out=1; break; end
     end; controller('closeQueue');
+    
   otherwise, assert(false);
 end
 end
