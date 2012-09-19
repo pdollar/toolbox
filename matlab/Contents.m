@@ -3,7 +3,8 @@
 %
 % Convenient (but no faster) replacement of for loops:
 %   fevalArrays       - Used to apply the same operation to a stack of array elements.
-%   fevalDistr        - Run simple jobs locally or in distributed fashion using queue.
+%   fevalDistr        - Wrapper for embarrassingly parallel function evaluation.
+%   fevalDistrDisk    - Helper for fevalDistr (do no call directly).
 %   fevalImages       - Used to apply the same operation to all images in given directory.
 %   fevalMats         - Used to apply the same operation to all .mat files in given directory.
 %

@@ -1,19 +1,31 @@
 function [out,res] = fevalDistr( funNm, jobs, varargin )
-% Run simple jobs locally or in distributed fashion using queue.
+% Wrapper for embarrassingly parallel function evaluation.
 %
-% Runs "r=feval(funNm,jobs{i}{:})" for each job either locally or across
-% cluster. Distributed queuing system must be installed separately. If
-% queuing system is not installed, this function can still be called with
-% either the 'local' or 'parfor' options. jobs should be a cell array of
-% length nJob. Each job should be a cell array of parameters to pass to
-% funNm. funNm must be a function in the path and must return a single
-% value (which may be a dummy value if funNm writes its results to disk).
+% Runs "r=feval(funNm,jobs{i}{:})" for each job in a parallel manner. jobs
+% should be a cell array of length nJob and each job should be a cell array
+% of parameters to pass to funNm. funNm must be a function in the path and
+% must return a single value (which may be a dummy value if funNm writes
+% results to disk). Different forms of parallelization are supported
+% depending on the hardware and Matlab toolboxes available. The type of
+% parallelization is determined by the parameter 'type' described below.
 %
-% If using type='local', jobs are executed using simple for loop. If using
-% type='parfor', the for loop is a parfor loop, make sure to setup matlab
-% workers first using "matlabpool open nWorkers". If type='distr' attempts
-% to use the distributed cluster code (must be installed separately);
-% defaults to 'local' if cluster code not found.
+% type='LOCAL': jobs are executed using a simple "for" loop. This implies
+% no parallelization and is the default fallback option.
+%
+% type='PARFOR': jobs are executed using a "parfor" loop. This option is
+% only available if the Matlab *Parallel Computing Toolbox* is installed.
+% Make sure to setup Matlab workers first using "matlabpool open".
+%
+% type='DISTR': jobs are executed on the Caltech cluster. Distributed
+% queuing system must be installed separately. Currently this option is
+% only supported on the Caltech cluster but could easily be installed on
+% any Linux cluster as it requires only SSH and a shared filesystem.
+%
+% type='DOSCOMPILED': jobs are executed locally in parallel on a windows
+% system by first compiling executables and then running in background.
+% This option is only available if the *Matlab Compiler* is installed (but
+% does NOT require the Parallel Computing Toolbox). Compiling an executable
+% can take 1-10 minutes, so use this option only for large jobs.
 %
 % USAGE
 %  [out,res] = fevalDistr( funNm, jobs, [varargin] )
@@ -22,7 +34,7 @@ function [out,res] = fevalDistr( funNm, jobs, varargin )
 %  funNm      - name of function that will process jobs
 %  jobs       - [1xnJob] cell array of parameters for each job
 %  varargin   - additional params (struct or name/value pairs)
-%   .type       - ['local'], 'parfor' or 'distr'
+%   .type       - ['local'], 'parfor', 'distr', 'doscompiled'
 %   .pLaunch    - [] parameter to controller('launchQueue',pLaunch{:})
 %   .group      - [1] send jobs in batches (only relevant if type='distr')
 %
@@ -38,7 +50,7 @@ function [out,res] = fevalDistr( funNm, jobs, varargin )
 %  tic, [out,J] = fevalDistr('conv2',jobs,pDistr{:}); toc
 %  figure(1); montage2(cell2array(J))
 %
-% See also controller, queue
+% See also matlabpool mcc
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
@@ -53,7 +65,7 @@ if(strcmp(type,'distr') && ~exist('controller.m','file'))
 end
 nJob=length(jobs); res=cell(1,nJob); store=(nargout==2);
 if(nJob==0), out=1; return; end
-switch type
+switch lower(type)
   case 'local'
     % run jobs locally using for loop
     tid=ticStatus('collecting jobs'); out=1;
@@ -65,8 +77,8 @@ switch type
     parfor i=1:nJob, r=feval(funNm,jobs{i}{:});
       if(store), res{i}=r; end; end; out=1;
     
-  case 'parallel-windows'
-    % run jobs locally using multiple threads by compiling windows exe
+  case 'doscompiled'
+    % run jobs locally using multiple threads by compiling DOS exe
     t=clock; t=mod(t(end),1); t=round((t+rand)/2*1e15);
     tDir=sprintf('temp-%15i\\',t); mkdir(tDir); fprintf('Compiling...\n');
     mcc('-m','fevalDistrDisk','-d',tDir,'-a',funNm);
