@@ -99,7 +99,8 @@ switch lower(type)
       end
       tocStatus(tid,k/nJob); if(k==nJob), out=1; break; end
     end
-    for i=1:10, try rmdir(tDir,'s'); catch, pause(1), end; end %#ok<CTCH>
+    for i=1:10, try rmdir(tDir,'s'); return;
+      catch, pause(1), end; end %#ok<CTCH>
     
   case 'distr'
     % run jobs using Linux queuing system
@@ -121,6 +122,6 @@ switch lower(type)
       tocStatus(tid,k/nJob); if(k==nJob), out=1; break; end
     end; controller('closeQueue');
     
-  otherwise, assert(false);
+  otherwise, error('unkown type: ''%s''',type);
 end
 end
