@@ -21,11 +21,12 @@ function [out,res] = fevalDistr( funNm, jobs, varargin )
 % only supported on the Caltech cluster but could easily be installed on
 % any Linux cluster as it requires only SSH and a shared filesystem.
 %
-% type='DOSCOMPILED': jobs are executed locally in parallel on a windows
-% system by first compiling executables and then running in background.
-% This option is only available if the *Matlab Compiler* is installed (but
-% does NOT require the Parallel Computing Toolbox). Compiling an executable
-% can take 1-10 minutes, so use this option only for large jobs.
+% type='COMPILED': jobs are executed locally in parallel by first compiling
+% executables and then running them in background. This option requires the
+% *Matlab Compiler* to be installed (but does NOT require the Parallel
+% Computing Toolbox). Compiling can take 1-10 minutes, so use this option
+% only for large jobs. (On Linux alter startup.m by calling addpath() only
+% if ~isdeployed, otherwise will get error about "CTF" after compiling).
 %
 % USAGE
 %  [out,res] = fevalDistr( funNm, jobs, [varargin] )
@@ -77,17 +78,18 @@ switch lower(type)
     parfor i=1:nJob, r=feval(funNm,jobs{i}{:});
       if(store), res{i}=r; end; end; out=1;
     
-  case 'doscompiled'
-    % run jobs locally using multiple threads by compiling DOS exe
+  case 'compiled'
+    % run jobs locally in background in parallel using compiled code
     t=clock; t=mod(t(end),1); t=round((t+rand)/2*1e15);
-    tDir=sprintf('temp-%15i\\',t); mkdir(tDir); fprintf('Compiling...\n');
+    tDir=sprintf('temp-%15i/',t); mkdir(tDir); fprintf('Compiling...\n');
     mcc('-m','fevalDistrDisk','-d',tDir,'-a',funNm);
-    cmd=['start /B /min ' tDir 'fevalDistrDisk.exe ' funNm];
+    cmd1=[tDir 'fevalDistrDisk ' funNm]; cmd2='';
+    if(ispc), cmd1=['start /B /min ' cmd1]; else cmd2=' &'; end
     Q=feature('numCores'); q=0; i=0; k=0; tid=ticStatus('collecting jobs');
     while( 1 )
       while( q<Q && i<nJob ), q=q+1; i=i+1;
         job=jobs{i}; save([tDir int2str2(i,5) '-in'],'job'); %#ok<NASGU>
-        system([cmd ' ' tDir int2str2(i,5)]);
+        system([cmd1 ' ' tDir int2str2(i,5) cmd2]);
       end
       fs=dir([tDir '*-done']); fs={fs.name}; k1=length(fs); k=k+k1; q=q-k1;
       for i1=1:k1
