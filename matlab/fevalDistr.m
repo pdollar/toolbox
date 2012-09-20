@@ -81,26 +81,21 @@ switch lower(type)
   case 'compiled'
     % run jobs locally in background in parallel using compiled code
     t=clock; t=mod(t(end),1); t=round((t+rand)/2*1e15);
-    tDir=sprintf('temp-%15i/',t); mkdir(tDir); fprintf('Compiling...\n');
+    tDir=sprintf('temp-%15i/',t); mkdir(tDir);
+    fprintf('Compiling (this may take a while)...\n');
     mcc('-m','fevalDistrDisk','-d',tDir,'-a',funNm);
-    cmd1=[tDir 'fevalDistrDisk ' funNm]; cmd2='';
-    if(ispc), cmd1=['start /B /min ' cmd1]; else cmd2=' &'; end
-    Q=feature('numCores'); q=0; i=0; k=0; tid=ticStatus('collecting jobs');
+    cmd=[tDir 'fevalDistrDisk ' funNm ' ' tDir ' ']; i=0; k=0;
+    Q=feature('numCores'); q=0; tid=ticStatus('collecting jobs');
     while( 1 )
-      while( q<Q && i<nJob ), q=q+1; i=i+1;
-        job=jobs{i}; save([tDir int2str2(i,5) '-in'],'job'); %#ok<NASGU>
-        system([cmd1 ' ' tDir int2str2(i,5) cmd2]);
+      while(q<Q && i<nJob), q=q+1; i=i+1; jobSave(tDir,jobs{i},i);
+        if(ispc), system2(['start /B /min ' cmd int2str2(i,10)],0);
+        else system2([cmd int2str2(i,10) ' &'],0); end
       end
       fs=dir([tDir '*-done']); fs={fs.name}; k1=length(fs); k=k+k1; q=q-k1;
-      for i1=1:k1
-        i2=str2double(fs{i1}(end-9:end-5)); f=[tDir int2str2(i2,5)];
-        if(store), r=load([f '-out']); res{i2}=r.r; end
-        delete([f '-in.mat'],[f '-out.mat'],[f '-done']);
-      end
+      for i1=1:k1, [ind,r]=jobLoad(tDir,fs{i1},store); res{ind}=r; end
       tocStatus(tid,k/nJob); if(k==nJob), out=1; break; end
     end
-    for i=1:10, try rmdir(tDir,'s'); return;
-      catch, pause(1), end; end %#ok<CTCH>
+    for i=1:10,try rmdir(tDir,'s');return;catch,pause(1),end;end%#ok<CTCH>
     
   case 'distr'
     % run jobs using Linux queuing system
@@ -124,4 +119,22 @@ switch lower(type)
     
   otherwise, error('unkown type: ''%s''',type);
 end
+end
+
+function jobSave( tDir, job, ind ) %#ok<INUSL>
+% Helper: save job to temporary file for use with fevalDistrDisk()
+save([tDir int2str2(ind,10) '-in'],'job');
+end
+
+function [ind,r] = jobLoad( tDir, f, store )
+% Helper: load job and delete temporary files from fevalDistrDisk()
+ind=str2double(f(end-14:end-5)); f=[tDir int2str2(ind,10)];
+if(store), r=load([f '-out']); r=r.r; else r=[]; end
+delete([f '-in.mat'],[f '-out.mat'],[f '-done']);
+end
+
+function msg = system2( cmd, show )
+% Helper: wraps system() call
+[status,msg]=system(cmd); assert(~status);
+if(show), disp(msg(1:end-1)); end
 end
