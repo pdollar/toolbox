@@ -40,6 +40,8 @@ function [out,res] = fevalDistr( funNm, jobs, varargin )
 % have two fields 'scheduler' and 'shareDir' that define the HPC Server.
 % For example, at MSR one possible cluster is defined by scheduler =
 % 'MSR-L25-DEV21' and shareDir = '\\msr-arrays\scratch\msr-pool\L25-dev21'.
+% Note call to 'job submit' from Matlab will hang unless pwd is saved
+% (simply call 'job submit' from cmd prompt and enter pwd).
 %
 % USAGE
 %  [out,res] = fevalDistr( funNm, jobs, [varargin] )
@@ -93,10 +95,7 @@ switch lower(type)
     
   case 'compiled'
     % run jobs locally in background in parallel using compiled code
-    t=clock; t=mod(t(end),1); t=round((t+rand)/2*1e15);
-    tDir=sprintf('temp-%015i/',t); mkdir(tDir);
-    fprintf('Compiling (this may take a while)...\n');
-    mcc('-m','fevalDistrDisk','-d',tDir,'-a',funNm);
+    tDir = jobSetup( '.', funNm );
     cmd=[tDir 'fevalDistrDisk ' funNm ' ' tDir ' ']; i=0; k=0;
     Q=feature('numCores'); q=0; tid=ticStatus('collecting jobs');
     while( 1 )
@@ -114,10 +113,7 @@ switch lower(type)
     % run jobs using Windows HPC Server
     dfs={'shareDir','REQ','scheduler','REQ'};
     [shareDir,scheduler]=getPrmDflt(pLaunch,dfs,1);
-    t=clock; t=mod(t(end),1); t=round((t+rand)/2*1e15);
-    tDir=[shareDir sprintf('\\temp-%015i\\',t)]; mkdir(tDir);
-    fprintf('Compiling (this may take a while)...\n');
-    mcc('-m','fevalDistrDisk','-d',tDir,'-a',funNm);
+    tDir = jobSetup( shareDir, funNm );
     for i=1:nJob, jobSave(tDir,jobs{i},i); end
     scheduler=[' /scheduler:' scheduler ' '];
     m=system2(['job new /failontaskfailure:true' scheduler],1);
@@ -157,6 +153,16 @@ switch lower(type)
     end; controller('closeQueue');
     
   otherwise, error('unkown type: ''%s''',type);
+end
+end
+
+function tDir = jobSetup( rtDir, funNm )
+%  Helper: prepare by setting up temporary dir and compiling funNm
+t=clock; t=mod(t(end),1); t=round((t+rand)/2*1e15);
+tDir=[rtDir filesep sprintf('temp-%015i',t) filesep]; mkdir(tDir);
+if(0), copyfile('.\fevalDistrDisk.exe',tDir); else
+  fprintf('Compiling (this may take a while)...\n');
+  mcc('-m','fevalDistrDisk','-d',tDir,'-a',funNm);
 end
 end
 
