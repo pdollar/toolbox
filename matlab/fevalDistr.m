@@ -39,7 +39,7 @@ function [out,res] = fevalDistr( funNm, jobs, varargin )
 % absolute paths and available from HPC cluster. Parameter pLaunch should
 % have two fields 'scheduler' and 'shareDir' that define the HPC Server.
 % For example, at MSR one possible cluster is defined by scheduler =
-% 'MSR-L25-DEV09' and shareDir = '\\MSR-L25-DEV10\share\'.
+% 'MSR-L25-DEV21' and shareDir = '\\msr-arrays\scratch\msr-pool\L25-dev21'.
 %
 % USAGE
 %  [out,res] = fevalDistr( funNm, jobs, [varargin] )
@@ -106,7 +106,7 @@ switch lower(type)
       end
       fs=dir([tDir '*-done']); fs={fs.name}; k1=length(fs); k=k+k1; q=q-k1;
       for i1=1:k1, [ind,r]=jobLoad(tDir,fs{i1},store); res{ind}=r; end
-      tocStatus(tid,k/nJob); if(k==nJob), out=1; break; end
+      pause(1); tocStatus(tid,k/nJob); if(k==nJob), out=1; break; end
     end
     for i=1:10, try rmdir(tDir,'s');break;catch,pause(1),end;end %#ok<CTCH>
     
@@ -132,7 +132,7 @@ switch lower(type)
       if(strcmpi('failed',m1)), disp('ABORTING'); out=0; break; end
       fs=dir([tDir '*-done']); fs={fs.name}; k1=length(fs); k=k+k1;
       for i1=1:k1, [ind,r]=jobLoad(tDir,fs{i1},store); res{ind}=r; end
-      tocStatus(tid,k/nJob); if(k==nJob), out=1; break; end
+      pause(1); tocStatus(tid,k/nJob); if(k==nJob), out=1; break; end
     end
     for i=1:10, try rmdir(tDir,'s');break;catch,pause(1),end;end %#ok<CTCH>
     
@@ -169,11 +169,15 @@ function [ind,r] = jobLoad( tDir, f, store )
 % Helper: load job and delete temporary files from fevalDistrDisk()
 ind=str2double(f(end-14:end-5)); f=[tDir int2str2(ind,10)];
 if(store), r=load([f '-out']); r=r.r; else r=[]; end
-delete([f '-in.mat'],[f '-out.mat'],[f '-done']);
+fs={[f '-done'],[f '-in.mat'],[f '-out.mat']};
+delete(fs{:}); pause(.1); exist1=@(f) exist(f,'file')==2;
+while( exist1(fs{1}) || exist1(fs{2}) || exist1(fs{3}) )
+  warning('Waiting for files to delete.'); pause(5); end %#ok<WNTAG>
 end
 
 function msg = system2( cmd, show )
 % Helper: wraps system() call
-[status,msg]=system(cmd); assert(~status);
-if(show), disp(msg(1:end-1)); end
+[status,msg]=system(cmd); msg=msg(1:end-1);
+if(status), error(msg); end
+if(show), disp(msg); end
 end
