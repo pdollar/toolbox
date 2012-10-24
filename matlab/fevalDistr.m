@@ -116,7 +116,10 @@ switch lower(type)
     tDir = jobSetup( shareDir, funNm, fevalDistrCompiled );
     for i=1:nJob, jobSave(tDir,jobs{i},i); end
     scheduler=[' /scheduler:' scheduler ' '];
-    m=system2(['job new /failontaskfailure:true' scheduler],1);
+    m=system2(['cluscfg view' scheduler],0);
+    [~,j]=regexp(m,'cores\s*: '); m1=m(j+1:j+6);
+    m=system2(['job new /failontaskfailure:true /numcores:' ...
+      int2str(min([1024 str2double(m1)-8 nJob])) scheduler],1);
     jid=m(isstrprop(m,'digit')); nJobStr=int2str(nJob);
     system2(['job add ' jid ' -workdir:' tDir ' -parametric:1-' nJobStr ...
       scheduler ' fevalDistrDisk ' funNm ' ' tDir ' *'],1);
