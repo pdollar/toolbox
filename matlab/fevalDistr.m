@@ -128,7 +128,7 @@ switch lower(type)
     while( 1 )
       m=system2(['job view ' jid scheduler],0);
       [~,j]=regexp(m,'State\s*: '); m1=m(j+1:j+6);
-      if(strcmpi('failed',m1)), disp('ABORTING'); out=0; break; end
+      if(strcmpi('failed',m1)), fprintf('\nABORTING\n'); out=0; break; end
       fs=dir([tDir '*-done']); fs={fs.name}; k1=length(fs); k=k+k1;
       for i1=1:k1, [ind,r]=jobLoad(tDir,fs{i1},store); res{ind}=r; end
       pause(1); tocStatus(tid,k/nJob); if(k==nJob), out=1; break; end
@@ -169,6 +169,8 @@ if(~isempty(fevalDistrCompiled) && exist(fevalDistrCompiled,'file'))
 else
   fprintf('Compiling (this may take a while)...\n');
   mcc('-m','fevalDistrDisk','-d',tDir,'-a',funNm);
+  if(~isempty(fevalDistrCompiled)), [~,~,e]=fileparts(fevalDistrCompiled);
+    copyfile([tDir filesep 'fevalDistrDisk' e],fevalDistrCompiled); end
 end
 end
 
