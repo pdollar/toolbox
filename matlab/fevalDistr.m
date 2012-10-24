@@ -95,7 +95,7 @@ switch lower(type)
     
   case 'compiled'
     % run jobs locally in background in parallel using compiled code
-    tDir = jobSetup( '.', funNm );
+    tDir = jobSetup( '.', funNm, '' );
     cmd=[tDir 'fevalDistrDisk ' funNm ' ' tDir ' ']; i=0; k=0;
     Q=feature('numCores'); q=0; tid=ticStatus('collecting jobs');
     while( 1 )
@@ -111,9 +111,9 @@ switch lower(type)
     
   case 'winhpc'
     % run jobs using Windows HPC Server
-    dfs={'shareDir','REQ','scheduler','REQ'};
-    [shareDir,scheduler]=getPrmDflt(pLaunch,dfs,1);
-    tDir = jobSetup( shareDir, funNm );
+    dfs={'shareDir','REQ','scheduler','REQ','fevalDistrCompiled',''};
+    [shareDir,scheduler,fevalDistrCompiled]=getPrmDflt(pLaunch,dfs,1);
+    tDir = jobSetup( shareDir, funNm, fevalDistrCompiled );
     for i=1:nJob, jobSave(tDir,jobs{i},i); end
     scheduler=[' /scheduler:' scheduler ' '];
     m=system2(['job new /failontaskfailure:true' scheduler],1);
@@ -156,11 +156,14 @@ switch lower(type)
 end
 end
 
-function tDir = jobSetup( rtDir, funNm )
+function tDir = jobSetup( rtDir, funNm, fevalDistrCompiled )
 %  Helper: prepare by setting up temporary dir and compiling funNm
 t=clock; t=mod(t(end),1); t=round((t+rand)/2*1e15);
 tDir=[rtDir filesep sprintf('temp-%015i',t) filesep]; mkdir(tDir);
-if(0), copyfile('.\fevalDistrDisk.exe',tDir); else
+if(~isempty(fevalDistrCompiled) && exist(fevalDistrCompiled,'file'))
+  fprintf('Reusing compiled fevalDistrCompiled...\n');
+  copyfile(fevalDistrCompiled,tDir);
+else
   fprintf('Compiling (this may take a while)...\n');
   mcc('-m','fevalDistrDisk','-d',tDir,'-a',funNm);
 end
@@ -183,6 +186,7 @@ end
 
 function msg = system2( cmd, show )
 % Helper: wraps system() call
+if(show), disp(cmd); end
 [status,msg]=system(cmd); msg=msg(1:end-1);
 if(status), error(msg); end
 if(show), disp(msg); end
