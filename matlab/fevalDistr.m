@@ -103,8 +103,8 @@ switch lower(type)
         if(ispc), system2(['start /B /min ' cmd int2str2(i,10)],0);
         else system2([cmd int2str2(i,10) ' &'],0); end
       end
-      fs=dir([tDir '*-done']); fs={fs.name}; k1=length(fs); k=k+k1; q=q-k1;
-      for i1=1:k1, [ind,r]=jobLoad(tDir,fs{i1},store); res{ind}=r; end
+      done=jobStatus(tDir,'done'); k1=length(done); k=k+k1; q=q-k1;
+      for i1=done, res{i1}=jobLoad(tDir,i1,store); end
       pause(1); tocStatus(tid,k/nJob); if(k==nJob), out=1; break; end
     end
     for i=1:10, try rmdir(tDir,'s');break;catch,pause(1),end;end %#ok<CTCH>
@@ -129,8 +129,8 @@ switch lower(type)
       m=system2(['job view ' jid scheduler],0);
       [~,j]=regexp(m,'State\s*: '); m1=m(j+1:j+6);
       if(strcmpi('failed',m1)), fprintf('\nABORTING\n'); out=0; break; end
-      fs=dir([tDir '*-done']); fs={fs.name}; k1=length(fs); k=k+k1;
-      for i1=1:k1, [ind,r]=jobLoad(tDir,fs{i1},store); res{ind}=r; end
+      done=jobStatus(tDir,'done'); k1=length(done); k=k+k1;
+      for i1=done, res{i1}=jobLoad(tDir,i1,store); end
       pause(1); tocStatus(tid,k/nJob); if(k==nJob), out=1; break; end
     end
     for i=1:10, try rmdir(tDir,'s');break;catch,pause(1),end;end %#ok<CTCH>
@@ -174,18 +174,24 @@ else
 end
 end
 
+function status = jobStatus( tDir, type )
+% Helper: get list of job files of given type.
+fs=dir([tDir '*-' type '*']); fs={fs.name}; n=length(fs);
+status=zeros(1,n); for i=1:n, status(i)=str2double(fs{i}(1:10)); end
+end
+
 function jobSave( tDir, job, ind ) %#ok<INUSL>
 % Helper: save job to temporary file for use with fevalDistrDisk()
 save([tDir int2str2(ind,10) '-in'],'job');
 end
 
-function [ind,r] = jobLoad( tDir, f, store )
+function r = jobLoad( tDir, ind, store )
 % Helper: load job and delete temporary files from fevalDistrDisk()
-ind=str2double(f(end-14:end-5)); f=[tDir int2str2(ind,10)];
+f=[tDir int2str2(ind,10)];
 if(store), r=load([f '-out']); r=r.r; else r=[]; end
-fs={[f '-done'],[f '-in.mat'],[f '-out.mat']};
+fs={[f '-done'],[f '-in.mat'],[f '-out.mat'],[f '-started']};
 delete(fs{:}); pause(.1); exist1=@(f) exist(f,'file')==2;
-while( exist1(fs{1}) || exist1(fs{2}) || exist1(fs{3}) )
+while( exist1(fs{1}) || exist1(fs{2}) || exist1(fs{3}) || exist1(fs{4}))
   warning('Waiting for files to delete.'); pause(5); end %#ok<WNTAG>
 end
 
