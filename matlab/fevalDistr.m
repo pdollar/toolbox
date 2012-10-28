@@ -72,105 +72,120 @@ function [out,res] = fevalDistr( funNm, jobs, varargin )
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
-
 dfs={'type','local','pLaunch',[],'group',1};
-[type,pLaunch,group]=getPrmDflt(varargin,dfs,1);
-if(strcmp(type,'distr') && ~exist('controller.m','file'))
-  warning(['distributed queuing not installed,' ...
-    ' switching to type=''local''.']); type='local';  %#ok<WNTAG>
-end
-nJob=length(jobs); res=cell(1,nJob); store=(nargout==2);
-if(nJob==0), out=1; return; end
+[type,pLaunch,group]=getPrmDflt(varargin,dfs,1); store=(nargout==2);
+if(isempty(jobs)), res=cell(1,0); out=1; return; end
 switch lower(type)
-  case 'local'
-    % run jobs locally using for loop
-    tid=ticStatus('collecting jobs'); out=1;
-    for i=1:nJob, r=feval(funNm,jobs{i}{:});
-      if(store), res{i}=r; end; tocStatus(tid,i/nJob); end
-    
-  case 'parfor'
-    % run jobs locally using parfor loop
-    parfor i=1:nJob, r=feval(funNm,jobs{i}{:});
-      if(store), res{i}=r; end; end; out=1;
-    
-  case 'compiled'
-    % run jobs locally in background in parallel using compiled code
-    tDir = jobSetup( '.', funNm, '' );
-    cmd=[tDir 'fevalDistrDisk ' funNm ' ' tDir ' ']; i=0; k=0;
-    Q=feature('numCores'); q=0; tid=ticStatus('collecting jobs');
-    while( 1 )
-      while(q<Q && i<nJob), q=q+1; i=i+1; jobSave(tDir,jobs{i},i);
-        if(ispc), system2(['start /B /min ' cmd int2str2(i,10)],0);
-        else system2([cmd int2str2(i,10) ' &'],0); end
-      end
-      done=jobStatus(tDir,'done'); k1=length(done); k=k+k1; q=q-k1;
-      for i1=done, res{i1}=jobLoad(tDir,i1,store); end
-      pause(1); tocStatus(tid,k/nJob); if(k==nJob), out=1; break; end
-    end
-    for i=1:10, try rmdir(tDir,'s');break;catch,pause(1),end;end %#ok<CTCH>
-    
-  case 'winhpc'
-    % run jobs using Windows HPC Server
-    dfs={'shareDir','REQ','scheduler','REQ','fevalDistrCompiled',''};
-    [shareDir,scheduler,fevalDistrCompiled]=getPrmDflt(pLaunch,dfs,1);
-    tDir = jobSetup( shareDir, funNm, fevalDistrCompiled );
-    for i=1:nJob, jobSave(tDir,jobs{i},i); end
-    scheduler=[' /scheduler:' scheduler ' '];
-    m=system2(['cluscfg view' scheduler],0);
-    [~,j]=regexp(m,'cores\s*: '); m1=m(j+1:j+6);
-    m=system2(['job new /failontaskfailure:true /numcores:' ...
-      int2str(min([1024 str2double(m1)-8 nJob])) scheduler],1);
-    jid=m(isstrprop(m,'digit')); nJobStr=int2str(nJob);
-    system2(['job add ' jid ' -workdir:' tDir ' -parametric:1-' nJobStr ...
-      scheduler ' fevalDistrDisk ' funNm ' ' tDir ' *'],1);
-    system2(['job submit /id:' jid scheduler],1);
-    tid=ticStatus('collecting jobs'); k=0;
-    while( 1 )
-      m=system2(['job view ' jid scheduler],0);
-      [~,j]=regexp(m,'State\s*: '); m1=m(j+1:j+6);
-      if(strcmpi('failed',m1)), fprintf('\nABORTING\n'); out=0; break; end
-      done=jobStatus(tDir,'done'); k1=length(done); k=k+k1;
-      for i1=done, res{i1}=jobLoad(tDir,i1,store); end
-      pause(1); tocStatus(tid,k/nJob); if(k==nJob), out=1; break; end
-    end
-    for i=1:10, try rmdir(tDir,'s');break;catch,pause(1),end;end %#ok<CTCH>
-    
-  case 'distr'
-    % run jobs using Linux queuing system
-    controller('launchQueue',pLaunch{:});
-    if( group>1 )
-      nJobGrp=ceil(nJob/group); jobsGrp=cell(1,nJobGrp); k=0;
-      for i=1:nJobGrp, k1=min(nJob,k+group);
-        jobsGrp{i}={funNm,jobs(k+1:k1),'type','local'}; k=k1; end
-      nJob=nJobGrp; jobs=jobsGrp; funNm='fevalDistr';
-    end
-    jids=controller('jobsAdd',nJob,funNm,jobs); k=0;
-    fprintf('Sent %i jobs...\n',nJob); tid=ticStatus('collecting jobs');
-    while( 1 )
-      jids1=controller('jobProbe',jids);
-      if(isempty(jids1)), pause(.1); continue; end
-      jid=jids1(1); [r,err]=controller('jobRecv',jid);
-      if(~isempty(err)), disp('ABORTING'); out=0; break; end
-      k=k+1; if(store), res{jid==jids}=r; end
-      tocStatus(tid,k/nJob); if(k==nJob), out=1; break; end
-    end; controller('closeQueue');
-    
-  otherwise, error('unkown type: ''%s''',type);
+  case 'local',     [out,res]=fedLocal(funNm,jobs,store);
+  case 'parfor',    [out,res]=fedParfor(funNm,jobs,store);
+  case 'distr',     [out,res]=fedDistr(funNm,jobs,pLaunch,group,store);
+  case 'compiled',  [out,res]=fedCompiled(funNm,jobs,store);
+  case 'winhpc',    [out,res]=fedWinHpc(funNm,jobs,pLaunch,store);
+  otherwise,        error('unkown type: ''%s''',type);
 end
 end
 
-function tDir = jobSetup( rtDir, funNm, fevalDistrCompiled )
+function [out,res] = fedLocal( funNm, jobs, store )
+% Run jobs locally using for loop.
+nJob=length(jobs); res=cell(1,nJob); out=1;
+tid=ticStatus('collecting jobs');
+for i=1:nJob, r=feval(funNm,jobs{i}{:});
+  if(store), res{i}=r; end; tocStatus(tid,i/nJob); end
+end
+
+function [out,res] = fedParfor( funNm, jobs, store )
+% Run jobs locally using parfor loop.
+nJob=length(jobs); res=cell(1,nJob); out=1;
+parfor i=1:nJob, r=feval(funNm,jobs{i}{:});
+  if(store), res{i}=r; end; end
+end
+
+function [out,res] = fedDistr( funNm, jobs, pLaunch, group, store )
+% Run jobs using Linux queuing system.
+if(~exist('controller.m','file'))
+  msg='distributed queuing not installed, switching to type=''local''.';
+  warning(msg); [out,res]=fedLocal(funNm,jobs,store); return; %#ok<WNTAG>
+end
+nJob=length(jobs); res=cell(1,nJob); controller('launchQueue',pLaunch{:});
+if( group>1 )
+  nJobGrp=ceil(nJob/group); jobsGrp=cell(1,nJobGrp); k=0;
+  for i=1:nJobGrp, k1=min(nJob,k+group);
+    jobsGrp{i}={funNm,jobs(k+1:k1),'type','local'}; k=k1; end
+  nJob=nJobGrp; jobs=jobsGrp; funNm='fevalDistr';
+end
+jids=controller('jobsAdd',nJob,funNm,jobs); k=0;
+fprintf('Sent %i jobs...\n',nJob); tid=ticStatus('collecting jobs');
+while( 1 )
+  jids1=controller('jobProbe',jids);
+  if(isempty(jids1)), pause(.1); continue; end
+  jid=jids1(1); [r,err]=controller('jobRecv',jid);
+  if(~isempty(err)), disp('ABORTING'); out=0; break; end
+  k=k+1; if(store), res{jid==jids}=r; end
+  tocStatus(tid,k/nJob); if(k==nJob), out=1; break; end
+end; controller('closeQueue');
+end
+
+function [out,res] = fedCompiled( funNm, jobs, store )
+% Run jobs locally in background in parallel using compiled code.
+nJob=length(jobs); res=cell(1,nJob); tDir=jobSetup('.',funNm,'' );
+cmd=[tDir 'fevalDistrDisk ' funNm ' ' tDir ' ']; i=0; k=0;
+Q=feature('numCores'); q=0; tid=ticStatus('collecting jobs');
+while( 1 )
+  % launch jobs until queue is full (q==Q) or all jobs launched (i==nJob)
+  while(q<Q && i<nJob), q=q+1; i=i+1; jobSave(tDir,jobs{i},i);
+    if(ispc), system2(['start /B /min ' cmd int2str2(i,10)],0);
+    else system2([cmd int2str2(i,10) ' &'],0); end
+  end
+  % collect completed jobs (k1 of them), release queue slots
+  done=jobStatus(tDir,'done'); k1=length(done); k=k+k1; q=q-k1;
+  for i1=done, res{i1}=jobLoad(tDir,i1,store); end
+  pause(1); tocStatus(tid,k/nJob); if(k==nJob), out=1; break; end
+end
+for i=1:10, try rmdir(tDir,'s'); break; catch,pause(1),end; end %#ok<CTCH>
+end
+
+function [out,res] = fedWinHpc( funNm, jobs, pLaunch, store )
+% Run jobs using Windows HPC Server.
+nJob=length(jobs); res=cell(1,nJob);
+dfs={'shareDir','REQ','scheduler','REQ','executable',''};
+[shareDir,scheduler,executable]=getPrmDflt(pLaunch,dfs,1);
+% perform job setup and create jobs
+tDir = jobSetup(shareDir,funNm,executable);
+for i=1:nJob, jobSave(tDir,jobs{i},i); end
+% launch on hpc cluster
+scheduler=[' /scheduler:' scheduler ' '];
+m=system2(['cluscfg view' scheduler],0);
+[~,j]=regexp(m,'cores\s*: '); nCores=str2double(m(j+1:j+6))-8;
+nCores=['/numcores:' int2str(min([1024 nCores nJob]))];
+m=system2(['job new /failontaskfailure:true ' nCores scheduler],1);
+jid=m(isstrprop(m,'digit')); nJobStr=int2str(nJob);
+cmd=[' /workdir:' tDir ' fevalDistrDisk ' funNm ' ' tDir ' '];
+system2(['job add ' jid ' /parametric:1-' nJobStr scheduler cmd '*'],1);
+system2(['job submit /id:' jid scheduler],1); save([tDir 'state']);
+% collect jobs as they come in
+tid=ticStatus('collecting jobs'); k=0;
+while( 1 )
+  m=system2(['job view ' jid scheduler],0);
+  [~,j]=regexp(m,'State\s*: '); m1=m(j+1:j+6);
+  if(strcmpi('failed',m1)), fprintf('\nABORTING\n'); out=0; break; end
+  done=jobStatus(tDir,'done'); k=k+length(done);
+  for i1=done, res{i1}=jobLoad(tDir,i1,store); end
+  pause(1); tocStatus(tid,k/nJob); if(k==nJob), out=1; break; end
+end
+for i=1:10, try rmdir(tDir,'s'); break; catch,pause(1),end; end %#ok<CTCH>
+end
+
+function tDir = jobSetup( rtDir, funNm, executable )
 %  Helper: prepare by setting up temporary dir and compiling funNm
 t=clock; t=mod(t(end),1); t=round((t+rand)/2*1e15);
 tDir=[rtDir filesep sprintf('temp-%015i',t) filesep]; mkdir(tDir);
-if(~isempty(fevalDistrCompiled) && exist(fevalDistrCompiled,'file'))
-  fprintf('Reusing compiled fevalDistrCompiled...\n');
-  copyfile(fevalDistrCompiled,tDir);
+if(~isempty(executable) && exist(executable,'file'))
+  fprintf('Reusing compiled executable...\n'); copyfile(executable,tDir);
 else
   fprintf('Compiling (this may take a while)...\n');
   mcc('-m','fevalDistrDisk','-d',tDir,'-a',funNm);
-  if(~isempty(fevalDistrCompiled)), [~,~,e]=fileparts(fevalDistrCompiled);
-    copyfile([tDir filesep 'fevalDistrDisk' e],fevalDistrCompiled); end
+  if(~isempty(executable)), [~,~,e]=fileparts(executable);
+    copyfile([tDir filesep 'fevalDistrDisk' e],executable); end
 end
 end
 
