@@ -169,23 +169,42 @@ while( 1 )
   if(strcmpi('failed',state)), fprintf('\nABORTING\n'); out=0; break; end
   done=jobFileIds(tDir,'done'); k=k+length(done);
   for i1=done, res{i1}=jobLoad(tDir,i1,store); end
+  hpcExcludeBadNodes(tDir,jid,scheduler);
   pause(1); tocStatus(tid,k/nJob); if(k==nJob), out=1; break; end
 end
 for i=1:10, try rmdir(tDir,'s'); break; catch,pause(1),end; end %#ok<CTCH>
 end
 
-function val = hpcParse( msg, key, tonum )
-% Helper: extracrt val corresponding to key in hpc msg.
+function hpcExcludeBadNodes( tDir, jid, scheduler )
+% Helper: look for and exclude bad nodes in hpc cluster (can be expensive).
+persistent t; if(isempty(t)), t=clock; end; freq=300;
+t1=clock; if(etime(t1,t)<freq), return; end; t=t1;
+ids=setdiff(jobFileIds(tDir,'in'),jobFileIds(tDir,'started'));
+for id=ids
+  m=system2(['task view ' jid '.1.' int2str(id) scheduler],0);
+  a=strcmpi(hpcParse(m,'State',0),'running');
+  u=hpcParse(m,'Total User Time',2); e=hpcParse(m,'Elapsed Time',2);
+  exclude = a && u/e<.01 && e<freq; if(~exclude), continue; end
+  system2(['job modify ' jid ' /addexcludednodes:' ...
+    hpcParse(m,'Allocated Nodes',0) scheduler],0); t=clock; return;
+end
+end
+
+function v = hpcParse( msg, key, tonum )
+% Helper: extract val corresponding to key in hpc msg.
 t=regexp(msg,': |\n','split'); t=strtrim(t(1:floor(length(t)/2)*2));
 keys=t(1:2:end); vals=t(2:2:end); j=find(strcmpi(key,keys));
 if(isempty(j)), error('key ''%s'' not found in:\n %s',key,msg); end
-val=vals{j}; if(tonum), val=str2double(val); end
+v=vals{j}; if(tonum==0), return; elseif(isempty(v)), v=0; return; end
+if(tonum==1), v=str2double(v); return; end
+v=regexp(v,' ','split'); v=str2double(regexp(v{1},':','split'));
+if(numel(v)==4), v(5)=0; end; v=((v(1)*24+v(2))*60+v(3))*60+v(4)+v(5)/1000;
 end
 
 function tDir = jobSetup( rtDir, funNm, executable )
 %  Helper: prepare by setting up temporary dir and compiling funNm
 t=clock; t=mod(t(end),1); t=round((t+rand)/2*1e15);
-tDir=[rtDir filesep sprintf('temp-%015i',t) filesep]; mkdir(tDir);
+tDir=[rtDir filesep sprintf('fevalDistr-%015i',t) filesep]; mkdir(tDir);
 if(~isempty(executable) && exist(executable,'file'))
   fprintf('Reusing compiled executable...\n'); copyfile(executable,tDir);
 else
