@@ -80,7 +80,7 @@ switch lower(type)
   case 'parfor',    [out,res]=fedParfor(funNm,jobs,store);
   case 'distr',     [out,res]=fedDistr(funNm,jobs,pLaunch,group,store);
   case 'compiled',  [out,res]=fedCompiled(funNm,jobs,store);
-  case 'winhpc',    [out,res]=fedWinHpc(funNm,jobs,pLaunch,store);
+  case 'winhpc',    [out,res]=fedWinhpc(funNm,jobs,pLaunch,store);
   otherwise,        error('unkown type: ''%s''',type);
 end
 end
@@ -137,14 +137,14 @@ while( 1 )
     else system2([cmd int2str2(i,10) ' &'],0); end
   end
   % collect completed jobs (k1 of them), release queue slots
-  done=jobStatus(tDir,'done'); k1=length(done); k=k+k1; q=q-k1;
+  done=jobFileIds(tDir,'done'); k1=length(done); k=k+k1; q=q-k1;
   for i1=done, res{i1}=jobLoad(tDir,i1,store); end
   pause(1); tocStatus(tid,k/nJob); if(k==nJob), out=1; break; end
 end
 for i=1:10, try rmdir(tDir,'s'); break; catch,pause(1),end; end %#ok<CTCH>
 end
 
-function [out,res] = fedWinHpc( funNm, jobs, pLaunch, store )
+function [out,res] = fedWinhpc( funNm, jobs, pLaunch, store )
 % Run jobs using Windows HPC Server.
 nJob=length(jobs); res=cell(1,nJob);
 dfs={'shareDir','REQ','scheduler','REQ','executable',''};
@@ -155,24 +155,31 @@ for i=1:nJob, jobSave(tDir,jobs{i},i); end
 % launch on hpc cluster
 scheduler=[' /scheduler:' scheduler ' '];
 m=system2(['cluscfg view' scheduler],0);
-[~,j]=regexp(m,'cores\s*: '); nCores=str2double(m(j+1:j+6))-8;
-nCores=['/numcores:' int2str(min([1024 nCores nJob]))];
+nCores=hpcParse(m,'total number of cores',1)-8;
+nCores=['/numcores:' int2str(min([1024 nCores nJob])) '-*'];
 m=system2(['job new /failontaskfailure:true ' nCores scheduler],1);
-jid=m(isstrprop(m,'digit')); nJobStr=int2str(nJob);
+jid=hpcParse(m,'created job, id',0); nJobStr=int2str(nJob);
 cmd=[' /workdir:' tDir ' fevalDistrDisk ' funNm ' ' tDir ' '];
 system2(['job add ' jid ' /parametric:1-' nJobStr scheduler cmd '*'],1);
 system2(['job submit /id:' jid scheduler],1); save([tDir 'state']);
 % collect jobs as they come in
 tid=ticStatus('collecting jobs'); k=0;
 while( 1 )
-  m=system2(['job view ' jid scheduler],0);
-  [~,j]=regexp(m,'State\s*: '); m1=m(j+1:j+6);
-  if(strcmpi('failed',m1)), fprintf('\nABORTING\n'); out=0; break; end
-  done=jobStatus(tDir,'done'); k=k+length(done);
+  m=system2(['job view ' jid scheduler],0); state=hpcParse(m,'state',0);
+  if(strcmpi('failed',state)), fprintf('\nABORTING\n'); out=0; break; end
+  done=jobFileIds(tDir,'done'); k=k+length(done);
   for i1=done, res{i1}=jobLoad(tDir,i1,store); end
   pause(1); tocStatus(tid,k/nJob); if(k==nJob), out=1; break; end
 end
 for i=1:10, try rmdir(tDir,'s'); break; catch,pause(1),end; end %#ok<CTCH>
+end
+
+function val = hpcParse( msg, key, tonum )
+% Helper: extracrt val corresponding to key in hpc msg.
+t=regexp(msg,': |\n','split'); t=strtrim(t(1:floor(length(t)/2)*2));
+keys=t(1:2:end); vals=t(2:2:end); j=find(strcmpi(key,keys));
+if(isempty(j)), error('key ''%s'' not found in:\n %s',key,msg); end
+val=vals{j}; if(tonum), val=str2double(val); end
 end
 
 function tDir = jobSetup( rtDir, funNm, executable )
@@ -189,10 +196,10 @@ else
 end
 end
 
-function status = jobStatus( tDir, type )
-% Helper: get list of job files of given type.
+function ids = jobFileIds( tDir, type )
+% Helper: get list of job files ids on disk of given type.
 fs=dir([tDir '*-' type '*']); fs={fs.name}; n=length(fs);
-status=zeros(1,n); for i=1:n, status(i)=str2double(fs{i}(1:10)); end
+ids=zeros(1,n); for i=1:n, ids(i)=str2double(fs{i}(1:10)); end
 end
 
 function jobSave( tDir, job, ind ) %#ok<INUSL>
