@@ -99,7 +99,7 @@ function chns = chnsCompute( I, varargin )
 %
 % See also rgbConvert, gradientMag, gradientHist, chnsPyramid
 %
-% Piotr's Image&Video Toolbox      Version 3.00
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -123,42 +123,43 @@ if( ~isfield(pChns,'complete') || pChns.complete~=1 )
 end
 if(nargin==0 || isempty(I)), chns=pChns; return; end
 
-% extract parameters from pChns
-p=pChns.pColor; enableColor=p.enabled; colorSpace=p.colorSpace;
-p=pChns.pGradMag; enableGradMag=p.enabled;
-colorChn=p.colorChn; normRad=p.normRad; normConst=p.normConst;
-p=pChns.pGradHist; enableGradHist=p.enabled; binSize=p.binSize;
-nOrients=p.nOrients; softBin=p.softBin; useHog=p.useHog; clipHog=p.clipHog;
-p=pChns.pCustom; enableCustom=[p.enabled];
+% create output struct
+info=struct('name',{},'pChn',{},'nChns',{},'padWith',{});
+chns=struct('pChns',pChns,'nTypes',0,'data',{{}},'info',info);
 
 % compute color channels
-I = rgbConvert(I,colorSpace); M=[]; H=[];
+p=pChns.pColor; nm='color channels';
+I = rgbConvert( I, p.colorSpace );
+if(p.enabled), chns=addChn(chns,I,nm,p,'replicate'); end
 
 % compute gradient magnitude channel
-if( enableGradMag || enableGradHist )
-  if( ~enableGradHist ), M=gradientMag(I,colorChn,normRad,normConst);
-  else [M,O]=gradientMag(I,colorChn,normRad,normConst); end
+p=pChns.pGradMag; nm='gradient magnitude';
+if( pChns.pGradHist.enabled )
+  [M,O]=gradientMag(I,p.colorChn,p.normRad,p.normConst);
+elseif( p.enabled )
+  M=gradientMag(I,p.colorChn,p.normRad,p.normConst);
 end
+if(p.enabled), chns=addChn(chns,M,nm,p,0); end
 
 % compute gradient histgoram channels
-if( enableGradHist )
-  H=gradientHist(M,O,binSize,nOrients,softBin,useHog,clipHog); end
+p=pChns.pGradHist; nm='gradient histogram';
+if( p.enabled )
+  H=gradientHist(M,O,p.binSize,p.nOrients,p.softBin,p.useHog,p.clipHog);
+  chns=addChn(chns,H,nm,pChns.pGradHist,0);
+end
 
 % compute custom channels
-nc=length(enableCustom); C=cell(1,nc); pc=pChns.pCustom;
-for i=find(enableCustom), C{i}=feval(pc(i).hFunc,I,pc(i).pFunc{:}); end
+p=pChns.pCustom;
+for i=find( [p.enabled] )
+  C=feval(p(i).hFunc,I,p(i).pFunc{:});
+  chns=addChn(chns,C,p(i).name,p(i),p(i).padWith );
+end
 
-% constrcut extra info for output struct
-info = {'color channels','gradient magnitude','gradient histogram'};
-info = struct( 'name',info, 'pChn',{pChns.pColor,pChns.pGradMag, ...
-  pChns.pGradHist}, 'nChns',{size(I,3),size(M,3),size(H,3)}, ...
-  'padWith', {'replicate',0,0} );
-for i=1:nc, info(i+3)=struct( 'name',pc(i).name, 'pChn',pc(i), ...
-    'nChns',size(C{i},3), 'padWith',pc(i).padWith ); end
+end
 
-% create output struct
-en = [enableColor enableGradMag enableGradHist enableCustom]>0;
-data={I M H C{:}}; data=data(en); info=info(en); nTypes=nnz(en); %#ok<CCAT>
-chns = struct('pChns',pChns,'nTypes',nTypes,'data',{data},'info',info);
-
+function chns = addChn( chns, data, name, pChn, padWith )
+% Helper function to add a channel to chns.
+chns.data{end+1}=data;
+chns.info(end+1)=struct('name',name,'pChn',pChn,...
+  'nChns',size(data,3),'padWith',padWith);
 end
