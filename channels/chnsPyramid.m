@@ -60,16 +60,16 @@ function pyramid = chnsPyramid( I, varargin )
 % scales are further tweaked so that the resized image has dimensions that
 % are exactly divisible by shrink (for details please see the code).
 %
-% If chnsPyramid() is called with no inputs or empty I, the output is the
-% complete default parameters (pPyramid). Finally, we describe the
-% remaining parameters: "pad" controls the amount the channels are padded
-% after being created (useful for detecting objects near boundaries);
-% "smoothIm" controls the amount the image is smoothed prior to computing
-% the channels (typically the amount of image smoothing should be small or
-% gradient information is lost); "smoothChns" controls the amount of
-% smoothing after the channels are created (and controls the integration
-% scale of the channels, see the BMVC09 paper); finally "concat" determines
-% whether all channels at a single scale are concatenated in the output.
+% If chnsPyramid() is called with no inputs, the output is the complete
+% default parameters (pPyramid). Finally, we describe the remaining
+% parameters: "pad" controls the amount the channels are padded after being
+% created (useful for detecting objects near boundaries); "smoothIm"
+% controls the amount the image is smoothed prior to computing the channels
+% (typically the amount of image smoothing should be small or gradient
+% information is lost); "smoothChns" controls the amount of smoothing after
+% the channels are created (and controls the integration scale of the
+% channels, see the BMVC09 paper); finally "concat" determines whether all
+% channels at a single scale are concatenated in the output.
 %
 % An emphasis has been placed on speed, with the code undergoing heavy
 % optimization. Computing the full set of (approximated) *multi-scale*
@@ -77,6 +77,7 @@ function pyramid = chnsPyramid( I, varargin )
 % machine from 2011 (although runtime depends on input parameters).
 %
 % USAGE
+%  pPyramid = chnsPryamid()
 %  pyramid = chnsPyramid( I, pPyramid )
 %
 % INPUTS
@@ -127,12 +128,13 @@ if( ~isfield(pPyramid,'complete') || pPyramid.complete~=1 )
   dfs={ 'pChns',{}, 'nPerOct',8, 'nOctUp',0, 'nApprox',-1, ...
     'lambdas',[], 'shrink',4, 'pad',[0 0], 'minDs',[16 16], ...
     'smoothIm',1, 'smoothChns',1, 'concat',1, 'complete',1 };
-  p = getPrmDflt(varargin,dfs,1); shrink=p.shrink;
-  p.pChns=chnsCompute([],p.pChns); p.pChns.pGradHist.binSize=shrink;
+  p = getPrmDflt(varargin,dfs,1);
+  shrink=p.shrink; p.pChns.pGradHist.binSize=shrink;
+  chns=chnsCompute([],p.pChns); p.pChns=chns.pChns;
   p.pad=round(p.pad/shrink)*shrink; p.minDs=max(p.minDs,shrink*4);
   if(p.nApprox<0), p.nApprox=p.nPerOct-1; end; pPyramid=p;
 end
-if(nargin==0 || isempty(I)), pyramid=pPyramid; return; end
+if(nargin==0), pyramid=pPyramid; return; end
 vs=struct2cell(pPyramid); [pChns,nPerOct,nOctUp,nApprox,lambdas,...
   shrink,pad,minDs,smoothIm,smoothChns,concat,~]=deal(vs{:});
 pChns.pGradHist.binSize=shrink; pPyramid.pChns=pChns;
@@ -141,8 +143,8 @@ minDs=max(minDs,shrink*4); pPyramid.minDs=minDs;
 
 % convert I to appropriate color space (or simply normalize)
 cs=pChns.pColor.colorSpace; sz=[size(I,1) size(I,2)];
-if(size(I,3)==1 && ~any(strcmpi(cs,{'gray','orig'}))), I=I(:,:,ones(1,3));
-  warning('Converting grayscale image to color'); end %#ok<WNTAG>
+if(~all(sz==0) && size(I,3)==1 && ~any(strcmpi(cs,{'gray','orig'}))),
+  I=I(:,:,[1 1 1]); warning('Converting image to color'); end %#ok<WNTAG>
 I=rgbConvert(I,cs); pChns.pColor.colorSpace='orig';
 
 % get scales at which to compute features and list of real/approx scales
@@ -174,7 +176,7 @@ for i=isR
 end
 
 % if lambdas not specified compute image specific lambdas
-if( nApprox>0 && isempty(lambdas) )
+if( nScales>0 && nApprox>0 && isempty(lambdas) )
   is=1+nOctUp*nPerOct:nApprox+1:nScales;
   assert(length(is)>=2); if(length(is)>2), is=is(2:3); end
   f0=zeros(1,nTypes); f1=f0; d0=data(is(1),:); d1=data(is(2),:);
@@ -208,6 +210,7 @@ end
 function [scales,scaleshw] = getScales(nPerOct,nOctUp,minDs,shrink,sz)
 % set each scale s such that max(abs(round(sz*s/shrink)*shrink-sz*s)) is
 % minimized without changing the smaller dim of sz (tricky algebra)
+if(any(sz==0)), scales=[]; scaleshw=[]; return; end
 nScales = floor(nPerOct*(nOctUp+log2(min(sz./minDs)))+1);
 scales = 2.^(-(0:nScales-1)/nPerOct+nOctUp);
 if(sz(1)<sz(2)), d0=sz(1); d1=sz(2); else d0=sz(2); d1=sz(1); end

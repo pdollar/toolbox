@@ -35,16 +35,16 @@ function chns = chnsCompute( I, varargin )
 % custom channel is generated via a call to "chns=feval(hFunc,I,pFunc{:})".
 % The color space of I is determined by pColor.colorSpace, use the setting
 % colorSpace='orig' if the input image is not an 'rgb' image and should be
-% left unchaned (e.g. if I has multiple channels). The input I will have
+% left unchanged (e.g. if I has multiple channels). The input I will have
 % type single and the output of hFunc should also have type single.
 %
 % As mentioned, the params for each channel type are described in detail in
 % the respective function. In addition, each channel type has a parameter
 % "enabled" that determines if the channel is computed. If chnsCompute() is
-% called with no inputs or empty I, the output is the complete default
-% parameters (pChns). Otherwise the outputs are the computed channels and
-% additional meta-data (see below). The channels are computed at a single
-% scale, for (fast) multi-scale channel computation see chnsPyramid.m.
+% called with no inputs, the output is the complete default parameters
+% (pChns). Otherwise the outputs are the computed channels and additional
+% meta-data (see below). The channels are computed at a single scale, for
+% (fast) multi-scale channel computation see chnsPyramid.m.
 %
 % An emphasis has been placed on speed, with the code undergoing heavy
 % optimization. Computing the full set of channels used in the BMVC09 paper
@@ -52,6 +52,7 @@ function chns = chnsCompute( I, varargin )
 % of a machine from 2011 (although runtime depends on input parameters).
 %
 % USAGE
+%  pChns = chnsCompute()
 %  chns = chnsCompute( I, pChns )
 %
 % INPUTS
@@ -121,7 +122,7 @@ if( ~isfield(pChns,'complete') || pChns.complete~=1 )
       'name','REQ','hFunc','REQ','pFunc',{},'padWith',0}, 1 ); end
   if( nc>0 ), pChns.pCustom=[pc{:}]; end
 end
-if(nargin==0 || isempty(I)), chns=pChns; return; end
+if(nargin==0), chns=pChns; return; end
 
 % create output struct
 info=struct('name',{},'pChn',{},'nChns',{},'padWith',{});
@@ -159,7 +160,7 @@ end
 
 function chns = addChn( chns, data, name, pChn, padWith )
 % Helper function to add a channel to chns.
-chns.data{end+1}=data;
+chns.data{end+1}=data; chns.nTypes=chns.nTypes+1;
 chns.info(end+1)=struct('name',name,'pChn',pChn,...
   'nChns',size(data,3),'padWith',padWith);
 end

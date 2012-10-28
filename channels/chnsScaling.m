@@ -39,14 +39,14 @@ function [lambdas,as,scales,fs] = chnsScaling( pPyramid, Is, show )
 %  fs             - [nImages x nScales x nTypes] array of feature means
 %
 % EXAMPLE
-%  sDir='../demoPeds/data/train/negBig';
+%  sDir='E:/code/detector/pedsData/train/negBig';
 %  Is = fevalImages( @(x) {x}, {}, sDir, 'I', 'png', 0, 200 );
-%  pPyramid = chnsPyramid([],'shrink',4,'nPerOct',12);
-%  lambdas = chnsScaling( pPyramid, Is, 1 );
+%  p=chnsPyramid(); p.shrink=4; p.nPerOct=12;
+%  lambdas = chnsScaling( p, Is, 1 );
 %
 % See also chnsCompute, chnsPyramid, fevalImages
 %
-% Piotr's Image&Video Toolbox      Version 3.00
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -55,7 +55,7 @@ function [lambdas,as,scales,fs] = chnsScaling( pPyramid, Is, show )
 if(nargin<3 || isempty(show)), show=1; end
 
 % fix some parameters in pPyramid (don't pad, concat or appoximate)
-pPyramid=chnsPyramid([],pPyramid); pPyramid.pad=[0 0];
+P=chnsPyramid([],pPyramid); pPyramid=P.pPyramid; pPyramid.pad=[0 0];
 pPyramid.concat=0; pPyramid.nApprox=0; pPyramid.nOctUp=0;
 shrink=pPyramid.shrink; pPyramid.minDs(:)=max(8,shrink*4);
 pPyramid.smoothChns=0;
