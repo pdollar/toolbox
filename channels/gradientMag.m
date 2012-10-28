@@ -35,11 +35,12 @@ function [M,O] = gradientMag( I, channel, normRad, normConst )
 %
 % See also gradient, gradient2, gradientHist, convTri
 %
-% Piotr's Image&Video Toolbox      Version 3.00
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
+if(nargin<1 || isempty(I)), M=single([]); O=M; return; end
 if(nargin<2 || isempty(channel)), channel=0; end
 if(nargin<3 || isempty(normRad)), normRad=0; end
 if(nargin<4 || isempty(normConst)), normConst=.005; end
