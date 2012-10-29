@@ -169,28 +169,9 @@ while( 1 )
   if(strcmpi('failed',state)), fprintf('\nABORTING\n'); out=0; break; end
   done=jobFileIds(tDir,'done'); k=k+length(done);
   for i1=done, res{i1}=jobLoad(tDir,i1,store); end
-  hpcExcludeBadNodes(tDir,jid,scheduler);
   pause(1); tocStatus(tid,k/nJob); if(k==nJob), out=1; break; end
 end
 for i=1:10, try rmdir(tDir,'s'); break; catch,pause(1),end; end %#ok<CTCH>
-end
-
-function hpcExcludeBadNodes( tDir, jid, scheduler )
-% Helper: look for and exclude bad nodes in hpc cluster (can be expensive).
-persistent t k; if(isempty(t)), t=clock; k=0; end
-freq=300; t1=clock; if(etime(t1,t)<freq), return; end; t=t1;
-ids=setdiff(jobFileIds(tDir,'in'),jobFileIds(tDir,'started')); bad={};
-for id=ids
-  m=system2(['task view ' jid '.1.' int2str(id) scheduler],0);
-  a=strcmpi(hpcParse(m,'State',0),'running');
-  u=hpcParse(m,'Total User Time',2); e=hpcParse(m,'Elapsed Time',2);
-  exclude = a && u/e<.01 && e>freq; if(~exclude), continue; end
-  bad=unique([bad hpcParse(m,'Allocated Nodes',0)]);
-  if(length(bad)==10-k), break; end
-end
-k=k+length(bad); if(isempty(bad)), return; end
-bad=sprintf('%s,',bad{:}); bad=bad(1:end-1); t=clock;
-system2(['job modify ' jid ' /addexcludednodes:' bad scheduler],0);
 end
 
 function v = hpcParse( msg, key, tonum )
