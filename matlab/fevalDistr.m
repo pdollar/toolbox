@@ -152,19 +152,38 @@ dfs={'shareDir','REQ','scheduler','REQ','executable','','maxTasks',256};
 tDir = jobSetup(shareDir,funNm,executable);
 for i=1:nJob, jobSave(tDir,jobs{i},i); end
 scheduler=[' /scheduler:' scheduler ' '];
-hpcSubmit(tDir,scheduler,funNm,1:nJob,maxTasks); k=0;
-ticId=ticStatus('collecting jobs'); save([tDir 'state']);
+tids=hpcSubmit(tDir,scheduler,funNm,1:nJob,maxTasks); k=0;
+ticId=ticStatus('collecting jobs'); check=clock; save([tDir 'state']);
 while( 1 )
   done=jobFileIds(tDir,'done'); k=k+length(done);
   for i1=done, res{i1}=jobLoad(tDir,i1,store); end
+  if(etime(clock,check)>120)
+    save([tDir 'state' num2str(now) '.mat']); tids0=tids;
+    stalled=hpcFindStalled(tDir,tids,scheduler); check=clock;
+    tids(stalled)=hpcSubmit(tDir,scheduler,funNm,stalled,maxTasks);
+    for i=stalled, system2(['task cancel ' tids0{i} scheduler],0); end
+  end
   pause(1); tocStatus(ticId,k/nJob); if(k==nJob), out=1; break; end
 end
 for i=1:10, try rmdir(tDir,'s'); break; catch,pause(1),end; end %#ok<CTCH>
 end
 
+function stalled = hpcFindStalled( tDir, tids, scheduler )
+% Helper: look for and exclude bad nodes in hpc cluster (can be expensive).
+ids=setdiff(jobFileIds(tDir,'in'),jobFileIds(tDir,'started'));
+stalled=zeros(1,length(tids));
+for id=ids, m=system2(['task view ' tids{id} scheduler],0);
+  a=strcmpi(hpcParse(m,'State',0),'running');
+  u=hpcParse(m,'Total User Time',2); e=hpcParse(m,'Elapsed Time',2);
+  stalled(id)=a && u/e<.01 && e>120;
+end
+stalled=find(stalled); n=length(stalled); w=repmat(' ',1,80);
+fprintf('\nDiscovered %i stalled jobs.\n%s\n',n,w);
+end
+
 function tids = hpcSubmit( tDir, scheduler, funNm, ids, maxTasks )
 % Helper: send jobs w given ids to HPC cluster.
-n=length(ids); tids=cell(1,n); k=ceil(n/maxTasks);
+n=length(ids); tids=cell(1,n); if(n==0), return; end; k=ceil(n/maxTasks);
 if(k>1), b=round(linspace(1,n+1,k+1));
   for i=1:k, is=b(i):b(i+1)-1;
     tids(is)=hpcSubmit(tDir,scheduler,funNm,ids(is),maxTasks);
