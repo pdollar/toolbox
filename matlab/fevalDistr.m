@@ -196,7 +196,7 @@ m=system2(['job new  ' nCores scheduler],1);
 jid=hpcParse(m,'created job, id',0);
 cmd0=['job add ' jid scheduler '/workdir:' tDir ' '];
 cmd1=[' fevalDistrDisk ' funNm ' ' tDir ' '];
-s=min(ids); e=max(ids); p=isequal(ids,s:e);
+s=min(ids); e=max(ids); p=n>1 && isequal(ids,s:e);
 if(p), jid1=[jid '.1']; else jid1=jid; end
 for i=1:n, tids{i}=[jid1 '.' int2str(i)]; end
 if(p), system2([cmd0 '/parametric:' int2str(s) '-' int2str(e) cmd1 '*'],1);
@@ -245,9 +245,11 @@ function r = jobLoad( tDir, ind, store )
 f=[tDir int2str2(ind,10)];
 if(store), r=load([f '-out']); r=r.r; else r=[]; end
 fs={[f '-done'],[f '-in.mat'],[f '-out.mat'],[f '-started']};
-delete(fs{:}); pause(.1); exist1=@(f) exist(f,'file')==2;
-while( exist1(fs{1}) || exist1(fs{2}) || exist1(fs{3}) || exist1(fs{4}))
-  warning('Waiting for files to delete.'); pause(5); end %#ok<WNTAG>
+delete(fs{:}); pause(.1);
+for i=1:4, k=0; while(exist(fs{i},'file')==2) %#ok<ALIGN>
+    warning('Waiting to delete %s.',fs{i}); %#ok<WNTAG>
+    delete(fs{i}); pause(5); k=k+1; if(k>12), break; end;
+  end; end
 end
 
 function msg = system2( cmd, show )
