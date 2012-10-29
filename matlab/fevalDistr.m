@@ -147,31 +147,42 @@ end
 function [out,res] = fedWinhpc( funNm, jobs, pLaunch, store )
 % Run jobs using Windows HPC Server.
 nJob=length(jobs); res=cell(1,nJob);
-dfs={'shareDir','REQ','scheduler','REQ','executable',''};
-[shareDir,scheduler,executable]=getPrmDflt(pLaunch,dfs,1);
-% perform job setup and create jobs
+dfs={'shareDir','REQ','scheduler','REQ','executable','','maxTasks',256};
+[shareDir,scheduler,executable,maxTasks]=getPrmDflt(pLaunch,dfs,1);
 tDir = jobSetup(shareDir,funNm,executable);
 for i=1:nJob, jobSave(tDir,jobs{i},i); end
-% launch on hpc cluster
 scheduler=[' /scheduler:' scheduler ' '];
-m=system2(['cluscfg view' scheduler],0);
-nCores=hpcParse(m,'total number of cores',1)-8;
-nCores=['/numcores:' int2str(min([1024 nCores nJob])) '-*'];
-m=system2(['job new /failontaskfailure:false ' nCores scheduler],1);
-jid=hpcParse(m,'created job, id',0); nJobStr=int2str(nJob);
-cmd=[' /workdir:' tDir ' fevalDistrDisk ' funNm ' ' tDir ' '];
-system2(['job add ' jid ' /parametric:1-' nJobStr scheduler cmd '*'],1);
-system2(['job submit /id:' jid scheduler],1); save([tDir 'state']);
-% collect jobs as they come in
-tid=ticStatus('collecting jobs'); k=0;
+hpcSubmit(tDir,scheduler,funNm,1:nJob,maxTasks); k=0;
+ticId=ticStatus('collecting jobs'); save([tDir 'state']);
 while( 1 )
-  m=system2(['job view ' jid scheduler],0); state=hpcParse(m,'state',0);
-  if(strcmpi('failed',state)), fprintf('\nABORTING\n'); out=0; break; end
   done=jobFileIds(tDir,'done'); k=k+length(done);
   for i1=done, res{i1}=jobLoad(tDir,i1,store); end
-  pause(1); tocStatus(tid,k/nJob); if(k==nJob), out=1; break; end
+  pause(1); tocStatus(ticId,k/nJob); if(k==nJob), out=1; break; end
 end
 for i=1:10, try rmdir(tDir,'s'); break; catch,pause(1),end; end %#ok<CTCH>
+end
+
+function tids = hpcSubmit( tDir, scheduler, funNm, ids, maxTasks )
+% Helper: send jobs w given ids to HPC cluster.
+n=length(ids); tids=cell(1,n); k=ceil(n/maxTasks);
+if(k>1), b=round(linspace(1,n+1,k+1));
+  for i=1:k, is=b(i):b(i+1)-1;
+    tids(is)=hpcSubmit(tDir,scheduler,funNm,ids(is),maxTasks);
+  end; return;
+end
+m=system2(['cluscfg view' scheduler],0);
+nCores=hpcParse(m,'total number of cores',1)-8;
+nCores=['/numcores:' int2str(min([1024 nCores length(ids)])) '-*'];
+m=system2(['job new  ' nCores scheduler],1);
+jid=hpcParse(m,'created job, id',0);
+cmd0=['job add ' jid scheduler '/workdir:' tDir ' '];
+cmd1=[' fevalDistrDisk ' funNm ' ' tDir ' '];
+s=min(ids); e=max(ids); p=isequal(ids,s:e);
+if(p), jid1=[jid '.1']; else jid1=jid; end
+for i=1:n, tids{i}=[jid1 '.' int2str(i)]; end
+if(p), system2([cmd0 '/parametric:' int2str(s) '-' int2str(e) cmd1 '*'],1);
+else for id=ids, system2([cmd0 cmd1 int2str(id)],0); end; end
+system2(['job submit /id:' jid scheduler],1); disp(repmat(' ',1,80));
 end
 
 function v = hpcParse( msg, key, tonum )
