@@ -157,7 +157,7 @@ scheduler=[' /scheduler:' scheduler ' '];
 m=system2(['cluscfg view' scheduler],0);
 nCores=hpcParse(m,'total number of cores',1)-8;
 nCores=['/numcores:' int2str(min([1024 nCores nJob])) '-*'];
-m=system2(['job new /failontaskfailure:true ' nCores scheduler],1);
+m=system2(['job new /failontaskfailure:false ' nCores scheduler],1);
 jid=hpcParse(m,'created job, id',0); nJobStr=int2str(nJob);
 cmd=[' /workdir:' tDir ' fevalDistrDisk ' funNm ' ' tDir ' '];
 system2(['job add ' jid ' /parametric:1-' nJobStr scheduler cmd '*'],1);
@@ -177,17 +177,20 @@ end
 
 function hpcExcludeBadNodes( tDir, jid, scheduler )
 % Helper: look for and exclude bad nodes in hpc cluster (can be expensive).
-persistent t; if(isempty(t)), t=clock; end; freq=300;
-t1=clock; if(etime(t1,t)<freq), return; end; t=t1;
-ids=setdiff(jobFileIds(tDir,'in'),jobFileIds(tDir,'started'));
+persistent t k; if(isempty(t)), t=clock; k=0; end
+freq=300; t1=clock; if(etime(t1,t)<freq), return; end; t=t1;
+ids=setdiff(jobFileIds(tDir,'in'),jobFileIds(tDir,'started')); bad={};
 for id=ids
   m=system2(['task view ' jid '.1.' int2str(id) scheduler],0);
   a=strcmpi(hpcParse(m,'State',0),'running');
   u=hpcParse(m,'Total User Time',2); e=hpcParse(m,'Elapsed Time',2);
-  exclude = a && u/e<.01 && e<freq; if(~exclude), continue; end
-  system2(['job modify ' jid ' /addexcludednodes:' ...
-    hpcParse(m,'Allocated Nodes',0) scheduler],0); t=clock; return;
+  exclude = a && u/e<.01 && e>freq; if(~exclude), continue; end
+  bad=unique([bad hpcParse(m,'Allocated Nodes',0)]);
+  if(length(bad)==10-k), break; end
 end
+k=k+length(bad); if(isempty(bad)), return; end
+bad=sprintf('%s,',bad{:}); bad=bad(1:end-1); t=clock;
+system2(['job modify ' jid ' /addexcludednodes:' bad scheduler],0);
 end
 
 function v = hpcParse( msg, key, tonum )
