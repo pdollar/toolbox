@@ -127,7 +127,7 @@ end
 
 function [out,res] = fedCompiled( funNm, jobs, store )
 % Run jobs locally in background in parallel using compiled code.
-nJob=length(jobs); res=cell(1,nJob); tDir=jobSetup('.',funNm,'' );
+nJob=length(jobs); res=cell(1,nJob); tDir=jobSetup('.',funNm,'',{});
 cmd=[tDir 'fevalDistrDisk ' funNm ' ' tDir ' ']; i=0; k=0;
 Q=feature('numCores'); q=0; tid=ticStatus('collecting jobs');
 while( 1 )
@@ -147,9 +147,11 @@ end
 function [out,res] = fedWinhpc( funNm, jobs, pLaunch, store )
 % Run jobs using Windows HPC Server.
 nJob=length(jobs); res=cell(1,nJob);
-dfs={'shareDir','REQ','scheduler','REQ','executable','','maxTasks',256};
-[shareDir,scheduler,executable,maxTasks]=getPrmDflt(pLaunch,dfs,1);
-tDir = jobSetup(shareDir,funNm,executable);
+dfs={'shareDir','REQ','scheduler','REQ','executable','',...
+  'mccOptions',{},'maxTasks',256};
+[shareDir,scheduler,executable,mccOptions,maxTasks] = ...
+  getPrmDflt(pLaunch,dfs,1);
+tDir = jobSetup(shareDir,funNm,executable,mccOptions);
 for i=1:nJob, jobSave(tDir,jobs{i},i); end
 scheduler=[' /scheduler:' scheduler ' '];
 tids=hpcSubmit(tDir,scheduler,funNm,1:nJob,maxTasks); k=0;
@@ -170,15 +172,19 @@ end
 
 function stalled = hpcFindStalled( tDir, tids, scheduler )
 % Helper: look for and exclude bad nodes in hpc cluster (can be expensive).
-ids=setdiff(jobFileIds(tDir,'in'),jobFileIds(tDir,'started'));
-stalled=zeros(1,length(tids));
+n=length(tids); stalled=zeros(1,n); running=stalled;
+jids=regexp(tids,'\.','split'); for i=1:n, jids{i}=jids{i}{1}; end
+for jid=unique(jids), j=jid{1}; m=system2(['job view ' j scheduler],0);
+  running(strcmp(jids,j))=strcmpi('running',hpcParse(m,'State',0)); end
+running=intersect(jobFileIds(tDir,'in'),find(running));
+ids=setdiff(running,jobFileIds(tDir,'started'));
 for id=ids, m=system2(['task view ' tids{id} scheduler],0);
-  a=strcmpi(hpcParse(m,'State',0),'running');
+  r=strcmpi(hpcParse(m,'State',0),'running'); running(id)=(r);
   u=hpcParse(m,'Total User Time',2); e=hpcParse(m,'Elapsed Time',2);
-  stalled(id)=a && u/e<.01 && e>120;
+  stalled(id)=r && u/e<.01 && e>120;
 end
 stalled=find(stalled); n=length(stalled); w=repmat(' ',1,80);
-fprintf('\nDiscovered %i stalled jobs.\n%s\n',n,w);
+fprintf('\nDiscovered %i/%i stalled tasks.\n%s\n',n,length(running),w);
 end
 
 function tids = hpcSubmit( tDir, scheduler, funNm, ids, maxTasks )
@@ -215,15 +221,16 @@ v=regexp(v,' ','split'); v=str2double(regexp(v{1},':','split'));
 if(numel(v)==4), v(5)=0; end; v=((v(1)*24+v(2))*60+v(3))*60+v(4)+v(5)/1000;
 end
 
-function tDir = jobSetup( rtDir, funNm, executable )
+function tDir = jobSetup( rtDir, funNm, executable, mccOptions )
 %  Helper: prepare by setting up temporary dir and compiling funNm
 t=clock; t=mod(t(end),1); t=round((t+rand)/2*1e15);
 tDir=[rtDir filesep sprintf('fevalDistr-%015i',t) filesep]; mkdir(tDir);
 if(~isempty(executable) && exist(executable,'file'))
   fprintf('Reusing compiled executable...\n'); copyfile(executable,tDir);
 else
-  fprintf('Compiling (this may take a while)...\n');
-  mcc('-m','fevalDistrDisk','-d',tDir,'-a',funNm);
+  t=clock; fprintf('Compiling (this may take a while)...\n');
+  mcc('-m','fevalDistrDisk','-d',tDir,'-a',funNm,mccOptions{:});
+  t=etime(clock,t); fprintf('Compile complete (%.1f seconds).\n',t);
   if(~isempty(executable)), [~,~,e]=fileparts(executable);
     copyfile([tDir filesep 'fevalDistrDisk' e],executable); end
 end
