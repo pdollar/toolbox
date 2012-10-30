@@ -151,17 +151,17 @@ template<class iT, class oT> void normalize( iT *I, oT *J, int n, oT nrm ) {
 // Convert rgb to various colorspaces
 template<class iT, class oT>
 oT* rgbConvert( iT *I, int n, int d, int flag, oT nrm ) {
-  oT *J = (oT*) wrMalloc(n*(flag==0 ? 1 : d)*sizeof(oT));
-  int n1=d*(n<1000?n/10:100); oT thr = oT(1.001);
-  if(flag>1 && nrm==1) for(int i=0; i<n1; i++) if(I[i]>thr)
+  oT *J = (oT*) wrMalloc(n*(flag==0 ? d/3 : d)*sizeof(oT));
+  int i, n1=d*(n<1000?n/10:100); oT thr = oT(1.001);
+  if(flag>1 && nrm==1) for(i=0; i<n1; i++) if(I[i]>thr)
     wrError("For floats all values in I must be smaller than 1.");
   bool useSse = n%4==0 && typeid(oT)==typeid(float);
-  if( flag==2 && useSse ) rgb2luv_sse(I,(float*)J,n,(float)nrm);
-  else if( flag==0 && d==1 ) normalize(I,J,n,nrm);
-  else if( flag==0 ) rgb2gray(I,J,n,nrm);
-  else if( flag==1 ) normalize(I,J,n*d,nrm);
-  else if( flag==2 ) rgb2luv(I,J,n,nrm);
-  else if( flag==3 ) rgb2hsv(I,J,n,nrm);
+  if( flag==2 && useSse )
+    for(i=0; i<d/3; i++) rgb2luv_sse(I+i*n*3,(float*)(J+i*n*3),n,(float)nrm);
+  else if( (flag==0 && d==1) || flag==1 ) normalize(I,J,n*d,nrm);
+  else if( flag==0 ) for(i=0; i<d/3; i++) rgb2gray(I+i*n*3,J+i*n*1,n,nrm);
+  else if( flag==2 ) for(i=0; i<d/3; i++) rgb2luv(I+i*n*3,J+i*n*3,n,nrm);
+  else if( flag==3 ) for(i=0; i<d/3; i++) rgb2hsv(I+i*n*3,J+i*n*3,n,nrm);
   else wrError("Unknown flag.");
   return J;
 }
@@ -185,8 +185,8 @@ void mexFunction(int nl, mxArray *pl[], int nr, const mxArray *pr[]) {
   idIn = mxGetClassID(pr[0]);
 
   // call rgbConvert() based on type of input and output array
-  if(!((d==1 && flag==0) || flag==1 || d==3))
-    mexErrMsgTxt("I must be a 3D array.");
+  if(!((d==1 && flag==0) || flag==1 || (d/3)*3==d))
+    mexErrMsgTxt("I must have third dimension d==1 or (d/3)*3==d.");
   if( idIn == mxSINGLE_CLASS && !single )
     J = (void*) rgbConvert( (float*) I, n, d, flag, 1.0 );
   else if( idIn == mxSINGLE_CLASS && single )
@@ -203,7 +203,7 @@ void mexFunction(int nl, mxArray *pl[], int nr, const mxArray *pr[]) {
     mexErrMsgTxt("Unsupported image type.");
 
   // create and set output array
-  dims1[0]=dims[0]; dims1[1]=dims[1]; dims1[2]=(flag==0 ? 1 : d);
+  dims1[0]=dims[0]; dims1[1]=dims[1]; dims1[2]=(flag==0 ? d/3 : d);
   idOut = single ? mxSINGLE_CLASS : mxDOUBLE_CLASS;
   pl[0] = mxCreateNumericMatrix(0,0,idOut,mxREAL);
   mxSetData(pl[0],J); mxSetDimensions(pl[0],(const mwSize*) dims1,3);
