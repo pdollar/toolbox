@@ -159,11 +159,10 @@ ticId=ticStatus('collecting jobs'); check=clock; save([tDir 'state']);
 while( 1 )
   done=jobFileIds(tDir,'done'); k=k+length(done);
   for i1=done, res{i1}=jobLoad(tDir,i1,store); end
-  if(etime(clock,check)>400)
-    save([tDir 'state' num2str(now) '.mat']); tids0=tids;
+  if(etime(clock,check)>300)
+    save([tDir 'state' num2str(now) '.mat']);
     stalled=hpcFindStalled(tDir,tids,scheduler); check=clock;
     tids(stalled)=hpcSubmit(tDir,scheduler,funNm,stalled,maxTasks);
-    for i=stalled, system2(['task cancel ' tids0{i} scheduler],0); end
   end
   pause(1); tocStatus(ticId,k/nJob); if(k==nJob), out=1; break; end
 end
@@ -181,7 +180,7 @@ ids=setdiff(running,jobFileIds(tDir,'started'));
 for id=ids, m=system2(['task view ' tids{id} scheduler],0);
   r=strcmpi(hpcParse(m,'State',0),'running'); running(id)=(r);
   u=hpcParse(m,'Total User Time',2); e=hpcParse(m,'Elapsed Time',2);
-  stalled(id)=r && u/e<.01 && e>300;
+  stalled(id)=r && u/e<.01 && e>200;
 end
 stalled=find(stalled); n=length(stalled); w=repmat(' ',1,80);
 fprintf('\nDiscovered %i/%i stalled tasks.\n%s\n',n,length(running),w);
