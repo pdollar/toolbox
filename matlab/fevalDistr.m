@@ -176,11 +176,11 @@ jids=regexp(tids,'\.','split'); for i=1:n, jids{i}=jids{i}{1}; end
 for jid=unique(jids), j=jid{1}; m=system2(['job view ' j scheduler],0);
   running(strcmp(jids,j))=strcmpi('running',hpcParse(m,'State',0)); end
 running=intersect(jobFileIds(tDir,'in'),find(running));
-ids=setdiff(running,jobFileIds(tDir,'started'));
-for id=ids, m=system2(['task view ' tids{id} scheduler],0);
+ticId=ticStatus('searching for stalled jobs'); k=0; n=length(running);
+for id=running, m=system2(['task view ' tids{id} scheduler],0);
   r=strcmpi(hpcParse(m,'State',0),'running'); running(id)=(r);
   u=hpcParse(m,'Total User Time',2); e=hpcParse(m,'Elapsed Time',2);
-  stalled(id)=r && u/e<.01 && e>200;
+  stalled(id)=r && u/e<.01 && e>200; k=k+1; tocStatus(ticId,k/n);
 end
 stalled=find(stalled); n=length(stalled); w=repmat(' ',1,80);
 fprintf('\nDiscovered %i/%i stalled tasks.\n%s\n',n,length(running),w);
@@ -250,9 +250,9 @@ function r = jobLoad( tDir, ind, store )
 % Helper: load job and delete temporary files from fevalDistrDisk()
 f=[tDir int2str2(ind,10)];
 if(store), r=load([f '-out']); r=r.r; else r=[]; end
-fs={[f '-done'],[f '-in.mat'],[f '-out.mat'],[f '-started']};
+fs={[f '-done'],[f '-in.mat'],[f '-out.mat']};
 delete(fs{:}); pause(.1);
-for i=1:4, k=0; while(exist(fs{i},'file')==2) %#ok<ALIGN>
+for i=1:3, k=0; while(exist(fs{i},'file')==2) %#ok<ALIGN>
     warning('Waiting to delete %s.',fs{i}); %#ok<WNTAG>
     delete(fs{i}); pause(5); k=k+1; if(k>12), break; end;
   end; end
