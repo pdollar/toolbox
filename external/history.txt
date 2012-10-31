@@ -1,7 +1,7 @@
 Version NEW
- -fevalDistr.m: new usage cases
+ -fevalDistr.m: new usage cases, major overhaul
  -chnsCompute.m/chnsPyramid.m: new behavior if called with empty I
- -minor: gradientMag.m, rgbConvert.m, chnsScaling.m
+ -minor: gradientMag, rgbConvert, chnsScaling, bbGt
 
 Version 3.01 (17-Sep-2012)
  -opticalFlow.m: optimized coarse-to-fine LK and HS flow

@@ -86,7 +86,7 @@ function varargout = bbGt( action, varargin )
 % bbGt>loadAll, bbGt>evalRes, bbGt>showRes,  bbGt>compRoc, bbGt>cropRes,
 % bbGt>compOas, bbGt>compOa, bbGt>sampleWins, bbGt>sampleWinsDir
 %
-% Piotr's Image&Video Toolbox      Version 2.66
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -966,6 +966,7 @@ function Is = sampleWinsDir( varargin )
 %   .imDir      - ['REQ'] directory containing images
 %   .gtDir      - [''] directory containing ground truth
 %   .imreadf    - [@imread] optional custom function for reading images
+%   .imreadp    - [{}] optional custom parameters for imreadf
 %   .pLoad      - {} params for bbGt>bbLoad() (determine format/filtering)
 %   .pSmp       - {} params for bbGt>sampleWins (determines bb extraction)
 %   .bbFunc     - {} function that generates candidate bbs (see above)
@@ -981,9 +982,9 @@ function Is = sampleWinsDir( varargin )
 % See also bbGt, bbGt>getFiles, bbGt>bbLoad, bbGt>sampleWins, bbApply
 
 % get paramters
-dfs={'imDir','REQ', 'gtDir','', 'imreadf',@imread, 'pLoad',{},...
-  'pSmp',{}, 'bbFunc',{}, 'bbArgs',{}, 'maxn',inf, 'batch',1 };
-[imDir,gtDir,imreadf,pLoad,pSmp,bbFunc,bbArgs,maxn,batch] ...
+dfs={'imDir','REQ', 'gtDir','', 'imreadf',@imread, 'imreadp',{}, ...
+  'pLoad',{}, 'pSmp',{}, 'bbFunc',{}, 'bbArgs',{}, 'maxn',inf, 'batch',1 };
+[imDir,gtDir,imreadf,imreadp,pLoad,pSmp,bbFunc,bbArgs,maxn,batch] ...
   = getPrmDflt(varargin,dfs,1);
 if(iscell(pSmp)), pSmp=cell2struct(pSmp(2:2:end),pSmp(1:2:end),2); end
 hasGt=~isempty(gtDir); hasFn=~isempty(bbFunc); assert(hasFn || hasGt);
@@ -996,7 +997,7 @@ batch=min(batch,n); Is=cell(n*1000,1); Is1=cell(1,batch);
 % loop over images (in batches) and sample windows
 tid=ticStatus('Sampling windows',1,1); k=0; i=0;
 while( i<n && k<maxn )
-  batch=min(batch,n-i); prm={fs,pLoad,pSmp,bbFunc,bbArgs,imreadf};
+  batch=min(batch,n-i); prm={fs,pLoad,pSmp,bbFunc,bbArgs,imreadf,imreadp};
   if(batch==1), Is1{1}=sampleWinsDir1(i+1,prm); else
     parfor j=1:batch, Is1{j}=sampleWinsDir1(i+j,prm); end; end
   for j=1:batch, k0=k+1; k=k+length(Is1{j}); Is(k0:k)=Is1{j}; end
@@ -1009,8 +1010,8 @@ end
 
 function Is = sampleWinsDir1( ind, prm )
 % Helper function for sampleWinsDir(), do not call directly.
-[fs,pLoad,pSmp,bbFunc,bbArgs,imreadf]=deal(prm{:});
-I=feval(imreadf,fs{1,ind}); bbGt=[];
+[fs,pLoad,pSmp,bbFunc,bbArgs,imreadf,imreadp]=deal(prm{:});
+I=feval(imreadf,fs{1,ind},imreadp{:}); bbGt=[];
 hasGt=size(fs,1)>1; hasFn=~isempty(bbFunc);
 if(hasGt), [~,bbGt]=bbLoad(fs{2,ind},pLoad); pSmp.bbs=bbGt; end
 if(hasFn), pSmp.bbs=bbFunc(I,bbArgs{:}); pSmp.ibbs=bbGt; end
