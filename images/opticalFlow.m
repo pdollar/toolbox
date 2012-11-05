@@ -53,7 +53,7 @@ function [Vx,Vy,reliab]=opticalFlow( I1, I2, varargin )
 %
 % See also convTri, imtransform2
 %
-% Piotr's Image&Video Toolbox      Version 3.01
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -94,10 +94,10 @@ function [Vx,Vy,reliab] = opticalFlowLk( I1, I2, radius  )
 % Compute elements of A'A and also of A'b
 radius=min(radius,floor(min(size(I1,1),size(I1,2))/2)-1);
 [Ix,Iy]=gradient2(I1); It=I2-I1; AAxy=convTri(Ix.*Iy,radius);
-AAxx=convTri(Ix.^2,radius); ABxt=convTri(-Ix.*It,radius);
-AAyy=convTri(Iy.^2,radius); AByt=convTri(-Iy.*It,radius);
+AAxx=convTri(Ix.^2,radius)+1e-5; ABxt=convTri(-Ix.*It,radius);
+AAyy=convTri(Iy.^2,radius)+1e-5; AByt=convTri(-Iy.*It,radius);
 % Find determinant and trace of A'A
-AAdet=AAxx.*AAyy-AAxy.^2; AAdeti=1./(AAdet+eps); AAtr=AAxx+AAyy;
+AAdet=AAxx.*AAyy-AAxy.^2; AAdeti=1./AAdet; AAtr=AAxx+AAyy;
 % Compute components of velocity vectors (A'A)^-1 * A'b
 Vx = AAdeti .* ( AAyy.*ABxt - AAxy.*AByt);
 Vy = AAdeti .* (-AAxy.*ABxt + AAxx.*AByt);
