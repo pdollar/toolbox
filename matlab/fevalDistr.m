@@ -195,7 +195,8 @@ if(k>1), b=round(linspace(1,n+1,k+1));
   end; return;
 end
 m=system2(['cluscfg view' scheduler],0); coresPerTask=1;
-nCores=hpcParse(m,'total number of cores',1)-8;
+nCores=(hpcParse(m,'total number of nodes',1) - ...
+  hpcParse(m,'Unreachable nodes',1) - 1)*8;
 nCores=min([1024 nCores length(ids)*coresPerTask]);
 m=system2(['job new /numcores:' int2str(nCores) '-*' scheduler],1);
 jid=hpcParse(m,'created job, id',0);
