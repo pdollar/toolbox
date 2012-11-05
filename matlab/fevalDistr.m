@@ -194,12 +194,13 @@ if(k>1), b=round(linspace(1,n+1,k+1));
     tids(is)=hpcSubmit(tDir,scheduler,funNm,ids(is),maxTasks);
   end; return;
 end
-m=system2(['cluscfg view' scheduler],0);
+m=system2(['cluscfg view' scheduler],0); coresPerTask=1;
 nCores=hpcParse(m,'total number of cores',1)-8;
-nCores=['/numcores:' int2str(min([1024 nCores length(ids)])) '-*'];
-m=system2(['job new  ' nCores scheduler],1);
+nCores=min([1024 nCores length(ids)*coresPerTask]);
+m=system2(['job new /numcores:' int2str(nCores) '-*' scheduler],1);
 jid=hpcParse(m,'created job, id',0);
-cmd0=['job add ' jid scheduler '/workdir:' tDir ' '];
+cmd0=['job add ' jid scheduler '/workdir:' tDir ' ' ...
+  ' /numcores:' int2str(coresPerTask) ' '];
 cmd1=[' fevalDistrDisk ' funNm ' ' tDir ' '];
 s=min(ids); e=max(ids); p=n>1 && isequal(ids,s:e);
 if(p), jid1=[jid '.1']; else jid1=jid; end
