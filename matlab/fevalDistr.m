@@ -200,14 +200,15 @@ nCores=(hpcParse(m,'total number of nodes',1) - ...
 minCores=min([minCores nCores n*coresPerTask 1024]);
 m=system2(['job new /numcores:' int2str(minCores) '-*' scheduler],1);
 jid=hpcParse(m,'created job, id',0);
-cmd0=['job add ' jid scheduler '/workdir:' tDir ' ' ...
-  ' /numcores:' int2str(coresPerTask) ' '];
-cmd1=[' fevalDistrDisk ' funNm ' ' tDir ' '];
-s=min(ids); e=max(ids); p=n>1 && isequal(ids,s:e);
+s=min(ids); e=max(ids); p=n>1 && isequal(ids,s:e); 
 if(p), jid1=[jid '.1']; else jid1=jid; end
 for i=1:n, tids{i}=[jid1 '.' int2str(i)]; end
-if(p), system2([cmd0 '/parametric:' int2str(s) '-' int2str(e) cmd1 '*'],1);
-else for id=ids, system2([cmd0 cmd1 int2str(id)],0); end; end
+cmd0=''; if(p), cmd0=['/parametric:' int2str(s) '-' int2str(e)]; end
+cmd=@(id) ['job add ' jid scheduler '/workdir:' tDir ...
+  ' /numcores:' int2str(coresPerTask) ' ' cmd0 ...
+  ' /stdout:stdout' id '.txt fevalDistrDisk ' funNm ' ' tDir ' ' id];
+if(p), ids1={'*'}; n=1; else ids1=int2str2(ids); end
+for i=1:n, system2(cmd(ids1{i}),1); end
 system2(['job submit /id:' jid scheduler],1); disp(repmat(' ',1,80));
 end
 
