@@ -58,7 +58,7 @@ if(nargin<3 || isempty(show)), show=1; end
 P=chnsPyramid([],pPyramid); pPyramid=P.pPyramid; pPyramid.pad=[0 0];
 pPyramid.concat=0; pPyramid.nApprox=0; pPyramid.nOctUp=0;
 shrink=pPyramid.shrink; pPyramid.minDs(:)=max(8,shrink*4);
-pPyramid.smoothChns=0;
+pPyramid.smooth=0;
 
 % resize all images to smallest image size
 ds=[inf inf]; nImages=numel(Is);

@@ -29,6 +29,7 @@ function chns = chnsCompute( I, varargin )
 % For more information about each channel type, including the exact input
 % parameters and their meanings, see the respective m-files which perform
 % the actual computatons (chnsCompute is essentially a wrapper function).
+% The converted color channels serve as input to gradientMag/gradientHist.
 %
 % Additionally, custom channels can be specified via an optional struct
 % array "pCustom" which may have 0 or more custom channel definitions. Each
@@ -60,6 +61,7 @@ function chns = chnsCompute( I, varargin )
 %  pChns       - parameters (struct or name/value pairs)
 %   .pColor       - parameters for color space:
 %     .enabled      - [1] if true enable color channels
+%     .smooth       - [1] radius for image smoothing (using convTri)
 %     .colorSpace   - ['luv'] choices are: 'gray', 'rgb', 'hsv', 'orig'
 %   .pGradMag     - parameters for gradient magnitude:
 %     .enabled      - [1] if true enable gradient magnitude channel
@@ -112,7 +114,7 @@ if( ~isfield(pChns,'complete') || pChns.complete~=1 )
   pChns = getPrmDflt(varargin,{'pColor',{},'pGradMag',{},...
     'pGradHist',{},'pCustom',p,'complete',1},1);
   pChns.pColor = getPrmDflt( pChns.pColor, {'enabled',1,...
-    'colorSpace','luv'}, 1 );
+    'smooth',1, 'colorSpace','luv'}, 1 );
   pChns.pGradMag = getPrmDflt( pChns.pGradMag, {'enabled',1,...
     'colorChn',0,'normRad',5,'normConst',.005}, 1 );
   pChns.pGradHist = getPrmDflt( pChns.pGradHist, {'enabled',1,...
@@ -130,7 +132,7 @@ chns=struct('pChns',pChns,'nTypes',0,'data',{{}},'info',info);
 
 % compute color channels
 p=pChns.pColor; nm='color channels';
-I = rgbConvert( I, p.colorSpace );
+I=rgbConvert(I,p.colorSpace); I=convTri(I,p.smooth);
 if(p.enabled), chns=addChn(chns,I,nm,p,'replicate'); end
 
 % compute gradient magnitude channel

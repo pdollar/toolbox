@@ -71,14 +71,14 @@ function J = convTri( I, r, s, nomex )
 %
 % See also conv2, convBox, gaussSmooth
 %
-% Piotr's Image&Video Toolbox      Version 3.00
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 if( nargin<3 ), s=1; end
 if( nargin<4 ), nomex=0; end
-if( r==0 && s==1 ), J = I; return; end
+if( isempty(I) || (r==0 && s==1) ), J = I; return; end
 if( 2*r+1>=min(size(I,1),size(I,2)) ), nomex=1; end
 
 if( nomex==0 )

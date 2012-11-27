@@ -63,13 +63,10 @@ function pyramid = chnsPyramid( I, varargin )
 % If chnsPyramid() is called with no inputs, the output is the complete
 % default parameters (pPyramid). Finally, we describe the remaining
 % parameters: "pad" controls the amount the channels are padded after being
-% created (useful for detecting objects near boundaries); "smoothIm"
-% controls the amount the image is smoothed prior to computing the channels
-% (typically the amount of image smoothing should be small or gradient
-% information is lost); "smoothChns" controls the amount of smoothing after
-% the channels are created (and controls the integration scale of the
-% channels, see the BMVC09 paper); finally "concat" determines whether all
-% channels at a single scale are concatenated in the output.
+% created (useful for detecting objects near boundaries); "smooth" controls
+% the amount of smoothing after the channels are created (and controls the
+% integration scale of the channels); finally "concat" determines whether
+% all channels at a single scale are concatenated in the output.
 %
 % An emphasis has been placed on speed, with the code undergoing heavy
 % optimization. Computing the full set of (approximated) *multi-scale*
@@ -77,7 +74,7 @@ function pyramid = chnsPyramid( I, varargin )
 % machine from 2011 (although runtime depends on input parameters).
 %
 % USAGE
-%  pPyramid = chnsPryamid()
+%  pPyramid = chnsPyramid()
 %  pyramid = chnsPyramid( I, pPyramid )
 %
 % INPUTS
@@ -91,8 +88,7 @@ function pyramid = chnsPyramid( I, varargin )
 %   .shrink       - [4] integer downsampling amount for channels
 %   .pad          - [0 0] amount to pad channels (along T/B and L/R)
 %   .minDs        - [16 16] minimum image size for channel computation
-%   .smoothIm     - [1] radius for image smoothing (using convTri)
-%   .smoothChns   - [1] radius for channel smoothing (using convTri)
+%   .smooth       - [1] radius for channel smoothing (using convTri)
 %   .concat       - [1] if true concatenate channels
 %   .complete     - [] if true does not check/set default vals in pPyramid
 %
@@ -117,29 +113,33 @@ function pyramid = chnsPyramid( I, varargin )
 %
 % See also chnsCompute, chnsScaling, convTri, imPad
 %
-% Piotr's Image&Video Toolbox      Version 3.00
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % get default parameters pPyramid
-if(nargin==2), pPyramid=varargin{1}; else pPyramid=[]; end
-if( ~isfield(pPyramid,'complete') || pPyramid.complete~=1 )
+if(nargin==2), p=varargin{1}; else p=[]; end
+if( ~isfield(p,'complete') || p.complete~=1 )
   dfs={ 'pChns',{}, 'nPerOct',8, 'nOctUp',0, 'nApprox',-1, ...
     'lambdas',[], 'shrink',4, 'pad',[0 0], 'minDs',[16 16], ...
-    'smoothIm',1, 'smoothChns',1, 'concat',1, 'complete',1 };
+    'smoothIm',[], 'smoothChns',[], 'smooth',1, 'concat',1, 'complete',1};
   p = getPrmDflt(varargin,dfs,1);
   shrink=p.shrink; p.pChns.pGradHist.binSize=shrink;
   chns=chnsCompute([],p.pChns); p.pChns=chns.pChns;
   p.pad=round(p.pad/shrink)*shrink; p.minDs=max(p.minDs,shrink*4);
-  if(p.nApprox<0), p.nApprox=p.nPerOct-1; end; pPyramid=p;
+  if(p.nApprox<0), p.nApprox=p.nPerOct-1; end
 end
-if(nargin==0), pyramid=pPyramid; return; end
-vs=struct2cell(pPyramid); [pChns,nPerOct,nOctUp,nApprox,lambdas,...
-  shrink,pad,minDs,smoothIm,smoothChns,concat,~]=deal(vs{:});
-pChns.pGradHist.binSize=shrink; pPyramid.pChns=pChns;
-if(nApprox<0), nApprox=nPerOct-1; end; pPyramid.nApprox=nApprox;
-minDs=max(minDs,shrink*4); pPyramid.minDs=minDs;
+if(isfield(p,'smoothChns')), if(~isempty(p.smoothChns))
+    p.smooth=p.smoothChns; end; p=rmfield(p,'smoothChns'); end
+if(isfield(p,'smoothIm')), if(~isempty(p.smoothIm))
+    p.pChns.pColor.smooth=p.smoothIm; end; p=rmfield(p,'smoothIm'); end
+if(nargin==0), pyramid=p; return; end
+vs=struct2cell(p); [pChns,nPerOct,nOctUp,nApprox,lambdas,...
+  shrink,pad,minDs,smooth,concat,~]=deal(vs{:});
+pChns.pGradHist.binSize=shrink; p.pChns=pChns;
+if(nApprox<0), nApprox=nPerOct-1; end; p.nApprox=nApprox;
+minDs=max(minDs,shrink*4); p.minDs=minDs; pPyramid=p;
 
 % convert I to appropriate color space (or simply normalize)
 cs=pChns.pColor.colorSpace; sz=[size(I,1) size(I,2)];
@@ -160,7 +160,7 @@ for i=isR
   s=scales(i); sz1=round(sz*s/shrink)*shrink;
   if(all(sz==sz1)), I1=I; else I1=imResampleMex(I,sz1(1),sz1(2),1); end
   if(s==.5 && (nApprox>0 || nPerOct==1)), I=I1; end
-  I1=convTri(I1,smoothIm); chns=chnsCompute(I1,pChns); data1=chns.data;
+  chns=chnsCompute(I1,pChns); data1=chns.data;
   if( i==isR(1) )
     nTypes=chns.nTypes; info=chns.info; data=cell(nScales,nTypes);
     j=find(strcmp('color channels',{chns.info.name}));
@@ -194,7 +194,7 @@ for i=isA
 end
 
 % smooth channels, optionally pad and concatenate channels
-for i=1:nScales*nTypes, data{i}=convTri(data{i},smoothChns); end
+for i=1:nScales*nTypes, data{i}=convTri(data{i},smooth); end
 if(any(pad)), for i=1:nScales, for j=1:nTypes
       data{i,j}=imPad(data{i,j},pad/shrink,info(j).padWith); end; end; end
 if(concat && nTypes), data0=data; data=cell(nScales,1); end
