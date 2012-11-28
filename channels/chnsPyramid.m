@@ -123,17 +123,13 @@ if(nargin==2), p=varargin{1}; else p=[]; end
 if( ~isfield(p,'complete') || p.complete~=1 )
   dfs={ 'pChns',{}, 'nPerOct',8, 'nOctUp',0, 'nApprox',-1, ...
     'lambdas',[], 'shrink',4, 'pad',[0 0], 'minDs',[16 16], ...
-    'smoothIm',[], 'smoothChns',[], 'smooth',1, 'concat',1, 'complete',1};
+    'smooth',1, 'concat',1, 'complete',1 };
   p = getPrmDflt(varargin,dfs,1);
   shrink=p.shrink; p.pChns.pGradHist.binSize=shrink;
   chns=chnsCompute([],p.pChns); p.pChns=chns.pChns;
   p.pad=round(p.pad/shrink)*shrink; p.minDs=max(p.minDs,shrink*4);
   if(p.nApprox<0), p.nApprox=p.nPerOct-1; end
 end
-if(isfield(p,'smoothChns')), if(~isempty(p.smoothChns))
-    p.smooth=p.smoothChns; end; p=rmfield(p,'smoothChns'); end
-if(isfield(p,'smoothIm')), if(~isempty(p.smoothIm))
-    p.pChns.pColor.smooth=p.smoothIm; end; p=rmfield(p,'smoothIm'); end
 if(nargin==0), pyramid=p; return; end
 vs=struct2cell(p); [pChns,nPerOct,nOctUp,nApprox,lambdas,...
   shrink,pad,minDs,smooth,concat,~]=deal(vs{:});
