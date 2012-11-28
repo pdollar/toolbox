@@ -1,4 +1,4 @@
-function [lambdas,as,scales,fs] = chnsScaling( pPyramid, Is, show )
+function [lambdas,as,scales,fs] = chnsScaling( pChns, Is, show )
 % Compute lambdas for channel power law scaling.
 %
 % For a broad family of features, including gradient histograms and all
@@ -15,20 +15,19 @@ function [lambdas,as,scales,fs] = chnsScaling( pPyramid, Is, show )
 % chnsPyramid() and (2) provide a visualization of the power law channel
 % scaling described in the BMVC2010 paper.
 %
-% chnsScaling() takes two main inputs: the parameters for computing an
-% image pyramid (pPyramid), which also include parameters for individual
-% channel computation, and an image or set of images (Is). The images are
-% downsampled to the dimension of the smallest image for simplicity of
+% chnsScaling() takes two main inputs: the parameters for computing image
+% channels (pChns), and an image or set of images (Is). The images are
+% cropped to the dimension of the smallest image for simplicity of
 % computing the lambdas (and fairly high resolution images are best). The
 % computed lambdas will depend on the channel parameters (e.g. how much
 % smoothing is performed), but given enough images (>1000) the computed
 % lambdas should not depend on the exact images used.
 %
 % USAGE
-%  [lambdas,as,scales,fs] = chnsScaling( pPyramid, Is, [show] )
+%  [lambdas,as,scales,fs] = chnsScaling( pChns, Is, [show] )
 %
 % INPUTS
-%  pPyramid       - parameters for creating pyramid (see chnsPyramid.m)
+%  pChns          - parameters for creating channels (see chnsCompute.m)
 %  Is             - [nImages x 1] cell array of images (nImages may be 1)
 %  show           - [1] figure in which to display results
 %
@@ -41,8 +40,7 @@ function [lambdas,as,scales,fs] = chnsScaling( pPyramid, Is, show )
 % EXAMPLE
 %  sDir='E:/code/detector/pedsData/train/negBig';
 %  Is = fevalImages( @(x) {x}, {}, sDir, 'I', 'png', 0, 200 );
-%  p=chnsPyramid(); p.shrink=4; p.nPerOct=12;
-%  lambdas = chnsScaling( p, Is, 1 );
+%  p = chnsCompute(); lambdas = chnsScaling( p, Is, 1 );
 %
 % See also chnsCompute, chnsPyramid, fevalImages
 %
@@ -54,17 +52,15 @@ function [lambdas,as,scales,fs] = chnsScaling( pPyramid, Is, show )
 % get additional input arguments
 if(nargin<3 || isempty(show)), show=1; end
 
-% fix some parameters in pPyramid (don't pad, concat or appoximate)
-P=chnsPyramid([],pPyramid); pPyramid=P.pPyramid; pPyramid.pad=[0 0];
-pPyramid.concat=0; pPyramid.nApprox=0; pPyramid.nOctUp=0;
-shrink=pPyramid.shrink; pPyramid.minDs(:)=max(8,shrink*4);
-pPyramid.smooth=0;
+% construct pPyramid (don't pad, shrink, concat or appoximate)
+pPyramid=chnsPyramid(); pPyramid.pChns=pChns; pPyramid.concat=0;
+pPyramid.pad=[0 0]; pPyramid.nApprox=0; pPyramid.shrink=1;
+pPyramid.minDs=[8 8]; pPyramid.smooth=0;
 
-% resize all images to smallest image size
+% crop all images to smallest image size
 ds=[inf inf]; nImages=numel(Is);
 for i=1:nImages, ds=min(ds,[size(Is{i},1) size(Is{i},2)]); end
-ds=floor(ds/shrink)*shrink;
-for i=1:nImages, Is{i}=imResample(Is{i},ds); end
+for i=1:nImages, Is{i}=Is{i}(1:ds(1),1:ds(2),:); end
 
 % compute fs [nImages x nScales x nTypes] array of feature means
 P=chnsPyramid(Is{1},pPyramid); scales=P.scales'; info=P.info;
