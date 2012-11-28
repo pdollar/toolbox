@@ -44,11 +44,6 @@ function pyramid = chnsPyramid( I, varargin )
 % difference in the channels, during detection the approximated channels
 % have been shown to be essentially as effective as the original channels.
 %
-% In many applications (such as object detection) the channels can be
-% subsampled prior to use. Use the "shrink" parameter to subsample the
-% channels by an integer amount after computation, this is also necessary
-% to speed up the computation of the approximate channels described above.
-%
 % While every effort is made to space the image scales evenly, this is not
 % always possible. For example, given a 101x100 image, it is impossible to
 % downsample it by exactly 1/2 along the first dimension, moreover, the
@@ -85,7 +80,6 @@ function pyramid = chnsPyramid( I, varargin )
 %   .nOctUp       - [0] number of upsampled octaves to compute
 %   .nApprox      - [-1] number of approx. scales (if -1 nApprox=nPerOct-1)
 %   .lambdas      - [] coefficients for power law scaling (see BMVC10)
-%   .shrink       - [4] integer downsampling amount for channels
 %   .pad          - [0 0] amount to pad channels (along T/B and L/R)
 %   .minDs        - [16 16] minimum image size for channel computation
 %   .smooth       - [1] radius for channel smoothing (using convTri)
@@ -120,22 +114,18 @@ function pyramid = chnsPyramid( I, varargin )
 
 % get default parameters pPyramid
 if(nargin==2), p=varargin{1}; else p=[]; end
-if( ~isfield(p,'complete') || p.complete~=1 )
+if( ~isfield(p,'complete') || p.complete~=1 || isempty(I) )
   dfs={ 'pChns',{}, 'nPerOct',8, 'nOctUp',0, 'nApprox',-1, ...
-    'lambdas',[], 'shrink',4, 'pad',[0 0], 'minDs',[16 16], ...
+    'lambdas',[], 'pad',[0 0], 'minDs',[16 16], ...
     'smooth',1, 'concat',1, 'complete',1 };
-  p = getPrmDflt(varargin,dfs,1);
-  shrink=p.shrink; p.pChns.pGradHist.binSize=shrink;
-  chns=chnsCompute([],p.pChns); p.pChns=chns.pChns;
+  p=getPrmDflt(varargin,dfs,1); chns=chnsCompute([],p.pChns);
+  p.pChns=chns.pChns; p.pChns.complete=1; shrink=p.pChns.shrink;
   p.pad=round(p.pad/shrink)*shrink; p.minDs=max(p.minDs,shrink*4);
   if(p.nApprox<0), p.nApprox=p.nPerOct-1; end
 end
-if(nargin==0), pyramid=p; return; end
+if(nargin==0), pyramid=p; return; end; pPyramid=p;
 vs=struct2cell(p); [pChns,nPerOct,nOctUp,nApprox,lambdas,...
-  shrink,pad,minDs,smooth,concat,~]=deal(vs{:});
-pChns.pGradHist.binSize=shrink; p.pChns=pChns;
-if(nApprox<0), nApprox=nPerOct-1; end; p.nApprox=nApprox;
-minDs=max(minDs,shrink*4); p.minDs=minDs; pPyramid=p;
+  pad,minDs,smooth,concat,~]=deal(vs{:}); shrink=pChns.shrink;
 
 % convert I to appropriate color space (or simply normalize)
 cs=pChns.pColor.colorSpace; sz=[size(I,1) size(I,2)];
@@ -149,26 +139,16 @@ nScales=length(scales); if(1), isR=1; else isR=1+nOctUp*nPerOct; end
 isR=isR:nApprox+1:nScales; isA=1:nScales; isA(isR)=[];
 j=[0 floor((isR(1:end-1)+isR(2:end))/2) nScales];
 isN=1:nScales; for i=1:length(isR), isN(j(i)+1:j(i+1))=isR(i); end
-nTypes=0; data=cell(nScales,nTypes); info=struct();
+nTypes=0; data=cell(nScales,nTypes); info=struct([]);
 
 % compute image pyramid [real scales]
 for i=isR
   s=scales(i); sz1=round(sz*s/shrink)*shrink;
   if(all(sz==sz1)), I1=I; else I1=imResampleMex(I,sz1(1),sz1(2),1); end
   if(s==.5 && (nApprox>0 || nPerOct==1)), I=I1; end
-  chns=chnsCompute(I1,pChns); data1=chns.data;
-  if( i==isR(1) )
-    nTypes=chns.nTypes; info=chns.info; data=cell(nScales,nTypes);
-    j=find(strcmp('color channels',{chns.info.name}));
-    if(~isempty(j)), chns.info(j).pChn.colorSpace=cs; end
-    for j=1:nTypes, info(j).nChns=size(data1{j},3); end
-    shr=zeros(1,nTypes); for j=1:nTypes, shr(j)=size(chns.data{j},1); end
-    shr=sz1(1)./shr; assert(all(shr<=shrink) && all(mod(shr,1)==0));
-    shr=shr/shrink;
-  end
-  for j = 1:nTypes, if(shr(j)==1), continue; end
-    data1{j}=imResampleMex(data1{j},sz1(1)*shr(j),sz1(2)*shr(j),1); end
-  data(i,:) = data1;
+  chns=chnsCompute(I1,pChns); info=chns.info;
+  if(i==isR(1)), nTypes=chns.nTypes; data=cell(nScales,nTypes); end
+  data(i,:) = chns.data;
 end
 
 % if lambdas not specified compute image specific lambdas
@@ -183,10 +163,9 @@ end
 
 % compute image pyramid [approximated scales]
 for i=isA
-  iR=isN(i); sz1=round(sz*scales(i)/shrink); data1=data(iR,:);
-  rs=(scales(i)/scales(iR)).^-lambdas;
-  for j=1:nTypes, data1{j}=imResampleMex(data1{j},sz1(1),sz1(2),rs(j)); end
-  data(i,:) = data1;
+  iR=isN(i); sz1=round(sz*scales(i)/shrink);
+  for j=1:nTypes, ratio=(scales(i)/scales(iR)).^-lambdas(j);
+    data{i,j}=imResampleMex(data{iR,j},sz1(1),sz1(2),ratio); end
 end
 
 % smooth channels, optionally pad and concatenate channels
@@ -197,6 +176,8 @@ if(concat && nTypes), data0=data; data=cell(nScales,1); end
 if(concat && nTypes), for i=1:nScales, data{i}=cat(3,data0{i,:}); end; end
 
 % create output struct
+j=info; if(~isempty(j)), j=find(strcmp('color channels',{j.name})); end
+if(~isempty(j)), info(j).pChn.colorSpace=cs; end
 pyramid = struct( 'pPyramid',pPyramid, 'nTypes',nTypes, ...
   'nScales',nScales, 'data',{data}, 'info',info, 'lambdas',lambdas, ...
   'scales',scales, 'scaleshw',scaleshw );
