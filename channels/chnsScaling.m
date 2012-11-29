@@ -54,13 +54,13 @@ if(nargin<3 || isempty(show)), show=1; end
 
 % construct pPyramid (don't pad, concat or appoximate)
 pPyramid=chnsPyramid(); pPyramid.pChns=pChns; pPyramid.concat=0;
-pPyramid.pad=[0 0]; pPyramid.nApprox=0;
-pPyramid.minDs=[8 8]; pPyramid.smooth=0;
+pPyramid.pad=[0 0]; pPyramid.nApprox=0; pPyramid.smooth=0;
+pPyramid.minDs(:)=max(8,pChns.shrink*4);
 
 % crop all images to smallest image size
 ds=[inf inf]; nImages=numel(Is);
 for i=1:nImages, ds=min(ds,[size(Is{i},1) size(Is{i},2)]); end
-shrink=pChns.shrink; ds=round(ds/shrink)*shrink;
+ds=round(ds/pChns.shrink)*pChns.shrink;
 for i=1:nImages, Is{i}=Is{i}(1:ds(1),1:ds(2),:); end
 
 % compute fs [nImages x nScales x nTypes] array of feature means
