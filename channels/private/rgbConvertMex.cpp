@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Piotr's Image&Video Toolbox      Version 3.00
+* Piotr's Image&Video Toolbox      Version NEW
 * Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 * Please email me if you find bugs, or have suggestions or questions!
 * Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -151,7 +151,7 @@ template<class iT, class oT> void normalize( iT *I, oT *J, int n, oT nrm ) {
 // Convert rgb to various colorspaces
 template<class iT, class oT>
 oT* rgbConvert( iT *I, int n, int d, int flag, oT nrm ) {
-  oT *J = (oT*) wrMalloc(n*(flag==0 ? d/3 : d)*sizeof(oT));
+  oT *J = (oT*) wrMalloc(n*(flag==0 ? (d==1?1:d/3) : d)*sizeof(oT));
   int i, n1=d*(n<1000?n/10:100); oT thr = oT(1.001);
   if(flag>1 && nrm==1) for(i=0; i<n1; i++) if(I[i]>thr)
     wrError("For floats all values in I must be smaller than 1.");
@@ -203,7 +203,7 @@ void mexFunction(int nl, mxArray *pl[], int nr, const mxArray *pr[]) {
     mexErrMsgTxt("Unsupported image type.");
 
   // create and set output array
-  dims1[0]=dims[0]; dims1[1]=dims[1]; dims1[2]=(flag==0 ? d/3 : d);
+  dims1[0]=dims[0]; dims1[1]=dims[1]; dims1[2]=(flag==0 ? (d==1?1:d/3) : d);
   idOut = single ? mxSINGLE_CLASS : mxDOUBLE_CLASS;
   pl[0] = mxCreateNumericMatrix(0,0,idOut,mxREAL);
   mxSetData(pl[0],J); mxSetDimensions(pl[0],(const mwSize*) dims1,3);
