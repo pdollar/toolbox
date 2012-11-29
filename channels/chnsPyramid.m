@@ -58,8 +58,10 @@ function pyramid = chnsPyramid( I, varargin )
 % If chnsPyramid() is called with no inputs, the output is the complete
 % default parameters (pPyramid). Finally, we describe the remaining
 % parameters: "pad" controls the amount the channels are padded after being
-% created (useful for detecting objects near boundaries); "concat" controls
-% whether all channels at a single scale are concatenated in the output.
+% created (useful for detecting objects near boundaries); "smooth" controls
+% the amount of smoothing after the channels are created (and controls the
+% integration scale of the channels); finally "concat" determines whether
+% all channels at a single scale are concatenated in the output.
 %
 % An emphasis has been placed on speed, with the code undergoing heavy
 % optimization. Computing the full set of (approximated) *multi-scale*
@@ -80,6 +82,7 @@ function pyramid = chnsPyramid( I, varargin )
 %   .lambdas      - [] coefficients for power law scaling (see BMVC10)
 %   .pad          - [0 0] amount to pad channels (along T/B and L/R)
 %   .minDs        - [16 16] minimum image size for channel computation
+%   .smooth       - [1] radius for channel smoothing (using convTri)
 %   .concat       - [1] if true concatenate channels
 %   .complete     - [] if true does not check/set default vals in pPyramid
 %
@@ -113,7 +116,8 @@ function pyramid = chnsPyramid( I, varargin )
 if(nargin==2), p=varargin{1}; else p=[]; end
 if( ~isfield(p,'complete') || p.complete~=1 || isempty(I) )
   dfs={ 'pChns',{}, 'nPerOct',8, 'nOctUp',0, 'nApprox',-1, ...
-    'lambdas',[], 'pad',[0 0], 'minDs',[16 16], 'concat',1, 'complete',1 };
+    'lambdas',[], 'pad',[0 0], 'minDs',[16 16], ...
+    'smooth',1, 'concat',1, 'complete',1 };
   p=getPrmDflt(varargin,dfs,1); chns=chnsCompute([],p.pChns);
   p.pChns=chns.pChns; p.pChns.complete=1; shrink=p.pChns.shrink;
   p.pad=round(p.pad/shrink)*shrink; p.minDs=max(p.minDs,shrink*4);
@@ -121,7 +125,7 @@ if( ~isfield(p,'complete') || p.complete~=1 || isempty(I) )
 end
 if(nargin==0), pyramid=p; return; end; pPyramid=p;
 vs=struct2cell(p); [pChns,nPerOct,nOctUp,nApprox,lambdas,...
-  pad,minDs,concat,~]=deal(vs{:}); shrink=pChns.shrink;
+  pad,minDs,smooth,concat,~]=deal(vs{:}); shrink=pChns.shrink;
 
 % convert I to appropriate color space (or simply normalize)
 cs=pChns.pColor.colorSpace; sz=[size(I,1) size(I,2)];
@@ -164,7 +168,8 @@ for i=isA
     data{i,j}=imResampleMex(data{iR,j},sz1(1),sz1(2),ratio); end
 end
 
-% optionally pad and concatenate channels
+% smooth channels, optionally pad and concatenate channels
+for i=1:nScales*nTypes, data{i}=convTri(data{i},smooth); end
 if(any(pad)), for i=1:nScales, for j=1:nTypes
       data{i,j}=imPad(data{i,j},pad/shrink,info(j).padWith); end; end; end
 if(concat && nTypes), data0=data; data=cell(nScales,1); end

@@ -41,18 +41,13 @@ function chns = chnsCompute( I, varargin )
 %
 % "shrink" (which should be an integer) determines the amount to subsample
 % the computed channels (in applications such as detection subsamping does
-% not affect performance).  "smoothIm" controls the amount the image is
-% smoothed prior to computing the channels (typically the amount of image
-% smoothing should be small or gradient information is lost); "smoothChn"
-% controls the amount of smoothing after the channels are created (and
-% controls the integration scale of the channels, see the BMVC09 paper);
-% The params for each channel type are described in detail in the
-% respective function. In addition, each channel type has a param "enabled"
-% that determines if the channel is computed. If chnsCompute() is called
-% with no inputs, the output is the complete default params (pChns).
-% Otherwise the outputs are the computed channels and additional meta-data
-% (see below). The channels are computed at a single scale, for (fast)
-% multi-scale channel computation see chnsPyramid.
+% not affect performance). The params for each channel type are described
+% in detail in the respective function. In addition, each channel type has
+% a param "enabled" that determines if the channel is computed. If
+% chnsCompute() is called with no inputs, the output is the complete
+% default params (pChns). Otherwise the outputs are the computed channels
+% and additional meta-data (see below). The channels are computed at a
+% single scale, for (fast) multi-scale channel computation see chnsPyramid.
 %
 % An emphasis has been placed on speed, with the code undergoing heavy
 % optimization. Computing the full set of channels used in the BMVC09 paper
@@ -67,10 +62,9 @@ function chns = chnsCompute( I, varargin )
 %  I           - [hxwx3] input image (uint8 or single/double in [0,1])
 %  pChns       - parameters (struct or name/value pairs)
 %   .shrink       - [4] integer downsampling amount for channels
-%   .smoothIm     - [1] radius for image smoothing (using convTri)
-%   .smoothChn    - [1] radius for channel smoothing (using convTri)
 %   .pColor       - parameters for color space:
 %     .enabled      - [1] if true enable color channels
+%     .smooth       - [1] radius for image smoothing (using convTri)
 %     .colorSpace   - ['luv'] choices are: 'gray', 'rgb', 'hsv', 'orig'
 %   .pGradMag     - parameters for gradient magnitude:
 %     .enabled      - [1] if true enable gradient magnitude channel
@@ -115,7 +109,7 @@ function chns = chnsCompute( I, varargin )
 %  tic, chns=chnsCompute(I,pChns); toc
 %  figure(1); im(chns.data{4});
 %
-% See also rgbConvert, gradientMag, gradientHist, chnsPyramid, chnsScaling
+% See also rgbConvert, gradientMag, gradientHist, chnsPyramid
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
@@ -126,10 +120,10 @@ function chns = chnsCompute( I, varargin )
 if(nargin==2), pChns=varargin{1}; else pChns=[]; end
 if( ~isfield(pChns,'complete') || pChns.complete~=1 || isempty(I) )
   p=struct('enabled',{},'name',{},'hFunc',{},'pFunc',{},'padWith',{});
-  pChns = getPrmDflt(varargin,{'shrink',4,'smoothIm',1,'smoothChn',1,...
-    'pColor',{},'pGradMag',{},'pGradHist',{},'pCustom',p,'complete',1},1);
+  pChns = getPrmDflt(varargin,{'shrink',4,'pColor',{},'pGradMag',{},...
+    'pGradHist',{},'pCustom',p,'complete',1},1);
   pChns.pColor = getPrmDflt( pChns.pColor, {'enabled',1,...
-    'colorSpace','luv'}, 1 );
+    'smooth',1, 'colorSpace','luv'}, 1 );
   pChns.pGradMag = getPrmDflt( pChns.pGradMag, {'enabled',1,...
     'colorChn',0,'normRad',5,'normConst',.005}, 1 );
   pChns.pGradHist = getPrmDflt( pChns.pGradHist, {'enabled',1,...
@@ -150,12 +144,12 @@ chns=struct('pChns',pChns,'nTypes',0,'data',{{}},'info',info);
 % crop I so divisible by shrink and get target dimensions
 shrink=pChns.shrink; [h,w,~]=size(I); cr=mod([h w],shrink);
 if(any(cr)), h=h-cr(1); w=w-cr(2); I=I(1:h,1:w,:); end
-h=h/shrink; w=w/shrink; smoothChn=pChns.smoothChn;
+h=h/shrink; w=w/shrink;
 
 % compute color channels
 p=pChns.pColor; nm='color channels';
-I=rgbConvert(I,p.colorSpace); I=convTri(I,pChns.smoothIm);
-if(p.enabled), chns=addChn(chns,I,nm,p,'replicate',smoothChn,h,w); end
+I=rgbConvert(I,p.colorSpace); I=convTri(I,p.smooth);
+if(p.enabled), chns=addChn(chns,I,nm,p,'replicate',h,w); end
 
 % compute gradient magnitude channel
 p=pChns.pGradMag; nm='gradient magnitude';
@@ -164,30 +158,29 @@ if( pChns.pGradHist.enabled )
 elseif( p.enabled )
   M=gradientMag(I,p.colorChn,p.normRad,p.normConst);
 end
-if(p.enabled), chns=addChn(chns,M,nm,p,0,smoothChn,h,w); end
+if(p.enabled), chns=addChn(chns,M,nm,p,0,h,w); end
 
 % compute gradient histgoram channels
 p=pChns.pGradHist; nm='gradient histogram';
 if( p.enabled )
   H=gradientHist(M,O,p.binSize,p.nOrients,p.softBin,p.useHog,p.clipHog);
-  chns=addChn(chns,H,nm,pChns.pGradHist,0,smoothChn,h,w);
+  chns=addChn(chns,H,nm,pChns.pGradHist,0,h,w);
 end
 
 % compute custom channels
 p=pChns.pCustom;
 for i=find( [p.enabled] )
   C=feval(p(i).hFunc,I,p(i).pFunc{:});
-  chns=addChn(chns,C,p(i).name,p(i),p(i).padWith,smoothChn,h,w);
+  chns=addChn(chns,C,p(i).name,p(i),p(i).padWith,h,w);
 end
 
 end
 
-function chns = addChn( chns, data, name, pChn, padWith, smoothChn, h, w )
+function chns = addChn( chns, data, name, pChn, padWith, h, w )
 % Helper function to add a channel to chns.
 [h1,w1,~]=size(data);
 if(h1~=h || w1~=w), data=imResampleMex(data,h,w,1);
   assert(all(mod([h1 w1]./[h w],1)==0)); end
-data = convTri(data,smoothChn);
 chns.data{end+1}=data; chns.nTypes=chns.nTypes+1;
 chns.info(end+1)=struct('name',name,'pChn',pChn,...
   'nChns',size(data,3),'padWith',padWith);
