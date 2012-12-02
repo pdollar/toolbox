@@ -87,7 +87,9 @@ lp={'LineWidth',2}; tp={'FontSize',12};
 for k=1:nTypes
   % plot ratios
   subplot(2,nTypes,k); set(gca,tp{:});
-  h0=loglog(1./scales1,mus(:,k),'go',lp{:}); hold on;
+  for i=round(linspace(1,nImages,20))
+    loglog(1./scales1,rs(i,:,k),'Color',[1 1 1]*.8); hold on; end
+  h0=loglog(1./scales1,mus(:,k),'go',lp{:});
   h1=loglog(1./scales1,musp(:,k),'b-',lp{:});
   title(sprintf('%s\n\\lambda = %.03f,  error = %.2e',...
     info(k).name,lambdas(k),errsFit(k)));
