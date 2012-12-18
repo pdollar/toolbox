@@ -27,16 +27,17 @@ function C = mat2cell2( X, parts )
 %
 % See also MAT2CELL, CELL2ARRAY, CELL2MAT
 %
-% Piotr's Image&Video Toolbox      Version 2.0
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 siz = size(X); nd = ndims(X);
+if(length(parts)>nd && all(parts(nd+1:end)==1)), parts=parts(1:nd); end
 [parts,er] = checkNumArgs( parts, size(siz), 0, 2 ); error(er);
 
 % crop border areas so as to make dims of X divisible by parts
-parts = min(siz,parts);   siz = siz - mod( siz, parts );
+parts = min(siz,parts); siz = siz - mod( siz, parts );
 if (~all( siz==size(X))); X = arrayCrop( X, ones(1,nd), siz ); end
 
 % Convert to cell array by calling mat2cell
