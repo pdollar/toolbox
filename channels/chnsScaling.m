@@ -68,7 +68,10 @@ P=chnsPyramid(Is{1},pPyramid); scales=P.scales'; info=P.info;
 nScales=P.nScales; nTypes=P.nTypes; fs=zeros(nImages,nScales,nTypes);
 parfor i=1:nImages, P=chnsPyramid(Is{i},pPyramid); for j=1:nScales
     for k=1:nTypes, fs(i,j,k)=mean(P.data{j,k}(:)); end; end; end
-fs=fs(min(fs(:,1,:),[],3)>.01,:,:); nImages=size(fs,1);
+
+% remove fs with fs(:,1,:) having small values
+kp=max(fs(:,1,:)); kp=fs(:,1,:)>kp(ones(1,nImages),1,:)/50;
+kp=min(kp,[],3); fs=fs(kp,:,:); nImages=size(fs,1);
 
 % compute ratios, intercepts and lambdas using least squares
 scales1=scales(2:end); nScales=nScales-1; O=ones(nScales,1);
