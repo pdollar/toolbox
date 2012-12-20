@@ -1,4 +1,4 @@
-function [h,miss] = plotRoc( D, varargin )
+function [h,miss,stds] = plotRoc( D, varargin )
 % Function for display of rocs (receiver operator characteristic curves).
 %
 % Display roc curves. Consistent usage ensures uniform look for rocs. The
@@ -11,7 +11,7 @@ function [h,miss] = plotRoc( D, varargin )
 % the truePosRate) on the y-axis versus the falsePosRate on the x-axis.
 %
 % USAGE
-%  [h,miss] = plotRoc( D, prm )
+%  [h,miss,stds] = plotRoc( D, prm )
 %
 % INPUTS
 %  D    - [nx2] n data points along roc [falsePosRate truePosRate]
@@ -33,7 +33,8 @@ function [h,miss] = plotRoc( D, varargin )
 %
 % OUTPUTS
 %  h    - plot handle for use in legend only
-%  miss - miss rates at fpTarget reference values (if fpTarget specified)
+%  miss - average miss rates at fpTarget reference values
+%  stds - standard deviation of miss rates at fpTarget reference values
 %
 % EXAMPLE
 %  k=2; x=0:.0001:1; data1 = [1-x; (1-x.^k).^(1/k)]';
@@ -72,16 +73,17 @@ h = plot( 2, 0, [lineSt marker], prmMrkr{:}, prmPlot{:} ); %(1)
 DQ = quantizeRocs( D, nMarker, logx, lims ); DQm=mean(DQ,3);
 if(~isempty(marker))
   plot(DQm(:,1),DQm(:,2),marker,prmClr{:},prmMrkr{:} ); end %(2)
-if(nD>1), DQs=std(squeeze(DQ(:,2,:)),0,2);
-  errorbar(DQm(:,1),DQm(:,2),DQs,'.',prmClr{:}); end %(3)
+if(nD>1), DQs=std(DQ,0,3);
+  errorbar(DQm(:,1),DQm(:,2),DQs(:,2),'.',prmClr{:}); end %(3)
 if(nD==1), DQ=D{1}; else DQ=quantizeRocs(D,100,logx,lims); end
 DQm = mean(DQ,3); plot( DQm(:,1), DQm(:,2), lineSt, prmPlot{:} ); %(4)
 
 % plot line at given fp rate
-m=length(fpTarget); miss=zeros(1,m);
+m=length(fpTarget); miss=zeros(1,m); stds=miss;
 if( m>0 )
-  assert( min(DQm(:,1))<=min(fpTarget) );
-  for i=1:m, j=find(DQm(:,1)<=fpTarget(i)); miss(i)=DQm(j(1),2); end
+  assert( min(DQm(:,1))<=min(fpTarget) ); DQs=std(DQ,0,3);
+  for i=1:m, j=find(DQm(:,1)<=fpTarget(i)); j=j(1);
+    miss(i)=DQm(j,2); stds(i)=DQs(j,2); end
   fp=min(fpTarget); plot([fp fp],lims(3:4),'Color',.7*[1 1 1]);
   fp=max(fpTarget); plot([fp fp],lims(3:4),'Color',.7*[1 1 1]);
 end
