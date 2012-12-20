@@ -128,8 +128,6 @@ if( ~isfield(pChns,'complete') || pChns.complete~=1 || isempty(I) )
     'colorChn',0,'normRad',5,'normConst',.005}, 1 );
   pChns.pGradHist = getPrmDflt( pChns.pGradHist, {'enabled',1,...
     'binSize',[],'nOrients',6,'softBin',0,'useHog',0,'clipHog',.2}, 1 );
-  if( isempty(pChns.pGradHist.binSize) )
-    pChns.pGradHist.binSize=pChns.shrink; end
   nc=length(pChns.pCustom); pc=cell(1,nc);
   for i=1:nc, pc{i} = getPrmDflt( pChns.pCustom(i), {'enabled',1,...
       'name','REQ','hFunc','REQ','pFunc',{},'padWith',0}, 1 ); end
@@ -163,7 +161,8 @@ if(p.enabled), chns=addChn(chns,M,nm,p,0,h,w); end
 % compute gradient histgoram channels
 p=pChns.pGradHist; nm='gradient histogram';
 if( p.enabled )
-  H=gradientHist(M,O,p.binSize,p.nOrients,p.softBin,p.useHog,p.clipHog);
+  binSize=p.binSize; if(isempty(binSize)), binSize=shrink; end
+  H=gradientHist(M,O,binSize,p.nOrients,p.softBin,p.useHog,p.clipHog);
   chns=addChn(chns,H,nm,pChns.pGradHist,0,h,w);
 end
 
