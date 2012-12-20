@@ -44,7 +44,7 @@ function [h,miss] = plotRoc( D, varargin )
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 2.66
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -64,25 +64,24 @@ for j=1:nD, if(D{j}(1,2)<D{j}(end,2)), D{j}=flipud(D{j}); end; end
 for j=1:nD, D{j}(:,2)=1-D{j}(:,2); assert(all(D{j}(:,2)>=0)); end
 if(smooth), for j=1:nD, D{j}=smoothRoc(D{j}); end; end
 
-% plot: (1) h for legend only, (2) roc curves, (3) markers, (4) error bars
-hold on; axis(lims);
+% plot: (1) h for legend only, (2) markers, (3) error bars, (4) roc curves
+hold on; axis(lims); xlabel(xLbl); ylabel(yLbl);
 prmMrkr = {'MarkerSize',mrkrSiz,'MarkerFaceColor',color};
 prmClr={'Color',color}; prmPlot = [prmClr,{'LineWidth',lineWd}];
 h = plot( 2, 0, [lineSt marker], prmMrkr{:}, prmPlot{:} ); %(1)
-if(nD==1), D1=D{1}; else D1=mean(quantizeRocs(D,100,logx,lims),3); end
-plot( D1(:,1), D1(:,2), lineSt, prmPlot{:} ); %(2)
 DQ = quantizeRocs( D, nMarker, logx, lims ); DQm=mean(DQ,3);
 if(~isempty(marker))
-  plot(DQm(:,1),DQm(:,2),marker,prmClr{:},prmMrkr{:} ); end %(3)
+  plot(DQm(:,1),DQm(:,2),marker,prmClr{:},prmMrkr{:} ); end %(2)
 if(nD>1), DQs=std(squeeze(DQ(:,2,:)),0,2);
-  errorbar(DQm(:,1),DQm(:,2),DQs,'.',prmClr{:}); end %(4)
-xlabel(xLbl); ylabel(yLbl);
+  errorbar(DQm(:,1),DQm(:,2),DQs,'.',prmClr{:}); end %(3)
+if(nD==1), DQ=D{1}; else DQ=quantizeRocs(D,100,logx,lims); end
+DQm = mean(DQ,3); plot( DQm(:,1), DQm(:,2), lineSt, prmPlot{:} ); %(4)
 
 % plot line at given fp rate
 m=length(fpTarget); miss=zeros(1,m);
 if( m>0 )
-  assert( min(D1(:,1))<=min(fpTarget) );
-  for i=1:m, j=find(D1(:,1)<=fpTarget(i)); miss(i)=D1(j(1),2); end
+  assert( min(DQm(:,1))<=min(fpTarget) );
+  for i=1:m, j=find(DQm(:,1)<=fpTarget(i)); miss(i)=DQm(j(1),2); end
   fp=min(fpTarget); plot([fp fp],lims(3:4),'Color',.7*[1 1 1]);
   fp=max(fpTarget); plot([fp fp],lims(3:4),'Color',.7*[1 1 1]);
 end
