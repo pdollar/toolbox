@@ -274,7 +274,7 @@ if(~isempty(wRng)),  for i=1:n, v=objs(i).bb(3);
     objs(i).ign = objs(i).ign || v<wRng(1) || v>wRng(2); end; end
 if(~isempty(hRng)),  for i=1:n, v=objs(i).bb(4);
     objs(i).ign = objs(i).ign || v<hRng(1) || v>hRng(2); end; end
-if(~isempty(oRng)),  for i=1:n, v=objs(i).ang;
+if(~isempty(oRng)),  for i=1:n, v=objs(i).ang; if(v>180), v=v-360; end
     objs(i).ign = objs(i).ign || v<oRng(1) || v>oRng(2); end; end
 if(~isempty(aRng)),  for i=1:n, v=objs(i).bb(3)*objs(i).bb(4);
     objs(i).ign = objs(i).ign || v<aRng(1) || v>aRng(2); end; end
