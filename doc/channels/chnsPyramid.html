@@ -68,11 +68,6 @@
  difference in the channels, during detection the approximated channels
  have been shown to be essentially as effective as the original channels.
 
- In many applications (such as object detection) the channels can be
- subsampled prior to use. Use the &quot;shrink&quot; parameter to subsample the
- channels by an integer amount after computation, this is also necessary
- to speed up the computation of the approximate channels described above.
-
  While every effort is made to space the image scales evenly, this is not
  always possible. For example, given a 101x100 image, it is impossible to
  downsample it by exactly 1/2 along the first dimension, moreover, the
@@ -84,16 +79,13 @@
  scales are further tweaked so that the resized image has dimensions that
  are exactly divisible by shrink (for details please see the code).
 
- If chnsPyramid() is called with no inputs or empty I, the output is the
- complete default parameters (pPyramid). Finally, we describe the
- remaining parameters: &quot;pad&quot; controls the amount the channels are padded
- after being created (useful for detecting objects near boundaries);
- &quot;smoothIm&quot; controls the amount the image is smoothed prior to computing
- the channels (typically the amount of image smoothing should be small or
- gradient information is lost); &quot;smoothChns&quot; controls the amount of
- smoothing after the channels are created (and controls the integration
- scale of the channels, see the BMVC09 paper); finally &quot;concat&quot; determines
- whether all channels at a single scale are concatenated in the output.
+ If chnsPyramid() is called with no inputs, the output is the complete
+ default parameters (pPyramid). Finally, we describe the remaining
+ parameters: &quot;pad&quot; controls the amount the channels are padded after being
+ created (useful for detecting objects near boundaries); &quot;smooth&quot; controls
+ the amount of smoothing after the channels are created (and controls the
+ integration scale of the channels); finally &quot;concat&quot; determines whether
+ all channels at a single scale are concatenated in the output.
 
  An emphasis has been placed on speed, with the code undergoing heavy
  optimization. Computing the full set of (approximated) *multi-scale*
@@ -101,6 +93,7 @@
  machine from 2011 (although runtime depends on input parameters).
 
  USAGE
+  pPyramid = chnsPyramid()
   pyramid = chnsPyramid( I, pPyramid )
 
  INPUTS
@@ -111,11 +104,9 @@
    .nOctUp       - [0] number of upsampled octaves to compute
    .nApprox      - [-1] number of approx. scales (if -1 nApprox=nPerOct-1)
    .lambdas      - [] coefficients for power law scaling (see BMVC10)
-   .shrink       - [4] integer downsampling amount for channels
    .pad          - [0 0] amount to pad channels (along T/B and L/R)
    .minDs        - [16 16] minimum image size for channel computation
-   .smoothIm     - [1] radius for image smoothing (using convTri)
-   .smoothChns   - [1] radius for channel smoothing (using convTri)
+   .smooth       - [1] radius for channel smoothing (using convTri)
    .concat       - [1] if true concatenate channels
    .complete     - [] if true does not check/set default vals in pPyramid
 
@@ -138,9 +129,9 @@
   figure(1); montage2(P1.data{2}); figure(2); montage2(P2.data{2});
   figure(3); montage2(abs(P1.data{2}-P2.data{2})); colorbar;
 
- See also <a href="chnsCompute.html" class="code" title="function chns = chnsCompute( I, varargin )">chnsCompute</a>, <a href="chnsScaling.html" class="code" title="function [lambdas,as,scales,fs] = chnsScaling( pPyramid, Is, show )">chnsScaling</a>, <a href="convTri.html" class="code" title="function J = convTri( I, r, s, nomex )">convTri</a>, <a href="imPad.html" class="code" title="function J = imPad( I, pad, type )">imPad</a>
+ See also <a href="chnsCompute.html" class="code" title="function chns = chnsCompute( I, varargin )">chnsCompute</a>, <a href="chnsScaling.html" class="code" title="function [lambdas,as,scales,fs] = chnsScaling( pChns, Is, show )">chnsScaling</a>, <a href="convTri.html" class="code" title="function J = convTri( I, r, s, nomex )">convTri</a>, <a href="imPad.html" class="code" title="function J = imPad( I, pad, type )">imPad</a>
 
- Piotr's Image&amp;Video Toolbox      Version 3.00
+ Piotr's Image&amp;Video Toolbox      Version 3.02
  Copyright 2012 Piotr Dollar &amp; Ron Appel.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>
@@ -152,7 +143,7 @@ This function calls:
 <li><a href="chnsCompute.html" class="code" title="function chns = chnsCompute( I, varargin )">chnsCompute</a>	Compute channel features at a single scale given an input image.</li><li><a href="convTri.html" class="code" title="function J = convTri( I, r, s, nomex )">convTri</a>	Extremely fast 2D image convolution with a triangle filter.</li><li><a href="imPad.html" class="code" title="function J = imPad( I, pad, type )">imPad</a>	Pad an image along its four boundaries.</li><li><a href="rgbConvert.html" class="code" title="function J = rgbConvert( I, colorSpace, useSingle )">rgbConvert</a>	Convert RGB image to other color spaces (highly optimized).</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="chnsScaling.html" class="code" title="function [lambdas,as,scales,fs] = chnsScaling( pPyramid, Is, show )">chnsScaling</a>	Compute lambdas for channel power law scaling.</li></ul>
+<li><a href="chnsScaling.html" class="code" title="function [lambdas,as,scales,fs] = chnsScaling( pChns, Is, show )">chnsScaling</a>	Compute lambdas for channel power law scaling.</li></ul>
 <!-- crossreference -->
 
 

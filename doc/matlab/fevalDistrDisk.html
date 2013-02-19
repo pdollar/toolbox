@@ -2,9 +2,9 @@
                 "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
 <head>
-  <title>Description of figureResized</title>
-  <meta name="keywords" content="figureResized">
-  <meta name="description" content="Creates a figures that takes up certain area of screen.">
+  <title>Description of fevalDistrDisk</title>
+  <meta name="keywords" content="fevalDistrDisk">
+  <meta name="description" content="Helper for fevalDistr (do no call directly).">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -13,37 +13,30 @@
 <body>
 <a name="_top"></a>
 <!-- menu.html matlab -->
-<h1>figureResized
+<h1>fevalDistrDisk
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>Creates a figures that takes up certain area of screen.</strong></div>
+<div class="box"><strong>Helper for fevalDistr (do no call directly).</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function varargout = figureResized( screenratio, varargin ) </strong></div>
+<div class="box"><strong>function fevalDistrDisk( funNm, jobDir, jobId ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> Creates a figures that takes up certain area of screen.
-
- Almost same as figure, except get to specify what fraction of available
- screen space figure should take up.  Figure appears in center of screen.
+<div class="fragment"><pre class="comment"> Helper for fevalDistr (do no call directly).
 
  USAGE
-  varargout = figureResized( screenratio, varargin )
+  fevalDistrDisk( funNm, jobDir, jobId )
 
  INPUTS
-  screenratio - controls fraction of screen image takes out (&lt;=.8)
-  varargin    - parameters to figure
 
  OUTPUTS
-  varargout   - out from figure
 
  EXAMPLE
-  figureResized( .75 )
 
- See also FIGURE
+ See also <a href="fevalDistr.html" class="code" title="function [out,res] = fevalDistr( funNm, jobs, varargin )">fevalDistr</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.0
+ Piotr's Image&amp;Video Toolbox      Version 3.02
  Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>
@@ -52,10 +45,10 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-</ul>
+<li><a href="int2str2.html" class="code" title="function nstr = int2str2( n, nDigits )">int2str2</a>	Convert integer to string of given length; improved version of int2str.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="../channels/chnsScaling.html" class="code" title="function [lambdas,as,scales,fs] = chnsScaling( pChns, Is, show )">chnsScaling</a>	Compute lambdas for channel power law scaling.</li><li><a href="../classify/pcaVisualize.html" class="code" title="function varargout=pcaVisualize( U, mu, vars, X, index, ks, fname, show )">pcaVisualize</a>	Visualization of quality of approximation of X given principal comp.</li></ul>
+</ul>
 <!-- crossreference -->
 
 

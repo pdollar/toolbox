@@ -4,7 +4,7 @@
 <head>
   <title>Description of fevalDistr</title>
   <meta name="keywords" content="fevalDistr">
-  <meta name="description" content="Run simple jobs locally or in distributed fashion using queue.">
+  <meta name="description" content="Wrapper for embarrassingly parallel function evaluation.">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -17,27 +17,55 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>Run simple jobs locally or in distributed fashion using queue.</strong></div>
+<div class="box"><strong>Wrapper for embarrassingly parallel function evaluation.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function [out,res] = fevalDistr( funNm, jobs, varargin ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> Run simple jobs locally or in distributed fashion using queue.
+<div class="fragment"><pre class="comment"> Wrapper for embarrassingly parallel function evaluation.
 
- Runs &quot;r=feval(funNm,jobs{i}{:})&quot; for each job either locally or across
- cluster. Distributed queuing system must be installed separately. If
- queuing system is not installed, this function can still be called with
- either the 'local' or 'parfor' options. jobs should be a cell array of
- length nJob. Each job should be a cell array of parameters to pass to
- funNm. funNm must be a function in the path and must return a single
- value (which may be a dummy value if funNm writes its results to disk).
+ Runs &quot;r=feval(funNm,jobs{i}{:})&quot; for each job in a parallel manner. jobs
+ should be a cell array of length nJob and each job should be a cell array
+ of parameters to pass to funNm. funNm must be a function in the path and
+ must return a single value (which may be a dummy value if funNm writes
+ results to disk). Different forms of parallelization are supported
+ depending on the hardware and Matlab toolboxes available. The type of
+ parallelization is determined by the parameter 'type' described below.
 
- If using type='local', jobs are executed using simple for loop. If using
- type='parfor', the for loop is a parfor loop, make sure to setup matlab
- workers first using &quot;matlabpool open nWorkers&quot;. If type='distr' attempts
- to use the distributed cluster code (must be installed separately);
- defaults to 'local' if cluster code not found.
+ type='LOCAL': jobs are executed using a simple &quot;for&quot; loop. This implies
+ no parallelization and is the default fallback option.
+
+ type='PARFOR': jobs are executed using a &quot;parfor&quot; loop. This option is
+ only available if the Matlab *Parallel Computing Toolbox* is installed.
+ Make sure to setup Matlab workers first using &quot;matlabpool open&quot;.
+
+ type='DISTR': jobs are executed on the Caltech cluster. Distributed
+ queuing system must be installed separately. Currently this option is
+ only supported on the Caltech cluster but could easily be installed on
+ any Linux cluster as it requires only SSH and a shared filesystem.
+ Parameter pLaunch is used for controller('launchQueue',pLaunch{:}) and
+ determines cluster machines used (e.g. pLaunch={48,401:408}).
+
+ type='COMPILED': jobs are executed locally in parallel by first compiling
+ an executable and then running it in background. This option requires the
+ *Matlab Compiler* to be installed (but does NOT require the Parallel
+ Computing Toolbox). Compiling can take 1-10 minutes, so use this option
+ only for large jobs. (On Linux alter startup.m by calling addpath() only
+ if ~isdeployed, otherwise will get error about &quot;CTF&quot; after compiling).
+ Note that relative paths will not work after compiling so all paths used
+ by funNm must be absolute paths.
+
+ type='WINHPC': jobs are executed on a Windows HPC Server 2008 cluster.
+ Similar to type='COMPILED', except after compiling, the executable is
+ queued to the HPC cluster where all computation occurs. This option
+ likewise requires the *Matlab Compiler*. Paths to data, etc., must be
+ absolute paths and available from HPC cluster. Parameter pLaunch should
+ have two fields 'scheduler' and 'shareDir' that define the HPC Server.
+ For example, at MSR one possible cluster is defined by scheduler =
+ 'MSR-L25-DEV21' and shareDir = '\\msr-arrays\scratch\msr-pool\L25-dev21'.
+ Note call to 'job submit' from Matlab will hang unless pwd is saved
+ (simply call 'job submit' from cmd prompt and enter pwd).
 
  USAGE
   [out,res] = fevalDistr( funNm, jobs, [varargin] )
@@ -46,8 +74,8 @@
   funNm      - name of function that will process jobs
   jobs       - [1xnJob] cell array of parameters for each job
   varargin   - additional params (struct or name/value pairs)
-   .type       - ['local'], 'parfor' or 'distr'
-   .pLaunch    - [] parameter to controller('launchQueue',pLaunch{:})
+   .type       - ['local'], 'parfor', 'distr', 'compiled', 'winhpc'
+   .pLaunch    - [] extra params for type='distr' or type='winhpc'
    .group      - [1] send jobs in batches (only relevant if type='distr')
 
  OUTPUTS
@@ -55,16 +83,16 @@
   res        - [1xnJob] cell array containing results of each job
 
  EXAMPLE
+  % Note: in this case parallel versions are slower since conv2 is so fast
   n=16; jobs=cell(1,n); for i=1:n, jobs{i}={rand(500),ones(25)}; end
-  tic, [out,J] = fevalDistr('conv2',jobs,'type','local'); toc,
-  tic, [out,J] = fevalDistr('conv2',jobs,'type','parfor'); toc,
-  pDistr={'type','distr','pLaunch',{48,401:408}};
-  tic, [out,J] = fevalDistr('conv2',jobs,pDistr{:}); toc
-  figure(1); montage2(cell2array(J))
+  tic, [out,J1] = fevalDistr('conv2',jobs,'type','local'); toc,
+  tic, [out,J2] = fevalDistr('conv2',jobs,'type','parfor'); toc,
+  tic, [out,J3] = fevalDistr('conv2',jobs,'type','compiled'); toc
+  [isequal(J1,J2), isequal(J1,J3)], figure(1); montage2(cell2array(J1))
 
- See also controller, queue
+ See also matlabpool mcc
 
- Piotr's Image&amp;Video Toolbox      Version 2.61
+ Piotr's Image&amp;Video Toolbox      Version 3.02
  Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>
@@ -73,7 +101,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li><li><a href="ticStatus.html" class="code" title="function id = ticStatus( msg, updateFreq, updateMinT, erasePrev )">ticStatus</a>	Used to display the progress of a long process.</li><li><a href="tocStatus.html" class="code" title="function tocStatus( id, fracDone )">tocStatus</a>	Used to display the progress of a long process.</li></ul>
+<li><a href="getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li><li><a href="int2str2.html" class="code" title="function nstr = int2str2( n, nDigits )">int2str2</a>	Convert integer to string of given length; improved version of int2str.</li><li><a href="ticStatus.html" class="code" title="function id = ticStatus( msg, updateFreq, updateMinT, erasePrev )">ticStatus</a>	Used to display the progress of a long process.</li><li><a href="tocStatus.html" class="code" title="function tocStatus( id, fracDone )">tocStatus</a>	Used to display the progress of a long process.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 </ul>

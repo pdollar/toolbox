@@ -20,7 +20,7 @@
 <div class="box"><strong>Function for display of rocs (receiver operator characteristic curves).</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function [h,miss] = plotRoc( D, varargin ) </strong></div>
+<div class="box"><strong>function [h,miss,stds] = plotRoc( D, varargin ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment"> Function for display of rocs (receiver operator characteristic curves).
@@ -35,7 +35,7 @@
  the truePosRate) on the y-axis versus the falsePosRate on the x-axis.
 
  USAGE
-  [h,miss] = plotRoc( D, prm )
+  [h,miss,stds] = plotRoc( D, prm )
 
  INPUTS
   D    - [nx2] n data points along roc [falsePosRate truePosRate]
@@ -57,7 +57,8 @@
 
  OUTPUTS
   h    - plot handle for use in legend only
-  miss - miss rates at fpTarget reference values (if fpTarget specified)
+  miss - average miss rates at fpTarget reference values
+  stds - standard deviation of miss rates at fpTarget reference values
 
  EXAMPLE
   k=2; x=0:.0001:1; data1 = [1-x; (1-x.^k).^(1/k)]';
@@ -68,7 +69,7 @@
 
  See also
 
- Piotr's Image&amp;Video Toolbox      Version 2.66
+ Piotr's Image&amp;Video Toolbox      Version 3.02
  Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>

@@ -28,7 +28,8 @@
 
  Convenient (but no faster) replacement of for loops:
    <a href="fevalArrays.html" class="code" title="function B = fevalArrays( A, fHandle, varargin )">fevalArrays</a>       - Used to apply the same operation to a stack of array elements.
-   <a href="fevalDistr.html" class="code" title="function [out,res] = fevalDistr( funNm, jobs, varargin )">fevalDistr</a>        - Run simple jobs locally or in distributed fashion using queue.
+   <a href="fevalDistr.html" class="code" title="function [out,res] = fevalDistr( funNm, jobs, varargin )">fevalDistr</a>        - Wrapper for embarrassingly parallel function evaluation.
+   <a href="fevalDistrDisk.html" class="code" title="function fevalDistrDisk( funNm, jobDir, jobId )">fevalDistrDisk</a>    - Helper for <a href="fevalDistr.html" class="code" title="function [out,res] = fevalDistr( funNm, jobs, varargin )">fevalDistr</a> (do no call directly).
    <a href="fevalImages.html" class="code" title="function X = fevalImages( fHandle, prms, srcDir, name, ext,nStr, nEnd, nDigits )">fevalImages</a>       - Used to apply the same operation to all images in given directory.
    <a href="fevalMats.html" class="code" title="function X = fevalMats( fHandle, matCont, prm, srcDir, prefix )">fevalMats</a>         - Used to apply the same operation to all .mat files in given directory.
 
@@ -68,7 +69,7 @@
    <a href="multiTimes.html" class="code" title="function C = multiTimes( A, B, type )">multiTimes</a>        - Matrix multiply each submatrix of two 3D arrays without looping.
    <a href="normpdf2.html" class="code" title="function ps = normpdf2( xs, m, C )">normpdf2</a>          - Normal prob. density function (pdf) with arbitrary covariance matrix.
    <a href="num2strs.html" class="code" title="function Y = num2strs( X, varargin )">num2strs</a>          - Applies num2str to each element of an array X.
-   <a href="plotRoc.html" class="code" title="function [h,miss] = plotRoc( D, varargin )">plotRoc</a>           - Function for display of rocs (receiver operator characteristic curves).
+   <a href="plotRoc.html" class="code" title="function [h,miss,stds] = plotRoc( D, varargin )">plotRoc</a>           - Function for display of rocs (receiver operator characteristic curves).
    <a href="randint2.html" class="code" title="function R = randint2( m, n, range )">randint2</a>          - Faster but restricted version of randint.
    <a href="randSample.html" class="code" title="function r = randSample( n, k, isArray )">randSample</a>        - Generate values sampled uniformly without replacement from 1:n.
    <a href="rotationMatrix.html" class="code" title="function varargout=rotationMatrix(varargin)">rotationMatrix</a>    - Performs different operations dealing with a rotation matrix

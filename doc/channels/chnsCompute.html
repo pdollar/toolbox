@@ -53,22 +53,25 @@
  For more information about each channel type, including the exact input
  parameters and their meanings, see the respective m-files which perform
  the actual computatons (chnsCompute is essentially a wrapper function).
+ The converted color channels serve as input to gradientMag/gradientHist.
 
  Additionally, custom channels can be specified via an optional struct
  array &quot;pCustom&quot; which may have 0 or more custom channel definitions. Each
  custom channel is generated via a call to &quot;chns=feval(hFunc,I,pFunc{:})&quot;.
  The color space of I is determined by pColor.colorSpace, use the setting
  colorSpace='orig' if the input image is not an 'rgb' image and should be
- left unchaned (e.g. if I has multiple channels). The input I will have
+ left unchanged (e.g. if I has multiple channels). The input I will have
  type single and the output of hFunc should also have type single.
 
- As mentioned, the params for each channel type are described in detail in
- the respective function. In addition, each channel type has a parameter
- &quot;enabled&quot; that determines if the channel is computed. If chnsCompute() is
- called with no inputs or empty I, the output is the complete default
- parameters (pChns). Otherwise the outputs are the computed channels and
- additional meta-data (see below). The channels are computed at a single
- scale, for (fast) multi-scale channel computation see chnsPyramid.m.
+ &quot;shrink&quot; (which should be an integer) determines the amount to subsample
+ the computed channels (in applications such as detection subsamping does
+ not affect performance). The params for each channel type are described
+ in detail in the respective function. In addition, each channel type has
+ a param &quot;enabled&quot; that determines if the channel is computed. If
+ chnsCompute() is called with no inputs, the output is the complete
+ default params (pChns). Otherwise the outputs are the computed channels
+ and additional meta-data (see below). The channels are computed at a
+ single scale, for (fast) multi-scale channel computation see chnsPyramid.
 
  An emphasis has been placed on speed, with the code undergoing heavy
  optimization. Computing the full set of channels used in the BMVC09 paper
@@ -76,13 +79,16 @@
  of a machine from 2011 (although runtime depends on input parameters).
 
  USAGE
+  pChns = chnsCompute()
   chns = chnsCompute( I, pChns )
 
  INPUTS
   I           - [hxwx3] input image (uint8 or single/double in [0,1])
   pChns       - parameters (struct or name/value pairs)
+   .shrink       - [4] integer downsampling amount for channels
    .pColor       - parameters for color space:
      .enabled      - [1] if true enable color channels
+     .smooth       - [1] radius for image smoothing (using convTri)
      .colorSpace   - ['luv'] choices are: 'gray', 'rgb', 'hsv', 'orig'
    .pGradMag     - parameters for gradient magnitude:
      .enabled      - [1] if true enable gradient magnitude channel
@@ -91,7 +97,7 @@
      .normConst    - [.005] normalization constant for gradient
    .pGradHist    - parameters for gradient histograms:
      .enabled      - [1] if true enable gradient histogram channels
-     .binSize      - [1] spatial bin size (if &gt; 1 chns will be smaller)
+     .binSize      - [shrink] spatial bin size (defaults to shrink)
      .nOrients     - [6] number of orientation channels
      .softBin      - [0] if true use &quot;soft&quot; bilinear spatial binning
      .useHog       - [0] if true perform 4-way hog normalization/clipping
@@ -108,22 +114,28 @@
   chns       - output struct
    .pChns      - exact input parameters used
    .nTypes     - number of channel types
-   .data       - [nTypes x 1] cell array of channels (each is [hxwxnChns])
+   .data       - [nTypes x 1] cell [h/shrink x w/shrink x nChns] channels
    .info       - [nTypes x 1] struct array
      .name       - channel type name
      .pChn       - exact input parameters for given channel type
      .nChns      - number of channels for given channel type
      .padWith    - how channel should be padded (0,'replicate')
 
- EXAMPLE
-  I = imResample(imread('peppers.png'),[480 640]);
-  pChns = chnsCompute(); pChns.pGradHist.binSize=4;
-  tic, for i=1:100, chns = chnsCompute(I,pChns); end; toc
-  figure(1); montage2(chns.data{3});
+ EXAMPLE - default channels
+  I=imResample(imread('peppers.png'),[480 640]); pChns=chnsCompute();
+  tic, for i=1:100, chns=chnsCompute(I,pChns); end; toc
+  figure(1); montage2(cat(3,chns.data{:}));
+
+ EXAMPLE - default + custom channels
+  I=imResample(imread('peppers.png'),[480 640]); pChns=chnsCompute();
+  hFunc=@(I) 5*sqrt(max(0,max(convBox(I.^2,2)-convBox(I,2).^2,[],3)));
+  pChns.pCustom=struct('name','Std02','hFunc',hFunc); pChns.complete=0;
+  tic, chns=chnsCompute(I,pChns); toc
+  figure(1); im(chns.data{4});
 
  See also <a href="rgbConvert.html" class="code" title="function J = rgbConvert( I, colorSpace, useSingle )">rgbConvert</a>, <a href="gradientMag.html" class="code" title="function [M,O] = gradientMag( I, channel, normRad, normConst )">gradientMag</a>, <a href="gradientHist.html" class="code" title="function H = gradientHist( M, O, varargin )">gradientHist</a>, <a href="chnsPyramid.html" class="code" title="function pyramid = chnsPyramid( I, varargin )">chnsPyramid</a>
 
- Piotr's Image&amp;Video Toolbox      Version 3.00
+ Piotr's Image&amp;Video Toolbox      Version 3.02
  Copyright 2012 Piotr Dollar &amp; Ron Appel.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>
@@ -132,7 +144,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="gradientHist.html" class="code" title="function H = gradientHist( M, O, varargin )">gradientHist</a>	Compute oriented gradient histograms.</li><li><a href="gradientMag.html" class="code" title="function [M,O] = gradientMag( I, channel, normRad, normConst )">gradientMag</a>	Compute gradient magnitude and orientation at each image location.</li><li><a href="rgbConvert.html" class="code" title="function J = rgbConvert( I, colorSpace, useSingle )">rgbConvert</a>	Convert RGB image to other color spaces (highly optimized).</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li></ul>
+<li><a href="convTri.html" class="code" title="function J = convTri( I, r, s, nomex )">convTri</a>	Extremely fast 2D image convolution with a triangle filter.</li><li><a href="gradientHist.html" class="code" title="function H = gradientHist( M, O, varargin )">gradientHist</a>	Compute oriented gradient histograms.</li><li><a href="gradientMag.html" class="code" title="function [M,O] = gradientMag( I, channel, normRad, normConst )">gradientMag</a>	Compute gradient magnitude and orientation at each image location.</li><li><a href="rgbConvert.html" class="code" title="function J = rgbConvert( I, colorSpace, useSingle )">rgbConvert</a>	Convert RGB image to other color spaces (highly optimized).</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 <li><a href="chnsPyramid.html" class="code" title="function pyramid = chnsPyramid( I, varargin )">chnsPyramid</a>	Compute channel feature pyramid given an input image.</li></ul>
