@@ -79,7 +79,7 @@ function J = convTri( I, r, s, nomex )
 if( nargin<3 ), s=1; end
 if( nargin<4 ), nomex=0; end
 if( isempty(I) || (r==0 && s==1) ), J = I; return; end
-if( 2*r+1>=min(size(I,1),size(I,2)) ), nomex=1; end
+m=min(size(I,1),size(I,2)); if( m<4 || 2*r+1>=m ), nomex=1; end
 
 if( nomex==0 )
   if( r>0 && r<=1 && s<=2 )
