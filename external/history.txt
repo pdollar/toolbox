@@ -1,3 +1,6 @@
+Version NEW
+ -minor: bbApply
+
 Version 3.02 (19-Feb-2013)
  -chnsCompute.m/chnsPyramid.m: tweaks to input/output format
  -chnsScaling.m: improved robustness, various tweaks
