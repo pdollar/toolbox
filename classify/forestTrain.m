@@ -55,7 +55,7 @@ function forest = forestTrain( data, hs, varargin )
 % get additional parameters and fill in remaining parameters
 dfs={'M',1,'N1',[],'F1',[],'minCount',1,'maxDepth',64,'dWts',[],'fWts',[]};
 [M,N1,F1,minCount,maxDepth,dWts,fWts]=getPrmDflt(varargin,dfs,1);
-[N,F]=size(data); assert(length(hs)==N); assert(all(hs>0));
+[N,F]=size(data); assert(length(hs)==N); assert(all(hs>0)); H=max(hs);
 if(isempty(N1)), N1=round(5*N/M); end; N1=min(N,N1);
 if(isempty(F1)), F1=round(sqrt(F)); end; F1=min(F,F1);
 if(isempty(dWts)), dWts=ones(1,N,'single'); end; dWts=dWts/sum(dWts);
@@ -73,15 +73,15 @@ for i=1:M
     d=wswor(dWts,N1,4); data1=data(d,:); hs1=hs(d);
     dWts1=dWts(d); dWts1=dWts1/sum(dWts1);
   end
-  tree=treeTrain(data1,hs1,F1,minCount,maxDepth,dWts1,fWts);
+  tree=treeTrain(data1,hs1,H,F1,minCount,maxDepth,dWts1,fWts);
   if(i==1), forest=tree(ones(M,1)); else forest(i)=tree; end
 end
 
 end
 
-function tree = treeTrain(data,hs,F1,minCount,maxDepth,dWts,fWts)
+function tree = treeTrain(data,hs,H,F1,minCount,maxDepth,dWts,fWts)
 % Train single random tree.
-N=size(data,1); H=max(hs); K=2*N-1;
+N=size(data,1); K=2*N-1;
 thrs=zeros(K,1,'single'); distr=zeros(K,H,'single');
 fids=zeros(K,1,'uint32'); child=fids; count=fids; depth=fids;
 dids=cell(K,1); dids{1}=1:N; k=1; K=2;
