@@ -1,5 +1,5 @@
 Version NEW
- -forestTrain.m: minor fix if hs small (thanks Stefan Gachter)
+ -forestTrain.m: optimizations and minor fix if hs small (thanks Stefan Gachter)
  -minor: bbApply
 
 Version 3.02 (19-Feb-2013)
