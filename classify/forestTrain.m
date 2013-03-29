@@ -12,7 +12,7 @@ function forest = forestTrain( data, hs, varargin )
 %
 % INPUTS
 %  data     - [NxF] N length F feature vectors
-%  hs       - [Nx1] target output hs in [1,H]
+%  hs       - [Nx1] target output labels in [1,H]
 %  varargin - additional params (struct or name/value pairs)
 %   .M        - [1] number of trees to train
 %   .N1       - [5*N/M] number of data points for training each tree
@@ -25,12 +25,12 @@ function forest = forestTrain( data, hs, varargin )
 %
 % OUTPUTS
 %  forest   - learned forest model struct array w the following fields
-%   .fids     - [Mx1] feature ids for each node
-%   .thrs     - [Mx1] threshold corresponding to each fid
-%   .child    - [Mx1] index of child for each node
-%   .distr    - [MxH] prob distribution at each node
-%   .count    - [Mx1] number of data points at each node
-%   .depth    - [Mx1] depth of each node
+%   .fids     - [Kx1] feature ids for each node
+%   .thrs     - [Kx1] threshold corresponding to each fid
+%   .child    - [Kx1] index of child for each node
+%   .distr    - [KxH] prob distribution at each node
+%   .count    - [Kx1] number of data points at each node
+%   .depth    - [Kx1] depth of each node
 %
 % EXAMPLE
 %  N=10000; H=5; d=2; [xs0,hs0,xs1,hs1]=demoGenData(N,N,H,d,1,1);
@@ -71,23 +71,25 @@ if(~isa(fWts,'single')), fWts=single(fWts); end
 if(~isa(dWts,'single')), dWts=single(dWts); end
 
 % train M random trees on different subsets of data
+prmTree = {H,F1,minCount,minChild,maxDepth,fWts};
 for i=1:M
   if(N==N1), data1=data; hs1=hs; dWts1=dWts; else
     d=wswor(dWts,N1,4); data1=data(d,:); hs1=hs(d);
     dWts1=dWts(d); dWts1=dWts1/sum(dWts1);
   end
-  tree=treeTrain(data1,hs1,H,F1,minCount,minChild,maxDepth,dWts1,fWts);
+  tree = treeTrain(data1,hs1,dWts1,prmTree);
   if(i==1), forest=tree(ones(M,1)); else forest(i)=tree; end
 end
 
 end
 
-function tree=treeTrain(data,hs,H,F1,minCount,minChild,maxDepth,dWts,fWts)
+function tree = treeTrain( data, hs, dWts, prmTree )
 % Train single random tree.
 N=size(data,1); K=2*N-1;
+[H,F1,minCount,minChild,maxDepth,fWts] = deal(prmTree{:});
 thrs=zeros(K,1,'single'); distr=zeros(K,H,'single');
 fids=zeros(K,1,'uint32'); child=fids; count=fids; depth=fids;
-dids=cell(K,1); dids{1}=1:N; k=1; K=2;
+dids=cell(K,1); dids{1}=uint32(1:N); k=1; K=2;
 while( k < K )
   % get node data and store distribution
   dids1=dids{k}; dids{k}=[]; hs1=hs(dids1); count(k)=length(dids1);
