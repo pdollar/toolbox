@@ -1,6 +1,6 @@
 Version NEW
  -forestTrain.m: optimizations and minor fix if hs small (thanks Stefan Gachter)
- -minor: bbApply, convConst.cpp
+ -minor: bbApply
 
 Version 3.02 (19-Feb-2013)
  -chnsCompute.m/chnsPyramid.m: tweaks to input/output format

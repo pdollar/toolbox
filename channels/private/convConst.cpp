@@ -7,7 +7,6 @@
 #include "wrappers.hpp"
 #include <string.h>
 #include "sse.hpp"
-#include <omp.h>
 
 // convolve two columns of I by ones filter
 void convBoxY( float *I, float *O, int h, int r, int s ) {
@@ -105,24 +104,21 @@ void convTriY( float *I, float *O, int h, int r, int s ) {
 
 // convolve I by a 2rx1 triangle filter (uses SSE)
 void convTri( float *I, float *O, int h, int w, int d, int r, int s ) {
-  r++; float nrm = 1.0f/(r*r*r*r); int h0, h1, w0;
+  r++; float nrm = 1.0f/(r*r*r*r); int i, j, k=(s-1)/2, h0, h1, w0;
   if(h%4==0) h0=h1=h; else { h0=h-(h%4); h1=h0+4; } w0=(w/s)*s;
-  #pragma omp parallel for
-  for( int d0=0; d0<d; d0++ ) {
+  float *T=(float*) alMalloc(2*h1*sizeof(float),16), *U=T+h1;
+  while(d-- > 0) {
     // initialize T and U
-    float *T, *U, *I1=I+d0*w*h, *O1=O+d0*w*h; int i, j, k=(s-1)/2;
-    #pragma omp critical
-    { T=(float*) mxMalloc(2*h1*sizeof(float)); } U=T+h1;
-    for(j=0; j<h0; j+=4) STR(U[j], STR(T[j], LDu(I1[j])));
-    for(i=1; i<r; i++) for(j=0; j<h0; j+=4) INC(U[j],INC(T[j],LDu(I1[j+i*h])));
+    for(j=0; j<h0; j+=4) STR(U[j], STR(T[j], LDu(I[j])));
+    for(i=1; i<r; i++) for(j=0; j<h0; j+=4) INC(U[j],INC(T[j],LDu(I[j+i*h])));
     for(j=0; j<h0; j+=4) STR(U[j],MUL(nrm,(SUB(MUL(2,LD(U[j])),LD(T[j])))));
     for(j=0; j<h0; j+=4) STR(T[j],0);
-    for(j=h0; j<h; j++ ) U[j]=T[j]=I1[j];
-    for(i=1; i<r; i++) for(j=h0; j<h; j++ ) U[j]+=T[j]+=I1[j+i*h];
+    for(j=h0; j<h; j++ ) U[j]=T[j]=I[j];
+    for(i=1; i<r; i++) for(j=h0; j<h; j++ ) U[j]+=T[j]+=I[j+i*h];
     for(j=h0; j<h; j++ ) { U[j] = nrm * (2*U[j]-T[j]); T[j]=0; }
     // prepare and convolve each column in turn
     for( i=0; i<w0; i++ ) {
-      float *Il, *Ir, *Im; Il=Ir=Im=I1; Im+=(i-1)*h;
+      float *Il, *Ir, *Im; Il=Ir=Im=I; Im+=(i-1)*h;
       if( i<=r ) { Il+=(r-i)*h; Ir+=(r-1+i)*h; }
       else if( i<=w-r ) { Il-=(r+1-i)*h; Ir+=(r-1+i)*h; }
       else { Il-=(r+1-i)*h; Ir+=(2*w-r-i)*h; }
@@ -131,11 +127,11 @@ void convTri( float *I, float *O, int h, int w, int d, int r, int s ) {
         INC(U[j], MUL(nrm,(INC(T[j],del))));
       }
       if(i) for( j=h0; j<h; j++ ) U[j]+=nrm*(T[j]+=Il[j]+Ir[j]-2*Im[j]);
-      k++; if(k==s) { k=0; convTriY(U,O1,h,r-1,s); O1+=h/s; }
+      k++; if(k==s) { k=0; convTriY(U,O,h,r-1,s); O+=h/s; }
     }
-    #pragma omp critical
-    { mxFree(T); }
+    I+=w*h;
   }
+  alFree(T);
 }
 
 // convolve one column of I by [1 p 1] filter (uses SSE)
@@ -159,22 +155,16 @@ void convTri1Y( float *I, float *O, int h, float p, int s ) {
 
 // convolve I by [1 p 1] filter (uses SSE)
 void convTri1( float *I, float *O, int h, int w, int d, float p, int s ) {
-  const float nrm = 1.0f/((p+2)*(p+2)); const int h0=h-(h%4);
-  #pragma omp parallel for
-  for( int d0=0; d0<d; d0++ ) {
-    float *Il, *Im, *Ir, *T, *O1=O+d0*h*w/s/s; int i, j;
-    #pragma omp critical
-    { T=(float*) alMalloc(h*sizeof(float),16); }
-    for( i=s/2; i<w; i+=s ) {
-      Il=Im=Ir=I+i*h+d0*h*w; if(i>0) Il-=h; if(i<w-1) Ir+=h;
-      for( j=0; j<h0; j+=4 )
-        STR(T[j],MUL(nrm,ADD(ADD(LDu(Il[j]),MUL(p,LDu(Im[j]))),LDu(Ir[j]))));
-      for( j=h0; j<h; j++ ) T[j]=nrm*(Il[j]+p*Im[j]+Ir[j]);
-      convTri1Y(T,O1,h,p,s); O1+=h/s;
-    }
-    #pragma omp critical
-    { alFree(T); }
+  const float nrm = 1.0f/((p+2)*(p+2)); int i, j, h0=h-(h%4);
+  float *Il, *Im, *Ir, *T=(float*) alMalloc(h*sizeof(float),16);
+  for( int d0=0; d0<d; d0++ ) for( i=s/2; i<w; i+=s ) {
+    Il=Im=Ir=I+i*h+d0*h*w; if(i>0) Il-=h; if(i<w-1) Ir+=h;
+    for( j=0; j<h0; j+=4 )
+      STR(T[j],MUL(nrm,ADD(ADD(LDu(Il[j]),MUL(p,LDu(Im[j]))),LDu(Ir[j]))));
+    for( j=h0; j<h; j++ ) T[j]=nrm*(Il[j]+p*Im[j]+Ir[j]);
+    convTri1Y(T,O,h,p,s); O+=h/s;
   }
+  alFree(T);
 }
 
 // convolve one column of I by a 2rx1 max filter
