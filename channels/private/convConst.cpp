@@ -7,6 +7,7 @@
 #include "wrappers.hpp"
 #include <string.h>
 #include "sse.hpp"
+#include <omp.h>
 
 // convolve two columns of I by ones filter
 void convBoxY( float *I, float *O, int h, int r, int s ) {
@@ -106,10 +107,12 @@ void convTriY( float *I, float *O, int h, int r, int s ) {
 void convTri( float *I, float *O, int h, int w, int d, int r, int s ) {
   r++; float nrm = 1.0f/(r*r*r*r); int h0, h1, w0;
   if(h%4==0) h0=h1=h; else { h0=h-(h%4); h1=h0+4; } w0=(w/s)*s;
+  #pragma omp parallel for
   for( int d0=0; d0<d; d0++ ) {
     // initialize T and U
     float *T, *U, *I1=I+d0*w*h, *O1=O+d0*w*h; int i, j, k=(s-1)/2;
-    T=(float*) mxMalloc(2*h1*sizeof(float)); U=T+h1;
+    #pragma omp critical
+    { T=(float*) mxMalloc(2*h1*sizeof(float)); } U=T+h1;
     for(j=0; j<h0; j+=4) STR(U[j], STR(T[j], LDu(I1[j])));
     for(i=1; i<r; i++) for(j=0; j<h0; j+=4) INC(U[j],INC(T[j],LDu(I1[j+i*h])));
     for(j=0; j<h0; j+=4) STR(U[j],MUL(nrm,(SUB(MUL(2,LD(U[j])),LD(T[j])))));
@@ -130,7 +133,8 @@ void convTri( float *I, float *O, int h, int w, int d, int r, int s ) {
       if(i) for( j=h0; j<h; j++ ) U[j]+=nrm*(T[j]+=Il[j]+Ir[j]-2*Im[j]);
       k++; if(k==s) { k=0; convTriY(U,O1,h,r-1,s); O1+=h/s; }
     }
-    mxFree(T);
+    #pragma omp critical
+    { mxFree(T); }
   }
 }
 
@@ -156,9 +160,11 @@ void convTri1Y( float *I, float *O, int h, float p, int s ) {
 // convolve I by [1 p 1] filter (uses SSE)
 void convTri1( float *I, float *O, int h, int w, int d, float p, int s ) {
   const float nrm = 1.0f/((p+2)*(p+2)); const int h0=h-(h%4);
+  #pragma omp parallel for
   for( int d0=0; d0<d; d0++ ) {
     float *Il, *Im, *Ir, *T, *O1=O+d0*h*w/s/s; int i, j;
-    T=(float*) alMalloc(h*sizeof(float),16);
+    #pragma omp critical
+    { T=(float*) alMalloc(h*sizeof(float),16); }
     for( i=s/2; i<w; i+=s ) {
       Il=Im=Ir=I+i*h+d0*h*w; if(i>0) Il-=h; if(i<w-1) Ir+=h;
       for( j=0; j<h0; j+=4 )
@@ -166,7 +172,8 @@ void convTri1( float *I, float *O, int h, int w, int d, float p, int s ) {
       for( j=h0; j<h; j++ ) T[j]=nrm*(Il[j]+p*Im[j]+Ir[j]);
       convTri1Y(T,O1,h,p,s); O1+=h/s;
     }
-    alFree(T);
+    #pragma omp critical
+    { alFree(T); }
   }
 }
 
