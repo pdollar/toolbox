@@ -58,7 +58,7 @@ function varargout = bbApply( action, varargin )
 % bbApply>union bbApply>resize bbApply>squarify bbApply>draw bbApply>crop
 % bbApply>convert bbApply>random bbApply>frMask bbApply>toMask
 %
-% Piotr's Image&Video Toolbox      Version NEW
+% Piotr's Image&Video Toolbox      Version 2.65
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -394,7 +394,7 @@ function [patches, bbs] = crop( I, bbs, padEl, dims )
 
 % get padEl, bound bb to visible region if empty
 if( nargin<3 ), padEl=0; end; h=size(I,1); w=size(I,2);
-if( nargin<4 ), dims=[]; end; bbs=single(bbs);
+if( nargin<4 ), dims=[]; end;
 if(isempty(padEl)), bbs=intersect([.5 .5 w h],bbs); end
 % crop each patch in turn
 n=size(bbs,1); patches=cell(1,n);
