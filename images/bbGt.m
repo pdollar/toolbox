@@ -86,7 +86,7 @@ function varargout = bbGt( action, varargin )
 % bbGt>loadAll, bbGt>evalRes, bbGt>showRes,  bbGt>compRoc, bbGt>cropRes,
 % bbGt>compOas, bbGt>compOa, bbGt>sampleWins, bbGt>sampleWinsDir
 %
-% Piotr's Image&Video Toolbox      Version 3.02
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -527,7 +527,7 @@ if(nargin<2), dtDir=[]; end
 if(nargin<3), pLoad={}; end
 if(isempty(dtDir)), fs=getFiles({gtDir}); gtFs=fs(1,:); else
   dtFile=length(dtDir)>4 && strcmp(dtDir(end-3:end),'.txt');
-  if(dtFile), dirs={gtDir}; else dirs={gtDir,gtDir}; end
+  if(dtFile), dirs={gtDir}; else dirs={gtDir,dtDir}; end
   fs=getFiles(dirs); gtFs=fs(1,:);
   if(dtFile), dtFs=dtDir; else dtFs=fs(2,:); end
 end
