@@ -1,7 +1,7 @@
 function toolboxGenDoc
 % Generate documentation, must run from dir toolbox.
 %
-% 1) Make sure to run toolboxUpdateHeader.m
+% 1) Make sure to update and run toolboxUpdateHeader.m
 % 2) Update history.txt appropriately, including w current version
 % 3) Update overview.html file with the version/data/link to zip:
 %     edit external/m2html/templates/frame-piotr/overview.html
@@ -17,7 +17,7 @@ function toolboxGenDoc
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 3.00
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -25,6 +25,10 @@ function toolboxGenDoc
 % Requires external/m2html to be in path.
 cd(fileparts(mfilename('fullpath'))); cd('../');
 addpath([pwd '/external/m2html']);
+
+% delete temporary files that should not be part of release
+fs={'pngreadc','pngwritec','rjpg8c','wjpg8c'};
+for i=1:length(fs), delete(['images/private/' fs{i} '.*']); end
 
 % delete old doc and run m2html
 if(exist('doc/','dir')), rmdir('doc/','s'); end
