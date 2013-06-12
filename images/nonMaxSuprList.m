@@ -56,7 +56,7 @@ if( nvals>5000 ); error('Input too large - use nonMaxSupr.'); end;
 
 % sort according to vals
 if(flag==2), vals1=vals+randn(nvals,1)/10000; else vals1=vals; end
-[disc,ord]=sort(vals1,'descend'); [disc,unord]=sort(ord);
+[~,ord]=sort(vals1,'descend'); [~,unord]=sort(ord);
 vals0=vals; subs0=subs; vals=vals(ord); subs=subs(ord,:);
 
 % discard vals below thresh

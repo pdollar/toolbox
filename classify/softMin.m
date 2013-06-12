@@ -47,7 +47,7 @@ function M = softMin( D, sigma )
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 if( sigma==0 ) % special case, make fast
-  [vs, inds] = min(D,[],2); [n k] = size(D);
+  [~, inds] = min(D,[],2); [n, k] = size(D);
   M = subsToArray( [(1:n)' inds], ones(n,1), [n k] );
 
 else % general case
@@ -56,7 +56,7 @@ else % general case
   sumM = sum( M, 2 );
   sumMzero = (sumM==0);
   if( any(sumMzero) )
-    [vs, inds] = min(D,[],2); [n k] = size(D);
+    [~, inds] = min(D,[],2); [n, k] = size(D);
     Mhard = subsToArray( [(1:n)' inds], ones(n,1), [n k] );
     M( sumMzero, : ) = Mhard( sumMzero, : );
     sumM = sum( M, 2 );

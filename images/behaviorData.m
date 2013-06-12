@@ -120,14 +120,14 @@ A = struct( 'save',@save1,'recreate',@recreate, ...
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   function save1( fName )
-    [d f ext] = fileparts(fName);
+    [d,f,ext] = fileparts(fName);
     if(strcmp(ext,'.txt')), saveTxt(fName); return; end
     vers=.5; if(isempty(d)), d='.'; end; f=[d '/' f '.bAnn']; %#ok<NASGU>
     save('-v6',f,'bnds','types','names','keys','vers');
   end
 
   function load1( fName, cName )
-    [d f ext] = fileparts(fName); if(nargin<2), cName=[]; end
+    [d,f,ext] = fileparts(fName); if(nargin<2), cName=[]; end
     if(strcmp(ext,'.txt')), loadTxt(fName,cName); return; end
     vers=.5; if(isempty(d)), d='.'; end; f=[d '/' f '.bAnn'];
     L=load( '-mat', f );
@@ -276,7 +276,7 @@ A = struct( 'save',@save1,'recreate',@recreate, ...
 
   function frame = getEnd( id ), frame=bnds{s}(id+1)-1; end
 
-  function id = getId( frame ), [v,id]=min(bnds{s}<=frame); id=id-1; end
+  function id = getId( frame ), [~,id]=min(bnds{s}<=frame); id=id-1; end
 
   function ids = getIds( type ), ids=find(types{s}==type); end
 

@@ -62,7 +62,7 @@ if( rate<=0 || rate>1 ); error('rate must be between 0 and 1'); end
 meansFinal = meansFinal';
 
 % calculate final cluster means per cluster
-[N,p] = size(X);  k = max(IDX);
+p = size(X,2);  k = max(IDX);
 M = zeros(k,p); for i=1:k; M(i,:) = mean( meansFinal(IDX==i,:), 1 ); end
 
 % sort clusters [largest first] and remove all smaller then minCsize

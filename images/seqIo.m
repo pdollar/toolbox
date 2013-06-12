@@ -110,7 +110,7 @@ function sr = reader( fName, cache )
 %
 % See also seqIo, seqReaderPlugin
 if(nargin<2 || isempty(cache)), cache=0; end
-if( cache>0 ), [as fs Is ts inds]=deal([]); end
+if( cache>0 ), [as, fs, Is, ts, inds]=deal([]); end
 r=@seqReaderPlugin; s=r('open',int32(-1),fName);
 sr = struct( 'close',@() r('close',s), 'getframe',@getframe, ...
   'getframeb',@() r('getframeb',s), 'getts',@() r('getts',s), ...
@@ -128,7 +128,7 @@ sr = struct( 'close',@() r('close',s), 'getframe',@getframe, ...
     [I,t]=r('getframe',s); if(0), fprintf('reading frame %i\n',f); end
     if(isempty(Is)), Is=zeros([size(I) cache],class(I));
       as=ones(1,cache); fs=-as; ts=as; inds=repmat({':'},1,ndims(I)); end
-    [d,i]=max(as); as(i)=0; fs(i)=f; ts(i)=t; Is(inds{:},i)=I;
+    [~,i]=max(as); as(i)=0; fs(i)=f; ts(i)=t; Is(inds{:},i)=I;
   end
 end
 
@@ -319,7 +319,7 @@ if(~isempty(aviName))
       'installing the similarly named mmread toolbox from Micah ' ...
       'Richert, available at Matlab Central. If mmread is installed, ' ...
       'seqIo will automatically use mmread instead of mmreader.'];
-    try V=mmreader(aviName); catch %#ok<CTCH>
+    try V=mmreader(aviName); catch %#ok<DMMR,CTCH>
       error('piotr:seqIo:frImgs',emsg); end; n=V.NumberOfFrames;
     info.height=V.Height; info.width=V.Width; info.fps=V.FrameRate;
     sw=writer(fName,info); tid=ticStatus('creating seq from avi');

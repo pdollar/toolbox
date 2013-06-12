@@ -63,7 +63,7 @@ if( nargin<2 || isempty(k)); error('k not specified'); end
 if( nargin<3 || isempty(cluster)); cluster=1;  end
 if( nargin<4 || isempty(scale)); scale=5;  end
 if( nargin<5 || isempty(show)); show=0;  end
-[N d] = size(X);
+[N, d] = size(X);
 
 if( cluster )
   %%% CLUSTERS subsample, run kmeans

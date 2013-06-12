@@ -42,7 +42,7 @@ nIn=nargin-2; in=varargin; o2=[]; cmd=lower(cmd);
 % open seq file
 if(strcmp(cmd,'open'))
   chk(nIn,1,2); h=length(hs)+1; hs(h)=h1; varargout={h1}; h1=h1+1;
-  [pth name]=fileparts(in{1}); if(isempty(pth)), pth='.'; end
+  [pth,name]=fileparts(in{1}); if(isempty(pth)), pth='.'; end
   if(nIn==1), info=[]; else info=in{2}; end
   fName=[pth filesep name]; cs(h)=-1;
   [infos{h},fids(h),tNms{h}]=open(fName,info); return;
@@ -111,7 +111,7 @@ if(strcmp(ext,'png') && ~s), s=getImgFile('pngreadc');
   if(s), info.readImg=@(nm) pngreadc(nm,[]); end; end
 if(~s), error('Cannot find Matlab''s source image reader'); end
 % generate unique temporary name
-[tNm tNm]=fileparts(fName); t=clock; t=mod(t(end),1);
+[~,tNm]=fileparts(fName); t=clock; t=mod(t(end),1);
 tNm=sprintf('tmp_%s_%15i.%s',tNm,round((t+rand)/2*1e15),ext);
 % compute seek info for compressed images
 if(any(strcmp(ext,{'raw','brgb8'}))), assert(info.numFrames>0); else

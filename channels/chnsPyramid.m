@@ -197,7 +197,7 @@ for i=1:nScales, s=scales(i);
   ss=(0:.01:1-eps)*(s1-s0)+s0;
   es0=d0*ss; es0=abs(es0-round(es0/shrink)*shrink);
   es1=d1*ss; es1=abs(es1-round(es1/shrink)*shrink);
-  [e,x]=min(max(es0,es1)); scales(i)=ss(x);
+  [~,x]=min(max(es0,es1)); scales(i)=ss(x);
 end
 kp=[scales(1:end-1)~=scales(2:end) true]; scales=scales(kp);
 scaleshw = [round(sz(1)*scales/shrink)*shrink/sz(1);

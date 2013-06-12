@@ -1,5 +1,7 @@
 Version NEW
  -TODO: automatic delete of rgb/png read crap, fix for 2013
+ -NO LONGER SUPPORTING MATLAB VERSIONS PRIOR TO MATLAB 2011b
+ -mlint error fixes throughout for Matlab 2013a
  -forestTrain.m: optimizations and minor fix if hs small (thanks Stefan Gachter)
  -bbGt.m: minor fix to bbGt>loadAll (thanks Phuc Nguyen)
  -minor: savefig

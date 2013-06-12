@@ -615,8 +615,8 @@ assert( size(dt0,2)==5 ); nd=size(dt0,1);
 assert( size(gt0,2)==5 ); ng=size(gt0,1);
 
 % sort dt highest score first, sort gt ignore last
-[disc,ord]=sort(dt0(:,5),'descend'); dt0=dt0(ord,:);
-[disc,ord]=sort(gt0(:,5),'ascend'); gt0=gt0(ord,:);
+[~,ord]=sort(dt0(:,5),'descend'); dt0=dt0(ord,:);
+[~,ord]=sort(gt0(:,5),'ascend'); gt0=gt0(ord,:);
 gt=gt0; gt(:,5)=-gt(:,5); dt=dt0; dt=[dt zeros(nd,1)];
 
 % Attempt to match each (sorted) dt to each (sorted) gt
@@ -728,7 +728,7 @@ fp=double(tp~=1); fp=cumsum(fp); tp=cumsum(tp);
 if( roc ), tp=tp/np; fppi=fp/nImg; xs=fppi; ys=tp;
 else rec=tp/np; prec=tp./(fp+tp); xs=rec; ys=prec; end
 % reference point
-[d,ind]=min(abs(xs-ref)); ref=ys(ind);
+[~,ind]=min(abs(xs-ref)); ref=ys(ind);
 end
 
 function [Is,scores,imgIds] = cropRes( gt, dt, imFs, varargin )
@@ -776,7 +776,7 @@ ids=zeros(1,sum(ms)); for i=1:N, ids(cms(i)+1:cms(i+1))=i; end
 % flatten bbs and keep relevent subset
 bbs=cat(1,bbs{:}); K=keep(bbs); bbs=bbs(K,:); ids=ids(K); n=min(n,sum(K));
 % reorder bbs appropriately
-if(~strcmp(type,'fn')), [d,ord]=sort(bbs(:,5),'descend'); else
+if(~strcmp(type,'fn')), [~,ord]=sort(bbs(:,5),'descend'); else
   if(size(bbs,1)<n), ord=randperm(size(bbs,1)); else ord=1:n; end; end
 bbs=bbs(ord(1:n),:); ids=ids(ord(1:n));
 % extract patches from each image

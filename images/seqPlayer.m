@@ -292,7 +292,7 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
     function updateMenus()
       m=menu; if(isempty(fVid)), en='off'; else en='on'; end
       set([m.hVidCls m.hVidInfo m.hVidAud],'Enable',en); nm='Seq Player';
-      if(~isempty(fVid)), [d,nm1]=fileparts(fVid); nm=[nm ' - ' nm1]; end
+      if(~isempty(fVid)), [~,nm1]=fileparts(fVid); nm=[nm ' - ' nm1]; end
       set(hFig,'Name',nm); dispApi.requestUpdate();
     end
     
@@ -303,11 +303,11 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
     function vidOpen( flag )
       if(isempty(fVid)), d='.'; else d=fileparts(fVid); end
       if(all(ischar(flag)))
-        [d f]=fileparts(flag); if(isempty(d)), d='.'; end;
+        [d,f]=fileparts(flag); if(isempty(d)), d='.'; end;
         d=[d '/']; f=[f '.seq']; flag=1;
       elseif(iscell(flag)), assert(length(flag)==2);
-        [d f]=fileparts(flag{1}); if(isempty(d)), d='.'; end;
-        [d2 f2]=fileparts(flag{2}); if(isempty(d2)), d2='.'; end;
+        [d,f]=fileparts(flag{1}); if(isempty(d)), d='.'; end;
+        [d2,f2]=fileparts(flag{2}); if(isempty(d2)), d2='.'; end;
         d=[d '/']; f=[f '.seq']; d2=[d2 '/']; f2=[f2 '.seq']; flag=2;
       elseif( flag==1 )
         [f,d]=uigetfile('*.seq','Select video',[d '/*.seq']);
@@ -343,7 +343,7 @@ if(~isempty(fName)), menuApi.vidOpen(fName); end
       if( nargin==0 ), [f,d]=uigetfile('*.wav','Select audio',...
           [fVid(1:end-3) 'wav']); if(f==0), return; end; fAud=[d f]; end
       try
-        [y,fs,nb]=wavread(fAud); dispApi.setAud(y,fs,nb);
+        [y,fs,nb]=wavread(fAud); dispApi.setAud(y,fs,nb); %#ok<REMFF1>
       catch er
         errordlg(['Failed to load: ' fAud '. ' er.message],'Error');
       end

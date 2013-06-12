@@ -37,7 +37,7 @@ if (~all(size(mu)==[1,2]) || ~all(size(C)==[2,2]))
   error('Works only for 2D Gaussians'); end
 
 % decompose using SVD
-[R,D,R] = svd(C);
+[~,D,R] = svd(C);
 normstd = sqrt( diag( D ) );
 
 % get angle of rotation (in row/column format)

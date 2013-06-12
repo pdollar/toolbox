@@ -32,7 +32,7 @@ function F = filmStrip( I, overlap, delta, border )
 I = double(I); I = I/max(I(:)); sizI = size(I);
 if(~any(sizI(3)==[1 3])); I=reshape(I,[sizI(1:2),1,sizI(3:end)]); end
 I = padarray( I, [border border 0 0 0], 0, 'both' );
-[mRows nCols nColor nFrame nStrip] = size(I);
+[mRows, nCols, nColor, nFrame, nStrip] = size(I);
 
 % size of final filmstip object
 sizF1 = [mRows+delta*(nFrame-1), nFrame*nCols-overlap*(nFrame-1), nColor];

@@ -332,7 +332,7 @@ dfs={'col',[0 255 0],'lw',3,'fh',35,'fcol',[255 0 0]};
 n=size(bb,1); bb(:,1:4)=round(bb(:,1:4));
 if(size(col,1)==1), col=col(ones(1,n),:); end
 if(size(fcol,1)==1), fcol=fcol(ones(1,n),:); end
-if( ndims(I)==2 ), I=I(:,:,[1 1 1]); end
+if( ismatrix(I) ), I=I(:,:,[1 1 1]); end
 % embed each bb
 x0=bb(:,1); x1=x0+bb(:,3)-1; y0=bb(:,2); y1=y0+bb(:,4)-1;
 j0=floor((lw-1)/2); j1=ceil((lw-1)/2); h=size(I,1); w=size(I,2);

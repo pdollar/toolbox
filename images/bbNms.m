@@ -94,7 +94,7 @@ end
   function bbs = nms1( bbs, type, thr, maxn, radii, overlap, isy )
     % if big split in two, recurse, merge, then run on merged
     if( size(bbs,1)>maxn )
-      n2=floor(size(bbs,1)/2); [d,ord]=sort(bbs(:,1+isy)+bbs(:,3+isy)/2);
+      n2=floor(size(bbs,1)/2); [~,ord]=sort(bbs(:,1+isy)+bbs(:,3+isy)/2);
       bbs0=nms1(bbs(ord(1:n2),:),type,thr,maxn,radii,overlap,~isy);
       bbs1=nms1(bbs(ord(n2+1:end),:),type,thr,maxn,radii,overlap,~isy);
       bbs=[bbs0; bbs1];
@@ -111,7 +111,7 @@ end
 
   function bbs = nmsMax( bbs, overlap, greedy, ovrDnm )
     % for each i suppress all j st j>i and area-overlap>overlap
-    [score,ord]=sort(bbs(:,5),'descend'); bbs=bbs(ord,:);
+    [~,ord]=sort(bbs(:,5),'descend'); bbs=bbs(ord,:);
     n=size(bbs,1); kp=true(1,n); as=bbs(:,3).*bbs(:,4);
     xs=bbs(:,1); xe=bbs(:,1)+bbs(:,3); ys=bbs(:,2); ye=bbs(:,2)+bbs(:,4);
     for i=1:n, if(greedy && ~kp(i)), continue; end
@@ -131,7 +131,7 @@ end
     ps=[bbs(:,1)+w/2 bbs(:,2)+h/2 log2(w) log2(h)];
     % find modes starting from each elt, then merge nodes that are same
     ps1=zeros(n,4); ws1=zeros(n,1); stopThr=1e-2;
-    for i=1:n, [ps1(i,:) ws1(i,:)]=nmsMs1(i); end
+    for i=1:n, [ps1(i,:), ws1(i,:)]=nmsMs1(i); end
     [ps,ws] = nonMaxSuprList(ps1,ws1,stopThr*100,[],[],2);
     % convert back to bbs format and sort by weight
     w=pow2(ps(:,3)); h=pow2(ps(:,4));
@@ -169,7 +169,7 @@ end
     end
     % perform set cover operation (greedily choose next best)
     N=N+N'; bbs1=zeros(n,5); n1=n; c=0;
-    while( n1>0 ), [s,i0]=max(N*bbs(:,5));
+    while( n1>0 ), [~,i0]=max(N*bbs(:,5));
       N0=N(:,i0)==1; n1=n1-sum(N0); N(N0,:)=0; N(:,N0)=0;
       c=c+1; bbs1(c,1:4)=bbs(i0,1:4); bbs1(c,5)=sum(bbs(N0,5));
     end

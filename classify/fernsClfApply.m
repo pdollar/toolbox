@@ -25,5 +25,5 @@ if( nargin<3 || isempty(inds) )
   inds = fernsInds(data,ferns.fids,ferns.thrs); end
 [N,M]=size(inds); H=ferns.H; probs=zeros(N,H);
 for m=1:M, probs = probs + ferns.pFern(inds(:,m),:,m); end
-if(ferns.bayes==0), probs=probs/M; end; [d,hs]=max(probs,[],2);
+if(ferns.bayes==0), probs=probs/M; end; [~,hs]=max(probs,[],2);
 end

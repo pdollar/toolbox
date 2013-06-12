@@ -64,7 +64,7 @@ dfs = {'nTrial',1, 'maxIter',100, 'display',0, 'rndSeed',[],...
 
 % error checking
 if(k<1); error('k must be greater than 1'); end
-if(ndims(X)~=2 || any(size(X)==0)); error('Illegal X'); end
+if(~ismatrix(X) || any(size(X)==0)); error('Illegal X'); end
 if(outFrac<0 || outFrac>=1), error('outFrac must be in [0,1)'); end
 nOut = floor( size(X,1)*outFrac );
 
@@ -84,7 +84,7 @@ if(dsp), fprintf('k=%i  d=%f  t=%fs\n',k,sum(d),etime(clock,t0)); end
 
 % sort IDX to have biggest clusters have lower indicies
 cnts = zeros(1,k); for i=1:k; cnts(i) = sum( IDX==i ); end
-[ids,order] = sort( -cnts ); C = C(order,:); d = d(order);
+[~,order] = sort( -cnts ); C = C(order,:); d = d(order);
 IDX2=IDX; for i=1:k; IDX2(IDX==order(i))=i; end; IDX = IDX2;
 
 end
@@ -92,7 +92,7 @@ end
 function [IDX,C,d] = kmeans2main( X, k, nOut, minCl, maxt, dsp, metric, C )
 
 % initialize cluster centers to be k random X points
-[N p] = size(X); k = min(k,N);
+[N,p] = size(X); k = min(k,N);
 IDX = ones(N,1); oldIDX = zeros(N,1);
 if(isempty(C)), C = X(randSample(N,k),:); end; t=0;
 
@@ -100,7 +100,7 @@ if(isempty(C)), C = X(randSample(N,k),:); end; t=0;
 if(dsp), nDg=ceil(log10(maxt-1)); fprintf(int2str2(0,nDg)); end
 while( any(oldIDX~=IDX) && t<maxt )
   % assign each point to closest cluster center
-  oldIDX=IDX; D=pdist2(X,C,metric); [mind IDX]=min(D,[],2);
+  oldIDX=IDX; D=pdist2(X,C,metric); [mind,IDX]=min(D,[],2);
   
   % do not use most distant nOut elements in computation of centers
   mind1=sort(mind); thr=mind1(end-nOut); IDX(mind>thr)=-1;

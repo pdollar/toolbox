@@ -77,7 +77,7 @@ if(rctE==0); figure(1); clf; imshow(I(:,:,:,end)); rctE=getrect; end
 %%% precompute kernels for all relevant scales
 rctS=round(rctS); rctS(3:4)=rctS(3:4)-mod(rctS(3:4),2);
 pos1 = rctS(1:2)+rctS(3:4)/2;  wd=rctS(3);  ht=rctS(4);
-[mRows nCols nCh nFrame] = size(I);
+[mRows,nCols,~,nFrame] = size(I);
 nScaleSm = max(1,floor(log(max(10/wd,10/ht))/log(scaleDel)));
 nScaleLr = max(1,floor(-log(min(nCols/wd,mRows/ht)/2)/log(scaleDel)));
 nScale = nScaleSm+nScaleLr+1;  scale = nScaleSm+1;
@@ -127,12 +127,12 @@ for frm = 1:nFrame
       [p,pos,Ic,sim]=kernelTracker1(Icur,q,pos1,kernel(s),nBit);
       if( sim>bestSim ); best={p,pos,Ic,s}; bestSim=sim; end;
     end
-    [p,pos,Ic,scale]=deal(best{:});
+    [~,pos,Ic,scale]=deal(best{:});
     wd=kernel(scale).wd; ht=kernel(scale).ht;
     
   else
     % otherwise just do meanshift once
-    [p,pos,Ic,bestSim]=kernelTracker1(Icur,q,pos,kernel(scale),nBit);
+    [~,pos,Ic,bestSim]=kernelTracker1(Icur,q,pos,kernel(scale),nBit);
   end
   
   % record results

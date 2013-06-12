@@ -95,7 +95,7 @@ function varargout=rotationMatrix(varargin)
 
 %%% Find the closest orthonormal matrix
 if all(size(varargin{1})==[3 3]) && nargout<=1
-  [U,S,V]=svd(varargin{1});
+  [U,~,V]=svd(varargin{1});
   varargout{1}=U*V';
   return
 end

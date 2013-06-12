@@ -77,13 +77,13 @@ maxN=1500; if( min(D,n)>maxN ); X=X(:,randSample(n,maxN)); n=maxN; end;
 % get principal components using the SVD- X=U*S*V';  maxrank=min(n-1,D)
 % basically same as svd(X,'econ'), slightly faster?
 if( D>n )
-  [V,SS,V] = svd( X' * X );
+  [~,SS,V] = svd( X' * X );
   keepLocs = diag(SS) > 1e-30;
   SS = SS(keepLocs,keepLocs);
   V = V(:,keepLocs);
   U = X * V * diag(1./sqrt(diag(SS)));
 else
-  [U,SS,U] = svd( X * X' );
+  [~,SS,U] = svd( X * X' );
   keepLocs = diag(SS) > 1e-30;
   SS = SS(keepLocs,keepLocs);
   U = U(:,keepLocs);

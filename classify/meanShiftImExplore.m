@@ -42,7 +42,7 @@ figure(show); clf; im(I);
 r=round(r); c=round(c);
 
 %%% get D and S
-[gridRs gridCs] = ndgrid( 1:mrows, 1:ncols );
+[gridRs, gridCs] = ndgrid( 1:mrows, 1:ncols );
 Deuc = ((gridRs-r).^2 + (gridCs-c).^2) / sigSpt^2;
 x = X(r,c,:); x = x(:)';  Xflat = reshape(X,[],p);
 Drange = pdist2( x, Xflat );

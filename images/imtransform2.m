@@ -73,7 +73,7 @@ if(~isempty(us) && ~isempty(vs)), useH=0; assert(numel(us)==numel(vs)); end
 if(~isa(us,'double')||~isa(vs,'double')), us=double(us); vs=double(vs); end
 if( useH && any(size(H)~=[3 3])), error('H must be 3x3'); end
 if( useH && all(all(H==eye(3))) ), J=I; return; end
-if( ndims(I)~=2 && ndims(I)~=3 ), error('I must a MxNXK array'); end
+if( ~ismatrix(I) && ndims(I)~=3 ), error('I must a MxNXK array'); end
 if(~any(strcmp(bbox,{'loose','crop'}))), error(['invalid bbox: ' bbox]);end
 if(strncmpi(method,'lin',3) || strncmpi(method,'bil',3)), mflag=2;
 elseif(strcmp(method,'nearest') ), mflag=1; else mflag=0; end

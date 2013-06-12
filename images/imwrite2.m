@@ -123,13 +123,13 @@ function varargout = imwrite2m( I, type, varargin )
 persistent imagei path name ext nDigits params
 switch type
   case 'init'
-    error(nargchk(8,8,nargin));
+    narginchk(8,8);
     [nstart, path, name, ext, nDigits, params] = deal(varargin{:});
     if(isempty(nstart)); imagei=0; else imagei=nstart; end
     varargout = {[]};
 
   case 'write'
-    error(nargchk(2,2,nargin));
+    narginchk(2,2);
     imwrite2s( I, imagei, path, name, ext, nDigits, params );
     imagei = imagei+1;
     varargout = {[]};

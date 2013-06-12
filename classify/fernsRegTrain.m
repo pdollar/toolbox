@@ -144,6 +144,6 @@ end
 function m = medianw(x,w)
 % Compute weighted median of x.
 [x,ord]=sort(x(:)); w=w(ord);
-[disc,ind]=max(cumsum(w)>=sum(w)/2);
+[~,ind]=max(cumsum(w)>=sum(w)/2);
 m = x(ind);
 end

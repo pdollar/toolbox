@@ -111,7 +111,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
     set( hFig, 'CurrentAxes', hAx );
     
     % optionally display limits
-    if(showLims && ~isempty(lims)), [disc,xs,ys]=rectToCorners(lims);
+    if(showLims && ~isempty(lims)), [~,xs,ys]=rectToCorners(lims);
       for j=1:4, ids=mod([j-1 j],4)+1; line(xs(ids),ys(ids)); end
     end
     
@@ -166,7 +166,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
 
   function pos1 = cornersToRect( pos0, x0, y0, x1, y1 )
     % compute pos from 4 corners given in rect coords
-    [pc,rs,R] = rectInfo( pos0 );
+    [pc,~,R] = rectInfo( pos0 );
     p0=[x0 y0]*R'+pc; p1=[x1 y1]*R'+pc;
     pc=(p1+p0)/2; p0=(p0-pc)*R; p1=(p1-pc)*R;
     pos1 = [pc+p0 p1-p0 pos0(5)];
@@ -192,7 +192,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
       end
     end
     % create invisible patch to captures key presses
-    pos=posNew; [pts,xs,ys]=rectToCorners(pos);
+    pos=posNew; [~,xs,ys]=rectToCorners(pos);
     vert=[xs ys ones(4,1)]; face=1:4;
     set(hPatch,'Faces',face,'Vertices',vert);
     % draw ellipse
@@ -286,7 +286,7 @@ api = struct('getPos',@getPos, 'setPos',@setPos, 'uistack',@uistack1, ...
       end; p0a=min(p0,p1); p1=max(p0,p1); p0=p0a;
       setPos(cornersToRect(pos0,p0(1),p0(2),p1(1),p1(2)));
     elseif( flag==2 || flag==4 ) % rotate rectangle
-      [pts,xs,ys]=rectToCorners(pos0);
+      [~,xs,ys]=rectToCorners(pos0);
       if(anchor(2)==-1), ids=[3 4]; else ids=[1 2]; end
       p0=mean([xs(ids) ys(ids)]); pc=(p0+pnt)/2;
       if(anchor(2)==-1), d=pnt-p0; else d=p0-pnt; end

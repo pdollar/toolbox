@@ -62,7 +62,7 @@ function [Vx,Vy,reliab]=opticalFlow( I1, I2, varargin )
 dfs={'type','LK','smooth',1,'resample',1,'radius',5,'alpha',1,'nIter',250};
 [type,smooth,resample,radius,alpha,nIter]=getPrmDflt(varargin,dfs,1);
 assert(any(strcmp(type,{'LK','HS'}))); useLk=strcmp(type,'LK');
-if( ndims(I1)~=2 || ndims(I2)~=2 || any(size(I1)~=size(I2)) )
+if( ~ismatrix(I1) || ~ismatrix(I2) || any(size(I1)~=size(I2)) )
   error('Input images must be 2D and have same dimensions.'); end
 
 % run optical flow in coarse to fine fashion

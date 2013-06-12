@@ -32,9 +32,8 @@ function varargout = text2( varargin )
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 %%% call text normally
-error(nargoutchk(0,1,nargout));
 hs = text( varargin{:} );
-if(nargout==1); varargout={hs}; end;
+if(nargout>=1); varargout={hs}; end;
 
 %%% now make sure text fits
 %%% update the OuterPosition (not regular Position) so good resize behavior

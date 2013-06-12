@@ -30,7 +30,7 @@ function [h,hc,hl] = plotEllipse(cRow,cCol,ra,rb,phi,color,nPnts,lw,ls)
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
-error(nargchk( 5, 9, nargin ));
+narginchk( 5, 9 );
 if(nargin<6 || isempty(color)); color = 'b'; end
 if(nargin<7 || isempty(nPnts)); nPnts = 100; end
 if(nargin<8 || isempty(nPnts)); lw = 1; end

@@ -72,7 +72,7 @@ hasChn=prm.hasChn;
 
 %%% If IS is not a cell convert to MxNxCxTxR array
 if( iscell(IS) && numel(IS)==1 ); IS=IS{1}; end;
-if( ~iscell(IS) && ndims(IS)>2 )
+if( ~iscell(IS) && ~ismatrix(IS) )
   siz=size(IS);
   if( ~hasChn );
     IS=reshape(IS,[siz(1:2),1,siz(3:end)]);

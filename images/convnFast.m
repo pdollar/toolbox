@@ -48,7 +48,7 @@ function C = convnFast( A, B, shape )
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 if( nargin<3 || isempty(shape)); shape='full'; end
-if(isempty(strmatch(shape, char({'same', 'valid', 'full', 'smooth'}))))
+if( ~any(strcmp(shape,{'same', 'valid', 'full', 'smooth'})) )
   error( 'convnFast: unknown shape flag' ); end
 
 shapeorig = shape;

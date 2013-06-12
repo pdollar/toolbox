@@ -34,7 +34,7 @@ function y = modefilt1( x, s )
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % get unique values in x
-[vals,disc,inds]=unique(x(:)'); m=length(vals); n=length(x);
+[vals,~,inds]=unique(x(:)'); m=length(vals); n=length(x);
 if(m>256), warning('x takes on large number of diff vals'); end %#ok<WNTAG>
 
 % create quantized representation [H(i,j)==1 iff x(j)==vals(i)]
@@ -44,6 +44,6 @@ H=zeros(m,n); H(sub2ind2([m,n],[inds; 1:n]'))=1;
 H=localSum(H,[0 s],'same');
 
 % compute mode for each j and map inds back to original vals
-[disc,inds]=max(H,[],1); y=vals(inds);
+[~,inds]=max(H,[],1); y=vals(inds);
 
 end

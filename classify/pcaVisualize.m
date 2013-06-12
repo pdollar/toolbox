@@ -51,7 +51,7 @@ inds = {':'}; inds = inds(:,ones(1,nd-1));
 x = double( X(inds{:},index) );
 xhats = x;  diffs = []; errors = zeros(1,length(ks));
 for k=1:length(ks)
-  [ Yk, xhat, errors(k) ] = pcaApply( x, U, mu, ks(k) );
+  [ ~, xhat, errors(k) ] = pcaApply( x, U, mu, ks(k) );
   xhats = cat( nd, xhats, xhat );
   diffs = cat( nd, diffs, (xhat-x).^2 );
 end

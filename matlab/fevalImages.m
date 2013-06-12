@@ -62,7 +62,7 @@ function X = fevalImages( fHandle, prms, srcDir, name, ext, ...
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
-error(nargchk( 3, 8, nargin ));
+narginchk( 3, 8 );
 
 %%% Check if srcDir is valid and add '/' at end if needed
 if( ~isempty(srcDir) )

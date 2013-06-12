@@ -39,7 +39,7 @@ function X = fevalMats( fHandle, matCont, prm, srcDir, prefix )
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
-error(nargchk( 4, 5, nargin ));
+narginchk( 4, 5 );
 
 %%% Check if srcDir is valid and add '/' at end if needed
 if( ~isempty(srcDir) )

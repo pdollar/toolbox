@@ -59,7 +59,7 @@ end
 
 % suppress all but the first maxn nonzero elts in keepLocs
 if( ~isempty(maxn) && maxn>0 && maxn<sum(keepLocs) )
-  [disc, order] = sort( -vals ); [disc,unorder]=sort(order);
+  [~,order] = sort( -vals ); [~,unorder]=sort(order);
   keepLocs = keepLocs(order);
   keepLocs( cumsum( keepLocs )>maxn ) = 0;
   keepLocs = keepLocs(unorder);

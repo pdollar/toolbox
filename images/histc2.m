@@ -60,8 +60,8 @@ function h = histc2( A, edges, wtMask )
 
 if( nargin<3 ); wtMask=[]; end;
 if( ~isa(A,'double') ); A=double(A); end;
-if( ndims(A)>2 ); error('A must be a 2 dim array'); end;
-[n nd] = size(A);
+if( ~ismatrix(A) ); error('A must be a 2 dim array'); end;
+[n,nd] = size(A);
 if( ~isempty(wtMask) && n~=numel(wtMask) )
   error( 'wtMask must have n elements (A is nxnd)' ); end
 

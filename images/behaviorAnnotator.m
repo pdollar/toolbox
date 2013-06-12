@@ -544,7 +544,7 @@ if(nargin>=3 && ~isempty(tName)), menuApi.trkOpen(tName); end
 
   function api = menuMakeApi()
     % create api
-    [fVid fAnn lastSave]=deal([]);
+    [fVid, fAnn, lastSave]=deal([]);
     api = struct('vidClose',@vidClose, 'annClose',@annClose, ...
       'vidOpen',@vidOpen, 'audOpen',@audOpen, 'trkOpen',@trkOpen, ...
       'annOpen',@annOpen, 'annBackup',@annBackup );
@@ -570,7 +570,7 @@ if(nargin>=3 && ~isempty(tName)), menuApi.trkOpen(tName); end
       if(isempty(A)), en='off'; else en='on'; end
       set([m.hAnnSav m.hAnnCls m.hAnnCnf m.hAnnMrg],'Enable',en);
       nm='Caltech Behavior Annotator';
-      if(~isempty(fVid)), [d,nm1]=fileparts(fVid); nm=[nm ' - ' nm1]; end
+      if(~isempty(fVid)), [~,nm1]=fileparts(fVid); nm=[nm ' - ' nm1]; end
       set(hFig,'Name',nm); annApi.updateAnn(); dispApi.requestUpdate();
     end
     
@@ -582,7 +582,7 @@ if(nargin>=3 && ~isempty(tName)), menuApi.trkOpen(tName); end
     function vidOpen( flag )
       if(isempty(fVid)), d='.'; else d=fileparts(fVid); end
       if(all(ischar(flag)))
-        [d f]=fileparts(flag); if(isempty(d)), d='.'; end;
+        [d,f]=fileparts(flag); if(isempty(d)), d='.'; end;
         d=[d '/']; f=[f '.seq']; flag=1;
       elseif( flag==1 )
         [f,d]=uigetfile('*.seq','Select video',[d '/*.seq']);
@@ -626,7 +626,7 @@ if(nargin>=3 && ~isempty(tName)), menuApi.trkOpen(tName); end
       if( nargin==0 ), [f,d]=uigetfile('*.wav','Select audio',...
           [fVid(1:end-3) 'wav']); if(f==0), return; end; fAud=[d f]; end
       try
-        [y,fs,nb]=wavread(fAud); dispApi.setAud(y,fs,nb);
+        [y,fs,nb]=wavread(fAud); dispApi.setAud(y,fs,nb); %#ok<REMFF1>
       catch er
         errordlg(['Failed to load: ' fAud '. ' er.message],'Error');
       end
@@ -636,7 +636,7 @@ if(nargin>=3 && ~isempty(tName)), menuApi.trkOpen(tName); end
       assert(~isempty(A)); qstr='Save Current Annotation?';
       button = questdlg(qstr,'Save','yes','no','yes');
       if(strcmp(button,'yes')); annSave(); end
-      [fAnn A lastSave]=deal([]); updateMenus();
+      [fAnn,A,lastSave]=deal([]); updateMenus();
     end
     
     function annOpen( flag )
@@ -661,7 +661,7 @@ if(nargin>=3 && ~isempty(tName)), menuApi.trkOpen(tName); end
         updateMenus();
       catch er
         errordlg(['Failed to load: ' fAnn '. ' er.message],'Error');
-        [fAnn A lastSave]=deal([]); return;
+        [fAnn,A,lastSave]=deal([]); return;
       end
     end
     
@@ -690,7 +690,7 @@ if(nargin>=3 && ~isempty(tName)), menuApi.trkOpen(tName); end
     
     function annBackup()
       if( isempty(lastSave) || etime(clock,lastSave)>60 )
-        [d f]=fileparts(fAnn); f=[d '/' f '-backup.txt'];
+        [d,f]=fileparts(fAnn); f=[d '/' f '-backup.txt'];
         assert(~isempty(A)); A.save(f); lastSave=clock();
       end
     end

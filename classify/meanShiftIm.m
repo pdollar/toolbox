@@ -68,7 +68,7 @@ if( nargin<5 || isempty(maxIter) ); maxIter = 100; end
 if( nargin<6 || isempty(minDel)); minDel = .001; end
 
 [mrows, ncols, p] = size(X); p = p+2;
-[gridRs gridCs] = ndgrid( 1:mrows, 1:ncols );
+[gridRs, gridCs] = ndgrid( 1:mrows, 1:ncols );
 data = cat( 3, cat( 3, gridRs/sigSpt, gridCs/sigSpt), X/sigRng );
 
 %%% MAIN LOOP

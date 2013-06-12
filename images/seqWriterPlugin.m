@@ -50,7 +50,7 @@ nIn=nargin-2; in=varargin; o1=[]; cmd=lower(cmd);
 % open seq file
 if(strcmp(cmd,'open'))
   chk(nIn,2); h=length(hs)+1; hs(h)=h1; varargout={h1}; h1=h1+1;
-  [pth name]=fileparts(in{1}); if(isempty(pth)), pth='.'; end
+  [pth,name]=fileparts(in{1}); if(isempty(pth)), pth='.'; end
   fName=[pth filesep name];
   [infos{h},fids(h),tNms{h}]=open(fName,in{2}); return;
 end
@@ -122,7 +122,7 @@ info.imageBitDepth=8*nCh; info.imageBitDepthReal=8;
 nByte=info.width*info.height*nCh; info.imageSizeBytes=nByte;
 info.numFrames=0; info.trueImageSize=nByte+6+512-mod(nByte+6,512);
 % generate unique temporary name
-[tNm tNm]=fileparts(fName); t=clock; t=mod(t(end),1);
+[~,tNm]=fileparts(fName); t=clock; t=mod(t(end),1);
 tNm=sprintf('tmp_%s_%15i.%s',tNm,round((t+rand)/2*1e15),ext);
 end
 

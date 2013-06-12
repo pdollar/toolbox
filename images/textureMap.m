@@ -71,9 +71,9 @@ end
 
 % Get values at cs and rs
 if(exist('TriScatteredInterp','file'))
-  F=TriScatteredInterp(csDst,rsDst,I(:),'linear'); J=F(cs,rs);
+  F=TriScatteredInterp(csDst,rsDst,I(:),'linear'); J=F(cs,rs); %#ok<REMFF1>
 else
-  J=griddata(csDst,rsDst,I(:),cs,rs); %#ok<FPARK>
+  J=griddata(csDst,rsDst,I(:),cs,rs);
 end
 if(~isnan(fillVal)), J(isnan(J))=fillVal; end
 
