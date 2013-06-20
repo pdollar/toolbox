@@ -13,8 +13,8 @@ function [X0,H0,X1,H1] = demoGenData1(n0,n1,k,d,sep,ecc,frc)
 %  n1     - size of testing set
 %  k      - number of mixture components
 %  d      - data dimension
-%  sep    - separation degree (sep > 0)
-%  ecc    - maximum eccentricity (0 < ecc < 1)
+%  sep    - minimum separation degree between clusters (sep > 0)
+%  ecc    - maximum eccentricity of clusters (0 < ecc < 1)
 %  frc    - [0] frac of points that are noise (uniformly distributed)
 %
 % OUTPUTS
@@ -36,53 +36,48 @@ function [X0,H0,X1,H1] = demoGenData1(n0,n1,k,d,sep,ecc,frc)
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
-% generate mixing weights
-W=0; while(any(W<=1/(4*k))), W=rand(k,1); W=W/sum(W); end
-
-% adjust n0 and n1 for noise fraction
+% generate mixing weights and adjust n0 and n1 for noise fraction
+w=0; while(any(w<=1/(4*k))), w=rand(k,1); w=w/sum(w); end
 if( nargin<7 ), frc=0; end; frc=max(0,min(frc,1));
-if(frc), nn0=floor(frc*n0); nn1=floor(frc*n1); n0=n0-nn0; n1=n1-nn1; end
+n=floor(frc*n0); n0=n0-n; ns0=[ceil(n0*w); n];
+n=floor(frc*n1); n1=n1-n; ns1=[ceil(n1*w); n];
 
 % create sep-separated Gaussian clusters of maximum eccentricity ecc
-trial = 1;
-while( 1 )
+for trial=1:1000
   lam = ones(k,1)/1000;
-  k0=sum(ceil(W*n0)); X0=zeros(k0,d); H0=zeros(k0,1); k0=0;
-  k1=sum(ceil(W*n1)); X1=zeros(k1,d); H1=zeros(k1,1); k1=0;
+  n0=sum(ns0); X0=zeros(n0,d); H0=zeros(n0,1); n0=0;
+  n1=sum(ns1); X1=zeros(n1,d); H1=zeros(n1,1); n1=0;
   mu = randn(k,d)*sqrt(k)*sqrt(sep)*trial/10;
-  for j = 1:k
+  for i = 1:k
     % generate a random covariance matrix S=C'*C
     U=rand(d,d)-0.5; U=sqrtm(inv(U*U'))*U;
     L=diag(rand(d,1)*(ecc-1)+1).^2/100; C=chol(U*L*U');
     % populate X0, H0
-    nj=ceil(n0*W(j));
-    X0j=randn(nj,d)*C + repmat(mu(j,:),nj,1);
-    H0(k0+1:k0+nj)=j; X0(k0+1:k0+nj,:)=X0j; k0=k0+nj;
-    if(nj>1), lam(j) = sqrt(trace(cov(X0j))); end
+    n=ns0(i); X0j=randn(n,d)*C + mu(ones(n,1)*i,:);
+    H0(n0+1:n0+n)=i; X0(n0+1:n0+n,:)=X0j; n0=n0+n;
+    if(n>1), lam(i) = sqrt(trace(cov(X0j))); end
     % populate X1, H1
-    mj=ceil(n1*W(j));
-    X1j=randn(mj,d)*C + repmat(mu(j,:),mj,1);
-    H1(k1+1:k1+mj)=j; X1(k1+1:k1+mj,:)=X1j; k1=k1+mj;
+    n=ns1(i); X1j=randn(n,d)*C + mu(ones(n,1)*i,:);
+    H1(n1+1:n1+n)=i; X1(n1+1:n1+n,:)=X1j; n1=n1+n;
   end
-  
   % check that degree of separation is sufficient (see Dasgupta 99)
   % use "lam=sqrt(trace(S))" instead of "lam=sqrt(eigs(S,1))*d"
   S = pdist2(mu,mu,'euclidean'); S(eye(k)>0)=inf;
   for i=1:k, for j=1:k, S(i,j)=S(i,j)/max(lam(i),lam(j)); end; end
-  if(all(S(:)>=sep)), break; end; trial=trial+1; assert(trial<1000);
-end
+  if(all(S(:)>=sep)), break; end
+end; assert(trial<1000);
 
-% generate uniformly distributed noise
-if( frc~=0 )
+% add uniformly distributed noise and permute order
+if( frc>0 )
   v=max(abs(X0(:))); if(n1), v=max(v,max(abs(X1(:)))); end
   % populate X0, H0
-  X0j=(rand(nn0,d)-.5)*v*2.5; k0=length(H0);
-  H0(k0+1:k0+nn0)=-1; X0(k0+1:k0+nn0,:)=X0j;
-  k0=k0+nn0; p=randperm(k0); X0=X0(p,:); H0=H0(p);
+  n=ns0(k+1); X0j=(rand(n,d)-.5)*v*2.5;
+  H0(n0+1:n0+n)=-1; X0(n0+1:n0+n,:)=X0j;
+  n0=n0+n; p=randperm(n0); X0=X0(p,:); H0=H0(p);
   % populate X1, H1
-  X1j=(rand(nn1,d)-.5)*v*2.5; k1=length(H1);
-  H1(k1+1:k1+nn1)=-1; X1(k1+1:k1+nn1,:)=X1j;
-  k1=k1+nn1; p=randperm(k1); X1=X1(p,:); H1=H1(p);
+  n=ns1(k+1); X1j=(rand(n,d)-.5)*v*2.5;
+  H1(n1+1:n1+n)=-1; X1(n1+1:n1+n,:)=X1j;
+  n1=n1+n; p=randperm(n1); X1=X1(p,:); H1=H1(p);
 end
 
 end
