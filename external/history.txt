@@ -1,5 +1,6 @@
 Version NEW
  -demoGenData.m: major cleanup
+ -dijkstra.*: fixed for 64 bit and added back to toolbox (thanks Bhuwan Dhingra)
 
 Version 3.10 (11-June-2013)
  -NO LONGER SUPPORTING MATLAB VERSIONS PRIOR TO MATLAB 2011b
@@ -53,7 +54,7 @@ Version 2.62 (22-Dec-11)
  -imResample: major optimziations, *input format has changed*
  -ploRoc.m: improved options and commenting, fixed second output parameter
  -hog: major optimizations, removed obsolete param oGran
- -dijskstra.*: removed from toolbox (was broken on 64 bit matlab)
+ -dijkstra.*: removed from toolbox (was broken on 64 bit matlab)
  -removed all 32 bit binaries (will no longer distribute)
  -minor: dispMatrixIm.m, imtransform2, bbApply.m, jitterImage.m
 

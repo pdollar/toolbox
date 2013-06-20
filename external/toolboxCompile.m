@@ -11,7 +11,7 @@
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 3.01
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -42,6 +42,8 @@ try
   ds=[repmat({'channels'},1,5) 'images' repmat({'classify'},1,2)];
   for i=1:length(fs), fs{i}=[rd '/' ds{i} '/private/' fs{i}]; end
   for i=1:length(fs), mex([fs{i} '.cpp'],opts{:},[fs{i} '.' mexext]); end
+  d=[rd '/matlab/private/']; mex([d 'fibheap.cpp'],[d 'dijkstra1.cpp'], ...
+    opts{:}, [d 'dijkstra1.' mexext]);
 catch ME
   fprintf(['C++ mex failed, likely due to lack of a C++ compiler.\n' ...
     'Run ''mex -setup'' to specify a C++ compiler if available.\n'...
