@@ -1,3 +1,6 @@
+Version NEW
+ -demoGenData.m: major cleanup
+
 Version 3.10 (11-June-2013)
  -NO LONGER SUPPORTING MATLAB VERSIONS PRIOR TO MATLAB 2011b
  -mlint error fixes throughout for Matlab 2013a
