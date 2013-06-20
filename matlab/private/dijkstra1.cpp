@@ -1,9 +1,9 @@
-/**************************************************************************
- * Piotr's Image&Video Toolbox      Version 2.61
- * Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
- * Please email me if you find bugs, or have suggestions or questions!
- * Licensed under the Simplified BSD License [see external/bsd.txt]
- *************************************************************************/
+/*******************************************************************************
+* Piotr's Image&Video Toolbox      Version NEW
+* Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
+* Please email me if you find bugs, or have suggestions or questions!
+* Licensed under the Simplified BSD License [see external/bsd.txt]
+*******************************************************************************/
 
 /**************************************************************************
  * Based on ISOMAP code which can be found at http:*isomap.stanford.edu/.
@@ -74,7 +74,7 @@ int  HeapNode::operator <(FibHeapNode& RHS) {
 /*************************************************************************
  * main
  *************************************************************************/
-void dijkstra1( long int n, long int s, double *D1, double *P1, double *Gpr, int *Gir, int *Gjc) {
+void dijkstra1( long int n, long int s, double *D1, double *P1, double *Gpr, mwIndex *Gir, mwIndex *Gjc) {
   int      finished;
   long int i, startInd, endInd, whichNeigh, nDone, closest;
   double   closestD, arcLength, INF, SMALL, oldDist;
@@ -135,8 +135,8 @@ void dijkstra1( long int n, long int s, double *D1, double *P1, double *Gpr, int
 void dijkstra( long int n, long int nSrc, double *sources, double *D, double *P, const mxArray *G ) {
   // dealing with sparse array
   double *Gpr = mxGetPr(G);
-  int *Gir = mxGetIr(G);
-  int *Gjc = mxGetJc(G);
+  mwIndex *Gir = mxGetIr(G);
+  mwIndex *Gjc = mxGetJc(G);
   
   // allocate memory for single source results (automatically recycled)
   double *D1 = (double *) mxCalloc( n , sizeof( double ));
