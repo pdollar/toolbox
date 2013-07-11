@@ -4,24 +4,23 @@ function [tree,data,err] = binaryTreeTrain( data, varargin )
 % Highly optimized code for training decision trees over binary variables.
 % Training a decision stump (depth=1) over 5000 features and 10000 training
 % examples takes 70ms on a single core machine and *7ms* with 12 cores and
-% OpenMP enabled. OpenMP support is available on Windows by default (and
-% requires compiling with the flag 'OPTIMFLAGS="$OPTIMFLAGS' '/openmp"').
+% OpenMP enabled (OpenMP is enabled by default, see toolboxCompile). This
+% code shares similarities with forestTrain.m but is optimized for binary
+% labels. Moreover, while forestTrain is meant for training random decision
+% forests, this code is tuned for use with boosting (see adaBoostTrain.m).
 %
-% For more information on how to train fast decision trees see:
-%  [1] R. Appel, T. Fuchs, P. Dollár, P. Perona; "Quickly Boosting
-%  Decision Trees – Pruning Underachieving Features Early," ICML 2013.
+% For more information on how to quickly boost decision trees see:
+%   [1] R. Appel, T. Fuchs, P. Dollár, P. Perona; "Quickly Boosting
+%   Decision Trees – Pruning Underachieving Features Early," ICML 2013.
 % The code here implements a simple brute-force strategy with the option to
 % sample features used for training each node for additional speedups.
-% Further gains using the ideas from the ICML paper are possible.
+% Further gains using the ideas from the ICML paper are possible. If you
+% use this code please consider citing our ICML paper.
 %
-% Each feature is quantized to lie between [0,nBins-1], where nBins<=256.
-% Quantization is expensive so is should be performed just once if training
-% multiple trees over same data. Note that the second output of the
+% During training each feature is quantized to lie between [0,nBins-1],
+% where nBins<=256. Quantization is expensive and should be performed just
+% once if training multiple trees. Note that the second output of the
 % algorithm is the quantized data, this can be reused in future training.
-%
-% This code shares similarities with forestTrain.m but is optimized for
-% binary labels. Moreover, while forestTrain is meant for training random
-% decision forests, this code is tuned for use with boosting.
 %
 % USAGE
 %  [tree,data,err] = binaryTreeTrain( data, [pTree] )
@@ -31,7 +30,7 @@ function [tree,data,err] = binaryTreeTrain( data, varargin )
 %   .X0         - [N0xF] negative feature vectors
 %   .X1         - [N1xF] positive feature vectors
 %   .wts0       - [N0x1] negative weights
-%   .wts1       - [N0x1] positive weights
+%   .wts1       - [N1x1] positive weights
 %   .xMin       - [1xF] optional vals defining feature quantization
 %   .xStep      - [1xF] optional vals defining feature quantization
 %  pTree      - additional params (struct or name/value pairs)

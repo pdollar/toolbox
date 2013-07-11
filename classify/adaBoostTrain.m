@@ -7,6 +7,14 @@ function model = adaBoostTrain( X0, X1, varargin )
 % 5,000 data points takes under 5 seconds, see example below. Most of the
 % training time is spent in binaryTreeTrain.m.
 %
+% For more information on how to quickly boost decision trees see:
+%   [1] R. Appel, T. Fuchs, P. Dollár, P. Perona; "Quickly Boosting
+%   Decision Trees – Pruning Underachieving Features Early," ICML 2013.
+% The code here implements a simple brute-force strategy with the option to
+% sample features used for training each node for additional speedups.
+% Further gains using the ideas from the ICML paper are possible. If you
+% use this code please consider citing our ICML paper.
+%
 % USAGE
 %  model = adaBoostTrain( X0, X1, [pBoost] )
 %
