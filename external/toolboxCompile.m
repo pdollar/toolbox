@@ -16,39 +16,41 @@
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
-disp('Compiling.......................................');
-rd=fileparts(mfilename('fullpath')); rd=rd(1:end-9);
-
-% general compile options (can make architecture specific)
+% compile options including openmp support for C++ files
 opts = {'-output'};
 if(exist('OCTAVE_VERSION','builtin')), opts={'-o'}; end
+if( ispc ), optsOmp={'OPTIMFLAGS="$OPTIMFLAGS','/openmp"'}; else
+  optsOmp={'CXXFLAGS="\$CXXFLAGS','-fopenmp"'};
+  optsOmp=[optsOmp,'LDFLAGS="\$LDFLAGS','-fopenmp"'];
+end
 
-% if you get warnings on linux, you can set the gcc version using:
-% opts = {'CXX=g++-4.1' 'CC=g++-4.1' 'LD=g++-4.1' '-l' ...
-%   'mwlapack' '-l' 'mwblas' '-output' };
+% list of files (missing /private/ part of directory)
+fs={'channels/convConst.cpp', 'channels/gradientMex.cpp',...
+  'channels/rgbConvertMex.cpp', 'channels/imResampleMex.cpp',...
+  'channels/imPadMex.cpp', 'images/assignToBins1.c',...
+  'images/histc2c.c', 'images/ktHistcRgb_c.c',...
+  'images/ktComputeW_c.c', 'images/nlfiltersep_max.c',...
+  'images/nlfiltersep_sum.c', 'images/imtransform2_c.c',...
+  'images/opticalFlowHsMex.cpp', 'classify/meanShift1.c', ...
+  'classify/fernsInds1.c', 'classify/forestFindThr.cpp',...
+  'classify/forestInds.cpp', 'classify/binaryTreeTrain1.cpp'};
+n=length(fs); useOmp=zeros(1,n); useOmp(end-1:end)=1;
 
-% compile c functions
-fs={'assignToBins1','histc2c','ktHistcRgb_c','ktComputeW_c',...
-  'nlfiltersep_max','nlfiltersep_sum','imtransform2_c',...
-  'meanShift1','fernsInds1'};
-ds=[repmat({'images'},1,7),repmat({'classify'},1,2)];
-for i=1:length(fs), fs{i}=[rd '/' ds{i} '/private/' fs{i}]; end
-for i=1:length(fs), mex([fs{i} '.c'],opts{:},[fs{i} '.' mexext]); end
-
-% compile c++ functions
+% compile every funciton in turn (special case for dijkstra)
+disp('Compiling Piotr''s Toolbox.......................');
+rd=fileparts(mfilename('fullpath')); rd=rd(1:end-9); tic;
 try
-  fs={'convConst','gradientMex','rgbConvertMex','imResampleMex',...
-    'imPadMex','opticalFlowHsMex','forestFindThr','forestInds',...
-    'binaryTreeTrain1'};
-  ds=[repmat({'channels'},1,5) 'images' repmat({'classify'},1,3)];
-  for i=1:length(fs), fs{i}=[rd '/' ds{i} '/private/' fs{i}]; end
-  for i=1:length(fs), mex([fs{i} '.cpp'],opts{:},[fs{i} '.' mexext]); end
-  d=[rd '/matlab/private/']; mex([d 'fibheap.cpp'],[d 'dijkstra1.cpp'], ...
-    '-largeArrayDims', opts{:}, [d 'dijkstra1.' mexext]);
+  for i=1:n
+    [d,f1,e]=fileparts(fs{i}); f=[rd '/' d '/private/' f1];
+    if(useOmp(i)), optsi=[optsOmp opts]; else optsi=opts; end
+    fprintf(' -> %s\n',[f e]); mex([f e],optsi{:},[f '.' mexext]);
+  end
+  d=[rd '/matlab/private/']; fprintf(' -> %s\n',[d 'dijkstra1.cpp']);
+  mex([d 'fibheap.cpp'], [d 'dijkstra1.cpp'], '-largeArrayDims', ...
+    opts{:}, [d 'dijkstra1.' mexext]);
 catch ME
   fprintf(['C++ mex failed, likely due to lack of a C++ compiler.\n' ...
     'Run ''mex -setup'' to specify a C++ compiler if available.\n'...
     'Or, one can specify a specific C++ explicitly (see mex help).\n']);
 end
-
-disp('..................................Done Compiling');
+disp('..................................Done Compiling'); toc;
