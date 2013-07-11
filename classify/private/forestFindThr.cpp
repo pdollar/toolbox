@@ -1,6 +1,6 @@
 /*******************************************************************************
-* Piotr's Image&Video Toolbox      Version 3.01
-* Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
+* Piotr's Image&Video Toolbox      Version NEW
+* Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
 * Please email me if you find bugs, or have suggestions or questions!
 * Licensed under the Simplified BSD License [see external/bsd.txt]
 *******************************************************************************/
@@ -8,7 +8,7 @@
 #include <mex.h>
 typedef unsigned int uint32;
 
-void rtreeFindThr( int H, int N, int F, const float *data, const uint32 *hs,
+void forestFindThr( int H, int N, int F, const float *data, const uint32 *hs,
   const float *ws, const uint32 *order, uint32 &fid, float &thr, double &gini )
 {
   int i, j, h; double *L, *R, *T; float *data1; uint32 *order1;
@@ -33,7 +33,7 @@ void rtreeFindThr( int H, int N, int F, const float *data, const uint32 *hs,
   delete [] L; delete [] R; delete [] T;
 }
 
-// [fid,thr,gini] = rtreeFindThr(data,hs,ws,order,H);
+// [fid,thr,gini] = mexFunction(data,hs,ws,order,H);
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   int H, N, F; float *data, *ws, thr; double gini; uint32 *hs, *order, fid;
   data = (float*) mxGetData(prhs[0]);
@@ -43,7 +43,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   H = (int) mxGetScalar(prhs[4]);
   N = (int) mxGetM(prhs[0]);
   F = (int) mxGetN(prhs[0]);
-  rtreeFindThr(H,N,F,data,hs,ws,order,fid,thr,gini);
+  forestFindThr(H,N,F,data,hs,ws,order,fid,thr,gini);
   plhs[0] = mxCreateDoubleScalar(fid);
   plhs[1] = mxCreateDoubleScalar(thr);
   plhs[2] = mxCreateDoubleScalar(gini);

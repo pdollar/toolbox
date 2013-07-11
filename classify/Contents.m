@@ -38,3 +38,9 @@
 %   fernsRegTrain      - Train boosted fern regressor.
 %   forestApply        - Apply learned forest classifier.
 %   forestTrain        - Train random forest classifier.
+%
+% Fast boosted decision tree code.
+%   adaBoostTrain      - Train boosted decision tree classifier.
+%   adaBoostApply      - Apply learned boosted decision tree classifier.
+%   binaryTreeTrain    - Train binary decision tree classifier.
+%   binaryTreeApply    - Apply learned binary decision tree classifier.

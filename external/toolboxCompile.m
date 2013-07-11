@@ -38,8 +38,9 @@ for i=1:length(fs), mex([fs{i} '.c'],opts{:},[fs{i} '.' mexext]); end
 % compile c++ functions
 try
   fs={'convConst','gradientMex','rgbConvertMex','imResampleMex',...
-    'imPadMex','opticalFlowHsMex','forestFindThr','forestInds'};
-  ds=[repmat({'channels'},1,5) 'images' repmat({'classify'},1,2)];
+    'imPadMex','opticalFlowHsMex','forestFindThr','forestInds',...
+    'binaryTreeTrain1'};
+  ds=[repmat({'channels'},1,5) 'images' repmat({'classify'},1,3)];
   for i=1:length(fs), fs{i}=[rd '/' ds{i} '/private/' fs{i}]; end
   for i=1:length(fs), mex([fs{i} '.cpp'],opts{:},[fs{i} '.' mexext]); end
   d=[rd '/matlab/private/']; mex([d 'fibheap.cpp'],[d 'dijkstra1.cpp'], ...

@@ -1,6 +1,6 @@
 /*******************************************************************************
-* Piotr's Image&Video Toolbox      Version 3.01
-* Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
+* Piotr's Image&Video Toolbox      Version NEW
+* Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
 * Please email me if you find bugs, or have suggestions or questions!
 * Licensed under the Simplified BSD License [see external/bsd.txt]
 *******************************************************************************/
@@ -9,7 +9,7 @@
 
 typedef unsigned int uint32;
 
-void rtreeInds( uint32 *inds, const float *data, const float *thrs, 
+void forestInds( uint32 *inds, const float *data, const float *thrs, 
   const uint32 *fids, const uint32 *child, int N )
 {
   #pragma omp parallel for
@@ -22,7 +22,7 @@ void rtreeInds( uint32 *inds, const float *data, const float *thrs,
   }
 }
 
-// inds=rtreeInds(data,thrs,fids,child) -- see rtreeApply.m
+// inds=mexFunction(data,thrs,fids,child)
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   int N; float *data, *thrs; uint32 *inds, *fids, *child;
   data = (float*) mxGetData(prhs[0]);
@@ -32,5 +32,5 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   N = (int) mxGetM(prhs[0]);
   plhs[0] = mxCreateNumericMatrix(N,1,mxUINT32_CLASS,mxREAL);
   inds = (uint32*) mxGetPr(plhs[0]);
-  rtreeInds(inds,data,thrs,fids,child,N);
+  forestInds(inds,data,thrs,fids,child,N);
 }
