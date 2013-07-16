@@ -86,7 +86,7 @@ function varargout = bbGt( action, varargin )
 % bbGt>loadAll, bbGt>evalRes, bbGt>showRes,  bbGt>compRoc, bbGt>cropRes,
 % bbGt>compOas, bbGt>compOa, bbGt>sampleWins, bbGt>sampleWinsDir
 %
-% Piotr's Image&Video Toolbox      Version 3.10
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -184,6 +184,8 @@ function [objs,bbs] = bbLoad( fName, varargin )
 % sticking out beyond the ellipse bounds. The 'ellipse' flag controls how
 % an oriented bb is converted to a regular bb. Specifically, set ellipse=1
 % if an ellipse tightly delineates the object and 0 if a rectangle does.
+% Finally, if 'squarify' is not empty the (non-ignore) bbs are converted to
+% a fixed aspect ratio using bbs=bbApply('squarify',bbs,squarify{:}).
 %
 % USAGE
 %  [objs,bbs] = bbGt( 'bbLoad', fName, [pLoad] )
@@ -193,6 +195,7 @@ function [objs,bbs] = bbLoad( fName, varargin )
 %  pLoad    - parameters (struct or name/value pairs)
 %   .format   - [0] gt format 0:default, 1:PASCAL
 %   .ellipse  - [1] controls how oriented bb is converted to regular bb
+%   .squarify - [] controls optional reshaping of bbs to fixed aspect ratio
 %   .lbls     - [] return objs with these labels (or [] to return all)
 %   .ilbls    - [] return objs with these labels but set to ignore
 %   .hRng     - [] range of acceptable obj heights
@@ -213,10 +216,10 @@ function [objs,bbs] = bbLoad( fName, varargin )
 % See also bbGt, bbGt>bbSave
 
 % get parameters
-dfs={'format',0,'ellipse',1,'lbls',[],'ilbls',[],'hRng',[],'wRng',[],...
-  'aRng',[],'arRng',[],'oRng',[],'xRng',[],'yRng',[],'vRng',[]};
-[format,ellipse,lbls,ilbls,hRng,wRng,aRng,arRng,oRng,xRng,yRng,vRng] ...
-  = getPrmDflt(varargin,dfs,1);
+df={'format',0,'ellipse',1,'squarify',[],'lbls',[],'ilbls',[],'hRng',[],...
+  'wRng',[],'aRng',[],'arRng',[],'oRng',[],'xRng',[],'yRng',[],'vRng',[]};
+[format,ellipse,sqr,lbls,ilbls,hRng,wRng,aRng,arRng,oRng,xRng,yRng,vRng]...
+  = getPrmDflt(varargin,df,1);
 
 % load objs
 if( format==0 )
@@ -288,8 +291,9 @@ end
 
 % finally get extent of each bounding box (not trivial if ang~=0)
 if(nargout<=1), return; end; if(n==0), bbs=zeros(0,5); return; end
-bbs=double([reshape([objs.bb],4,[]); [objs.ign]]');
+bbs=double([reshape([objs.bb],4,[]); [objs.ign]]'); ign=bbs(:,5)==1;
 for i=1:n, bbs(i,1:4)=bbExtent(bbs(i,1:4),objs(i).ang,ellipse); end
+if(~isempty(sqr)), bbs(~ign,:)=bbApply('squarify',bbs(~ign,:),sqr{:}); end
 
   function bb = bbExtent( bb, ang, ellipse )
     % get bb that fully contains given oriented bb
