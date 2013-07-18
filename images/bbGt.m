@@ -693,7 +693,7 @@ function [xs,ys,score,ref] = compRoc( gt, dt, roc, ref )
 % Compute ROC or PR based on outputs of evalRes on multiple images.
 %
 % ROC="Receiver operating characteristic"; PR="Precision Recall"
-% Also computes result at reference point (ref):
+% Also computes result at reference points (ref):
 %  which for ROC curves is the *detection* rate at reference *FPPI*
 %  which for PR curves is the *precision* at reference *recall*
 % Note, FPPI="false positive per image"
@@ -705,13 +705,13 @@ function [xs,ys,score,ref] = compRoc( gt, dt, roc, ref )
 %  gt         - {1xn} first output of evalRes() for each image
 %  dt         - {1xn} second output of evalRes() for each image
 %  roc        - [1] if 1 compue ROC else compute PR
-%  ref        - [1/.1] reference point for ROC or PR curve
+%  ref        - [] reference points for ROC or PR curve
 %
 % OUTPUTS
 %  xs         - x coords for curve: ROC->FPPI; PR->recall
 %  ys         - y coords for curve: ROC->TP; PR->precision
-%  score      - score at each coord
-%  ref        - y value at reference point
+%  score      - detection scores corresponding to each (x,y)
+%  ref        - recall or precision at each reference point
 %
 % EXAMPLE
 %
@@ -719,20 +719,23 @@ function [xs,ys,score,ref] = compRoc( gt, dt, roc, ref )
 
 % get additional parameters
 if(nargin<3 || isempty(roc)), roc=1; end
-if(nargin<4 || isempty(ref)), if(roc), ref=1; else ref=.1; end; end
+if(nargin<4 || isempty(ref)), ref=[]; end
 % convert to single matrix, discard ignore bbs
 nImg=length(gt); assert(length(dt)==nImg);
 gt=cat(1,gt{:}); gt=gt(gt(:,5)~=-1,:);
 dt=cat(1,dt{:}); dt=dt(dt(:,6)~=-1,:);
 % compute results
-if(size(dt,1)==0), xs=0; ys=0; ref=0; return; end
-np=size(gt,1); score=dt(:,5); tp=dt(:,6);
-[score, order]=sort(score,'descend'); tp=tp(order);
+if(size(dt,1)==0), xs=0; ys=0; score=0; ref=ref*0; return; end
+m=length(ref); np=size(gt,1); score=dt(:,5); tp=dt(:,6);
+[score,order]=sort(score,'descend'); tp=tp(order);
 fp=double(tp~=1); fp=cumsum(fp); tp=cumsum(tp);
-if( roc ), tp=tp/np; fppi=fp/nImg; xs=fppi; ys=tp;
-else rec=tp/np; prec=tp./(fp+tp); xs=rec; ys=prec; end
-% reference point
-[~,ind]=min(abs(xs-ref)); ref=ys(ind);
+if( roc )
+  xs=fp/nImg; ys=tp/np; xs1=[-inf; xs]; ys1=[0; ys];
+  for i=1:m, j=find(xs1<=ref(i)); ref(i)=ys1(j(end)); end
+else
+  xs=tp/np; ys=tp./(fp+tp); xs1=[xs; inf]; ys1=[ys; 0];
+  for i=1:m, j=find(xs1>=ref(i)); ref(i)=ys1(j(1)); end
+end
 end
 
 function [Is,scores,imgIds] = cropRes( gt, dt, imFs, varargin )
