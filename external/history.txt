@@ -3,10 +3,11 @@ Version NEW
  *  detector/ - Aggregate Channel Features pedestrian detection code.
  * For more information, see detector/Contents.m. Other changes:
  -images/bb*.m: moved to detector/bb*.m
+ -detector/bbGt.m: removed obsolete sampleWins() and sampleWinsDir() functions
  -classify/adaBoost*.m: added highly optimized code for boosted decision trees
  -classify/binaryTree*.m: added highly optimized code for binary decision trees
  -dijkstra.*: fixed for 64 bit and added back to toolbox (thanks Bhuwan Dhingra)
- -minor: forestFindThr.cpp, forestInds.cpp, toolboxComple, demoGenData, bbGt
+ -minor: forestFindThr.cpp, forestInds.cpp, toolboxComple, demoGenData
 
 Version 3.10 (11-June-2013)
  -NO LONGER SUPPORTING MATLAB VERSIONS PRIOR TO MATLAB 2011b
