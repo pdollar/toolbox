@@ -1,4 +1,7 @@
 Version NEW
+ * THIS IS A MAJOR RELEASE, FEATURING THE FOLLOWING NEW PACKAGE:
+ *  detector/ - Aggregate Channel Features pedestrian detection code.
+ * For more information, see detector/Contents.m. Other changes:
  -classify/adaBoost*.m: added highly optimized code for boosted decision trees
  -classify/binaryTree*.m: added highly optimized code for binary decision trees
  -dijkstra.*: fixed for 64 bit and added back to toolbox (thanks Bhuwan Dhingra)
