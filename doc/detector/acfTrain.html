@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of acfTrain</title>
+  <meta name="keywords" content="acfTrain">
+  <meta name="description" content="Train aggregate channel features object detector.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html detector -->
+<h1>acfTrain
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Train aggregate channel features object detector.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function detector = acfTrain( varargin ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Train aggregate channel features object detector.
+
+ Train aggregate channel features (ACF) object detector:
+  P. Dollár, Z. Tu, P. Perona and S. Belongie
+  &quot;Integral Channel Features&quot;, BMVC 2009.
+ The exact details of the algorithm below differ substantially from the
+ BMVC09 paper, a more up-to-date method writeup is not yet available.
+
+ Takes a set of parameters opts (described in detail below) and trains a
+ detector from start to finish including performing multiple rounds of
+ bootstrapping if need be. The return is a struct 'detector' for use with
+ acfDetect.m which fully defines a sliding window detector. Training is
+ fast (on the INRIA pedestrian dataset training takes ~10 minutes on a
+ single core or ~3m using four cores). Taking advantage of parallel
+ training requires launching matlabpool (see help for matlabpool). The
+ trained detector may be altered in certain ways via acfModify(). Calling
+ opts=acfTrain() returns all default options.
+
+ (1) Specifying features and model: The channel features are defined by
+ 'pPyramid'. See chnsCompute.m and chnsPyramid.m for more details. The
+ model dimensions ('modelDs') define the window height and width. The
+ padded dimensions ('modelDsPad') define the extended region around object
+ candidates that are used for classification. For example, for 100 pixel
+ tall pedestrians, typically a 128 pixel tall region is used to make a
+ decision. 'pNms' controls non-maximal suppression (see bbNms.m), 'stride'
+ controls the window stride, and 'cascThr' and 'cascCal' are the threshold
+ and calibration used for the constant soft cascades. Typically, set
+ 'cascThr' to -1 and adjust 'cascCal' until the desired recall is reached
+ (setting 'cascCal' shifts the final scores output by the detector by the
+ given amount). Training alternates between sampling (bootstrapping) and
+ training an AdaBoost classifier (clf). 'nWeak' determines the number of
+ training stages and number of trees after each stage, e.g. nWeak=[32 128
+ 512 2048] defines four stages with the final clf having 2048 trees.
+ 'pBoost' specifies parameters for AdaBoost, and 'pBoost.pTree' are the
+ decision tree parameters, see adaBoostTrain.m for details. Finally,
+ 'seed' is the random seed used and makes results reproducible and 'name'
+ defines the location for storing the detector and log file.
+
+ (2) Specifying training data location and amount: The training data can
+ take on a number of different forms. The positives can be specified using
+ either a dir of pre-cropped windows ('posWinDir') or dirs of full images
+ ('posImgDir') and ground truth labels ('posGtDir'). The negatives can by
+ specified using a dir of pre-cropped windows ('negWinDir'), a dir of full
+ images without any positives and from which negatives can be sampled
+ ('negImgDir'), and finally if neither 'negWinDir' or 'negImgDir' are
+ given negatives are sampled from the images in 'posImgDir' (avoiding the
+ positives). For the pre-cropped windows all images must have size at
+ least modelDsPad and have the object (of size exactly modelDs) centered.
+ 'imreadf' can be used to specify a custom function for loading an image,
+ and 'imreadp' are custom additional parameters to imreadf. When sampling
+ from full images, 'pLoad' determines how the ground truth is loaded and
+ converted to a set of positive bbs (see bbGt&gt;bbLoad). 'nPos' controls the
+ total number of positives to sample for training (if nPos=inf the number
+ of positives is limited by the training set). 'nNeg' controls the total
+ number of negatives to sample and 'nPerNeg' limits the number of
+ negatives to sample per image. 'nAccNeg' controls the maximum number of
+ negatives that can accumulate over multiple stages of bootstrapping.
+ Define 'pJitter' to jitter the positives (see jitterImage.m) and thus
+ artificially increase the number of positive training windows. Finally if
+ 'winsSave' is true cropped windows are saved to disk as a mat file.
+
+ USAGE
+  detector = acfTrain( opts )
+  opts = acfTrain()
+
+ INPUTS
+  opts       - parameters (struct or name/value pairs)
+   (1) features and model:
+   .pPyramid   - [{}] params for creating pyramid (see chnsPyramid)
+   .modelDs    - [] model height+width without padding (eg [100 41])
+   .modelDsPad - [] model height+width with padding (eg [128 64])
+   .pNms       - [..] params for non-maximal suppression (see bbNms.m)
+   .stride     - [4] spatial stride between detection windows
+   .cascThr    - [-1] constant cascade threshold (affects speed/accuracy)
+   .cascCal    - [.005] cascade calibration (affects speed/accuracy)
+   .nWeak      - [128] vector defining number weak clfs per stage
+   .pBoost     - [..] parameters for boosting (see adaBoostTrain.m)
+   .seed       - [0] seed for random stream (for reproducibility)
+   .name       - [''] name to prepend to clf and log filenames
+   (2) training data location and amount:
+   .posGtDir   - [''] dir containing ground truth
+   .posImgDir  - [''] dir containing full positive images
+   .negImgDir  - [''] dir containing full negative images
+   .posWinDir  - [''] dir containing cropped positive windows
+   .negWinDir  - [''] dir containing cropped negative windows
+   .imreadf    - [@imread] optional custom function for reading images
+   .imreadp    - [{}] optional custom parameters for imreadf
+   .pLoad      - [..] params for bbGt&gt;bbLoad (see bbGt)
+   .nPos       - [inf] max number of pos windows to sample
+   .nNeg       - [5000] max number of neg windows to sample
+   .nPerNeg    - [25]  max number of neg windows to sample per image
+   .nAccNeg    - [10000] max number of neg windows to accumulate
+   .pJitter    - [{}] params for jittering pos windows (see jitterImage)
+   .winsSave   - [0] if true save cropped windows at each stage to disk
+
+ OUTPUTS
+  detector   - trained object detector (modify only via acfModify)
+   .opts       - input parameters used for model training
+   .clf        - learned boosted tree classifier (see adaBoostTrain)
+   .info       - info about channels (see chnsCompute.m)
+
+ EXAMPLE
+
+ See also <a href="acfDetect.html" class="code" title="function bbs = acfDetect( I, detector, fileName )">acfDetect</a>, <a href="acfDemoInria.html" class="code" title="">acfDemoInria</a>, <a href="acfModify.html" class="code" title="function detector = acfModify( detector, varargin )">acfModify</a>, <a href="acfTest.html" class="code" title="function [miss,roc,gt,dt] = acfTest( varargin )">acfTest</a>, chnsCompute,
+ chnsPyramid, adaBoostTrain, <a href="bbGt.html" class="code" title="function varargout = bbGt( action, varargin )">bbGt</a>, <a href="bbNms.html" class="code" title="function bbs = bbNms( bbs, varargin )">bbNms</a>, jitterImage
+
+ Piotr's Image&amp;Video Toolbox      Version 3.20
+ Copyright 2013 Piotr Dollar &amp; Ron Appel.  [pdollar-at-caltech.edu]
+ Please email me if you find bugs, or have suggestions or questions!
+ Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../channels/chnsCompute.html" class="code" title="function chns = chnsCompute( I, varargin )">chnsCompute</a>	Compute channel features at a single scale given an input image.</li><li><a href="../channels/chnsPyramid.html" class="code" title="function pyramid = chnsPyramid( I, varargin )">chnsPyramid</a>	Compute channel feature pyramid given an input image.</li><li><a href="../channels/chnsScaling.html" class="code" title="function [lambdas,as,scales,fs] = chnsScaling( pChns, Is, show )">chnsScaling</a>	Compute lambdas for channel power law scaling.</li><li><a href="../channels/convTri.html" class="code" title="function J = convTri( I, r, s, nomex )">convTri</a>	Extremely fast 2D image convolution with a triangle filter.</li><li><a href="../classify/adaBoostTrain.html" class="code" title="function model = adaBoostTrain( X0, X1, varargin )">adaBoostTrain</a>	Train boosted decision tree classifier.</li><li><a href="acfDetect.html" class="code" title="function bbs = acfDetect( I, detector, fileName )">acfDetect</a>	Run aggregate channel features object detector on given image(s).</li><li><a href="bbApply.html" class="code" title="function varargout = bbApply( action, varargin )">bbApply</a>	Functions for manipulating bounding boxes (bb).</li><li><a href="bbGt.html" class="code" title="function varargout = bbGt( action, varargin )">bbGt</a>	Bounding box (bb) annotations struct, evaluation and sampling routines.</li><li><a href="../images/jitterImage.html" class="code" title="function IJ = jitterImage( I, varargin )">jitterImage</a>	Creates multiple, slightly jittered versions of an image.</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li><li><a href="../matlab/mat2cell2.html" class="code" title="function C = mat2cell2( X, parts )">mat2cell2</a>	Break matrix up into a cell array of same sized matrices.</li><li><a href="../matlab/randSample.html" class="code" title="function r = randSample( n, k, isArray )">randSample</a>	Generate values sampled uniformly without replacement from 1:n.</li><li><a href="../matlab/ticStatus.html" class="code" title="function id = ticStatus( msg, updateFreq, updateMinT, erasePrev )">ticStatus</a>	Used to display the progress of a long process.</li><li><a href="../matlab/tocStatus.html" class="code" title="function tocStatus( id, fracDone )">tocStatus</a>	Used to display the progress of a long process.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="acfDemoInria.html" class="code" title="">acfDemoInria</a>	Demo for aggregate channel features object detector on Inria dataset.</li></ul>
+<!-- crossreference -->
+
+
+
+
+<!-- Start of Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-4884268-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+<!-- end of Google Analytics Code -->
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

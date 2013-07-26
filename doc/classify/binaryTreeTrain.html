@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of binaryTreeTrain</title>
+  <meta name="keywords" content="binaryTreeTrain">
+  <meta name="description" content="Train binary decision tree classifier.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html classify -->
+<h1>binaryTreeTrain
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Train binary decision tree classifier.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [tree,data,err] = binaryTreeTrain( data, varargin ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Train binary decision tree classifier.
+
+ Highly optimized code for training decision trees over binary variables.
+ Training a decision stump (depth=1) over 5000 features and 10000 training
+ examples takes 70ms on a single core machine and *7ms* with 12 cores and
+ OpenMP enabled (OpenMP is enabled by default, see toolboxCompile). This
+ code shares similarities with forestTrain.m but is optimized for binary
+ labels. Moreover, while forestTrain is meant for training random decision
+ forests, this code is tuned for use with boosting (see adaBoostTrain.m).
+
+ For more information on how to quickly boost decision trees see:
+   [1] R. Appel, T. Fuchs, P. Dollár, P. Perona; &quot;Quickly Boosting
+   Decision Trees – Pruning Underachieving Features Early,&quot; ICML 2013.
+ The code here implements a simple brute-force strategy with the option to
+ sample features used for training each node for additional speedups.
+ Further gains using the ideas from the ICML paper are possible. If you
+ use this code please consider citing our ICML paper.
+
+ During training each feature is quantized to lie between [0,nBins-1],
+ where nBins&lt;=256. Quantization is expensive and should be performed just
+ once if training multiple trees. Note that the second output of the
+ algorithm is the quantized data, this can be reused in future training.
+
+ USAGE
+  [tree,data,err] = binaryTreeTrain( data, [pTree] )
+
+ INPUTS
+  data       - data for training tree
+   .X0         - [N0xF] negative feature vectors
+   .X1         - [N1xF] positive feature vectors
+   .wts0       - [N0x1] negative weights
+   .wts1       - [N1x1] positive weights
+   .xMin       - [1xF] optional vals defining feature quantization
+   .xStep      - [1xF] optional vals defining feature quantization
+  pTree      - additional params (struct or name/value pairs)
+   .nBins      - [256] maximum number of quanizaton bins (&lt;=256)
+   .maxDepth   - [1] maximum depth of tree
+   .minWeight  - [.01] minimum sample weigth to allow split
+   .fracFtrs   - [1] fraction of features to sample for each node split
+
+ OUTPUTS
+  tree       - learned decision tree model struct w the following fields
+   .fids       - [Kx1] feature ids for each node
+   .thrs       - [Kx1] threshold corresponding to each fid
+   .child      - [Kx1] index of child for each node (1-indexed)
+   .hs         - [Kx1] log ratio (.5*log(p/(1-p)) at each node
+   .weights    - [Kx1] total sample weight at each node
+   .depth      - [Kx1] depth of each node
+  data       - data used for training tree (quantized version of input)
+  err        - decision tree training error
+
+ EXAMPLE
+
+ See also <a href="binaryTreeApply.html" class="code" title="function hs = binaryTreeApply( X, tree, maxDepth, minWeight )">binaryTreeApply</a>, <a href="adaBoostTrain.html" class="code" title="function model = adaBoostTrain( X0, X1, varargin )">adaBoostTrain</a>, <a href="forestTrain.html" class="code" title="function forest = forestTrain( data, hs, varargin )">forestTrain</a>
+
+ Piotr's Image&amp;Video Toolbox      Version 3.20
+ Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Please email me if you find bugs, or have suggestions or questions!
+ Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="adaBoostTrain.html" class="code" title="function model = adaBoostTrain( X0, X1, varargin )">adaBoostTrain</a>	Train boosted decision tree classifier.</li></ul>
+<!-- crossreference -->
+
+
+
+
+<!-- Start of Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-4884268-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+<!-- end of Google Analytics Code -->
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

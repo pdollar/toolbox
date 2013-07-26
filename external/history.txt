@@ -1,6 +1,6 @@
-Version NEW
+Version 3.20 (25-July-2013)
  * THIS IS A MAJOR RELEASE, FEATURING THE FOLLOWING NEW PACKAGE:
- *  detector/ - Aggregate Channel Features pedestrian detection code.
+ *  detector/ - Aggregate Channel Features (ACF) object detection code.
  * For more information, see detector/Contents.m. Other changes:
  -images/bb*.m: moved to detector/bb*.m
  -detector/bbGt.m: removed obsolete sampleWins() and sampleWinsDir() functions

@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of acfModify</title>
+  <meta name="keywords" content="acfModify">
+  <meta name="description" content="Modify aggregate channel features object detector.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html detector -->
+<h1>acfModify
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Modify aggregate channel features object detector.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function detector = acfModify( detector, varargin ) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Modify aggregate channel features object detector.
+
+ Takes an object detector trained by acfTrain() and modifies it. Only
+ certain modifications are allowed to the detector and the detector should
+ never be modified directly (this may cause the detector to be invalid and
+ cause segmentation faults). Any valid modification to a detector after it
+ is trained should be performed using acfModify().
+
+ The parameters 'nPerOct', 'nOctUp', 'nApprox', 'lambdas', 'pad', 'minDs'
+ modify the channel feature pyramid created (see help of chnsPyramid.m for
+ more details) and primarily control the scales used. The parameters
+ 'pNms', 'stride', 'cascThr' and 'cascCal' modify the detector behavior
+ (see help of acfTrain.m for more details). Finally, 'rescale' can be
+ used to rescale the trained detector (this change is irreversible).
+
+ USAGE
+  detector = acfModify( detector, pModify )
+
+ INPUTS
+  detector   - detector trained via acfTrain
+  pModify    - parameters (struct or name/value pairs)
+   .nPerOct    - [] number of scales per octave
+   .nOctUp     - [] number of upsampled octaves to compute
+   .nApprox    - [] number of approx. scales to use
+   .lambdas    - [] coefficients for power law scaling (see BMVC10)
+   .pad        - [] amount to pad channels (along T/B and L/R)
+   .minDs      - [] minimum image size for channel computation
+   .pNms       - [] params for non-maximal suppression (see bbNms.m)
+   .stride     - [] spatial stride between detection windows
+   .cascThr    - [] constant cascade threshold (affects speed/accuracy)
+   .cascCal    - [] cascade calibration (affects speed/accuracy)
+   .rescale    - [] rescale entire detector by given ratio
+
+ OUTPUTS
+  detector   - modified object detector
+
+ EXAMPLE
+
+ See also chnsPyramid, <a href="bbNms.html" class="code" title="function bbs = bbNms( bbs, varargin )">bbNms</a>, <a href="acfTrain.html" class="code" title="function detector = acfTrain( varargin )">acfTrain</a>, <a href="acfDetect.html" class="code" title="function bbs = acfDetect( I, detector, fileName )">acfDetect</a>
+
+ Piotr's Image&amp;Video Toolbox      Version 3.20
+ Copyright 2013 Piotr Dollar &amp; Ron Appel.  [pdollar-at-caltech.edu]
+ Please email me if you find bugs, or have suggestions or questions!
+ Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../channels/chnsPyramid.html" class="code" title="function pyramid = chnsPyramid( I, varargin )">chnsPyramid</a>	Compute channel feature pyramid given an input image.</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="acfDemoInria.html" class="code" title="">acfDemoInria</a>	Demo for aggregate channel features object detector on Inria dataset.</li></ul>
+<!-- crossreference -->
+
+
+
+
+<!-- Start of Google Analytics Code -->
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-4884268-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+<!-- end of Google Analytics Code -->
+
+<hr><address>Generated by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

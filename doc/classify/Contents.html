@@ -28,7 +28,7 @@
 
  Clustering:
    <a href="demoCluster.html" class="code" title="">demoCluster</a>        - Clustering demo.
-   <a href="demoGenData.html" class="code" title="function [X,IDX,T,IDT] = demoGenData(n,m,k,d,c,e,f)">demoGenData</a>        - Generate data drawn form a mixture of Gaussians.
+   <a href="demoGenData.html" class="code" title="function [X0,H0,X1,H1] = demoGenData1(n0,n1,k,d,sep,ecc,frc)">demoGenData</a>        - Generate data drawn form a mixture of Gaussians.
    <a href="kmeans2.html" class="code" title="function [ IDX, C, d ] = kmeans2( X, k, varargin )">kmeans2</a>            - Fast version of kmeans clustering.
    <a href="meanShift.html" class="code" title="function [IDX,M] = meanShift(X, radius, rate, maxIter, minCsize, blur )">meanShift</a>          - <a href="meanShift.html" class="code" title="function [IDX,M] = meanShift(X, radius, rate, maxIter, minCsize, blur )">meanShift</a> clustering algorithm.
    <a href="meanShiftIm.html" class="code" title="function [M,Vr,Vc] = meanShiftIm( X,sigSpt,sigRng,softFlag,maxIter,minDel )">meanShiftIm</a>        - Applies the <a href="meanShift.html" class="code" title="function [IDX,M] = meanShift(X, radius, rate, maxIter, minCsize, blur )">meanShift</a> algorithm to a joint spatial/range image.
@@ -46,23 +46,29 @@
    <a href="pcaVisualize.html" class="code" title="function varargout=pcaVisualize( U, mu, vars, X, index, ks, fname, show )">pcaVisualize</a>       - Visualization of quality of approximation of X given principal comp.
    <a href="visualizeData.html" class="code" title="function visualizeData( X, k, IDX, types, C )">visualizeData</a>      - Project high dim. data unto principal components (PCA) for visualization.
 
- Confusion matrix display.
+ Confusion matrix display:
    <a href="confMatrix.html" class="code" title="function CM = confMatrix( IDXtrue, IDXpred, ntypes )">confMatrix</a>         - Generates a confusion matrix according to true and predicted data labels.
    <a href="confMatrixShow.html" class="code" title="function confMatrixShow( CM, types, pvPairs, nDigits, showCnts )">confMatrixShow</a>     - Used to display a confusion matrix.
 
- Radial Basis Functions (RBFs)
+ Radial Basis Functions (RBFs):
    <a href="rbfComputeBasis.html" class="code" title="function rbfBasis = rbfComputeBasis( X, k, cluster, scale, show )">rbfComputeBasis</a>    - Get locations and sizes of radial basis functions for use in rbf network.
    <a href="rbfComputeFtrs.html" class="code" title="function Xrbf = rbfComputeFtrs( X, rbfBasis )">rbfComputeFtrs</a>     - Evaluate features of X given a set of radial basis functions.
    <a href="rbfDemo.html" class="code" title="function rbfDemo( dataType, noiseSig, scale, k, cluster, show )">rbfDemo</a>            - Demonstration of rbf networks for regression.
 
- Fast random fern/forest classification/regression code.
+ Fast random fern/forest classification/regression code:
    <a href="fernsClfApply.html" class="code" title="function [hs,probs] = fernsClfApply( data, ferns, inds )">fernsClfApply</a>      - Apply learned fern classifier.
    <a href="fernsClfTrain.html" class="code" title="function [ferns,hsPr] = fernsClfTrain( data, hs, varargin )">fernsClfTrain</a>      - Train random fern classifier.
    <a href="fernsInds.html" class="code" title="function inds = fernsInds( data, fids, thrs )">fernsInds</a>          - Compute indices for each input by each fern.
    <a href="fernsRegApply.html" class="code" title="function [ys,ysCum] = fernsRegApply( data, ferns, inds )">fernsRegApply</a>      - Apply learned fern regressor.
    <a href="fernsRegTrain.html" class="code" title="function [ferns,ysPr] = fernsRegTrain( data, ys, varargin )">fernsRegTrain</a>      - Train boosted fern regressor.
    <a href="forestApply.html" class="code" title="function [hs,probs] = forestApply( data, forest, maxDepth, minCount )">forestApply</a>        - Apply learned forest classifier.
-   <a href="forestTrain.html" class="code" title="function forest = forestTrain( data, hs, varargin )">forestTrain</a>        - Train random forest classifier.</pre></div>
+   <a href="forestTrain.html" class="code" title="function forest = forestTrain( data, hs, varargin )">forestTrain</a>        - Train random forest classifier.
+
+ Fast boosted decision tree code:
+   <a href="adaBoostTrain.html" class="code" title="function model = adaBoostTrain( X0, X1, varargin )">adaBoostTrain</a>      - Train boosted decision tree classifier.
+   <a href="adaBoostApply.html" class="code" title="function hs = adaBoostApply( X, model, maxDepth, minWeight )">adaBoostApply</a>      - Apply learned boosted decision tree classifier.
+   <a href="binaryTreeTrain.html" class="code" title="function [tree,data,err] = binaryTreeTrain( data, varargin )">binaryTreeTrain</a>    - Train binary decision tree classifier.
+   <a href="binaryTreeApply.html" class="code" title="function hs = binaryTreeApply( X, tree, maxDepth, minWeight )">binaryTreeApply</a>    - Apply learned binary decision tree classifier.</pre></div>
 
 <!-- crossreference -->
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
