@@ -1,30 +1,28 @@
-function bbs = acfDetect( I, detector, bbsNm )
-% Run aggregate channel features object detector on given image or images.
+function bbs = acfDetect( I, detector, fileName )
+% Run aggregate channel features object detector on given image(s).
 %
-% Applies an object detector trained by acfTrain() to an input image. Prior
-% to applying the detector, the detector may be modified via acfModify().
 % The input 'I' can either be a single image (or filename) or a cell array
 % of images (or filenames). In the first case, the return is a set of bbs
 % where each row has the format [x y w h score] and score is the confidence
 % of detection. If the input is a cell array, the output is a cell array
 % where each element is a set of bbs in the form above (in this case a
-% parfor loop is used to speed execution). A cell of detectors that differ
-% only in their classifier (but with same channels, nms, etc.) can be
-% specified, bbs from each detector are concatendated. If using multiple
-% detectors and pNms.separate=1 then each bb has a sixth element bbType=j,
-% where j is the j-th detector, see bbNms.m for details. Finally, if
-% 'bbsNm' is specified, the bbs are saved to a comma separated text file
-% and the output bbs are set to 1. If saving to disk and the input is a
-% cell array, the output is flattened to an array where each row has the
-% format [imgId x y w h score] and imgId is a one-indexed image id.
+% parfor loop is used to speed execution). If 'fileName' is specified, the
+% bbs are saved to a comma separated text file and the output is set to
+% bbs=1. If saving detections for multiple images the output is stored in
+% the format [imgId x y w h score] and imgId is a one-indexed image id.
+%
+% A cell of detectors trained with the same channels can be specified,
+% detected bbs from each detector are concatenated. If using multiple
+% detectors and opts.pNms.separate=1 then each bb has a sixth element
+% bbType=j, where j is the j-th detector, see bbNms.m for details.
 %
 % USAGE
-%  bbs = acfDetect( I, detector, [bbsNm] )
+%  bbs = acfDetect( I, detector, [fileName] )
 %
 % INPUTS
 %  I          - input image(s) of filename(s) of input image(s)
 %  detector   - detector(s) trained via acfTrain
-%  bbsNm      - [] target filename (if specified return is 1)
+%  fileName   - [] target filename (if specified return is 1)
 %
 % OUTPUTS
 %  bbs        - [nx5] array of bounding boxes or cell array of bbs
@@ -39,21 +37,21 @@ function bbs = acfDetect( I, detector, bbsNm )
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % run detector on every image
-if(nargin<3), bbsNm=''; end; multiple=iscell(I);
-if(~isempty(bbsNm) && exist(bbsNm,'file')), bbs=1; return; end
+if(nargin<3), fileName=''; end; multiple=iscell(I);
+if(~isempty(fileName) && exist(fileName,'file')), bbs=1; return; end
 if(~multiple), bbs=acfDetectImg(I,detector); else
   n=length(I); bbs=cell(n,1);
   parfor i=1:n, bbs{i}=acfDetectImg(I{i},detector); end
 end
 
-% write results to disk if bbsNm specified
-if(isempty(bbsNm)), return; end
-d=fileparts(bbsNm); if(~isempty(d)&&~exist(d,'dir')), mkdir(d); end
+% write results to disk if fileName specified
+if(isempty(fileName)), return; end
+d=fileparts(fileName); if(~isempty(d)&&~exist(d,'dir')), mkdir(d); end
 if( multiple ) % add image index to each bb and flatten result
   for i=1:n, bbs{i}=[ones(size(bbs{i},1),1)*i bbs{i}]; end
   bbs=cell2mat(bbs);
 end
-dlmwrite(bbsNm,bbs); bbs=1;
+dlmwrite(fileName,bbs); bbs=1;
 
 end
 

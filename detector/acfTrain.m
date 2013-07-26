@@ -70,12 +70,12 @@ function detector = acfTrain( varargin )
 %   .pPyramid   - [{}] params for creating pyramid (see chnsPyramid)
 %   .modelDs    - [] model height+width without padding (eg [100 41])
 %   .modelDsPad - [] model height+width with padding (eg [128 64])
-%   .pNms       - [] params for non-maximal suppression (see bbNms.m)
+%   .pNms       - [..] params for non-maximal suppression (see bbNms.m)
 %   .stride     - [4] spatial stride between detection windows
 %   .cascThr    - [-1] constant cascade threshold (affects speed/accuracy)
 %   .cascCal    - [.005] cascade calibration (affects speed/accuracy)
 %   .nWeak      - [128] vector defining number weak clfs per stage
-%   .pBoost     - [{}] parameters for boosting (see adaBoostTrain.m)
+%   .pBoost     - [..] parameters for boosting (see adaBoostTrain.m)
 %   .seed       - [0] seed for random stream (for reproducibility)
 %   .name       - [''] name to prepend to clf and log filenames
 %   (2) training data location and amount:
@@ -86,7 +86,7 @@ function detector = acfTrain( varargin )
 %   .negWinDir  - [''] dir containing cropped negative windows
 %   .imreadf    - [@imread] optional custom function for reading images
 %   .imreadp    - [{}] optional custom parameters for imreadf
-%   .pLoad      - [{}] params for bbGt>bbLoad (see bbGt)
+%   .pLoad      - [..] params for bbGt>bbLoad (see bbGt)
 %   .nPos       - [inf] max number of pos windows to sample
 %   .nNeg       - [5000] max number of neg windows to sample
 %   .nPerNeg    - [25]  max number of neg windows to sample per image
@@ -102,7 +102,7 @@ function detector = acfTrain( varargin )
 %
 % EXAMPLE
 %
-% See also acfDetect, acfDemoInria, acfModify, chnsCompute,
+% See also acfDetect, acfDemoInria, acfModify, acfTest, chnsCompute,
 % chnsPyramid, adaBoostTrain, bbGt, bbNms, jitterImage
 %
 % Piotr's Image&Video Toolbox      Version NEW

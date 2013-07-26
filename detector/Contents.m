@@ -13,7 +13,7 @@
 %
 % Aggregate channel features object detector:
 %   acfDemoInria - Demo for aggregate channel features object detector on Inria dataset.
-%   acfDetect    - Run aggregate channel features object detector on given image or images.
+%   acfDetect    - Run aggregate channel features object detector on given image(s).
 %   acfModify    - Modify aggregate channel features object detector.
 %   acfTest      - Test aggregate channel features object detector given ground truth.
 %   acfTrain     - Train aggregate channel features object detector.
