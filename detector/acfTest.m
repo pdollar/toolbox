@@ -24,7 +24,7 @@ function [miss,roc,gt,dt] = acfTest( varargin )
 %
 % See also acfTrain, acfDetect, acfDemoInria, bbGt
 %
-% Piotr's Image&Video Toolbox      Version NEW
+% Piotr's Image&Video Toolbox      Version 3.20
 % Copyright 2013 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
