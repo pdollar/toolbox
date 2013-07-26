@@ -42,12 +42,6 @@
 %   seqWriterPlugin   - Plugin for seqIo and videoIO to allow writing of seq files.
 %   seqPlayer         - Simple GUI to play seq files.
 %
-% Object bounding box utilities and labeling tools:
-%   bbApply           - Functions for manipulating bounding boxes (bb).
-%   bbGt              - Bounding box (bb) annotations struct, evaluation and sampling routines.
-%   bbLabeler         - Bounding box or ellipse labeler for static images.
-%   bbNms             - Bounding box (bb) non-maximal suppression (nms).
-%
 % Behavior annotation for seq files:
 %   behaviorAnnotator - Caltech Behavior Annotator.
 %   behaviorData      - Retrieve and manipulate behavior annotation of a video.

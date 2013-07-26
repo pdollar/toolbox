@@ -17,3 +17,9 @@
 %   acfModify    - Modify aggregate channel features object detector.
 %   acfTest      - Test aggregate channel features object detector given ground truth.
 %   acfTrain     - Train aggregate channel features object detector.
+% 
+% Object bounding box utilities and labeling tools:
+%   bbApply      - Functions for manipulating bounding boxes (bb).
+%   bbGt         - Bounding box (bb) annotations struct, evaluation and sampling routines.
+%   bbLabeler    - Bounding box or ellipse labeler for static images.
+%   bbNms        - Bounding box (bb) non-maximal suppression (nms).
