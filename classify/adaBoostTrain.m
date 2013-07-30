@@ -37,6 +37,7 @@ function model = adaBoostTrain( X0, X1, varargin )
 %   .depth      - [K x nWeak] depth of each node
 %   .errs       - [1 x nWeak] error for each tree (for debugging)
 %   .losses     - [1 x nWeak] loss after every iteration (for debugging)
+%   .treeDepth  - depth of all leaf nodes (or 0 if leaf depth varies)
 %
 % EXAMPLE
 %  % output should be: 'Testing err=0.0145 fp=0.0165 fn=0.0125'
@@ -100,6 +101,8 @@ for i=1:nWeak, T=trees(i); k=size(T.fids,1);
   model.child(1:k,i)=T.child; model.hs(1:k,i)=T.hs;
   model.weights(1:k,i)=T.weights; model.depth(1:k,i)=T.depth;
 end
+depth = max(model.depth(:));
+model.treeDepth = depth * uint32(all(model.depth(~model.child)==depth));
 
 % output info to log
 msg='Done training err=%.4f fp=%.4f fn=%.4f (t=%.1fs).\n';
