@@ -105,7 +105,7 @@ function detector = acfTrain( varargin )
 % See also acfDetect, acfDemoInria, acfModify, acfTest, chnsCompute,
 % chnsPyramid, adaBoostTrain, bbGt, bbNms, jitterImage
 %
-% Piotr's Image&Video Toolbox      Version 3.20
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2013 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -205,7 +205,7 @@ dfs={ 'pTree',{}, 'nWeak',0, 'discrete',1, 'verbose',16 };
 opts.pBoost=getPrmDflt(opts.pBoost,dfs,1);
 dfs={'nBins',256,'maxDepth',2,'minWeight',.01,'fracFtrs',1,'nThreads',inf};
 opts.pBoost.pTree=getPrmDflt(opts.pBoost.pTree,dfs,1);
-opts.pLoad=getPrmDflt(opts.pLoad,{'squarify',{3,1}},1);
+opts.pLoad=getPrmDflt(opts.pLoad,{'squarify',{3,1}},-1);
 opts.pLoad.squarify{2}=opts.modelDs(2)/opts.modelDs(1);
 end
 

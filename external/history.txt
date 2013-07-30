@@ -1,6 +1,7 @@
 Version NEW
  -classify/adaBoost* and binaryTree*: allow control over multi-threading
- -minor: acfTrain.m, toolboxComple.m, acfDetect.m
+ -detector/acf*: various optimization and tweaks
+ -minor: toolboxComple.m
 
 Version 3.20 (25-July-2013)
  * THIS IS A MAJOR RELEASE, FEATURING THE FOLLOWING NEW PACKAGE:
