@@ -11,7 +11,7 @@
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 3.20
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -35,7 +35,7 @@ fs={'channels/convConst.cpp', 'channels/gradientMex.cpp',...
   'classify/fernsInds1.c', 'classify/forestFindThr.cpp',...
   'classify/forestInds.cpp', 'classify/binaryTreeTrain1.cpp',...
   'detector/acfDetect1.cpp' };
-n=length(fs); useOmp=zeros(1,n); useOmp(end-1:end)=1;
+n=length(fs); useOmp=zeros(1,n); useOmp(end-2:end-1)=1;
 
 % compile every funciton in turn (special case for dijkstra)
 disp('Compiling Piotr''s Toolbox.......................');

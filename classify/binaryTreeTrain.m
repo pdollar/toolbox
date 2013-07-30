@@ -38,6 +38,7 @@ function [tree,data,err] = binaryTreeTrain( data, varargin )
 %   .maxDepth   - [1] maximum depth of tree
 %   .minWeight  - [.01] minimum sample weigth to allow split
 %   .fracFtrs   - [1] fraction of features to sample for each node split
+%   .nThreads   - [inf] max number of computational threads to use
 %
 % OUTPUTS
 %  tree       - learned decision tree model struct w the following fields
@@ -54,14 +55,14 @@ function [tree,data,err] = binaryTreeTrain( data, varargin )
 %
 % See also binaryTreeApply, adaBoostTrain, forestTrain
 %
-% Piotr's Image&Video Toolbox      Version 3.20
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % get parameters
-dfs={ 'nBins',256, 'maxDepth',1, 'minWeight',.01, 'fracFtrs',1 };
-[nBins,maxDepth,minWeight,fracFtrs]=getPrmDflt(varargin,dfs,1);
+dfs={'nBins',256,'maxDepth',1,'minWeight',.01,'fracFtrs',1,'nThreads',inf};
+[nBins,maxDepth,minWeight,fracFtrs,nThreads]=getPrmDflt(varargin,dfs,1);
 assert(nBins<=256);
 
 % get data and normalize weights
@@ -101,8 +102,8 @@ while( k < K )
     k=k+1; continue; end
   % train best stump
   fidsSt=1:F; if(fracFtrs<1), fidsSt=randperm(F,floor(F*fracFtrs)); end
-  [errsSt,thrsSt] = binaryTreeTrain1(X0,X1,...
-    single(wts0/w),single(wts1/w),nBins,prior,uint32(fidsSt-1));
+  [errsSt,thrsSt] = binaryTreeTrain1(X0,X1,single(wts0/w),...
+    single(wts1/w),nBins,prior,uint32(fidsSt-1),nThreads);
   [~,fid]=min(errsSt); thr=single(thrsSt(fid))+.5; fid=fidsSt(fid);
   % split data and continue
   left0=X0(:,fid)<thr; left1=X1(:,fid)<thr;

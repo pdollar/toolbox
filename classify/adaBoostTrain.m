@@ -51,7 +51,7 @@ function model = adaBoostTrain( X0, X1, varargin )
 %
 % See also adaBoostApply, binaryTreeTrain, demoGenData
 %
-% Piotr's Image&Video Toolbox      Version 3.20
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -59,6 +59,7 @@ function model = adaBoostTrain( X0, X1, varargin )
 % get additional parameters
 dfs={ 'pTree','REQ', 'nWeak',128, 'discrete',1, 'verbose',0 };
 [pTree,nWeak,discrete,verbose]=getPrmDflt(varargin,dfs,1);
+nThreads=[]; if(isfield(pTree,'nThreads')), nThreads=pTree.nThreads; end
 assert(isa(X0,'single') && isa(X1,'single'));
 
 % main loop
@@ -72,8 +73,8 @@ for i=1:nWeak
   % train tree and classify each example
   [tree,data,err]=binaryTreeTrain(data,pTree);
   if(discrete), tree.hs=(tree.hs>0)*2-1; end
-  h0 = binaryTreeApply(X0,tree);
-  h1 = binaryTreeApply(X1,tree);
+  h0 = binaryTreeApply(X0,tree,[],[],nThreads);
+  h1 = binaryTreeApply(X1,tree,[],[],nThreads);
   % compute alpha and incorporate directly into tree model
   alpha=1; if(discrete), alpha=max(-5,min(5,.5*log((1-err)/err))); end
   if(verbose && alpha<=0), nWeak=i-1; disp(' stopping early'); break; end
