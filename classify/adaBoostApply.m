@@ -5,7 +5,7 @@ function hs = adaBoostApply( X, model, maxDepth, minWeight, nThreads )
 %  hs = adaBoostApply( X, model, [maxDepth], [minWeight], [nThreads] )
 %
 % INPUTS
-%  X          - [NxF] N length F feature vectors (must be type single)
+%  X          - [NxF] N length F feature vectors
 %  model      - learned boosted tree classifier
 %  maxDepth   - [] maximum depth of tree
 %  minWeight  - [] minimum sample weigth to allow split
@@ -23,7 +23,6 @@ function hs = adaBoostApply( X, model, maxDepth, minWeight, nThreads )
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
-assert(isa(X,'single'));
 if(nargin<3 || isempty(maxDepth)), maxDepth=0; end
 if(nargin<4 || isempty(minWeight)), minWeight=0; end
 if(nargin<5 || isempty(nThreads)), nThreads=inf; end

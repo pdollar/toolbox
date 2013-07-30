@@ -61,7 +61,6 @@ function model = adaBoostTrain( X0, X1, varargin )
 dfs={ 'pTree','REQ', 'nWeak',128, 'discrete',1, 'verbose',0 };
 [pTree,nWeak,discrete,verbose]=getPrmDflt(varargin,dfs,1);
 nThreads=[]; if(isfield(pTree,'nThreads')), nThreads=pTree.nThreads; end
-assert(isa(X0,'single') && isa(X1,'single'));
 
 % main loop
 [N0,F]=size(X0); [N1,F1]=size(X1); assert(F==F1);
@@ -93,9 +92,10 @@ end
 
 % create output model struct
 k=0; for i=1:nWeak, k=max(k,size(trees(i).fids,1)); end
-Zu=zeros(k,nWeak,'uint32'); Zs=zeros(k,nWeak,'single');
-model=struct( 'fids',Zu, 'thrs',Zs, 'child',Zu, 'hs',Zs,...
-  'weights',Zs, 'depth',Zu, 'errs',errs, 'losses',losses );
+Z = @(type) zeros(k,nWeak,type);
+model=struct( 'fids',Z('uint32'), 'thrs',Z(data.xType), ...
+  'child',Z('uint32'), 'hs',Z('single'), 'weights',Z('single'), ...
+  'depth',Z('uint32'), 'errs',errs, 'losses',losses );
 for i=1:nWeak, T=trees(i); k=size(T.fids,1);
   model.fids(1:k,i)=T.fids; model.thrs(1:k,i)=T.thrs;
   model.child(1:k,i)=T.child; model.hs(1:k,i)=T.hs;

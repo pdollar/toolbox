@@ -21,7 +21,7 @@ void constructCdf( uint8* data, float *wts, int nBins,
   for(i=1; i<nBins; i++) cdf[i]+=cdf[i-1];
 }
 
-// errs = mexFunction( data0, data1, wts0, wts1,
+// [errs,thrs] = mexFunction( data0, data1, wts0, wts1,
 //  nBins, prior, fids, nThreads, [ord0], [ord1] )
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {

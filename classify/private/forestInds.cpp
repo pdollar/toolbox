@@ -7,10 +7,12 @@
 #include <mex.h>
 #include <omp.h>
 
+typedef unsigned char uint8;
 typedef unsigned int uint32;
 #define min(x,y) ((x) < (y) ? (x) : (y))
 
-void forestInds( uint32 *inds, const float *data, const float *thrs,
+template<typename T>
+void forestInds( uint32 *inds, const T *data, const T *thrs,
   const uint32 *fids, const uint32 *child, int N, int nThreads )
 {
   #pragma omp parallel for num_threads(nThreads)
@@ -25,9 +27,9 @@ void forestInds( uint32 *inds, const float *data, const float *thrs,
 
 // inds=mexFunction(data,thrs,fids,child,[nThreads])
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
-  int N, nThreads; float *data, *thrs; uint32 *inds, *fids, *child;
-  data = (float*) mxGetData(prhs[0]);
-  thrs = (float*) mxGetData(prhs[1]);
+  int N, nThreads; void *data, *thrs; uint32 *inds, *fids, *child;
+  data = mxGetData(prhs[0]);
+  thrs = mxGetData(prhs[1]);
   fids = (uint32*) mxGetData(prhs[2]);
   child = (uint32*) mxGetData(prhs[3]);
   nThreads = (nrhs<5) ? 100000 : (int) mxGetScalar(prhs[4]);
@@ -35,5 +37,13 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   N = (int) mxGetM(prhs[0]);
   plhs[0] = mxCreateNumericMatrix(N,1,mxUINT32_CLASS,mxREAL);
   inds = (uint32*) mxGetPr(plhs[0]);
-  forestInds(inds,data,thrs,fids,child,N,nThreads);
+  if(mxGetClassID(prhs[0])!=mxGetClassID(prhs[1]))
+    mexErrMsgTxt("Mismatch between data types.");
+  if(mxGetClassID(prhs[0])==mxSINGLE_CLASS)
+    forestInds(inds,(float*)data,(float*)thrs,fids,child,N,nThreads);
+  else if(mxGetClassID(prhs[0])==mxDOUBLE_CLASS)
+    forestInds(inds,(double*)data,(double*)thrs,fids,child,N,nThreads);
+  else if(mxGetClassID(prhs[0])==mxUINT8_CLASS)
+    forestInds(inds,(uint8*)data,(uint8*)thrs,fids,child,N,nThreads);
+  else mexErrMsgTxt("Unknown data type.");
 }

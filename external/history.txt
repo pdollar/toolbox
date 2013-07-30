@@ -1,5 +1,5 @@
 Version NEW
- -classify/adaBoost*,binaryTree*: allow control over multi-threading
+ -classify/adaBoost*,binaryTree*: various improvements
  -detector/acf*: various optimization and tweaks
  -detector/acfDemoCal.m: added detector trained on Caltech Peds Dataset
  -minor: toolboxComple.m

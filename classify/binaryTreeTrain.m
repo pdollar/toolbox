@@ -33,6 +33,7 @@ function [tree,data,err] = binaryTreeTrain( data, varargin )
 %   .wts1       - [N1x1] positive weights
 %   .xMin       - [1xF] optional vals defining feature quantization
 %   .xStep      - [1xF] optional vals defining feature quantization
+%   .xType      - [] optional original data type for features
 %  pTree      - additional params (struct or name/value pairs)
 %   .nBins      - [256] maximum number of quanizaton bins (<=256)
 %   .maxDepth   - [1] maximum depth of tree
@@ -66,10 +67,11 @@ dfs={'nBins',256,'maxDepth',1,'minWeight',.01,'fracFtrs',1,'nThreads',inf};
 assert(nBins<=256);
 
 % get data and normalize weights
-dfs={'X0','REQ', 'X1','REQ', 'wts0',[], 'wts1',[], 'xMin',[], 'xStep',[]};
-[X0,X1,wts0,wts1,xMin,xStep]=getPrmDflt(data,dfs,1);
+dfs={ 'X0','REQ', 'X1','REQ', 'wts0',[], 'wts1',[], ...
+  'xMin',[], 'xStep',[], 'xType',[] };
+[X0,X1,wts0,wts1,xMin,xStep,xType]=getPrmDflt(data,dfs,1);
 [N0,F]=size(X0); [N1,F1]=size(X1); assert(F==F1);
-if(isempty(xMin)), xMin=zeros(1,F); xStep=ones(1,F); end
+if(isempty(xType)), xMin=zeros(1,F); xStep=ones(1,F); xType=class(X0); end
 assert(isfloat(wts0)); if(isempty(wts0)), wts0=ones(N0,1)/N0; end
 assert(isfloat(wts1)); if(isempty(wts1)), wts1=ones(N1,1)/N1; end
 w=sum(wts0)+sum(wts1); if(abs(w-1)>1e-3), wts0=wts0/w; wts1=wts1/w; end
@@ -83,11 +85,11 @@ if( ~isa(X0,'uint8') || ~isa(X1,'uint8') )
   X1 = uint8(bsxfun(@times,bsxfun(@minus,X1,xMin),1./xStep));
 end
 data=struct( 'X0',X0, 'X1',X1, 'wts0',wts0, 'wts1',wts1, ...
-  'xMin',xMin, 'xStep',xStep );
+  'xMin',xMin, 'xStep',xStep, 'xType',xType );
 
 % train decision tree classifier
-K=2*(N0+N1);
-thrs=zeros(K,1,'single'); hs=thrs; weights=thrs; errs=thrs;
+K=2*(N0+N1); thrs=zeros(K,1,xType);
+hs=zeros(K,1,'single'); weights=hs; errs=hs;
 fids=zeros(K,1,'uint32'); child=fids; depth=fids;
 wtsAll0=cell(K,1); wtsAll0{1}=wts0;
 wtsAll1=cell(K,1); wtsAll1{1}=wts1; k=1; K=2;
