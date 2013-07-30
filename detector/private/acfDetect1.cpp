@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Piotr's Image&Video Toolbox      Version 3.20
+* Piotr's Image&Video Toolbox      Version NEW
 * Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
 * Please email me if you find bugs, or have suggestions or questions!
 * Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -10,6 +10,14 @@
 using namespace std;
 
 typedef unsigned int uint32;
+
+inline void getChild( float *chns1, uint32 *cids, uint32 *fids,
+  float *thrs, uint32 offset, uint32 &k0, uint32 &k )
+{
+  float ftr = chns1[cids[fids[k]]];
+  k = (ftr<thrs[k]) ? 1 : 2;
+  k0=k+=k0*2; k+=offset;
+}
 
 void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
@@ -27,6 +35,8 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
   float *hs = (float*) mxGetData(mxGetField(trees,0,"hs"));
   uint32 *fids = (uint32*) mxGetData(mxGetField(trees,0,"fids"));
   uint32 *child = (uint32*) mxGetData(mxGetField(trees,0,"child"));
+  const int treeDepth = mxGetField(trees,0,"treeDepth")==NULL ? 0 :
+    (int) mxGetScalar(mxGetField(trees,0,"treeDepth"));
 
   // get dimensions and constants
   const mwSize *chnsSize = mxGetDimensions(prhs[0]);
@@ -51,14 +61,40 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
   vector<int> rs, cs; vector<float> hs1;
   for( int c=0; c<width1; c++ ) for( int r=0; r<height1; r++ ) {
     float h=0, *chns1=chns+(r*stride/shrink) + (c*stride/shrink)*height;
-    for( int t = 0; t < nTrees; t++ ) {
-      uint32 k = t*nTreeNodes;
-      while( child[k] ) {
-        float ftr = chns1[cids[fids[k]]];
-        if(ftr<thrs[k]) k = child[k]-1; else k = child[k];
-        k += t*nTreeNodes;
+    if( treeDepth==1 ) {
+      // specialized case for treeDepth==1
+      for( int t = 0; t < nTrees; t++ ) {
+        uint32 offset=t*nTreeNodes, k=offset, k0=0;
+        getChild(chns1,cids,fids,thrs,offset,k0,k);
+        h += hs[k]; if( h<=cascThr ) break;
       }
-      h += hs[k]; if( h<=cascThr ) break;
+    } else if( treeDepth==2 ) {
+      // specialized case for treeDepth==2
+      for( int t = 0; t < nTrees; t++ ) {
+        uint32 offset=t*nTreeNodes, k=offset, k0=0;
+        getChild(chns1,cids,fids,thrs,offset,k0,k);
+        getChild(chns1,cids,fids,thrs,offset,k0,k);
+        h += hs[k]; if( h<=cascThr ) break;
+      }
+    } else if( treeDepth>2) {
+      // specialized case for treeDepth>2
+      for( int t = 0; t < nTrees; t++ ) {
+        uint32 offset=t*nTreeNodes, k=offset, k0=0;
+        for( int i=0; i<treeDepth; i++ )
+          getChild(chns1,cids,fids,thrs,offset,k0,k);
+        h += hs[k]; if( h<=cascThr ) break;
+      }
+    } else {
+      // general case (variable tree depth)
+      for( int t = 0; t < nTrees; t++ ) {
+        uint32 offset=t*nTreeNodes, k=offset, k0=k;
+        while( child[k] ) {
+          float ftr = chns1[cids[fids[k]]];
+          k = (ftr<thrs[k]) ? 1 : 0;
+          k0 = k = child[k0]-k+offset;
+        }
+        h += hs[k]; if( h<=cascThr ) break;
+      }
     }
     if(h>cascThr) { cs.push_back(c); rs.push_back(r); hs1.push_back(h); }
   }
