@@ -25,7 +25,7 @@ function hs = binaryTreeApply( X, tree, maxDepth, minWeight, nThreads )
 
 if(nargin<3 || isempty(maxDepth)), maxDepth=0; end
 if(nargin<4 || isempty(minWeight)), minWeight=0; end
-if(nargin<5 || isempty(nThreads)), nThreads=inf; end
+if(nargin<5 || isempty(nThreads)), nThreads=1e5; end
 if(maxDepth>0), tree.child(tree.depth>=maxDepth) = 0; end
 if(minWeight>0), tree.child(tree.weights<=minWeight) = 0; end
 hs = tree.hs(forestInds(X,tree.thrs,tree.fids,tree.child,nThreads));

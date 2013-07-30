@@ -62,7 +62,7 @@ function [tree,data,err] = binaryTreeTrain( data, varargin )
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % get parameters
-dfs={'nBins',256,'maxDepth',1,'minWeight',.01,'fracFtrs',1,'nThreads',inf};
+dfs={'nBins',256,'maxDepth',1,'minWeight',.01,'fracFtrs',1,'nThreads',1e5};
 [nBins,maxDepth,minWeight,fracFtrs,nThreads]=getPrmDflt(varargin,dfs,1);
 assert(nBins<=256);
 
