@@ -1,3 +1,9 @@
+Version 3.21 (30-July-2013)
+ -classify/adaBoost*,binaryTree*: various improvements
+ -detector/acf*: various optimization and tweaks
+ -detector/acfDemoCal.m: added detector trained on Caltech Peds Dataset
+ -minor: toolboxComple.m
+
 Version 3.20 (25-July-2013)
  * THIS IS A MAJOR RELEASE, FEATURING THE FOLLOWING NEW PACKAGE:
  *  detector/ - Aggregate Channel Features (ACF) object detection code.

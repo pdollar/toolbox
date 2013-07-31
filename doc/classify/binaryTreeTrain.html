@@ -57,11 +57,13 @@
    .wts1       - [N1x1] positive weights
    .xMin       - [1xF] optional vals defining feature quantization
    .xStep      - [1xF] optional vals defining feature quantization
+   .xType      - [] optional original data type for features
   pTree      - additional params (struct or name/value pairs)
    .nBins      - [256] maximum number of quanizaton bins (&lt;=256)
    .maxDepth   - [1] maximum depth of tree
    .minWeight  - [.01] minimum sample weigth to allow split
    .fracFtrs   - [1] fraction of features to sample for each node split
+   .nThreads   - [inf] max number of computational threads to use
 
  OUTPUTS
   tree       - learned decision tree model struct w the following fields
@@ -76,9 +78,9 @@
 
  EXAMPLE
 
- See also <a href="binaryTreeApply.html" class="code" title="function hs = binaryTreeApply( X, tree, maxDepth, minWeight )">binaryTreeApply</a>, <a href="adaBoostTrain.html" class="code" title="function model = adaBoostTrain( X0, X1, varargin )">adaBoostTrain</a>, <a href="forestTrain.html" class="code" title="function forest = forestTrain( data, hs, varargin )">forestTrain</a>
+ See also <a href="binaryTreeApply.html" class="code" title="function hs = binaryTreeApply( X, tree, maxDepth, minWeight, nThreads )">binaryTreeApply</a>, <a href="adaBoostTrain.html" class="code" title="function model = adaBoostTrain( X0, X1, varargin )">adaBoostTrain</a>, <a href="forestTrain.html" class="code" title="function forest = forestTrain( data, hs, varargin )">forestTrain</a>
 
- Piotr's Image&amp;Video Toolbox      Version 3.20
+ Piotr's Image&amp;Video Toolbox      Version 3.21
  Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>

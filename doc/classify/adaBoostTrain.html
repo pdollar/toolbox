@@ -61,6 +61,7 @@
    .depth      - [K x nWeak] depth of each node
    .errs       - [1 x nWeak] error for each tree (for debugging)
    .losses     - [1 x nWeak] loss after every iteration (for debugging)
+   .treeDepth  - depth of all leaf nodes (or 0 if leaf depth varies)
 
  EXAMPLE
   % output should be: 'Testing err=0.0145 fp=0.0165 fn=0.0125'
@@ -73,9 +74,9 @@
   fn = mean(adaBoostApply( xTst(hTst==2,:), model )&lt;0);
   fprintf('Testing err=%.4f fp=%.4f fn=%.4f\n',(fp+fn)/2,fp,fn);
 
- See also <a href="adaBoostApply.html" class="code" title="function hs = adaBoostApply( X, model, maxDepth, minWeight )">adaBoostApply</a>, <a href="binaryTreeTrain.html" class="code" title="function [tree,data,err] = binaryTreeTrain( data, varargin )">binaryTreeTrain</a>, <a href="demoGenData.html" class="code" title="function [X0,H0,X1,H1] = demoGenData1(n0,n1,k,d,sep,ecc,frc)">demoGenData</a>
+ See also <a href="adaBoostApply.html" class="code" title="function hs = adaBoostApply( X, model, maxDepth, minWeight, nThreads )">adaBoostApply</a>, <a href="binaryTreeTrain.html" class="code" title="function [tree,data,err] = binaryTreeTrain( data, varargin )">binaryTreeTrain</a>, <a href="demoGenData.html" class="code" title="function [X0,H0,X1,H1] = demoGenData1(n0,n1,k,d,sep,ecc,frc)">demoGenData</a>
 
- Piotr's Image&amp;Video Toolbox      Version 3.20
+ Piotr's Image&amp;Video Toolbox      Version 3.21
  Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>
@@ -84,7 +85,7 @@
 <h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 This function calls:
 <ul style="list-style-image:url(../matlabicon.gif)">
-<li><a href="binaryTreeApply.html" class="code" title="function hs = binaryTreeApply( X, tree, maxDepth, minWeight )">binaryTreeApply</a>	Apply learned binary decision tree classifier.</li><li><a href="binaryTreeTrain.html" class="code" title="function [tree,data,err] = binaryTreeTrain( data, varargin )">binaryTreeTrain</a>	Train binary decision tree classifier.</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li></ul>
+<li><a href="binaryTreeApply.html" class="code" title="function hs = binaryTreeApply( X, tree, maxDepth, minWeight, nThreads )">binaryTreeApply</a>	Apply learned binary decision tree classifier.</li><li><a href="binaryTreeTrain.html" class="code" title="function [tree,data,err] = binaryTreeTrain( data, varargin )">binaryTreeTrain</a>	Train binary decision tree classifier.</li><li><a href="../matlab/getPrmDflt.html" class="code" title="function varargout = getPrmDflt( prm, dfs, checkExtra )">getPrmDflt</a>	Helper to set default values (if not already set) of parameter struct.</li></ul>
 This function is called by:
 <ul style="list-style-image:url(../matlabicon.gif)">
 <li><a href="../detector/acfTrain.html" class="code" title="function detector = acfTrain( varargin )">acfTrain</a>	Train aggregate channel features object detector.</li></ul>

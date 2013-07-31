@@ -20,19 +20,20 @@
 <div class="box"><strong>Apply learned binary decision tree classifier.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function hs = binaryTreeApply( X, tree, maxDepth, minWeight ) </strong></div>
+<div class="box"><strong>function hs = binaryTreeApply( X, tree, maxDepth, minWeight, nThreads ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment"> Apply learned binary decision tree classifier.
 
  USAGE
-  hs = binaryTreeApply( X, tree, [maxDepth], [minWeight] )
+  hs = binaryTreeApply( X, tree, [maxDepth], [minWeight], [nThreads] )
 
  INPUTS
-  X          - [NxF] N length F feature vectors (must be type single)
+  X          - [NxF] N length F feature vectors
   tree       - learned tree classification model
   maxDepth   - [] maximum depth of tree
   minWeight  - [] minimum sample weigth to allow split
+  nThreads   - [inf] max number of computational threads to use
 
  OUTPUTS
   hs         - [Nx1] predicted output log ratios
@@ -41,7 +42,7 @@
 
  See also <a href="binaryTreeTrain.html" class="code" title="function [tree,data,err] = binaryTreeTrain( data, varargin )">binaryTreeTrain</a>
 
- Piotr's Image&amp;Video Toolbox      Version 3.20
+ Piotr's Image&amp;Video Toolbox      Version 3.21
  Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>
