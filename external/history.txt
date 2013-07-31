@@ -1,4 +1,4 @@
-Version NEW
+Version 3.21 (30-July-2013)
  -classify/adaBoost*,binaryTree*: various improvements
  -detector/acf*: various optimization and tweaks
  -detector/acfDemoCal.m: added detector trained on Caltech Peds Dataset
