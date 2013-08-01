@@ -1,3 +1,6 @@
+Version NEW
+ -minor: acfTest.m
+
 Version 3.21 (30-July-2013)
  -classify/adaBoost*,binaryTree*: various improvements
  -detector/acf*: various optimization and tweaks

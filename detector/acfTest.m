@@ -10,6 +10,7 @@ function [miss,roc,gt,dt] = acfTest( varargin )
 %   .imgDir   - ['REQ'] dir containing test images
 %   .gtDir    - ['REQ'] dir containing test ground truth
 %   .pLoad    - [] params for bbGt>bbLoad for test data (see bbGt>bbLoad)
+%   .thr      - [.5] threshold on overlap area for comparing two bbs
 %   .ref      - [10.^(-2:.25:0)] reference points (see bbGt>compRoc)
 %   .lims     - [3.1e-3 1e1 .05 1] plot axis limits
 %   .show     - [0] optional figure number for display
@@ -24,15 +25,15 @@ function [miss,roc,gt,dt] = acfTest( varargin )
 %
 % See also acfTrain, acfDetect, acfDemoInria, bbGt
 %
-% Piotr's Image&Video Toolbox      Version 3.20
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2013 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % get parameters
-dfs={ 'name','REQ', 'imgDir','REQ', 'gtDir','REQ', 'pLoad',[], ...
+dfs={ 'name','REQ', 'imgDir','REQ', 'gtDir','REQ', 'pLoad',[], 'thr',.5,...
   'ref',10.^(-2:.25:0), 'lims',[3.1e-3 1e1 .05 1], 'show',0 };
-[name,imgDir,gtDir,pLoad,ref,lims,show] = getPrmDflt(varargin,dfs,1);
+[name,imgDir,gtDir,pLoad,thr,ref,lims,show] = getPrmDflt(varargin,dfs,1);
 
 % run detector on directory of images
 bbsNm=[name 'Dets.txt'];
@@ -45,7 +46,7 @@ end
 
 % run evaluation using bbGt
 [gt,dt] = bbGt('loadAll',gtDir,bbsNm,pLoad);
-[gt,dt] = bbGt('evalRes',gt,dt);
+[gt,dt] = bbGt('evalRes',gt,dt,thr);
 [fp,tp,score,miss] = bbGt('compRoc',gt,dt,1,ref);
 miss=exp(mean(log(1-miss))); roc=[score fp tp];
 
