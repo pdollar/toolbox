@@ -11,6 +11,8 @@ function [miss,roc,gt,dt] = acfTest( varargin )
 %   .gtDir    - ['REQ'] dir containing test ground truth
 %   .pLoad    - [] params for bbGt>bbLoad for test data (see bbGt>bbLoad)
 %   .thr      - [.5] threshold on overlap area for comparing two bbs
+%   .mul      - [0] if true allow multiple matches to each gt
+%   .reapply  - [0] if true re-apply detector even if bbs already computed
 %   .ref      - [10.^(-2:.25:0)] reference points (see bbGt>compRoc)
 %   .lims     - [3.1e-3 1e1 .05 1] plot axis limits
 %   .show     - [0] optional figure number for display
@@ -31,13 +33,16 @@ function [miss,roc,gt,dt] = acfTest( varargin )
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % get parameters
-dfs={ 'name','REQ', 'imgDir','REQ', 'gtDir','REQ', 'pLoad',[], 'thr',.5,...
-  'ref',10.^(-2:.25:0), 'lims',[3.1e-3 1e1 .05 1], 'show',0 };
-[name,imgDir,gtDir,pLoad,thr,ref,lims,show] = getPrmDflt(varargin,dfs,1);
+dfs={ 'name','REQ', 'imgDir','REQ', 'gtDir','REQ', 'pLoad',[], ...
+  'thr',.5,'mul',0, 'reapply',0, 'ref',10.^(-2:.25:0), ...
+  'lims',[3.1e-3 1e1 .05 1], 'show',0 };
+[name,imgDir,gtDir,pLoad,thr,mul,reapply,ref,lims,show] = ...
+  getPrmDflt(varargin,dfs,1);
 
 % run detector on directory of images
 bbsNm=[name 'Dets.txt'];
-if(~exist(bbsNm,'file'))
+if(reapply && exist(bbsNm,'file')), delete(bbsNm); end
+if(reapply || ~exist(bbsNm,'file'))
   detector = load([name 'Detector.mat']);
   detector = detector.detector;
   imgNms = bbGt('getFiles',{imgDir});
@@ -46,9 +51,9 @@ end
 
 % run evaluation using bbGt
 [gt,dt] = bbGt('loadAll',gtDir,bbsNm,pLoad);
-[gt,dt] = bbGt('evalRes',gt,dt,thr);
+[gt,dt] = bbGt('evalRes',gt,dt,thr,mul);
 [fp,tp,score,miss] = bbGt('compRoc',gt,dt,1,ref);
-miss=exp(mean(log(1-miss))); roc=[score fp tp];
+miss=exp(mean(log(max(1e-10,1-miss)))); roc=[score fp tp];
 
 % optionally plot roc
 if( ~show ), return; end
