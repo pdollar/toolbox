@@ -12,7 +12,7 @@
 % Note: pre-trained model files are provided (delete to re-train).
 % Re-training may give slightly variable results on different machines.
 %
-% Piotr's Image&Video Toolbox      Version 3.20
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2013 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -33,7 +33,7 @@ opts=acfTrain(); opts.modelDs=[100 41]; opts.modelDsPad=[128 64];
 opts.posGtDir=[dataDir 'train/posGt']; opts.nWeak=[32 128 512 2048];
 opts.posImgDir=[dataDir 'train/pos']; opts.pJitter=struct('flip',1);
 opts.negImgDir=[dataDir 'train/neg']; opts.pBoost.pTree.fracFtrs=1/16;
-opts.name='models/AcfInria';
+opts.pLoad={'squarify',{3,.41}}; opts.name='models/AcfInria';
 
 %% train detector (see acfTrain)
 detector = acfTrain( opts );
@@ -48,7 +48,7 @@ figure(1); im(I); bbApply('draw',bbs); pause(.1);
 
 %% test detector and plot roc (see acfTest)
 [miss,~,gt,dt]=acfTest('name',opts.name,'imgDir',[dataDir 'test/pos'],...
-  'gtDir',[dataDir 'test/posGt'],'pLoad',{'squarify',{3,.41}},'show',2);
+  'gtDir',[dataDir 'test/posGt'],'pLoad',opts.pLoad,'show',2);
 
 %% optional timing test for detector (should be ~30 fps)
 if( 0 )

@@ -1,5 +1,5 @@
 Version NEW
- -minor: acfTest.m
+ -minor: acfTest, acfTrain, acfDemoInria
 
 Version 3.21 (30-July-2013)
  -classify/adaBoost*,binaryTree*: various improvements
