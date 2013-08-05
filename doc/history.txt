@@ -1,3 +1,6 @@
+Version 3.22 (05-Aug-2013)
+ -detector/acf*: minor fixes and tweaks
+
 Version 3.21 (30-July-2013)
  -classify/adaBoost*,binaryTree*: various improvements
  -detector/acf*: various optimization and tweaks
