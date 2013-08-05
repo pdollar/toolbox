@@ -3,7 +3,7 @@
 % (1) Download data and helper routines from Caltech Peds Website
 %  www.vision.caltech.edu/Image_Datasets/CaltechPedestrians/
 %  (1a) Download Caltech files: set*.tar and annotations.zip
-%  (1b) Copy above files to dataDir/ and untar/unzip contents
+%  (1b) Copy above files to dataDir/data-USA/ and untar/unzip contents
 %  (1c) Download evaluation code (routines necessary for extracting images)
 % (2) Set dataDir/ variable below to point to location of Caltech data.
 % (3) Launch "matlabpool open" for faster training if available.
@@ -12,7 +12,7 @@
 % Note: pre-trained model files are provided (delete to re-train).
 % Re-training may give slightly variable results on different machines.
 %
-% Piotr's Image&Video Toolbox      Version 3.21
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2013 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
