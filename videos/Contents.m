@@ -11,7 +11,10 @@
 %   seqWriterPlugin   - Plugin for seqIo and videoIO to allow writing of seq files.
 %   seqPlayer         - Simple GUI to play seq files.
 %
+% Image and sequence alignment:
+%   imagesAlign       - Fast and robust estimation of homography relating two images.
+%   imagesAlignSeq    - Stabilize image sequence using coarse optical flow estimation.
+%
 % Miscellaneous:
 %   kernelTracker     - Kernel Tracker from Comaniciu, Ramesh and Meer PAMI 2003.
-%   imagesAlign       - Fast and robust estimation of homography relating two images.
 %   opticalFlow       - Coarse-to-fine optical flow using Lucas&Kanade or Horn&Schunck.

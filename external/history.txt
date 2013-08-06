@@ -1,4 +1,5 @@
 Version NEW
+ -imagesAlignSeq.m: stabilize image sequence using coarse optical flow
  -videos/: split images/ directory into images/ and videos/
  -minor: localSum.m, kernelTracker.m, imrectLite.m (removed)
 
