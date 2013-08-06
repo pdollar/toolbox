@@ -59,7 +59,6 @@
 %
 % Miscellaneous:
 %   imMlGauss         - Calculates max likelihood params of Gaussian that gave rise to image G.
-%   imrectLite        - A 'lite' version of imrect [OBSOLETE: use imrectRot].
 %   imRectRot         - Create a draggable, resizable, rotatable rectangle or ellipse.
 %   imwrite2          - Similar to imwrite, except follows a strict naming convention.
 %   kernelTracker     - Kernel Tracker from Comaniciu, Ramesh and Meer PAMI 2003.
