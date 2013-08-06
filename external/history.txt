@@ -1,7 +1,7 @@
 Version NEW
  -imagesAlignSeq.m: stabilize image sequence using coarse optical flow
  -videos/: split images/ directory into images/ and videos/
- -minor: localSum.m, kernelTracker.m, imrectLite.m (removed)
+ -minor: localSum.m, kernelTracker.m, imrectLite.m (removed), rgbConvert.cpp
 
 Version 3.22 (05-Aug-2013)
  -detector/acf*: minor fixes and tweaks

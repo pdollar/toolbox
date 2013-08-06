@@ -1,6 +1,6 @@
 /*******************************************************************************
 * Piotr's Image&Video Toolbox      Version NEW
-* Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
+* Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
 * Please email me if you find bugs, or have suggestions or questions!
 * Licensed under the Simplified BSD License [see external/bsd.txt]
 *******************************************************************************/
@@ -176,7 +176,8 @@ void mexFunction(int nl, mxArray *pl[], int nr, const mxArray *pr[]) {
   if( nr!=3 ) mexErrMsgTxt("Three inputs expected.");
   if( nl>1 ) mexErrMsgTxt("One output expected.");
   dims = (const int*) mxGetDimensions(pr[0]); n=dims[0]*dims[1];
-  nDims = mxGetNumberOfDimensions(pr[0]); d=(nDims==2) ? 1 : dims[2];
+  nDims = mxGetNumberOfDimensions(pr[0]);
+  d = 1; for( int i=2; i<nDims; i++ ) d*=dims[i];
 
   // extract input arguments
   I = mxGetPr(pr[0]);
