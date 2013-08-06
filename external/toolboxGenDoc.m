@@ -17,7 +17,7 @@ function toolboxGenDoc
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 3.20
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -28,11 +28,12 @@ addpath([pwd '/external/m2html']);
 
 % delete temporary files that should not be part of release
 fs={'pngreadc','pngwritec','rjpg8c','wjpg8c'};
-for i=1:length(fs), delete(['images/private/' fs{i} '.*']); end
+for i=1:length(fs), delete(['videos/private/' fs{i} '.*']); end
 
 % delete old doc and run m2html
 if(exist('doc/','dir')), rmdir('doc/','s'); end
-dirs={'channels','classify','detector','images','filters','matlab'};
+dirs={'channels','classify','detector',...
+  'images','filters','matlab','videos'};
 m2html('mfiles',dirs,'htmldir','doc','recursive','on','source','off',...
   'template','frame-piotr','index','menu','global','on');
 

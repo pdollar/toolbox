@@ -1,5 +1,5 @@
 function I = localSum( I, dims, shape, op )
-% Fast routine for box filtering.
+% Fast routine for box, max and min filtering.
 %
 % Same effect as calling 'C=convn( I, ones(dims), shape)', except more
 % efficient. Computes local sums by using running sums. To get sum in

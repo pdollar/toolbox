@@ -47,13 +47,14 @@ function [allRct, allSim, allIc] = kernelTracker( I, prm )
 %  allIc        - [1 x t] cell array of cropped windows containing obj
 %
 % EXAMPLE
+%  disp('Select a rectangular region for tracking');
 %  [allRct,allSim,allIc] = kernelTracker();
 %  figure(2); clf; plot(allRct);
 %  figure(3); clf; montage2(allIc,struct('hasChn',true));
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 2.61
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]

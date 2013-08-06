@@ -1,7 +1,7 @@
 % MATLAB
 % See also
 %
-% Convenient (but no faster) replacement of for loops:
+% Embarrassingly parallel function evaluation:
 %   fevalArrays       - Used to apply the same operation to a stack of array elements.
 %   fevalDistr        - Wrapper for embarrassingly parallel function evaluation.
 %   fevalDistrDisk    - Helper for fevalDistr (do no call directly).
