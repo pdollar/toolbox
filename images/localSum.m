@@ -6,7 +6,7 @@ function I = localSum( I, dims, shape, op )
 % non-overlapping windows, use shape='block'. Equivalent to doing localSum,
 % and then subsampling (except more efficient). If operation op is set to
 % 'max' or 'min', computes local maxes or mins instead of sums. Note, that
-% when applicable convSum and convMax are significantly faster.
+% when applicable convBox and convMax are significantly faster.
 %
 % USAGE
 %  I = localSum( I, dims, [shape], [op] )
@@ -32,9 +32,9 @@ function I = localSum( I, dims, shape, op )
 %  I2=localSum(I,3,'block','max'); figure(3); im(I2); title('max')
 %  I3=localSum(I,3,'block','min'); figure(4); im(I3); title('min')
 %
-% See also convSum, convMax, imShrink
+% See also convBox, convMax, imShrink
 %
-% Piotr's Image&Video Toolbox      Version 3.00
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]

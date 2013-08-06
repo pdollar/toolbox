@@ -1,3 +1,6 @@
+Version NEW
+ -minor: localSum.m
+
 Version 3.22 (05-Aug-2013)
  -detector/acf*: minor fixes and tweaks
 
