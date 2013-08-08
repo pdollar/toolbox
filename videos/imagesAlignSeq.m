@@ -16,8 +16,8 @@ function [J,Vxs,Vys] = imagesAlignSeq( I, pFlow, type, bndThr )
 % which is slightly more accurate but slower. Finally, all images in I are
 % warped to the last frame of the sequence using the accumulated flows. If
 % type==-1, a homography computed via imagesAlign.m with params pFlow is
-% used instead. If videos have black boundaries use bndThr to automatically
-% crop the dark boundaries (with average pixel values under bndThr).
+% used instead. If videos have black boundaries use bndThr to ignore dark
+% boundaries for flow estimation (with average pixel values under bndThr).
 %
 % USAGE
 %  [J,Vxs,Vys] = imagesAlignSeq( I, pFlow, [type], [bndThr] )
@@ -54,6 +54,7 @@ if(nargin<4 || isempty(bndThr)), bndThr=0; end
 [h,w,k,n]=size(I); if(n>1), assert(k==3); else n=k; k=1; end
 for t=1:k*n, if(bndThr<=0), break; end; It=I(:,:,t);
   xs=find(sum(It,1)>h*bndThr); ys=find(sum(It,2)>w*bndThr);
+  if(isempty(xs)||isempty(ys)), error('bndThr set too high'); end
   pad=[ys(1)-1 h-ys(end) xs(1)-1 w-xs(end)];
   I(:,:,t)=imPad(imPad(It,-pad,0),pad,'replicate');
 end
