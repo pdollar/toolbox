@@ -39,6 +39,16 @@ function [J,Vxs,Vys] = imagesAlignSeq( I, pFlow, type, bndThr )
 %  tic, J = imagesAlignSeq( I, pFlow, 1, 20 ); toc
 %  playMovie([I J],15,-10,struct('hasChn',1))
 %
+% EXAMPLE
+%  % Requires Caltech Pedestrian Dataset to be installed
+%  [pth,ss,vs]=dbInfo; s=randi(length(ss)); v=randi(length(vs{s}));
+%  nm=sprintf('%s/videos/set%02i/V%03i.seq',pth,ss(s),vs{s}(v));
+%  f=seqIo(nm,'getinfo'); f=f.numFrames; f=randi(f-30);
+%  I=seqIo(nm,'toImgs',[],1,f,f+9);
+%  pFlow={'smooth',1,'radius',25,'type','LK','resample',1};
+%  tic, J = imagesAlignSeq( I, pFlow, 1, 20 ); toc
+%  playMovie([I J],15,-10,struct('hasChn',1))
+%
 % See also opticalFlow, imtransform2, imagesAlign
 %
 % Piotr's Image&Video Toolbox      Version NEW
@@ -52,11 +62,12 @@ if(nargin<4 || isempty(bndThr)), bndThr=0; end
 
 % fill in black areas around image boundaries
 [h,w,k,n]=size(I); if(n>1), assert(k==3); else n=k; k=1; end
-for t=1:k*n, if(bndThr<=0), break; end; It=I(:,:,t);
-  xs=find(sum(It,1)>h*bndThr); ys=find(sum(It,2)>w*bndThr);
+for t=1:n, if(bndThr<=0), break; end; is=(1:k)+(t*k-k);
+  xs=find(sum(sum(I(:,:,is),1),3)>k*h*bndThr);
+  ys=find(sum(sum(I(:,:,is),2),3)>k*w*bndThr);
   if(isempty(xs)||isempty(ys)), error('bndThr set too high'); end
   pad=[ys(1)-1 h-ys(end) xs(1)-1 w-xs(end)];
-  I(:,:,t)=imPad(imPad(It,-pad,0),pad,'replicate');
+  I(:,:,is)=imPad(imPad(I(:,:,is),-pad,0),pad,'replicate');
 end
 if(k==1), G=I; else G=rgbConvert(I,'gray'); end; J=I;
 
