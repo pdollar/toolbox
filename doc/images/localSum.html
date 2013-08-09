@@ -4,7 +4,7 @@
 <head>
   <title>Description of localSum</title>
   <meta name="keywords" content="localSum">
-  <meta name="description" content="Fast routine for box filtering.">
+  <meta name="description" content="Fast routine for box, max and min filtering.">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -17,20 +17,20 @@
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>Fast routine for box filtering.</strong></div>
+<div class="box"><strong>Fast routine for box, max and min filtering.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="box"><strong>function I = localSum( I, dims, shape, op ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> Fast routine for box filtering.
+<div class="fragment"><pre class="comment"> Fast routine for box, max and min filtering.
 
  Same effect as calling 'C=convn( I, ones(dims), shape)', except more
  efficient. Computes local sums by using running sums. To get sum in
  non-overlapping windows, use shape='block'. Equivalent to doing localSum,
  and then subsampling (except more efficient). If operation op is set to
  'max' or 'min', computes local maxes or mins instead of sums. Note, that
- when applicable convSum and convMax are significantly faster.
+ when applicable convBox and convMax are significantly faster.
 
  USAGE
   I = localSum( I, dims, [shape], [op] )
@@ -56,10 +56,10 @@
   I2=localSum(I,3,'block','max'); figure(3); im(I2); title('max')
   I3=localSum(I,3,'block','min'); figure(4); im(I3); title('min')
 
- See also convSum, convMax, <a href="imShrink.html" class="code" title="function I = imShrink( I, ratios )">imShrink</a>
+ See also convBox, convMax, <a href="imShrink.html" class="code" title="function I = imShrink( I, ratios )">imShrink</a>
 
- Piotr's Image&amp;Video Toolbox      Version 3.00
- Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 3.22
+ Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>
 
