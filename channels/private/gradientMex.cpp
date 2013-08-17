@@ -43,24 +43,22 @@ void grad2( float *I, float *Gx, float *Gy, int h, int w, int d ) {
   }
 }
 
-// build lookup table a[] s.t. a[dx/2.02*n]~=acos(dx)
+// build lookup table a[] s.t. a[x*n]~=acos(x) for x in [-1,1]
 float* acosTable() {
-  int i, n=25000, n2=n/2; float t, ni;
-  static float a[25000]; static bool init=false;
-  if( init ) return a+n2; ni = 2.02f/(float) n;
-  for( i=0; i<n; i++ ) {
-    t = i*ni - 1.01f;
-    t = t<-1 ? -1 : (t>1 ? 1 : t);
-    t = (float) acos( t );
-    a[i] = (t <= PI-1e-5f) ? t : 0;
-  }
-  init=true; return a+n2;
+  const int n=10000, b=10; int i; float ni;
+  static float a[n*2+b*2]; static bool init=false;
+  float *a1=a+n+b; if( init ) return a1;
+  for( i=-n-b; i<-n; i++ )   a1[i]=PI;
+  for( i=-n; i<n; i++ )      a1[i]=(float) acos(i*(1.0f/float(n)));
+  for( i=n; i<n+b; i++ )     a1[i]=0;
+  for( i=-n-b; i<n/10; i++ ) a1[i] = (a1[i] <= PI-1e-5f) ? a1[i]: 0;
+  init=true; return a1;
 }
 
 // compute gradient magnitude and orientation at each location (uses sse)
 void gradMag( float *I, float *M, float *O, int h, int w, int d ) {
   int x, y, y1, c, h4, s; float *Gx, *Gy, *M2; __m128 *_Gx, *_Gy, *_M2, _m;
-  float *acost = acosTable(), acMult=25000/2.02f;
+  float *acost = acosTable(), acMult=10000.0f;
   // allocate memory for storing one column of output (padded so h4%4==0)
   h4=(h%4==0) ? h : h-(h%4)+4; s=d*h4*sizeof(float);
   M2=(float*) alMalloc(s,16); _M2=(__m128*) M2;
