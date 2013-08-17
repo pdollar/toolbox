@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Piotr's Image&Video Toolbox      Version 3.00
+* Piotr's Image&Video Toolbox      Version NEW
 * Copyright 2012 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
 * Please email me if you find bugs, or have suggestions or questions!
 * Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -117,7 +117,8 @@ void gradQuantize( float *O, float *M, int *O0, int *O1, float *M0, float *M1,
   // perform the majority of the work with sse
   _O0=(__m128i*) O0; _O1=(__m128i*) O1; _M0=(__m128*) M0; _M1=(__m128*) M1;
   for( i=0; i<=n-4; i+=4 ) {
-    _o=MUL(LDu(O[i]),_oMult); _o0f=CVT(CVT(_o)); _o0=CVT(MUL(_o0f,_nbf));
+    _o=MUL(LDu(O[i]),_oMult); _o0f=CVT(CVT(_o));
+    _o0=CVT(MUL(_o0f,_nbf)); _o0=AND(CMPGT(_oMax,_o0),_o0);
     _o1=ADD(_o0,_nb); _o1=AND(CMPGT(_oMax,_o1),_o1);
     *_O0++=_o0; *_O1++=_o1; _m=MUL(LDu(M[i]),_norm);
     *_M1=MUL(SUB(_o,_o0f),_m); *_M0=SUB(_m,*_M1); _M0++; _M1++;
@@ -125,7 +126,7 @@ void gradQuantize( float *O, float *M, int *O0, int *O1, float *M0, float *M1,
   // compute trailing locations without sse
   for( i; i<n; i++ ) {
     o=O[i]*oMult; m=M[i]*norm; o0=(int) o; od=o-o0;
-    o0*=nb; o1=o0+nb; if(o1==oMax) o1=0;
+    o0*=nb; if(o0>=oMax) o0=0; o1=o0+nb; if(o1==oMax) o1=0;
     O0[i]=o0; O1[i]=o1; M1[i]=od*m; M0[i]=m-M1[i];
   }
 }

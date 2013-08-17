@@ -1,3 +1,6 @@
+Version NEW
+ -minor: gradientMex.cpp
+
 Version 3.22 (08-Aug-2013)
  -imagesAlignSeq.m: stabilize image sequence using coarse optical flow
  -videos/: split images/ directory into images/ and videos/
