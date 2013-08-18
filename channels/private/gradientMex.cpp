@@ -9,7 +9,7 @@
 #include "string.h"
 #include "sse.hpp"
 
-#define PI 3.1415926535897931f
+#define PI 3.14159265f
 
 // compute x and y gradients for just one column (uses sse)
 void grad1( float *I, float *Gx, float *Gy, int h, int w, int x ) {
@@ -45,19 +45,19 @@ void grad2( float *I, float *Gx, float *Gy, int h, int w, int d ) {
 
 // build lookup table a[] s.t. a[x*n]~=acos(x) for x in [-1,1]
 float* acosTable() {
-  const int n=10000, b=10; int i; float ni;
+  const int n=10000, b=10; int i;
   static float a[n*2+b*2]; static bool init=false;
   float *a1=a+n+b; if( init ) return a1;
   for( i=-n-b; i<-n; i++ )   a1[i]=PI;
-  for( i=-n; i<n; i++ )      a1[i]=(float) acos(i*(1.0f/float(n)));
+  for( i=-n; i<n; i++ )      a1[i]=float(acos(i/float(n)));
   for( i=n; i<n+b; i++ )     a1[i]=0;
-  for( i=-n-b; i<n/10; i++ ) a1[i] = (a1[i] <= PI-1e-5f) ? a1[i]: 0;
+  for( i=-n-b; i<n/10; i++ ) if( a1[i] > PI-1e-6f ) a1[i]=PI-1e-6f;
   init=true; return a1;
 }
 
 // compute gradient magnitude and orientation at each location (uses sse)
-void gradMag( float *I, float *M, float *O, int h, int w, int d ) {
-  int x, y, y1, c, h4, s; float *Gx, *Gy, *M2; __m128 *_Gx, *_Gy, *_M2, _m;
+void gradMag( float *I, float *M, float *O, int h, int w, int d, int full ) {
+  int x, y, y1, c, h4, s; float *Gx, *Gy, *M2; __m128 *_O, *_Gx, *_Gy, *_M2, _m;
   float *acost = acosTable(), acMult=10000.0f;
   // allocate memory for storing one column of output (padded so h4%4==0)
   h4=(h%4==0) ? h : h-(h%4)+4; s=d*h4*sizeof(float);
@@ -85,9 +85,11 @@ void gradMag( float *I, float *M, float *O, int h, int w, int d ) {
       _Gx[y] = MUL( MUL(_Gx[y],_m), SET(acMult) );
       _Gx[y] = XOR( _Gx[y], AND(_Gy[y], SET(-0.f)) );
     };
-    memcpy( M+x*h, M2, h*sizeof(float) );
+    memcpy( M+x*h, M2, h*sizeof(float) ); _O=(__m128*) (O+x*h);
     // compute and store gradient orientation (O) via table lookup
-    if(O!=0) for( y=0; y<h; y++ ) O[x*h+y] = acost[(int)Gx[y]];
+    if( O!=0 ) for( y=0; y<h; y++ ) O[x*h+y] = acost[(int)Gx[y]];
+    if( O!=0 && full) for( y=0; y<h4/4; y++ )
+      _O[y] = ADD( _O[y], AND( CMPLT(_Gy[y],SET(0.f)), SET(PI)) );
   }
   alFree(Gx); alFree(Gy); alFree(M2);
 }
@@ -254,16 +256,16 @@ void mGrad2( int nl, mxArray *pl[], int nr, const mxArray *pr[] ) {
   grad2( I, Gx, Gy, h, w, d );
 }
 
-// [M,O] = gradMag( I, [channel] ) - see gradientMag.m
+// [M,O] = gradMag( I, channel, full ) - see gradientMag.m
 void mGradMag( int nl, mxArray *pl[], int nr, const mxArray *pr[] ) {
-  int h, w, d, c; float *I, *M, *O=0;
-  checkArgs(nl,pl,nr,pr,1,2,1,2,&h,&w,&d,mxSINGLE_CLASS,(void**)&I);
+  int h, w, d, c, full; float *I, *M, *O=0;
+  checkArgs(nl,pl,nr,pr,1,2,3,3,&h,&w,&d,mxSINGLE_CLASS,(void**)&I);
   if(h<2 || w<2) mexErrMsgTxt("I must be at least 2x2.");
-  c = (nr>=2) ? (int) mxGetScalar(pr[1]) : 0;
+  c = (int) mxGetScalar(pr[1]); full = (int) mxGetScalar(pr[2]);
   if( c>0 && c<=d ) { I += h*w*(c-1); d=1; }
   pl[0] = mxCreateMatrix3(h,w,1,mxSINGLE_CLASS,0,(void**)&M);
   if(nl>=2) pl[1] = mxCreateMatrix3(h,w,1,mxSINGLE_CLASS,0,(void**)&O);
-  gradMag(I, M, O, h, w, d );
+  gradMag(I, M, O, h, w, d, full );
 }
 
 // gradMagNorm( M, S, norm ) - operates on M - see gradientMag.m
