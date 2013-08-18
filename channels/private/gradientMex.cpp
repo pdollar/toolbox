@@ -66,13 +66,13 @@ void gradMag( float *I, float *M, float *O, int h, int w, int d, int full ) {
   Gy=(float*) alMalloc(s,16); _Gy=(__m128*) Gy;
   // compute gradient magnitude and orientation for each column
   for( x=0; x<w; x++ ) {
-    // compute gradients (Gx, Gy) and squared magnitude (M2) for each channel
-    for( c=0; c<d; c++ ) grad1( I+x*h+c*w*h, Gx+c*h4, Gy+c*h4, h, w, x );
-    for( y=0; y<d*h4/4; y++ ) _M2[y]=ADD(MUL(_Gx[y],_Gx[y]),MUL(_Gy[y],_Gy[y]));
-    // store gradients with maximum response in the first channel
-    for(c=1; c<d; c++) {
+    // compute gradients (Gx, Gy) with maximum squared magnitude (M2)
+    for(c=0; c<d; c++) {
+      grad1( I+x*h+c*w*h, Gx+c*h4, Gy+c*h4, h, w, x );
       for( y=0; y<h4/4; y++ ) {
-        y1=h4/4*c+y; _m = CMPGT( _M2[y1], _M2[y] );
+        y1=h4/4*c+y;
+        _M2[y1]=ADD(MUL(_Gx[y1],_Gx[y1]),MUL(_Gy[y1],_Gy[y1]));
+        if( c==0 ) continue; _m = CMPGT( _M2[y1], _M2[y] );
         _M2[y] = OR( AND(_m,_M2[y1]), ANDNOT(_m,_M2[y]) );
         _Gx[y] = OR( AND(_m,_Gx[y1]), ANDNOT(_m,_Gx[y]) );
         _Gy[y] = OR( AND(_m,_Gy[y1]), ANDNOT(_m,_Gy[y]) );
@@ -82,8 +82,8 @@ void gradMag( float *I, float *M, float *O, int h, int w, int d, int full ) {
     for( y=0; y<h4/4; y++ ) {
       _m = MIN( RCPSQRT(_M2[y]), SET(1e10f) );
       _M2[y] = RCP(_m);
-      _Gx[y] = MUL( MUL(_Gx[y],_m), SET(acMult) );
-      _Gx[y] = XOR( _Gx[y], AND(_Gy[y], SET(-0.f)) );
+      if(O) _Gx[y] = MUL( MUL(_Gx[y],_m), SET(acMult) );
+      if(O) _Gx[y] = XOR( _Gx[y], AND(_Gy[y], SET(-0.f)) );
     };
     memcpy( M+x*h, M2, h*sizeof(float) ); _O=(__m128*) (O+x*h);
     // compute and store gradient orientation (O) via table lookup
