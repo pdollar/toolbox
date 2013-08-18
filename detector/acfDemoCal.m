@@ -12,7 +12,7 @@
 % Note: pre-trained model files are provided (delete to re-train).
 % Re-training may give slightly variable results on different machines.
 %
-% Piotr's Image&Video Toolbox      Version 3.22
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2013 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -30,7 +30,7 @@ opts=acfTrain(); opts.modelDs=[50 20.5]; opts.modelDsPad=[64 32];
 opts.pPyramid.smooth=.5; opts.pPyramid.pChns.pColor.smooth=0;
 opts.posGtDir=[dataDir 'train/annotations']; opts.nWeak=[32 128 512 2048];
 opts.posImgDir=[dataDir 'train/images']; opts.pJitter=struct('flip',1);
-opts.pBoost.pTree.fracFtrs=1/8; opts.name='models/AcfCaltech';
+opts.pBoost.pTree.fracFtrs=1/16; opts.name='models/AcfCaltech';
 pLoad={'lbls',{'person'},'ilbls',{'people'},'squarify',{3,.41}};
 opts.pLoad = [pLoad 'hRng',[50 inf], 'vRng',[1 1] ];
 
