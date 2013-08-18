@@ -1,6 +1,6 @@
 /*******************************************************************************
 * Piotr's Image&Video Toolbox      Version NEW
-* Copyright 2012 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
+* Copyright 2013 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
 * Please email me if you find bugs, or have suggestions or questions!
 * Licensed under the Simplified BSD License [see external/bsd.txt]
 *******************************************************************************/
@@ -56,7 +56,7 @@ float* acosTable() {
 }
 
 // compute gradient magnitude and orientation at each location (uses sse)
-void gradMag( float *I, float *M, float *O, int h, int w, int d, int full ) {
+void gradMag( float *I, float *M, float *O, int h, int w, int d, bool full ) {
   int x, y, y1, c, h4, s; float *Gx, *Gy, *M2; __m128 *_O, *_Gx, *_Gy, *_M2, _m;
   float *acost = acosTable(), acMult=10000.0f;
   // allocate memory for storing one column of output (padded so h4%4==0)
@@ -105,13 +105,13 @@ void gradMagNorm( float *M, float *S, int h, int w, float norm ) {
 
 // helper for gradHist, quantize O and M into O0, O1 and M0, M1 (uses sse)
 void gradQuantize( float *O, float *M, int *O0, int *O1, float *M0, float *M1,
-  int nOrients, int nb, int n, float norm )
+  int nOrients, int nb, int n, float norm, bool full )
 {
   // assumes all *OUTPUT* matrices are 4-byte aligned
   int i, o0, o1; float o, od, m;
   __m128i _o0, _o1, *_O0, *_O1; __m128 _o, _o0f, _m, *_M0, *_M1;
   // define useful constants
-  const float oMult=(float)nOrients/PI; const int oMax=nOrients*nb;
+  const float oMult=(float)nOrients/(full?2*PI:PI); const int oMax=nOrients*nb;
   const __m128 _norm=SET(norm), _oMult=SET(oMult), _nbf=SET((float)nb);
   const __m128i _oMax=SET(oMax), _nb=SET(nb);
   // perform the majority of the work with sse
@@ -133,7 +133,7 @@ void gradQuantize( float *O, float *M, int *O0, int *O1, float *M0, float *M1,
 
 // compute nOrients gradient histograms per bin x bin block of pixels
 void gradHist( float *M, float *O, float *H, int h, int w,
-  int bin, int nOrients, bool softBin )
+  int bin, int nOrients, bool softBin, bool full )
 {
   const int hb=h/bin, wb=w/bin, h0=hb*bin, w0=wb*bin, nb=wb*hb;
   const float s=(float)bin, sInv=1/s, sInv2=1/s/s;
@@ -143,7 +143,7 @@ void gradHist( float *M, float *O, float *H, int h, int w,
   // main loop
   for( x=0; x<w0; x++ ) {
     // compute target orientation bins for entire column - very fast
-    gradQuantize( O+x*h, M+x*h, O0, O1, M0, M1, nOrients, nb, h0, sInv2 );
+    gradQuantize( O+x*h, M+x*h, O0, O1, M0, M1, nOrients, nb, h0, sInv2, full );
 
     if( !softBin || bin==1 ) {
       // interpolate w.r.t. orientation only, not spatial bin
@@ -265,7 +265,7 @@ void mGradMag( int nl, mxArray *pl[], int nr, const mxArray *pr[] ) {
   if( c>0 && c<=d ) { I += h*w*(c-1); d=1; }
   pl[0] = mxCreateMatrix3(h,w,1,mxSINGLE_CLASS,0,(void**)&M);
   if(nl>=2) pl[1] = mxCreateMatrix3(h,w,1,mxSINGLE_CLASS,0,(void**)&O);
-  gradMag(I, M, O, h, w, d, full );
+  gradMag(I, M, O, h, w, d, full>0 );
 }
 
 // gradMagNorm( M, S, norm ) - operates on M - see gradientMag.m
@@ -278,28 +278,29 @@ void mGradMagNorm( int nl, mxArray *pl[], int nr, const mxArray *pr[] ) {
   gradMagNorm(M,S,h,w,norm);
 }
 
-// H=gradHist(M,O,[bin],[nOrients],[softBin],[useHog],[clip])-see gradientHist.m
+// H=gradHist(M,O,[...]) - see gradientHist.m
 void mGradHist( int nl, mxArray *pl[], int nr, const mxArray *pr[] ) {
-  int h, w, d, hb, wb, bin, nOrients; bool softBin, useHog;
-  float *M, *O, *H, *G, clip;
-  checkArgs(nl,pl,nr,pr,1,3,2,7,&h,&w,&d,mxSINGLE_CLASS,(void**)&M);
+  int h, w, d, hb, wb, binSize, nOrients; bool softBin, useHog, full;
+  float *M, *O, *H, *G, clipHog;
+  checkArgs(nl,pl,nr,pr,1,3,2,8,&h,&w,&d,mxSINGLE_CLASS,(void**)&M);
   O = (float*) mxGetPr(pr[1]);
   if( mxGetM(pr[1])!=h || mxGetN(pr[1])!=w || d!=1 ||
     mxGetClassID(pr[1])!=mxSINGLE_CLASS ) mexErrMsgTxt("M or O is bad.");
-  bin      = (nr>=3) ? (int)   mxGetScalar(pr[2])    : 8;
+  binSize  = (nr>=3) ? (int)   mxGetScalar(pr[2])    : 8;
   nOrients = (nr>=4) ? (int)   mxGetScalar(pr[3])    : 9;
   softBin  = (nr>=5) ? (bool) (mxGetScalar(pr[4])>0) : true;
   useHog   = (nr>=6) ? (bool) (mxGetScalar(pr[5])>0) : false;
-  clip     = (nr>=7) ? (float) mxGetScalar(pr[6])    : 0.2f;
-  hb=h/bin; wb=w/bin;
+  clipHog  = (nr>=7) ? (float) mxGetScalar(pr[6])    : 0.2f;
+  full     = (nr>=8) ? (bool) (mxGetScalar(pr[7])>0) : false;
+  hb=h/binSize; wb=w/binSize;
   if( useHog==false ) {
     pl[0] = mxCreateMatrix3(hb,wb,nOrients,mxSINGLE_CLASS,1,(void**)&H);
-    gradHist( M, O, H, h, w, bin, nOrients, softBin );
+    gradHist( M, O, H, h, w, binSize, nOrients, softBin, full );
   } else {
     pl[0] = mxCreateMatrix3(hb,wb,nOrients*4,mxSINGLE_CLASS,1,(void**)&G);
     H = (float*) mxCalloc(wb*hb*nOrients,sizeof(float));
-    gradHist( M, O, H, h, w, bin, nOrients, softBin );
-    hog( H, G, h, w, bin, nOrients, clip ); mxFree(H);
+    gradHist( M, O, H, h, w, binSize, nOrients, softBin, full );
+    hog( H, G, h, w, binSize, nOrients, clipHog ); mxFree(H);
   }
 }
 

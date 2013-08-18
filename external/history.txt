@@ -1,6 +1,7 @@
 Version NEW
  -gradientMag.m: added support for computing orientation in [0,2pi)
- -gradientHist.m: made robust to angles outside of range [0,pi)
+ -gradientHist.m/chnsCompute.m: added contrast sensitive orientation histograms
+ -gradientHist.m: made robust to angles slightly outside of expected range
 
 Version 3.22 (08-Aug-2013)
  -imagesAlignSeq.m: stabilize image sequence using coarse optical flow

@@ -44,16 +44,17 @@ function H = gradientHist( M, O, varargin )
 % processors support SSE2). Please see: http://en.wikipedia.org/wiki/SSE2.
 %
 % USAGE
-%  H = gradientHist( M,O,[binSize],[nOrients],[softBin],[useHog],[clip] )
+%  H = gradientHist( M, O, [binSize,nOrients,softBin,useHog,clipHog,full] )
 %
 % INPUTS
 %  M        - [hxw] gradient magnitude at each location (see gradientMag.m)
-%  O        - [hxw] gradient orientation in [0,pi)
+%  O        - [hxw] gradient orientation in range defined by param flag
 %  binSize  - [8] spatial bin size
 %  nOrients - [9] number of orientation bins
 %  softBin  - [true] if true use "soft" bilinear spatial binning
 %  useHog   - [false] if true perform 4-way hog normalization/clipping
 %  clipHog  - [.2] value at which to clip hog histogram bins
+%  full     - [false] if true expects angles in [0,2*pi) else in [0,pi)
 %
 % OUTPUTS
 %  H        - [w/binSize x h/binSize x nOrients] gradient histograms
@@ -65,8 +66,8 @@ function H = gradientHist( M, O, varargin )
 %
 % See also gradientMag, gradient2, hog
 %
-% Piotr's Image&Video Toolbox      Version 3.00
-% Copyright 2012 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
+% Piotr's Image&Video Toolbox      Version NEW
+% Copyright 2013 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 

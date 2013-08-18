@@ -21,7 +21,7 @@ function [M,O] = gradientMag( I, channel, normRad, normConst, full )
 %  channel    - [0] if>0 color channel to use for gradient computation
 %  normRad    - [0] normalization radius (no normalization if 0)
 %  normConst  - [.005] normalization constant
-%  full       - [0] if true compute angle in [0,2*pi) else in [0,pi)
+%  full       - [0] if true compute angles in [0,2*pi) else in [0,pi)
 %
 % OUTPUTS
 %  M          - [hxw] gradient magnitude at each location
@@ -29,15 +29,15 @@ function [M,O] = gradientMag( I, channel, normRad, normConst, full )
 %
 % EXAMPLE
 %  I=rgbConvert(imread('peppers.png'),'gray');
-%  tic, [Gx,Gy]=gradient2(I); M=sqrt(Gx.^2+Gy.^2); O=atan2(Gy,Gx); toc
-%  tic, full=0; [M1,O1]=gradientMag(I,0,0,0,full); toc
+%  [Gx,Gy]=gradient2(I); M=sqrt(Gx.^2+Gy.^2); O=atan2(Gy,Gx);
+%  full=0; [M1,O1]=gradientMag(I,0,0,0,full);
 %  D=abs(M-M1); mean2(D), if(full), o=pi*2; else o=pi; end
 %  D=abs(O-O1); D(~M)=0; D(D>o*.99)=o-D(D>o*.99); mean2(abs(D))
 %
 % See also gradient, gradient2, gradientHist, convTri
 %
 % Piotr's Image&Video Toolbox      Version NEW
-% Copyright 2012 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
+% Copyright 2013 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
