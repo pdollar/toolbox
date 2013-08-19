@@ -105,11 +105,11 @@ void gradMagNorm( float *M, float *S, int h, int w, float norm ) {
 
 // helper for gradHist, quantize O and M into O0, O1 and M0, M1 (uses sse)
 void gradQuantize( float *O, float *M, int *O0, int *O1, float *M0, float *M1,
-  int nOrients, int nb, int n, float norm, bool full )
+  int nb, int n, float norm, int nOrients, bool full )
 {
   // assumes all *OUTPUT* matrices are 4-byte aligned
   int i, o0, o1; float o, od, m;
-  __m128i _o0, _o1, *_O0, *_O1; __m128 _o, _o0f, _m, *_M0, *_M1;
+  __m128i _o0, _o1, *_O0, *_O1; __m128 _o, _od, _m, *_M0, *_M1;
   // define useful constants
   const float oMult=(float)nOrients/(full?2*PI:PI); const int oMax=nOrients*nb;
   const __m128 _norm=SET(norm), _oMult=SET(oMult), _nbf=SET((float)nb);
@@ -117,17 +117,17 @@ void gradQuantize( float *O, float *M, int *O0, int *O1, float *M0, float *M1,
   // perform the majority of the work with sse
   _O0=(__m128i*) O0; _O1=(__m128i*) O1; _M0=(__m128*) M0; _M1=(__m128*) M1;
   for( i=0; i<=n-4; i+=4 ) {
-    _o=MUL(LDu(O[i]),_oMult); _o0f=CVT(CVT(_o));
-    _o0=CVT(MUL(_o0f,_nbf)); _o0=AND(CMPGT(_oMax,_o0),_o0);
-    _o1=ADD(_o0,_nb); _o1=AND(CMPGT(_oMax,_o1),_o1);
-    *_O0++=_o0; *_O1++=_o1; _m=MUL(LDu(M[i]),_norm);
-    *_M1=MUL(SUB(_o,_o0f),_m); *_M0=SUB(_m,*_M1); _M0++; _M1++;
+    _o=MUL(LDu(O[i]),_oMult); _o0=CVT(_o); _od=SUB(_o,CVT(_o0));
+    _o0=CVT(MUL(CVT(_o0),_nbf)); _o0=AND(CMPGT(_oMax,_o0),_o0); *_O0++=_o0;
+    _o1=ADD(_o0,_nb); _o1=AND(CMPGT(_oMax,_o1),_o1); *_O1++=_o1;
+    _m=MUL(LDu(M[i]),_norm); *_M1=MUL(_od,_m); *_M0++=SUB(_m,*_M1); _M1++;
   }
   // compute trailing locations without sse
   for( i; i<n; i++ ) {
-    o=O[i]*oMult; m=M[i]*norm; o0=(int) o; od=o-o0;
-    o0*=nb; if(o0>=oMax) o0=0; o1=o0+nb; if(o1==oMax) o1=0;
-    O0[i]=o0; O1[i]=o1; M1[i]=od*m; M0[i]=m-M1[i];
+    o=O[i]*oMult; o0=(int) o; od=o-o0;
+    o0*=nb; if(o0>=oMax) o0=0; O0[i]=o0;
+    o1=o0+nb; if(o1==oMax) o1=0; O1[i]=o1;
+    m=M[i]*norm; M1[i]=od*m; M0[i]=m-M1[i];
   }
 }
 
@@ -143,7 +143,7 @@ void gradHist( float *M, float *O, float *H, int h, int w,
   // main loop
   for( x=0; x<w0; x++ ) {
     // compute target orientation bins for entire column - very fast
-    gradQuantize( O+x*h, M+x*h, O0, O1, M0, M1, nOrients, nb, h0, sInv2, full );
+    gradQuantize(O+x*h,M+x*h,O0,O1,M0,M1,nb,h0,sInv2,nOrients,full);
 
     if( !softBin || bin==1 ) {
       // interpolate w.r.t. orientation only, not spatial bin
