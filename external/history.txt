@@ -1,4 +1,5 @@
 Version NEW
+ -TODO: add link to latest toolbox.zip on website (latest version)
  -gradientMag.m: added support for computing orientation in [0,2pi)
  -gradientHist.m/chnsCompute.m: added contrast sensitive gradient histograms
  -gradientHist.m: made robust to angles slightly outside of expected range
