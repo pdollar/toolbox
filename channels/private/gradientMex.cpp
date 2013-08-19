@@ -231,13 +231,14 @@ float* hogNormMatrix( float *H, int nOrients, int hb, int wb, int bin ) {
   return N;
 }
 
-// HOG helper: perform four normalizations per spatial block
-void hogNormalize( float *H, const float *R, const float *N,
-  int hb, int wb, int nOrients, float clip )
+// HOG helper: compute HOG or FHOG channels
+void hogChannels( float *H, float *T, const float *R, const float *N,
+  int hb, int wb, int nOrients, float clip, const bool sum )
 {
   #define U(chn,blk) { \
     float t=R1[y]*N1[y-(blk)]; if(t>clip) t=clip; \
-    H1[chn*nOrients*nb+y]=t; \
+    if(sum) H1[y]+=t*.5f; else H1[chn*nOrients*nb+y]=t; \
+    if(T) T[chn*nb+x*hb+y]+=t*.2357f; \
   }
   int o, x, y, nb=wb*hb;
   for( o=0; o<nOrients; o++ ) for( x=0; x<wb; x++ ) {
@@ -263,8 +264,29 @@ void hog( float *M, float *O, float *H, int h, int w, int binSize,
   // compute block normalization values
   N = hogNormMatrix( R, nOrients, hb, wb, binSize );
   // perform four normalizations per spatial block
-  hogNormalize( H, R, N, hb, wb, nOrients, clip );
+  hogChannels( H, NULL, R, N, hb, wb, nOrients, clip, false );
   wrFree(N); wrFree(R);
+}
+
+// compute FHOG features
+void fhog( float *M, float *O, float *H, int h, int w, int binSize, 
+  int nOrients, int softBin, float clip )
+{
+  const int hb=h/binSize, wb=w/binSize, nb=hb*wb, nbo=nb*nOrients;
+  float *N, *R1, *R2; int o, x;
+  // compute unnormalized constrast sensitive histograms
+  R1 = (float*) wrCalloc(wb*hb*nOrients*2,sizeof(float));
+  gradHist( M, O, R1, h, w, binSize, nOrients*2, softBin, true );
+  // compute unnormalized contrast insensitive histograms
+  R2 = (float*) wrCalloc(wb*hb*nOrients,sizeof(float));
+  for( o=0; o<nOrients; o++ ) for( x=0; x<nb; x++ )
+    R2[o*nb+x] = R1[o*nb+x]+R1[(o+nOrients)*nb+x];
+  // compute block normalization values
+  N = hogNormMatrix( R2, nOrients, hb, wb, binSize );
+  // normalize normalized histograms and texture channels
+  hogChannels( H, H+nbo*3, R1, N, hb, wb, nOrients*2, clip, true );
+  hogChannels( H+nbo*2, NULL, R2, N, hb, wb, nOrients, clip, true );
+  wrFree(N); mxFree(R1); wrFree(R2);
 }
 
 /******************************************************************************/
@@ -328,8 +350,8 @@ void mGradMagNorm( int nl, mxArray *pl[], int nr, const mxArray *pr[] ) {
 
 // H=gradHist(M,O,[...]) - see gradientHist.m
 void mGradHist( int nl, mxArray *pl[], int nr, const mxArray *pr[] ) {
-  int h, w, d, hb, wb, binSize, nOrients, softBin;
-  bool useHog, full; float *M, *O, *H, clipHog;
+  int h, w, d, hb, wb, binSize, nOrients, softBin, useHog;
+  bool full; float *M, *O, *H, clipHog;
   checkArgs(nl,pl,nr,pr,1,3,2,8,&h,&w,&d,mxSINGLE_CLASS,(void**)&M);
   O = (float*) mxGetPr(pr[1]);
   if( mxGetM(pr[1])!=h || mxGetN(pr[1])!=w || d!=1 ||
@@ -337,16 +359,19 @@ void mGradHist( int nl, mxArray *pl[], int nr, const mxArray *pr[] ) {
   binSize  = (nr>=3) ? (int)   mxGetScalar(pr[2])    : 8;
   nOrients = (nr>=4) ? (int)   mxGetScalar(pr[3])    : 9;
   softBin  = (nr>=5) ? (int)   mxGetScalar(pr[4])    : 1;
-  useHog   = (nr>=6) ? (bool) (mxGetScalar(pr[5])>0) : false;
+  useHog   = (nr>=6) ? (int)   mxGetScalar(pr[5])    : 0;
   clipHog  = (nr>=7) ? (float) mxGetScalar(pr[6])    : 0.2f;
   full     = (nr>=8) ? (bool) (mxGetScalar(pr[7])>0) : false;
   hb=h/binSize; wb=w/binSize;
-  if( useHog==false ) {
+  if( useHog==0 ) {
     pl[0] = mxCreateMatrix3(hb,wb,nOrients,mxSINGLE_CLASS,1,(void**)&H);
     gradHist( M, O, H, h, w, binSize, nOrients, softBin, full );
-  } else {
+  } else if(useHog==1) {
     pl[0] = mxCreateMatrix3(hb,wb,nOrients*4,mxSINGLE_CLASS,1,(void**)&H);
     hog( M, O, H, h, w, binSize, nOrients, softBin, full, clipHog );
+  } else {
+    pl[0] = mxCreateMatrix3(hb,wb,nOrients*3+4,mxSINGLE_CLASS,1,(void**)&H);
+    fhog( M, O, H, h, w, binSize, nOrients, softBin, clipHog );
   }
 }
 
