@@ -21,9 +21,10 @@ function H = gradientHist( M, O, varargin )
 % The first step in computing the gradient histogram is simply quantizing
 % the magnitude M into nOrients [hxw] orientation channels according to the
 % gradient orientation. The magnitude at each location is placed into the
-% two nearest orientation bins using linear interpolation. Next, spatial
+% two nearest orientation bins using linear interpolation if softBin >= 0
+% or simply to the nearest orientation bin if softBin < 0. Next, spatial
 % binning is performed by summing the pixels in each binSize x binSize
-% region of each [hxw] orientation channel. If "softBin" is true each pixel
+% region of each [hxw] orientation channel. If "softBin" is odd each pixel
 % can contribute to multiple spatial bins (using bilinear interpolation),
 % otherwise each pixel contributes to a single spatial bin. The result of
 % these steps is a floor([h/binSize w/binSize nOrients]) feature map
@@ -51,7 +52,7 @@ function H = gradientHist( M, O, varargin )
 %  O        - [hxw] gradient orientation in range defined by param flag
 %  binSize  - [8] spatial bin size
 %  nOrients - [9] number of orientation bins
-%  softBin  - [true] if true use "soft" bilinear spatial binning
+%  softBin  - [1] set soft binning (odd: spatial=soft, >=0: orient=soft)
 %  useHog   - [false] if true perform 4-way hog normalization/clipping
 %  clipHog  - [.2] value at which to clip hog histogram bins
 %  full     - [false] if true expects angles in [0,2*pi) else in [0,pi)

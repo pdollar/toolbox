@@ -105,7 +105,7 @@ void gradMagNorm( float *M, float *S, int h, int w, float norm ) {
 
 // helper for gradHist, quantize O and M into O0, O1 and M0, M1 (uses sse)
 void gradQuantize( float *O, float *M, int *O0, int *O1, float *M0, float *M1,
-  int nb, int n, float norm, int nOrients, bool full )
+  int nb, int n, float norm, int nOrients, bool full, bool interpolate )
 {
   // assumes all *OUTPUT* matrices are 4-byte aligned
   int i, o0, o1; float o, od, m;
@@ -118,6 +118,7 @@ void gradQuantize( float *O, float *M, int *O0, int *O1, float *M0, float *M1,
   _O0=(__m128i*) O0; _O1=(__m128i*) O1; _M0=(__m128*) M0; _M1=(__m128*) M1;
   for( i=0; i<=n-4; i+=4 ) {
     _o=MUL(LDu(O[i]),_oMult); _o0=CVT(_o); _od=SUB(_o,CVT(_o0));
+    if(!interpolate) _od=CVT(CVT(ADD(_od,SET(.5f))));
     _o0=CVT(MUL(CVT(_o0),_nbf)); _o0=AND(CMPGT(_oMax,_o0),_o0); *_O0++=_o0;
     _o1=ADD(_o0,_nb); _o1=AND(CMPGT(_oMax,_o1),_o1); *_O1++=_o1;
     _m=MUL(LDu(M[i]),_norm); *_M1=MUL(_od,_m); *_M0++=SUB(_m,*_M1); _M1++;
@@ -125,6 +126,7 @@ void gradQuantize( float *O, float *M, int *O0, int *O1, float *M0, float *M1,
   // compute trailing locations without sse
   for( i; i<n; i++ ) {
     o=O[i]*oMult; o0=(int) o; od=o-o0;
+    if(!interpolate) od=float(int(od+.5));
     o0*=nb; if(o0>=oMax) o0=0; O0[i]=o0;
     o1=o0+nb; if(o1==oMax) o1=0; O1[i]=o1;
     m=M[i]*norm; M1[i]=od*m; M0[i]=m-M1[i];
@@ -133,7 +135,7 @@ void gradQuantize( float *O, float *M, int *O0, int *O1, float *M0, float *M1,
 
 // compute nOrients gradient histograms per bin x bin block of pixels
 void gradHist( float *M, float *O, float *H, int h, int w,
-  int bin, int nOrients, bool softBin, bool full )
+  int bin, int nOrients, int softBin, bool full )
 {
   const int hb=h/bin, wb=w/bin, h0=hb*bin, w0=wb*bin, nb=wb*hb;
   const float s=(float)bin, sInv=1/s, sInv2=1/s/s;
@@ -143,9 +145,9 @@ void gradHist( float *M, float *O, float *H, int h, int w,
   // main loop
   for( x=0; x<w0; x++ ) {
     // compute target orientation bins for entire column - very fast
-    gradQuantize(O+x*h,M+x*h,O0,O1,M0,M1,nb,h0,sInv2,nOrients,full);
+    gradQuantize(O+x*h,M+x*h,O0,O1,M0,M1,nb,h0,sInv2,nOrients,full,softBin>=0);
 
-    if( !softBin || bin==1 ) {
+    if( softBin%2==0 || bin==1 ) {
       // interpolate w.r.t. orientation only, not spatial bin
       H1=H+(x/bin)*hb;
       #define GH H1[O0[y]]+=M0[y]; H1[O1[y]]+=M1[y]; y++;
@@ -280,7 +282,7 @@ void mGradMagNorm( int nl, mxArray *pl[], int nr, const mxArray *pr[] ) {
 
 // H=gradHist(M,O,[...]) - see gradientHist.m
 void mGradHist( int nl, mxArray *pl[], int nr, const mxArray *pr[] ) {
-  int h, w, d, hb, wb, binSize, nOrients; bool softBin, useHog, full;
+  int h, w, d, hb, wb, binSize, nOrients; int softBin, useHog, full;
   float *M, *O, *H, *G, clipHog;
   checkArgs(nl,pl,nr,pr,1,3,2,8,&h,&w,&d,mxSINGLE_CLASS,(void**)&M);
   O = (float*) mxGetPr(pr[1]);
@@ -288,7 +290,7 @@ void mGradHist( int nl, mxArray *pl[], int nr, const mxArray *pr[] ) {
     mxGetClassID(pr[1])!=mxSINGLE_CLASS ) mexErrMsgTxt("M or O is bad.");
   binSize  = (nr>=3) ? (int)   mxGetScalar(pr[2])    : 8;
   nOrients = (nr>=4) ? (int)   mxGetScalar(pr[3])    : 9;
-  softBin  = (nr>=5) ? (bool) (mxGetScalar(pr[4])>0) : true;
+  softBin  = (nr>=5) ? (int)   mxGetScalar(pr[4])    : 1;
   useHog   = (nr>=6) ? (bool) (mxGetScalar(pr[5])>0) : false;
   clipHog  = (nr>=7) ? (float) mxGetScalar(pr[6])    : 0.2f;
   full     = (nr>=8) ? (bool) (mxGetScalar(pr[7])>0) : false;
