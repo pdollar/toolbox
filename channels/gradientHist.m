@@ -12,8 +12,8 @@ function H = gradientHist( M, O, varargin )
 % These features in turn generalize the HOG features introduced in:
 %   N. Dalal and B. Triggs, "Histograms of Oriented
 %   Gradients for Human Detection," CVPR 2005.
-% Setting the parameters appropriately gives almost identical features to
-% the original HOG features, also see hog.m for more details.
+% Setting parameters appropriately gives almost identical features to the
+% original HOG or updated FHOG features, see hog.m and fhog.m for details.
 %
 % The input to the function are the gradient magnitude M and orientation O
 % at each image location. See gradientMag.m for computing M and O from I.
@@ -30,15 +30,10 @@ function H = gradientHist( M, O, varargin )
 % these steps is a floor([h/binSize w/binSize nOrients]) feature map
 % representing the gradient histograms in each image region.
 %
-% The above can effectively be used directly. Alternatively, if "useHog" is
-% true, an additional 4-way normalization is performed on each histogram
-% followed by clipping, resulting in nOrient*4 bins at each location.
-% The result closely resembles the HOG features from Dalal's CVPR05 paper,
-% for more details see hog.m.
-%
 % Parameter settings of particular interest:
 %  binSize=1: simply quantize the gradient magnitude into nOrients channels
-%  softBin=1, useHog=1, clip=.2: original HOG features
+%  softBin=1, useHog=1, clip=.2: original HOG features (see hog.m)
+%  softBin=-1; useHog=2, clip=.2: FHOG features (see fhog.m)
 %  softBin=0, useHog=0: channels used in Dollar's BMVC09 paper
 %
 % This code requires SSE2 to compile and run (most modern Intel and AMD
@@ -53,7 +48,7 @@ function H = gradientHist( M, O, varargin )
 %  binSize  - [8] spatial bin size
 %  nOrients - [9] number of orientation bins
 %  softBin  - [1] set soft binning (odd: spatial=soft, >=0: orient=soft)
-%  useHog   - [false] if true perform 4-way hog normalization/clipping
+%  useHog   - [0] 1: compute HOG (see hog.m), 2: compute FHOG (see fhog.m)
 %  clipHog  - [.2] value at which to clip hog histogram bins
 %  full     - [false] if true expects angles in [0,2*pi) else in [0,pi)
 %
@@ -65,7 +60,7 @@ function H = gradientHist( M, O, varargin )
 %  H1=gradientHist(M,O,2,6,0); figure(1); montage2(H1);
 %  H2=gradientHist(M,O,2,6,1); figure(2); montage2(H2);
 %
-% See also gradientMag, gradient2, hog
+% See also gradientMag, gradient2, hog, fhog
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2013 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]

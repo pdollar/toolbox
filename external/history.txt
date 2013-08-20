@@ -1,10 +1,10 @@
 Version NEW
  -TODO: add link to latest toolbox.zip on website (latest version)
- -gradientMag.m: added support for computing orientation in [0,2pi)
+ -fhog.m: added heavily optimized FHOG (Felzenszwalb's HOG) features
  -gradientHist.m/chnsCompute.m: added contrast sensitive gradient histograms
- -gradientHist.m: made robust to angles slightly outside of expected range
- -gradientHist.m: added option to turn of orientation interpolation
- -minor: acfDemoCal
+ -gradientHist.m: various optimization and additional options
+ -gradientMag.m: added support for computing orientation in [0,2pi)
+ -minor: acfDemoCal, hog
 
 Version 3.22 (08-Aug-2013)
  -imagesAlignSeq.m: stabilize image sequence using coarse optical flow

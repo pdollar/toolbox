@@ -1,10 +1,9 @@
-function H = hog( I, binSize, nOrients, clip )
+function H = hog( I, binSize, nOrients, clip, crop )
 % Efficiently compute histogram of oriented gradient (HOG) features.
 %
-% Code to compute HOG features as described in "Histograms of Oriented
-% Gradients for Human Detection" by Dalal & Triggs, CVPR05. The code is
-% extremely optimized, with some speedup tricks adopted from the HOG code
-% feature.cpp by Deva Ramanan and massive additional gains from using SSE.
+% Heavily optimized code to compute HOG features described in "Histograms
+% of Oriented Gradients for Human Detection" by Dalal & Triggs, CVPR05.
+% This function is made largely obsolete by fhog, see fhog.m for details.
 %
 % If I has dimensions [hxw], the size of the computed feature vector H is
 % floor([h/binSize w/binSize nOrients*4]). For each binSize x binSize
@@ -35,19 +34,20 @@ function H = hog( I, binSize, nOrients, clip )
 % and gradientHist(). Specifically, it is equivalent to the following:
 %  [M,O] = gradientMag( I ); softBin = 1; useHog = 1;
 %  H = gradientHist(M,O,binSize,nOrients,softBin,useHog,clip);
-% See gradientHist() more general usage.
+% See gradientHist() for more general usage.
 %
 % This code requires SSE2 to compile and run (most modern Intel and AMD
 % processors support SSE2). Please see: http://en.wikipedia.org/wiki/SSE2.
 %
 % USAGE
-%  H = hog( I, [binSize], [nOrients], [clip] )
+%  H = hog( I, [binSize], [nOrients], [clip], [crop] )
 %
 % INPUTS
 %  I        - [hxw] color or grayscale input image (must have type single)
 %  binSize  - [8] spatial bin size
 %  nOrients - [9] number of orientation bins
 %  clip     - [.2] value at which to clip histogram bins
+%  crop     - [0] if true crop boundaries
 %
 % OUTPUTS
 %  H        - [h/binSize w/binSize nOrients*4] computed hog features
@@ -59,13 +59,19 @@ function H = hog( I, binSize, nOrients, clip )
 %
 % See also hogDraw, gradientHist
 %
-% Piotr's Image&Video Toolbox      Version 3.00
-% Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Piotr's Image&Video Toolbox      Version NEW
+% Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 if( nargin<2 ), binSize=8; end
 if( nargin<3 ), nOrients=9; end
 if( nargin<4 ), clip=.2; end
-softBin = 1; useHog = 1; [M,O] = gradientMag( I );
+if( nargin<5 ), crop=0; end
+
+softBin = 1; useHog = 1; b = binSize;
+[M,O] = gradientMag( I );
 H = gradientHist(M,O,binSize,nOrients,softBin,useHog,clip);
+if( crop ), e=mod(size(I),b)<b/2; H=H(2:end-e(1),2:end-e(2),:); end
+
+end
