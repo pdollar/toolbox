@@ -227,15 +227,21 @@ void gradHist( float *M, float *O, float *H, int h, int w,
 
 // HOG helper: compute 2x2 block normalization values (padded by 1 pixel)
 float* hogNormMatrix( float *H, int nOrients, int hb, int wb, int bin ) {
-  float *N, *N1, *n; int o, x, y, hb1=hb+1, wb1=wb+1;
+  float *N, *N1, *n; int o, x, y, dx, dy, hb1=hb+1, wb1=wb+1;
   float eps = 1e-4f/4/bin/bin/bin/bin; // precise backward equality
   N = (float*) wrCalloc(hb1*wb1,sizeof(float)); N1=N+hb1+1;
   for( o=0; o<nOrients; o++ ) for( x=0; x<wb; x++ ) for( y=0; y<hb; y++ )
     N1[x*hb1+y] += H[o*wb*hb+x*hb+y]*H[o*wb*hb+x*hb+y];
   for( x=0; x<wb-1; x++ ) for( y=0; y<hb-1; y++ ) {
     n=N1+x*hb1+y; *n=1/float(sqrt(n[0]+n[1]+n[hb1]+n[hb1+1]+eps)); }
-  x=wb-1; for( y=0; y<hb; y++ ) N1[x*hb1+y]=0;
-  y=hb-1; for( x=0; x<wb; x++ ) N1[x*hb1+y]=0;
+  x=0;     dx= 1; dy= 1; y=0;                  N[x*hb1+y]=N[(x+dx)*hb1+y+dy];
+  x=0;     dx= 1; dy= 0; for(y=0; y<hb1; y++)  N[x*hb1+y]=N[(x+dx)*hb1+y+dy];
+  x=0;     dx= 1; dy=-1; y=hb1-1;              N[x*hb1+y]=N[(x+dx)*hb1+y+dy];
+  x=wb1-1; dx=-1; dy= 1; y=0;                  N[x*hb1+y]=N[(x+dx)*hb1+y+dy];
+  x=wb1-1; dx=-1; dy= 0; for( y=0; y<hb1; y++) N[x*hb1+y]=N[(x+dx)*hb1+y+dy];
+  x=wb1-1; dx=-1; dy=-1; y=hb1-1;              N[x*hb1+y]=N[(x+dx)*hb1+y+dy];
+  y=0;     dx= 0; dy= 1; for(x=0; x<wb1; x++)  N[x*hb1+y]=N[(x+dx)*hb1+y+dy];
+  y=hb1-1; dx= 0; dy=-1; for(x=0; x<wb1; x++)  N[x*hb1+y]=N[(x+dx)*hb1+y+dy];
   return N;
 }
 
