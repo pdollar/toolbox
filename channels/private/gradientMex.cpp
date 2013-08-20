@@ -57,7 +57,7 @@ float* acosTable() {
 
 // compute gradient magnitude and orientation at each location (uses sse)
 void gradMag( float *I, float *M, float *O, int h, int w, int d, bool full ) {
-  int x, y, y1, c, h4, s; float *Gx, *Gy, *M2; __m128 *_O, *_Gx, *_Gy, *_M2, _m;
+  int x, y, y1, c, h4, s; float *Gx, *Gy, *M2; __m128 *_Gx, *_Gy, *_M2, _m;
   float *acost = acosTable(), acMult=10000.0f;
   // allocate memory for storing one column of output (padded so h4%4==0)
   h4=(h%4==0) ? h : h-(h%4)+4; s=d*h4*sizeof(float);
@@ -85,11 +85,16 @@ void gradMag( float *I, float *M, float *O, int h, int w, int d, bool full ) {
       if(O) _Gx[y] = MUL( MUL(_Gx[y],_m), SET(acMult) );
       if(O) _Gx[y] = XOR( _Gx[y], AND(_Gy[y], SET(-0.f)) );
     };
-    memcpy( M+x*h, M2, h*sizeof(float) ); _O=(__m128*) (O+x*h);
+    memcpy( M+x*h, M2, h*sizeof(float) );
     // compute and store gradient orientation (O) via table lookup
     if( O!=0 ) for( y=0; y<h; y++ ) O[x*h+y] = acost[(int)Gx[y]];
-    if( O!=0 && full) for( y=0; y<h4/4; y++ )
-      _O[y] = ADD( _O[y], AND( CMPLT(_Gy[y],SET(0.f)), SET(PI)) );
+    if( O!=0 && full ) {
+      y1=((~size_t(O+x*h)+1)&15)/4; y=0;
+      for( ; y<y1; y++ ) O[y+x*h]+=(Gy[y]<0)*PI;
+      for( ; y<h-4; y+=4 ) STRu( O[y+x*h],
+        ADD( LDu(O[y+x*h]), AND(CMPLT(LDu(Gy[y]),SET(0.f)),SET(PI)) ) );
+      for( ; y<h; y++ ) O[y+x*h]+=(Gy[y]<0)*PI;
+    }
   }
   alFree(Gx); alFree(Gy); alFree(M2);
 }
