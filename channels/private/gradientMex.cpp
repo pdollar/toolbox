@@ -220,37 +220,45 @@ void gradHist( float *M, float *O, float *H, int h, int w,
 
 /******************************************************************************/
 
-// HOG helper: compute 2x2 block normalization values
+// HOG helper: compute 2x2 block normalization values (padded by 1 pixel)
 float* hogNormMatrix( float *H, int nOrients, int hb, int wb, int bin ) {
-  float *N, *N1; int o, x, y, nb=wb*hb;
+  float *N, *N1, *n; int o, x, y, hb1=hb+1, wb1=wb+1;
   float eps = 1e-4f/4/bin/bin/bin/bin; // precise backward equality
-  N = (float*) wrCalloc(nb,sizeof(float));
-  for( o=0; o<nOrients; o++ ) for( x=0; x<nb; x++ ) N[x]+=H[x+o*nb]*H[x+o*nb];
+  N = (float*) wrCalloc(hb1*wb1,sizeof(float)); N1=N+hb1+1;
+  for( o=0; o<nOrients; o++ ) for( x=0; x<wb; x++ ) for( y=0; y<hb; y++ )
+    N1[x*hb1+y] += H[o*wb*hb+x*hb+y]*H[o*wb*hb+x*hb+y];
   for( x=0; x<wb-1; x++ ) for( y=0; y<hb-1; y++ ) {
-    N1=N+x*hb+y; *N1=1/float(sqrt( N1[0] + N1[1] + N1[hb] + N1[hb+1] +eps )); }
+    n=N1+x*hb1+y; *n=1/float(sqrt(n[0]+n[1]+n[hb1]+n[hb1+1]+eps)); }
+  x=wb-1; for( y=0; y<hb; y++ ) N1[x*hb1+y]=0;
+  y=hb-1; for( x=0; x<wb; x++ ) N1[x*hb1+y]=0;
   return N;
 }
 
 // HOG helper: compute HOG or FHOG channels
-void hogChannels( float *H, float *T, const float *R, const float *N,
-  int hb, int wb, int nOrients, float clip, const bool sum )
+void hogChannels( float *H, const float *R, const float *N,
+  int hb, int wb, int nOrients, float clip, int type )
 {
-  #define U(chn,blk) { \
-    float t=R1[y]*N1[y-(blk)]; if(t>clip) t=clip; \
-    if(sum) H1[y]+=t*.5f; else H1[chn*nOrients*nb+y]=t; \
-    if(T) T[chn*nb+x*hb+y]+=t*.2357f; \
-  }
-  int o, x, y, nb=wb*hb;
+  #define GETT(blk) t=R1[y]*N1[y-(blk)]; if(t>clip) t=clip; c++;
+  const float r=.2357f; int o, x, y, c; float t;
+  const int nb=wb*hb, nbo=nOrients*nb, hb1=hb+1;
   for( o=0; o<nOrients; o++ ) for( x=0; x<wb; x++ ) {
-    const float *R1=R+o*nb+x*hb, *N1=N+x*hb; float *H1=H+o*nb+x*hb;
-    bool lf, md, rt; lf=(x==0); rt=(x==wb-1); md=(!lf && !rt);
-    y=0; if(!rt) U(0,0); if(!lf) U(2,hb);
-    if(lf) for( y=1; y<hb-1; y++ ) { U(0,0); U(1,1); }
-    if(md) for( y=1; y<hb-1; y++ ) { U(0,0); U(1,1); U(2,hb); U(3,hb+1); }
-    if(rt) for( y=1; y<hb-1; y++ ) { U(2,hb); U(3,hb+1); }
-    y=hb-1; if(!rt) U(1,1); if(!lf) U(3,hb+1);
+    const float *R1=R+o*nb+x*hb, *N1=N+x*hb1+hb1+1;
+    float *H1 = (type<=1) ? (H+o*nb+x*hb) : (H+x*hb);
+    if( type==0) for( y=0; y<hb; y++ ) {
+      // store each orientation and normalization (nOrients*4 channels)
+      c=-1; GETT(0); H1[c*nbo+y]=t; GETT(1); H1[c*nbo+y]=t;
+      GETT(hb1); H1[c*nbo+y]=t; GETT(hb1+1); H1[c*nbo+y]=t;
+    } else if( type==1 ) for( y=0; y<hb; y++ ) {
+      // sum across all normalizations (nOrients channels)
+      c=-1; GETT(0); H1[y]+=t*.5f; GETT(1); H1[y]+=t*.5f;
+      GETT(hb1); H1[y]+=t*.5f; GETT(hb1+1); H1[y]+=t*.5f;
+    } else if( type==2 ) for( y=0; y<hb; y++ ) {
+      // sum across all orientations (4 channels)
+      c=-1; GETT(0); H1[c*nb+y]+=t*r; GETT(1); H1[c*nb+y]+=t*r;
+      GETT(hb1); H1[c*nb+y]+=t*r; GETT(hb1+1); H1[c*nb+y]+=t*r;
+    }
   }
-  #undef U
+  #undef GETT
 }
 
 // compute HOG features
@@ -264,12 +272,12 @@ void hog( float *M, float *O, float *H, int h, int w, int binSize,
   // compute block normalization values
   N = hogNormMatrix( R, nOrients, hb, wb, binSize );
   // perform four normalizations per spatial block
-  hogChannels( H, NULL, R, N, hb, wb, nOrients, clip, false );
+  hogChannels( H, R, N, hb, wb, nOrients, clip, 0 );
   wrFree(N); wrFree(R);
 }
 
 // compute FHOG features
-void fhog( float *M, float *O, float *H, int h, int w, int binSize, 
+void fhog( float *M, float *O, float *H, int h, int w, int binSize,
   int nOrients, int softBin, float clip )
 {
   const int hb=h/binSize, wb=w/binSize, nb=hb*wb, nbo=nb*nOrients;
@@ -283,9 +291,10 @@ void fhog( float *M, float *O, float *H, int h, int w, int binSize,
     R2[o*nb+x] = R1[o*nb+x]+R1[(o+nOrients)*nb+x];
   // compute block normalization values
   N = hogNormMatrix( R2, nOrients, hb, wb, binSize );
-  // normalize normalized histograms and texture channels
-  hogChannels( H, H+nbo*3, R1, N, hb, wb, nOrients*2, clip, true );
-  hogChannels( H+nbo*2, NULL, R2, N, hb, wb, nOrients, clip, true );
+  // normalized histograms and texture channels
+  hogChannels( H+nbo*0, R1, N, hb, wb, nOrients*2, clip, 1 );
+  hogChannels( H+nbo*2, R2, N, hb, wb, nOrients*1, clip, 1 );
+  hogChannels( H+nbo*3, R1, N, hb, wb, nOrients*2, clip, 2 );
   wrFree(N); mxFree(R1); wrFree(R2);
 }
 
