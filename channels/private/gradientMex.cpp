@@ -221,6 +221,13 @@ void gradHist( float *M, float *O, float *H, int h, int w,
     }
   }
   alFree(O0); alFree(O1); alFree(M0); alFree(M1);
+  // normalize boundary bins which only get 7/8 of weight of interior bins
+  if( softBin%2!=0 ) for( int o=0; o<nOrients; o++ ) {
+    x=0; for( y=0; y<hb; y++ ) H[o*nb+x*hb+y]*=8.f/7.f;
+    y=0; for( x=0; x<wb; x++ ) H[o*nb+x*hb+y]*=8.f/7.f;
+    x=wb-1; for( y=0; y<hb; y++ ) H[o*nb+x*hb+y]*=8.f/7.f;
+    y=hb-1; for( x=0; x<wb; x++ ) H[o*nb+x*hb+y]*=8.f/7.f;
+  }
 }
 
 /******************************************************************************/
