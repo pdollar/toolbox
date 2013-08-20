@@ -1,28 +1,31 @@
-function V = hogDraw( H, w )
+function V = hogDraw( H, w, fhog )
 % Create visualization of hog descriptor.
 %
 % USAGE
-%  V = hogDraw( H, [w] )
+%  V = hogDraw( H, [w], [fhog] )
 %
 % INPUTS
 %  H          - [m n oBin*4] computed hog features
 %  w          - [15] width for each glyph
+%  fhog       - [0] if true draw features returned by fhog
 %
 % OUTPUTS
 %  V          - [m*w n*w] visualization of hog features
 %
 % EXAMPLE
 %
-% See also hog
+% See also hog, fhog
 %
-% Piotr's Image&Video Toolbox      Version 2.41
-% Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Piotr's Image&Video Toolbox      Version NEW
+% Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
-% fold 4 normalizations
-nFold=4; s=size(H); s(3)=s(3)/nFold; w0=H; H=zeros(s);
-for o=0:nFold-1, H=H+w0(:,:,(1:s(3))+o*s(3)); end;
+% fold normalizations
+if(nargin<3 || isempty(fhog)), fhog=0; end
+m=size(H,3); if(fhog), m=(m-4)/3; H=H(:,:,1:m*3); m=3; else m=4; end
+s=size(H); s(3)=s(3)/m; w0=H; H=zeros(s);
+for o=0:m-1, H=H+w0(:,:,(1:s(3))+o*s(3)); end;
 
 % construct a "glyph" for each orientaion
 if(nargin<2 || isempty(w)), w=15; end

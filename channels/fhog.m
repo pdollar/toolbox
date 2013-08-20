@@ -41,7 +41,7 @@ function H = fhog( I, binSize, nOrients, clip, crop )
 % EXAMPLE
 %  I=imResample(single(imread('peppers.png'))/255,[480 640]);
 %  tic, for i=1:100, H=fhog(I,8,9); end; disp(100/toc) % >125 fps
-%  figure(1); montage2(H); colorbar
+%  figure(1); im(I); V=hogDraw(H,25,1); figure(2); im(V)
 %
 % EXAMPLE
 %  % comparison to features.cc (requires DPM code release version 5)
@@ -52,7 +52,7 @@ function H = fhog( I, binSize, nOrients, clip, crop )
 %  figure(1); montage2(H1); colorbar
 %  figure(2); montage2(H2); colorbar
 %
-% See also hog, gradientHist
+% See also hog, hogDraw, gradientHist
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]

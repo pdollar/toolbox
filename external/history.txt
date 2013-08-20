@@ -4,7 +4,7 @@ Version NEW
  -gradientHist.m/chnsCompute.m: added contrast sensitive gradient histograms
  -gradientHist.m: various optimization and additional options
  -gradientMag.m: added support for computing orientation in [0,2pi)
- -minor: acfDemoCal, hog
+ -minor: acfDemoCal, hog, hogDraw
 
 Version 3.22 (08-Aug-2013)
  -imagesAlignSeq.m: stabilize image sequence using coarse optical flow
