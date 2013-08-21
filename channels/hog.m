@@ -22,8 +22,7 @@ function H = hog( I, binSize, nOrients, clip, crop )
 % at boundaries) thus has 4 different normalization values associated with
 % it. Each histogram bin is then normalized by each of the 4 different L2
 % norms, resulting in a 4 times expansion of the number of bins. Finally,
-% any bin whose value is bigger than "clip" is set to "clip". Along
-% boundaries the histograms with missing normalizations are set to 0.
+% any bin whose value is bigger than "clip" is set to "clip".
 %
 % The computed features are NOT identical to those described in the CVPR05
 % paper. Specifically, there is no Gaussian spatial window, and other minor
