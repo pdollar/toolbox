@@ -20,15 +20,14 @@
 <div class="box"><strong>Efficiently compute histogram of oriented gradient (HOG) features.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function H = hog( I, binSize, nOrients, clip ) </strong></div>
+<div class="box"><strong>function H = hog( I, binSize, nOrients, clip, crop ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment"> Efficiently compute histogram of oriented gradient (HOG) features.
 
- Code to compute HOG features as described in &quot;Histograms of Oriented
- Gradients for Human Detection&quot; by Dalal &amp; Triggs, CVPR05. The code is
- extremely optimized, with some speedup tricks adopted from the HOG code
- feature.cpp by Deva Ramanan and massive additional gains from using SSE.
+ Heavily optimized code to compute HOG features described in &quot;Histograms
+ of Oriented Gradients for Human Detection&quot; by Dalal &amp; Triggs, CVPR05.
+ This function is made largely obsolete by fhog, see fhog.m for details.
 
  If I has dimensions [hxw], the size of the computed feature vector H is
  floor([h/binSize w/binSize nOrients*4]). For each binSize x binSize
@@ -47,8 +46,7 @@
  at boundaries) thus has 4 different normalization values associated with
  it. Each histogram bin is then normalized by each of the 4 different L2
  norms, resulting in a 4 times expansion of the number of bins. Finally,
- any bin whose value is bigger than &quot;clip&quot; is set to &quot;clip&quot;. Along
- boundaries the histograms with missing normalizations are set to 0.
+ any bin whose value is bigger than &quot;clip&quot; is set to &quot;clip&quot;.
 
  The computed features are NOT identical to those described in the CVPR05
  paper. Specifically, there is no Gaussian spatial window, and other minor
@@ -59,19 +57,20 @@
  and gradientHist(). Specifically, it is equivalent to the following:
   [M,O] = gradientMag( I ); softBin = 1; useHog = 1;
   H = gradientHist(M,O,binSize,nOrients,softBin,useHog,clip);
- See gradientHist() more general usage.
+ See gradientHist() for more general usage.
 
  This code requires SSE2 to compile and run (most modern Intel and AMD
  processors support SSE2). Please see: http://en.wikipedia.org/wiki/SSE2.
 
  USAGE
-  H = hog( I, [binSize], [nOrients], [clip] )
+  H = hog( I, [binSize], [nOrients], [clip], [crop] )
 
  INPUTS
   I        - [hxw] color or grayscale input image (must have type single)
   binSize  - [8] spatial bin size
   nOrients - [9] number of orientation bins
   clip     - [.2] value at which to clip histogram bins
+  crop     - [0] if true crop boundaries
 
  OUTPUTS
   H        - [h/binSize w/binSize nOrients*4] computed hog features
@@ -81,10 +80,10 @@
   tic, for i=1:125, H=hog(I,8,9); end; toc % ~1s for 125 iterations
   figure(1); im(I); V=hogDraw(H,25); figure(2); im(V)
 
- See also <a href="hogDraw.html" class="code" title="function V = hogDraw( H, w )">hogDraw</a>, <a href="gradientHist.html" class="code" title="function H = gradientHist( M, O, varargin )">gradientHist</a>
+ See also <a href="hogDraw.html" class="code" title="function V = hogDraw( H, w, fhog )">hogDraw</a>, <a href="gradientHist.html" class="code" title="function H = gradientHist( M, O, varargin )">gradientHist</a>
 
- Piotr's Image&amp;Video Toolbox      Version 3.00
- Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 3.23
+ Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>
 

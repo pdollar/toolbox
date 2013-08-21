@@ -20,27 +20,28 @@
 <div class="box"><strong>Create visualization of hog descriptor.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function V = hogDraw( H, w ) </strong></div>
+<div class="box"><strong>function V = hogDraw( H, w, fhog ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment"> Create visualization of hog descriptor.
 
  USAGE
-  V = hogDraw( H, [w] )
+  V = hogDraw( H, [w], [fhog] )
 
  INPUTS
   H          - [m n oBin*4] computed hog features
   w          - [15] width for each glyph
+  fhog       - [0] if true draw features returned by fhog
 
  OUTPUTS
   V          - [m*w n*w] visualization of hog features
 
  EXAMPLE
 
- See also <a href="hog.html" class="code" title="function H = hog( I, binSize, nOrients, clip )">hog</a>
+ See also <a href="hog.html" class="code" title="function H = hog( I, binSize, nOrients, clip, crop )">hog</a>, <a href="fhog.html" class="code" title="function H = fhog( I, binSize, nOrients, clip, crop )">fhog</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.41
- Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 3.23
+ Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>
 

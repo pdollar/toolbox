@@ -49,9 +49,10 @@
  Gradients and gradient histograms:
    <a href="gradient2.html" class="code" title="function [Gx,Gy] = gradient2( I )">gradient2</a>    - Compute numerical gradients along x and y directions.
    <a href="gradientHist.html" class="code" title="function H = gradientHist( M, O, varargin )">gradientHist</a> - Compute oriented gradient histograms.
-   <a href="gradientMag.html" class="code" title="function [M,O] = gradientMag( I, channel, normRad, normConst )">gradientMag</a>  - Compute gradient magnitude and orientation at each image location.
-   <a href="hog.html" class="code" title="function H = hog( I, binSize, nOrients, clip )">hog</a>          - Efficiently compute histogram of oriented gradient (HOG) features.
-   <a href="hogDraw.html" class="code" title="function V = hogDraw( H, w )">hogDraw</a>      - Create visualization of <a href="hog.html" class="code" title="function H = hog( I, binSize, nOrients, clip )">hog</a> descriptor.
+   <a href="gradientMag.html" class="code" title="function [M,O] = gradientMag( I, channel, normRad, normConst, full )">gradientMag</a>  - Compute gradient magnitude and orientation at each image location.
+   <a href="hog.html" class="code" title="function H = hog( I, binSize, nOrients, clip, crop )">hog</a>          - Efficiently compute histogram of oriented gradient (HOG) features.
+   <a href="hogDraw.html" class="code" title="function V = hogDraw( H, w, fhog )">hogDraw</a>      - Create visualization of <a href="hog.html" class="code" title="function H = hog( I, binSize, nOrients, clip, crop )">hog</a> descriptor.
+   <a href="fhog.html" class="code" title="function H = fhog( I, binSize, nOrients, clip, crop )">fhog</a>         - Efficiently compute Felzenszwalb's <a href="hog.html" class="code" title="function H = hog( I, binSize, nOrients, clip, crop )">HOG</a> (FHOG) features.
 
  Miscellaneous:
    <a href="imPad.html" class="code" title="function J = imPad( I, pad, type )">imPad</a>        - Pad an image along its four boundaries.
