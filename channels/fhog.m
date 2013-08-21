@@ -7,14 +7,14 @@ function H = fhog( I, binSize, nOrients, clip, crop )
 % Gives nearly identical results to features.cc in code release version 5
 % but runs 4x faster (over 125 fps on VGA color images).
 %
-% The computed HOG features are 3*nOrients+4 dimensional. There are
+% The computed HOG features are 3*nOrients+5 dimensional. There are
 % 2*nOrients contrast sensitive orientation channels, nOrients contrast
-% insensitive orientation channels, and 4 texture channels. Using the
-% standard value of nOrients=9 gives a 31 dimensional feature vector at
-% each cell. This variant of HOG, refered to as FHOG, has been shown to
-% achieve superior performance to the original HOG features. For details
-% please refer to work by Felzenszwalb et al. Note that fhog does not
-% return the 32nd all zero channel used by Felzenszwalb et al.
+% insensitive orientation channels, 4 texture channels and 1 all zeros
+% channel (used as a 'truncation' feature). Using the standard value of
+% nOrients=9 gives a 32 dimensional feature vector at each cell. This
+% variant of HOG, refered to as FHOG, has been shown to achieve superior
+% performance to the original HOG features. For details please refer to
+% work by Felzenszwalb et al. (see link above).
 %
 % This function is essentially a wrapper for calls to gradientMag()
 % and gradientHist(). Specifically, it is equivalent to the following:
@@ -36,7 +36,7 @@ function H = fhog( I, binSize, nOrients, clip, crop )
 %  crop     - [0] if true crop boundaries
 %
 % OUTPUTS
-%  H        - [h/binSize w/binSize nOrients*4] computed hog features
+%  H        - [h/binSize w/binSize nOrients*3+5] computed hog features
 %
 % EXAMPLE
 %  I=imResample(single(imread('peppers.png'))/255,[480 640]);
@@ -48,9 +48,8 @@ function H = fhog( I, binSize, nOrients, clip, crop )
 %  I=imResample(single(imread('peppers.png'))/255,[480 640]); Id=double(I);
 %  tic, for i=1:100, H1=features(Id,8); end; disp(100/toc)
 %  tic, for i=1:100, H2=fhog(I,8,9,.2,1); end; disp(100/toc)
-%  H1=H1(:,:,1:31); D=H1-H2; mean(abs(D(:)))
-%  figure(1); montage2(H1); colorbar
-%  figure(2); montage2(H2); colorbar
+%  figure(1); montage2(H1); figure(2); montage2(H2);
+%  D=abs(H1-H2); mean(D(:))
 %
 % See also hog, hogDraw, gradientHist
 %

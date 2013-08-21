@@ -397,7 +397,7 @@ void mGradHist( int nl, mxArray *pl[], int nr, const mxArray *pr[] ) {
     pl[0] = mxCreateMatrix3(hb,wb,nOrients*4,mxSINGLE_CLASS,1,(void**)&H);
     hog( M, O, H, h, w, binSize, nOrients, softBin, full, clipHog );
   } else {
-    pl[0] = mxCreateMatrix3(hb,wb,nOrients*3+4,mxSINGLE_CLASS,1,(void**)&H);
+    pl[0] = mxCreateMatrix3(hb,wb,nOrients*3+5,mxSINGLE_CLASS,1,(void**)&H);
     fhog( M, O, H, h, w, binSize, nOrients, softBin, clipHog );
   }
 }

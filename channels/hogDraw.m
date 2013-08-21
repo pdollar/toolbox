@@ -23,7 +23,7 @@ function V = hogDraw( H, w, fhog )
 
 % fold normalizations
 if(nargin<3 || isempty(fhog)), fhog=0; end
-m=size(H,3); if(fhog), m=(m-4)/3; H=H(:,:,1:m*3); m=3; else m=4; end
+m=size(H,3); if(fhog), m=(m-5)/3; H=H(:,:,1:m*3); m=3; else m=4; end
 s=size(H); s(3)=s(3)/m; w0=H; H=zeros(s);
 for o=0:m-1, H=H+w0(:,:,(1:s(3))+o*s(3)); end;
 
