@@ -1,5 +1,4 @@
-Version NEW
- -TODO: add link to latest toolbox.zip on website (latest version)
+Version 3.23 (20-Aug-2013)
  -fhog.m: added heavily optimized FHOG (Felzenszwalb's HOG) features
  -gradientHist.m/chnsCompute.m: added contrast sensitive gradient histograms
  -gradientHist.m: various optimization and additional options
