@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Piotr's Image&Video Toolbox      Version 3.20
+* Piotr's Image&Video Toolbox      Version NEW
 * Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
 * Please email me if you find bugs, or have suggestions or questions!
 * Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -19,7 +19,7 @@ void forestFindThr( int H, int N, int F, const float *data, const uint32 *hs,
   for( i=0; i<H; i++ ) g+=T[i]*T[i];
   fid = 1; thr = 0; gini = 1e5;
   for( i=0; i<F; i++ ) {
-    order1=(uint32*) order+i*N; data1=(float*) data+i*N;
+    order1=(uint32*) order+i*N; data1=(float*) data+i*size_t(N);
     for( j=0; j<H; j++ ) { L[j]=0; R[j]=T[j]; } gl=sl=0; gr=g;
     for( j=0; j<N-1; j++ ) {
       int j1=order1[j], j2=order1[j+1]; h=hs[j1]-1; sl+=ws[j1]; sr=s-sl;

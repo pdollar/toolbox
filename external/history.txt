@@ -1,3 +1,6 @@
+Version NEW
+ -classify/private/*.cpp: minor fixes for very large datasets
+
 Version 3.23 (20-Aug-2013)
  -fhog.m: added heavily optimized FHOG (Felzenszwalb's HOG) features
  -gradientHist.m/chnsCompute.m: added contrast sensitive gradient histograms

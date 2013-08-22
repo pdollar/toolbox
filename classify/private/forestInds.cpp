@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Piotr's Image&Video Toolbox      Version 3.21
+* Piotr's Image&Video Toolbox      Version NEW
 * Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
 * Please email me if you find bugs, or have suggestions or questions!
 * Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -19,7 +19,7 @@ void forestInds( uint32 *inds, const T *data, const T *thrs,
   for( int i = 0; i < N; i++ ) {
     uint32 k = 0;
     while( child[k] )
-      if( data[i+fids[k]*N] < thrs[k] )
+      if( data[i+fids[k]*size_t(N)] < thrs[k] )
         k = child[k]-1; else k = child[k];
     inds[i] = k+1;
   }
