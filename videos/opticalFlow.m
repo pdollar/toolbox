@@ -1,4 +1,4 @@
-function [Vx,Vy,reliab]=opticalFlow( I1, I2, varargin )
+function [Vx,Vy,reliab] = opticalFlow( I1, I2, varargin )
 % Coarse-to-fine optical flow using Lucas&Kanade or Horn&Schunck.
 %
 % Implemented 'type' of optical flow estimation:
@@ -23,6 +23,8 @@ function [Vx,Vy,reliab]=opticalFlow( I1, I2, varargin )
 %  pFlow    - parameters (struct or name/value pairs)
 %   .type       - ['LK'] may be either 'LK' or 'HS'
 %   .smooth     - [1] smoothing radius for triangle filter (may be 0)
+%   .filt       - [0] median filtering radius for smoothing flow field
+%   .minsiz     - [8] minimum image height/width in image pyramid
 %   .resample   - [1] resampling amount (must be a power of 2)
 %   .radius     - [5] integration radius for weighted window [LK only]
 %   .alpha      - [1] smoothness constraint [HS only]
@@ -53,21 +55,23 @@ function [Vx,Vy,reliab]=opticalFlow( I1, I2, varargin )
 %
 % See also convTri, imtransform2
 %
-% Piotr's Image&Video Toolbox      Version 3.02
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % get default parameters and do error checking
-dfs={'type','LK','smooth',1,'resample',1,'radius',5,'alpha',1,'nIter',250};
-[type,smooth,resample,radius,alpha,nIter]=getPrmDflt(varargin,dfs,1);
+dfs={ 'type','LK', 'smooth',1, 'filt',0, 'minsiz',8, ...
+  'resample',1, 'radius',5, 'alpha',1, 'nIter',250 };
+[type,smooth,filt,minsiz,resample,radius,alpha,nIter] = ...
+  getPrmDflt(varargin,dfs,1);
 assert(any(strcmp(type,{'LK','HS'}))); useLk=strcmp(type,'LK');
 if( ~ismatrix(I1) || ~ismatrix(I2) || any(size(I1)~=size(I2)) )
   error('Input images must be 2D and have same dimensions.'); end
 
 % run optical flow in coarse to fine fashion
 if(~isa(I1,'single')), I1=single(I1); I2=single(I2); end
-[h,w]=size(I1); nScales=floor(log2(min(h,w)))-2;
+[h,w]=size(I1); nScales=floor(log2(min(h,w)/minsiz))+1;
 for s=1:nScales + round(log2(resample))
   % get current scale and I1s and I2s at given scale
   scale=2^(nScales-s); h1=round(h/scale); w1=round(w/scale);
@@ -84,6 +88,9 @@ for s=1:nScales + round(log2(resample))
   if( useLk ), [Vx1,Vy1,reliab]=opticalFlowLk(I1s,I2s,radius);
   else [Vx1,Vy1]=opticalFlowHs(I1s,I2s,alpha,nIter); reliab=[]; end
   Vx=Vx+Vx1; Vy=Vy+Vy1;
+  % finally median filter the resulting flow field
+  if(filt), Vx=medfilt2(Vx,[filt filt],'symmetric'); end
+  if(filt), Vy=medfilt2(Vy,[filt filt],'symmetric'); end
 end
 if(s~=nScales), r=sqrt(h*w/numel(Vx));
   Vx=imResample(Vx,[h w])*r; Vy=imResample(Vy,[h w])*r; end
@@ -107,16 +114,13 @@ end
 
 function [Vx,Vy] = opticalFlowHs( I1, I2, alpha, nIter )
 % compute derivatives (averaging over 2x2 neighborhoods)
-A00=shift(I1,0,0); A10=shift(I1,1,0);
-A01=shift(I1,0,1); A11=shift(I1,1,1);
-B00=shift(I2,0,0); B10=shift(I2,1,0);
-B01=shift(I2,0,1); B11=shift(I2,1,1);
-Ex=0.25*((A01+B01+A11+B11)-(A00+B00+A10+B10));
-Ey=0.25*((A10+B10+A11+B11)-(A00+B00+A01+B01));
-Et=0.25*((B00+B10+B01+B11)-(A00+A10+A01+A11));
-Ex([1 end],:)=0; Ex(:,[1 end])=0;
-Ey([1 end],:)=0; Ey(:,[1 end])=0;
-Et([1 end],:)=0; Et(:,[1 end])=0;
+pad = @(I,p) imPad(I,p,'replicate');
+Ex = I1(:,2:end)-I1(:,1:end-1) + I2(:,2:end)-I2(:,1:end-1);
+Ey = I1(2:end,:)-I1(1:end-1,:) + I2(2:end,:)-I2(1:end-1,:);
+Ex = Ex/4; Ey = Ey/4; Et = (I2-I1)/4;
+Ex = pad(Ex,[1 1 1 2]) + pad(Ex,[0 2 1 2]);
+Ey = pad(Ey,[1 2 1 1]) + pad(Ey,[1 2 0 2]);
+Et=pad(Et,[0 2 1 1])+pad(Et,[1 1 1 1])+pad(Et,[1 1 0 2])+pad(Et,[0 2 0 2]);
 Z=1./(alpha*alpha + Ex.*Ex + Ey.*Ey);
 % iterate updating Ux and Vx in each iter
 if( 1 )
@@ -133,7 +137,7 @@ else
 end
 end
 
-function J = shift( I, y, x )
+function J = shift( I, y, x ) %#ok<DEFNU>
 % shift I by -1<=x,y<=1 pixels
 [h,w]=size(I); J=zeros(h+2,w+2,'single');
 J(2-y:end-1-y,2-x:end-1-x)=I;
