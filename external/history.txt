@@ -1,6 +1,7 @@
 Version NEW
  -classify/private/*.cpp: minor fixes for very large datasets
  -opticalFlow.m: various improvements
+ -minor: imagesAlignSeq
 
 Version 3.23 (20-Aug-2013)
  -fhog.m: added heavily optimized FHOG (Felzenszwalb's HOG) features

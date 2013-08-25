@@ -35,7 +35,7 @@ function [J,Vxs,Vys] = imagesAlignSeq( I, pFlow, type, bndThr )
 %
 % EXAMPLE
 %  I = seqIo(which('peds30.seq'),'toImgs'); I=I(:,:,:,1:15);
-%  pFlow={'smooth',1,'radius',25,'type','LK','resample',1};
+%  pFlow={'smooth',1,'radius',25,'type','LK','maxScale',1};
 %  tic, J = imagesAlignSeq( I, pFlow, 1, 20 ); toc
 %  playMovie([I J],15,-10,struct('hasChn',1))
 %
@@ -45,13 +45,13 @@ function [J,Vxs,Vys] = imagesAlignSeq( I, pFlow, type, bndThr )
 %  nm=sprintf('%s/videos/set%02i/V%03i.seq',pth,ss(s),vs{s}(v));
 %  f=seqIo(nm,'getinfo'); f=f.numFrames; f=randi(f-30);
 %  I=seqIo(nm,'toImgs',[],1,f,f+9);
-%  pFlow={'smooth',1,'radius',25,'type','LK','resample',1};
+%  pFlow={'smooth',1,'radius',25,'type','LK','maxScale',1};
 %  tic, J = imagesAlignSeq( I, pFlow, 1, 20 ); toc
 %  playMovie([I J],15,-10,struct('hasChn',1))
 %
 % See also opticalFlow, imtransform2, imagesAlign
 %
-% Piotr's Image&Video Toolbox      Version 3.22
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
