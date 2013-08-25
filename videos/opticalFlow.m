@@ -8,9 +8,9 @@ function [Vx,Vy,reliab] = opticalFlow( I1, I2, varargin )
 % HS is a global, slower method (an SSE implementation is provided).
 %
 % Common parameters for LK and HS: 'smooth' determines smoothing prior to
-% flow computation and can make flow estimation more robust. 'resample' can
+% flow computation and can make flow estimation more robust. 'maxScale' can
 % be used to downsample an image for faster but lower quality results, e.g.
-% resample=.5 makes flow computation about 4x faster. LK: 'radius' controls
+% maxScale=.5 makes flow computation about 4x faster. LK: 'radius' controls
 % integration window size (and smoothness of flow). HS: 'alpha' controls
 % tradeoff between data and smoothness term (and smoothness of flow) and
 % 'nIter' determines number of gradient decent steps.
@@ -24,8 +24,8 @@ function [Vx,Vy,reliab] = opticalFlow( I1, I2, varargin )
 %   .type       - ['LK'] may be either 'LK' or 'HS'
 %   .smooth     - [1] smoothing radius for triangle filter (may be 0)
 %   .filt       - [0] median filtering radius for smoothing flow field
-%   .minsiz     - [8] minimum image height/width in image pyramid
-%   .resample   - [1] resampling amount (must be a power of 2)
+%   .minScale   - [1/64] minimum pyramid scale (must be a power of 2)
+%   .maxScale   - [1] maximum pyramid scale (must be a power of 2)
 %   .radius     - [5] integration radius for weighted window [LK only]
 %   .alpha      - [1] smoothness constraint [HS only]
 %   .nIter      - [250] number of iterations [HS only]
@@ -61,9 +61,9 @@ function [Vx,Vy,reliab] = opticalFlow( I1, I2, varargin )
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % get default parameters and do error checking
-dfs={ 'type','LK', 'smooth',1, 'filt',0, 'minsiz',8, ...
-  'resample',1, 'radius',5, 'alpha',1, 'nIter',250 };
-[type,smooth,filt,minsiz,resample,radius,alpha,nIter] = ...
+dfs={ 'type','LK', 'smooth',1, 'filt',0, 'minScale',1/64, ...
+  'maxScale',1, 'radius',5, 'alpha',1, 'nIter',250 };
+[type,smooth,filt,minScale,maxScale,radius,alpha,nIter] = ...
   getPrmDflt(varargin,dfs,1);
 assert(any(strcmp(type,{'LK','HS'}))); useLk=strcmp(type,'LK');
 if( ~ismatrix(I1) || ~ismatrix(I2) || any(size(I1)~=size(I2)) )
@@ -71,8 +71,8 @@ if( ~ismatrix(I1) || ~ismatrix(I2) || any(size(I1)~=size(I2)) )
 
 % run optical flow in coarse to fine fashion
 if(~isa(I1,'single')), I1=single(I1); I2=single(I2); end
-[h,w]=size(I1); nScales=floor(log2(min(h,w)/minsiz))+1;
-for s=1:nScales + round(log2(resample))
+[h,w]=size(I1); nScales=max(1,floor(log2(min([h w 1/minScale])))+1);
+for s=1:max(1,nScales + round(log2(maxScale)))
   % get current scale and I1s and I2s at given scale
   scale=2^(nScales-s); h1=round(h/scale); w1=round(w/scale);
   if( scale==1 ), I1s=I1; I2s=I2; else
@@ -80,8 +80,8 @@ for s=1:nScales + round(log2(resample))
   % initialize Vx,Vy or upsample from previous scale
   if(s==1), Vx=zeros(h1,w1,'single'); Vy=Vx; else r=sqrt(h1*w1/numel(Vx));
     Vx=imResample(Vx,[h1 w1])*r; Vy=imResample(Vy,[h1 w1])*r; end
-  % transform I1s according to current estimate of Vx and Vy
-  if(s), I1s=imtransform2(I1s,[],'pad','replciate','vs',-Vx,'us',-Vy); end
+  % transform I2s according to current estimate of Vx and Vy
+  if(s>1), I2s=imtransform2(I2s,[],'pad','replciate','vs',Vx,'us',Vy); end
   % smooth images
   I1s=convTri(I1s,smooth); I2s=convTri(I2s,smooth);
   % run optical flow on current scale
@@ -92,8 +92,8 @@ for s=1:nScales + round(log2(resample))
   if(filt), Vx=medfilt2(Vx,[filt filt],'symmetric'); end
   if(filt), Vy=medfilt2(Vy,[filt filt],'symmetric'); end
 end
-if(s~=nScales), r=sqrt(h*w/numel(Vx));
-  Vx=imResample(Vx,[h w])*r; Vy=imResample(Vy,[h w])*r; end
+r=sqrt(h*w/numel(Vx));
+if(r~=1), Vx=imResample(Vx,[h w])*r; Vy=imResample(Vy,[h w])*r; end
 
 end
 
