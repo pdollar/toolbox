@@ -1,6 +1,6 @@
 Version NEW
  -classify/private/*.cpp: minor fixes for very large datasets
- -opticalFlow.m: various improvements
+ -opticalFlow.m: various improvements, changes to parameters
  -minor: imagesAlignSeq
 
 Version 3.23 (20-Aug-2013)
