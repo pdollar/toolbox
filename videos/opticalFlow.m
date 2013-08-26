@@ -39,7 +39,7 @@ function [Vx,Vy,reliab] = opticalFlow( I1, I2, varargin )
 %
 % OUTPUTS
 %  Vx, Vy   - x,y components of flow  [Vx>0->right, Vy>0->down]
-%  reliab   - reliability of flow in given window [LK/SD only]
+%  reliab   - reliability of flow in given window
 %
 % EXAMPLE - compute LK flow on test images
 %  load opticalFlowTest;
@@ -95,7 +95,7 @@ for s=1:max(1,nScales + round(log2(maxScale)))
   % run optical flow on current scale
   switch type
     case 'LK', [Vx1,Vy1,reliab]=opticalFlowLk(I1s,I2s,radius);
-    case 'HS', [Vx1,Vy1]=opticalFlowHs(I1s,I2s,alpha,nIter); reliab=0;
+    case 'HS', [Vx1,Vy1,reliab]=opticalFlowHs(I1s,I2s,alpha,nIter);
     case 'SD', [Vx1,Vy1,reliab]=opticalFlowSd(I1s,I2s,radius,nBlock,1);
   end
   Vx=Vx+Vx1; Vy=Vy+Vy1;
@@ -124,27 +124,28 @@ Vy = AAdeti .* (-AAxy.*ABxt + AAxx.*AByt);
 reliab = 0.5*AAtr - 0.5*sqrt(AAtr.^2-4*AAdet);
 end
 
-function [Vx,Vy] = opticalFlowHs( I1, I2, alpha, nIter )
+function [Vx,Vy,reliab] = opticalFlowHs( I1, I2, alpha, nIter )
 % compute derivatives (averaging over 2x2 neighborhoods)
 pad = @(I,p) imPad(I,p,'replicate');
+crop = @(I,c) I(1+c:end-c,1+c:end-c);
 Ex = I1(:,2:end)-I1(:,1:end-1) + I2(:,2:end)-I2(:,1:end-1);
 Ey = I1(2:end,:)-I1(1:end-1,:) + I2(2:end,:)-I2(1:end-1,:);
 Ex = Ex/4; Ey = Ey/4; Et = (I2-I1)/4;
 Ex = pad(Ex,[1 1 1 2]) + pad(Ex,[0 2 1 2]);
 Ey = pad(Ey,[1 2 1 1]) + pad(Ey,[1 2 0 2]);
 Et=pad(Et,[0 2 1 1])+pad(Et,[1 1 1 1])+pad(Et,[1 1 0 2])+pad(Et,[0 2 0 2]);
-Z=1./(alpha*alpha + Ex.*Ex + Ey.*Ey);
+Z=1./(alpha*alpha + Ex.*Ex + Ey.*Ey); reliab=crop(Z,1);
 % iterate updating Ux and Vx in each iter
 if( 1 )
   [Vx,Vy]=opticalFlowHsMex(Ex,Ey,Et,Z,nIter);
-  Vx=Vx(2:end-1,2:end-1); Vy=Vy(2:end-1,2:end-1);
+  Vx=crop(Vx,1); Vy=crop(Vy,1);
 else
+  Ex=crop(Ex,1); Ey=crop(Ey,1); Et=crop(Et,1); Z=crop(Z,1);
   Vx=zeros(size(I1),'single'); Vy=Vx;
+  f=single([0 1 0; 1 0 1; 0 1 0])/4;
   for i = 1:nIter
-    Mx=.25*(shift(Vx,-1,0)+shift(Vx,1,0)+shift(Vx,0,-1)+shift(Vx,0,1));
-    My=.25*(shift(Vy,-1,0)+shift(Vy,1,0)+shift(Vy,0,-1)+shift(Vy,0,1));
+    Mx=conv2(Vx,f,'same'); My=conv2(Vy,f,'same');
     m=(Ex.*Mx+Ey.*My+Et).*Z; Vx=Mx-Ex.*m; Vy=My-Ey.*m;
-    Vx=Vx(2:end-1,2:end-1); Vy=Vy(2:end-1,2:end-1);
   end
 end
 end
@@ -161,10 +162,4 @@ end
 D=convTri(D,radius); [reliab,D]=min(D,[],3);
 k=2*nBlock+1; Vy=mod(D-1,k)+1; Vx=(D-Vy)/k+1;
 Vy=(nBlock+1-Vy)*step; Vx=(nBlock+1-Vx)*step;
-end
-
-function J = shift( I, y, x ) %#ok<DEFNU>
-% shift I by -1<=x,y<=1 pixels
-[h,w]=size(I); J=zeros(h+2,w+2,'single');
-J(2-y:end-1-y,2-x:end-1-x)=I;
 end
