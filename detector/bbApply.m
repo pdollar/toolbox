@@ -58,7 +58,7 @@ function varargout = bbApply( action, varargin )
 % bbApply>union bbApply>resize bbApply>squarify bbApply>draw bbApply>crop
 % bbApply>convert bbApply>random bbApply>frMask bbApply>toMask
 %
-% Piotr's Image&Video Toolbox      Version 2.65
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -337,7 +337,7 @@ if( ismatrix(I) ), I=I(:,:,[1 1 1]); end
 x0=bb(:,1); x1=x0+bb(:,3)-1; y0=bb(:,2); y1=y0+bb(:,4)-1;
 j0=floor((lw-1)/2); j1=ceil((lw-1)/2); h=size(I,1); w=size(I,2);
 x00=max(1,x0-j0); x01=min(x0+j1,w); x10=max(1,x1-j0); x11=min(x1+j1,w);
-y00=max(1,y0-j0); y01=min(y0+j1,h); y10=max(1,y1-j0); y11=min(y1+j1,w);
+y00=max(1,y0-j0); y01=min(y0+j1,h); y10=max(1,y1-j0); y11=min(y1+j1,h);
 for b=1:n
   for c=1:3, I([y00(b):y01(b) y10(b):y11(b)],x00(b):x11(b),c)=col(b,c); end
   for c=1:3, I(y00(b):y11(b),[x00(b):x01(b) x10(b):x11(b)],c)=col(b,c); end
