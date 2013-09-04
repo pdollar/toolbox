@@ -11,7 +11,7 @@
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 3.22
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -40,18 +40,17 @@ n=length(fs); useOmp=zeros(1,n); useOmp([6 9])=1;
 % compile every funciton in turn (special case for dijkstra)
 disp('Compiling Piotr''s Toolbox.......................');
 rd=fileparts(mfilename('fullpath')); rd=rd(1:end-9); tic;
-try
-  for i=1:n
+errmsg=' -> COMPILE FAILURE: ''%s'' %s\n';
+for i=1:n
+  try %#ok<ALIGN>
     [d,f1,e]=fileparts(fs{i}); f=[rd '/' d '/private/' f1];
     if(useOmp(i)), optsi=[optsOmp opts]; else optsi=opts; end
     fprintf(' -> %s\n',[f e]); mex([f e],optsi{:},[f '.' mexext]);
-  end
+  catch err, fprintf(errmsg,[f1 e],err.message); end
+end
+try %#ok<ALIGN>
   d=[rd '/matlab/private/']; fprintf(' -> %s\n',[d 'dijkstra1.cpp']);
   mex([d 'fibheap.cpp'], [d 'dijkstra1.cpp'], '-largeArrayDims', ...
     opts{:}, [d 'dijkstra1.' mexext]);
-catch ME
-  fprintf(['C++ mex failed, likely due to lack of a C++ compiler.\n' ...
-    'Run ''mex -setup'' to specify a C++ compiler if available.\n'...
-    'Or, one can specify a specific C++ explicitly (see mex help).\n']);
-end
+catch err, fprintf(errmsg,[f1 e],err.message); end
 disp('..................................Done Compiling'); toc;
