@@ -5,7 +5,9 @@
 * Licensed under the Simplified BSD License [see external/bsd.txt]
 *******************************************************************************/
 #include <mex.h>
+#ifdef USEOMP
 #include <omp.h>
+#endif
 
 typedef unsigned char uint8;
 typedef unsigned int uint32;
@@ -48,13 +50,17 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     M1 = (int) mxGetNumberOfElements(prhs[9]);
   }
 
-  // find lowest error for each feature
+  // create outpu structure
   plhs[0] = mxCreateNumericMatrix(1,F,mxSINGLE_CLASS,mxREAL);
   plhs[1] = mxCreateNumericMatrix(1,F,mxUINT8_CLASS,mxREAL);
   float *errs = (float*) mxGetData(plhs[0]);
   uint8 *thrs = (uint8*) mxGetData(plhs[1]);
+
+  // find lowest error for each feature
+  #ifdef USEOMP
   nThreads = min(nThreads,omp_get_max_threads());
   #pragma omp parallel for num_threads(nThreads)
+  #endif
   for( int f=0; f<F; f++ ) {
     float cdf0[256], cdf1[256], e0=1, e1=0, e; int thr;
     constructCdf(data0+N0*size_t(fids[f]),wts0,nBins,N0,M0,ord0,cdf0);

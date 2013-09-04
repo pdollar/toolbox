@@ -5,7 +5,9 @@
 * Licensed under the Simplified BSD License [see external/bsd.txt]
 *******************************************************************************/
 #include <mex.h>
+#ifdef USEOMP
 #include <omp.h>
+#endif
 
 typedef unsigned char uint8;
 typedef unsigned int uint32;
@@ -15,7 +17,10 @@ template<typename T>
 void forestInds( uint32 *inds, const T *data, const T *thrs,
   const uint32 *fids, const uint32 *child, int N, int nThreads )
 {
+  #ifdef USEOMP
+  nThreads = min(nThreads,omp_get_max_threads());
   #pragma omp parallel for num_threads(nThreads)
+  #endif
   for( int i = 0; i < N; i++ ) {
     uint32 k = 0;
     while( child[k] )
@@ -33,7 +38,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   fids = (uint32*) mxGetData(prhs[2]);
   child = (uint32*) mxGetData(prhs[3]);
   nThreads = (nrhs<5) ? 100000 : (int) mxGetScalar(prhs[4]);
-  nThreads = min(nThreads,omp_get_max_threads());
   N = (int) mxGetM(prhs[0]);
   plhs[0] = mxCreateNumericMatrix(N,1,mxUINT32_CLASS,mxREAL);
   inds = (uint32*) mxGetPr(plhs[0]);
