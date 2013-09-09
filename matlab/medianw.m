@@ -11,8 +11,8 @@ function m = medianw( x, w, dim )
 %  m = medianw( x, w, [dim] )
 %
 % INPUTS
-%  x      - 1D or 2D vector or matrix of samples
-%  w      - 1D or 2D vector or matrix of weights
+%  x      - vector or array of samples
+%  w      - vector or array of weights
 %  dim    - dimension along which to compute median
 %
 % OUTPUTS
@@ -35,21 +35,23 @@ function m = medianw( x, w, dim )
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 if(nargin<3), dim=find(size(x)~=1,1); end
+d=dim; nd=ndims(x); n=numel(x);
 
-if( isscalar(x) || size(x,dim)==1 )
+if( n==1 || size(x,d)==1 )
   m=x;
-elseif( length(x)==numel(x) )
+elseif( length(x)==n )
   [x,o]=sort(x); w=w(o); w=cumsum(w);
   w=w/w(end); [~,j]=min(w<=.5);
   if(j==1 || w(j-1)~=.5), m=x(j);
   else m=(x(j-1)+x(j))/2; end
 else
-  if(dim==2), x=x'; w=w'; end; assert(dim<=2);
-  [x,o]=sort(x); w=w(o); w=cumsum(w);
-  w=bsxfun(@rdivide,w,w(end,:)); [~,j]=min(w<=.5);
-  s=size(x); s=(0:s(2)-1)*s(1); j0=max(1,j-1); j0=j0+s; j=j+s;
+  if(d>1), p=[d 1:d-1 d+1:nd]; x=permute(x,p); w=permute(w,p); end
+  [x,o]=sort(x); w=w(o); w=cumsum(w); is={':'}; is=is(ones(1,nd-1));
+  w=bsxfun(@rdivide,w,w(end,is{:})); [~,j]=min(w<=.5);
+  s=size(x); s=reshape(((1:n/s(1))-1)*s(1),size(j));
+  j0=max(1,j-1); j0=j0+s; j=j+s;
   same=w(j0)~=.5; j0(same)=j(same); m=(x(j0)+x(j))/2;
-  if(dim==2), m=m'; end
+  if(d>1), p=[2:d 1 d+1:nd]; m=permute(m,p); end
 end
 
 end
