@@ -1,7 +1,9 @@
 Version NEW
  -classify/private/*.cpp: minor fixes for very large datasets
  -opticalFlow.m: various improvements, changes to parameters
- -minor: imagesAlignSeq, bbApply, toolboxCompile
+ -toolboxCompile.m: added option to compile w/o openMP
+ -matlab/medianw.m: added fast weighted median
+ -minor: imagesAlignSeq, bbApply
 
 Version 3.23 (20-Aug-2013)
  -fhog.m: added heavily optimized FHOG (Felzenszwalb's HOG) features
