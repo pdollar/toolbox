@@ -1,6 +1,6 @@
 /*******************************************************************************
-* Piotr's Image&Video Toolbox      Version 3.00
-* Copyright 2012 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
+* Piotr's Image&Video Toolbox      Version NEW
+* Copyright 2013 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
 * Please email me if you find bugs, or have suggestions or questions!
 * Licensed under the Simplified BSD License [see external/bsd.txt]
 *******************************************************************************/
@@ -8,7 +8,7 @@
 #include <string.h>
 #include "sse.hpp"
 
-// convolve two columns of I by ones filter
+// convolve one column of I by a 2rx1 ones filter
 void convBoxY( float *I, float *O, int h, int r, int s ) {
   float t; int j, p=r+1, q=2*h-(r+1), h0=r+1, h1=h-r, h2=h;
   t=0; for(j=0; j<=r; j++) t+=I[j]; t=2*t-I[r]; j=0;
@@ -37,13 +37,12 @@ void convBox( float *I, float *O, int h, int w, int d, int r, int s ) {
     for(i=0; i<=r; i++) for(j=h0; j<h; j++ ) T[j]+=I[j+i*h];
     for(j=h0; j<h; j++ ) T[j]=nrm*(2*T[j]-I[j+r*h]);
     // prepare and convolve each column in turn
-    for( i=0; i<w0; i++ ) {
-      float *Il, *Ir; Il=Ir=I;
-      if(i<=r) { Il+=(r-i)*h; Ir+=(r+i)*h; }
-      else if( i<w-r ) { Il-=(r-i+1)*h; Ir+=(r+i)*h; }
-      else { Il-=(r-i+1)*h; Ir+=2*w*h-(r+i+1)*h; }
-      if(i) for(j=0; j<h0; j+=4) DEC(T[j],MUL(nrm,SUB(LDu(Il[j]),LDu(Ir[j]))));
-      if(i) for(j=h0; j<h; j++ ) T[j]-=nrm*(Il[j]-Ir[j]);
+    k++; if(k==s) { k=0; convBoxY(T,O,h,r,s); O+=h/s; }
+    for( i=1; i<w0; i++ ) {
+      float *Il=I+(i-1-r)*h; if(i<=r) Il=I+(r-i)*h;
+      float *Ir=I+(i+r)*h; if(i>=w-r) Ir=I+(2*w-r-i-1)*h;
+      for(j=0; j<h0; j+=4) DEC(T[j],MUL(nrm,SUB(LDu(Il[j]),LDu(Ir[j]))));
+      for(j=h0; j<h; j++ ) T[j]-=nrm*(Il[j]-Ir[j]);
       k++; if(k==s) { k=0; convBoxY(T,O,h,r,s); O+=h/s; }
     }
     I+=w*h;
@@ -51,7 +50,7 @@ void convBox( float *I, float *O, int h, int w, int d, int r, int s ) {
   alFree(T);
 }
 
-// convolve single column of I by [1; 1] filter (uses SSE)
+// convolve one column of I by a [1; 1] filter (uses SSE)
 void conv11Y( float *I, float *O, int h, int side, int s ) {
   #define C4(m,o) ADD(LDu(I[m*j-1+o]),LDu(I[m*j+o]))
   int j=0, k=((~((size_t) O) + 1) & 15)/4;
@@ -71,7 +70,7 @@ void conv11Y( float *I, float *O, int h, int side, int s ) {
   #undef C4
 }
 
-// convolve I by [1 1; 1 1] filter (uses SSE)
+// convolve I by a [1 1; 1 1] filter (uses SSE)
 void conv11( float *I, float *O, int h, int w, int d, int side, int s ) {
   const float nrm = 0.25f; int i, j;
   float *I0, *I1, *T = (float*) alMalloc(h*sizeof(float),16);
@@ -117,16 +116,15 @@ void convTri( float *I, float *O, int h, int w, int d, int r, int s ) {
     for(i=1; i<r; i++) for(j=h0; j<h; j++ ) U[j]+=T[j]+=I[j+i*h];
     for(j=h0; j<h; j++ ) { U[j] = nrm * (2*U[j]-T[j]); T[j]=0; }
     // prepare and convolve each column in turn
-    for( i=0; i<w0; i++ ) {
-      float *Il, *Ir, *Im; Il=Ir=Im=I; Im+=(i-1)*h;
-      if( i<=r ) { Il+=(r-i)*h; Ir+=(r-1+i)*h; }
-      else if( i<=w-r ) { Il-=(r+1-i)*h; Ir+=(r-1+i)*h; }
-      else { Il-=(r+1-i)*h; Ir+=(2*w-r-i)*h; }
-      if(i) for( j=0; j<h0; j+=4 ) {
-        __m128 del = SUB(ADD(LDu(Il[j]),LDu(Ir[j])),MUL(2,LDu(Im[j])));
-        INC(U[j], MUL(nrm,(INC(T[j],del))));
+    k++; if(k==s) { k=0; convTriY(U,O,h,r-1,s); O+=h/s; }
+    for( i=1; i<w0; i++ ) {
+      float *Il=I+(i-1-r)*h; if(i<=r) Il=I+(r-i)*h; float *Im=I+(i-1)*h;
+      float *Ir=I+(i-1+r)*h; if(i>w-r) Ir=I+(2*w-r-i)*h;
+      for( j=0; j<h0; j+=4 ) {
+        INC(T[j],ADD(LDu(Il[j]),LDu(Ir[j]),MUL(-2,LDu(Im[j]))));
+        INC(U[j],MUL(nrm,LD(T[j])));
       }
-      if(i) for( j=h0; j<h; j++ ) U[j]+=nrm*(T[j]+=Il[j]+Ir[j]-2*Im[j]);
+      for( j=h0; j<h; j++ ) U[j]+=nrm*(T[j]+=Il[j]+Ir[j]-2*Im[j]);
       k++; if(k==s) { k=0; convTriY(U,O,h,r-1,s); O+=h/s; }
     }
     I+=w*h;
@@ -134,7 +132,7 @@ void convTri( float *I, float *O, int h, int w, int d, int r, int s ) {
   alFree(T);
 }
 
-// convolve one column of I by [1 p 1] filter (uses SSE)
+// convolve one column of I by a [1 p 1] filter (uses SSE)
 void convTri1Y( float *I, float *O, int h, float p, int s ) {
   #define C4(m,o) ADD(ADD(LDu(I[m*j-1+o]),MUL(p,LDu(I[m*j+o]))),LDu(I[m*j+1+o]))
   int j=0, k=((~((size_t) O) + 1) & 15)/4, h2=(h-1)/2;
@@ -153,7 +151,7 @@ void convTri1Y( float *I, float *O, int h, float p, int s ) {
   #undef C4
 }
 
-// convolve I by [1 p 1] filter (uses SSE)
+// convolve I by a [1 p 1] filter (uses SSE)
 void convTri1( float *I, float *O, int h, int w, int d, float p, int s ) {
   const float nrm = 1.0f/((p+2)*(p+2)); int i, j, h0=h-(h%4);
   float *Il, *Im, *Ir, *T=(float*) alMalloc(h*sizeof(float),16);
@@ -186,7 +184,7 @@ void convMaxY( float *I, float *O, float *T, int h, int r ) {
   #undef max1
 }
 
-// convolve every column of I by a 2rx1 max filter
+// convolve I by a 2rx1 max filter
 void convMax( float *I, float *O, int h, int w, int d, int r ) {
   if( r>w-1 ) r=w-1; if( r>h-1 ) r=h-1; int m=2*r+1;
   float *T=(float*) alMalloc(m*2*sizeof(float),16);
