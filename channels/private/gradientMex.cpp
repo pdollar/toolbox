@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Piotr's Image&Video Toolbox      Version 3.23
+* Piotr's Image&Video Toolbox      Version NEW
 * Copyright 2013 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
 * Please email me if you find bugs, or have suggestions or questions!
 * Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -377,7 +377,7 @@ void mGradMagNorm( int nl, mxArray *pl[], int nr, const mxArray *pr[] ) {
 
 // H=gradHist(M,O,[...]) - see gradientHist.m
 void mGradHist( int nl, mxArray *pl[], int nr, const mxArray *pr[] ) {
-  int h, w, d, hb, wb, binSize, nOrients, softBin, useHog;
+  int h, w, d, hb, wb, nChns, binSize, nOrients, softBin, useHog;
   bool full; float *M, *O, *H, clipHog;
   checkArgs(nl,pl,nr,pr,1,3,2,8,&h,&w,&d,mxSINGLE_CLASS,(void**)&M);
   O = (float*) mxGetPr(pr[1]);
@@ -389,15 +389,15 @@ void mGradHist( int nl, mxArray *pl[], int nr, const mxArray *pr[] ) {
   useHog   = (nr>=6) ? (int)   mxGetScalar(pr[5])    : 0;
   clipHog  = (nr>=7) ? (float) mxGetScalar(pr[6])    : 0.2f;
   full     = (nr>=8) ? (bool) (mxGetScalar(pr[7])>0) : false;
-  hb=h/binSize; wb=w/binSize;
+  hb = h/binSize; wb = w/binSize;
+  nChns = useHog== 0 ? nOrients : (useHog==1 ? nOrients*4 : nOrients*3+5);
+  pl[0] = mxCreateMatrix3(hb,wb,nChns,mxSINGLE_CLASS,1,(void**)&H);
+  if( nOrients==0 ) return;
   if( useHog==0 ) {
-    pl[0] = mxCreateMatrix3(hb,wb,nOrients,mxSINGLE_CLASS,1,(void**)&H);
     gradHist( M, O, H, h, w, binSize, nOrients, softBin, full );
   } else if(useHog==1) {
-    pl[0] = mxCreateMatrix3(hb,wb,nOrients*4,mxSINGLE_CLASS,1,(void**)&H);
     hog( M, O, H, h, w, binSize, nOrients, softBin, full, clipHog );
   } else {
-    pl[0] = mxCreateMatrix3(hb,wb,nOrients*3+5,mxSINGLE_CLASS,1,(void**)&H);
     fhog( M, O, H, h, w, binSize, nOrients, softBin, clipHog );
   }
 }
