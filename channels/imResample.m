@@ -41,7 +41,8 @@ if( nargin<3 || isempty(method) ), bilinear=1; else
 end
 if( nargin<4 || isempty(norm) ), norm=1; end
 [m,n,~]=size(A); k=numel(scale);
-if(k==1 && scale==1 && norm==1), B=A; return; end
+same = (k==1 && scale==1) | (k==2 && m==scale(1) && n==scale(2));
+if( same && norm==1 ); B=A; return; end
 
 if( bilinear )
   % use bilinear interpolation
