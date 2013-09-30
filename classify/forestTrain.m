@@ -22,7 +22,7 @@ function forest = forestTrain( data, hs, varargin )
 %   .maxDepth - [64] maximum depth of tree
 %   .dWts     - [] weights used for sampling and weighing each data point
 %   .fWts     - [] weights used for sampling features
-%   .split    - ['gini'] options include 'gini' or 'entropy'
+%   .split    - ['gini'] options include 'gini', 'entropy' and 'twoing'
 %
 % OUTPUTS
 %  forest   - learned forest model struct array w the following fields
@@ -65,7 +65,7 @@ if(isempty(N1)), N1=round(5*N/M); end; N1=min(N,N1);
 if(isempty(F1)), F1=round(sqrt(F)); end; F1=min(F,F1);
 if(isempty(dWts)), dWts=ones(1,N,'single'); end; dWts=dWts/sum(dWts);
 if(isempty(fWts)), fWts=ones(1,F,'single'); end; fWts=fWts/sum(fWts);
-split=find(strcmpi(splitStr,{'gini','entropy'}))-1;
+split=find(strcmpi(splitStr,{'gini','entropy','twoing'}))-1;
 if(isempty(split)), error('unknown splitting criteria: %s',splitStr); end
 
 % make sure data has correct types

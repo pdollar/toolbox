@@ -6,6 +6,7 @@
 *******************************************************************************/
 #include <string.h>
 #include <stdint.h>
+#include <math.h>
 #include <mex.h>
 
 typedef unsigned int uint32;
@@ -53,6 +54,12 @@ void forestFindThr( int H, int N, int F, const float *data,
         gl-=entropy(Wl[h]); Wl[h]+=ws[j1]; gl+=entropy(Wl[h]);
         gr-=entropy(Wr[h]); Wr[h]-=ws[j1]; gr+=entropy(Wr[h]);
         v = gl/w + gr/w;
+      } else if (split==2) {
+        // twoing: v = pl*pr*\sum_h(|p_h_left - p_h_right|)^2 [slow if H>>0]
+        j1=order1[j]; j2=order1[j+1]; h=hs[j1]-1;
+        wl+=ws[j1]; Wl[h]+=ws[j1]; wr-=ws[j1]; Wr[h]-=ws[j1];
+        g=0; for( int h1=0; h1<H; h1++ ) g+=fabs(Wl[h1]/wl-Wr[h1]/wr);
+        v = - wl/w*wr/w*g*g;
       }
       if( v<vBst && data1[j2]-data1[j1]>=1e-6f ) {
         vBst=v; fid=i+1; thr=0.5f*(data1[j1]+data1[j2]); }
