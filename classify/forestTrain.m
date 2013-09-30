@@ -48,7 +48,7 @@ function forest = forestTrain( data, hs, varargin )
 %
 % See also forestApply, fernsClfTrain
 %
-% Piotr's Image&Video Toolbox      Version 3.10
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -100,9 +100,9 @@ while( k < K )
   % train split and continue
   fids1=wswor(fWts,F1,4); data1=data(dids1,fids1);
   [~,order1]=sort(data1); order1=uint32(order1-1);
-  [fid,thr,gini]=forestFindThr(data1,hs1,dWts(dids1),order1,H);
+  [fid,thr,gain]=forestFindThr(data1,hs1,dWts(dids1),order1,H);
   fid=fids1(fid); left=data(dids1,fid)<thr; count0=nnz(left);
-  if( gini<100 && count0>=minChild && (count(k)-count0)>=minChild )
+  if( gain>1e-10 && count0>=minChild && (count(k)-count0)>=minChild )
     child(k)=K; fids(k)=fid-1; thrs(k)=thr;
     dids{K}=dids1(left); dids{K+1}=dids1(~left);
     depth(K:K+1)=depth(k)+1; K=K+2;
