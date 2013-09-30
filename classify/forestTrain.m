@@ -22,6 +22,7 @@ function forest = forestTrain( data, hs, varargin )
 %   .maxDepth - [64] maximum depth of tree
 %   .dWts     - [] weights used for sampling and weighing each data point
 %   .fWts     - [] weights used for sampling features
+%   .split    - ['gini'] options include 'gini' or 'entropy'
 %
 % OUTPUTS
 %  forest   - learned forest model struct array w the following fields
@@ -55,14 +56,17 @@ function forest = forestTrain( data, hs, varargin )
 
 % get additional parameters and fill in remaining parameters
 dfs={ 'M',1, 'N1',[], 'F1',[], 'minCount',1, 'minChild',1, ...
-  'maxDepth',64, 'dWts',[], 'fWts',[] };
-[M,N1,F1,minCount,minChild,maxDepth,dWts,fWts]=getPrmDflt(varargin,dfs,1);
+  'maxDepth',64, 'dWts',[], 'fWts',[], 'split','gini' };
+[M,N1,F1,minCount,minChild,maxDepth,dWts,fWts,splitStr] = ...
+  getPrmDflt(varargin,dfs,1);
 [N,F]=size(data); assert(length(hs)==N); assert(all(hs>0)); H=max(hs);
 minChild=max(1,minChild); minCount=max([1 minCount minChild]);
 if(isempty(N1)), N1=round(5*N/M); end; N1=min(N,N1);
 if(isempty(F1)), F1=round(sqrt(F)); end; F1=min(F,F1);
 if(isempty(dWts)), dWts=ones(1,N,'single'); end; dWts=dWts/sum(dWts);
 if(isempty(fWts)), fWts=ones(1,F,'single'); end; fWts=fWts/sum(fWts);
+split=find(strcmpi(splitStr,{'gini','entropy'}))-1;
+if(isempty(split)), error('unknown splitting criteria: %s',splitStr); end
 
 % make sure data has correct types
 if(~isa(data,'single')), data=single(data); end
@@ -71,7 +75,7 @@ if(~isa(fWts,'single')), fWts=single(fWts); end
 if(~isa(dWts,'single')), dWts=single(dWts); end
 
 % train M random trees on different subsets of data
-prmTree = {H,F1,minCount,minChild,maxDepth,fWts};
+prmTree = {H,F1,minCount,minChild,maxDepth,fWts,split};
 for i=1:M
   if(N==N1), data1=data; hs1=hs; dWts1=dWts; else
     d=wswor(dWts,N1,4); data1=data(d,:); hs1=hs(d);
@@ -86,7 +90,7 @@ end
 function tree = treeTrain( data, hs, dWts, prmTree )
 % Train single random tree.
 N=size(data,1); K=2*N-1;
-[H,F1,minCount,minChild,maxDepth,fWts] = deal(prmTree{:});
+[H,F1,minCount,minChild,maxDepth,fWts,split] = deal(prmTree{:});
 thrs=zeros(K,1,'single'); distr=zeros(K,H,'single');
 fids=zeros(K,1,'uint32'); child=fids; count=fids; depth=fids;
 dids=cell(K,1); dids{1}=uint32(1:N); k=1; K=2;
@@ -100,7 +104,7 @@ while( k < K )
   % train split and continue
   fids1=wswor(fWts,F1,4); data1=data(dids1,fids1);
   [~,order1]=sort(data1); order1=uint32(order1-1);
-  [fid,thr,gain]=forestFindThr(data1,hs1,dWts(dids1),order1,H);
+  [fid,thr,gain]=forestFindThr(data1,hs1,dWts(dids1),order1,H,split);
   fid=fids1(fid); left=data(dids1,fid)<thr; count0=nnz(left);
   if( gain>1e-10 && count0>=minChild && (count(k)-count0)>=minChild )
     child(k)=K; fids(k)=fid-1; thrs(k)=thr;
