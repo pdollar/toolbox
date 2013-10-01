@@ -16,9 +16,9 @@ function [ U, mu, vars ] = pca( X )
 % opposite of many matlab functions such as princomp. If X is MxNxn, then
 % X(:,:,i) represents the ith observation (useful for stack of n images),
 % likewise for n videos X is MxNxKxn. If X is very large, it is sampled
-% before running PCA, using subsampleMatrix. Use this function to retrieve
-% the basis U. Use pcaApply to retrieve that basis coefficients for a novel
-% vector x. Use pcaVisualize(X,...) for visualization of approximated X.
+% before running PCA. Use this function to retrieve the basis U. Use
+% pcaApply to retrieve that basis coefficients for a novel vector x. Use
+% pcaVisualize(X,...) for visualization of approximated X.
 %
 % To calculate residuals:
 %  residuals = cumsum(vars/sum(vars)); plot(residuals,'-.')
@@ -41,33 +41,23 @@ function [ U, mu, vars ] = pca( X )
 %  pcaVisualize( U, mu, vars, I3D1, 13, [0:12], [], 1 );
 %  Xr = pcaRandVec( U, mu, vars, 1, 25, 0, 3 );
 %
-% See also princomp, pcaApply, pcaVisualize, pcaRandVec
-% visualizeData, subsampleMatrix
+% See also princomp, pcaApply, pcaVisualize, pcaRandVec, visualizeData
 %
 % Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
-% Will run out of memory if X has too many elements.
-maxmegs = 200;
-if( ~isa(X,'double') )
-  s=whos('X'); nbytes=s.bytes/numel(X);
-  X = subsampleMatrix( X, maxmegs * nbytes/8 );
-  X = double(X);
-else
-  X = subsampleMatrix( X, maxmegs );
-end
-
 % set X to be zero mean, then flatten
 d=size(X); n=d(end); d=prod(d(1:end-1));
+if(~isa(X,'double')), X=double(X); end
 if(n==1); mu=X; U=zeros(d,1); vars=0; return; end
 mu = mean( X, ndims(X) );
 X = bsxfun(@minus,X,mu)/sqrt(n-1);
 X = reshape( X, d, n );
 
-% make sure X not too large or SVD too slow O(min(d,n)^2.5)
-m=1500; if( min(d,n)>m ), X=X(:,randperm(n,m)); n=m; end
+% make sure X not too large or SVD slow O(min(d,n)^2.5)
+m=2500; if( min(d,n)>m ), X=X(:,randperm(n,m)); n=m; end
 
 % get principal components using the SVD of X: X=U*S*V'
 if( 0 )
