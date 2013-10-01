@@ -63,13 +63,24 @@ m=2500; if( min(d,n)>m ), X=X(:,randperm(n,m)); n=m; end
 if( 0 )
   [U,S]=svd(X,'econ'); vars=diag(S).^2;
 elseif( d>n )
-  [~,SS,V]=svd(X'*X); vars=diag(SS);
+  [~,SS,V]=robustSvd(X'*X); vars=diag(SS);
   U = X * V * diag(1./sqrt(vars));
 else
-  [~,SS,U]=svd(X*X'); vars=diag(SS);
+  [~,SS,U]=robustSvd(X*X'); vars=diag(SS);
 end
 
 % discard low variance prinicipal components
 K=vars>1e-30; vars=vars(K); U=U(:,K);
 
+end
+
+function [U,S,V] = robustSvd( X, trials )
+% Robust version of SVD more likely to always converge.
+% [Converge issues only seem to appear on Matlab 2013a in Windows.]
+if(nargin<2), trials=100; end
+try [U,S,V] = svd(X); catch
+  if(trials<=0), error('svd did not converge'); end
+  n=numel(X); j=randi(n); X(j)=X(j)+eps;
+  [U,S,V]=robustSvd(X,trials-1);
+end
 end
