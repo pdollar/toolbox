@@ -1,4 +1,4 @@
-function [ U, mu, vars ] = pca( X )
+function [U,mu,vars] = pca( X )
 % Principal components analysis (alternative to princomp).
 %
 % A simple linear dimensionality reduction technique. Use to create an
@@ -24,20 +24,20 @@ function [ U, mu, vars ] = pca( X )
 %  residuals = cumsum(vars/sum(vars)); plot(residuals,'-.')
 %
 % USAGE
-%  [ U, mu, vars ] = pca( X )
+%  [U,mu,vars] = pca( X )
 %
 % INPUTS
 %  X         - [d1 x ... x dm x n], treated as n [d1 x ... x dm] elements
 %
 % OUTPUTS
 %  U         - [d x r], d=prod(di), each column is a principal component
-%  mu        - [d1 x ... x dm] mean of X.
+%  mu        - [d1 x ... x dm] mean of X
 %  vars      - sorted eigenvalues corresponding to eigenvectors in U
 %
 % EXAMPLE
 %  load pcaData;
-%  [ U, mu, vars ] = pca( I3D1(:,:,1:12) );
-%  [ Y, Xhat, avsq ] = pcaApply( I3D1(:,:,1), U, mu, 5 );
+%  [U,mu,vars] = pca( I3D1(:,:,1:12) );
+%  [Y,Xhat,avsq] = pcaApply( I3D1(:,:,1), U, mu, 5 );
 %  pcaVisualize( U, mu, vars, I3D1, 13, [0:12], [], 1 );
 %  Xr = pcaRandVec( U, mu, vars, 1, 25, 0, 3 );
 %
