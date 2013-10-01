@@ -14,15 +14,16 @@ function forest = forestTrain( data, hs, varargin )
 %  data     - [NxF] N length F feature vectors
 %  hs       - [Nx1] target output labels in [1,H]
 %  varargin - additional params (struct or name/value pairs)
-%   .M        - [1] number of trees to train
-%   .N1       - [5*N/M] number of data points for training each tree
-%   .F1       - [sqrt(F)] number features to sample for each node split
-%   .minCount - [1] minimum number of data points to allow split
-%   .minChild - [1] minimum number of data points allowed at child nodes
-%   .maxDepth - [64] maximum depth of tree
-%   .dWts     - [] weights used for sampling and weighing each data point
-%   .fWts     - [] weights used for sampling features
-%   .split    - ['gini'] options include 'gini', 'entropy' and 'twoing'
+%   .M          - [1] number of trees to train
+%   .H          - [max(hs)] number of classes
+%   .N1         - [5*N/M] number of data points for training each tree
+%   .F1         - [sqrt(F)] number features to sample for each node split
+%   .split      - ['gini'] options include 'gini', 'entropy' and 'twoing'
+%   .minCount   - [1] minimum number of data points to allow split
+%   .minChild   - [1] minimum number of data points allowed at child nodes
+%   .maxDepth   - [64] maximum depth of tree
+%   .dWts       - [] weights used for sampling and weighing each data point
+%   .fWts       - [] weights used for sampling features
 %
 % OUTPUTS
 %  forest   - learned forest model struct array w the following fields
@@ -30,6 +31,7 @@ function forest = forestTrain( data, hs, varargin )
 %   .thrs     - [Kx1] threshold corresponding to each fid
 %   .child    - [Kx1] index of child for each node
 %   .distr    - [KxH] prob distribution at each node
+%   .hs       - [Kx1] most likely label at each node
 %   .count    - [Kx1] number of data points at each node
 %   .depth    - [Kx1] depth of each node
 %
@@ -50,17 +52,18 @@ function forest = forestTrain( data, hs, varargin )
 % See also forestApply, fernsClfTrain
 %
 % Piotr's Image&Video Toolbox      Version NEW
-% Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % get additional parameters and fill in remaining parameters
-dfs={ 'M',1, 'N1',[], 'F1',[], 'minCount',1, 'minChild',1, ...
-  'maxDepth',64, 'dWts',[], 'fWts',[], 'split','gini' };
-[M,N1,F1,minCount,minChild,maxDepth,dWts,fWts,splitStr] = ...
+dfs={ 'M',1, 'H',[], 'N1',[], 'F1',[], 'split','gini', 'minCount',1, ...
+  'minChild',1, 'maxDepth',64, 'dWts',[], 'fWts',[] };
+[M,H,N1,F1,splitStr,minCount,minChild,maxDepth,dWts,fWts] = ...
   getPrmDflt(varargin,dfs,1);
-[N,F]=size(data); assert(length(hs)==N); assert(all(hs>0)); H=max(hs);
+[N,F]=size(data); assert(length(hs)==N);
 minChild=max(1,minChild); minCount=max([1 minCount minChild]);
+if(isempty(H)), H=max(hs); end; assert(all(hs>0 & hs<=H));
 if(isempty(N1)), N1=round(5*N/M); end; N1=min(N,N1);
 if(isempty(F1)), F1=round(sqrt(F)); end; F1=min(F,F1);
 if(isempty(dWts)), dWts=ones(1,N,'single'); end; dWts=dWts/sum(dWts);
@@ -89,32 +92,32 @@ end
 
 function tree = treeTrain( data, hs, dWts, prmTree )
 % Train single random tree.
+[H,F1,minCount,minChild,maxDepth,fWts,split]=deal(prmTree{:});
 N=size(data,1); K=2*N-1;
-[H,F1,minCount,minChild,maxDepth,fWts,split] = deal(prmTree{:});
 thrs=zeros(K,1,'single'); distr=zeros(K,H,'single');
 fids=zeros(K,1,'uint32'); child=fids; count=fids; depth=fids;
-dids=cell(K,1); dids{1}=uint32(1:N); k=1; K=2;
+hsn=fids; dids=cell(K,1); dids{1}=uint32(1:N); k=1; K=2;
 while( k < K )
   % get node data and store distribution
-  dids1=dids{k}; dids{k}=[]; hs1=hs(dids1); count(k)=length(dids1);
-  pure=all(hs1(1)==hs1); if(pure), distr(k,hs1(1))=1; else
-    distr(k,:)=histc(hs1,1:H)/single(count(k)); end
+  dids1=dids{k}; dids{k}=[]; hs1=hs(dids1); n1=length(hs1); count(k)=n1;
+  pure=all(hs1(1)==hs1); if(pure), distr(k,hs1(1))=1; hsn(k)=hs1(1);
+  else distr(k,:)=histc(hs1,1:H)/n1; [~,hsn(k)]=max(distr(k,:)); end
   % if pure node or insufficient data don't train split
-  if( pure||count(k)<=minCount||depth(k)>maxDepth ), k=k+1; continue; end
+  if( pure || n1<=minCount || depth(k)>maxDepth ), k=k+1; continue; end
   % train split and continue
   fids1=wswor(fWts,F1,4); data1=data(dids1,fids1);
   [~,order1]=sort(data1); order1=uint32(order1-1);
   [fid,thr,gain]=forestFindThr(data1,hs1,dWts(dids1),order1,H,split);
   fid=fids1(fid); left=data(dids1,fid)<thr; count0=nnz(left);
-  if( gain>1e-10 && count0>=minChild && (count(k)-count0)>=minChild )
+  if( gain>1e-10 && count0>=minChild && (n1-count0)>=minChild )
     child(k)=K; fids(k)=fid-1; thrs(k)=thr;
     dids{K}=dids1(left); dids{K+1}=dids1(~left);
     depth(K:K+1)=depth(k)+1; K=K+2;
   end; k=k+1;
-end; K=K-1;
+end; K=1:K-1;
 % create output model struct
-tree=struct('fids',fids(1:K),'thrs',thrs(1:K),'child',child(1:K),...
-  'distr',distr(1:K,:),'count',count(1:K),'depth',depth(1:K));
+tree=struct('fids',fids(K),'thrs',thrs(K),'child',child(K),...
+  'distr',distr(K,:),'hs',hsn(K),'count',count(K),'depth',depth(K));
 end
 
 function ids = wswor( prob, N, trials )

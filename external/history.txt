@@ -1,6 +1,6 @@
 Version NEW
  -classify/private/*.cpp: minor fixes for very large datasets
- -forestTrain.m: added additional splitting criteria
+ -forestTrain.m/forestApply: added new options for splitting/applying 
  -opticalFlow.m: various improvements, changes to parameters
  -toolboxCompile.m: added option to compile w/o openMP
  -matlab/medianw.m: added fast weighted median
