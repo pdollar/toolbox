@@ -29,11 +29,13 @@ if(nargin<5 || isempty(best)), best=0; end
 assert(isa(data,'single')); M=length(forest);
 H=size(forest(1).distr,2); N=size(data,1);
 if(best), hs=zeros(N,M); else ps=zeros(N,H); end
+discr=iscell(forest(1).hs); if(discr), best=1; hs=cell(N,M); end
 for i=1:M, tree=forest(i);
   if(maxDepth>0), tree.child(tree.depth>=maxDepth) = 0; end
   if(minCount>0), tree.child(tree.count<=minCount) = 0; end
   ids = forestInds(data,tree.thrs,tree.fids,tree.child);
   if(best), hs(:,i)=tree.hs(ids); else ps=ps+tree.distr(ids,:); end
 end
+if(discr), ps=[]; return; end % output is actually {NxM} in this case
 if(best), ps=histc(hs',1:H)'; end; [~,hs]=max(ps,[],2); ps=ps/M;
 end
