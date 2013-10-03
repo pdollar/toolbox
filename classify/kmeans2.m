@@ -51,7 +51,7 @@ function [ IDX, C, d ] = kmeans2( X, k, varargin )
 %
 % See also DEMOCLUSTER
 %
-% Piotr's Image&Video Toolbox      Version 2.52
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -92,9 +92,9 @@ end
 function [IDX,C,d] = kmeans2main( X, k, nOut, minCl, maxt, dsp, metric, C )
 
 % initialize cluster centers to be k random X points
-[N,p] = size(X); k = min(k,N);
+[N,p] = size(X); k = min(k,N); t=0;
 IDX = ones(N,1); oldIDX = zeros(N,1);
-if(isempty(C)), C = X(randSample(N,k),:); end; t=0;
+if(isempty(C)), C = X(randperm(N,k),:)+randn(k,p)/1e5; end
 
 % MAIN LOOP: loop until the cluster assigments do not change
 if(dsp), nDg=ceil(log10(maxt-1)); fprintf(int2str2(0,nDg)); end

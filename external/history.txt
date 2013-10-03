@@ -5,7 +5,7 @@ Version NEW
  -toolboxCompile.m: added option to compile w/o openMP
  -matlab/medianw.m: added fast weighted median
  -minor: imagesAlignSeq, bbApply, convConst, imResample, gradientMex, pca,
-   subsampleMatrix (removed)
+   kmeans2, subsampleMatrix (removed)
 
 Version 3.23 (20-Aug-2013)
  -fhog.m: added heavily optimized FHOG (Felzenszwalb's HOG) features
