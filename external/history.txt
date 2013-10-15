@@ -1,4 +1,4 @@
-Version NEW
+Version 3.24 (10-Oct-2013)
  -classify/private/*.cpp: minor fixes for very large datasets
  -classify/forest*.m: added new options for splitting/applying 
  -videos/opticalFlow.m: various improvements, changes to parameters
