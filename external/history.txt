@@ -1,11 +1,11 @@
 Version NEW
  -classify/private/*.cpp: minor fixes for very large datasets
- -forestTrain.m/forestApply: added new options for splitting/applying 
- -opticalFlow.m: various improvements, changes to parameters
- -toolboxCompile.m: added option to compile w/o openMP
+ -classify/forest*.m: added new options for splitting/applying 
+ -videos/opticalFlow.m: various improvements, changes to parameters
  -matlab/medianw.m: added fast weighted median
- -minor: imagesAlignSeq, bbApply, convConst, imResample, gradientMex, pca,
-   kmeans2, subsampleMatrix (removed)
+ -toolboxCompile.m: added option to compile w/o openMP
+ -minor: imagesAlignSeq, bbApply, convConst, imResample,
+   gradientMex, pca, kmeans2, subsampleMatrix (removed)
 
 Version 3.23 (20-Aug-2013)
  -fhog.m: added heavily optimized FHOG (Felzenszwalb's HOG) features
