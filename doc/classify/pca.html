@@ -20,57 +20,55 @@
 <div class="box"><strong>Principal components analysis (alternative to princomp).</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function [ U, mu, vars ] = pca( X ) </strong></div>
+<div class="box"><strong>function [U,mu,vars] = pca( X ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment"> Principal components analysis (alternative to princomp).
 
- A simple linear dimensionality reduction technique.  Use to create an
- orthonormal basis for the points in R^D such that the coordinates of a
- vector x in this basis are of decreasing importance.  Instead of using
- all D basis vectors to specify the location of x, using only the first
- k&lt;D still gives a vector xhat that is close to x.
+ A simple linear dimensionality reduction technique. Use to create an
+ orthonormal basis for the points in R^d such that the coordinates of a
+ vector x in this basis are of decreasing importance. Instead of using all
+ d basis vectors to specify the location of x, using only the first k&lt;d
+ still gives a vector xhat that is close to x.
 
  This function operates on arrays of arbitrary dimension, by first
- converting the arrays to vector.  If X is m+1 dimensional, say of size
+ converting the arrays to vectors. If X is m+1 dimensional, say of size
  [d1 x d2 x...x dm x n], then the first m dimensions of X are combined. X
- is flattened to be 2 dimensional: [Dxn], with D=prod(di). Once X is
- converted to 2 dimensions of size Dxn, each column represents a single
- observation, and each row is a different variable.  Note that this is the
- opposite of many matlab functions such as princomp.  If X is MxNxn, then
+ is flattened to be 2 dimensional: [dxn], with d=prod(di). Once X is
+ converted to 2 dimensions of size dxn, each column represents a single
+ observation, and each row is a different variable. Note that this is the
+ opposite of many matlab functions such as princomp. If X is MxNxn, then
  X(:,:,i) represents the ith observation (useful for stack of n images),
  likewise for n videos X is MxNxKxn. If X is very large, it is sampled
- before running PCA, using subsampleMatrix. Use this function to retrieve
- the basis U.  Use pcaApply to retrieve that basis coefficients for a
- novel vector x. Use pcaVisualize(X,...) for visualization of approximated
- X.
+ before running PCA. Use this function to retrieve the basis U. Use
+ pcaApply to retrieve that basis coefficients for a novel vector x. Use
+ pcaVisualize(X,...) for visualization of approximated X.
 
  To calculate residuals:
-  residuals = cumsum(vars / sum(vars)); plot( residuals, '-.' )
+  residuals = cumsum(vars/sum(vars)); plot(residuals,'-.')
 
  USAGE
-  [ U, mu, vars ] = pca( X )
+  [U,mu,vars] = pca( X )
 
  INPUTS
   X         - [d1 x ... x dm x n], treated as n [d1 x ... x dm] elements
 
  OUTPUTS
-  U         - [D x r], D=prod(di), each column is a principal component
-  mu        - [d1 x ... x dm] mean of X.
+  U         - [d x r], d=prod(di), each column is a principal component
+  mu        - [d1 x ... x dm] mean of X
   vars      - sorted eigenvalues corresponding to eigenvectors in U
 
  EXAMPLE
   load pcaData;
-  [ U, mu, vars ] = pca( I3D1(:,:,1:12) );
-  [ Y, Xhat, avsq ] = pcaApply( I3D1(:,:,1), U, mu, 5 );
+  [U,mu,vars] = pca( I3D1(:,:,1:12) );
+  [Y,Xhat,avsq] = pcaApply( I3D1(:,:,1), U, mu, 5 );
   pcaVisualize( U, mu, vars, I3D1, 13, [0:12], [], 1 );
   Xr = pcaRandVec( U, mu, vars, 1, 25, 0, 3 );
 
- See also PRINCOMP, <a href="pcaApply.html" class="code" title="function varargout = pcaApply( X, U, mu, k )">PCAAPPLY</a>, <a href="pcaVisualize.html" class="code" title="function varargout=pcaVisualize( U, mu, vars, X, index, ks, fname, show )">PCAVISUALIZE</a>, <a href="pcaRandVec.html" class="code" title="function Xr = pcaRandVec( U, mu, vars, k, n, hypershpere, show )">PCARANDVEC</a>
- <a href="visualizeData.html" class="code" title="function visualizeData( X, k, IDX, types, C )">VISUALIZEDATA</a>, SUBSAMPLEMATRIX
+ See also princomp, <a href="pcaApply.html" class="code" title="function varargout = pcaApply( X, U, mu, k )">pcaApply</a>, <a href="pcaVisualize.html" class="code" title="function varargout=pcaVisualize( U, mu, vars, X, index, ks, fname, show )">pcaVisualize</a>, <a href="pcaRandVec.html" class="code" title="function Xr = pcaRandVec( U, mu, vars, k, n, hypershpere, show )">pcaRandVec</a>, <a href="visualizeData.html" class="code" title="function visualizeData( X, k, IDX, types, C )">visualizeData</a>
 
- Piotr's Image&amp;Video Toolbox      Version 2.0
- Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 3.24
+ Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>
 

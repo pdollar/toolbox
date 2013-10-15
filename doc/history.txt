@@ -1,3 +1,12 @@
+Version 3.24 (10-Oct-2013)
+ -classify/private/*.cpp: minor fixes for very large datasets
+ -classify/forest*.m: added new options for splitting/applying 
+ -videos/opticalFlow.m: various improvements, changes to parameters
+ -matlab/medianw.m: added fast weighted median
+ -toolboxCompile.m: added option to compile w/o openMP
+ -minor: imagesAlignSeq, bbApply, convConst, imResample,
+   gradientMex, pca, kmeans2, subsampleMatrix (removed)
+
 Version 3.23 (20-Aug-2013)
  -fhog.m: added heavily optimized FHOG (Felzenszwalb's HOG) features
  -gradientHist.m/chnsCompute.m: added contrast sensitive gradient histograms

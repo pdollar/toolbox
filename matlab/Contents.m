@@ -54,7 +54,6 @@
 %   spBlkDiag         - Creates a sparse block diagonal matrix from a 3D array.
 %   sub2ind2          - Improved version of sub2ind.
 %   subsToArray       - Converts subs/vals image representation to array representation.
-
 %   uniqueColors      - Generate m*n visually distinct RGB colors suitable for display.
 %
 % Thin plate splines:

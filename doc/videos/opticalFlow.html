@@ -20,7 +20,7 @@
 <div class="box"><strong>Coarse-to-fine optical flow using Lucas&amp;Kanade or Horn&amp;Schunck.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function [Vx,Vy,reliab]=opticalFlow( I1, I2, varargin ) </strong></div>
+<div class="box"><strong>function [Vx,Vy,reliab] = opticalFlow( I1, I2, varargin ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
 <div class="fragment"><pre class="comment"> Coarse-to-fine optical flow using Lucas&amp;Kanade or Horn&amp;Schunck.
@@ -28,16 +28,22 @@
  Implemented 'type' of optical flow estimation:
   LK: http://en.wikipedia.org/wiki/Lucas-Kanade_method
   HS: http://en.wikipedia.org/wiki/Horn-Schunck_method
+  SD: Simple block-based sum of absolute differences flow
  LK is a local, fast method (the implementation is fully vectorized).
  HS is a global, slower method (an SSE implementation is provided).
+ SD is a simple but potentially expensive approach.
 
- Common parameters for LK and HS: 'smooth' determines smoothing prior to
- flow computation and can make flow estimation more robust. 'resample' can
- be used to downsample an image for faster but lower quality results, e.g.
- resample=.5 makes flow computation about 4x faster. LK: 'radius' controls
- integration window size (and smoothness of flow). HS: 'alpha' controls
- tradeoff between data and smoothness term (and smoothness of flow) and
- 'nIter' determines number of gradient decent steps.
+ Common parameters: 'smooth' determines smoothing prior to computing flow
+ and can make flow estimation more robust. 'filt' determines amount of
+ median filtering of the computed flow field which improves results but is
+ costly. 'minScale' and 'maxScale' control image scales in the pyramid.
+ Setting 'maxScale'&lt;1 results in faster but lower quality results, e.g.
+ maxScale=.5 makes flow computation about 4x faster. Method specific
+ parameters: 'radius' controls window size (and smoothness of flow) for LK
+ and SD. 'nBlock' determines number of blocks tested in each direction for
+ SD, computation time is O(nBlock^2). For HS, 'alpha' controls tradeoff
+ between data and smoothness term (and smoothness of flow) and 'nIter'
+ determines number of gradient decent steps.
 
  USAGE
   [Vx,Vy,reliab] = opticalFlow( I1, I2, pFlow )
@@ -45,16 +51,19 @@
  INPUTS
   I1, I2   - input images to calculate flow between
   pFlow    - parameters (struct or name/value pairs)
-   .type       - ['LK'] may be either 'LK' or 'HS'
+   .type       - ['LK'] may be 'LK', 'HS' or 'SD'
    .smooth     - [1] smoothing radius for triangle filter (may be 0)
-   .resample   - [1] resampling amount (must be a power of 2)
-   .radius     - [5] integration radius for weighted window [LK only]
+   .filt       - [0] median filtering radius for smoothing flow field
+   .minScale   - [1/64] minimum pyramid scale (must be a power of 2)
+   .maxScale   - [1] maximum pyramid scale (must be a power of 2)
+   .radius     - [10] integration radius for weighted window [LK/SD only]
+   .nBlock     - [5] number of tested blocks [SD only]
    .alpha      - [1] smoothness constraint [HS only]
    .nIter      - [250] number of iterations [HS only]
 
  OUTPUTS
   Vx, Vy   - x,y components of flow  [Vx&gt;0-&gt;right, Vy&gt;0-&gt;down]
-  reliab   - reliability of flow in given window [LK only]
+  reliab   - reliability of flow in given window
 
  EXAMPLE - compute LK flow on test images
   load opticalFlowTest;
@@ -68,17 +77,18 @@
   I1=imtransform2(I1,[],'vs',-Vx,'us',-Vy,'pad','replicate');
   figure(1); im(I1); figure(2); im(I2);
 
- EXAMPLE - compare LK and HS flow
+ EXAMPLE - compare LK/HS/SD flows
   load opticalFlowTest;
-  prm={'smooth',1,'radius',10,'alpha',20,'nIter',200,'type'};
+  prm={'smooth',1,'radius',10,'alpha',20,'nIter',250,'type'};
   tic, [Vx1,Vy1]=opticalFlow(I1,I2,prm{:},'LK'); toc
   tic, [Vx2,Vy2]=opticalFlow(I1,I2,prm{:},'HS'); toc
-  figure(1); im([Vx1 Vy1; Vx2 Vy2]); colormap jet;
+  tic, [Vx3,Vy3]=opticalFlow(I1,I2,prm{:},'SD','minScale',1); toc
+  figure(1); im([Vx1 Vy1; Vx2 Vy2; Vx3 Vy3]); colormap jet;
 
- See also convTri, imtransform2
+ See also convTri, imtransform2, medfilt2
 
- Piotr's Image&amp;Video Toolbox      Version 3.02
- Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 3.24
+ Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>
 

@@ -3,7 +3,7 @@ function toolboxGenDoc
 %
 % 1) Make sure to update and run toolboxUpdateHeader.m
 % 2) Update history.txt appropriately, including w current version
-% 3) Update overview.html file with the version/data/link to zip:
+% 3) Update overview.html file with the version/date/link to zip:
 %     edit external/m2html/templates/frame-piotr/overview.html
 %
 % USAGE
@@ -17,7 +17,7 @@ function toolboxGenDoc
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 3.22
+% Piotr's Image&Video Toolbox      Version 3.24
 % Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -27,7 +27,7 @@ cd(fileparts(mfilename('fullpath'))); cd('../');
 addpath([pwd '/external/m2html']);
 
 % delete temporary files that should not be part of release
-fs={'pngreadc','pngwritec','rjpg8c','wjpg8c'};
+fs={'pngreadc','pngwritec','rjpg8c','wjpg8c','png'};
 for i=1:length(fs), delete(['videos/private/' fs{i} '.*']); end
 
 % delete old doc and run m2html

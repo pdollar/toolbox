@@ -2,9 +2,9 @@
                 "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
 <head>
-  <title>Description of forestApply</title>
-  <meta name="keywords" content="forestApply">
-  <meta name="description" content="Apply learned forest classifier.">
+  <title>Description of medianw</title>
+  <meta name="keywords" content="medianw">
+  <meta name="description" content="Fast weighted median.">
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
   <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
   <meta name="robots" content="index, follow">
@@ -12,36 +12,46 @@
 </head>
 <body>
 <a name="_top"></a>
-<!-- menu.html classify -->
-<h1>forestApply
+<!-- menu.html matlab -->
+<h1>medianw
 </h1>
 
 <h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>Apply learned forest classifier.</strong></div>
+<div class="box"><strong>Fast weighted median.</strong></div>
 
 <h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="box"><strong>function [hs,ps] = forestApply( data, forest, maxDepth, minCount, best ) </strong></div>
+<div class="box"><strong>function m = medianw( x, w, dim ) </strong></div>
 
 <h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
-<div class="fragment"><pre class="comment"> Apply learned forest classifier.
+<div class="fragment"><pre class="comment"> Fast weighted median.
+
+ Computes the weighted median of a set of samples.
+  http://en.wikipedia.org/wiki/Weighted_median
+ &quot;A weighted median of a sample is the 50% weighted percentile.&quot;
+ For matrices computes median along each column (or dimension dim).
+ If all weights are equal to 1 gives identical results to median.
 
  USAGE
-  [hs,ps] = forestApply( data, forest, [maxDepth], [minCount], [best] )
+  m = medianw( x, w, [dim] )
 
  INPUTS
-  data     - [NxF] N length F feature vectors
-  forest   - learned forest classification model
-  maxDepth - [] maximum depth of tree
-  minCount - [] minimum number of data points to allow split
-  best     - [0] if true use single best prediction per tree
+  x      - vector or array of samples
+  w      - vector or array of weights
+  dim    - dimension along which to compute median
 
  OUTPUTS
-  hs       - [Nx1] predicted output labels
-  ps       - [NxH] predicted output label probabilities
+  m      - weighted median value of x
 
- EXAMPLE
+ EXAMPLE - simple toy example
+  x=[1 2 3]; w=[1 1 5]; medianw(x,w)
 
- See also <a href="forestTrain.html" class="code" title="function forest = forestTrain( data, hs, varargin )">forestTrain</a>
+ EXAMPLE - comparison to median
+  n=randi(100); m=randi(100);
+  x=rand(n,m); w=ones(n,m);
+  m1=median(x); m2=medianw(x,w);
+  assert(isequal(m1,m2))
+
+ See also median
 
  Piotr's Image&amp;Video Toolbox      Version 3.24
  Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]

@@ -40,9 +40,9 @@
    <a href="softMin.html" class="code" title="function M = softMin( D, sigma )">softMin</a>            - Calculates the <a href="softMin.html" class="code" title="function M = softMin( D, sigma )">softMin</a> of a vector.
 
  Principal components analysis:
-   <a href="pca.html" class="code" title="function [ U, mu, vars ] = pca( X )">pca</a>                - Principal components analysis (alternative to princomp).
-   <a href="pcaApply.html" class="code" title="function varargout = pcaApply( X, U, mu, k )">pcaApply</a>           - Companion function to <a href="pca.html" class="code" title="function [ U, mu, vars ] = pca( X )">pca</a>.
-   <a href="pcaRandVec.html" class="code" title="function Xr = pcaRandVec( U, mu, vars, k, n, hypershpere, show )">pcaRandVec</a>         - Generate random vectors in <a href="pca.html" class="code" title="function [ U, mu, vars ] = pca( X )">PCA</a> subspace.
+   <a href="pca.html" class="code" title="function [U,mu,vars] = pca( X )">pca</a>                - Principal components analysis (alternative to princomp).
+   <a href="pcaApply.html" class="code" title="function varargout = pcaApply( X, U, mu, k )">pcaApply</a>           - Companion function to <a href="pca.html" class="code" title="function [U,mu,vars] = pca( X )">pca</a>.
+   <a href="pcaRandVec.html" class="code" title="function Xr = pcaRandVec( U, mu, vars, k, n, hypershpere, show )">pcaRandVec</a>         - Generate random vectors in <a href="pca.html" class="code" title="function [U,mu,vars] = pca( X )">PCA</a> subspace.
    <a href="pcaVisualize.html" class="code" title="function varargout=pcaVisualize( U, mu, vars, X, index, ks, fname, show )">pcaVisualize</a>       - Visualization of quality of approximation of X given principal comp.
    <a href="visualizeData.html" class="code" title="function visualizeData( X, k, IDX, types, C )">visualizeData</a>      - Project high dim. data unto principal components (PCA) for visualization.
 
@@ -61,7 +61,7 @@
    <a href="fernsInds.html" class="code" title="function inds = fernsInds( data, fids, thrs )">fernsInds</a>          - Compute indices for each input by each fern.
    <a href="fernsRegApply.html" class="code" title="function [ys,ysCum] = fernsRegApply( data, ferns, inds )">fernsRegApply</a>      - Apply learned fern regressor.
    <a href="fernsRegTrain.html" class="code" title="function [ferns,ysPr] = fernsRegTrain( data, ys, varargin )">fernsRegTrain</a>      - Train boosted fern regressor.
-   <a href="forestApply.html" class="code" title="function [hs,probs] = forestApply( data, forest, maxDepth, minCount )">forestApply</a>        - Apply learned forest classifier.
+   <a href="forestApply.html" class="code" title="function [hs,ps] = forestApply( data, forest, maxDepth, minCount, best )">forestApply</a>        - Apply learned forest classifier.
    <a href="forestTrain.html" class="code" title="function forest = forestTrain( data, hs, varargin )">forestTrain</a>        - Train random forest classifier.
 
  Fast boosted decision tree code:
