@@ -8,7 +8,10 @@
 %   "The Fastest Pedestrian Detector in the West," BMVC 2010.
 %  [3] P. Dollár, R. Appel and W. Kienzle
 %   "Crosstalk Cascades for Frame-Rate Pedestrian Detection," ECCV 2012.
+%  [4] P. Dollár, R. Appel, S. Belongie and P. Perona
+%   "Fast Feature Pyramids for Object Detection", PAMI 2014.
 % Please cite a subset of the above papers if you end up using the code.
+% The PAMI 2014 paper has the most thorough and up to date descriptions.
 % Code written and maintained by Piotr Dollar and Ron Appel.
 %
 % Aggregate channel features object detector:
