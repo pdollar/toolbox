@@ -1,4 +1,4 @@
-Version NEW
+Version 3.25 (15-Dec-2013)
  -added pointer to PAMI14 work: chnsScaling.m, acfTrain.m, chnsPyramid.m
  -minor: toolboxCompile.m
 

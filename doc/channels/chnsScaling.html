@@ -30,8 +30,8 @@
  can be used to approximate feature responses at nearby scales. The
  approximation is accurate at least within an entire scale octave. For
  details and to understand why this unexpected result holds, please see:
-   P. Dollár, S. Belongie and P. Perona
-   &quot;The Fastest Pedestrian Detector in the West,&quot; BMVC 2010.
+   P. Dollár, R. Appel, S. Belongie and P. Perona
+   &quot;Fast Feature Pyramids for Object Detection&quot;, PAMI 2014.
 
  This function computes channels at multiple image scales and plots the
  resulting power law scaling. The purpose of this function is two-fold:
@@ -62,14 +62,14 @@
   fs             - [nImages x nScales x nTypes] array of feature means
 
  EXAMPLE
-  sDir='E:/code/detector/pedsData/train/negBig';
+  sDir = 'data/Inria/train/neg/';
   Is = fevalImages( @(x) {x}, {}, sDir, 'I', 'png', 0, 200 );
   p = chnsCompute(); lambdas = chnsScaling( p, Is, 1 );
 
  See also <a href="chnsCompute.html" class="code" title="function chns = chnsCompute( I, varargin )">chnsCompute</a>, <a href="chnsPyramid.html" class="code" title="function pyramid = chnsPyramid( I, varargin )">chnsPyramid</a>, fevalImages
 
- Piotr's Image&amp;Video Toolbox      Version 3.02
- Copyright 2012 Piotr Dollar &amp; Ron Appel.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 3.25
+ Copyright 2013 Piotr Dollar &amp; Ron Appel.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>
 
