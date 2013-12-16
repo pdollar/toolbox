@@ -1,6 +1,6 @@
 Version NEW
- -very minor updated that added pointer to PAMI14 work
- -minor: chnsScaling.m, acfTrain.m, chnsPyramid.m
+ -added pointer to PAMI14 work: chnsScaling.m, acfTrain.m, chnsPyramid.m
+ -minor: toolboxCompile.m
 
 Version 3.24 (10-Oct-2013)
  -classify/private/*.cpp: minor fixes for very large datasets
