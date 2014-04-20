@@ -152,36 +152,14 @@ dfs={'shareDir','REQ','scheduler','REQ','executable','','mccOptions',{}};
 tDir = jobSetup(shareDir,funNm,executable,mccOptions);
 for i=1:nJob, jobSave(tDir,jobs{i},i); end
 scheduler=[' /scheduler:' scheduler ' '];
-tids=hpcSubmit(tDir,scheduler,funNm,1:nJob); k=0;
-ticId=ticStatus('collecting jobs'); check=clock; save([tDir 'state']);
+hpcSubmit(tDir,scheduler,funNm,1:nJob); k=0;
+ticId=ticStatus('collecting jobs');
 while( 1 )
   done=jobFileIds(tDir,'done'); k=k+length(done);
   for i1=done, res{i1}=jobLoad(tDir,i1,store); end
-  if(etime(clock,check)>300)
-    save([tDir 'state' num2str(now) '.mat']);
-    stalled=hpcFindStalled(tDir,tids,scheduler); check=clock;
-    tids(stalled)=hpcSubmit(tDir,scheduler,funNm,stalled);
-  end
-  pause(1); tocStatus(ticId,k/nJob); if(k==nJob), out=1; break; end
+  pause(5); tocStatus(ticId,k/nJob); if(k==nJob), out=1; break; end
 end
 for i=1:10, try rmdir(tDir,'s'); break; catch,pause(1),end; end %#ok<CTCH>
-end
-
-function stalled = hpcFindStalled( tDir, tids, scheduler )
-% Helper: look for and exclude bad nodes in hpc cluster (can be expensive).
-n=length(tids); stalled=zeros(1,n); running=stalled;
-jids=regexp(tids,'\.','split'); for i=1:n, jids{i}=jids{i}{1}; end
-for jid=unique(jids), j=jid{1}; m=system2(['job view ' j scheduler],0);
-  running(strcmp(jids,j))=strcmpi('running',hpcParse(m,'State',0)); end
-running=intersect(jobFileIds(tDir,'in'),find(running));
-ticId=ticStatus('searching for stalled jobs'); k=0; n=length(running);
-for id=running, m=system2(['task view ' tids{id} scheduler],0);
-  r=strcmpi(hpcParse(m,'State',0),'running'); running(id)=(r);
-  u=hpcParse(m,'Total User Time',2); e=hpcParse(m,'Elapsed Time',2);
-  stalled(id)=r && u/e<.01 && e>200; k=k+1; tocStatus(ticId,k/n);
-end
-stalled=find(stalled); n=length(stalled); w=repmat(' ',1,80);
-fprintf('\nDiscovered %i/%i stalled tasks.\n%s\n',n,length(running),w);
 end
 
 function tids = hpcSubmit( tDir, scheduler, funNm, ids )

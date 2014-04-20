@@ -1,4 +1,5 @@
 Version NEW
+ -fevalDistr.m: tweaks to HPC case
  -minor: gradientMex.cpp
 
 Version 3.25 (15-Dec-2013)
