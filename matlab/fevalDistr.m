@@ -36,8 +36,9 @@ function [out,res] = fevalDistr( funNm, jobs, varargin )
 % Similar to type='COMPILED', except after compiling, the executable is
 % queued to the HPC cluster where all computation occurs. This option
 % likewise requires the *Matlab Compiler*. Paths to data, etc., must be
-% absolute paths and available from HPC cluster. Parameter pLaunch should
+% absolute paths and available from HPC cluster. Parameter pLaunch must
 % have two fields 'scheduler' and 'shareDir' that define the HPC Server.
+% Extra parameters in pLaunch add finer control, see fedWinhpc for details.
 % For example, at MSR one possible cluster is defined by scheduler =
 % 'MSR-L25-DEV21' and shareDir = '\\msr-arrays\scratch\msr-pool\L25-dev21'.
 % Note call to 'job submit' from Matlab will hang unless pwd is saved
@@ -147,44 +148,38 @@ end
 function [out,res] = fedWinhpc( funNm, jobs, pLaunch, store )
 % Run jobs using Windows HPC Server.
 nJob=length(jobs); res=cell(1,nJob);
-dfs={'shareDir','REQ','scheduler','REQ','executable','','mccOptions',{}};
-[shareDir,scheduler,executable,mccOptions] = getPrmDflt(pLaunch,dfs,1);
-tDir = jobSetup(shareDir,funNm,executable,mccOptions);
+dfs={'shareDir','REQ','scheduler','REQ','executable','fevalDistrDisk',...
+  'mccOptions',{},'coresPerTask',1,'minCores',1024};
+p = getPrmDflt(pLaunch,dfs,1);
+tDir = jobSetup(p.shareDir,funNm,p.executable,p.mccOptions);
 for i=1:nJob, jobSave(tDir,jobs{i},i); end
-scheduler=[' /scheduler:' scheduler ' '];
-hpcSubmit(tDir,scheduler,funNm,1:nJob); k=0;
+hpcSubmit(funNm,1:nJob,tDir,p); k=0;
 ticId=ticStatus('collecting jobs');
 while( 1 )
   done=jobFileIds(tDir,'done'); k=k+length(done);
   for i1=done, res{i1}=jobLoad(tDir,i1,store); end
   pause(5); tocStatus(ticId,k/nJob); if(k==nJob), out=1; break; end
 end
-for i=1:10, try rmdir(tDir,'s'); break; catch,pause(1),end; end %#ok<CTCH>
+for i=1:10, try rmdir(tDir,'s'); break; catch,pause(5),end; end %#ok<CTCH>
 end
 
-function tids = hpcSubmit( tDir, scheduler, funNm, ids )
+function tids = hpcSubmit( funNm, ids, tDir, pLaunch )
 % Helper: send jobs w given ids to HPC cluster.
 n=length(ids); tids=cell(1,n); if(n==0), return; end;
-coresPerTask=1; maxTasksPerJob=inf; minCores=1;
-nJob=ceil(n/maxTasksPerJob);
-if(nJob>1), b=round(linspace(1,n+1,nJob+1));
-  for i=1:nJob, is=b(i):b(i+1)-1;
-    tids(is)=hpcSubmit(tDir,scheduler,funNm,ids(is),maxTasksPerJob);
-  end; return;
-end
+scheduler=[' /scheduler:' pLaunch.scheduler ' '];
 m=system2(['cluscfg view' scheduler],0);
-nCores=(hpcParse(m,'total number of nodes',1) - ...
+minCores=(hpcParse(m,'total number of nodes',1) - ...
   hpcParse(m,'Unreachable nodes',1) - 1)*8;
-minCores=min([minCores nCores n*coresPerTask 1024]);
+minCores=min([minCores pLaunch.minCores n*pLaunch.coresPerTask]);
 m=system2(['job new /numcores:' int2str(minCores) '-*' scheduler],1);
 jid=hpcParse(m,'created job, id',0);
 s=min(ids); e=max(ids); p=n>1 && isequal(ids,s:e);
 if(p), jid1=[jid '.1']; else jid1=jid; end
 for i=1:n, tids{i}=[jid1 '.' int2str(i)]; end
 cmd0=''; if(p), cmd0=['/parametric:' int2str(s) '-' int2str(e)]; end
-cmd=@(id) ['job add ' jid scheduler '/workdir:' tDir ...
-  ' /numcores:' int2str(coresPerTask) ' ' cmd0 ...
-  ' /stdout:stdout' id '.txt fevalDistrDisk ' funNm ' ' tDir ' ' id];
+cmd=@(id) ['job add ' jid scheduler '/workdir:' tDir ' /numcores:' ...
+  int2str(pLaunch.coresPerTask) ' ' cmd0 ' /stdout:stdout' id ...
+  '.txt ' pLaunch.executable ' ' funNm ' ' tDir ' ' id];
 if(p), ids1='*'; n=1; else ids1=int2str2(ids); end
 if(n==1), ids1={ids1}; end; for i=1:n, system2(cmd(ids1{i}),1); end
 system2(['job submit /id:' jid scheduler],1); disp(repmat(' ',1,80));
@@ -202,22 +197,22 @@ if(numel(v)==4), v(5)=0; end; v=((v(1)*24+v(2))*60+v(3))*60+v(4)+v(5)/1000;
 end
 
 function tDir = jobSetup( rtDir, funNm, executable, mccOptions )
-%  Helper: prepare by setting up temporary dir and compiling funNm
+% Helper: prepare by setting up temporary dir and compiling funNm
 t=clock; t=mod(t(end),1); t=round((t+rand)/2*1e15);
 tDir=[rtDir filesep sprintf('fevalDistr-%015i',t) filesep]; mkdir(tDir);
 if(~isempty(executable) && exist(executable,'file'))
   fprintf('Reusing compiled executable...\n'); copyfile(executable,tDir);
 else
   t=clock; fprintf('Compiling (this may take a while)...\n');
-  mcc('-m','fevalDistrDisk','-d',tDir,'-a',funNm,mccOptions{:});
+  [~,f,e]=fileparts(executable); if(isempty(f)), f='fevalDistrDisk'; end
+  mcc('-m','fevalDistrDisk','-d',tDir,'-o',f,'-a',funNm,mccOptions{:});
   t=etime(clock,t); fprintf('Compile complete (%.1f seconds).\n',t);
-  if(~isempty(executable)), [~,~,e]=fileparts(executable);
-    copyfile([tDir filesep 'fevalDistrDisk' e],executable); end
+  if(~isempty(executable)), copyfile([tDir filesep f e],executable); end
 end
 end
 
 function ids = jobFileIds( tDir, type )
-% Helper: get list of job files ids on disk of given type.
+% Helper: get list of job files ids on disk of given type
 fs=dir([tDir '*-' type '*']); fs={fs.name}; n=length(fs);
 ids=zeros(1,n); for i=1:n, ids(i)=str2double(fs{i}(1:10)); end
 end
