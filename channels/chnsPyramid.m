@@ -22,8 +22,8 @@ function pyramid = chnsPyramid( I, varargin )
 % can be used to approximate feature responses at nearby scales. The
 % approximation is accurate at least within an entire scale octave. For
 % details and to understand why this unexpected result holds, please see:
-%   P. Dollár, S. Belongie and P. Perona
-%   "The Fastest Pedestrian Detector in the West," BMVC 2010.
+%   P. Dollár, R. Appel, S. Belongie and P. Perona
+%   "Fast Feature Pyramids for Object Detection", PAMI 2014.
 %
 % The parameter "nApprox" determines how many intermediate scales are
 % approximated using the techniques described in the above paper. Roughly
@@ -107,8 +107,8 @@ function pyramid = chnsPyramid( I, varargin )
 %
 % See also chnsCompute, chnsScaling, convTri, imPad
 %
-% Piotr's Image&Video Toolbox      Version 3.02
-% Copyright 2012 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
+% Piotr's Image&Video Toolbox      Version 3.25
+% Copyright 2013 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 

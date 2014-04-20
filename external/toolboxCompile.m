@@ -1,5 +1,11 @@
 % Compiles all mex routines that are part of toolbox.
 %
+% If you get warnings about "omp.h", your compiler may lack default OpenMp
+% support (for info about OpenMP see http://en.wikipedia.org/wiki/OpenMP).
+% To compile without OpenMP alter code below to 'useOmp(:)=0'; and re-run
+% toolboxCompile. Note that this will disable parallelization and make some
+% routines (in particular training certain classifier) much slower.
+%
 % USAGE
 %  toolboxCompile
 %
@@ -11,7 +17,7 @@
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 3.24
+% Piotr's Image&Video Toolbox      Version 3.25
 % Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]

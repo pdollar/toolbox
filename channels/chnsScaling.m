@@ -6,8 +6,8 @@ function [lambdas,as,scales,fs] = chnsScaling( pChns, Is, show )
 % can be used to approximate feature responses at nearby scales. The
 % approximation is accurate at least within an entire scale octave. For
 % details and to understand why this unexpected result holds, please see:
-%   P. Dollár, S. Belongie and P. Perona
-%   "The Fastest Pedestrian Detector in the West," BMVC 2010.
+%   P. Dollár, R. Appel, S. Belongie and P. Perona
+%   "Fast Feature Pyramids for Object Detection", PAMI 2014.
 %
 % This function computes channels at multiple image scales and plots the
 % resulting power law scaling. The purpose of this function is two-fold:
@@ -38,14 +38,14 @@ function [lambdas,as,scales,fs] = chnsScaling( pChns, Is, show )
 %  fs             - [nImages x nScales x nTypes] array of feature means
 %
 % EXAMPLE
-%  sDir='E:/code/detector/pedsData/train/negBig';
+%  sDir = 'data/Inria/train/neg/';
 %  Is = fevalImages( @(x) {x}, {}, sDir, 'I', 'png', 0, 200 );
 %  p = chnsCompute(); lambdas = chnsScaling( p, Is, 1 );
 %
 % See also chnsCompute, chnsPyramid, fevalImages
 %
-% Piotr's Image&Video Toolbox      Version 3.02
-% Copyright 2012 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
+% Piotr's Image&Video Toolbox      Version 3.25
+% Copyright 2013 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
@@ -82,7 +82,7 @@ if(show==0), return; end
 
 % compute predicted means and errors for display purposes
 musp=as(O,:).*scales1(:,ones(1,nTypes)).^-lambdas(O,:);
-errsFit=mean((musp-mus).^2,1); stds=permute(std(rs,0,1),[2 3 1]);
+errsFit=mean(abs(musp-mus)); stds=permute(std(rs,0,1),[2 3 1]);
 
 % plot results
 if(show<0), show=-show; clear=0; else clear=1; end

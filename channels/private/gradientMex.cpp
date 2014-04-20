@@ -150,7 +150,7 @@ void gradHist( float *M, float *O, float *H, int h, int w,
 {
   const int hb=h/bin, wb=w/bin, h0=hb*bin, w0=wb*bin, nb=wb*hb;
   const float s=(float)bin, sInv=1/s, sInv2=1/s/s;
-  float *H0, *H1, *M0, *M1; int x, y; int *O0, *O1;
+  float *H0, *H1, *M0, *M1; int x, y; int *O0, *O1; float xb, init;
   O0=(int*)alMalloc(h*sizeof(int),16); M0=(float*) alMalloc(h*sizeof(float),16);
   O1=(int*)alMalloc(h*sizeof(int),16); M1=(float*) alMalloc(h*sizeof(float),16);
   // main loop
@@ -182,7 +182,7 @@ void gradHist( float *M, float *O, float *H, int h, int w,
 
     } else {
       // interpolate using trilinear interpolation
-      float ms[4], xyd, xb, yb, xd, yd, init; __m128 _m, _m0, _m1;
+      float ms[4], xyd, yb, xd, yd; __m128 _m, _m0, _m1;
       bool hasLf, hasRt; int xb0, yb0;
       if( x==0 ) { init=(0+.5f)*sInv-0.5f; xb=init; }
       hasLf = xb>=0; xb0 = hasLf?(int)xb:-1; hasRt = xb0 < wb-1;
