@@ -355,7 +355,7 @@ nObj=length(objs);
 switch name
   case 'lbl', for i=1:nObj, objs(i).lbl=vals{i}; end
   case 'bb',  for i=1:nObj, objs(i).bb=vals(i,:); end
-  case 'occ', for i=1:nObj, objs(i).ooc=vals(i); end
+  case 'occ', for i=1:nObj, objs(i).occ=vals(i); end
   case 'bbv', for i=1:nObj, objs(i).bbv=vals(i,:); end
   case 'ign', for i=1:nObj, objs(i).ign=vals(i); end
   case 'ang', for i=1:nObj, objs(i).ang=vals(i); end
