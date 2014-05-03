@@ -617,6 +617,7 @@ assert( size(gt0,2)==5 ); ng=size(gt0,1);
 gt=gt0; gt(:,5)=-gt(:,5); dt=dt0; dt=[dt zeros(nd,1)];
 
 % Attempt to match each (sorted) dt to each (sorted) gt
+oa = compOas( dt(:,1:4), gt(:,1:4), gt(:,5)==-1 );
 for d=1:nd
   bstOa=thr; bstg=0; bstm=0; % info about best match so far
   for g=1:ng
@@ -625,13 +626,12 @@ for d=1:nd
     % if dt already matched, and on ignore gt, nothing more to do
     if( bstm~=0 && m==-1 ), break; end
     % compute overlap area, continue to next gt unless better match made
-    oa=compOa(dt(d,1:4),gt(g,1:4),m==-1); if(oa<bstOa), continue; end
+    if(oa(d,g)<bstOa), continue; end
     % match successful and best so far, store appropriately
-    bstOa=oa; bstg=g; if(m==0), bstm=1; else bstm=-1; end
+    bstOa=oa(d,g); bstg=g; if(m==0), bstm=1; else bstm=-1; end
   end; g=bstg; m=bstm;
   % store type of match for both dt and gt
-  if(m==-1), assert(mul || gt(g,5)==m); dt(d,6)=m; end
-  if(m==1), assert(gt(g,5)==0); gt(g,5)=m; dt(d,6)=m; end
+  if(m==-1), dt(d,6)=m; elseif(m==1), gt(g,5)=m; dt(d,6)=m; end
 end
 
 end

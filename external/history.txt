@@ -1,6 +1,7 @@
 Version NEW
  -fevalDistr.m: tweaks to HPC case
  -bbGt.m: minor fix (thanks David Hall)
+ -bbGt>evalRes: optimized
  -minor: gradientMex.cpp
 
 Version 3.25 (15-Dec-2013)
