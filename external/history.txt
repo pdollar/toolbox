@@ -1,7 +1,7 @@
 Version NEW
  -fevalDistr.m: tweaks to HPC case
- -bbGt.m: minor fix (thanks David Hall)
- -bbGt>evalRes: optimized
+ -bbGt>set(): minor fix (thanks David Hall)
+ -bbGt>evalRes(): optimized, bbGt>bbLoad(): support for ImageNet format
  -minor: gradientMex.cpp
 
 Version 3.25 (15-Dec-2013)

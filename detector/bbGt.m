@@ -150,7 +150,8 @@ function [objs,bbs] = bbLoad( fName, varargin )
 % the PASCAL VOC: http://pascallin.ecs.soton.ac.uk/challenges/VOC/. Objects
 % labeled as either 'truncated' or 'occluded' using the PASCAL definitions
 % have the 'occ' flag set to true. Objects labeled as 'difficult' have the
-% 'ign' flag set to true. 'class' is used for 'lbl'.
+% 'ign' flag set to true. 'class' is used for 'lbl'. format=2 is the
+% ImageNet detection format and requires the ImageNet Dev Kit.
 %
 % FILTERING: After loading, the objects can be filtered. First, only
 % objects with lbl in lbls or ilbls or returned. For each object, obj.ign
@@ -186,7 +187,7 @@ function [objs,bbs] = bbLoad( fName, varargin )
 % INPUTS
 %  fName    - name of text file
 %  pLoad    - parameters (struct or name/value pairs)
-%   .format   - [0] gt format 0:default, 1:PASCAL
+%   .format   - [0] gt format 0:default, 1:PASCAL, 2:ImageNet
 %   .ellipse  - [1] controls how oriented bb is converted to regular bb
 %   .squarify - [] controls optional reshaping of bbs to fixed aspect ratio
 %   .lbls     - [] return objs with these labels (or [] to return all)
@@ -244,6 +245,17 @@ elseif( format==1 )
     objs(i).lbl=os(i).class; objs(i).ign=os(i).difficult;
     objs(i).occ=os(i).occluded || os(i).truncated;
     if(objs(i).occ), objs(i).bbv=bb; end
+  end
+elseif( format==2 )
+  if(exist('VOCreadxml.m','file')~=2)
+    error('bbLoad() requires the ImageNet dev code.'); end
+  os=VOCreadxml(fName); os=os.annotation;
+  if(isfield(os,'object')), os=os.object; else os=[]; end
+  n=length(os); objs=create(n);
+  for i=1:n
+    bb=os(i).bndbox; bb=str2double({bb.xmin bb.ymin bb.xmax bb.ymax});
+    bb(3)=bb(3)-bb(1); bb(4)=bb(4)-bb(2); objs(i).bb=bb;
+    objs(i).lbl=os(i).name;
   end
 else error('bbLoad() unknown format: %i',format);
 end
