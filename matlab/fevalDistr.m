@@ -149,7 +149,7 @@ function [out,res] = fedWinhpc( funNm, jobs, pLaunch, store )
 % Run jobs using Windows HPC Server.
 nJob=length(jobs); res=cell(1,nJob);
 dfs={'shareDir','REQ','scheduler','REQ','executable','fevalDistrDisk',...
-  'mccOptions',{},'coresPerTask',1,'minCores',1024};
+  'mccOptions',{},'coresPerTask',1,'minCores',1024,'priority',2000};
 p = getPrmDflt(pLaunch,dfs,1);
 tDir = jobSetup(p.shareDir,funNm,p.executable,p.mccOptions);
 for i=1:nJob, jobSave(tDir,jobs{i},i); end
@@ -171,7 +171,8 @@ m=system2(['cluscfg view' scheduler],0);
 minCores=(hpcParse(m,'total number of nodes',1) - ...
   hpcParse(m,'Unreachable nodes',1) - 1)*8;
 minCores=min([minCores pLaunch.minCores n*pLaunch.coresPerTask]);
-m=system2(['job new /numcores:' int2str(minCores) '-*' scheduler],1);
+m=system2(['job new /numcores:' int2str(minCores) '-*' scheduler ...
+  '/priority:' int2str(pLaunch.priority)],1);
 jid=hpcParse(m,'created job, id',0);
 s=min(ids); e=max(ids); p=n>1 && isequal(ids,s:e);
 if(p), jid1=[jid '.1']; else jid1=jid; end
