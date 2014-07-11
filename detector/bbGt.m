@@ -79,7 +79,7 @@ function varargout = bbGt( action, varargin )
 % bbGt>loadAll, bbGt>evalRes, bbGt>showRes,  bbGt>compRoc, bbGt>cropRes,
 % bbGt>compOas, bbGt>compOa
 %
-% Piotr's Image&Video Toolbox      Version 3.20
+% Piotr's Image&Video Toolbox      Version NEW
 % Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -240,6 +240,7 @@ elseif( format==1 )
     error('bbLoad() requires the PASCAL VOC code.'); end
   os=PASreadrecord(fName); os=os.objects;
   n=length(os); objs=create(n);
+  if(~isfield(os,'occluded')), for i=1:n, os(i).occluded=0; end; end
   for i=1:n
     bb=os(i).bbox; bb(3)=bb(3)-bb(1); bb(4)=bb(4)-bb(2); objs(i).bb=bb;
     objs(i).lbl=os(i).class; objs(i).ign=os(i).difficult;
