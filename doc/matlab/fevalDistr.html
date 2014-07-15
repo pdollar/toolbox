@@ -60,8 +60,9 @@
  Similar to type='COMPILED', except after compiling, the executable is
  queued to the HPC cluster where all computation occurs. This option
  likewise requires the *Matlab Compiler*. Paths to data, etc., must be
- absolute paths and available from HPC cluster. Parameter pLaunch should
+ absolute paths and available from HPC cluster. Parameter pLaunch must
  have two fields 'scheduler' and 'shareDir' that define the HPC Server.
+ Extra parameters in pLaunch add finer control, see fedWinhpc for details.
  For example, at MSR one possible cluster is defined by scheduler =
  'MSR-L25-DEV21' and shareDir = '\\msr-arrays\scratch\msr-pool\L25-dev21'.
  Note call to 'job submit' from Matlab will hang unless pwd is saved
@@ -92,8 +93,8 @@
 
  See also matlabpool mcc
 
- Piotr's Image&amp;Video Toolbox      Version 3.02
- Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
+ Piotr's Image&amp;Video Toolbox      Version 3.26
+ Copyright 2014 Piotr Dollar.  [pdollar-at-caltech.edu]
  Please email me if you find bugs, or have suggestions or questions!
  Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>
 

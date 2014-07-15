@@ -1,3 +1,9 @@
+Version 3.26 (15-July-2014)
+ -fevalDistr.m: tweaks to HPC case
+ -bbGt>set(): minor fix (thanks David Hall)
+ -bbGt>evalRes(): optimized, bbGt>bbLoad(): support for ImageNet format
+ -minor: gradientMex.cpp
+
 Version 3.25 (15-Dec-2013)
  -added pointer to PAMI14 work: chnsScaling.m, acfTrain.m, chnsPyramid.m
  -minor: toolboxCompile.m
