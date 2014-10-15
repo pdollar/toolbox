@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Piotr's Image&Video Toolbox      Version 3.26
+* Piotr's Image&Video Toolbox      Version NEW
 * Copyright 2014 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
 * Please email me if you find bugs, or have suggestions or questions!
 * Licensed under the Simplified BSD License [see external/bsd.txt]
@@ -104,8 +104,8 @@ void gradMagNorm( float *M, float *S, int h, int w, float norm ) {
   __m128 *_M, *_S, _norm; int i=0, n=h*w, n4=n/4;
   _S = (__m128*) S; _M = (__m128*) M; _norm = SET(norm);
   bool sse = !(size_t(M)&15) && !(size_t(S)&15);
-  if(sse) { for(; i<n4; i++) *_M++=MUL(*_M,RCP(ADD(*_S++,_norm))); i*=4; }
-  for(; i<n; i++) M[i] /= (S[i] + norm);
+  if(sse) for(; i<n4; i++) { *_M=MUL(*_M,RCP(ADD(*_S++,_norm))); _M++; }
+  if(sse) i*=4; for(; i<n; i++) M[i] /= (S[i] + norm);
 }
 
 // helper for gradHist, quantize O and M into O0, O1 and M0, M1 (uses sse)
@@ -132,12 +132,12 @@ void gradQuantize( float *O, float *M, int *O0, int *O1, float *M0, float *M1,
     *_M0++=MUL(LDu(M[i]),_norm); *_M1++=SET(0.f); *_O1++=SET(0);
   }
   // compute trailing locations without sse
-  if( interpolate ) for( i; i<n; i++ ) {
+  if( interpolate ) for(; i<n; i++ ) {
     o=O[i]*oMult; o0=(int) o; od=o-o0;
     o0*=nb; if(o0>=oMax) o0=0; O0[i]=o0;
     o1=o0+nb; if(o1==oMax) o1=0; O1[i]=o1;
     m=M[i]*norm; M1[i]=od*m; M0[i]=m-M1[i];
-  } else for( i; i<n; i++ ) {
+  } else for(; i<n; i++ ) {
     o=O[i]*oMult; o0=(int) (o+.5f);
     o0*=nb; if(o0>=oMax) o0=0; O0[i]=o0;
     M0[i]=M[i]*norm; M1[i]=0; O1[i]=0;

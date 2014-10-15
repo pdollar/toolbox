@@ -97,8 +97,8 @@ template<class iT> void rgb2luv_sse( iT *I, float *J, int n, float nrm ) {
       _cminu=SET(minu); _cminv=SET(minv);
       for( i1=i; i1<n1; i1+=4 ) {
         _l = *(_L++);
-        *(_U++) = SUB(MUL(_l,*_U),_cminu);
-        *(_V++) = SUB(MUL(_l,*_V),_cminv);
+        *_U = SUB(MUL(_l,*_U),_cminu); _U++;
+        *_V = SUB(MUL(_l,*_V),_cminv); _V++;
       }
     }
     i = n1;
