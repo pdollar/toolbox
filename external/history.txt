@@ -1,4 +1,5 @@
 Version NEW
+ -changed toolbox name to "Piotr's Computer Vision Matlab Toolbox"
  -added Mac binaries (mexmaci64)
  -gradientMex, rgbConvertMex, imtransform2_c: fixed compiler warnings on Mac
  -toolboxCompile: disable OMP on Mac by default (OMP is tricky to setup on Mac)

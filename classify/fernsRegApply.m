@@ -17,9 +17,8 @@ function [ys,ysCum] = fernsRegApply( data, ferns, inds )
 %
 % See also fernsRegTrain, fernsInds
 %
-% Piotr's Image&Video Toolbox      Version 2.50
-% Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
-% Please email me if you find bugs, or have suggestions or questions!
+% Piotr's Computer Vision Matlab Toolbox      Version 2.50
+% Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 if( nargin<3 || isempty(inds) )
   inds = fernsInds(data,ferns.fids,ferns.thrs); end; [N,M]=size(inds);

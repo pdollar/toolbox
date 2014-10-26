@@ -1,9 +1,8 @@
 /**************************************************************************
- * Piotr's Image&Video Toolbox      Version 2.2
- * Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
- * Please email me if you find bugs, or have suggestions or questions!
- * Licensed under the Simplified BSD License [see external/bsd.txt]
- *************************************************************************/
+* Piotr's Computer Vision Matlab Toolbox      Version 2.2
+* Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
+* Licensed under the Simplified BSD License [see external/bsd.txt]
+**************************************************************************/
 #include "mex.h"
 
 #define arraymax(A, m, s, e, i) m=A[s]; for(i=s+1; i<=e; i++) { m=((A[i])>(m)?(A[i]):(m)); };

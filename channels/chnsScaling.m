@@ -44,9 +44,8 @@ function [lambdas,as,scales,fs] = chnsScaling( pChns, Is, show )
 %
 % See also chnsCompute, chnsPyramid, fevalImages
 %
-% Piotr's Image&Video Toolbox      Version 3.25
-% Copyright 2013 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
-% Please email me if you find bugs, or have suggestions or questions!
+% Piotr's Computer Vision Matlab Toolbox      Version 3.25
+% Copyright 2014 Piotr Dollar & Ron Appel.  [pdollar-at-gmail.com]
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % get additional input arguments

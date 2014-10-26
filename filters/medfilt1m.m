@@ -31,9 +31,8 @@ function y = medfilt1m( x, r, z )
 %
 % See also MODEFILT1, MEDFILT1
 %
-% Piotr's Image&Video Toolbox      Version 2.35
-% Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
-% Please email me if you find bugs, or have suggestions or questions!
+% Piotr's Computer Vision Matlab Toolbox      Version 2.35
+% Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % apply medfilt1 (standard median filter) to valid locations in x

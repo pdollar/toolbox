@@ -21,9 +21,8 @@ function sub = ind2sub2( siz, ind )
 %
 % See also IND2SUB, SUB2IND2
 %
-% Piotr's Image&Video Toolbox      Version 2.0
-% Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
-% Please email me if you find bugs, or have suggestions or questions!
+% Piotr's Computer Vision Matlab Toolbox      Version 2.0
+% Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 if( any(ind>prod(siz)) ); error('index out of range'); end

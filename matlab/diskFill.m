@@ -15,9 +15,8 @@ function diskFill( tDir, nGig )
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 2.61
-% Copyright 2012 Piotr Dollar.  [pdollar-at-caltech.edu]
-% Please email me if you find bugs, or have suggestions or questions!
+% Piotr's Computer Vision Matlab Toolbox      Version 2.61
+% Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 nm = sprintf('%s/garbage_%s_%05i_%%05i.mat',tDir,date,round(rand*10^5));

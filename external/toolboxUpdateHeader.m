@@ -12,15 +12,13 @@ function toolboxUpdateHeader
 %
 % See also
 %
-% Piotr's Image&Video Toolbox      Version 3.26
-% Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
-% Please email me if you find bugs, or have suggestions or questions!
+% Piotr's Computer Vision Matlab Toolbox      Version NEW
+% Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 header={
-  '% Piotr''s Image&Video Toolbox      Version 3.26'; ...
-  '% Copyright 2014 Piotr Dollar.  [pdollar-at-caltech.edu]'; ...
-  '% Please email me if you find bugs, or have suggestions or questions!'; ...
+  '% Piotr''s Computer Vision Matlab Toolbox      Version 3.26'; ...
+  '% Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]'; ...
   '% Licensed under the Simplified BSD License [see external/bsd.txt]'};
 
 % must start in /toolbox base directory
@@ -72,7 +70,7 @@ fclose(fid); n=n-1; lines=lines(1:n);
 end
 
 function writeFile( fName, lines )
-fid = fopen( fName, 'wt' );
-for i=1:length(lines); fprintf( fid, '%s\n', lines{i} ); end
+fid = fopen( fName, 'w' );
+for i=1:length(lines); fprintf( fid, '%s\r\n', lines{i} ); end
 fclose(fid);
 end

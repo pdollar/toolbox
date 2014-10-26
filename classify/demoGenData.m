@@ -31,9 +31,8 @@ function [X0,H0,X1,H1] = demoGenData1(n0,n1,k,d,sep,ecc,frc)
 %
 % See also visualizeData, demoCluster
 %
-% Piotr's Image&Video Toolbox      Version 3.20
-% Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
-% Please email me if you find bugs, or have suggestions or questions!
+% Piotr's Computer Vision Matlab Toolbox      Version 3.20
+% Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % generate mixing weights and adjust n0 and n1 for noise fraction

@@ -31,9 +31,8 @@ function bbs = acfDetect( I, detector, fileName )
 %
 % See also acfTrain, acfModify, bbGt>loadAll, bbNms
 %
-% Piotr's Image&Video Toolbox      Version 3.20
-% Copyright 2013 Piotr Dollar & Ron Appel.  [pdollar-at-caltech.edu]
-% Please email me if you find bugs, or have suggestions or questions!
+% Piotr's Computer Vision Matlab Toolbox      Version 3.20
+% Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % run detector on every image

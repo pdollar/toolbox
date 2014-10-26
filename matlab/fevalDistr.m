@@ -69,9 +69,8 @@ function [out,res] = fevalDistr( funNm, jobs, varargin )
 %
 % See also matlabpool mcc
 %
-% Piotr's Image&Video Toolbox      Version 3.26
-% Copyright 2014 Piotr Dollar.  [pdollar-at-caltech.edu]
-% Please email me if you find bugs, or have suggestions or questions!
+% Piotr's Computer Vision Matlab Toolbox      Version 3.26
+% Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 dfs={'type','local','pLaunch',[],'group',1};
 [type,pLaunch,group]=getPrmDflt(varargin,dfs,1); store=(nargout==2);
