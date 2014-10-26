@@ -2,6 +2,7 @@ Version NEW
  -added Mac binaries (mexmaci64)
  -gradientMex, rgbConvertMex, imtransform2_c: fixed compiler warnings on Mac
  -toolboxCompile: disable OMP on Mac by default (OMP is tricky to setup on Mac)
+ -bbApply.m>draw(): minor fix (thanks Michele Pratusevich)
 
 Version 3.26 (15-July-2014)
  -fevalDistr.m: tweaks to HPC case

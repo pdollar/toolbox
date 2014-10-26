@@ -58,8 +58,8 @@ function varargout = bbApply( action, varargin )
 % bbApply>union bbApply>resize bbApply>squarify bbApply>draw bbApply>crop
 % bbApply>convert bbApply>random bbApply>frMask bbApply>toMask
 %
-% Piotr's Image&Video Toolbox      Version 3.24
-% Copyright 2013 Piotr Dollar.  [pdollar-at-caltech.edu]
+% Piotr's Image&Video Toolbox      Version NEW
+% Copyright 2014 Piotr Dollar.  [pdollar-at-caltech.edu]
 % Please email me if you find bugs, or have suggestions or questions!
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
@@ -297,7 +297,7 @@ if(isempty(col)), if(k==1), col='g'; else col=hsv(k); end; end
 if(size(col,1)<k), ids=ones(1,n); end; hs=zeros(1,n);
 % draw rectangles and optionally labels
 for b=1:n, hs(b)=rectangle('Position',bb(b,1:4),prop{:},col(ids(b),:)); end
-if(m==4), return; end; hs=[hs zeros(1,n)];
+if(m==4), return; end; hs=[hs zeros(1,n)]; bb=double(bb);
 for b=1:n, hs(b+n)=text(bb(b,1),bb(b,2),num2str(bb(b,5),4),tProp{:}); end
 end
 
