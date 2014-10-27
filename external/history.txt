@@ -1,10 +1,11 @@
-Version NEW
+Version 3.30 (26-Oct-2014)
  -changed toolbox name to "Piotr's Computer Vision Matlab Toolbox"
  -added Mac 64 bit binaries (mexmaci64)
  -gradientMex, rgbConvertMex, imtransform2_c: fixed compiler warnings on Mac
  -toolboxCompile: disable OMP on Mac by default (OMP is tricky to setup on Mac)
  -toolboxUpdateHeader.m: generalizing to update c headers
  -bbApply.m>draw(): minor fix (thanks Michele Pratusevich)
+ -minor: toolboxGenDoc.m
 
 Version 3.26 (15-July-2014)
  -fevalDistr.m: tweaks to HPC case

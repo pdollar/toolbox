@@ -58,7 +58,7 @@ function varargout = bbApply( action, varargin )
 % bbApply>union bbApply>resize bbApply>squarify bbApply>draw bbApply>crop
 % bbApply>convert bbApply>random bbApply>frMask bbApply>toMask
 %
-% Piotr's Computer Vision Matlab Toolbox      Version NEW
+% Piotr's Computer Vision Matlab Toolbox      Version 3.30
 % Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
