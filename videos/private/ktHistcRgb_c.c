@@ -1,22 +1,22 @@
-/**************************************************************************
+/*******************************************************************************
 * Piotr's Computer Vision Matlab Toolbox      Version 2.2
 * Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 * Licensed under the Simplified BSD License [see external/bsd.txt]
-**************************************************************************/
+*******************************************************************************/
 #include "mex.h"
 typedef unsigned char uchar;
 
-/**************************************************************************
- * Construct 3-D RGB histogram of colors in B [n x 3].
- * Efficient implementation possible for the following reasons:
- *  1) We know that histogram is 3 dimensional.
- *  2) All values in B are between [0,2^nBits)
- *  3) Bins are restricted to powers of 2 (nBins=2^nBits)
- * Finding the bin index is simply a matter of dividing/multiplying by
- * powers of 2, which can be done efficiently with the left and right shift
- * operators. See also histc2c.c in toolbox for more general histogramming
- * implementation. This is about 5x faster. Note: nBins = 2^nBits = 1<<nBits
- *************************************************************************/
+/*******************************************************************************
+* Construct 3-D RGB histogram of colors in B [n x 3].
+* Efficient implementation possible for the following reasons:
+*  1) We know that histogram is 3 dimensional.
+*  2) All values in B are between [0,2^nBits)
+*  3) Bins are restricted to powers of 2 (nBins=2^nBits)
+* Finding the bin index is simply a matter of dividing/multiplying by
+* powers of 2, which can be done efficiently with the left and right shift
+* operators. See also histc2c.c in toolbox for more general histogramming
+* implementation. This is about 5x faster. Note: nBins = 2^nBits = 1<<nBits
+*******************************************************************************/
 void ktHistcRgb( double* h, uchar* B, double* wtMask, int n, int nBits ) {
   int i, indFlat, nBits2=nBits+nBits;
   for( i=0; i<n; i++ ) {

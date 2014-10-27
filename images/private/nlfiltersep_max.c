@@ -1,21 +1,21 @@
-/**************************************************************************
+/*******************************************************************************
 * Piotr's Computer Vision Matlab Toolbox      Version 2.2
 * Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 * Licensed under the Simplified BSD License [see external/bsd.txt]
-**************************************************************************/
+*******************************************************************************/
 #include "mex.h"
 
 #define arraymax(A, m, s, e, i) m=A[s]; for(i=s+1; i<=e; i++) { m=((A[i])>(m)?(A[i]):(m)); };
-int	maxi( int x, int y ) { return (x > y) ? x : y; };
-int	mini( int x, int y ) { return (x < y) ? x : y; };
+int maxi( int x, int y ) { return (x > y) ? x : y; };
+int mini( int x, int y ) { return (x < y) ? x : y; };
 
-/**************************************************************************
- * Row non-linear seperable filter - max (see nlfiltersep.m)
- *  x = nlfiltersep_max( [ 1 9; 5 9; 0 0; 4 8; 7 3; 2 6], 1, 1 )
- *  y = [5 9; 5 9; 5 9; 7 8; 7 8; 7 6]; x-y
- * B(i,j) is the max of A(i-r1:i+r2,j). It has the same dims as A.
- * Border calculations are done separately for efficiency.
- *************************************************************************/
+/*******************************************************************************
+* Row non-linear seperable filter - max (see nlfiltersep.m)
+*  x = nlfiltersep_max( [ 1 9; 5 9; 0 0; 4 8; 7 3; 2 6], 1, 1 )
+*  y = [5 9; 5 9; 5 9; 7 8; 7 8; 7 6]; x-y
+* B(i,j) is the max of A(i-r1:i+r2,j). It has the same dims as A.
+* Border calculations are done separately for efficiency.
+*******************************************************************************/
 void nlfiltersep_max( const double *A, double *B, int r1, int r2, int mRows, int nCols ) {
   int i, row0, e, s, r, c; double m;
   for( c=0; c<nCols; c++ ) {

@@ -1,18 +1,18 @@
-/**************************************************************************
+/*******************************************************************************
 * Piotr's Computer Vision Matlab Toolbox      Version 2.50
 * Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 * Licensed under the Simplified BSD License [see external/bsd.txt]
-**************************************************************************/
+*******************************************************************************/
 #include <math.h>
 #include <string.h>
 #include "mex.h"
 
-/**************************************************************************
- * Calculates mean of all the points in data that lie on a sphere of
- * radius^2==radius2 centered on [1xp] vector x. data is [nxp]. mean
- * contains [1xp] result and return is number of points used for calc.
- *************************************************************************/
-int			meanVec( double *x, double *data, int p, int n, double radius2,
+/*******************************************************************************
+* Calculates mean of all the points in data that lie on a sphere of
+* radius^2==radius2 centered on [1xp] vector x. data is [nxp]. mean
+* contains [1xp] result and return is number of points used for calc.
+*******************************************************************************/
+int meanVec( double *x, double *data, int p, int n, double radius2,
         double *mean ) {
   int i, j; double dist; int cnt=0, m=0;
   for( j=0; j<p; j++ ) mean[j]=0;
@@ -31,36 +31,36 @@ int			meanVec( double *x, double *data, int p, int n, double radius2,
 }
 
 /* Squared euclidean distance between two vectors. */
-double		dist( double *A, double *B, int n ) {
+double dist( double *A, double *B, int n ) {
   double d=0.0; int i;
   for(i=0; i<n; i++) d+=(A[i]-B[i]) * (A[i]-B[i]);
   return d;
 }
 
-/**************************************************************************
- * data				- p x n column matrix of data points
- * p					- dimension of data points
- * n					- number of data points
- * radius			- radius of search windo
- * rate				- gradient descent proportionality factor
- * maxIter			- max allowed number of iterations
- * blur				- specifies algorithm mode
- * labels			- labels for each cluster
- * means				- output (final clusters)
- *************************************************************************/
-void		meanShift( double data[], int p, int n, double radius, double rate,
+/*******************************************************************************
+* data      - p x n column matrix of data points
+* p         - dimension of data points
+* n         - number of data points
+* radius    - radius of search windo
+* rate      - gradient descent proportionality factor
+* maxIter   - max allowed number of iterations
+* blur      - specifies algorithm mode
+* labels    - labels for each cluster
+* means     - output (final clusters)
+*******************************************************************************/
+void meanShift( double data[], int p, int n, double radius, double rate,
         int maxIter, bool blur, double labels[], double *means ) {
-  double radius2;		/* radius^2 */
-  int iter;			/* number of iterations */
-  double *mean;		/* mean vector */
-  int i, j, o, m;		/* looping and temporary variables */
-  int delta = 1;		/* indicator if change occurred between iterations */
-  int *deltas;		/* indicator if change occurred between iterations per point */
-  double *meansCur;	/* calculated means for current iter */
-  double *meansNxt;	/* calculated means for next iter */
-  double *data1;		/* If blur data1 points to meansCur else it points to data */
-  int *consolidated;	/* Needed in the assignment of cluster labels */
-  int nLabels = 1;	/* Needed in the assignment of cluster labels */
+  double radius2;    /* radius^2 */
+  int iter;          /* number of iterations */
+  double *mean;      /* mean vector */
+  int i, j, o, m;    /* looping and temporary variables */
+  int delta = 1;     /* indicator if change occurred between iterations */
+  int *deltas;       /* indicator if change occurred between iterations per point */
+  double *meansCur;  /* calculated means for current iter */
+  double *meansNxt;  /* calculated means for next iter */
+  double *data1;     /* If blur data1 points to meansCur else it points to data */
+  int *consolidated; /* Needed in the assignment of cluster labels */
+  int nLabels = 1;   /* Needed in the assignment of cluster labels */
   
   /* initialization */
   meansCur = (double*) malloc( sizeof(double)*p*n );
@@ -111,7 +111,7 @@ void		meanShift( double data[], int p, int n, double radius, double rate,
 }
 
 /* see meanShift.m for usage info */
-void		mexFunction( int nlhs, mxArray * plhs[], int nrhs, const mxArray * prhs[] ) {
+void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] ) {
   double radius, rate, *data, *labels, *means; int p, n, maxIter; bool blur;
   
   /* Check inputs */

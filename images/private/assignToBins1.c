@@ -1,19 +1,19 @@
-/**************************************************************************
+/*******************************************************************************
 * Piotr's Computer Vision Matlab Toolbox      Version 2.2
 * Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 * Licensed under the Simplified BSD License [see external/bsd.txt]
-*************************************************************************/
+*******************************************************************************/
 #include "mex.h"
 
-/**************************************************************************
- * Return index of bin for x. The edges are determined by the (nBins+1)
- * element vector edges. Returns an integer value k in [0,nBins-1]
- * representing the bin x falls into, or k==nBins if x does not fall
- * into any bin. if edges[k] <= x < edges[k+1], then x falls
- * into bin k (k<nBins). Additionally, if x==edges[nBins], then x falls
- * into bin k=nBins-1. Eventually, all values where k==nBins should be ingored.
- * Adapted from \MATLAB6p5\toolbox\matlab\datafun\histc.c
- *************************************************************************/
+/*******************************************************************************
+* Return index of bin for x. The edges are determined by the (nBins+1)
+* element vector edges. Returns an integer value k in [0,nBins-1]
+* representing the bin x falls into, or k==nBins if x does not fall
+* into any bin. if edges[k] <= x < edges[k+1], then x falls
+* into bin k (k<nBins). Additionally, if x==edges[nBins], then x falls
+* into bin k=nBins-1. Eventually, all values where k==nBins should be ingored.
+* Adapted from \MATLAB6p5\toolbox\matlab\datafun\histc.c
+*******************************************************************************/
 int findBin( double x, double *edges, int nBins ) {
   int k = nBins; /* NOBIN */
   int k0 = 0; int k1 = nBins;

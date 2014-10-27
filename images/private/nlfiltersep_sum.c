@@ -1,23 +1,23 @@
-/**************************************************************************
+/*******************************************************************************
 * Piotr's Computer Vision Matlab Toolbox      Version 2.2
 * Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 * Licensed under the Simplified BSD License [see external/bsd.txt]
-**************************************************************************/
+*******************************************************************************/
 #include "mex.h"
 
 #define arraysum(A, m, s, e, i) m=0; for(i=s; i<=e; i++) { m+=A[i]; };
-int	maxi( int x, int y ) { return (x > y) ? x : y; };
-int	mini( int x, int y ) { return (x < y) ? x : y; };
+int maxi( int x, int y ) { return (x > y) ? x : y; };
+int mini( int x, int y ) { return (x < y) ? x : y; };
 
-/**************************************************************************
- * Row non-linear seperable filter - sum (see nlfiltersep.m)
- *  x = nlfiltersep_sum( [ 1 9; 5 9; 0 0; 4 8; 7 3; 2 6], 1, 1 )
- *  y = [6 18; 6 18; 9 17; 11 11; 13 17; 9 9]; x-y
- * B(i,j) is the sum of A(i-r1:i+r2,j). It has the same dims as A.
- * This can be implemented effiicently because:
- *  B[i] = B[i-1] + A[i+r2] - A[i-r1-1];
- * Does not work for initial (r1+1) and final r2 values in each row.
- *************************************************************************/
+/*******************************************************************************
+* Row non-linear seperable filter - sum (see nlfiltersep.m)
+*  x = nlfiltersep_sum( [ 1 9; 5 9; 0 0; 4 8; 7 3; 2 6], 1, 1 )
+*  y = [6 18; 6 18; 9 17; 11 11; 13 17; 9 9]; x-y
+* B(i,j) is the sum of A(i-r1:i+r2,j). It has the same dims as A.
+* This can be implemented effiicently because:
+*  B[i] = B[i-1] + A[i+r2] - A[i-r1-1];
+* Does not work for initial (r1+1) and final r2 values in each row.
+*******************************************************************************/
 void nlfiltersep_sum( const double *A, double *B, int r1, int r2, int mRows, int nCols ) {
   int i, row0, e, s, r, c; double m;
   for( c=0; c<nCols; c++ ) {

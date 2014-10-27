@@ -1,19 +1,19 @@
-/**************************************************************************
+/*******************************************************************************
 * Piotr's Computer Vision Matlab Toolbox      Version 2.2
 * Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 * Licensed under the Simplified BSD License [see external/bsd.txt]
-**************************************************************************/
+*******************************************************************************/
 #include "mex.h"
 
-/**************************************************************************
- * Return index of bin for x. The edges are determined by the (nBins+1)
- * element vector edges. Returns an integer value k in [0,nBins-1]
- * representing the bin x falls into, or k==nBins if x does not fall
- * into any bin. if edges[k] <= x < edges[k+1], then x falls
- * into bin k (k<nBins). Additionally, if x==edges[nBins], then x falls
- * into bin k=nBins-1. Eventually, all values where k==nBins should be ingored.
- * Adapted from \MATLAB6p5\toolbox\matlab\datafun\histc.c
- *************************************************************************/
+/*******************************************************************************
+* Return index of bin for x. The edges are determined by the (nBins+1)
+* element vector edges. Returns an integer value k in [0,nBins-1]
+* representing the bin x falls into, or k==nBins if x does not fall
+* into any bin. if edges[k] <= x < edges[k+1], then x falls
+* into bin k (k<nBins). Additionally, if x==edges[nBins], then x falls
+* into bin k=nBins-1. Eventually, all values where k==nBins should be ingored.
+* Adapted from \MATLAB6p5\toolbox\matlab\datafun\histc.c
+*******************************************************************************/
 int findBin( double x, double *edges, int nBins ) {
   int k = nBins; /* NOBIN */
   int k0 = 0; int k1 = nBins;
@@ -31,14 +31,14 @@ int findBin( double x, double *edges, int nBins ) {
   return k;
 }
 
-/**************************************************************************
- * Fast indexing into multidimensional arrays.
- * Call sub2ind_init once and store the result (siz contains the nd sizes):
- *  subMul = sub2ind_init( siz, nd );
- * Then, to index into an array A of size siz, given a subscript sub
- * (where sub is an nd int array of subscripts), you can get the index using:
- *  sub2ind(ind,sub,subMul,nd)
- *************************************************************************/
+/*******************************************************************************
+* Fast indexing into multidimensional arrays.
+* Call sub2ind_init once and store the result (siz contains the nd sizes):
+*  subMul = sub2ind_init( siz, nd );
+* Then, to index into an array A of size siz, given a subscript sub
+* (where sub is an nd int array of subscripts), you can get the index using:
+*  sub2ind(ind,sub,subMul,nd)
+*******************************************************************************/
 #define sub2ind(ind, sub, subMul, nd) ind=sub[0]; for(k=1;k<nd;k++) ind+=sub[k]*subMul[k];
 int *sub2ind_init( const int*siz, const int nd ) {
   int i, *subMul;
