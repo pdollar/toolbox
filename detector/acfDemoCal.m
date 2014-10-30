@@ -2,10 +2,11 @@
 %
 % (1) Download data and helper routines from Caltech Peds Website
 %  www.vision.caltech.edu/Image_Datasets/CaltechPedestrians/
-%  (1a) Download Caltech files: set*.tar and annotations.zip
-%  (1b) Copy above files to dataDir/data-USA/ and untar/unzip contents
+%  (1a) Download Caltech-USA files: videos/set*.tar and annotations.zip
+%  (1b) Copy above to CaltechPeds/data-USA/ and extract contents
 %  (1c) Download evaluation code (routines necessary for extracting images)
-% (2) Set dataDir/ variable below to point to location of Caltech data.
+%  Note: for CaltechPeds setup details please see CaltechPeds/readme.txt
+% (2) Set dataDir/ variable below to point to location to extract data.
 % (3) Launch "matlabpool open" for faster training if available.
 % (4) Run demo script and enjoy your newly minted fast ped detector!
 %
@@ -19,17 +20,21 @@
 %% extract training and testing images and ground truth
 cd(fileparts(which('acfDemoCal.m'))); dataDir='../../data/Caltech/';
 for s=1:2
-  if(s==1), type='train'; else type='test'; end
+  if(s==1), type='test'; skip=[]; else type='train'; skip=4; end
+  dbInfo(['Usa' type]); if(s==2), type=['train' int2str2(skip,2)]; end
   if(exist([dataDir type '/annotations'],'dir')), continue; end
-  dbInfo(['Usa' type]); dbExtract([dataDir type],1);
+  dbExtract([dataDir type],1,skip);
 end
 
 %% set up opts for training detector (see acfTrain)
 opts=acfTrain(); opts.modelDs=[50 20.5]; opts.modelDsPad=[64 32];
-opts.pPyramid.smooth=.5; opts.pPyramid.pChns.pColor.smooth=0;
-opts.posGtDir=[dataDir 'train/annotations']; opts.nWeak=[32 128 512 2048];
-opts.posImgDir=[dataDir 'train/images']; opts.pJitter=struct('flip',1);
-opts.pBoost.pTree.fracFtrs=1/16; opts.name='models/AcfCaltech';
+opts.pPyramid.pChns.pColor.smooth=0; opts.nWeak=[64 256 1024 4096];
+opts.pBoost.pTree.maxDepth=5; opts.pBoost.discrete=0;
+opts.pBoost.pTree.fracFtrs=1/16; opts.nNeg=25000; opts.nAccNeg=50000;
+opts.pPyramid.pChns.pGradHist.softBin=1; opts.pJitter=struct('flip',1);
+opts.posGtDir=[dataDir 'train' int2str2(skip,2) '/annotations'];
+opts.posImgDir=[dataDir 'train' int2str2(skip,2) '/images'];
+opts.pPyramid.pChns.shrink=2; opts.name='models/AcfCaltech+';
 pLoad={'lbls',{'person'},'ilbls',{'people'},'squarify',{3,.41}};
 opts.pLoad = [pLoad 'hRng',[50 inf], 'vRng',[1 1] ];
 
@@ -37,7 +42,7 @@ opts.pLoad = [pLoad 'hRng',[50 inf], 'vRng',[1 1] ];
 detector = acfTrain( opts );
 
 %% modify detector (see acfModify)
-pModify=struct('cascThr',-1,'cascCal',-.005);
+pModify=struct('cascThr',-1,'cascCal',.005);
 detector=acfModify(detector,pModify);
 
 %% run detector on a sample image (see acfDetect)
@@ -50,7 +55,3 @@ figure(1); im(I); bbApply('draw',bbs); pause(.1);
   'gtDir',[dataDir 'test/annotations'],'pLoad',[pLoad, 'hRng',[50 inf],...
   'vRng',[.65 1],'xRng',[5 635],'yRng',[5 475]],...
   'pModify',pModify,'reapply',0,'show',2);
-
-%% optionally show top false positives ('type' can be 'fp','fn','tp','dt')
-if( 0 ), bbGt('cropRes',gt,dt,imgNms,'type','fn','n',50,...
-    'show',3,'dims',opts.modelDs([2 1])); end

@@ -2,10 +2,11 @@
 %
 % (1) Download data and helper routines from Caltech Peds Website
 %  www.vision.caltech.edu/Image_Datasets/CaltechPedestrians/
-%  (1a) Download INRIA files: set00.tar, set01.tar, and annotations.zip
-%  (1b) Copy above three files to dataDir/ and untar/unzip contents
+%  (1a) Download INRIA files: videos/set*.tar and annotations.zip
+%  (1b) Copy above to CaltechPeds/data-INRIA/ and extract contents
 %  (1c) Download evaluation code (routines necessary for extracting images)
-% (2) Set dataDir/ variable below to point to location of INRIA data.
+%  Note: for CaltechPeds setup details please see CaltechPeds/readme.txt
+% (2) Set dataDir/ variable below to point to location to extract data.
 % (3) Launch "matlabpool open" for faster training if available.
 % (4) Run demo script and enjoy your newly minted fast ped detector!
 %
@@ -18,12 +19,12 @@
 
 %% extract training and testing images and ground truth
 cd(fileparts(which('acfDemoInria.m'))); dataDir='../../data/Inria/';
-for s=1:2
+for s=1:2, pth=dbInfo('InriaTest');
   if(s==1), set='00'; type='train'; else set='01'; type='test'; end
   if(exist([dataDir type '/posGt'],'dir')), continue; end
-  seqIo([dataDir 'set' set '/V000'],'toImgs',[dataDir type '/pos']);
-  seqIo([dataDir 'set' set '/V001'],'toImgs',[dataDir type '/neg']);
-  V=vbb('vbbLoad',[dataDir 'annotations/set' set '/V000']);
+  seqIo([pth '/videos/set' set '/V000'],'toImgs',[dataDir type '/pos']);
+  seqIo([pth '/videos/set' set '/V001'],'toImgs',[dataDir type '/neg']);
+  V=vbb('vbbLoad',[pth '/annotations/set' set '/V000']);
   vbb('vbbToFiles',V,[dataDir type '/posGt']);
 end
 
