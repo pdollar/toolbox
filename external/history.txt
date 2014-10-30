@@ -1,3 +1,7 @@
+Version NEW
+ -adaBoostApply, binaryTree*: set default max threads to 16 for OMP code
+ -minor: toolboxUpdateHeader
+
 Version 3.30 (26-Oct-2014)
  -changed toolbox name to "Piotr's Computer Vision Matlab Toolbox"
  -added Mac 64 bit binaries (mexmaci64)

@@ -9,7 +9,7 @@ function hs = adaBoostApply( X, model, maxDepth, minWeight, nThreads )
 %  model      - learned boosted tree classifier
 %  maxDepth   - [] maximum depth of tree
 %  minWeight  - [] minimum sample weigth to allow split
-%  nThreads   - [inf] max number of computational threads to use
+%  nThreads   - [16] max number of computational threads to use
 %
 % OUTPUTS
 %  hs         - [Nx1] predicted output log ratios
@@ -18,13 +18,13 @@ function hs = adaBoostApply( X, model, maxDepth, minWeight, nThreads )
 %
 % See also adaBoostTrain
 %
-% Piotr's Computer Vision Matlab Toolbox      Version 3.21
+% Piotr's Computer Vision Matlab Toolbox      Version NEW
 % Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 if(nargin<3 || isempty(maxDepth)), maxDepth=0; end
 if(nargin<4 || isempty(minWeight)), minWeight=0; end
-if(nargin<5 || isempty(nThreads)), nThreads=1e5; end
+if(nargin<5 || isempty(nThreads)), nThreads=16; end
 if(maxDepth>0), model.child(model.depth>=maxDepth) = 0; end
 if(minWeight>0), model.child(model.weights<=minWeight) = 0; end
 nWeak=size(model.fids,2); N=size(X,1); hs=zeros(N,1); nt=nThreads;

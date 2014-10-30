@@ -39,7 +39,7 @@ function [tree,data,err] = binaryTreeTrain( data, varargin )
 %   .maxDepth   - [1] maximum depth of tree
 %   .minWeight  - [.01] minimum sample weigth to allow split
 %   .fracFtrs   - [1] fraction of features to sample for each node split
-%   .nThreads   - [inf] max number of computational threads to use
+%   .nThreads   - [16] max number of computational threads to use
 %
 % OUTPUTS
 %  tree       - learned decision tree model struct w the following fields
@@ -56,12 +56,12 @@ function [tree,data,err] = binaryTreeTrain( data, varargin )
 %
 % See also binaryTreeApply, adaBoostTrain, forestTrain
 %
-% Piotr's Computer Vision Matlab Toolbox      Version 3.21
+% Piotr's Computer Vision Matlab Toolbox      Version NEW
 % Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % get parameters
-dfs={'nBins',256,'maxDepth',1,'minWeight',.01,'fracFtrs',1,'nThreads',1e5};
+dfs={'nBins',256,'maxDepth',1,'minWeight',.01,'fracFtrs',1,'nThreads',16};
 [nBins,maxDepth,minWeight,fracFtrs,nThreads]=getPrmDflt(varargin,dfs,1);
 assert(nBins<=256);
 
