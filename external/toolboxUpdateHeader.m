@@ -75,6 +75,6 @@ end
 
 function writeFile( fName, lines )
 fid = fopen( fName, 'w' );
-for i=1:length(lines); fprintf( fid, '%s\r\n', lines{i} ); end
+for i=1:length(lines); fprintf( fid, '%s\n', lines{i} ); end
 fclose(fid);
 end
