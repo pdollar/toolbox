@@ -10,6 +10,7 @@ function [miss,roc,gt,dt] = acfTest( varargin )
 %   .imgDir   - ['REQ'] dir containing test images
 %   .gtDir    - ['REQ'] dir containing test ground truth
 %   .pLoad    - [] params for bbGt>bbLoad for test data (see bbGt>bbLoad)
+%   .pModify  - [] params for acfModify for modifying detector
 %   .thr      - [.5] threshold on overlap area for comparing two bbs
 %   .mul      - [0] if true allow multiple matches to each gt
 %   .reapply  - [0] if true re-apply detector even if bbs already computed
@@ -25,17 +26,17 @@ function [miss,roc,gt,dt] = acfTest( varargin )
 %
 % EXAMPLE
 %
-% See also acfTrain, acfDetect, acfDemoInria, bbGt
+% See also acfTrain, acfDetect, acfModify, acfDemoInria, bbGt
 %
-% Piotr's Computer Vision Matlab Toolbox      Version 3.22
+% Piotr's Computer Vision Matlab Toolbox      Version NEW
 % Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 % get parameters
 dfs={ 'name','REQ', 'imgDir','REQ', 'gtDir','REQ', 'pLoad',[], ...
-  'thr',.5,'mul',0, 'reapply',0, 'ref',10.^(-2:.25:0), ...
+  'pModify',[], 'thr',.5,'mul',0, 'reapply',0, 'ref',10.^(-2:.25:0), ...
   'lims',[3.1e-3 1e1 .05 1], 'show',0 };
-[name,imgDir,gtDir,pLoad,thr,mul,reapply,ref,lims,show] = ...
+[name,imgDir,gtDir,pLoad,pModify,thr,mul,reapply,ref,lims,show] = ...
   getPrmDflt(varargin,dfs,1);
 
 % run detector on directory of images
@@ -44,6 +45,7 @@ if(reapply && exist(bbsNm,'file')), delete(bbsNm); end
 if(reapply || ~exist(bbsNm,'file'))
   detector = load([name 'Detector.mat']);
   detector = detector.detector;
+  if(~isempty(pModify)), detector=acfModify(detector,pModify); end
   imgNms = bbGt('getFiles',{imgDir});
   acfDetect( imgNms, detector, bbsNm );
 end

@@ -12,12 +12,12 @@
 % Note: pre-trained model files are provided (delete to re-train).
 % Re-training may give slightly variable results on different machines.
 %
-% Piotr's Computer Vision Matlab Toolbox      Version 3.23
+% Piotr's Computer Vision Matlab Toolbox      Version NEW
 % Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 %% extract training and testing images and ground truth
-dataDir = 'D:\code\research\detectorAcf\data\Caltech\';
+cd(fileparts(which('acfDemoCal.m'))); dataDir='../../data/Caltech/';
 for s=1:2
   if(s==1), type='train'; else type='test'; end
   if(exist([dataDir type '/annotations'],'dir')), continue; end
@@ -37,7 +37,8 @@ opts.pLoad = [pLoad 'hRng',[50 inf], 'vRng',[1 1] ];
 detector = acfTrain( opts );
 
 %% modify detector (see acfModify)
-detector = acfModify(detector,'cascThr',-1,'cascCal',-.005);
+pModify=struct('cascThr',-1,'cascCal',-.005);
+detector=acfModify(detector,pModify);
 
 %% run detector on a sample image (see acfDetect)
 imgNms=bbGt('getFiles',{[dataDir 'test/images']});
@@ -47,7 +48,8 @@ figure(1); im(I); bbApply('draw',bbs); pause(.1);
 %% test detector and plot roc (see acfTest)
 [~,~,gt,dt]=acfTest('name',opts.name,'imgDir',[dataDir 'test/images'],...
   'gtDir',[dataDir 'test/annotations'],'pLoad',[pLoad, 'hRng',[50 inf],...
-  'vRng',[.65 1],'xRng',[5 635],'yRng',[5 475]],'show',2);
+  'vRng',[.65 1],'xRng',[5 635],'yRng',[5 475]],...
+  'pModify',pModify,'reapply',0,'show',2);
 
 %% optionally show top false positives ('type' can be 'fp','fn','tp','dt')
 if( 0 ), bbGt('cropRes',gt,dt,imgNms,'type','fn','n',50,...

@@ -222,6 +222,7 @@ function savefig(fname, varargin)
 	% Output eps from Matlab.
 	renderer=	['-' lower(get(fighdl, 'Renderer'))];					% Use same as in figure.
 	if(strcmpi(renderer, '-none')), renderer=	'-painters';	end		% We need a valid renderer.
+	deps = [deps '-loose'];  % added by PPD seems to help w cropping in matlab 2014b :(
 	print(fighdl, deps{:}, '-noui', renderer, res, [fname '-temp']);	% Output the eps.
 	
 	% Convert to other formats.

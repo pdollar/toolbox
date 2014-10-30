@@ -12,12 +12,12 @@
 % Note: pre-trained model files are provided (delete to re-train).
 % Re-training may give slightly variable results on different machines.
 %
-% Piotr's Computer Vision Matlab Toolbox      Version 3.22
+% Piotr's Computer Vision Matlab Toolbox      Version NEW
 % Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
 %% extract training and testing images and ground truth
-dataDir = 'D:\code\research\detectorAcf\data\Inria\';
+cd(fileparts(which('acfDemoInria.m'))); dataDir='../../data/Inria/';
 for s=1:2
   if(s==1), set='00'; type='train'; else set='01'; type='test'; end
   if(exist([dataDir type '/posGt'],'dir')), continue; end
@@ -38,7 +38,8 @@ opts.pLoad={'squarify',{3,.41}}; opts.name='models/AcfInria';
 detector = acfTrain( opts );
 
 %% modify detector (see acfModify)
-detector = acfModify(detector,'cascThr',-1,'cascCal',0);
+pModify=struct('cascThr',-1,'cascCal',0);
+detector=acfModify(detector,pModify);
 
 %% run detector on a sample image (see acfDetect)
 imgNms=bbGt('getFiles',{[dataDir 'test/pos']});
@@ -47,7 +48,8 @@ figure(1); im(I); bbApply('draw',bbs); pause(.1);
 
 %% test detector and plot roc (see acfTest)
 [miss,~,gt,dt]=acfTest('name',opts.name,'imgDir',[dataDir 'test/pos'],...
-  'gtDir',[dataDir 'test/posGt'],'pLoad',opts.pLoad,'show',2);
+  'gtDir',[dataDir 'test/posGt'],'pLoad',opts.pLoad,...
+  'pModify',pModify,'reapply',0,'show',2);
 
 %% optional timing test for detector (should be ~30 fps)
 if( 0 )

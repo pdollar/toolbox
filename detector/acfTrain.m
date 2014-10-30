@@ -105,7 +105,7 @@ function detector = acfTrain( varargin )
 % See also acfDetect, acfDemoInria, acfModify, acfTest, chnsCompute,
 % chnsPyramid, adaBoostTrain, bbGt, bbNms, jitterImage
 %
-% Piotr's Computer Vision Matlab Toolbox      Version 3.25
+% Piotr's Computer Vision Matlab Toolbox      Version NEW
 % Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
@@ -202,7 +202,7 @@ dfs={ 'type','maxg', 'overlap',.65, 'ovrDnm','min' };
 opts.pNms=getPrmDflt(opts.pNms,dfs,-1);
 dfs={ 'pTree',{}, 'nWeak',0, 'discrete',1, 'verbose',16 };
 opts.pBoost=getPrmDflt(opts.pBoost,dfs,1);
-dfs={'nBins',256,'maxDepth',2,'minWeight',.01,'fracFtrs',1,'nThreads',1e5};
+dfs={'nBins',256,'maxDepth',2,'minWeight',.01,'fracFtrs',1,'nThreads',16};
 opts.pBoost.pTree=getPrmDflt(opts.pBoost.pTree,dfs,1);
 opts.pLoad=getPrmDflt(opts.pLoad,{'squarify',{0,1}},-1);
 opts.pLoad.squarify{2}=opts.modelDs(2)/opts.modelDs(1);
@@ -225,7 +225,7 @@ else
   if(hasGt), fs={opts.posImgDir,opts.posGtDir}; end
   fs=bbGt('getFiles',fs); nImg=size(fs,2); assert(nImg>0);
   if(~isinf(n)), fs=fs(:,randperm(nImg)); end; Is=cell(nImg*1000,1);
-  tid=ticStatus('Sampling windows',1,30); k=0; i=0; batch=64;
+  diary('off'); tid=ticStatus('Sampling windows',1,30); k=0; i=0; batch=64;
   while( i<nImg && k<n )
     batch=min(batch,nImg-i); Is1=cell(1,batch);
     parfor j=1:batch, ij=i+j;
@@ -237,7 +237,8 @@ else
     if(k>n), Is=Is(randSample(k,n)); k=n; end
     i=i+batch; tocStatus(tid,max(i/nImg,k/n));
   end
-  Is=Is(1:k); fprintf('Sampled %i windows from %i images.\n',k,i);
+  Is=Is(1:k); diary('on');
+  fprintf('Sampled %i windows from %i images.\n',k,i);
 end
 % optionally jitter positive windows
 if(length(Is)<2), Is={}; return; end
@@ -254,6 +255,7 @@ if(any(ds(1:2)<opts.modelDsPad)), error('Windows too small.'); end
 nm=[opts.name 'Is' int2str(positive) 'Stage' int2str(stage)];
 if( opts.winsSave ), save(nm,'Is','-v7.3'); end
 fprintf('Done sampling windows (time=%.0fs).\n',etime(clock,start));
+diary('off'); diary('on');
 end
 
 function Is = sampleWins1( I, gt, detector, stage, positive )

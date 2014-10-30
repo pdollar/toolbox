@@ -1,6 +1,8 @@
 Version NEW
+ -acfDemo*: updated demos and model files
+ -acfTrain, acfTest: minor usability updates
  -adaBoostApply, binaryTree*: set default max threads to 16 for OMP code
- -minor: toolboxUpdateHeader
+ -minor: toolboxUpdateHeader, savefig
 
 Version 3.30 (26-Oct-2014)
  -changed toolbox name to "Piotr's Computer Vision Matlab Toolbox"
