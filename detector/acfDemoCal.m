@@ -38,11 +38,17 @@ opts.pPyramid.pChns.shrink=2; opts.name='models/AcfCaltech+';
 pLoad={'lbls',{'person'},'ilbls',{'people'},'squarify',{3,.41}};
 opts.pLoad = [pLoad 'hRng',[50 inf], 'vRng',[1 1] ];
 
+%% optionally set up opts for LDCF version of detector (see acfTrain)
+if( 0 )
+  % NEED TO SETUP LDCF PARAMS HERE [FOR NOW MANUALLY ALTER ACFTRAIN]
+  opts.name='models/LdcfCaltech';
+end
+
 %% train detector (see acfTrain)
 detector = acfTrain( opts );
 
 %% modify detector (see acfModify)
-pModify=struct('cascThr',-1,'cascCal',.005);
+pModify=struct('cascThr',-1,'cascCal',.01);
 detector=acfModify(detector,pModify);
 
 %% run detector on a sample image (see acfDetect)

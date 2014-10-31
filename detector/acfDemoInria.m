@@ -35,11 +35,19 @@ opts.posImgDir=[dataDir 'train/pos']; opts.pJitter=struct('flip',1);
 opts.negImgDir=[dataDir 'train/neg']; opts.pBoost.pTree.fracFtrs=1/16;
 opts.pLoad={'squarify',{3,.41}}; opts.name='models/AcfInria';
 
+%% optionally set up opts for LDCF version of detector (see acfTrain)
+if( 0 )
+  % NEED TO SETUP LDCF PARAMS HERE [FOR NOW MANUALLY ALTER ACFTRAIN]
+  opts.pJitter=struct('flip',1,'nTrn',3,'mTrn',1); opts.seed=1;
+  opts.pBoost.pTree.maxDepth=3; opts.pBoost.discrete=0;
+  opts.pPyramid.pChns.shrink=2; opts.name='models/LdcfInria';
+end
+
 %% train detector (see acfTrain)
 detector = acfTrain( opts );
 
 %% modify detector (see acfModify)
-pModify=struct('cascThr',-1,'cascCal',0);
+pModify=struct('cascThr',-1,'cascCal',.01);
 detector=acfModify(detector,pModify);
 
 %% run detector on a sample image (see acfDetect)
