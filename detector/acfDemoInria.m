@@ -37,9 +37,8 @@ opts.pLoad={'squarify',{3,.41}}; opts.name='models/AcfInria';
 
 %% optionally set up opts for LDCF version of detector (see acfTrain)
 if( 0 )
-  % NEED TO SETUP LDCF PARAMS HERE [FOR NOW MANUALLY ALTER ACFTRAIN]
-  opts.pJitter=struct('flip',1,'nTrn',3,'mTrn',1); opts.seed=1;
-  opts.pBoost.pTree.maxDepth=3; opts.pBoost.discrete=0;
+  opts.filters=[5 4]; opts.pJitter=struct('flip',1,'nTrn',3,'mTrn',1);
+  opts.pBoost.pTree.maxDepth=3; opts.pBoost.discrete=0; opts.seed=2;
   opts.pPyramid.pChns.shrink=2; opts.name='models/LdcfInria';
 end
 

@@ -19,6 +19,9 @@ function detector = acfTrain( varargin )
 %
 % (1) Specifying features and model: The channel features are defined by
 % 'pPyramid'. See chnsCompute.m and chnsPyramid.m for more details. The
+% channels may be convolved by a set 'filters' to remove local correlations
+% (see our NIPS14 paper on LDCF), improving accuracy but slowing detection.
+% If 'filters'=[wFilter,nFilter] these are automatically computed. The
 % model dimensions ('modelDs') define the window height and width. The
 % padded dimensions ('modelDsPad') define the extended region around object
 % candidates that are used for classification. For example, for 100 pixel
@@ -68,6 +71,7 @@ function detector = acfTrain( varargin )
 %  opts       - parameters (struct or name/value pairs)
 %   (1) features and model:
 %   .pPyramid   - [{}] params for creating pyramid (see chnsPyramid)
+%   .filters    - [] [wxwxnChnsxnFilter] filters or [wFilter,nFilter]
 %   .modelDs    - [] model height+width without padding (eg [100 41])
 %   .modelDsPad - [] model height+width with padding (eg [128 64])
 %   .pNms       - [..] params for non-maximal suppression (see bbNms.m)
@@ -127,35 +131,36 @@ for stage = 0:numel(opts.nWeak)-1
   diary('on'); fprintf([repmat('-',[1 75]) '\n']);
   fprintf('Training stage %i\n',stage); startStage=clock;
   
-  % sample positives and compute features
+  % sample positives and compute info about channels
   if( stage==0 )
-    Is1 = sampleWins( detector, stage, 1 );
-    X1 = chnsCompute1( Is1, opts ); X1a=X1;
-    X1 = reshape(X1,[],size(X1,4))';
-  end
-  
-  % compute info about channels
-  if( stage==0 )
+    [Is1,IsOrig1] = sampleWins( detector, stage, 1 );
     t=ndims(Is1); if(t==3), t=Is1(:,:,1); else t=Is1(:,:,:,1); end
     t=chnsCompute(t,opts.pPyramid.pChns); detector.info=t.info;
   end
   
-  % compute local correlations and recompute features
-  if( stage==0 && isempty(opts.FB) && 0 ) % OFF
-    opts.FB = chnsCorrelation( X1a, 5, 4, 5000 );
-    detector.opts.FB = opts.FB;
-    X1 = chnsCompute1( Is1, opts );
-    X1 = reshape(X1,[],size(X1,4))';
-  end; clear X1a;
+  % compute local decorrelation filters
+  if( stage==0 && length(opts.filters)==2 )
+    fs = opts.filters; opts.filters = [];
+    X1 = chnsCompute1( IsOrig1, opts );
+    fs = chnsCorrelation( X1, fs(1), fs(2) );
+    opts.filters = fs; detector.opts.filters = fs;
+  end
   
   % compute lambdas
   if( stage==0 && isempty(opts.pPyramid.lambdas) )
     fprintf('Computing lambdas... '); start=clock;
-    ds=size(Is1); ds(1:end-1)=1; Is1=mat2cell2(Is1,ds);
-    ls=chnsScaling(opts.pPyramid.pChns,Is1,0);
+    ds=size(IsOrig1); ds(1:end-1)=1; IsOrig1=mat2cell2(IsOrig1,ds);
+    ls=chnsScaling(opts.pPyramid.pChns,IsOrig1,0);
     ls=round(ls*10^5)/10^5; detector.opts.pPyramid.lambdas=ls;
     fprintf('done (time=%.0fs).\n',etime(clock,start));
-  end; clear Is1 ls;
+  end
+  
+  % compute features for positives
+  if( stage==0 )
+    X1 = chnsCompute1( Is1, opts );
+    X1 = reshape(X1,[],size(X1,4))';
+    clear Is1 IsOrig1 ls fs ds t;
+  end
   
   % sample negatives and compute features
   Is0 = sampleWins( detector, stage, 0 );
@@ -191,8 +196,9 @@ end
 
 function opts = initializeOpts( varargin )
 % Initialize opts struct.
-dfs= { 'pPyramid',{}, 'modelDs',[100 41], 'modelDsPad',[128 64], ...
-  'FB',[], 'pNms',struct(), 'stride',4, 'cascThr',-1, 'cascCal',.005, ...
+dfs= { 'pPyramid',{}, 'filters',[], ...
+  'modelDs',[100 41], 'modelDsPad',[128 64], ...
+  'pNms',struct(), 'stride',4, 'cascThr',-1, 'cascCal',.005, ...
   'nWeak',128, 'pBoost', {}, 'seed',0, 'name','', 'posGtDir','', ...
   'posImgDir','', 'negImgDir','', 'posWinDir','', 'negWinDir','', ...
   'imreadf',@imread, 'imreadp',{}, 'pLoad',{}, 'nPos',inf, 'nNeg',5000, ...
@@ -216,7 +222,7 @@ opts.pLoad=getPrmDflt(opts.pLoad,{'squarify',{0,1}},-1);
 opts.pLoad.squarify{2}=opts.modelDs(2)/opts.modelDs(1);
 end
 
-function Is = sampleWins( detector, stage, positive )
+function [Is,IsOrig] = sampleWins( detector, stage, positive )
 % Load or sample windows for training detector.
 opts=detector.opts; start=clock;
 if( positive ), n=opts.nPos; else n=opts.nNeg; end
@@ -250,7 +256,7 @@ else
 end
 % optionally jitter positive windows
 if(length(Is)<2), Is={}; return; end
-nd=ndims(Is{1})+1; Is=cat(nd,Is{:});
+nd=ndims(Is{1})+1; Is=cat(nd,Is{:}); IsOrig=Is;
 if( positive && isstruct(opts.pJitter) )
   opts.pJitter.hasChn=(nd==4); Is=jitterImage(Is,opts.pJitter);
   ds=size(Is); ds(nd)=ds(nd)*ds(nd+1); Is=reshape(Is,ds(1:nd));
@@ -299,27 +305,26 @@ end
 function chns = chnsCompute1( Is, opts )
 % Compute single scale channels of dimensions modelDsPad.
 if(isempty(Is)), chns=[]; return; end
-fprintf('Extracting features... '); start=clock; FB=opts.FB;
+fprintf('Extracting features... '); start=clock; fs=opts.filters;
 pChns=opts.pPyramid.pChns; smooth=opts.pPyramid.smooth;
 dsTar=opts.modelDsPad/pChns.shrink; ds=size(Is); ds(1:end-1)=1;
 Is=squeeze(mat2cell2(Is,ds)); n=length(Is); chns=cell(1,n);
 parfor i=1:n
   C=chnsCompute(Is{i},pChns); C=convTri(cat(3,C.data{:}),smooth);
-  if(~isempty(FB)), C=repmat(C,[1 1 size(FB,4)]);
-    for j=1:size(C,3), C(:,:,j)=conv2(C(:,:,j),FB(:,:,j),'same'); end; end
-  if(~isempty(FB)), C=imResample(C,.5); shr=2; else shr=1; end
+  if(~isempty(fs)), C=repmat(C,[1 1 size(fs,4)]);
+    for j=1:size(C,3), C(:,:,j)=conv2(C(:,:,j),fs(:,:,j),'same'); end; end
+  if(~isempty(fs)), C=imResample(C,.5); shr=2; else shr=1; end
   ds=size(C); cr=ds(1:2)-dsTar/shr; s=floor(cr/2)+1; e=ceil(cr/2);
   C=C(s(1):end-e(1),s(2):end-e(2),:); chns{i}=C;
 end; chns=cat(4,chns{:});
 fprintf('done (time=%.0fs).\n',etime(clock,start));
 end
 
-function FB = chnsCorrelation( chns, wFilters, nFilters, maxImg )
-% Compute FB capturing local correlations for each channel.
+function filters = chnsCorrelation( chns, wFilter, nFilter )
+% Compute filters capturing local correlations for each channel.
 fprintf('Computing correlations... '); start=clock;
-[~,~,m,n]=size(chns); w=wFilters; wp=w*2-1;
-if(n>maxImg), chns=chns(:,:,:,randperm(n,maxImg)); n=maxImg; end
-FB=zeros(w,w,m,nFilters,'single');
+[~,~,m,n]=size(chns); w=wFilter; wp=w*2-1;
+filters=zeros(w,w,m,nFilter,'single');
 for i=1:m
   % compute local auto-scorrelation using Wiener-Khinchin theorem
   mus=squeeze(mean(mean(chns(:,:,i,:)))); sig=cell(1,n);
@@ -330,11 +335,11 @@ for i=1:m
   sig=double(mean(cat(4,sig{mus>1/50}),4));
   sig=reshape(full(convmtx2(sig,w,w)),wp+w-1,wp+w-1,[]);
   sig=reshape(sig(w:wp,w:wp,:),w^2,w^2); sig=(sig+sig')/2;
-  % compute FB for each channel from sig (sorted by eigenvalue)
-  [FBk,D]=eig(sig); FBk=reshape(FBk,w,w,[]);
+  % compute filters for each channel from sig (sorted by eigenvalue)
+  [fs,D]=eig(sig); fs=reshape(fs,w,w,[]);
   [~,ord]=sort(diag(D),'descend');
-  FBk=flipdim(flipdim(FBk,1),2); %#ok<DFLIPDIM>
-  FB(:,:,i,:)=FBk(:,:,ord(1:nFilters));
+  fs=flipdim(flipdim(fs,1),2); %#ok<DFLIPDIM>
+  filters(:,:,i,:)=fs(:,:,ord(1:nFilter));
 end
 fprintf('done (time=%.0fs).\n',etime(clock,start));
 end

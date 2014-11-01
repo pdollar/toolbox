@@ -40,15 +40,14 @@ opts.pLoad = [pLoad 'hRng',[50 inf], 'vRng',[1 1] ];
 
 %% optionally set up opts for LDCF version of detector (see acfTrain)
 if( 0 )
-  % NEED TO SETUP LDCF PARAMS HERE [FOR NOW MANUALLY ALTER ACFTRAIN]
-  opts.name='models/LdcfCaltech';
+  opts.filters=[5 4]; opts.name='models/LdcfCaltech';
 end
 
 %% train detector (see acfTrain)
 detector = acfTrain( opts );
 
 %% modify detector (see acfModify)
-pModify=struct('cascThr',-1,'cascCal',.01);
+pModify=struct('cascThr',-1,'cascCal',.025);
 detector=acfModify(detector,pModify);
 
 %% run detector on a sample image (see acfDetect)
