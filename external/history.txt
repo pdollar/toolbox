@@ -1,9 +1,9 @@
-Version NEW
+Version 3.40 (01-Nov-2014)
  -Added LDCF detector described in NIPS14 paper
  -acfReadme.m: added proper readme for detection code
  -acf*.m: many updates to support LDCF and improve usability
  -adaBoostApply, binaryTree*: set default max threads to 16 for OMP code
- -minor: toolboxUpdateHeader, savefig
+ -minor: toolboxUpdateHeader, toolboxGenDoc, savefig
 
 Version 3.30 (26-Oct-2014)
  -changed toolbox name to "Piotr's Computer Vision Matlab Toolbox"

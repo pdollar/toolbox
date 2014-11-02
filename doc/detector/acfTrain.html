@@ -29,7 +29,7 @@
   P. Dollár, R. Appel, S. Belongie and P. Perona
    &quot;Fast Feature Pyramids for Object Detection&quot;, PAMI 2014.
  The ACF detector is fast (30 fps on a single core) and achieves top
- accuracy on rigid object detection.
+ accuracy on rigid object detection. Please see acfReadme.m for details.
 
  Takes a set of parameters opts (described in detail below) and trains a
  detector from start to finish including performing multiple rounds of
@@ -43,6 +43,9 @@
 
  (1) Specifying features and model: The channel features are defined by
  'pPyramid'. See chnsCompute.m and chnsPyramid.m for more details. The
+ channels may be convolved by a set 'filters' to remove local correlations
+ (see our NIPS14 paper on LDCF), improving accuracy but slowing detection.
+ If 'filters'=[wFilter,nFilter] these are automatically computed. The
  model dimensions ('modelDs') define the window height and width. The
  padded dimensions ('modelDsPad') define the extended region around object
  candidates that are used for classification. For example, for 100 pixel
@@ -92,6 +95,7 @@
   opts       - parameters (struct or name/value pairs)
    (1) features and model:
    .pPyramid   - [{}] params for creating pyramid (see chnsPyramid)
+   .filters    - [] [wxwxnChnsxnFilter] filters or [wFilter,nFilter]
    .modelDs    - [] model height+width without padding (eg [100 41])
    .modelDsPad - [] model height+width with padding (eg [128 64])
    .pNms       - [..] params for non-maximal suppression (see bbNms.m)
@@ -126,10 +130,10 @@
 
  EXAMPLE
 
- See also <a href="acfDetect.html" class="code" title="function bbs = acfDetect( I, detector, fileName )">acfDetect</a>, <a href="acfDemoInria.html" class="code" title="">acfDemoInria</a>, <a href="acfModify.html" class="code" title="function detector = acfModify( detector, varargin )">acfModify</a>, <a href="acfTest.html" class="code" title="function [miss,roc,gt,dt] = acfTest( varargin )">acfTest</a>, chnsCompute,
- chnsPyramid, adaBoostTrain, <a href="bbGt.html" class="code" title="function varargout = bbGt( action, varargin )">bbGt</a>, <a href="bbNms.html" class="code" title="function bbs = bbNms( bbs, varargin )">bbNms</a>, jitterImage
+ See also <a href="acfReadme.html" class="code" title="">acfReadme</a>, <a href="acfDetect.html" class="code" title="function bbs = acfDetect( I, detector, fileName )">acfDetect</a>, <a href="acfDemoInria.html" class="code" title="">acfDemoInria</a>, <a href="acfModify.html" class="code" title="function detector = acfModify( detector, varargin )">acfModify</a>, <a href="acfTest.html" class="code" title="function [miss,roc,gt,dt] = acfTest( varargin )">acfTest</a>,
+ chnsCompute, chnsPyramid, adaBoostTrain, <a href="bbGt.html" class="code" title="function varargout = bbGt( action, varargin )">bbGt</a>, <a href="bbNms.html" class="code" title="function bbs = bbNms( bbs, varargin )">bbNms</a>, jitterImage
 
- Piotr's Computer Vision Matlab Toolbox      Version 3.25
+ Piotr's Computer Vision Matlab Toolbox      Version 3.40
  Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
  Licensed under the Simplified BSD License [see external/bsd.txt]</pre></div>
 

@@ -17,7 +17,7 @@ function toolboxGenDoc
 %
 % See also
 %
-% Piotr's Computer Vision Matlab Toolbox      Version 3.30
+% Piotr's Computer Vision Matlab Toolbox      Version 3.40
 % Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
@@ -28,6 +28,7 @@ addpath([pwd '/external/m2html']);
 % delete temporary files that should not be part of release
 fs={'pngreadc','pngwritec','rjpg8c','wjpg8c','png'};
 for i=1:length(fs), delete(['videos/private/' fs{i} '.*']); end
+delete('detector/models/*Dets.txt');
 
 % delete old doc and run m2html
 if(exist('doc/','dir')), rmdir('doc/','s'); end
