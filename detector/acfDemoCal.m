@@ -1,17 +1,6 @@
 % Demo for aggregate channel features object detector on Caltech dataset.
 %
-% (1) Download data and helper routines from Caltech Peds Website
-%  www.vision.caltech.edu/Image_Datasets/CaltechPedestrians/
-%  (1a) Download Caltech-USA files: videos/set*.tar and annotations.zip
-%  (1b) Copy above to CaltechPeds/data-USA/ and extract contents
-%  (1c) Download evaluation code (routines necessary for extracting images)
-%  Note: for CaltechPeds setup details please see CaltechPeds/readme.txt
-% (2) Set dataDir/ variable below to point to location to extract data.
-% (3) Launch "matlabpool open" for faster training if available.
-% (4) Run demo script and enjoy your newly minted fast ped detector!
-%
-% Note: pre-trained model files are provided (delete to re-train).
-% Re-training may give slightly variable results on different machines.
+% See also acfReadme.m
 %
 % Piotr's Computer Vision Matlab Toolbox      Version NEW
 % Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
@@ -38,10 +27,8 @@ opts.pPyramid.pChns.shrink=2; opts.name='models/AcfCaltech+';
 pLoad={'lbls',{'person'},'ilbls',{'people'},'squarify',{3,.41}};
 opts.pLoad = [pLoad 'hRng',[50 inf], 'vRng',[1 1] ];
 
-%% optionally set up opts for LDCF version of detector (see acfTrain)
-if( 0 )
-  opts.filters=[5 4]; opts.name='models/LdcfCaltech';
-end
+%% optionally switch to LDCF version of detector (see acfTrain)
+if( 0 ), opts.filters=[5 4]; opts.name='models/LdcfCaltech'; end
 
 %% train detector (see acfTrain)
 detector = acfTrain( opts );

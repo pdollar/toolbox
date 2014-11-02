@@ -1,17 +1,6 @@
 % Demo for aggregate channel features object detector on Inria dataset.
 %
-% (1) Download data and helper routines from Caltech Peds Website
-%  www.vision.caltech.edu/Image_Datasets/CaltechPedestrians/
-%  (1a) Download INRIA files: videos/set*.tar and annotations.zip
-%  (1b) Copy above to CaltechPeds/data-INRIA/ and extract contents
-%  (1c) Download evaluation code (routines necessary for extracting images)
-%  Note: for CaltechPeds setup details please see CaltechPeds/readme.txt
-% (2) Set dataDir/ variable below to point to location to extract data.
-% (3) Launch "matlabpool open" for faster training if available.
-% (4) Run demo script and enjoy your newly minted fast ped detector!
-%
-% Note: pre-trained model files are provided (delete to re-train).
-% Re-training may give slightly variable results on different machines.
+% See also acfReadme.m
 %
 % Piotr's Computer Vision Matlab Toolbox      Version NEW
 % Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
@@ -35,7 +24,7 @@ opts.posImgDir=[dataDir 'train/pos']; opts.pJitter=struct('flip',1);
 opts.negImgDir=[dataDir 'train/neg']; opts.pBoost.pTree.fracFtrs=1/16;
 opts.pLoad={'squarify',{3,.41}}; opts.name='models/AcfInria';
 
-%% optionally set up opts for LDCF version of detector (see acfTrain)
+%% optionally switch to LDCF version of detector (see acfTrain)
 if( 0 )
   opts.filters=[5 4]; opts.pJitter=struct('flip',1,'nTrn',3,'mTrn',1);
   opts.pBoost.pTree.maxDepth=3; opts.pBoost.discrete=0; opts.seed=2;
@@ -68,5 +57,5 @@ if( 0 )
 end
 
 %% optionally show top false positives ('type' can be 'fp','fn','tp','dt')
-if( 0 ), bbGt('cropRes',gt,dt,imgNms,'type','fn','n',50,...
+if( 0 ), bbGt('cropRes',gt,dt,imgNms,'type','fp','n',50,...
     'show',3,'dims',opts.modelDs([2 1])); end

@@ -5,7 +5,7 @@ function detector = acfTrain( varargin )
 %  P. Dollár, R. Appel, S. Belongie and P. Perona
 %   "Fast Feature Pyramids for Object Detection", PAMI 2014.
 % The ACF detector is fast (30 fps on a single core) and achieves top
-% accuracy on rigid object detection.
+% accuracy on rigid object detection. Please see acfReadme.m for details.
 %
 % Takes a set of parameters opts (described in detail below) and trains a
 % detector from start to finish including performing multiple rounds of
@@ -106,8 +106,8 @@ function detector = acfTrain( varargin )
 %
 % EXAMPLE
 %
-% See also acfDetect, acfDemoInria, acfModify, acfTest, chnsCompute,
-% chnsPyramid, adaBoostTrain, bbGt, bbNms, jitterImage
+% See also acfReadme, acfDetect, acfDemoInria, acfModify, acfTest,
+% chnsCompute, chnsPyramid, adaBoostTrain, bbGt, bbNms, jitterImage
 %
 % Piotr's Computer Vision Matlab Toolbox      Version NEW
 % Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
