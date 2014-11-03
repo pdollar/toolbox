@@ -1,3 +1,6 @@
+Version NEW
+ -acfSweeps.m: Added ACF parameter sweep code to toolbox
+
 Version 3.40 (01-Nov-2014)
  -Added LDCF detector described in NIPS14 paper
  -acfReadme.m: added proper readme for detection code

@@ -9,6 +9,7 @@
 %   acfDetect    - Run aggregate channel features object detector on given image(s).
 %   acfModify    - Modify aggregate channel features object detector.
 %   acfReadme    - Aggregate Channel Features Detector Overview.
+%   acfSweeps    - Parameter sweeps for ACF pedestrian detector.
 %   acfTest      - Test aggregate channel features object detector given ground truth.
 %   acfTrain     - Train aggregate channel features object detector.
 %
