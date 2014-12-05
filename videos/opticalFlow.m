@@ -63,7 +63,7 @@ function [Vx,Vy,reliab] = opticalFlow( I1, I2, varargin )
 %
 % See also convTri, imtransform2, medfilt2
 %
-% Piotr's Computer Vision Matlab Toolbox      Version 3.24
+% Piotr's Computer Vision Matlab Toolbox      Version NEW
 % Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
@@ -115,7 +115,8 @@ radius=min(radius,floor(min(size(I1,1),size(I1,2))/2)-1);
 AAxx=convTri(Ix.^2,radius)+1e-5; ABxt=convTri(-Ix.*It,radius);
 AAyy=convTri(Iy.^2,radius)+1e-5; AByt=convTri(-Iy.*It,radius);
 % Find determinant and trace of A'A
-AAdet=AAxx.*AAyy-AAxy.^2; AAdeti=1./AAdet; AAtr=AAxx+AAyy;
+AAdet=AAxx.*AAyy-AAxy.^2; AAdeti=1./AAdet;
+AAdeti(isinf(AAdeti))=0; AAtr=AAxx+AAyy;
 % Compute components of velocity vectors (A'A)^-1 * A'b
 Vx = AAdeti .* ( AAyy.*ABxt - AAxy.*AByt);
 Vy = AAdeti .* (-AAxy.*ABxt + AAxx.*AByt);
