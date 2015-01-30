@@ -109,7 +109,7 @@ function detector = acfTrain( varargin )
 % See also acfReadme, acfDetect, acfDemoInria, acfModify, acfTest,
 % chnsCompute, chnsPyramid, adaBoostTrain, bbGt, bbNms, jitterImage
 %
-% Piotr's Computer Vision Matlab Toolbox      Version 3.40
+% Piotr's Computer Vision Matlab Toolbox      Version NEW
 % Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 
@@ -230,7 +230,7 @@ if( positive ), crDir=opts.posWinDir; else crDir=opts.negWinDir; end
 if( exist(crDir,'dir') && stage==0 )
   % if window directory is specified simply load windows
   fs=bbGt('getFiles',{crDir}); nImg=length(fs); assert(nImg>0);
-  if(nImg>n), fs=fs(:,randSample(nImg,n)); end; n=nImg;
+  if(nImg>n), fs=fs(:,randSample(nImg,n)); else n=nImg; end
   for i=1:n, fs{i}=[{opts.imreadf},fs(i),opts.imreadp]; end
   Is=cell(1,n); parfor i=1:n, Is{i}=feval(fs{i}{:}); end
 else
