@@ -23,4 +23,8 @@ int main(int argc, char* argv[]) {
   mwArray bbs;
   acfDetect(1, bbs, I, detectorFileName, fileName); 
   cout << bbs << endl;
+  
+  // Shut down the library and the application global state.
+  libacfTerminate();
+  mclTerminateApplication();
 }
