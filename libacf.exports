@@ -1,0 +1,7 @@
+libacfInitialize
+libacfInitializeWithHandlers
+libacfTerminate
+libacfPrintStackTrace
+mlxAcfDetect
+acfDetect
+

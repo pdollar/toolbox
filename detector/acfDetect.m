@@ -1,4 +1,4 @@
-function bbs = acfDetect( I, detector, fileName )
+function bbs = acfDetect( I, detectorFileName, fileName )
 % Run aggregate channel features object detector on given image(s).
 %
 % The input 'I' can either be a single image (or filename) or a cell array
@@ -37,6 +37,8 @@ function bbs = acfDetect( I, detector, fileName )
 
 % run detector on every image
 if(nargin<3), fileName=''; end; multiple=iscell(I);
+if(isempty(detectorFileName) || ~exist(detectorFileName)), bbs = 1; return; end
+t = load(detectorFileName); detector = t.detector;
 if(~isempty(fileName) && exist(fileName,'file')), bbs=1; return; end
 if(~multiple), bbs=acfDetectImg(I,detector); else
   n=length(I); bbs=cell(n,1);
