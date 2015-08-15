@@ -1,6 +1,6 @@
 Version NEW
  -acfSweeps.m: Added ACF parameter sweep code to toolbox
- -minor: opticalFlow, acfTrain
+ -minor: opticalFlow, acfTrain, binaryTreeTrain1
 
 Version 3.40 (01-Nov-2014)
  -Added LDCF detector described in NIPS14 paper

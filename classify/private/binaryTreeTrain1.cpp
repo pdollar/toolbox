@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Piotr's Computer Vision Matlab Toolbox      Version 3.24
+* Piotr's Computer Vision Matlab Toolbox      Version NEW
 * Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 * Licensed under the Simplified BSD License [see external/bsd.txt]
 *******************************************************************************/
@@ -49,7 +49,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     M1 = (int) mxGetNumberOfElements(prhs[9]);
   }
 
-  // create outpu structure
+  // create output structure
   plhs[0] = mxCreateNumericMatrix(1,F,mxSINGLE_CLASS,mxREAL);
   plhs[1] = mxCreateNumericMatrix(1,F,mxUINT8_CLASS,mxREAL);
   float *errs = (float*) mxGetData(plhs[0]);
@@ -61,7 +61,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   #pragma omp parallel for num_threads(nThreads)
   #endif
   for( int f=0; f<F; f++ ) {
-    float cdf0[256], cdf1[256], e0=1, e1=0, e; int thr;
+    float cdf0[256], cdf1[256], e0, e1, e; int thr=0;
+    if(prior<.5) { e0=prior; e1=1-prior; } else { e0=1-prior; e1=prior; }
     constructCdf(data0+N0*size_t(fids[f]),wts0,nBins,N0,M0,ord0,cdf0);
     constructCdf(data1+N1*size_t(fids[f]),wts1,nBins,N1,M1,ord1,cdf1);
     for( int i=0; i<nBins; i++) {
