@@ -312,7 +312,7 @@ void fhog( float *M, float *O, float *H, int h, int w, int binSize,
   hogChannels( H+nbo*0, R1, N, hb, wb, nOrients*2, clip, 1 );
   hogChannels( H+nbo*2, R2, N, hb, wb, nOrients*1, clip, 1 );
   hogChannels( H+nbo*3, R1, N, hb, wb, nOrients*2, clip, 2 );
-  wrFree(N); mxFree(R1); wrFree(R2);
+  wrFree(N); wrFree(R1); wrFree(R2);
 }
 
 /******************************************************************************/
