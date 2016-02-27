@@ -60,7 +60,7 @@ if(isempty(lbl)), imLabel(lgd,'bottom',30,{'FontSize',24}); lgd=[]; end
 xlabel(lbl); set(gca,'XTick',1:N,'XTickLabel',lgd);
 % save plot
 fFig=[plDir expNm]; diary('off');
-for t=1:25, try savefig(fFig,1,'png'); break; catch, pause(1), end; end
+for t=1:25, try save_fig(fFig,1,'png'); break; catch, pause(1), end; end
 end
 
 function [jobsTrn,jobsTst] = createJobs( rtDir, opts, T )

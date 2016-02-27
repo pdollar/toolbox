@@ -1,4 +1,5 @@
 Version NEW
+ -renamed function savefig -> save_fig, updated function calls in acfSweeps.m, acfTest.m: see issue #14
  -acfSweeps.m: Added ACF parameter sweep code to toolbox
  -minor: opticalFlow, acfTrain, binaryTreeTrain1
 

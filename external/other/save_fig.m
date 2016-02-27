@@ -1,13 +1,13 @@
-function savefig(fname, varargin)
+function save_fig(fname, varargin)
 	
-% Usage: savefig(filename, fighdl, options)
+% Usage: save_fig(filename, fighdl, options)
 %
 % Saves a pdf, eps, png, jpeg, and/or tiff of the contents of the fighandle's (or current) figure.
 % It saves an eps of the figure and the uses Ghostscript to convert to the other formats.
 % The result is a cropped, clean picture. There are options for using rgb or cmyk colours,
 % or grayscale. You can also choose the resolution.
 %
-% The advantage of savefig is that there is very little empty space around the figure in the
+% The advantage of save_fig is that there is very little empty space around the figure in the
 % resulting files, you can export to more than one format at once, and Ghostscript generates
 % trouble-free files.
 %
@@ -18,8 +18,8 @@ function savefig(fname, varargin)
 % fighdl:  (default: gcf) Integer handle to figure.
 %
 % options: (default: '-r300', '-lossless', '-rgb') You can define your own
-%          defaults in a global variable savefig_defaults, if you want to, i.e.
-%          savefig_defaults= {'-r200','-gray'};.
+%          defaults in a global variable save_fig_defaults, if you want to, i.e.
+%          save_fig_defaults= {'-r200','-gray'};.
 % 'eps':   Output in Encapsulated Post Script (no preview yet).
 % 'pdf':   Output in (Adobe) Portable Document Format.
 % 'png':   Output in Portable Network Graphics.
@@ -40,7 +40,7 @@ function savefig(fname, varargin)
 % '-dbg':  Displays gs command line(s).
 %
 % EXAMPLE:
-% savefig('nicefig', 'pdf', 'jpeg', '-cmyk', '-c0.1', '-r250');
+% save_fig('nicefig', 'pdf', 'jpeg', '-cmyk', '-c0.1', '-r250');
 % Saves the current figure to nicefig.pdf and nicefig.png, both in cmyk and at 250 dpi,
 %          with high quality lossy compression.
 %
@@ -53,7 +53,7 @@ function savefig(fname, varargin)
 % - No 'epstopdf' stuff anymore! Using '-dEPSCrop' option in gs instead!
 % Version 1.2, 2006-05-02:
 % - Added a '-dbg' option (see options, above).
-% - Now looks for a global variable 'savefig_defaults' (see options, above).
+% - Now looks for a global variable 'save_fig_defaults' (see options, above).
 % - More detailed Ghostscript options (user will not really notice).
 % - Warns when there is no device for a file-type/color-model combination.
 % Version 1.3, 2006-06-06:
@@ -82,7 +82,7 @@ function savefig(fname, varargin)
 % - Added lossless compression, see option '-lossless', above. Works on most formats.
 % - Added lossy compression, see options '-c<float>...', above. Works on 'pdf'.
 %   Thanks to Olly Woodford for idea and implementation!
-% - Removed option '-nointerpolate' -- now savefig never interpolates.
+% - Removed option '-nointerpolate' -- now save_fig never interpolates.
 % - Fixed a few small bugs and removed some mlint comments. 
 % Version 2.0, 2008-11-07:
 % - Added the possibility to include fonts into eps or pdf.
@@ -143,7 +143,7 @@ function savefig(fname, varargin)
 	set(fighdl, 'PaperUnits', 'centimeters', 'PaperSize', sz(3:4), 'PaperPosition', sz);
 	
 	% Set up the various devices.
-	% Those commented out are not yet supported by gs (nor by savefig).
+	% Those commented out are not yet supported by gs (nor by save_fig).
 	% pdf-cmyk works due to the Matlab '-cmyk' export being carried over from eps to pdf.
 	device.eps.rgb=		sprintf(epsCmd, 'DeviceRGB',	'epswrite', [fname '.eps']);
 	device.jpeg.rgb=	sprintf(cmdEnd,	'jpeg', 					[fname '.jpeg']);
@@ -160,9 +160,9 @@ function savefig(fname, varargin)
 	device.tiff.gray=	sprintf(cmdEnd,	'tiffgray', 				[fname '.tiff']);
 	
 	% Get options.
-	global savefig_defaults;											% Add global defaults.
- 	if( iscellstr(savefig_defaults)), varargin=	{savefig_defaults{:}, varargin{:}};
-	elseif(ischar(savefig_defaults)), varargin=	{savefig_defaults, varargin{:}};
+	global save_fig_defaults;											% Add global defaults.
+ 	if( iscellstr(save_fig_defaults)), varargin=	{save_fig_defaults{:}, varargin{:}};
+	elseif(ischar(save_fig_defaults)), varargin=	{save_fig_defaults, varargin{:}};
 	end
 	varargin=	{'-r300', '-lossless', '-rgb', varargin{:}};			% Add defaults.
 	res=		'';
@@ -183,11 +183,11 @@ function savefig(fname, varargin)
 			otherwise
 				if(regexp(varargin{n}, '^\-r[0-9]+$')), 	 res=  varargin{n};
 				elseif(regexp(varargin{n}, '^\-c[0-9.]+$')), comp= str2double(varargin{n}(3:end));
-				else	warning('pax:savefig:inputError', 'Unknown option in argument: ''%s''.', varargin{n});
+				else	warning('pax:save_fig:inputError', 'Unknown option in argument: ''%s''.', varargin{n});
 				end
 			end
 		else
-			warning('pax:savefig:inputError', 'Wrong type of argument: ''%s''.', class(varargin{n}));
+			warning('pax:save_fig:inputError', 'Wrong type of argument: ''%s''.', class(varargin{n}));
 		end
 	end
 	types=		unique(types);
@@ -232,7 +232,7 @@ function savefig(fname, varargin)
 		else
 			cmd=		device.(types{n}).rgb;							% Use alternative.
 			if(~strcmp(types{n}, 'eps'))	% It works anyways for eps (VERY SHAKY!).
-				warning('pax:savefig:deviceError', ...
+				warning('pax:save_fig:deviceError', ...
 						'No device for %s using %s. Using rgb instead.', types{n}, color);
 			end
 		end
