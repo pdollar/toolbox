@@ -63,7 +63,7 @@ function [Vx,Vy,reliab] = opticalFlow( I1, I2, varargin )
 %
 % See also convTri, imtransform2, medfilt2
 %
-% Piotr's Computer Vision Matlab Toolbox      Version NEW
+% Piotr's Computer Vision Matlab Toolbox      Version 3.50
 % Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 

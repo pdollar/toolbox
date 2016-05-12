@@ -1,3 +1,8 @@
+Version 3.50 (12-May-2016)
+ -migrating documentation to github
+ -acfSweeps.m: Added ACF parameter sweep code to toolbox
+ -minor: opticalFlow, acfTrain, binaryTreeTrain1
+
 Version 3.40 (01-Nov-2014)
  -Added LDCF detector described in NIPS14 paper
  -acfReadme.m: added proper readme for detection code

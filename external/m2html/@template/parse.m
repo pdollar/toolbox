@@ -11,7 +11,7 @@ function [tpl, str] = parse(tpl,target,handle,append)
 %  Copyright (C) 2003 Guillaume Flandin <Guillaume@artefact.tk>
 %  $Revision: 1.0 $Date: 2003/05/05 22:19:51 $
 
-error(nargchk(3,4,nargin));
+narginchk(3,4);
 if nargin == 3
 	append = 0;
 end

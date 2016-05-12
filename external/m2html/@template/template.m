@@ -22,7 +22,7 @@ function tpl = template(root,unknowns)
 %  Copyright (C) 2003 Guillaume Flandin <Guillaume@artefact.tk>
 %  $Revision: 1.0 $Date: 2003/05/05 22:19:51 $
 
-error(nargchk(0,2,nargin));
+narginchk(0,2);
 
 switch nargin
 	case 0

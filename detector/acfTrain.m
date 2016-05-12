@@ -109,7 +109,7 @@ function detector = acfTrain( varargin )
 % See also acfReadme, acfDetect, acfDemoInria, acfModify, acfTest,
 % chnsCompute, chnsPyramid, adaBoostTrain, bbGt, bbNms, jitterImage
 %
-% Piotr's Computer Vision Matlab Toolbox      Version NEW
+% Piotr's Computer Vision Matlab Toolbox      Version 3.50
 % Copyright 2014 Piotr Dollar.  [pdollar-at-gmail.com]
 % Licensed under the Simplified BSD License [see external/bsd.txt]
 

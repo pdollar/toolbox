@@ -18,7 +18,7 @@ function s = mfileparse(mfile, mdirs, names, options)
 %  Copyright (C) 2003 Guillaume Flandin <Guillaume@artefact.tk>
 %  $Revision: 1.0 $Date: 2003/29/04 17:33:43 $
 
-error(nargchk(3,4,nargin));
+narginchk(3,4);
 if nargin == 3,
 	options = struct('verbose',1, 'globalHypertextLinks',0, 'todo',0);
 end
