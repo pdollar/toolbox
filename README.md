@@ -1,1 +1,1 @@
-http://vision.ucsd.edu/~pdollar/toolbox/doc/
+Documentation: https://pdollar.github.io/toolbox/
