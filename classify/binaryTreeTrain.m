@@ -10,8 +10,8 @@ function [tree,data,err] = binaryTreeTrain( data, varargin )
 % forests, this code is tuned for use with boosting (see adaBoostTrain.m).
 %
 % For more information on how to quickly boost decision trees see:
-%   [1] R. Appel, T. Fuchs, P. Dollár, P. Perona; "Quickly Boosting
-%   Decision Trees – Pruning Underachieving Features Early," ICML 2013.
+%   [1] R. Appel, T. Fuchs, P. DollÃ¡r, P. Perona; "Quickly Boosting
+%   Decision Trees â€“ Pruning Underachieving Features Early," ICML 2013.
 % The code here implements a simple brute-force strategy with the option to
 % sample features used for training each node for additional speedups.
 % Further gains using the ideas from the ICML paper are possible. If you
@@ -87,7 +87,7 @@ data=struct( 'X0',X0, 'X1',X1, 'wts0',wts0, 'wts1',wts1, ...
   'xMin',xMin, 'xStep',xStep, 'xType',xType );
 
 % train decision tree classifier
-K=2*(N0+N1); thrs=zeros(K,1,xType);
+K=2^(maxDepth+1); thrs=zeros(K,1,xType);
 hs=zeros(K,1,'single'); weights=hs; errs=hs;
 fids=zeros(K,1,'uint32'); child=fids; depth=fids;
 wtsAll0=cell(K,1); wtsAll0{1}=wts0;
