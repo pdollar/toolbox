@@ -29,7 +29,7 @@
 %   "Fast Feature Pyramids for Object Detection," PAMI 2014.
 %  [5] W. Nam, P. Dollár, and J.H. Han
 %   "Local Decorrelation For Improved Pedestrian Detection," NIPS 2014.
-% Please see: http://vision.ucsd.edu/~pdollar/research.html#ObjectDetection
+% Please see: https://pdollar.github.io/research.html#ObjectDetection
 %
 % A short summary of the papers, organized by detector name:
 %
@@ -68,7 +68,7 @@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%% 3. Setup. %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % (A) Please install and setup the toolbox as described online:
-%  http://vision.ucsd.edu/~pdollar/toolbox/doc/index.html
+%  https://pdollar.github.io/toolbox/
 % You may need to recompile for your system, see toolboxCompile. Note:
 % enabling OpenMP during compile will significantly speed training.
 %
