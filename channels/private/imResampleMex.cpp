@@ -117,7 +117,9 @@ void resample( T *A, T *B, int ha, int hb, int wa, int wb, int d, T r ) {
       if(ybd[0]==2) for(; y<hb; y++) { ya=yas[y*4]; B0[y]=U(0)+U(1); }
       if(ybd[0]==3) for(; y<hb; y++) { ya=yas[y*4]; B0[y]=U(0)+U(1)+U(2); }
       if(ybd[0]==4) for(; y<hb; y++) { ya=yas[y*4]; B0[y]=U(0)+U(1)+U(2)+U(3); }
-      if(ybd[0]>4)  for(; y<hn; y++) { B0[ybs[y]] += C[yas[y]] * ywts[y]; }
+      if(ybd[0]>4) {  
+         for(int i=0; i<hb; i++) { B0[i] = 0; }
+         for(; y<hn; y++) { B0[ybs[y]] += C[yas[y]] * ywts[y]; } }
       #undef U
     } else {
       for(y=0; y<ybd[0]; y++) B0[y] = C[yas[y]]*ywts[y];
@@ -132,14 +134,16 @@ void resample( T *A, T *B, int ha, int hb, int wa, int wb, int d, T r ) {
 // B = imResampleMex(A,hb,wb,nrm); see imResample.m for usage details
 #ifdef MATLAB_MEX_FILE
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
-  int *ns, ms[3], n, m, nCh, nDims;
+  int n, m, nCh, nDims;
+  mwSize ms[3];
+  mwSize *ns;
   void *A, *B; mxClassID id; double nrm;
 
   // Error checking on arguments
   if( nrhs!=4) mexErrMsgTxt("Four inputs expected.");
   if( nlhs>1 ) mexErrMsgTxt("One output expected.");
   nDims=mxGetNumberOfDimensions(prhs[0]); id=mxGetClassID(prhs[0]);
-  ns = (int*) mxGetDimensions(prhs[0]); nCh=(nDims==2) ? 1 : ns[2];
+  ns = (mwSize*) mxGetDimensions(prhs[0]); nCh=(nDims==2) ? 1 : ns[2];
   if( (nDims!=2 && nDims!=3) ||
     (id!=mxSINGLE_CLASS && id!=mxDOUBLE_CLASS && id!=mxUINT8_CLASS) )
     mexErrMsgTxt("A should be 2D or 3D single, double or uint8 array.");

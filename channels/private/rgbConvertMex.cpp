@@ -168,13 +168,14 @@ oT* rgbConvert( iT *I, int n, int d, int flag, oT nrm ) {
 // J = rgbConvertMex(I,flag,single); see rgbConvert.m for usage details
 #ifdef MATLAB_MEX_FILE
 void mexFunction(int nl, mxArray *pl[], int nr, const mxArray *pr[]) {
-  const int *dims; int nDims, n, d, dims1[3]; void *I; void *J; int flag;
+  const mwSize *dims; int nDims, n, d; void *I; void *J; int flag;
+  mwSize dims1[3];
   bool single; mxClassID idIn, idOut;
 
   // Error checking
   if( nr!=3 ) mexErrMsgTxt("Three inputs expected.");
   if( nl>1 ) mexErrMsgTxt("One output expected.");
-  dims = (const int*) mxGetDimensions(pr[0]); n=dims[0]*dims[1];
+  dims = (const mwSize*) mxGetDimensions(pr[0]); n=dims[0]*dims[1];
   nDims = mxGetNumberOfDimensions(pr[0]);
   d = 1; for( int i=2; i<nDims; i++ ) d*=dims[i];
 

@@ -23,7 +23,8 @@ void ktComputeW( double* w, uchar* B, double* q, double *p, int n, int nBits ) {
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   /* Declare variables. */
-  int n, nBits, dims[2];
+  int n, nBits;
+  mwSize dims[2];
   uchar *B; double *q, *p, *w;
   
   /* PRHS=[B, q, p, nBits]; PLHS=[w] */

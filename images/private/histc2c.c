@@ -40,7 +40,7 @@ int findBin( double x, double *edges, int nBins ) {
 *  sub2ind(ind,sub,subMul,nd)
 *******************************************************************************/
 #define sub2ind(ind, sub, subMul, nd) ind=sub[0]; for(k=1;k<nd;k++) ind+=sub[k]*subMul[k];
-int *sub2ind_init( const int*siz, const int nd ) {
+int *sub2ind_init( const mwSize*siz, const int nd ) {
   int i, *subMul;
   subMul = (int*) mxCalloc( nd, sizeof(int));
   subMul[0] = 1; for(i=1; i<nd; i++ ) subMul[i]=subMul[i-1]*siz[i-1];
@@ -48,7 +48,7 @@ int *sub2ind_init( const int*siz, const int nd ) {
 }
 
 /* construct the nd dimensional histogram */
-void histcND( double* h, double* A, double* wtMask, int n, int nd, double**edges, int* nBins ) {
+void histcND( double* h, double* A, double* wtMask, int n, int nd, double**edges, mwSize* nBins ) {
   int i, j, k, inbounds; int *subMul, *sub, ind;
   sub = (int *) mxMalloc( nd * sizeof(int) );
   subMul = sub2ind_init( nBins, nd );
@@ -67,7 +67,9 @@ void histcND( double* h, double* A, double* wtMask, int n, int nd, double**edges
 }
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
-  int i, n, nd, *nBins; double *A, *wtMask, **edges, *h;
+  int i, n, nd;
+  mwSize *nBins;
+  double *A, *wtMask, **edges, *h;
   
   /* Error checking on arguments PRHS=[A1, wtMask, edges1, edges2, ...]; PLHS=[h] */
   if( nrhs < 3) mexErrMsgTxt("At least three input arguments required.");
@@ -83,7 +85,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
   /* extract arguments */
   A = mxGetPr(prhs[0]);
   wtMask = mxGetPr(prhs[1]);
-  nBins = (int*) mxMalloc( nd * sizeof(int) );
+  nBins = (mwSize*) mxMalloc( nd * sizeof(int) );
   for( i=0; i<nd; i++) nBins[i] = mxGetN(prhs[i+2])-1;
   edges = (double**) mxMalloc( nd * sizeof(double*) );
   for( i=0; i<nd; i++) edges[i] = mxGetPr(prhs[i+2]);

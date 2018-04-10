@@ -26,7 +26,9 @@ void ktHistcRgb( double* h, uchar* B, double* wtMask, int n, int nBits ) {
 }
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
-  int n, nBits, dims[3]; uchar *B; double *wtMask, *h;
+  int n, nBits;
+  mwSize dims[3]; 
+  uchar *B; double *wtMask, *h;
   
   /* PRHS=[B, wtMask, nBits]; PLHS=[h] */
   if( nrhs != 3) mexErrMsgTxt("Three input arguments required.");
