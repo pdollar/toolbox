@@ -5,6 +5,10 @@
 *******************************************************************************/
 #ifndef _WRAPPERS_HPP_
 #define _WRAPPERS_HPP_
+
+#include <stddef.h>
+#include <stdlib.h>
+
 #ifdef MATLAB_MEX_FILE
 
 // wrapper functions if compiling from Matlab
