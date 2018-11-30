@@ -203,10 +203,13 @@ function savefig(fname, varargin)
 	
 	% Generate the gs command.
 	switch(computer)													% Get gs command.
-		case {'MAC','MACI'},			gs= '/usr/local/bin/gs';
-		case {'PCWIN'},		gs= 'gswin32c.exe';
-		case {'PCWIN64'},		gs= 'gswin64c.exe';
-		otherwise,						gs= 'gs';
+		case {'MAC','MACI'},  gs= '/usr/local/bin/gs';
+		case {'PCWIN'},       gs= 'gswin32c.exe';
+		case {'PCWIN64'},     gs= 'gswin64c.exe';
+		case {'GLNXA64'},                  
+		    setenv('LD_LIBRARY_PATH','/usr/lib/x86_64-linux-gnu');
+		    gs= 'gs';  % avoid issues with GS < 9.16 on Linux
+		otherwise,            gs= 'gs';
 	end
 	gs=		[gs		' -q -dNOPAUSE -dBATCH -dEPSCrop'];					% Essential.
 	gs=		[gs     ' -dPDFSETTINGS=/prepress -dEmbedAllFonts=' fonts];	% Must be first?
